@@ -7,6 +7,7 @@
 Telefonda kullanılabilen oyunlar ve araçlar:
 
 - **Batak** (`batak.html`): İhaleli batak, 3 bilgisayar rakibe karşı
+- **İş Bankası Yenilikler** (`isbank.html`): Yeni ürünler, İşCep, haberler ve KAP duyuruları; günde iki kez otomatik güncellenir (veri: `isbank/haberler.json`)
 - **Bankacılık** (`banka.html`): BCH rotatif kredi, vadeli mevduat , tüketici kredisi ve kredi kartı gecikme faizi hesaplama
 - **Resmi Gazete** (`gazete.html`): Her sabah otomatik güncellenen günlük özet (veriler `gazete/` klasöründe)
 - **Sayı Tahmin** (`tahmin.html`): Tutulan sayıyı bul
