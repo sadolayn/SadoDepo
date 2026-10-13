@@ -65,6 +65,18 @@
   .camp .left.soon { background: rgba(239,106,76,.15); color: #ef6a4c; }
   .camp b { display: block; font-size: 16px; margin: 4px 0; }
   .camp p { margin: 0; font-size: 14px; color: #c9c9c9; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+  .stat span { display: block; font-size: 12px; color: var(--muted); }
+  .stat b { display: block; font-size: 26px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .stat small { color: var(--muted); font-size: 12px; }
+  .stat.hero { grid-column: 1 / -1; background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%); border-color: #3a50f0; text-align: center; padding: 18px; }
+  .stat.hero span { color: #b9c0d6; }
+  .stat.hero b { font-size: 44px; color: #fff; }
+  .facts { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px 14px; margin-bottom: 8px; }
+  .facts li { padding: 9px 0; border-top: 1px solid var(--line); font-size: 14px; color: #c9c9c9; list-style: none; }
+  .facts li:first-child { border-top: none; }
+  .facts ul { margin: 0; padding: 0; }
   .maxlink { display: block; text-align: center; margin: 12px 0 0; padding: 12px; border-radius: 12px; border: 1px solid var(--accent); color: var(--accent); text-decoration: none; font-weight: 600; }
   .empty { text-align: center; color: var(--muted); padding: 40px 0; }
   .note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 18px; line-height: 1.5; }
@@ -95,16 +107,17 @@ const CATS = [
   ["KAP", "var(--kap)"],
   ["Haber", "var(--haber)"],
   ["Maximum", "var(--accent)"],
+  ["Şubeler", "#5d8fe0"],
 ];
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
-let newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü";
+let subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü";
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 
 function renderChips() {
   $("chips").innerHTML = CATS.map(([k]) => {
-    const n = k === "Tümü" ? all.length : k === "Maximum" ? camps.length : all.filter((h) => h.kategori === k).length;
+    const n = k === "Tümü" ? all.length : k === "Maximum" ? camps.length : k === "Şubeler" ? (subeler ? subeler.yurtici + subeler.yurtdisi : 0) : all.filter((h) => h.kategori === k).length;
     return `<button data-k="${k}" class="${k === cat ? "active" : ""}">${k}<b>${n}</b></button>`;
   }).join("");
   $("chips").querySelectorAll("button").forEach((b) => (b.onclick = () => {
@@ -135,8 +148,27 @@ function renderCamps() {
   $("list").innerHTML = html;
 }
 
+function renderSubeler() {
+  const d = subeler;
+  if (!d) { $("list").innerHTML = '<div class="empty">Şube bilgisi yüklenemedi.</div>'; return; }
+  const f = (n) => Number(n).toLocaleString("tr-TR");
+  $("upd").textContent = "Veri dönemi: " + d.donem;
+  $("list").innerHTML = `
+    <div class="stats">
+      <div class="stat hero"><span>Toplam şube</span><b>${f(d.yurtici + d.yurtdisi)}</b></div>
+      <div class="stat"><span>Yurt içi şube</span><b>${f(d.yurtici)}</b><small>81 ilin tamamında</small></div>
+      <div class="stat"><span>Yurt dışı şube</span><b>${f(d.yurtdisi)}</b><small>${f(d.ulke)} ülkede</small></div>
+      <div class="stat"><span>ATM</span><b>${f(d.atm)}</b><small>Türkiye'nin en geniş ağı</small></div>
+      <div class="stat"><span>İşCep müşterisi</span><b>${esc(d.iscep)}</b><small>${esc(d.iscepDonem)}</small></div>
+    </div>
+    <div class="facts"><ul>${(d.notlar || []).map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
+    <a class="maxlink" href="https://www.google.com/maps/search/T%C3%BCrkiye+%C4%B0%C5%9F+Bankas%C4%B1+%C5%9Fubesi" target="_blank" rel="noopener">📍 Yakınımdaki şubeleri haritada göster ↗</a>
+    <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(d.kaynak)} ↗</a>`;
+}
+
 function renderList() {
   if (cat === "Maximum") return renderCamps();
+  if (cat === "Şubeler") return renderSubeler();
   if (newsUpd) $("upd").textContent = "Son güncelleme: " + new Date(newsUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
   if (!items.length) { $("list").innerHTML = '<div class="empty">Bu kategoride henüz haber yok.</div>'; return; }
@@ -164,6 +196,10 @@ function renderList() {
       const c = await rc.json();
       campUpd = c.guncelleme || null;
       camps = (c.kampanyalar || []).filter((k) => daysLeft(k.bitis) >= 1).sort((a, b) => a.bitis.localeCompare(b.bitis));
+    } catch (e) {}
+    try {
+      const rs = await fetch("isbank/subeler.json?t=" + Date.now(), { cache: "no-store" });
+      subeler = await rs.json();
     } catch (e) {}
     if (!CATS.some((c) => c[0] === cat)) cat = "Tümü";
     renderChips(); renderList();
