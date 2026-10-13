@@ -57,6 +57,19 @@
   .t { font-size: 19px; font-weight: 700; }
   .d { font-size: 14px; color: var(--muted); margin-top: 2px; }
   .arrow { margin-left: auto; color: var(--accent); font-size: 22px; }
+  a.game.isb {
+    background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%);
+    border-color: #3a50f0;
+  }
+  a.game.isb .t { color: #e6e8ee; }
+  a.game.isb .d { color: #b9c0d6; }
+  a.game.isb .arrow { color: #d9dce3; }
+  .isb-icon {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(255,255,255,.14);
+    color: #e6e8ee;
+    display: flex; align-items: center; justify-content: center;
+  }
   .quote {
     margin-top: 34px;
     max-width: 380px;
@@ -85,9 +98,9 @@
       <div><div class="t">Batak</div><div class="d">İhaleli batak, 3 rakibe karşı</div></div>
       <div class="arrow">›</div>
     </a>
-    <a class="game" href="isbank.html">
-      <div class="icon">🏛️</div>
-      <div><div class="t">İş Bankası Yenilikler</div><div class="d">Ürünler, İşCep, KAP ve Maximum kampanyaları</div></div>
+    <a class="game isb" href="isbank.html">
+      <div class="icon isb-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg></div>
+      <div><div class="t">İş Bankası Yenilikler</div><div class="d">Ürünler, İşCep, KAP ve Maximum</div></div>
       <div class="arrow">›</div>
     </a>
     <a class="game" href="banka.html">
