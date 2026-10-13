@@ -1,5 +1,7 @@
 # SADOLAYN
 
+> *“Bilgi paylaştıkça büyür”*
+
 ### 👉 [Siteyi aç: sadolayn.github.io/SadoDepo](https://sadolayn.github.io/SadoDepo/)
 
 Telefonda kullanılabilen oyunlar ve araçlar:

@@ -47,6 +47,23 @@
   .t { font-size: 19px; font-weight: 700; }
   .d { font-size: 14px; color: var(--muted); margin-top: 2px; }
   .arrow { margin-left: auto; color: var(--accent); font-size: 22px; }
+  .quote {
+    margin-top: 34px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    padding: 18px 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .quote q {
+    display: block;
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-size: 21px;
+    color: var(--accent);
+    quotes: "“" "”";
+  }
+  .quote span { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); letter-spacing: 1px; }
 </style>
 </head>
 <body>
@@ -73,6 +90,10 @@
       <div><div class="t">Sayı Tahmin</div><div class="d">Tuttuğum sayıyı bul</div></div>
       <div class="arrow">›</div>
     </a>
+  </div>
+  <div class="quote">
+    <q>Bilgi paylaştıkça büyür</q>
+    <span>— SADOLAYN</span>
   </div>
 </body>
 </html>
