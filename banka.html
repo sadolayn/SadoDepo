@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bankacılık Hesaplamaları</title>
+<style>
+  :root {
+    --bg: #000000;
+    --card: #0d0d0d;
+    --field: #161616;
+    --ink: #f2f2f2;
+    --muted: #8a8a8a;
+    --accent: #e0a24f;
+    --pos: #3fc283;
+    --neg: #ef6a4c;
+    --line: #262626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 12px 16px 32px;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  header h1 { margin: 0; font-size: 20px; }
+  .tabs {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px;
+    margin-bottom: 14px;
+  }
+  .tabs button {
+    border: none; background: transparent; color: var(--muted);
+    padding: 10px 4px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
+    line-height: 1.2;
+  }
+  .tabs button.active { background: var(--accent); color: #000; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+  .card h2 { margin: 0 0 4px; font-size: 17px; }
+  .card .hint { margin: 0 0 14px; font-size: 13px; color: var(--muted); line-height: 1.4; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 5px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field { position: relative; }
+  input, select {
+    width: 100%; padding: 12px 12px; font-size: 17px;
+    background: var(--field); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 10px; outline: none;
+    -webkit-appearance: none; appearance: none;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  .field .unit { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
+  .field input { padding-right: 40px; }
+  .big { text-align: center; padding: 6px 0 12px; }
+  .big span { display: block; font-size: 13px; color: var(--muted); }
+  .big b { font-size: 30px; color: var(--accent); }
+  .rows div { display: flex; justify-content: space-between; padding: 9px 0; border-top: 1px solid var(--line); font-size: 15px; }
+  .rows div span:first-child { color: var(--muted); }
+  .rows div.total span:last-child { font-weight: 700; }
+  .neg { color: var(--neg); }
+  .pos { color: var(--pos); }
+  details { margin-top: 4px; }
+  summary { cursor: pointer; color: var(--accent); font-size: 14px; padding: 8px 0; }
+  .tbl { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 6px 4px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--muted); font-weight: 500; position: sticky; top: 0; background: var(--card); }
+  td:first-child, th:first-child { text-align: center; }
+  .note { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a href="index.html">← Menü</a>
+    <h1>🏦 Bankacılık</h1>
+    <span style="width:52px"></span>
+  </header>
+
+  <div class="tabs">
+    <button data-tab="bch" class="active">BCH<br>Rotatif</button>
+    <button data-tab="mev">Vadeli<br>Mevduat</button>
+    <button data-tab="tk">Tüketici<br>Kredisi</button>
+  </div>
+
+  <!-- BCH -->
+  <section class="panel active" id="bch">
+    <div class="card">
+      <h2>BCH Rotatif Kredi</h2>
+      <p class="hint">Borçlu cari hesap kullanımında faiz, kullanılan tutar üzerinden gün bazında işler.</p>
+      <label>Kullanılan tutar</label>
+      <div class="field"><input id="b_tutar" type="text" inputmode="decimal" value="1.000.000"><span class="unit">TL</span></div>
+      <div class="two">
+        <div><label>Aylık faiz</label><div class="field"><input id="b_faiz" type="text" inputmode="decimal" value="4,25"><span class="unit">%</span></div></div>
+        <div><label>Kullanım süresi</label><div class="field"><input id="b_gun" type="text" inputmode="numeric" value="30"><span class="unit">gün</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>BSMV</label><div class="field"><input id="b_bsmv" type="text" inputmode="decimal" value="5"><span class="unit">%</span></div></div>
+        <div><label>KKDF</label><div class="field"><input id="b_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="big"><span>Toplam maliyet</span><b id="b_out">–</b></div>
+      <div class="rows" id="b_rows"></div>
+    </div>
+  </section>
+
+  <!-- Mevduat -->
+  <section class="panel" id="mev">
+    <div class="card">
+      <h2>Vadeli Mevduat Getirisi</h2>
+      <p class="hint">Faiz yıllık oran üzerinden gün/365 ile hesaplanır, stopaj kesildikten sonraki net getiri gösterilir.</p>
+      <label>Anapara</label>
+      <div class="field"><input id="m_tutar" type="text" inputmode="decimal" value="500.000"><span class="unit">TL</span></div>
+      <div class="two">
+        <div><label>Yıllık brüt faiz</label><div class="field"><input id="m_faiz" type="text" inputmode="decimal" value="42"><span class="unit">%</span></div></div>
+        <div><label>Vade</label><div class="field"><input id="m_gun" type="text" inputmode="numeric" value="32"><span class="unit">gün</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>Stopaj</label><div class="field"><input id="m_stopaj" type="text" inputmode="decimal" value="17,5"><span class="unit">%</span></div></div>
+        <div><label>Vade sonunda</label>
+          <select id="m_yenile"><option value="1">Tek vade</option><option value="12">12 ay yenile</option><option value="6">6 ay yenile</option><option value="3">3 ay yenile</option></select>
+        </div>
+      </div>
+      <p class="note" id="m_note"></p>
+    </div>
+    <div class="card">
+      <div class="big"><span id="m_bigLabel">Net getiri</span><b id="m_out">–</b></div>
+      <div class="rows" id="m_rows"></div>
+    </div>
+  </section>
+
+  <!-- Tüketici -->
+  <section class="panel" id="tk">
+    <div class="card">
+      <h2>Tüketici Kredisi (Eşit Taksit)</h2>
+      <p class="hint">Taksitler, faize eklenen BSMV ve KKDF dahil sabit tutarda hesaplanır.</p>
+      <label>Kredi tutarı</label>
+      <div class="field"><input id="t_tutar" type="text" inputmode="decimal" value="200.000"><span class="unit">TL</span></div>
+      <div class="two">
+        <div><label>Aylık faiz</label><div class="field"><input id="t_faiz" type="text" inputmode="decimal" value="3,49"><span class="unit">%</span></div></div>
+        <div><label>Vade</label><div class="field"><input id="t_vade" type="text" inputmode="numeric" value="24"><span class="unit">ay</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>BSMV</label><div class="field"><input id="t_bsmv" type="text" inputmode="decimal" value="15"><span class="unit">%</span></div></div>
+        <div><label>KKDF</label><div class="field"><input id="t_kkdf" type="text" inputmode="decimal" value="15"><span class="unit">%</span></div></div>
+      </div>
+      <label>Tahsis / dosya ücreti</label>
+      <div class="field"><input id="t_ucret" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div>
+    </div>
+    <div class="card">
+      <div class="big"><span>Aylık taksit</span><b id="t_out">–</b></div>
+      <div class="rows" id="t_rows"></div>
+      <details>
+        <summary>Ödeme planını göster</summary>
+        <div class="tbl"><table id="t_plan"></table></div>
+      </details>
+    </div>
+  </section>
+
+  <p class="note">Hesaplamalar bilgi amaçlıdır; bankanın uyguladığı oran, masraf ve yuvarlamalara göre gerçek tutarlar farklılık gösterebilir. Vergi oranlarını kendi durumuna göre değiştirebilirsin.</p>
+</div>
+
+<script>
+const $ = (x) => document.getElementById(x);
+const tl = (n) => isFinite(n) ? n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL" : "–";
+const pct = (n) => isFinite(n) ? "%" + n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : "–";
+function num(id) {
+  const v = $(id).value.trim().replace(/\s/g, "");
+  // Türkçe biçim: 1.000.000,50
+  const clean = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : (/^\d{1,3}(\.\d{3})+$/.test(v) ? v.replace(/\./g, "") : v);
+  const n = parseFloat(clean);
+  return isFinite(n) ? n : 0;
+}
+function rows(id, list) {
+  $(id).innerHTML = list.map(([k, v, cls]) => `<div class="${cls || ""}"><span>${k}</span><span>${v}</span></div>`).join("");
+}
+// Tutar alanlarını binlik ayırıcıyla biçimlendir
+for (const id of ["b_tutar", "m_tutar", "t_tutar", "t_ucret"]) {
+  $(id).addEventListener("blur", () => {
+    const n = num(id);
+    $(id).value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 });
+  });
+}
+
+// ---------- BCH ----------
+function calcBCH() {
+  const P = num("b_tutar"), r = num("b_faiz") / 100, g = num("b_gun");
+  const bsmv = num("b_bsmv") / 100, kkdf = num("b_kkdf") / 100;
+  const faiz = P * r * g / 30;
+  const vB = faiz * bsmv, vK = faiz * kkdf;
+  const top = faiz + vB + vK;
+  const yillik = r * 12 * 100;
+  const efektif = (Math.pow(1 + r * (1 + bsmv + kkdf), 12) - 1) * 100;
+  $("b_out").textContent = tl(top);
+  rows("b_rows", [
+    ["Faiz", tl(faiz)],
+    ["BSMV", tl(vB)],
+    ["KKDF", tl(vK)],
+    ["Günlük maliyet", tl(g ? top / g : 0)],
+    ["Dönem sonu borç", tl(P + top), "total"],
+    ["Yıllık nominal faiz", pct(yillik)],
+    ["Yıllık efektif maliyet", pct(efektif)],
+  ]);
+}
+
+// ---------- Mevduat ----------
+let stopajManual = false;
+$("m_stopaj").addEventListener("input", () => (stopajManual = true));
+function autoStopaj(g) {
+  if (g <= 182) return 17.5;
+  if (g <= 365) return 15;
+  return 10;
+}
+function calcMev() {
+  const g = num("m_gun");
+  if (!stopajManual) $("m_stopaj").value = String(autoStopaj(g)).replace(".", ",");
+  const P = num("m_tutar"), r = num("m_faiz") / 100, s = num("m_stopaj") / 100;
+  const n = Number($("m_yenile").value);
+  const brut1 = P * r * g / 365;
+  const net1 = brut1 * (1 - s);
+  $("m_note").textContent = stopajManual
+    ? "Stopaj oranını elle girdin."
+    : `Stopaj vadeye göre otomatik seçildi (6 aya kadar %17,5 · 1 yıla kadar %15 · 1 yıldan uzun %10).`;
+  if (n === 1) {
+    $("m_bigLabel").textContent = "Net getiri";
+    $("m_out").textContent = tl(net1);
+    rows("m_rows", [
+      ["Brüt faiz", tl(brut1)],
+      ["Stopaj kesintisi", "−" + tl(brut1 * s), "neg"],
+      ["Net faiz", tl(net1), "pos"],
+      ["Vade sonu bakiye", tl(P + net1), "total"],
+      ["Günlük net getiri", tl(g ? net1 / g : 0)],
+      ["Yıllık net oran", pct(r * (1 - s) * 100)],
+    ]);
+  } else {
+    let bal = P, brutT = 0, stT = 0;
+    for (let i = 0; i < n; i++) {
+      const b = bal * r * g / 365;
+      brutT += b; stT += b * s; bal += b * (1 - s);
+    }
+    $("m_bigLabel").textContent = `${n} vade sonunda net getiri`;
+    $("m_out").textContent = tl(bal - P);
+    rows("m_rows", [
+      ["İlk vade net faiz", tl(net1)],
+      ["Toplam brüt faiz", tl(brutT)],
+      ["Toplam stopaj", "−" + tl(stT), "neg"],
+      ["Toplam net faiz", tl(bal - P), "pos"],
+      ["Son bakiye", tl(bal), "total"],
+      ["Toplam süre", `${Math.round(g * n)} gün`],
+    ]);
+  }
+}
+
+// ---------- Tüketici ----------
+function calcTK() {
+  const P = num("t_tutar"), r = num("t_faiz") / 100, n = Math.round(num("t_vade"));
+  const bsmv = num("t_bsmv") / 100, kkdf = num("t_kkdf") / 100, ucret = num("t_ucret");
+  const i = r * (1 + bsmv + kkdf);
+  if (!P || !n) { $("t_out").textContent = "–"; rows("t_rows", []); $("t_plan").innerHTML = ""; return; }
+  const taksit = i === 0 ? P / n : P * i / (1 - Math.pow(1 + i, -n));
+  let kalan = P, tF = 0, tB = 0, tK = 0;
+  let html = "<tr><th>#</th><th>Taksit</th><th>Anapara</th><th>Faiz</th><th>KKDF</th><th>BSMV</th><th>Kalan</th></tr>";
+  for (let k = 1; k <= n; k++) {
+    const f = kalan * r, kk = f * kkdf, bs = f * bsmv;
+    let ana = taksit - f - kk - bs;
+    if (k === n) ana = kalan;
+    kalan = Math.max(0, kalan - ana);
+    tF += f; tK += kk; tB += bs;
+    const fmt = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    html += `<tr><td>${k}</td><td>${fmt(taksit)}</td><td>${fmt(ana)}</td><td>${fmt(f)}</td><td>${fmt(kk)}</td><td>${fmt(bs)}</td><td>${fmt(kalan)}</td></tr>`;
+  }
+  $("t_plan").innerHTML = html;
+  const toplam = taksit * n;
+  // Yıllık maliyet oranı: masraf dahil aylık iç verim oranı
+  let lo = 0, hi = 1;
+  const net = P - ucret;
+  for (let it = 0; it < 100; it++) {
+    const m = (lo + hi) / 2;
+    const pv = m === 0 ? taksit * n : taksit * (1 - Math.pow(1 + m, -n)) / m;
+    if (pv > net) lo = m; else hi = m;
+  }
+  const aylikMaliyet = (lo + hi) / 2;
+  $("t_out").textContent = tl(taksit);
+  rows("t_rows", [
+    ["Toplam faiz", tl(tF)],
+    ["Toplam KKDF", tl(tK)],
+    ["Toplam BSMV", tl(tB)],
+    ["Masraf", tl(ucret)],
+    ["Toplam geri ödeme", tl(toplam + ucret), "total"],
+    ["Aylık efektif faiz (vergiler dahil)", pct(i * 100)],
+    ["Yıllık maliyet oranı", pct((Math.pow(1 + aylikMaliyet, 12) - 1) * 100)],
+  ]);
+}
+
+// ---------- Sekmeler ----------
+document.querySelectorAll(".tabs button").forEach((b) => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach((x) => x.classList.remove("active"));
+    b.classList.add("active");
+    $(b.dataset.tab).classList.add("active");
+    try { localStorage.setItem("bankaTab", b.dataset.tab); } catch (e) {}
+  });
+});
+try {
+  const t = localStorage.getItem("bankaTab");
+  if (t) document.querySelector(`.tabs button[data-tab="${t}"]`)?.click();
+} catch (e) {}
+
+document.querySelectorAll("#bch input").forEach((e) => e.addEventListener("input", calcBCH));
+document.querySelectorAll("#mev input, #mev select").forEach((e) => e.addEventListener("input", calcMev));
+document.querySelectorAll("#tk input").forEach((e) => e.addEventListener("input", calcTK));
+calcBCH(); calcMev(); calcTK();
+</script>
+</body>
+</html>
