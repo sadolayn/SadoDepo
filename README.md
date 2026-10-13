@@ -1,4 +1,6 @@
-# SADOLAYN
+<p align="center"><img src="img/logo.png" alt="SADOLAYN" width="360"></p>
+
+<h1 align="center">SADOLAYN</h1>
 
 > *“Bilgi paylaştıkça büyür”*
 

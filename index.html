@@ -2,6 +2,8 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
 <meta name="theme-color" content="#000000">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SADOLAYN</title>
@@ -28,7 +30,15 @@
     padding: 16px;
   }
   h1 { margin: 0 0 4px; font-size: 34px; letter-spacing: 2px; color: var(--accent); }
-  p { margin: 0 0 28px; color: var(--muted); }
+  h1.logo { margin: 0 0 6px; line-height: 0; }
+  h1.logo img {
+    width: min(320px, 82vw);
+    height: auto;
+    filter: drop-shadow(0 4px 18px rgba(224,162,79,.25));
+    animation: glow 1.2s ease-out;
+  }
+  @keyframes glow { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+  p { margin: 0 0 28px; color: var(--muted); letter-spacing: 1px; }
   .list { width: 100%; max-width: 380px; display: grid; gap: 12px; }
   a.game {
     display: flex;
@@ -67,7 +77,7 @@
 </style>
 </head>
 <body>
-  <h1>SADOLAYN</h1>
+  <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"></h1>
   <p>Hoş geldiniz 👋</p>
   <div class="list">
     <a class="game" href="batak.html">
