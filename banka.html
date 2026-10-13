@@ -30,13 +30,13 @@
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header h1 { margin: 0; font-size: 20px; }
   .tabs {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
     background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px;
     margin-bottom: 14px;
   }
   .tabs button {
     border: none; background: transparent; color: var(--muted);
-    padding: 10px 4px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
+    padding: 10px 2px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer;
     line-height: 1.2;
   }
   .tabs button.active { background: var(--accent); color: #000; }
@@ -87,6 +87,7 @@
     <button data-tab="bch" class="active">BCH<br>Rotatif</button>
     <button data-tab="mev">Vadeli<br>Mevduat</button>
     <button data-tab="tk">Tüketici<br>Kredisi</button>
+    <button data-tab="kk">Kart<br>Gecikme</button>
   </div>
 
   <!-- BCH -->
@@ -164,6 +165,34 @@
     </div>
   </section>
 
+
+  <!-- Kredi kartı -->
+  <section class="panel" id="kk">
+    <div class="card">
+      <h2>Kredi Kartı Gecikme Faizi</h2>
+      <p class="hint">Asgari ödemenin ödenmeyen kısmına gecikme faizi, kalan borca akdi faiz işler. Faizlere BSMV ve KKDF eklenir.</p>
+      <label>Dönem borcu</label>
+      <div class="field"><input id="k_borc" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div>
+      <div class="two">
+        <div><label>Ödediğin tutar</label><div class="field"><input id="k_odenen" type="text" inputmode="decimal" value="5.000"><span class="unit">TL</span></div></div>
+        <div><label>Asgari ödeme oranı</label><div class="field"><input id="k_asg" type="text" inputmode="decimal" value="20"><span class="unit">%</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>Aylık akdi faiz</label><div class="field"><input id="k_akdi" type="text" inputmode="decimal" value="3,75"><span class="unit">%</span></div></div>
+        <div><label>Aylık gecikme faizi</label><div class="field"><input id="k_gec" type="text" inputmode="decimal" value="4,05"><span class="unit">%</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>Faiz işleyen gün</label><div class="field"><input id="k_gun" type="text" inputmode="numeric" value="30"><span class="unit">gün</span></div></div>
+        <div><label>BSMV + KKDF</label><div class="field"><input id="k_vergi" type="text" inputmode="decimal" value="30"><span class="unit">%</span></div></div>
+      </div>
+      <p class="note" id="k_note"></p>
+    </div>
+    <div class="card">
+      <div class="big"><span>Faiz + vergi toplamı</span><b id="k_out">–</b></div>
+      <div class="rows" id="k_rows"></div>
+    </div>
+  </section>
+
   <p class="note">Hesaplamalar bilgi amaçlıdır; bankanın uyguladığı oran, masraf ve yuvarlamalara göre gerçek tutarlar farklılık gösterebilir. Vergi oranlarını kendi durumuna göre değiştirebilirsin.</p>
 </div>
 
@@ -182,7 +211,7 @@ function rows(id, list) {
   $(id).innerHTML = list.map(([k, v, cls]) => `<div class="${cls || ""}"><span>${k}</span><span>${v}</span></div>`).join("");
 }
 // Tutar alanlarını binlik ayırıcıyla biçimlendir
-for (const id of ["b_tutar", "m_tutar", "t_tutar", "t_ucret"]) {
+for (const id of ["b_tutar", "m_tutar", "t_tutar", "t_ucret", "k_borc", "k_odenen"]) {
   $(id).addEventListener("blur", () => {
     const n = num(id);
     $(id).value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 });
@@ -299,6 +328,46 @@ function calcTK() {
   ]);
 }
 
+
+// ---------- Kredi kartı ----------
+let kkManual = false;
+["k_akdi", "k_gec"].forEach((x) => $(x).addEventListener("input", () => (kkManual = true)));
+function kkTier(b) {
+  // TCMB azami aylık oranlar (Eylül 2026): akdi / gecikme
+  if (b < 30000) return [3.25, 3.55, "30.000 TL altı"];
+  if (b <= 180000) return [3.75, 4.05, "30.000 – 180.000 TL"];
+  return [4.25, 4.55, "180.000 TL üstü"];
+}
+function calcKK() {
+  const B = num("k_borc");
+  const t = kkTier(B);
+  if (!kkManual) {
+    $("k_akdi").value = String(t[0]).replace(".", ",");
+    $("k_gec").value = String(t[1]).replace(".", ",");
+  }
+  const O = Math.min(num("k_odenen"), B), asg = B * num("k_asg") / 100;
+  const ra = num("k_akdi") / 100, rg = num("k_gec") / 100, g = num("k_gun"), v = num("k_vergi") / 100;
+  const kalan = B - O;
+  let akdiMatrah, gecMatrah;
+  if (O >= asg) { gecMatrah = 0; akdiMatrah = kalan; }
+  else { gecMatrah = asg - O; akdiMatrah = B - asg; }
+  const fA = akdiMatrah * ra * g / 30, fG = gecMatrah * rg * g / 30;
+  const vergi = (fA + fG) * v;
+  const top = fA + fG + vergi;
+  $("k_note").textContent = kkManual
+    ? "Faiz oranlarını elle girdin."
+    : `Oranlar borç dilimine göre TCMB azami oranlarından seçildi (${t[2]}, Eylül 2026). Bankanın oranı daha düşük olabilir.`;
+  $("k_out").textContent = tl(top);
+  rows("k_rows", [
+    ["Asgari ödeme", tl(asg)],
+    [O >= asg ? "Asgari ödendi ✓" : "Ödenmeyen asgari", O >= asg ? "" : tl(asg - O), O >= asg ? "pos" : "neg"],
+    ["Gecikme faizi", tl(fG)],
+    ["Akdi faiz", tl(fA)],
+    ["BSMV + KKDF", tl(vergi)],
+    ["Sonraki ekstreye devreden", tl(kalan + top), "total"],
+  ]);
+}
+
 // ---------- Sekmeler ----------
 document.querySelectorAll(".tabs button").forEach((b) => {
   b.addEventListener("click", () => {
@@ -317,7 +386,8 @@ try {
 document.querySelectorAll("#bch input").forEach((e) => e.addEventListener("input", calcBCH));
 document.querySelectorAll("#mev input, #mev select").forEach((e) => e.addEventListener("input", calcMev));
 document.querySelectorAll("#tk input").forEach((e) => e.addEventListener("input", calcTK));
-calcBCH(); calcMev(); calcTK();
+document.querySelectorAll("#kk input").forEach((e) => e.addEventListener("input", calcKK));
+calcBCH(); calcMev(); calcTK(); calcKK();
 </script>
 </body>
 </html>
