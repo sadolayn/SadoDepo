@@ -19,6 +19,10 @@
     --dijital: #5aa9f0;
     --kap: #e0a24f;
     --haber: #b48cf0;
+    --maxipuan: #e0a24f;
+    --taksit: #5aa9f0;
+    --indirim: #3fc283;
+    --puan: #b48cf0;
   }
   * { box-sizing: border-box; }
   body {
@@ -55,6 +59,13 @@
   .item p { margin: 0; font-size: 14px; color: #c9c9c9; }
   .src { margin-top: 6px; font-size: 12px; color: var(--muted); }
   .src::after { content: " ↗"; }
+  .camp { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; border-left: 4px solid var(--c); }
+  .camp .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .camp .left { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: #1f1f1f; color: var(--muted); white-space: nowrap; }
+  .camp .left.soon { background: rgba(239,106,76,.15); color: #ef6a4c; }
+  .camp b { display: block; font-size: 16px; margin: 4px 0; }
+  .camp p { margin: 0; font-size: 14px; color: #c9c9c9; }
+  .maxlink { display: block; text-align: center; margin: 12px 0 0; padding: 12px; border-radius: 12px; border: 1px solid var(--accent); color: var(--accent); text-decoration: none; font-weight: 600; }
   .empty { text-align: center; color: var(--muted); padding: 40px 0; }
   .note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 18px; line-height: 1.5; }
 </style>
@@ -71,7 +82,7 @@
   <div class="chips" id="chips"></div>
   <div id="list"><div class="empty">Yükleniyor…</div></div>
 
-  <p class="note">Haberler kamuya açık kaynaklardan (basın, KAP duyurularını aktaran siteler) günde iki kez otomatik derlenir. Ayrıntı için kaynağa dokun.</p>
+  <p class="note">Haberler ve Maximum kampanyaları kamuya açık kaynaklardan günde iki kez otomatik derlenir. Kampanya koşulları için maximum.com.tr'ye bakın.</p>
 </div>
 
 <script>
@@ -83,15 +94,17 @@ const CATS = [
   ["Dijital", "var(--dijital)"],
   ["KAP", "var(--kap)"],
   ["Haber", "var(--haber)"],
+  ["Maximum", "var(--accent)"],
 ];
+const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
-let all = [], cat = "Tümü";
+let newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü";
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 
 function renderChips() {
   $("chips").innerHTML = CATS.map(([k]) => {
-    const n = k === "Tümü" ? all.length : all.filter((h) => h.kategori === k).length;
+    const n = k === "Tümü" ? all.length : k === "Maximum" ? camps.length : all.filter((h) => h.kategori === k).length;
     return `<button data-k="${k}" class="${k === cat ? "active" : ""}">${k}<b>${n}</b></button>`;
   }).join("");
   $("chips").querySelectorAll("button").forEach((b) => (b.onclick = () => {
@@ -101,7 +114,30 @@ function renderChips() {
   }));
 }
 
+function daysLeft(d) {
+  const end = new Date(d + "T23:59:59"), now = new Date();
+  return Math.ceil((end - now) / 86400000);
+}
+function renderCamps() {
+  if (campUpd) $("upd").textContent = "Kampanyalar güncellendi: " + new Date(campUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  if (!camps.length) { $("list").innerHTML = '<div class="empty">Şu an listelenen kampanya yok.</div>'; return; }
+  let html = "";
+  for (const k of camps) {
+    const n = daysLeft(k.bitis);
+    const left = n <= 1 ? "Son gün" : `Son ${n} gün`;
+    html += `<div class="camp" style="--c:${TUR[k.tur] || "var(--muted)"}">
+      <div class="top"><span class="tag">${esc(k.tur)}</span><span class="left ${n <= 7 ? "soon" : ""}">${left}</span></div>
+      <b>${esc(k.baslik)}</b>
+      <p>${esc(k.ozet)}</p>
+    </div>`;
+  }
+  html += `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm kampanyalar ve katılım koşulları ↗</a>`;
+  $("list").innerHTML = html;
+}
+
 function renderList() {
+  if (cat === "Maximum") return renderCamps();
+  if (newsUpd) $("upd").textContent = "Son güncelleme: " + new Date(newsUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
   if (!items.length) { $("list").innerHTML = '<div class="empty">Bu kategoride henüz haber yok.</div>'; return; }
   let html = "", last = "";
@@ -122,9 +158,13 @@ function renderList() {
     const r = await fetch("isbank/haberler.json?t=" + Date.now(), { cache: "no-store" });
     const d = await r.json();
     all = (d.haberler || []).sort((a, b) => b.tarih.localeCompare(a.tarih));
-    if (d.guncelleme) {
-      $("upd").textContent = "Son güncelleme: " + new Date(d.guncelleme).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
-    }
+    newsUpd = d.guncelleme || null;
+    try {
+      const rc = await fetch("isbank/kampanyalar.json?t=" + Date.now(), { cache: "no-store" });
+      const c = await rc.json();
+      campUpd = c.guncelleme || null;
+      camps = (c.kampanyalar || []).filter((k) => daysLeft(k.bitis) >= 1).sort((a, b) => a.bitis.localeCompare(b.bitis));
+    } catch (e) {}
     if (!CATS.some((c) => c[0] === cat)) cat = "Tümü";
     renderChips(); renderList();
   } catch (e) {
