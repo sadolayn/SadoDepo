@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Solitaire</title>
+<style>
+  :root {
+    --bg: #000000;
+    --felt: #0b2a1c;
+    --felt-line: #164a33;
+    --card: #0d0d0d;
+    --ink: #f2f2f2;
+    --muted: #8a8a8a;
+    --accent: #e0a24f;
+    --red: #d63a2c;
+    --line: #262626;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 520px; margin: 0 auto; padding: 10px 8px 24px; user-select: none; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  header h1 { margin: 0; font-size: 20px; }
+  .stats { display: flex; justify-content: center; gap: 16px; font-size: 13px; color: var(--muted); margin: 8px 0; }
+  .stats b { color: var(--ink); }
+  .bar { display: flex; gap: 6px; justify-content: center; margin-bottom: 8px; }
+  .bar button { padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 14px; font-weight: 600; cursor: pointer; }
+  .bar button.pri { background: var(--accent); border-color: var(--accent); color: #000; }
+  .bar button:disabled { opacity: .35; }
+  .board {
+    position: relative; border-radius: 16px; padding: 8px;
+    background: radial-gradient(ellipse at 50% 30%, var(--felt-line) 0%, var(--felt) 75%);
+    border: 1px solid var(--felt-line); min-height: 70vh; overflow: hidden;
+  }
+  .slot { position: absolute; border: 1.5px dashed rgba(255,255,255,.18); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.25); font-size: 22px; }
+  .card {
+    position: absolute; border-radius: 7px; background: #f7f4ee; color: #111; border: 1px solid #b9b2a5;
+    box-shadow: 0 1px 3px rgba(0,0,0,.45); font-weight: 800;
+    transition: left .18s ease, top .18s ease, transform .15s;
+  }
+  .card.red { color: var(--red); }
+  .card .r { position: absolute; top: 3px; left: 4px; line-height: 1; }
+  .card .s1 { position: absolute; top: 3px; right: 4px; line-height: 1; }
+  .card .s2 { position: absolute; left: 0; right: 0; bottom: 6%; text-align: center; line-height: 1; }
+  .card.back {
+    background: repeating-linear-gradient(45deg, #1d3f8f 0 5px, #234aa3 5px 10px);
+    border-color: #e0a24f;
+  }
+  .card.back > * { display: none; }
+  .card.hint { box-shadow: 0 0 0 3px var(--accent); }
+  .shake { animation: shake .3s; }
+  @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.82); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 1000; }
+  .overlay.show { display: flex; }
+  .modal { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 26px 22px; width: 100%; max-width: 360px; text-align: center; }
+  .modal .moon { font-size: 56px; margin-bottom: 6px; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translateY(-6px); } }
+  .modal h2 { margin: 0 0 8px; font-size: 22px; font-family: Georgia, "Times New Roman", serif; font-style: italic; color: var(--accent); }
+  .modal p { margin: 0 0 18px; color: #bbb; font-size: 15px; line-height: 1.5; }
+  .btn { width: 100%; padding: 13px; border-radius: 12px; background: var(--accent); border: none; color: #000; font-size: 16px; font-weight: 700; cursor: pointer; }
+  .btn.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); margin-top: 8px; }
+  .confetti { position: fixed; top: -40px; font-size: 22px; pointer-events: none; z-index: 1001; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html">← Menü</a>
+  <h1>🃏 Solitaire</h1>
+  <span style="width:52px"></span>
+</header>
+<div class="stats"><span>Hamle <b id="moves">0</b></span><span>Süre <b id="time">0:00</b></span><span>Kazanılan <b id="wins">0</b></span></div>
+<div class="bar">
+  <button id="undo">↶ Geri al</button>
+  <button id="hint">💡 İpucu</button>
+  <button id="auto" class="pri" style="display:none">⚡ Otomatik bitir</button>
+  <button id="newg">Yeni oyun</button>
+</div>
+<div class="board" id="board"></div>
+
+<div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+
+<script>
+const SUITS = ["♠", "♥", "♣", "♦"];
+const RANK = { 1: "A", 11: "J", 12: "Q", 13: "K" };
+const isRed = (s) => s === "♥" || s === "♦";
+const $ = (x) => document.getElementById(x);
+
+let S; // durum
+let history = [];
+let els = new Map();
+let timer = null, started = 0, elapsed = 0;
+let wins = 0;
+try { wins = Number(localStorage.getItem("solWins")) || 0; } catch (e) {}
+
+function deal() {
+  const deck = [];
+  for (const s of SUITS) for (let r = 1; r <= 13; r++) deck.push({ id: s + r, s, r, up: false });
+  for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }
+  const tab = [];
+  for (let i = 0; i < 7; i++) {
+    tab.push(deck.splice(0, i + 1));
+    tab[i][i].up = true;
+  }
+  S = { stock: deck, waste: [], found: [[], [], [], []], tab, moves: 0 };
+  history = [];
+  elapsed = 0; started = 0;
+  clearInterval(timer); timer = null;
+  $("board").innerHTML = ""; els = new Map();
+  updateStats();
+  render();
+}
+const snapshot = () => JSON.stringify(S);
+function pushHistory() { history.push(snapshot()); if (history.length > 200) history.shift(); }
+function startTimer() {
+  if (timer) return;
+  started = Date.now() - elapsed * 1000;
+  timer = setInterval(() => { elapsed = Math.floor((Date.now() - started) / 1000); updateStats(); }, 1000);
+}
+function updateStats() {
+  $("moves").textContent = S ? S.moves : 0;
+  $("time").textContent = `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, "0")}`;
+  $("wins").textContent = wins;
+  $("undo").disabled = !history.length;
+}
+
+// ---------- Kurallar ----------
+const lastOf = (arr) => arr[arr.length - 1];
+function canFound(c, fi) {
+  const f = S.found[fi];
+  if (!f.length) return c.r === 1 && SUITS[fi] === c.s;
+  const t = lastOf(f);
+  return t.s === c.s && c.r === t.r + 1;
+}
+function foundIndexFor(c) { const fi = SUITS.indexOf(c.s); return canFound(c, fi) ? fi : -1; }
+function canTab(c, ti) {
+  const col = S.tab[ti];
+  if (!col.length) return c.r === 13;
+  const t = lastOf(col);
+  return t.up && isRed(t.s) !== isRed(c.s) && t.r === c.r + 1;
+}
+
+// Kartın nerede olduğu
+function locate(id) {
+  if (S.waste.length && lastOf(S.waste).id === id) return { from: "waste" };
+  for (let i = 0; i < 4; i++) if (S.found[i].length && lastOf(S.found[i]).id === id) return { from: "found", i };
+  for (let i = 0; i < 7; i++) { const k = S.tab[i].findIndex((c) => c.id === id); if (k >= 0) return { from: "tab", i, k }; }
+  return null;
+}
+function takeFrom(loc) {
+  if (loc.from === "waste") return [S.waste.pop()];
+  if (loc.from === "found") return [S.found[loc.i].pop()];
+  return S.tab[loc.i].splice(loc.k);
+}
+function flipTops() { for (const col of S.tab) if (col.length && !lastOf(col).up) { lastOf(col).up = true; } }
+
+// En iyi hedefi bul
+function bestMove(id) {
+  const loc = locate(id);
+  if (!loc) return null;
+  if (loc.from === "tab" && !S.tab[loc.i][loc.k].up) return null;
+  const card = loc.from === "tab" ? S.tab[loc.i][loc.k] : loc.from === "waste" ? lastOf(S.waste) : lastOf(S.found[loc.i]);
+  const single = loc.from !== "tab" || loc.k === S.tab[loc.i].length - 1;
+  if (single && loc.from !== "found") {
+    const fi = foundIndexFor(card);
+    if (fi >= 0) return { loc, to: "found", i: fi };
+  }
+  let empty = -1;
+  for (let ti = 0; ti < 7; ti++) {
+    if (loc.from === "tab" && ti === loc.i) continue;
+    if (!canTab(card, ti)) continue;
+    if (S.tab[ti].length) return { loc, to: "tab", i: ti };
+    if (empty < 0) empty = ti;
+  }
+  // Boş sütuna papaz: zaten sütunun en altındaysa anlamsız
+  if (empty >= 0 && !(loc.from === "tab" && loc.k === 0)) return { loc, to: "tab", i: empty };
+  return null;
+}
+function doMove(m) {
+  pushHistory();
+  const cards = takeFrom(m.loc);
+  if (m.to === "found") S.found[m.i].push(...cards); else S.tab[m.i].push(...cards);
+  flipTops();
+  S.moves++;
+  startTimer();
+}
+function drawStock() {
+  pushHistory();
+  if (!S.stock.length) {
+    if (!S.waste.length) { history.pop(); return; }
+    S.stock = S.waste.reverse().map((c) => ({ ...c, up: false }));
+    S.waste = [];
+  } else {
+    for (let i = 0; i < 3 && S.stock.length; i++) { const c = S.stock.pop(); c.up = true; S.waste.push(c); }
+  }
+  S.moves++;
+  startTimer();
+  render();
+}
+
+// ---------- Etkileşim ----------
+function onCardTap(id, el) {
+  const loc = locate(id);
+  if (!loc) { shake(el); return; }
+  const m = bestMove(id);
+  if (!m) { shake(el); return; }
+  doMove(m);
+  render();
+  checkWin();
+}
+function shake(el) { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
+function undo() {
+  if (!history.length) return;
+  S = JSON.parse(history.pop());
+  render();
+}
+function allMoves() {
+  const out = [];
+  const ids = [];
+  if (S.waste.length) ids.push(lastOf(S.waste).id);
+  for (const col of S.tab) col.forEach((c) => c.up && ids.push(c.id));
+  for (const id of ids) {
+    const m = bestMove(id);
+    if (!m) continue;
+    // Anlamsız tablo hareketlerini ele (aynı türden başka karta taşıma, alttaki kart zaten açık)
+    if (m.loc.from === "tab" && m.to === "tab" && m.loc.k > 0 && S.tab[m.loc.i][m.loc.k - 1].up) continue;
+    out.push({ id, m });
+  }
+  return out;
+}
+function hint() {
+  const mv = allMoves().sort((a, b) => (b.m.to === "found") - (a.m.to === "found"));
+  if (!mv.length) {
+    if (S.stock.length || S.waste.length) flash(els.get("__stock"));
+    return;
+  }
+  flash(els.get(mv[0].id));
+}
+function flash(el) { if (!el) return; el.classList.add("hint"); setTimeout(() => el.classList.remove("hint"), 900); }
+function canAutoFinish() {
+  return !S.stock.length && !S.waste.length && S.tab.every((col) => col.every((c) => c.up)) && !isWon();
+}
+async function autoFinish() {
+  $("auto").disabled = true;
+  while (!isWon()) {
+    let moved = false;
+    for (let ti = 0; ti < 7 && !moved; ti++) {
+      const col = S.tab[ti];
+      if (!col.length) continue;
+      const fi = foundIndexFor(lastOf(col));
+      if (fi >= 0) { doMove({ loc: { from: "tab", i: ti, k: col.length - 1 }, to: "found", i: fi }); moved = true; }
+    }
+    if (!moved) break;
+    render();
+    await new Promise((r) => setTimeout(r, 70));
+  }
+  $("auto").disabled = false;
+  checkWin();
+}
+const isWon = () => S.found.every((f) => f.length === 13);
+function checkWin() {
+  if (!isWon()) return;
+  clearInterval(timer); timer = null;
+  wins++;
+  try { localStorage.setItem("solWins", wins); } catch (e) {}
+  updateStats();
+  confetti();
+  setTimeout(() => {
+    $("modal").innerHTML = `
+      <div class="moon">✨</div>
+      <h2>Dileğin kabul olsun!</h2>
+      <p>Oyunu <b>${S.moves}</b> hamlede, <b>${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, "0")}</b> sürede bitirdin.</p>
+      <button class="btn" id="again">Yeni dilek, yeni oyun</button>`;
+    $("overlay").classList.add("show");
+    $("again").onclick = () => { $("overlay").classList.remove("show"); wishScreen(); };
+  }, 900);
+}
+function confetti() {
+  const em = ["✨", "⭐", "🌙", "💫", "🎉", "♥", "♠"];
+  for (let i = 0; i < 40; i++) {
+    const d = document.createElement("div");
+    d.className = "confetti";
+    d.textContent = em[i % em.length];
+    d.style.left = Math.random() * 100 + "vw";
+    d.style.animationDuration = 2 + Math.random() * 2 + "s";
+    d.style.animationDelay = Math.random() * 0.8 + "s";
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 5000);
+  }
+}
+
+// ---------- Çizim ----------
+function cardHTML(c, cw) {
+  const fs = Math.max(11, Math.round(cw * 0.3));
+  return `<span class="r" style="font-size:${fs}px">${RANK[c.r] || c.r}</span><span class="s1" style="font-size:${Math.round(fs * 0.85)}px">${c.s}</span><span class="s2" style="font-size:${Math.round(cw * 0.55)}px">${c.s}</span>`;
+}
+function render() {
+  const board = $("board");
+  const W = board.clientWidth - 16;
+  const gap = 5;
+  const cw = Math.floor((W - gap * 6) / 7);
+  const ch = Math.round(cw * 1.42);
+  const x = (i) => 8 + i * (cw + gap);
+  const tabY = 8 + ch + 14;
+  const seen = new Set();
+
+  // Boş yuvalar (bir kez)
+  if (!els.has("__slots")) {
+    els.set("__slots", true);
+    const mk = (key, i, y, txt) => { const s = document.createElement("div"); s.className = "slot"; s.textContent = txt; board.appendChild(s); els.set(key, s); };
+    mk("__stock", 0, 8, "↻");
+    for (let i = 0; i < 4; i++) mk("__f" + i, 3 + i, 8, SUITS[i]);
+    for (let i = 0; i < 7; i++) mk("__t" + i, i, tabY, "");
+    els.get("__stock").onclick = drawStock;
+  }
+  const place = (key, left, topY) => { const s = els.get(key); Object.assign(s.style, { left: left + "px", top: topY + "px", width: cw + "px", height: ch + "px" }); };
+  place("__stock", x(0), 8);
+  for (let i = 0; i < 4; i++) place("__f" + i, x(3 + i), 8);
+  for (let i = 0; i < 7; i++) place("__t" + i, x(i), tabY);
+  els.get("__stock").textContent = S.waste.length || S.stock.length ? "↻" : "";
+
+  let z = 1;
+  const putCard = (c, left, topY, up, onTap) => {
+    let el = els.get(c.id);
+    if (!el) { el = document.createElement("div"); els.set(c.id, el); board.appendChild(el); }
+    el.className = "card" + (up ? (isRed(c.s) ? " red" : "") : " back");
+    el.innerHTML = up ? cardHTML(c, cw) : "";
+    Object.assign(el.style, { left: left + "px", top: topY + "px", width: cw + "px", height: ch + "px", zIndex: z++ });
+    el.onclick = onTap;
+    seen.add(c.id);
+  };
+  // Deste
+  S.stock.forEach((c, i) => putCard(c, x(0), 8, false, drawStock));
+  // Açık kartlar (son 3 yelpaze)
+  const fan = Math.round(cw * 0.32);
+  const wl = S.waste.length;
+  S.waste.forEach((c, i) => {
+    const k = Math.max(0, i - (wl - 3));
+    const visIdx = wl <= 3 ? i : k;
+    const left = x(1) + (i >= wl - 3 ? visIdx * fan : 0);
+    const isTop = i === wl - 1;
+    putCard(c, left, 8, true, isTop ? (e) => onCardTap(c.id, e.currentTarget) : null);
+  });
+  // Bitiş yığınları
+  S.found.forEach((f, fi) => f.forEach((c, i) => putCard(c, x(3 + fi), 8, true, i === f.length - 1 ? (e) => onCardTap(c.id, e.currentTarget) : null)));
+  // Tablo
+  let maxBottom = tabY + ch;
+  const downOff = Math.round(ch * 0.16), upOff = Math.round(ch * 0.3);
+  S.tab.forEach((col, ti) => {
+    let y = tabY;
+    col.forEach((c, k) => {
+      putCard(c, x(ti), y, c.up, c.up ? (e) => onCardTap(c.id, e.currentTarget) : (k === col.length - 1 ? () => { c.up = true; render(); } : null));
+      y += c.up ? upOff : downOff;
+    });
+    maxBottom = Math.max(maxBottom, y - (col.length ? (lastOf(col).up ? upOff : downOff) : 0) + ch);
+  });
+  // Kaldırılmış kartlar
+  for (const [k, el] of els) if (!k.startsWith("__") && !seen.has(k)) { el.remove(); els.delete(k); }
+  board.style.height = maxBottom + 16 + "px";
+  $("auto").style.display = canAutoFinish() ? "" : "none";
+  updateStats();
+}
+
+// ---------- Dilek ekranı ----------
+function wishScreen() {
+  $("modal").innerHTML = `
+    <div class="moon">🌙</div>
+    <h2>İçinden bir dilek tut…</h2>
+    <p>Gözlerini kapat, dileğini içinden geçir.<br>Oyunu bitirirsen dileğin kabul olsun. ✨</p>
+    <button class="btn" id="go">Dileğimi tuttum, başla</button>`;
+  $("overlay").classList.add("show");
+  $("go").onclick = () => { $("overlay").classList.remove("show"); deal(); };
+}
+
+$("undo").onclick = undo;
+$("hint").onclick = hint;
+$("auto").onclick = autoFinish;
+$("newg").onclick = wishScreen;
+window.addEventListener("resize", () => S && render());
+deal();
+wishScreen();
+</script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
