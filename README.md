@@ -2,7 +2,7 @@
 
 ### 👉 [Siteyi aç: sadolayn.github.io/SadoDepo](https://sadolayn.github.io/SadoDepo/)
 
-Telefonda oynanabilen basit oyunlar:
+Telefonda kullanılabilen oyunlar ve araçlar:
 
 - **Batak** (`batak.html`): İhaleli batak, 3 bilgisayar rakibe karşı
 - **Bankacılık** (`banka.html`): BCH rotatif kredi, vadeli mevduat , tüketici kredisi ve kredi kartı gecikme faizi hesaplama
