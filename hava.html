@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hava Durumu</title>
+<style>
+  :root {
+    --bg: #000000;
+    --card: #0d0d0d;
+    --field: #161616;
+    --ink: #f2f2f2;
+    --muted: #8a8a8a;
+    --accent: #e0a24f;
+    --line: #262626;
+    --cold: #5aa9f0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 12px 16px 32px;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  header h1 { margin: 0; font-size: 20px; }
+  .search { display: flex; gap: 8px; margin-bottom: 8px; position: relative; }
+  .search input {
+    flex: 1; min-width: 0; padding: 12px 14px; font-size: 16px;
+    background: var(--field); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; outline: none;
+  }
+  .search input:focus { border-color: var(--accent); }
+  .search button {
+    width: 48px; border-radius: 12px; border: 1px solid var(--line); background: var(--card);
+    color: var(--ink); font-size: 20px; cursor: pointer;
+  }
+  .results { background: var(--card); border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; display: none; overflow: hidden; }
+  .results.show { display: block; }
+  .results div { padding: 12px 14px; border-top: 1px solid var(--line); cursor: pointer; font-size: 15px; }
+  .results div:first-child { border-top: none; }
+  .results div small { color: var(--muted); margin-left: 6px; }
+  .now {
+    text-align: center; padding: 22px 16px 18px; margin-bottom: 12px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+  }
+  .place { font-size: 18px; font-weight: 600; }
+  .place small { display: block; font-size: 13px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+  .big-ico { font-size: 64px; line-height: 1; margin: 12px 0 4px; }
+  .temp { font-size: 64px; font-weight: 300; line-height: 1; }
+  .temp sup { font-size: 28px; }
+  .cond { font-size: 17px; margin-top: 6px; }
+  .hl { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+  .cell { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+  .cell span { display: block; font-size: 12px; color: var(--muted); }
+  .cell b { font-size: 20px; font-weight: 600; }
+  h2 { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 16px 4px 8px; font-weight: 600; }
+  .hours { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+  .hours::-webkit-scrollbar { display: none; }
+  .hour { flex: none; width: 62px; text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 10px 4px; }
+  .hour .h { font-size: 12px; color: var(--muted); }
+  .hour .i { font-size: 24px; margin: 6px 0; }
+  .hour .t { font-size: 16px; font-weight: 600; }
+  .hour .p { font-size: 11px; color: var(--cold); min-height: 14px; }
+  .days { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 4px 14px; }
+  .day { display: grid; grid-template-columns: 72px 34px 1fr; align-items: center; gap: 8px; padding: 11px 0; border-top: 1px solid var(--line); }
+  .day:first-child { border-top: none; }
+  .day .n { font-size: 15px; }
+  .day .i { font-size: 22px; text-align: center; }
+  .range { display: flex; align-items: center; gap: 8px; font-size: 15px; font-variant-numeric: tabular-nums; }
+  .range .lo { color: var(--muted); width: 32px; text-align: right; }
+  .range .hi { width: 32px; }
+  .bar { flex: 1; height: 6px; border-radius: 99px; background: #1f1f1f; position: relative; }
+  .bar i { position: absolute; top: 0; bottom: 0; border-radius: 99px; background: linear-gradient(90deg, var(--cold), var(--accent)); }
+  .rain { font-size: 11px; color: var(--cold); display: block; }
+  .msg { text-align: center; color: var(--muted); padding: 40px 0; }
+  .note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 16px; }
+  .note a { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a href="index.html">← Menü</a>
+    <h1>🌤️ Hava Durumu</h1>
+    <span style="width:52px"></span>
+  </header>
+
+  <form class="search" id="form">
+    <input id="q" type="search" placeholder="Şehir ara (ör. İzmir)" autocomplete="off">
+    <button type="button" id="loc" aria-label="Konumumu kullan">📍</button>
+  </form>
+  <div class="results" id="results"></div>
+
+  <div id="out"><div class="msg">Yükleniyor…</div></div>
+
+  <p class="note">Veriler <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>'dan alınır.</p>
+</div>
+
+<script>
+const $ = (x) => document.getElementById(x);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const DEFAULT = { name: "İstanbul", admin: "Türkiye", lat: 41.0082, lon: 28.9784 };
+
+const WMO = {
+  0: ["Açık", "☀️", "🌙"], 1: ["Çoğunlukla açık", "🌤️", "🌙"], 2: ["Parçalı bulutlu", "⛅", "☁️"], 3: ["Bulutlu", "☁️", "☁️"],
+  45: ["Sisli", "🌫️"], 48: ["Kırağılı sis", "🌫️"],
+  51: ["Hafif çisenti", "🌦️"], 53: ["Çisenti", "🌦️"], 55: ["Yoğun çisenti", "🌧️"],
+  56: ["Dondurucu çisenti", "🌧️"], 57: ["Dondurucu çisenti", "🌧️"],
+  61: ["Hafif yağmur", "🌦️"], 63: ["Yağmurlu", "🌧️"], 65: ["Şiddetli yağmur", "🌧️"],
+  66: ["Dondurucu yağmur", "🌧️"], 67: ["Dondurucu yağmur", "🌧️"],
+  71: ["Hafif kar", "🌨️"], 73: ["Karlı", "🌨️"], 75: ["Yoğun kar", "❄️"], 77: ["Kar taneleri", "🌨️"],
+  80: ["Sağanak", "🌦️"], 81: ["Sağanak yağış", "🌧️"], 82: ["Şiddetli sağanak", "⛈️"],
+  85: ["Kar sağanağı", "🌨️"], 86: ["Yoğun kar sağanağı", "❄️"],
+  95: ["Gök gürültülü", "⛈️"], 96: ["Dolulu fırtına", "⛈️"], 99: ["Şiddetli dolu", "⛈️"],
+};
+const wmo = (c, day = 1) => {
+  const w = WMO[c] || ["–", "🌡️"];
+  return { text: w[0], icon: !day && w[2] ? w[2] : w[1] };
+};
+const dirName = (d) => ["K", "KD", "D", "GD", "G", "GB", "B", "KB"][Math.round(d / 45) % 8];
+const round = (n) => Math.round(n);
+
+function save(p) { try { localStorage.setItem("havaYer", JSON.stringify(p)); } catch (e) {} }
+function loadSaved() { try { return JSON.parse(localStorage.getItem("havaYer") || "null"); } catch (e) { return null; } }
+
+async function show(place) {
+  $("out").innerHTML = '<div class="msg">Yükleniyor…</div>';
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${place.lat}&longitude=${place.lon}`
+    + `&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m,is_day,pressure_msl`
+    + `&hourly=temperature_2m,weather_code,precipitation_probability,is_day`
+    + `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max`
+    + `&timezone=auto&forecast_days=7`;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    render(place, await r.json());
+    save(place);
+  } catch (e) {
+    $("out").innerHTML = '<div class="msg">Hava durumu alınamadı. İnternet bağlantını kontrol edip tekrar dene.</div>';
+  }
+}
+
+function render(place, d) {
+  const c = d.current, dl = d.daily, h = d.hourly;
+  const now = wmo(c.weather_code, c.is_day);
+  const tTime = (s) => s.slice(11, 16);
+
+  let hours = "";
+  const startIdx = Math.max(0, h.time.findIndex((t) => t >= c.time.slice(0, 13)));
+  for (let i = startIdx; i < Math.min(startIdx + 24, h.time.length); i++) {
+    const w = wmo(h.weather_code[i], h.is_day[i]);
+    const p = h.precipitation_probability[i];
+    hours += `<div class="hour"><div class="h">${i === startIdx ? "Şimdi" : h.time[i].slice(11, 13)}</div>
+      <div class="i">${w.icon}</div><div class="t">${round(h.temperature_2m[i])}°</div>
+      <div class="p">${p >= 20 ? "💧" + p + "%" : ""}</div></div>`;
+  }
+
+  const lo = Math.min(...dl.temperature_2m_min), hi = Math.max(...dl.temperature_2m_max);
+  const span = Math.max(1, hi - lo);
+  let days = "";
+  dl.time.forEach((t, i) => {
+    const w = wmo(dl.weather_code[i]);
+    const name = i === 0 ? "Bugün" : new Date(t + "T12:00:00").toLocaleDateString("tr-TR", { weekday: "long" });
+    const a = dl.temperature_2m_min[i], b = dl.temperature_2m_max[i];
+    const p = dl.precipitation_probability_max[i];
+    days += `<div class="day">
+      <div class="n">${name}${p >= 30 ? `<span class="rain">💧 %${p}</span>` : ""}</div>
+      <div class="i">${w.icon}</div>
+      <div class="range"><span class="lo">${round(a)}°</span>
+        <span class="bar"><i style="left:${((a - lo) / span) * 100}%;right:${100 - ((b - lo) / span) * 100}%"></i></span>
+        <span class="hi">${round(b)}°</span></div>
+    </div>`;
+  });
+
+  $("out").innerHTML = `
+    <div class="now">
+      <div class="place">${esc(place.name)}<small>${esc(place.admin || "")}</small></div>
+      <div class="big-ico">${now.icon}</div>
+      <div class="temp">${round(c.temperature_2m)}<sup>°C</sup></div>
+      <div class="cond">${now.text}</div>
+      <div class="hl">En yüksek ${round(dl.temperature_2m_max[0])}° · En düşük ${round(dl.temperature_2m_min[0])}°</div>
+    </div>
+    <div class="grid">
+      <div class="cell"><span>Hissedilen</span><b>${round(c.apparent_temperature)}°</b></div>
+      <div class="cell"><span>Nem</span><b>%${round(c.relative_humidity_2m)}</b></div>
+      <div class="cell"><span>Rüzgâr</span><b>${round(c.wind_speed_10m)} km/s ${dirName(c.wind_direction_10m)}</b></div>
+      <div class="cell"><span>UV indeksi</span><b>${round(dl.uv_index_max[0])}</b></div>
+      <div class="cell"><span>Gün doğumu</span><b>${tTime(dl.sunrise[0])}</b></div>
+      <div class="cell"><span>Gün batımı</span><b>${tTime(dl.sunset[0])}</b></div>
+    </div>
+    <h2>Saatlik</h2>
+    <div class="hours">${hours}</div>
+    <h2>7 günlük</h2>
+    <div class="days">${days}</div>`;
+}
+
+// Şehir arama
+let timer;
+$("q").addEventListener("input", () => {
+  clearTimeout(timer);
+  const q = $("q").value.trim();
+  if (q.length < 2) { $("results").classList.remove("show"); return; }
+  timer = setTimeout(async () => {
+    try {
+      const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=6&language=tr&format=json`);
+      const d = await r.json();
+      const list = d.results || [];
+      $("results").innerHTML = list.length
+        ? list.map((p, i) => `<div data-i="${i}">${esc(p.name)}<small>${esc([p.admin1, p.country].filter(Boolean).join(", "))}</small></div>`).join("")
+        : '<div style="color:var(--muted);cursor:default">Sonuç bulunamadı</div>';
+      $("results").classList.add("show");
+      $("results").querySelectorAll("[data-i]").forEach((el) => (el.onclick = () => {
+        const p = list[el.dataset.i];
+        $("results").classList.remove("show");
+        $("q").value = "";
+        show({ name: p.name, admin: [p.admin1, p.country].filter(Boolean).join(", "), lat: p.latitude, lon: p.longitude });
+      }));
+    } catch (e) {}
+  }, 300);
+});
+$("form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const first = $("results").querySelector("[data-i]");
+  if (first) first.click();
+});
+
+// Konum
+function useLocation(silent) {
+  if (!navigator.geolocation) { if (!silent) alert("Tarayıcın konum desteklemiyor."); return; }
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const lat = pos.coords.latitude, lon = pos.coords.longitude;
+    let name = "Konumum", admin = "";
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=tr&zoom=10`);
+      const d = await r.json();
+      const a = d.address || {};
+      name = a.town || a.city || a.county || a.state || name;
+      admin = [a.province || a.state, a.country].filter(Boolean).join(", ");
+    } catch (e) {}
+    show({ name, admin, lat, lon });
+  }, () => { if (!silent) alert("Konum izni verilmedi. Şehir arayarak devam edebilirsin."); }, { timeout: 8000, maximumAge: 600000 });
+}
+$("loc").onclick = () => useLocation(false);
+
+show(loadSaved() || DEFAULT);
+</script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
