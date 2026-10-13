@@ -1,17 +1,26 @@
 {
-  "donem": "31 Mart 2026",
-  "kaynak": "İş Bankası 2026/3 yatırımcı sunumu",
-  "kaynakUrl": "https://www.isbank.com.tr/contentmanagement/IsbankInvestorDocuments/pdf/YatirimciSunumu1Q2026.pdf",
-  "yurtici": 997,
+  "donem": "30 Haziran 2026",
+  "kaynak": "İş Bankası Haziran 2026 yatırımcı sunumu",
+  "kaynakUrl": "https://www.isbank.com.tr/contentmanagement/IsbankInvestorDocuments/pdf/YatirimciSunumu.pdf",
+  "yurtici": 999,
   "yurtdisi": 22,
   "ulke": 11,
-  "atm": 6986,
+  "atm": 7014,
+  "musteri": "25,8 milyon",
+  "musteriDonem": "Aralık 2025",
+  "calisan": 20719,
+  "calisanDonem": "Haziran 2026, TBB",
   "iscep": "16 milyon",
   "iscepDonem": "Haziran 2026",
   "notlar": [
     "Yurt içi şube ağı 81 ilin tamamını kapsıyor; özel bankalar arasında en geniş şube ağı.",
-    "Şube pazar payı %11,1 ile özel bankalar arasında 1. sırada.",
-    "ATM ağı Türkiye'nin en genişi; ATM pazar payı %12,3.",
+    "Şube pazar payı %11,2 ile özel bankalar arasında 1. sırada.",
+    "ATM pazar payı %12,4 ile özel bankalar arasında 1. sırada.",
+    "Her gün yaklaşık 6 milyon müşteri mobil bankacılığı kullanıyor.",
     "Yurt dışında şubelere ek olarak 3 banka iştiraki ve 2 temsilcilik bulunuyor."
+  ],
+  "ekKaynaklar": [
+    { "ad": "TBB – Banka, Çalışan ve Şube Sayıları (Haziran 2026)", "url": "https://www.tbb.org.tr/sites/default/files/raporlar/54910/ekler/Banka%20%C3%87al%C4%B1%C5%9Fan%20ve%20%C5%9Eube%20Say%C4%B1lar%C4%B1-Haziran%202026.pdf" },
+    { "ad": "Müşteri sayısı: 2025 Entegre Faaliyet Raporu (Banka Dünyası aracılığıyla)", "url": "https://bankadunyasi.com/turkiyedeki-bankalarin-musteri-sayilari-2026/" }
   ]
 }

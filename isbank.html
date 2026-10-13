@@ -164,7 +164,9 @@ function renderSubeler() {
   $("upd").textContent = "Veri dönemi: " + d.donem;
   $("list").innerHTML = `
     <div class="stats">
-      <div class="stat hero"><span>Toplam şube</span><b>${f(d.yurtici + d.yurtdisi)}</b></div>
+      <div class="stat hero"><span>Toplam müşteri</span><b>${esc(d.musteri)}</b><small style="color:#b9c0d6">${esc(d.musteriDonem)}</small></div>
+      <div class="stat"><span>Toplam şube</span><b>${f(d.yurtici + d.yurtdisi)}</b><small>Türkiye + ${f(d.ulke)} ülke</small></div>
+      <div class="stat"><span>Çalışan</span><b>${f(d.calisan)}</b><small>${esc(d.calisanDonem)}</small></div>
       <div class="stat"><span>Yurt içi şube</span><b>${f(d.yurtici)}</b><small>81 ilin tamamında</small></div>
       <div class="stat"><span>Yurt dışı şube</span><b>${f(d.yurtdisi)}</b><small>${f(d.ulke)} ülkede</small></div>
       <div class="stat"><span>ATM</span><b>${f(d.atm)}</b><small>Türkiye'nin en geniş ağı</small></div>
@@ -172,7 +174,8 @@ function renderSubeler() {
     </div>
     <div class="facts"><ul>${(d.notlar || []).map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
     <a class="maxlink" href="https://www.google.com/maps/search/T%C3%BCrkiye+%C4%B0%C5%9F+Bankas%C4%B1+%C5%9Fubesi" target="_blank" rel="noopener">📍 Yakınımdaki şubeleri haritada göster ↗</a>
-    <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(d.kaynak)} ↗</a>`;
+    <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(d.kaynak)} ↗</a>
+    ${(d.ekKaynaklar || []).map((k) => `<a class="maxlink" style="border-color:var(--line);color:var(--muted);font-weight:400;font-size:13px" href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.ad)} ↗</a>`).join("")}`;
 }
 
 function renderIscep() {
