@@ -1,4 +1,6 @@
-# Sado Oyunlar
+# SADOLAYN
+
+### 👉 [Siteyi aç: sadolayn.github.io/SadoDepo](https://sadolayn.github.io/SadoDepo/)
 
 Telefonda oynanabilen basit oyunlar:
 
@@ -7,4 +9,3 @@ Telefonda oynanabilen basit oyunlar:
 - **Resmi Gazete** (`gazete.html`): Her sabah otomatik güncellenen günlük özet (veriler `gazete/` klasöründe)
 - **Sayı Tahmin** (`tahmin.html`): Tutulan sayıyı bul
 
-Oyna: https://sadolayn.github.io/SadoDepo/
