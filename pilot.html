@@ -35,7 +35,7 @@
 <header>
   <a href="index.html">← Menü</a>
   <h1>✈️ Nehir Pilotu</h1>
-  <span style="width:52px"></span>
+  <button id="snd" style="width:52px;background:none;border:1px solid #262626;border-radius:10px;color:#f2f2f2;font-size:18px;padding:4px 0;cursor:pointer">🔊</button>
 </header>
 <div class="hud">
   <div>Puan <b id="score">0</b></div>
@@ -150,6 +150,8 @@ function hud() {
 function crash() {
   if (st.dead) return;
   st.dead = 1;
+  sfxBoom(true);
+  setEngine(false);
   st.booms.push({ x: st.px, y: st.cam + PLANE_Y, r: 0, big: true });
   st.lives--;
   hud();
@@ -202,6 +204,7 @@ function step() {
   if (st.cool <= 0 && (touchX != null || keys[" "] || autoFire)) {
     st.bullets.push({ x: st.px - 1.5, y: st.cam + PLANE_Y - 16, w: 3, h: 12 });
     st.cool = 9;
+    sfxShoot();
   }
   for (const b of st.bullets) b.y -= 9 + st.speed;
   st.bullets = st.bullets.filter((b) => b.y > st.cam - 20 && !b.hit);
@@ -215,10 +218,12 @@ function step() {
     }
     if (o.t === "heli") o.ph += 0.6;
     for (const b of st.bullets) {
+      if (o.t === "fuel") break; // yakıt depoları vurulamaz, mermi üstünden geçer
       if (!b.hit && overlap(b, o)) {
         b.hit = true; o.dead = true;
-        st.score += { boat: 30, heli: 60, fuel: 80, jet: 100, bridge: 500 }[o.t];
-        st.booms.push({ x: o.x + o.w / 2, y: o.y + o.h / 2, r: 0, big: o.t === "bridge" || o.t === "fuel" });
+        st.score += { boat: 30, heli: 60, jet: 100, bridge: 500 }[o.t];
+        if (o.t === "bridge") sfxBridge(); else sfxBoom(false);
+        st.booms.push({ x: o.x + o.w / 2, y: o.y + o.h / 2, r: 0, big: o.t === "bridge" });
         if (o.t === "bridge") st.checkpoint = o.y;
         hud();
       }
@@ -230,7 +235,14 @@ function step() {
     }
   }
   st.objs = st.objs.filter((o) => !o.dead && o.y < st.cam + H + 50);
-  if (refuel) st.fuel = Math.min(100, st.fuel + 0.9);
+  if (refuel) {
+    const wasFull = st.fuel >= 100;
+    st.fuel = Math.min(100, st.fuel + 0.9);
+    if (frame % 6 === 0 && !wasFull) sfxRefuel(st.fuel);
+    if (!wasFull && st.fuel >= 100) sfxFull();
+  }
+  if (st.fuel < 25 && frame % 50 === 0) sfxLowFuel();
+  setEngine(true, st.speed);
   if (st.fuel <= 0) { st.fuel = 0; hud(); return crash(); }
   updateBooms();
 }
@@ -315,6 +327,72 @@ function drawPlane(x, y, tilt) {
   ctx.restore();
 }
 
+
+// ---------- Ses (Web Audio ile üretilir) ----------
+let AC = null, master = null, eng = null, noiseBuf = null, muted = false;
+try { muted = localStorage.getItem("pilotMute") === "1"; } catch (e) {}
+function initAudio() {
+  if (AC) { if (AC.state === "suspended") AC.resume(); return; }
+  try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
+  master = AC.createGain(); master.gain.value = muted ? 0 : 0.9; master.connect(AC.destination);
+  // Gürültü tamponu (patlama ve motor hışırtısı)
+  noiseBuf = AC.createBuffer(1, AC.sampleRate * 1.5, AC.sampleRate);
+  const d = noiseBuf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  // Motor: iki alçak osilatör + filtrelenmiş gürültü
+  const o1 = AC.createOscillator(), o2 = AC.createOscillator();
+  o1.type = "sawtooth"; o2.type = "square";
+  const nz = AC.createBufferSource(); nz.buffer = noiseBuf; nz.loop = true;
+  const nf = AC.createBiquadFilter(); nf.type = "lowpass"; nf.frequency.value = 500;
+  const nzg = AC.createGain(); nzg.gain.value = 0.35;
+  const lp = AC.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 380; lp.Q.value = 4;
+  const g = AC.createGain(); g.gain.value = 0;
+  o1.connect(lp); o2.connect(lp); nz.connect(nf); nf.connect(nzg); nzg.connect(lp); lp.connect(g); g.connect(master);
+  o1.start(); o2.start(); nz.start();
+  eng = { o1, o2, lp, g };
+}
+function setEngine(on, speed = 2) {
+  if (!eng) return;
+  const t = AC.currentTime;
+  const f = 38 + speed * 14;
+  eng.o1.frequency.setTargetAtTime(f, t, 0.08);
+  eng.o2.frequency.setTargetAtTime(f * 1.007, t, 0.08);
+  eng.lp.frequency.setTargetAtTime(260 + speed * 90, t, 0.1);
+  eng.g.gain.setTargetAtTime(on ? 0.11 : 0, t, on ? 0.15 : 0.05);
+}
+function tone(freq, dur, type = "square", vol = 0.08, slideTo = null) {
+  if (!AC || muted) return;
+  const t = AC.currentTime;
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, t);
+  if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.02);
+}
+function sfxShoot() { tone(1500, 0.09, "square", 0.045, 260); }
+function sfxBoom(big) {
+  if (!AC || muted) return;
+  const t = AC.currentTime, dur = big ? 1.1 : 0.55;
+  const src = AC.createBufferSource(); src.buffer = noiseBuf;
+  const f = AC.createBiquadFilter(); f.type = "lowpass";
+  f.frequency.setValueAtTime(big ? 1800 : 2400, t); f.frequency.exponentialRampToValueAtTime(70, t + dur);
+  const g = AC.createGain(); g.gain.setValueAtTime(big ? 0.9 : 0.55, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  src.connect(f); f.connect(g); g.connect(master); src.start(t); src.stop(t + dur);
+  tone(big ? 90 : 140, dur * 0.8, "sine", big ? 0.35 : 0.2, 35);
+}
+function sfxRefuel(level) { tone(320 + level * 7, 0.07, "triangle", 0.09); }
+function sfxFull() { tone(1200, 0.12, "triangle", 0.08); }
+function sfxLowFuel() { tone(980, 0.11, "square", 0.06); setTimeout(() => tone(980, 0.11, "square", 0.06), 160); }
+function sfxBridge() { tone(520, 0.12, "square", 0.06); setTimeout(() => tone(780, 0.16, "square", 0.06), 120); }
+function updateMuteBtn() { document.getElementById("snd").textContent = muted ? "🔇" : "🔊"; }
+document.getElementById("snd").onclick = () => {
+  muted = !muted;
+  try { localStorage.setItem("pilotMute", muted ? "1" : "0"); } catch (e) {}
+  if (master) master.gain.value = muted ? 0 : 0.9;
+  updateMuteBtn();
+};
+updateMuteBtn();
+
 // ---------- Döngü ----------
 let autoFire = false, acc = 0, frame = 0;
 function loop(t) {
@@ -326,6 +404,7 @@ function loop(t) {
   if (!st.over) raf = requestAnimationFrame(loop);
 }
 function start() {
+  initAudio();
   newGame();
   st.cam = 0;
   $("ov").classList.add("hide");
@@ -335,6 +414,7 @@ function start() {
 }
 function gameOver() {
   st.over = true;
+  setEngine(false);
   if (st.score > best) { best = st.score; try { localStorage.setItem("pilotBest", best); } catch (e) {} }
   showBox(`<h2>Oyun bitti</h2><p>Puan: <b>${st.score}</b><br>En iyi: <b>${best}</b></p><button class="btn" id="go">Tekrar uç</button>`);
 }
@@ -356,7 +436,7 @@ window.addEventListener("keydown", (e) => { keys[e.key] = true; if (e.key === " 
 window.addEventListener("keyup", (e) => { keys[e.key] = false; if (e.key === " ") autoFire = false; });
 
 newGame(); st.cam = 0; draw();
-showBox(`<h2>✈️ Nehir Pilotu</h2><p>Nehrin üzerinde uç, kıyılara çarpma.<br>Gemileri, helikopterleri ve köprüleri vur.<br>Yakıtın bitmeden <b>YKT</b> depolarının üzerinden geç.<br><br>En iyi puan: <b>${best}</b></p><button class="btn" id="go">Uçuşa başla</button>`);
+showBox(`<h2>✈️ Nehir Pilotu</h2><p>Nehrin üzerinde uç, kıyılara çarpma.<br>Gemileri, helikopterleri, jetleri ve köprüleri vur.<br>Yakıtın bitmeden <b>YKT</b> depolarının üzerinden geç<br>(depolar vurulamaz, merak etme 😉).<br><br>En iyi puan: <b>${best}</b></p><button class="btn" id="go">Uçuşa başla</button>`);
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
