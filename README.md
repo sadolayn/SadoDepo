@@ -13,6 +13,6 @@ Telefonda kullanılabilen oyunlar ve araçlar:
 - **Resmi Gazete** (`gazete.html`): Her sabah otomatik güncellenen günlük özet (veriler `gazete/` klasöründe)
 - **King** (`king.html`): 20 ellik King, koz ve 6 ceza, kart sayan güçlü bilgisayar rakiplere karşı
 - **Solitaire** (`solitaire.html`): Klondike, kartlar 3'lü açılır; başlamadan dilek tutulur
-- **Nehir Pilotu** (`pilot.html`): Nehir üzerinde dikey kaydırmalı uçuş ve atış oyunu
+- **UçUç** (`pilot.html`): Nehir üzerinde dikey kaydırmalı uçuş ve atış oyunu
 - **Sayı Tahmin** (`tahmin.html`): Tutulan sayıyı bul
 
