@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Döviz ve kıymetli maden fiyatlarını (TL) toplayıp data/piyasa.json yazar.
 Kur: Avrupa Merkez Bankası referans kurları (frankfurter.app) — USD/TRY, EUR/TRY, GBP/TRY.
-Madenler: fawazahmed0/currency-api (USD/ons) -> TL/gram (1 ons = 31.1034768 gr).
+Madenler: Yahoo Finance GC=F, SI=F, PL=F, PA=F (USD/ons) -> TL/gram (1 ons = 31.1034768 gr).
 Haftalık geçmiş (2020-11'den beri) + son 21 gün günlük."""
 import json, urllib.request, datetime as dt, sys, os
 from concurrent.futures import ThreadPoolExecutor
@@ -58,24 +58,8 @@ def metal(d):
             pass
     return d.isoformat(), None
 
-# 1) LBMA resmi gösterge fiyatları (USD/ons)
-LBMA = {"xau": ["gold_pm", "gold_am"], "xag": ["silver"], "xpt": ["platinum_pm", "platinum_am"], "xpd": ["palladium_pm", "palladium_am"]}
+# 1) Madenler: Yahoo Finance vadeli ons fiyatları (USD)
 lb = {}
-for m, names in LBMA.items():
-    for n in names:
-        try:
-            arr = json.loads(get(f"https://prices.lbma.org.uk/json/{n}.json"))
-            ser = {}
-            for e in arr:
-                d0 = e.get("d"); v = e.get("v") or []
-                if d0 and d0 >= "2020-10-01" and v and v[0]:
-                    ser[d0] = float(v[0])
-            if len(ser) > 500:
-                lb[m] = ser
-                print(f"::notice::LBMA {n}: {len(ser)} gün, son {max(ser)}")
-                break
-        except Exception as e:
-            print(f"::warning::LBMA {n}: {str(e)[:120]}")
 import http.cookiejar, time
 def yahoo_series(sym):
     cj = http.cookiejar.CookieJar()
@@ -110,7 +94,7 @@ for d0 in sorted(set().union(*[set(v) for v in lb.values()])):
         if d0 in lb[m]: last[m] = lb[m][d0]
     if len(last) == 4: ok[d0] = dict(last)
 
-# 2) LBMA'nın henüz yayınlamadığı son günler için currency-api
+# 2) Eksik son günler için yedek: currency-api
 lastd = dt.date.fromisoformat(max(ok))
 extra = [lastd + dt.timedelta(days=i) for i in range(1, (TODAY - lastd).days + 1)]
 with ThreadPoolExecutor(8) as ex:
@@ -141,7 +125,7 @@ for s in ("2021-10-15", "2023-12-29", keep[-1]):
 
 out = {
     "updated": dt.datetime.now(dt.timezone(dt.timedelta(hours=3))).strftime("%Y-%m-%d %H:%M"),
-    "source": "Kurlar: Avrupa Merkez Bankası referans kurları (frankfurter.app). Madenler: currency-api ons fiyatları, TL/gram'a çevrilmiştir.",
+    "source": "Kurlar: Avrupa Merkez Bankası referans kurları (frankfurter.app). Madenler: Yahoo Finance altın, gümüş, platin, paladyum vadeli ons fiyatları, TL/gram'a çevrilmiştir.",
     "dates": keep, **cols,
 }
 os.makedirs("data", exist_ok=True)
