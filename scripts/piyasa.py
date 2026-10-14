@@ -30,7 +30,25 @@ def yahoo(sym):
                 out[d] = c
             if len(out) > 500: return out
         except Exception as e:
-            print("yahoo fail", sym, host, e, file=sys.stderr)
+            print(f"::warning::yahoo {sym} {host}: {str(e)[:150]}")
+    return None
+
+STOOQ = {"usdtry": "usdtry", "eurtry": "eurtry", "gbptry": "gbptry",
+         "xau": "xauusd", "xag": "xagusd", "xpt": "xptusd", "xpd": "xpdusd"}
+
+def stooq(sym):
+    try:
+        d2 = dt.date.today().strftime("%Y%m%d")
+        txt = get(f"https://stooq.com/q/d/l/?s={sym}&d1=20200101&d2={d2}&i=d")
+        out = {}
+        for line in txt.strip().splitlines()[1:]:
+            f = line.split(",")
+            if len(f) >= 5 and f[4] not in ("", "null"):
+                out[f[0]] = float(f[4])
+        if len(out) > 500: return out
+        print(f"::warning::stooq {sym}: {txt[:120]!r}")
+    except Exception as e:
+        print(f"::warning::stooq {sym}: {str(e)[:150]}")
     return None
 
 def clean(series, maxjump=0.25):
@@ -44,8 +62,8 @@ def clean(series, maxjump=0.25):
 
 raw = {}
 for k, s in YAHOO.items():
-    r = yahoo(s)
-    if not r: sys.exit(f"Veri alınamadı: {k}")
+    r = stooq(STOOQ[k]) or yahoo(s)
+    if not r: sys.exit(f"::error::Veri alınamadı: {k}")
     raw[k] = clean(r)
     print(k, len(raw[k]), min(raw[k]), max(raw[k]), file=sys.stderr)
 
