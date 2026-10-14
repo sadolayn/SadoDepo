@@ -27,8 +27,8 @@
   header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header h1 { margin: 0; font-size: 20px; }
-  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px; margin-bottom: 12px; }
-  .tabs button { border: none; background: transparent; color: var(--muted); padding: 10px 4px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px; margin-bottom: 12px; }
+  .tabs button { border: none; background: transparent; color: var(--muted); padding: 10px 2px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
   .tabs button.active { background: var(--accent); color: #000; }
   .panel { display: none; } .panel.active { display: block; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
@@ -87,6 +87,19 @@
   .rows div { display: flex; justify-content: space-between; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
   .rows div span:first-child { color: var(--muted); }
   .note { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 8px; }
+  .ygrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mini { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 8px; cursor: pointer; }
+  .mini.cur { border-color: var(--accent); }
+  .mini .mn { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; font-weight: 700; margin: 0 2px 6px; }
+  .mini .mn span { font-size: 10px; font-weight: 600; color: var(--work); }
+  .mg { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .mg div { font-size: 10px; text-align: center; line-height: 17px; border-radius: 4px; color: #ddd; position: relative; }
+  .mg .h { color: var(--muted); font-size: 8px; line-height: 12px; }
+  .mg .we { color: #666; }
+  .mg .hol { background: rgba(239,106,76,.45); color: #fff; }
+  .mg .half { background: linear-gradient(135deg, transparent 50%, rgba(232,181,43,.55) 50%); }
+  .mg .dn::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 3px; height: 3px; margin-left: -1.5px; border-radius: 50%; background: var(--dini); }
+  .mg .td { outline: 1.5px solid var(--accent); }
   .yearsel { display: flex; gap: 6px; margin-bottom: 8px; }
   .yearsel button { flex: 1; padding: 9px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-weight: 600; cursor: pointer; }
   .yearsel button.active { background: var(--accent); color: #000; border-color: var(--accent); }
@@ -102,8 +115,9 @@
 
   <div class="tabs">
     <button data-tab="ay" class="active">Aylık</button>
-    <button data-tab="hesap">İş günü hesapla</button>
-    <button data-tab="liste">Tatil listesi</button>
+    <button data-tab="yil">Yıllık</button>
+    <button data-tab="hesap">İş günü</button>
+    <button data-tab="liste">Liste</button>
   </div>
 
   <!-- Aylık takvim -->
@@ -127,6 +141,22 @@
       </div>
       <div class="list" id="mList" style="margin-top:8px"></div>
     </div>
+  </section>
+
+  <!-- Yıllık görünüm -->
+  <section class="panel" id="yil">
+    <div class="yearsel" id="yearsel2"></div>
+    <div class="card">
+      <h3 id="ySumTitle"></h3>
+      <div class="stats">
+        <div class="stat"><b id="yWork">0</b><span>İş günü</span></div>
+        <div class="stat"><b id="yHol">0</b><span>Hafta içi tatil</span></div>
+        <div class="stat"><b id="yHalf">0</b><span>Yarım gün</span></div>
+      </div>
+      <div class="legend"><span class="l1">Resmi tatil</span><span class="l2">Yarım gün</span><span class="l3">Dini gün</span></div>
+    </div>
+    <div class="ygrid" id="ygrid"></div>
+    <p class="note">Ayın sağ üstündeki mavi sayı o ayın iş günü sayısı. Bir aya dokununca aylık görünümde açılır.</p>
   </section>
 
   <!-- İş günü hesaplama -->
@@ -377,6 +407,49 @@ function renderList() {
   $("yList").innerHTML = `<div style="font-size:13px;color:var(--muted);padding-bottom:6px">${listYear} yılında hafta içine denk gelen <b style="color:var(--hol)">${wd}</b> tam gün tatil var.</div>` + items.map(itemHTML).join("") + note;
 }
 
+// ================= Yıllık görünüm =================
+let yYear = YEARS.includes(today.getFullYear()) ? today.getFullYear() : YEARS[0];
+function renderYear() {
+  $("yearsel2").innerHTML = YEARS.map((y) => `<button data-y="${y}" class="${y === yYear ? "active" : ""}">${y}</button>`).join("");
+  $("yearsel2").querySelectorAll("button").forEach((b) => (b.onclick = () => { yYear = Number(b.dataset.y); renderYear(); }));
+  let tw = 0, th = 0, thf = 0;
+  let html = "";
+  for (let m = 0; m < 12; m++) {
+    const first = new Date(yYear, m, 1, 12);
+    const off = (first.getDay() + 6) % 7;
+    const days = new Date(yYear, m + 1, 0).getDate();
+    let cells = ["P", "S", "Ç", "P", "C", "C", "P"].map((d) => `<div class="h">${d}</div>`).join("");
+    for (let i = 0; i < off; i++) cells += "<div></div>";
+    let w = 0;
+    for (let d = 1; d <= days; d++) {
+      const dt = new Date(yYear, m, d, 12);
+      const i = info(dt);
+      const c = [];
+      if (i.we) c.push("we");
+      if (i.full) c.push("hol");
+      if (i.half) c.push("half");
+      if (i.dini.length) c.push("dn");
+      if (keyOf(dt) === keyOf(today)) c.push("td");
+      if (!i.we && !i.full) w++;
+      if (!i.we && i.full) th++;
+      if (!i.we && i.half) thf++;
+      cells += `<div class="${c.join(" ")}">${d}</div>`;
+    }
+    tw += w;
+    const cur = yYear === today.getFullYear() && m === today.getMonth();
+    html += `<div class="mini${cur ? " cur" : ""}" data-m="${m}"><div class="mn">${MONTHS[m]}<span>${w} iş günü</span></div><div class="mg">${cells}</div></div>`;
+  }
+  $("ygrid").innerHTML = html;
+  $("ygrid").querySelectorAll(".mini").forEach((el) => (el.onclick = () => {
+    view = new Date(yYear, Number(el.dataset.m), 1, 12);
+    renderMonth();
+    document.querySelector('.tabs button[data-tab="ay"]').click();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }));
+  $("ySumTitle").textContent = `${yYear} yılı özeti`;
+  $("yWork").textContent = tw; $("yHol").textContent = th; $("yHalf").textContent = thf;
+}
+
 // ================= Sekmeler ve başlangıç =================
 document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
   document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
@@ -389,7 +462,7 @@ const endM = new Date(today.getFullYear(), today.getMonth() + 1, 0, 12);
 $("h1b").value = iso(endM);
 $("h2a").value = iso(today);
 selected = today;
-renderMonth(); showDetail(today); calc1(); calc2(); renderList();
+renderMonth(); showDetail(today); calc1(); calc2(); renderList(); renderYear();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
