@@ -156,7 +156,7 @@
       <div class="two">
         <div><label>Başlangıç tarihi</label><input id="m_bas" type="date" style="color-scheme:dark"></div>
         <div><label>Yıl gün sayısı</label>
-          <select id="m_esas"><option value="act">Artık yılda 366</option><option value="365">Her zaman 365</option></select>
+          <div class="field" style="padding:13px 14px;color:var(--ink);font-weight:600" id="m_esasTxt">365</div>
         </div>
       </div>
       <p class="note" id="m_note"></p>
@@ -373,7 +373,6 @@ function autoStopaj(g) {
 const isLeap = (y) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
 // Vade içindeki günleri yıllara göre böl: faiz = Σ (gün / yılın gün sayısı)
 function yearFrac(start, days) {
-  if ($("m_esas").value === "365") return { f: days / 365, leapDays: 0 };
   let f = 0, leapDays = 0;
   const d = new Date(start);
   for (let i = 0; i < days; i++) {
@@ -514,7 +513,11 @@ function calcMev() {
     ]);
   }
   calcExtra(P, r, g, start);
-  if ($("m_esas").value !== "365" && totalLeap > 0) leapInfo = ` Vadenin ${totalLeap} günü artık yıla denk geliyor; bu günler ÷366 ile hesaplandı.`;
+  // Yıl gün sayısı vadenin düştüğü yıllara göre otomatik
+  { const ys = new Set(), d = new Date(start); for (let i = 0; i < Math.max(1, g * n); i++) { ys.add(d.getFullYear()); d.setDate(d.getDate() + 1); }
+    const parts = [...ys].map((y) => `${isLeap(y) ? 366 : 365} (${y})`);
+    $("m_esasTxt").textContent = parts.length === 1 ? parts[0] : parts.join(" · "); }
+  if (totalLeap > 0) leapInfo = ` Vadenin ${totalLeap} günü artık yıla denk geliyor; bu günler ÷366 ile hesaplandı.`;
   $("m_note").textContent = stopajTxt + leapInfo;
 }
 
