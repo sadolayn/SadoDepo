@@ -143,18 +143,13 @@
   <div class="card">
     <h3 id="heatTitle">Ayın takvimi</h3>
     <div class="heat" id="heat"></div>
-    <p class="note" style="margin:8px 0 0">Kutudaki küçük sayı o gün işlenen toplam adet (tutar ve bakiyeler hariç). Bir güne dokununca o günü düzenlersin.</p>
+    <p class="note" style="margin:8px 0 0">Kutudaki küçük sayı o gün işlenen toplam adet. Bir güne dokununca o günü düzenlersin.</p>
   </div>
 
   <div class="card edit">
     <h3>Ürünleri düzenle</h3>
     <ul id="editList"></ul>
     <div class="addrow"><input id="newName" placeholder="Yeni kalem (ör. BES, POS)" maxlength="30"><button class="btn pri" id="addBtn" style="padding:10px 14px">Ekle</button></div>
-    <select id="newType" style="width:100%;margin-top:8px;padding:10px;font-size:14px;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:10px">
-      <option value="adet">Adet (+/− ile)</option>
-      <option value="tutar">Tutar – toplanan (milyon TL)</option>
-      <option value="bakiye">Ortalama bakiye (SFO/KFO gibi, milyon TL)</option>
-    </select>
   </div>
 
   <div class="card">
@@ -189,9 +184,6 @@ const DEFAULT_PRODUCTS = [
   { id: "ft", name: "Fatura talimatı", icon: "🧾", type: "adet" },
   { id: "skk", name: "Şirket kredi kartı", icon: "🏢", type: "adet" },
   { id: "cek", name: "Çek karnesi", icon: "📘", type: "adet" },
-  { id: "sfo", name: "SFO", icon: "💰", type: "bakiye" },
-  { id: "kfo", name: "KFO", icon: "📊", type: "bakiye" },
-  { id: "kar", name: "Karlılık", icon: "📈", type: "tutar" },
 ];
 const TYPE_AD = { adet: "Adet", tutar: "Tutar (toplanan)", bakiye: "Ortalama bakiye" };
 const ICONS = ["📌", "📈", "🛡️", "💼", "📱", "🏠", "🚗", "💰", "🧩", "⭐"];
@@ -215,9 +207,14 @@ function migrate() {
   D.targets ||= {};
   D.days ||= {};
   for (const p of D.products) p.type ||= "adet";
-  if (!D.v3) {
-    for (const p of DEFAULT_PRODUCTS) if (p.type !== "adet" && !D.products.some((x) => x.id === p.id)) D.products.push({ ...p });
-    D.v3 = true;
+  D.v3 = true;
+  // Yalnızca adet bazlı kalemler: tutar/bakiye (SFO, KFO, karlılık) kalemlerini ve verilerini kaldır
+  const drop = D.products.filter((p) => p.type !== "adet").map((p) => p.id);
+  if (drop.length) {
+    D.products = D.products.filter((p) => p.type === "adet");
+    for (const q of Object.values(D.targets)) for (const id of drop) delete q[id];
+    for (const d of Object.values(D.days)) for (const id of drop) delete d[id];
+    for (const id of drop) delete D.bal[id];
   }
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) { toast("Kaydedilemedi: tarayıcı depolaması kapalı olabilir"); } }
@@ -449,7 +446,7 @@ function renderHeat() {
   $("heat").querySelectorAll("[data-d]").forEach((el) => (el.onclick = () => { selDay = new Date(y, m, Number(el.dataset.d), 12); render(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
 }
 function renderEdit() {
-  $("editList").innerHTML = D.products.map((p) => `<li><span style="font-size:20px">${p.icon}</span><div style="flex:1;min-width:0"><input value="${escapeHtml(p.name)}" data-r="${p.id}" maxlength="30" style="width:100%"><div style="font-size:11px;color:var(--muted);margin-top:3px">${TYPE_AD[p.type]}</div></div><button class="x" data-x="${p.id}" aria-label="Sil">✕</button></li>`).join("");
+  $("editList").innerHTML = D.products.map((p) => `<li><span style="font-size:20px">${p.icon}</span><div style="flex:1;min-width:0"><input value="${escapeHtml(p.name)}" data-r="${p.id}" maxlength="30" style="width:100%"></div><button class="x" data-x="${p.id}" aria-label="Sil">✕</button></li>`).join("");
   $("editList").querySelectorAll("[data-r]").forEach((i) => (i.onchange = () => { const p = D.products.find((x) => x.id === i.dataset.r); if (p && i.value.trim()) { p.name = i.value.trim(); save(); renderProds(); } }));
   $("editList").querySelectorAll("[data-x]").forEach((b) => (b.onclick = () => {
     const p = D.products.find((x) => x.id === b.dataset.x);
@@ -485,7 +482,7 @@ function setTarget(pid) {
 function addProduct() {
   const name = $("newName").value.trim();
   if (!name) return;
-  const type = $("newType").value;
+  const type = "adet";
   const id = "u" + Date.now().toString(36);
   D.products.push({ id, name, icon: ICONS[D.products.length % ICONS.length], type });
   $("newName").value = "";
