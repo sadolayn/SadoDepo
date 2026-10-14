@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oyunlar</title>
+<style>
+  :root {
+    --bg: #000000;
+    --card: #0d0d0d;
+    --ink: #f2f2f2;
+    --muted: #8a8a8a;
+    --accent: #e0a24f;
+    --line: #262626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  h1 { margin: 0 0 4px; font-size: 34px; letter-spacing: 2px; color: var(--accent); }
+  h1.logo { margin: 0 0 6px; line-height: 0; }
+  h1.logo img {
+    width: min(320px, 82vw);
+    height: auto;
+    filter: drop-shadow(0 4px 18px rgba(224,162,79,.25));
+    animation: glow 1.2s ease-out;
+  }
+  @keyframes glow { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+  p { margin: 0 0 28px; color: var(--muted); letter-spacing: 1px; }
+  .list { width: 100%; max-width: 380px; display: grid; gap: 12px; }
+  a.game {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    color: var(--ink);
+    text-decoration: none;
+    transition: border-color .15s, transform .1s;
+  }
+  a.game:active { transform: scale(.98); border-color: var(--accent); }
+  .icon { font-size: 36px; width: 48px; text-align: center; }
+  .t { font-size: 19px; font-weight: 700; }
+  .d { font-size: 14px; color: var(--muted); margin-top: 2px; }
+  .arrow { margin-left: auto; color: var(--accent); font-size: 22px; }
+  a.game.isb {
+    background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%);
+    border-color: #3a50f0;
+  }
+  a.game.isb .t { color: #e6e8ee; }
+  a.game.isb .d { color: #b9c0d6; }
+  a.game.isb .arrow { color: #d9dce3; }
+  .isb-icon {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(255,255,255,.14);
+    color: #e6e8ee;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sep { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin: 10px 4px 0; }
+  .quote {
+    margin-top: 34px;
+    max-width: 380px;
+    width: 100%;
+    text-align: center;
+    padding: 18px 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .quote q {
+    display: block;
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-size: 21px;
+    color: var(--accent);
+    quotes: "“" "”";
+  }
+  .quote span { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); letter-spacing: 1px; }
+  .top { width: 100%; max-width: 380px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .top a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  .top h2 { margin: 0; font-size: 22px; }
+  body { justify-content: flex-start; }
+</style>
+</head>
+<body>
+  <div class="top"><a href="index.html">← Ana sayfa</a><h2>🎮 Oyunlar</h2><span style="width:70px"></span></div>
+  <div class="list">
+    <a class="game" href="batak.html">
+      <div class="icon">♠️</div>
+      <div><div class="t">Batak</div><div class="d">İhaleli batak, 3 rakibe karşı</div></div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="game" href="king.html">
+      <div class="icon">👑</div>
+      <div><div class="t">King</div><div class="d">20 el, koz ve cezalar</div></div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="game" href="solitaire.html">
+      <div class="icon">🃏</div>
+      <div><div class="t">Solitaire</div><div class="d">3'lü açılır · önce bir dilek tut 🌙</div></div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="game" href="pilot.html">
+      <div class="icon">✈️</div>
+      <div><div class="t">UçUç</div><div class="d">Nehirde uç, vur, yakıtını doldur</div></div>
+      <div class="arrow">›</div>
+    </a>
+    <a class="game" href="tahmin.html">
+      <div class="icon">🎯</div>
+      <div><div class="t">Sayı Tahmin</div><div class="d">Tuttuğum sayıyı bul</div></div>
+      <div class="arrow">›</div>
+    </a>
+  </div>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

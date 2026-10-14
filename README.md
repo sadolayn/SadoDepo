@@ -7,6 +7,7 @@
 Telefonda kullanılabilen oyunlar ve araçlar:
 
 - **Hava Durumu** (`hava.html`): Konuma veya şehre göre anlık, saatlik ve 7 günlük tahmin
+- **Oyunlar** (`oyunlar.html`): Tüm oyunların listelendiği sayfa
 - **Batak** (`batak.html`): İhaleli batak, 3 bilgisayar rakibe karşı
 - **İş Bankası Yenilikler** (`isbank.html`): Yeni ürünler, İşCep, haberler, KAP duyuruları ve Maximum kampanyaları; günde iki kez otomatik güncellenir (veri: `isbank/haberler.json`)
 - **Bankacılık** (`banka.html`): BCH rotatif kredi, vadeli mevduat , tüketici kredisi ve kredi kartı gecikme faizi hesaplama
