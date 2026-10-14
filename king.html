@@ -72,14 +72,14 @@
   .seat-e { right: 6px; top: 50%; transform: translateY(-50%); }
   .seat-s { bottom: 8px; left: 50%; transform: translateX(-50%); }
 
-  .slot { position: absolute; width: 52px; height: 76px; }
-  .slot-n { top: 68px; left: 50%; transform: translateX(-50%); }
-  .slot-s { bottom: 68px; left: 50%; transform: translateX(-50%); }
-  .slot-w { left: 92px; top: 50%; transform: translateY(-50%); }
-  .slot-e { right: 92px; top: 50%; transform: translateY(-50%); }
+  .slot { position: absolute; width: 56px; height: 84px; }
+  .slot-n { top: 64px; left: 50%; transform: translateX(-50%); }
+  .slot-s { bottom: 64px; left: 50%; transform: translateX(-50%); }
+  .slot-w { left: 90px; top: 50%; transform: translateY(-50%); }
+  .slot-e { right: 90px; top: 50%; transform: translateY(-50%); }
 
   .card {
-    width: 52px; height: 76px;
+    width: 56px; height: 84px;
     background: #f7f4ee;
     color: #111;
     border-radius: 7px;
@@ -90,9 +90,10 @@
     flex: none;
   }
   .card.red { color: var(--red); }
-  .card .r { position: absolute; top: 3px; left: 4px; font-size: 22px; line-height: 1; letter-spacing: -1px; }
-  .card .s1 { position: absolute; top: 25px; left: 4px; font-size: 19px; line-height: 1; }
-  .card .s2 { position: absolute; bottom: 3px; right: 4px; font-size: 30px; line-height: 1; }
+  .card .r { position: absolute; top: 3px; left: 3px; font-size: 29px; line-height: 1; letter-spacing: -1px; transform-origin: left top; }
+  .card .r.ten { transform: scaleX(.72); letter-spacing: -2px; }
+  .card .s1 { position: absolute; top: 32px; left: 2px; font-size: 26px; line-height: 1; }
+  .card .s2 { position: absolute; bottom: 3px; right: 4px; font-size: 34px; line-height: 1; }
   .card.win { outline: 3px solid var(--win); }
   .pop { animation: pop .18s ease-out; }
   @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -119,7 +120,7 @@
     padding: 14px 0 4px; min-height: 90px;
   }
   .hand .card:not(:last-child) .s2 { display: none; }
-  .hand .card { margin-left: -26px; transition: transform .12s, opacity .12s; cursor: pointer; }
+  .hand .card { margin-left: -30px; transition: transform .12s, opacity .12s; cursor: pointer; }
   .hand .card:first-child { margin-left: 0; }
   .hand .card.ok { transform: translateY(-10px); }
   .hand .card.no { opacity: .4; cursor: default; }
@@ -234,7 +235,7 @@ function sortHand(h) { h.sort((a, b) => SUITS.indexOf(a.s) - SUITS.indexOf(b.s) 
 function cardEl(c) {
   const el = document.createElement("div");
   el.className = "card" + (isRed(c.s) ? " red" : "");
-  el.innerHTML = `<span class="r">${rankText(c.r)}</span><span class="s1">${c.s}</span><span class="s2">${c.s}</span>`;
+  el.innerHTML = `<span class="r${c.r === 10 ? " ten" : ""}">${rankText(c.r)}</span><span class="s1">${c.s}</span><span class="s2">${c.s}</span>`;
   return el;
 }
 
