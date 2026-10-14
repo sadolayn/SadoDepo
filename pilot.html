@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Nehir Pilotu</title>
+<style>
+  :root { --bg: #000; --ink: #f2f2f2; --muted: #8a8a8a; --accent: #e0a24f; --line: #262626; --card: #0d0d0d; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); overscroll-behavior: none; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 480px; margin: 0 auto; padding: 8px; user-select: none; touch-action: none; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  header h1 { margin: 0; font-size: 19px; }
+  .hud { display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 8px; align-items: center; font-size: 13px; margin-bottom: 6px; }
+  .hud b { font-size: 16px; }
+  .fuel { height: 14px; border-radius: 99px; background: #222; border: 1px solid #333; position: relative; overflow: hidden; }
+  .fuel i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, #ef6a4c, #e0a24f 35%, #3fc283 70%); border-radius: 99px; }
+  .fuel span { position: absolute; inset: 0; text-align: center; font-size: 10px; line-height: 13px; font-weight: 700; color: #000; mix-blend-mode: screen; }
+  .wrap { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+  canvas { display: block; width: 100%; height: auto; background: #1b5a2a; }
+  .overlay { position: absolute; inset: 0; background: rgba(0,0,0,.72); display: flex; align-items: center; justify-content: center; padding: 18px; }
+  .overlay.hide { display: none; }
+  .box { text-align: center; }
+  .box h2 { margin: 0 0 6px; font-size: 28px; color: var(--accent); letter-spacing: 1px; }
+  .box p { margin: 0 0 14px; color: #ccc; font-size: 14px; line-height: 1.5; }
+  .btn { padding: 13px 28px; border-radius: 12px; background: var(--accent); border: none; color: #000; font-size: 17px; font-weight: 800; cursor: pointer; }
+  .tip { text-align: center; font-size: 12px; color: var(--muted); margin-top: 6px; }
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html">← Menü</a>
+  <h1>✈️ Nehir Pilotu</h1>
+  <span style="width:52px"></span>
+</header>
+<div class="hud">
+  <div>Puan <b id="score">0</b></div>
+  <div class="fuel"><i id="fuelBar" style="width:100%"></i><span>YAKIT</span></div>
+  <div style="text-align:right"><span id="lives">✈️✈️✈️</span></div>
+</div>
+<div class="wrap" id="wrap">
+  <canvas id="c" width="360" height="560"></canvas>
+  <div class="overlay" id="ov"><div class="box" id="box"></div></div>
+</div>
+<div class="tip">Parmağını sağa sola kaydırarak uç · ateş otomatik · yakıt depolarının üzerinden geç</div>
+
+<script>
+const cv = document.getElementById("c");
+const ctx = cv.getContext("2d");
+const W = 360, H = 560, SEG = 24, PLANE_Y = H - 90;
+const $ = (x) => document.getElementById(x);
+let best = 0;
+try { best = Number(localStorage.getItem("pilotBest")) || 0; } catch (e) {}
+
+let st, raf = null, last = 0;
+const keys = {};
+let touchX = null;
+
+// ---------- Nehir üretimi ----------
+function newRiver() {
+  return { segs: [], center: W / 2, width: 220, nextBridge: 70, count: 0 };
+}
+function genSeg(r, y) {
+  r.count++;
+  const s = { y, l: 0, r: 0, il: 0, ir: 0, bridge: false };
+  if (r.count === r.nextBridge) {
+    s.bridge = true;
+    r.nextBridge += 55 + Math.floor(Math.random() * 25);
+    r.width = 120; r.center = W / 2;
+  } else if (r.count > r.nextBridge - 4 || r.count < r.nextBridge - 55 + 4 && r.count > 5 && false) {
+    r.width += (120 - r.width) * 0.5; r.center += (W / 2 - r.center) * 0.5;
+  } else {
+    r.width += (Math.random() - 0.5) * 34;
+    r.width = Math.max(110, Math.min(320, r.width));
+    r.center += (Math.random() - 0.5) * 30;
+    const half = r.width / 2;
+    r.center = Math.max(half + 6, Math.min(W - half - 6, r.center));
+  }
+  // Köprüye yaklaşırken daral
+  if (r.nextBridge - r.count < 5 && !s.bridge) { r.width += (120 - r.width) * 0.45; r.center += (W / 2 - r.center) * 0.45; }
+  s.l = Math.round(r.center - r.width / 2);
+  s.r = Math.round(r.center + r.width / 2);
+  // Ada
+  if (!s.bridge && r.width > 250 && r.count > 8 && r.nextBridge - r.count > 8) {
+    r.island = (r.island || 0) > 0 ? r.island - 1 : Math.random() < 0.04 ? 10 + Math.floor(Math.random() * 14) : 0;
+    if (r.island > 0) {
+      const iw = Math.min(r.width - 150, 40 + (r.island % 7) * 6);
+      s.il = Math.round(r.center - iw / 2); s.ir = Math.round(r.center + iw / 2);
+    }
+  } else r.island = 0;
+  return s;
+}
+function waterSpans(s) {
+  if (s.il) return [[s.l, s.il], [s.ir, s.r]];
+  return [[s.l, s.r]];
+}
+function segAt(wy) {
+  for (const s of st.river.segs) if (wy >= s.y && wy < s.y + SEG) return s;
+  return null;
+}
+
+// ---------- Nesneler ----------
+function spawnOn(s) {
+  if (s.bridge) { st.objs.push({ t: "bridge", x: s.l - 40, y: s.y + 2, w: s.r - s.l + 80, h: SEG - 4, hp: 1 }); return; }
+  if (st.river.count < 12) return;
+  const spans = waterSpans(s);
+  const sp = spans[Math.floor(Math.random() * spans.length)];
+  const roomy = sp[1] - sp[0];
+  const rnd = Math.random();
+  const lvl = Math.min(1, st.dist / 40000);
+  if (rnd < 0.035 && roomy > 50) {
+    st.objs.push({ t: "fuel", x: sp[0] + 10 + Math.random() * (roomy - 40), y: s.y - 20, w: 22, h: 38 });
+  } else if (rnd < 0.035 + 0.07 + lvl * 0.03 && roomy > 60) {
+    const w = 38;
+    st.objs.push({ t: "boat", x: sp[0] + 6 + Math.random() * (roomy - w - 12), y: s.y, w, h: 14, vx: Math.random() < 0.5 ? 0 : (Math.random() < 0.5 ? -1 : 1) * (0.5 + lvl), lo: sp[0], hi: sp[1] });
+  } else if (rnd < 0.035 + 0.12 + lvl * 0.06 && roomy > 50) {
+    const w = 30;
+    st.objs.push({ t: "heli", x: sp[0] + 6 + Math.random() * (roomy - w - 12), y: s.y, w, h: 18, vx: Math.random() < 0.4 ? 0 : (Math.random() < 0.5 ? -1 : 1) * (0.8 + lvl * 1.2), lo: sp[0], hi: sp[1], ph: Math.random() * 6 });
+  } else if (rnd < 0.035 + 0.12 + lvl * 0.06 + 0.008 + lvl * 0.012) {
+    const dir = Math.random() < 0.5 ? -1 : 1;
+    st.objs.push({ t: "jet", x: dir > 0 ? -40 : W + 10, y: s.y, w: 30, h: 12, vx: dir * (2.6 + lvl * 1.5), free: true });
+  }
+}
+
+// ---------- Oyun ----------
+function newGame() {
+  st = { river: newRiver(), objs: [], bullets: [], booms: [], dist: 0, speed: 2, px: W / 2, fuel: 100, score: 0, lives: 3, dead: 0, cool: 0, over: false, lowFuelBeep: 0, checkpoint: 0 };
+  // Ekranı başlangıçta doldur (dünya koordinatı: y yukarı doğru azalır)
+  for (let y = H; y > -SEG * 4; y -= SEG) st.river.segs.unshift(genSeg(st.river, y));
+  st.river.segs.sort((a, b) => a.y - b.y);
+  hud();
+}
+function respawn() {
+  st.objs = st.objs.filter((o) => o.t === "bridge" && o.y > st.cam + PLANE_Y + 40 ? false : !(o.y > st.cam - 40 && o.y < st.cam + H));
+  const s = segAt(st.cam + PLANE_Y);
+  const spans = s ? waterSpans(s) : [[W / 2 - 40, W / 2 + 40]];
+  const big = spans.sort((a, b) => (b[1] - b[0]) - (a[1] - a[0]))[0];
+  st.px = (big[0] + big[1]) / 2;
+  st.fuel = 100; st.speed = 2; st.dead = 0;
+}
+function hud() {
+  $("score").textContent = st.score;
+  $("fuelBar").style.width = Math.max(0, st.fuel) + "%";
+  $("lives").textContent = "✈️".repeat(Math.max(0, st.lives));
+}
+function crash() {
+  if (st.dead) return;
+  st.dead = 1;
+  st.booms.push({ x: st.px, y: st.cam + PLANE_Y, r: 0, big: true });
+  st.lives--;
+  hud();
+  if (navigator.vibrate) try { navigator.vibrate(150); } catch (e) {}
+}
+function overlap(a, b) { return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
+
+function step() {
+  if (st.dead) {
+    st.dead++;
+    updateBooms();
+    if (st.dead > 70) {
+      if (st.lives <= 0) return gameOver();
+      respawn();
+    }
+    return;
+  }
+  // Hız
+  let target = 2 + Math.min(1.6, st.dist / 25000);
+  if (keys.ArrowUp) target += 1.4;
+  if (keys.ArrowDown) target -= 0.9;
+  st.speed += (target - st.speed) * 0.08;
+  st.dist += st.speed;
+  st.cam = (st.cam ?? 0) - st.speed;
+  // Nehri üret
+  const segs = st.river.segs;
+  while (segs[0].y > st.cam - SEG * 3) { const s = genSeg(st.river, segs[0].y - SEG); segs.unshift(s); spawnOn(s); }
+  while (segs.length && segs[segs.length - 1].y > st.cam + H + SEG) segs.pop();
+  // Yön
+  let vx = 0;
+  if (keys.ArrowLeft) vx -= 4;
+  if (keys.ArrowRight) vx += 4;
+  if (touchX != null) vx = Math.max(-5, Math.min(5, (touchX - st.px) * 0.25));
+  st.px += vx;
+  st.tilt = vx;
+  st.px = Math.max(8, Math.min(W - 8, st.px));
+  const plane = { x: st.px - 11, y: st.cam + PLANE_Y - 10, w: 22, h: 22 };
+  // Kıyıya çarpma
+  for (const yy of [plane.y + 4, plane.y + plane.h - 4]) {
+    const s = segAt(yy);
+    if (!s) continue;
+    const inWater = waterSpans(s).some(([a, b]) => plane.x + 3 > a && plane.x + plane.w - 3 < b);
+    if (!inWater && !s.bridge) return crash();
+  }
+  // Yakıt
+  st.fuel -= 0.045 * st.speed;
+  let refuel = false;
+  // Ateş
+  st.cool--;
+  if (st.cool <= 0 && (touchX != null || keys[" "] || autoFire)) {
+    st.bullets.push({ x: st.px - 1.5, y: st.cam + PLANE_Y - 16, w: 3, h: 12 });
+    st.cool = 9;
+  }
+  for (const b of st.bullets) b.y -= 9 + st.speed;
+  st.bullets = st.bullets.filter((b) => b.y > st.cam - 20 && !b.hit);
+  // Nesneler
+  for (const o of st.objs) {
+    if (o.dead) continue;
+    if (o.vx) {
+      o.x += o.vx;
+      if (o.free) { if (o.x < -60 || o.x > W + 60) o.dead = true; }
+      else if (o.x < o.lo + 2 || o.x + o.w > o.hi - 2) o.vx *= -1;
+    }
+    if (o.t === "heli") o.ph += 0.6;
+    for (const b of st.bullets) {
+      if (!b.hit && overlap(b, o)) {
+        b.hit = true; o.dead = true;
+        st.score += { boat: 30, heli: 60, fuel: 80, jet: 100, bridge: 500 }[o.t];
+        st.booms.push({ x: o.x + o.w / 2, y: o.y + o.h / 2, r: 0, big: o.t === "bridge" || o.t === "fuel" });
+        if (o.t === "bridge") st.checkpoint = o.y;
+        hud();
+      }
+    }
+    if (o.dead) continue;
+    if (overlap(plane, o)) {
+      if (o.t === "fuel") refuel = true;
+      else { o.dead = true; st.booms.push({ x: o.x + o.w / 2, y: o.y + o.h / 2, r: 0 }); return crash(); }
+    }
+  }
+  st.objs = st.objs.filter((o) => !o.dead && o.y < st.cam + H + 50);
+  if (refuel) st.fuel = Math.min(100, st.fuel + 0.9);
+  if (st.fuel <= 0) { st.fuel = 0; hud(); return crash(); }
+  updateBooms();
+}
+function updateBooms() { for (const b of st.booms) b.r += 1.6; st.booms = st.booms.filter((b) => b.r < (b.big ? 40 : 24)); }
+
+// ---------- Çizim ----------
+function draw() {
+  const cam = st.cam ?? 0;
+  // Kara
+  ctx.fillStyle = "#1f6b30"; ctx.fillRect(0, 0, W, H);
+  // Su ve kıyı
+  for (const s of st.river.segs) {
+    const y = s.y - cam;
+    if (y > H || y + SEG < 0) continue;
+    ctx.fillStyle = "#2b5fc9";
+    ctx.fillRect(s.l, y, s.r - s.l, SEG + 1);
+    if (s.il) { ctx.fillStyle = "#1f6b30"; ctx.fillRect(s.il, y, s.ir - s.il, SEG + 1); }
+    // kıyı çizgileri
+    ctx.fillStyle = "#c9b27a";
+    ctx.fillRect(s.l - 3, y, 3, SEG + 1); ctx.fillRect(s.r, y, 3, SEG + 1);
+    if (s.il) { ctx.fillRect(s.il, y, 3, SEG + 1); ctx.fillRect(s.ir - 3, y, 3, SEG + 1); }
+    // dalga
+    if ((s.y / SEG) % 3 === 0) { ctx.fillStyle = "rgba(255,255,255,.12)"; ctx.fillRect(s.l + ((s.y * 7) % Math.max(1, s.r - s.l - 20)), y + 8, 14, 2); }
+    // ağaçlar
+    if ((Math.abs(s.y) / SEG) % 4 === 1) {
+      ctx.fillStyle = "#17521f";
+      const tx = (Math.abs(s.y) * 13) % Math.max(1, s.l - 20);
+      if (s.l > 30) { ctx.beginPath(); ctx.arc(tx + 10, y + 12, 8, 0, 7); ctx.fill(); }
+      const tx2 = s.r + 12 + (Math.abs(s.y) * 7) % Math.max(1, W - s.r - 30);
+      if (W - s.r > 30) { ctx.beginPath(); ctx.arc(tx2, y + 12, 8, 0, 7); ctx.fill(); }
+    }
+    // köprü yolu
+    if (s.bridge) { ctx.fillStyle = "#3a3a3a"; ctx.fillRect(0, y + 4, W, SEG - 8); ctx.fillStyle = "#e0a24f"; for (let x = 4; x < W; x += 22) ctx.fillRect(x, y + SEG / 2 - 1, 10, 2); }
+  }
+  // Nesneler
+  for (const o of st.objs) {
+    const y = o.y - cam;
+    if (y > H + 40 || y < -60) continue;
+    if (o.t === "bridge") {
+      ctx.fillStyle = "#8a6a3a"; ctx.fillRect(o.x, y, o.w, o.h);
+      ctx.fillStyle = "#5c4422"; for (let x = o.x; x < o.x + o.w; x += 12) ctx.fillRect(x, y, 3, o.h);
+      ctx.fillStyle = "#e0a24f"; ctx.fillRect(o.x, y, o.w, 3); ctx.fillRect(o.x, y + o.h - 3, o.w, 3);
+    } else if (o.t === "fuel") {
+      ctx.fillStyle = "#f2f2f2"; ctx.fillRect(o.x, y, o.w, o.h);
+      ctx.fillStyle = "#d63a2c"; ctx.fillRect(o.x, y + 4, o.w, 9); ctx.fillRect(o.x, y + 25, o.w, 9);
+      ctx.fillStyle = "#111"; ctx.font = "bold 9px system-ui"; ctx.textAlign = "center"; ctx.fillText("YKT", o.x + o.w / 2, y + 22);
+    } else if (o.t === "boat") {
+      ctx.fillStyle = "#3b3b3b"; ctx.beginPath(); ctx.moveTo(o.x, y + 5); ctx.lineTo(o.x + o.w, y + 5); ctx.lineTo(o.x + o.w - 6, y + o.h); ctx.lineTo(o.x + 6, y + o.h); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = "#d9d9d9"; ctx.fillRect(o.x + 12, y - 2, 14, 7);
+    } else if (o.t === "heli") {
+      ctx.fillStyle = "#e8c23a"; ctx.fillRect(o.x + 6, y + 6, 16, 10); ctx.fillRect(o.x + (o.vx < 0 ? 20 : -2), y + 9, 10, 3);
+      ctx.fillStyle = "#222"; const rw = 14 + Math.sin(o.ph) * 12; ctx.fillRect(o.x + 14 - rw / 2, y + 3, rw, 2);
+    } else if (o.t === "jet") {
+      ctx.fillStyle = "#b0b6c4"; ctx.beginPath();
+      if (o.vx > 0) { ctx.moveTo(o.x + o.w, y + 6); ctx.lineTo(o.x, y); ctx.lineTo(o.x + 6, y + 6); ctx.lineTo(o.x, y + 12); }
+      else { ctx.moveTo(o.x, y + 6); ctx.lineTo(o.x + o.w, y); ctx.lineTo(o.x + o.w - 6, y + 6); ctx.lineTo(o.x + o.w, y + 12); }
+      ctx.closePath(); ctx.fill();
+    }
+  }
+  // Mermiler
+  ctx.fillStyle = "#ffe08a";
+  for (const b of st.bullets) ctx.fillRect(b.x, b.y - cam, b.w, b.h);
+  // Uçak
+  if (!st.dead) drawPlane(st.px, PLANE_Y, st.tilt || 0);
+  // Patlamalar
+  for (const b of st.booms) {
+    const y = b.y - cam;
+    ctx.fillStyle = `rgba(255,${160 - b.r * 3},40,${1 - b.r / (b.big ? 40 : 24)})`;
+    ctx.beginPath(); ctx.arc(b.x, y, b.r, 0, 7); ctx.fill();
+  }
+  // Düşük yakıt uyarısı
+  if (st.fuel < 25 && !st.dead && Math.floor(Date.now() / 300) % 2) {
+    ctx.fillStyle = "rgba(239,106,76,.9)"; ctx.font = "bold 16px system-ui"; ctx.textAlign = "center"; ctx.fillText("YAKIT AZ!", W / 2, 30);
+  }
+}
+function drawPlane(x, y, tilt) {
+  const t = Math.max(-1, Math.min(1, tilt / 4));
+  ctx.save(); ctx.translate(x, y);
+  ctx.fillStyle = "#e0a24f";
+  ctx.beginPath(); ctx.moveTo(0, -14); ctx.lineTo(3, -4); ctx.lineTo(13 - t * 4, 4); ctx.lineTo(13 - t * 4, 7); ctx.lineTo(3, 4); ctx.lineTo(3, 9); ctx.lineTo(7, 13); ctx.lineTo(-7, 13); ctx.lineTo(-3, 9); ctx.lineTo(-3, 4); ctx.lineTo(-13 - t * 4, 7); ctx.lineTo(-13 - t * 4, 4); ctx.lineTo(-3, -4); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#6b3f10"; ctx.fillRect(-1.5, -9, 3, 5);
+  ctx.restore();
+}
+
+// ---------- Döngü ----------
+let autoFire = false, acc = 0, frame = 0;
+function loop(t) {
+  if (!last) last = t;
+  acc += Math.min(100, t - last);
+  last = t;
+  while (acc >= 16.67 && !st.over) { step(); acc -= 16.67; if (++frame % 5 === 0) hud(); }
+  draw();
+  if (!st.over) raf = requestAnimationFrame(loop);
+}
+function start() {
+  newGame();
+  st.cam = 0;
+  $("ov").classList.add("hide");
+  last = 0; acc = 0;
+  cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(loop);
+}
+function gameOver() {
+  st.over = true;
+  if (st.score > best) { best = st.score; try { localStorage.setItem("pilotBest", best); } catch (e) {} }
+  showBox(`<h2>Oyun bitti</h2><p>Puan: <b>${st.score}</b><br>En iyi: <b>${best}</b></p><button class="btn" id="go">Tekrar uç</button>`);
+}
+function showBox(html) { $("box").innerHTML = html; $("ov").classList.remove("hide"); $("go").onclick = start; }
+
+// ---------- Kontroller ----------
+function toGame(e) {
+  const r = cv.getBoundingClientRect();
+  const p = e.touches ? e.touches[0] : e;
+  return ((p.clientX - r.left) / r.width) * W;
+}
+cv.addEventListener("touchstart", (e) => { e.preventDefault(); touchX = toGame(e); }, { passive: false });
+cv.addEventListener("touchmove", (e) => { e.preventDefault(); touchX = toGame(e); }, { passive: false });
+cv.addEventListener("touchend", (e) => { e.preventDefault(); if (!e.touches.length) touchX = null; }, { passive: false });
+cv.addEventListener("mousedown", (e) => { touchX = toGame(e); });
+cv.addEventListener("mousemove", (e) => { if (e.buttons) touchX = toGame(e); });
+window.addEventListener("mouseup", () => (touchX = null));
+window.addEventListener("keydown", (e) => { keys[e.key] = true; if (e.key === " ") { autoFire = true; e.preventDefault(); } });
+window.addEventListener("keyup", (e) => { keys[e.key] = false; if (e.key === " ") autoFire = false; });
+
+newGame(); st.cam = 0; draw();
+showBox(`<h2>✈️ Nehir Pilotu</h2><p>Nehrin üzerinde uç, kıyılara çarpma.<br>Gemileri, helikopterleri ve köprüleri vur.<br>Yakıtın bitmeden <b>YKT</b> depolarının üzerinden geç.<br><br>En iyi puan: <b>${best}</b></p><button class="btn" id="go">Uçuşa başla</button>`);
+</script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
