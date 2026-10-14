@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Takvim</title>
+<style>
+  :root {
+    --bg: #000000;
+    --card: #0d0d0d;
+    --field: #161616;
+    --ink: #f2f2f2;
+    --muted: #8a8a8a;
+    --accent: #e0a24f;
+    --line: #262626;
+    --hol: #ef6a4c;
+    --half: #e8b52b;
+    --dini: #3fc283;
+    --work: #5aa9f0;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 12px 14px 24px; }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  header h1 { margin: 0; font-size: 20px; }
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px; margin-bottom: 12px; }
+  .tabs button { border: none; background: transparent; color: var(--muted); padding: 10px 4px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .tabs button.active { background: var(--accent); color: #000; }
+  .panel { display: none; } .panel.active { display: block; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+
+  .mhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .mhead button { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 20px; cursor: pointer; }
+  .mhead .mt { text-align: center; }
+  .mhead .mt b { font-size: 19px; display: block; }
+  .mhead .mt span { font-size: 12px; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .dow { text-align: center; font-size: 11px; color: var(--muted); padding: 4px 0; font-weight: 600; }
+  .day {
+    aspect-ratio: 1 / 1.05; border-radius: 10px; background: var(--field); border: 1px solid transparent;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 15px; position: relative; cursor: pointer;
+  }
+  .day.empty { background: transparent; cursor: default; }
+  .day.we { color: #7d7d7d; background: #101010; }
+  .day.hol { background: rgba(239,106,76,.18); color: #ffb3a1; border-color: rgba(239,106,76,.5); }
+  .day.half { background: linear-gradient(135deg, var(--field) 50%, rgba(232,181,43,.25) 50%); border-color: rgba(232,181,43,.5); }
+  .day.today { outline: 2px solid var(--accent); }
+  .day.sel { background: var(--accent) !important; color: #000 !important; }
+  .day i { position: absolute; bottom: 5px; width: 5px; height: 5px; border-radius: 50%; }
+  .day i.d { background: var(--dini); }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; color: var(--muted); margin-top: 10px; }
+  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .legend .l1::before { background: rgba(239,106,76,.6); }
+  .legend .l2::before { background: rgba(232,181,43,.6); }
+  .legend .l3::before { background: var(--dini); border-radius: 50%; }
+  .legend .l4::before { background: #222; }
+  .detail { font-size: 14px; line-height: 1.5; min-height: 22px; }
+  .detail b { color: var(--accent); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat { background: var(--field); border-radius: 12px; padding: 10px; text-align: center; }
+  .stat b { display: block; font-size: 22px; }
+  .stat span { font-size: 11px; color: var(--muted); }
+  .list .it { display: flex; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); align-items: center; }
+  .list .it:first-child { border-top: none; }
+  .list .dt { width: 52px; text-align: center; flex: none; }
+  .list .dt b { display: block; font-size: 19px; }
+  .list .dt span { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+  .list .nm { flex: 1; font-size: 14px; }
+  .list .nm small { display: block; color: var(--muted); font-size: 12px; }
+  .tag { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 99px; white-space: nowrap; }
+  .tag.t1 { background: rgba(239,106,76,.18); color: var(--hol); }
+  .tag.t2 { background: rgba(232,181,43,.18); color: var(--half); }
+  .tag.t3 { background: rgba(63,194,131,.15); color: var(--dini); }
+  .left { font-size: 11px; color: var(--muted); }
+  h3 { margin: 0 0 8px; font-size: 15px; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 5px; }
+  input, select { width: 100%; padding: 12px; font-size: 16px; background: var(--field); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; outline: none; -webkit-appearance: none; appearance: none; color-scheme: dark; }
+  input:focus, select:focus { border-color: var(--accent); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .big { text-align: center; padding: 12px 0 4px; }
+  .big span { display: block; font-size: 13px; color: var(--muted); }
+  .big b { font-size: 30px; color: var(--accent); }
+  .rows div { display: flex; justify-content: space-between; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  .rows div span:first-child { color: var(--muted); }
+  .note { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 8px; }
+  .yearsel { display: flex; gap: 6px; margin-bottom: 8px; }
+  .yearsel button { flex: 1; padding: 9px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-weight: 600; cursor: pointer; }
+  .yearsel button.active { background: var(--accent); color: #000; border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a href="index.html">← Menü</a>
+    <h1>📅 Takvim</h1>
+    <span style="width:52px"></span>
+  </header>
+
+  <div class="tabs">
+    <button data-tab="ay" class="active">Aylık</button>
+    <button data-tab="hesap">İş günü hesapla</button>
+    <button data-tab="liste">Tatil listesi</button>
+  </div>
+
+  <!-- Aylık takvim -->
+  <section class="panel active" id="ay">
+    <div class="card">
+      <div class="mhead">
+        <button id="prev" aria-label="Önceki ay">‹</button>
+        <div class="mt"><b id="mTitle"></b><span id="mSub"></span></div>
+        <button id="next" aria-label="Sonraki ay">›</button>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="legend"><span class="l1">Resmi tatil</span><span class="l2">Yarım gün</span><span class="l3">Dini gün</span><span class="l4">Hafta sonu</span></div>
+    </div>
+    <div class="card"><div class="detail" id="detail">Ayrıntı için bir güne dokun.</div></div>
+    <div class="card">
+      <h3 id="sumTitle">Bu ay</h3>
+      <div class="stats">
+        <div class="stat"><b id="sWork">0</b><span>İş günü</span></div>
+        <div class="stat"><b id="sHol">0</b><span>Tatil (hafta içi)</span></div>
+        <div class="stat"><b id="sHalf">0</b><span>Yarım gün</span></div>
+      </div>
+      <div class="list" id="mList" style="margin-top:8px"></div>
+    </div>
+  </section>
+
+  <!-- İş günü hesaplama -->
+  <section class="panel" id="hesap">
+    <div class="card">
+      <h3>İki tarih arasında kaç iş günü var?</h3>
+      <div class="two">
+        <div><label>Başlangıç</label><input type="date" id="h1a"></div>
+        <div><label>Bitiş</label><input type="date" id="h1b"></div>
+      </div>
+      <label>Yarım günler (arife)</label>
+      <select id="hHalf">
+        <option value="1">Tam iş günü say</option>
+        <option value="0.5">Yarım gün say</option>
+        <option value="0">Tatil say</option>
+      </select>
+      <div class="big"><span>İş günü</span><b id="h1out">–</b></div>
+      <div class="rows" id="h1rows"></div>
+    </div>
+    <div class="card">
+      <h3>Şu tarihten X iş günü sonrası ne zaman?</h3>
+      <div class="two">
+        <div><label>Başlangıç</label><input type="date" id="h2a"></div>
+        <div><label>İş günü sayısı</label><input type="number" id="h2n" inputmode="numeric" value="10" min="0" max="500"></div>
+      </div>
+      <label>Yön</label>
+      <select id="h2dir"><option value="1">İleri (sonrası)</option><option value="-1">Geri (öncesi)</option></select>
+      <div class="big"><span id="h2lbl">Sonuç</span><b id="h2out">–</b></div>
+      <div class="rows" id="h2rows"></div>
+      <p class="note">Başlangıç günü sayılmaz; sayım ertesi iş gününden başlar. Hafta sonları, resmi tatiller ve bayramlar atlanır; arifeler yukarıdaki yarım gün ayarına göre iş günü kabul edilir.</p>
+    </div>
+  </section>
+
+  <!-- Liste -->
+  <section class="panel" id="liste">
+    <div class="yearsel" id="yearsel"></div>
+    <div class="card"><div class="list" id="yList"></div></div>
+    <p class="note">Resmi tatiller 2429 sayılı Kanun'a göre; bayram tarihleri Diyanet takvimine göre. Hükümetin ayrıca ilan edebileceği idari izinler bu listede yer almaz.</p>
+  </section>
+</div>
+
+<script>
+// ================= Veri =================
+const YEARS = [2026, 2027];
+const FIXED = [
+  ["01-01", "Yılbaşı", "tam"],
+  ["04-23", "Ulusal Egemenlik ve Çocuk Bayramı", "tam"],
+  ["05-01", "Emek ve Dayanışma Günü", "tam"],
+  ["05-19", "Atatürk'ü Anma, Gençlik ve Spor Bayramı", "tam"],
+  ["07-15", "Demokrasi ve Millî Birlik Günü", "tam"],
+  ["08-30", "Zafer Bayramı", "tam"],
+  ["10-28", "Cumhuriyet Bayramı arifesi", "yarim"],
+  ["10-29", "Cumhuriyet Bayramı", "tam"],
+];
+const RELIGIOUS = {
+  2026: [
+    ["03-19", "Ramazan Bayramı arifesi", "yarim"],
+    ["03-20", "Ramazan Bayramı 1. gün", "tam"],
+    ["03-21", "Ramazan Bayramı 2. gün", "tam"],
+    ["03-22", "Ramazan Bayramı 3. gün", "tam"],
+    ["05-26", "Kurban Bayramı arifesi", "yarim"],
+    ["05-27", "Kurban Bayramı 1. gün", "tam"],
+    ["05-28", "Kurban Bayramı 2. gün", "tam"],
+    ["05-29", "Kurban Bayramı 3. gün", "tam"],
+    ["05-30", "Kurban Bayramı 4. gün", "tam"],
+  ],
+  2027: [
+    ["03-08", "Ramazan Bayramı arifesi", "yarim"],
+    ["03-09", "Ramazan Bayramı 1. gün", "tam"],
+    ["03-10", "Ramazan Bayramı 2. gün", "tam"],
+    ["03-11", "Ramazan Bayramı 3. gün", "tam"],
+    ["05-15", "Kurban Bayramı arifesi", "yarim"],
+    ["05-16", "Kurban Bayramı 1. gün", "tam"],
+    ["05-17", "Kurban Bayramı 2. gün", "tam"],
+    ["05-18", "Kurban Bayramı 3. gün", "tam"],
+    ["05-19", "Kurban Bayramı 4. gün", "tam"],
+  ],
+};
+// Tatil olmayan dini günler (Diyanet)
+const DINI = {
+  2026: [
+    ["01-15", "Miraç Kandili"],
+    ["02-02", "Berat Kandili"],
+    ["02-19", "Ramazan başlangıcı"],
+    ["03-16", "Kadir Gecesi"],
+    ["06-16", "Hicri Yılbaşı"],
+    ["06-25", "Aşure Günü"],
+    ["08-24", "Mevlid Kandili"],
+    ["12-10", "Üç Ayların başlangıcı · Regaip Kandili"],
+  ],
+  2027: [],
+};
+
+// Tarih anahtarı → kayıtlar
+const DAYS = new Map();
+function add(key, name, type) { if (!DAYS.has(key)) DAYS.set(key, []); DAYS.get(key).push({ name, type }); }
+for (const y of YEARS) {
+  for (const [md, n, t] of FIXED) add(`${y}-${md}`, n, t);
+  for (const [md, n, t] of RELIGIOUS[y] || []) add(`${y}-${md}`, n, t);
+  for (const [md, n] of DINI[y] || []) add(`${y}-${md}`, n, "dini");
+}
+
+const $ = (x) => document.getElementById(x);
+const pad = (n) => String(n).padStart(2, "0");
+const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parse = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d, 12); };
+const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+const DOW = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+const fmtLong = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
+
+function info(d) {
+  const recs = DAYS.get(keyOf(d)) || [];
+  const we = d.getDay() === 0 || d.getDay() === 6;
+  const full = recs.some((r) => r.type === "tam");
+  const half = !full && recs.some((r) => r.type === "yarim");
+  const dini = recs.filter((r) => r.type === "dini");
+  return { recs, we, full, half, dini };
+}
+// İş günü değeri: 1, 0.5 ya da 0
+function workValue(d, halfVal) {
+  const i = info(d);
+  if (i.we || i.full) return 0;
+  if (i.half) return halfVal;
+  return 1;
+}
+const inRange = (d) => YEARS.includes(d.getFullYear());
+
+// ================= Aylık görünüm =================
+const today = new Date(); today.setHours(12, 0, 0, 0);
+let view = new Date(today.getFullYear(), today.getMonth(), 1, 12);
+let selected = null;
+
+function renderMonth() {
+  const y = view.getFullYear(), m = view.getMonth();
+  $("mTitle").textContent = `${MONTHS[m]} ${y}`;
+  $("mSub").textContent = inRange(view) ? "" : "Bu yıl için bayram tarihleri yüklenmedi";
+  const g = $("grid");
+  g.innerHTML = DOW.map((d) => `<div class="dow">${d}</div>`).join("");
+  const first = new Date(y, m, 1, 12);
+  const offset = (first.getDay() + 6) % 7;
+  for (let i = 0; i < offset; i++) g.insertAdjacentHTML("beforeend", '<div class="day empty"></div>');
+  const days = new Date(y, m + 1, 0).getDate();
+  let work = 0, hol = 0, halfC = 0;
+  const monthItems = [];
+  for (let d = 1; d <= days; d++) {
+    const dt = new Date(y, m, d, 12);
+    const i = info(dt);
+    const cls = ["day"];
+    if (i.we) cls.push("we");
+    if (i.full) cls.push("hol");
+    if (i.half) cls.push("half");
+    if (keyOf(dt) === keyOf(today)) cls.push("today");
+    if (selected && keyOf(dt) === keyOf(selected)) cls.push("sel");
+    const el = document.createElement("div");
+    el.className = cls.join(" ");
+    el.innerHTML = `${d}${i.dini.length ? '<i class="d"></i>' : ""}`;
+    el.onclick = () => { selected = dt; renderMonth(); showDetail(dt); };
+    g.appendChild(el);
+    const v = workValue(dt, 1);
+    if (!i.we && !i.full) work++;
+    if (!i.we && i.full) hol++;
+    if (!i.we && i.half) halfC++;
+    for (const r of i.recs) monthItems.push({ dt, ...r });
+  }
+  $("sWork").textContent = work;
+  $("sHol").textContent = hol;
+  $("sHalf").textContent = halfC;
+  $("sumTitle").textContent = `${MONTHS[m]} ${y} özeti`;
+  $("mList").innerHTML = monthItems.length ? monthItems.map(itemHTML).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmi tatil ya da dini gün yok.</div>';
+}
+function itemHTML(x) {
+  const tag = x.type === "tam" ? '<span class="tag t1">Tatil</span>' : x.type === "yarim" ? '<span class="tag t2">Yarım gün</span>' : '<span class="tag t3">Dini gün</span>';
+  const diff = Math.round((x.dt - today) / 86400000);
+  const left = diff > 0 ? `${diff} gün kaldı` : diff === 0 ? "Bugün" : "";
+  return `<div class="it"><div class="dt"><b>${x.dt.getDate()}</b><span>${MONTHS[x.dt.getMonth()].slice(0, 3)}</span></div>
+    <div class="nm">${x.name}<small>${x.dt.toLocaleDateString("tr-TR", { weekday: "long" })}${left ? " · " + left : ""}</small></div>${tag}</div>`;
+}
+function showDetail(d) {
+  const i = info(d);
+  let txt = `<b>${fmtLong(d)}</b><br>`;
+  if (i.recs.length) txt += i.recs.map((r) => r.name + (r.type === "yarim" ? " (öğleden sonra tatil)" : "")).join("<br>") + "<br>";
+  txt += i.we ? "Hafta sonu" : i.full ? "Resmi tatil — iş günü değil" : i.half ? "Yarım iş günü" : "İş günü";
+  if (!inRange(d)) txt += "<br><span style='color:var(--muted);font-size:12px'>Bu yıl için bayram tarihleri yüklenmedi.</span>";
+  $("detail").innerHTML = txt;
+}
+$("prev").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1, 12); renderMonth(); };
+$("next").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1, 12); renderMonth(); };
+
+// ================= İş günü hesaplama =================
+const halfVal = () => Number($("hHalf").value);
+const fmtN = (n) => n.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
+function calc1() {
+  if (!$("h1a").value || !$("h1b").value) return;
+  let a = parse($("h1a").value), b = parse($("h1b").value);
+  let sign = 1;
+  if (b < a) { [a, b] = [b, a]; sign = -1; }
+  let work = 0, we = 0, hol = 0, half = 0, total = 0, outside = false;
+  for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) {
+    total++;
+    if (!inRange(d)) outside = true;
+    const i = info(d);
+    if (i.we) we++; else if (i.full) hol++; else if (i.half) half++;
+    work += workValue(d, halfVal());
+  }
+  $("h1out").textContent = fmtN(work * sign) + " gün";
+  $("h1rows").innerHTML = [
+    ["Toplam takvim günü", total],
+    ["Hafta sonu", we],
+    ["Hafta içi resmi tatil", hol],
+    ["Yarım gün (arife)", half],
+  ].map(([k, v]) => `<div><span>${k}</span><span>${v}</span></div>`).join("") +
+    (outside ? `<div><span style="color:var(--half)">Not</span><span style="color:var(--half);font-size:12px;text-align:right">2026–2027 dışındaki bayramlar hesaba katılmadı</span></div>` : "");
+}
+function calc2() {
+  if (!$("h2a").value) return;
+  const n = Math.max(0, Math.floor(Number($("h2n").value) || 0));
+  const dir = Number($("h2dir").value);
+  const d = parse($("h2a").value);
+  let count = 0, skipped = [], outside = false, guard = 0;
+  while (count < n && guard++ < 3000) {
+    d.setDate(d.getDate() + dir);
+    if (!inRange(d)) outside = true;
+    const v = workValue(d, halfVal() === 0 ? 0 : 1);
+    if (v > 0) count++;
+    else { const i = info(d); if (!i.we) skipped.push(`${d.getDate()} ${MONTHS[d.getMonth()]} · ${i.recs.map((r) => r.name).join(", ")}`); }
+  }
+  $("h2lbl").textContent = `${n} iş günü ${dir > 0 ? "sonrası" : "öncesi"}`;
+  $("h2out").textContent = d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+  $("h2rows").innerHTML = `<div><span>Gün</span><span>${d.toLocaleDateString("tr-TR", { weekday: "long" })}</span></div>` +
+    (skipped.length ? `<div style="display:block"><span>Atlanan tatiller</span><br><span style="font-size:13px;color:var(--ink)">${skipped.join("<br>")}</span></div>` : "") +
+    (outside ? `<div><span style="color:var(--half)">Not</span><span style="color:var(--half);font-size:12px;text-align:right">2026–2027 dışındaki bayramlar hesaba katılmadı</span></div>` : "");
+}
+["h1a", "h1b", "hHalf"].forEach((x) => $(x).addEventListener("input", () => { calc1(); calc2(); }));
+["h2a", "h2n", "h2dir"].forEach((x) => $(x).addEventListener("input", calc2));
+
+// ================= Liste =================
+let listYear = YEARS.includes(today.getFullYear()) ? today.getFullYear() : YEARS[0];
+function renderList() {
+  $("yearsel").innerHTML = YEARS.map((y) => `<button data-y="${y}" class="${y === listYear ? "active" : ""}">${y}</button>`).join("");
+  $("yearsel").querySelectorAll("button").forEach((b) => (b.onclick = () => { listYear = Number(b.dataset.y); renderList(); }));
+  const items = [];
+  for (const [k, recs] of DAYS) if (k.startsWith(listYear + "-")) for (const r of recs) items.push({ dt: parse(k), ...r });
+  items.sort((a, b) => a.dt - b.dt);
+  let wd = 0; // hafta içine denk gelen tam tatil sayısı
+  const seen = new Set();
+  for (const x of items) if (x.type === "tam" && !seen.has(keyOf(x.dt))) { seen.add(keyOf(x.dt)); if (x.dt.getDay() % 6 !== 0) wd++; }
+  const note = listYear === 2027 && !DINI[2027].length ? '<div style="font-size:12px;color:var(--muted);padding:8px 0 4px">2027 kandil tarihleri Diyanet takvimi netleşince eklenecek.</div>' : "";
+  $("yList").innerHTML = `<div style="font-size:13px;color:var(--muted);padding-bottom:6px">${listYear} yılında hafta içine denk gelen <b style="color:var(--hol)">${wd}</b> tam gün tatil var.</div>` + items.map(itemHTML).join("") + note;
+}
+
+// ================= Sekmeler ve başlangıç =================
+document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach((x) => x.classList.remove("active"));
+  b.classList.add("active"); $(b.dataset.tab).classList.add("active");
+}));
+const iso = (d) => keyOf(d);
+$("h1a").value = iso(today);
+const endM = new Date(today.getFullYear(), today.getMonth() + 1, 0, 12);
+$("h1b").value = iso(endM);
+$("h2a").value = iso(today);
+selected = today;
+renderMonth(); showDetail(today); calc1(); calc2(); renderList();
+</script>
+<footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
+<script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
