@@ -6,6 +6,7 @@
 
 Telefonda kullanılabilen oyunlar ve araçlar:
 
+- **Takvim** (`takvim.html`): Resmi tatiller, bayramlar ve dini günler; iş günü hesaplama
 - **Hava Durumu** (`hava.html`): Konuma veya şehre göre anlık, saatlik ve 7 günlük tahmin
 - **Oyunlar** (`oyunlar.html`): Tüm oyunların listelendiği sayfa
 - **Batak** (`batak.html`): İhaleli batak, 3 bilgisayar rakibe karşı
