@@ -96,12 +96,18 @@
   <section class="panel active" id="bch">
     <div class="card">
       <h2>BCH Rotatif Kredi</h2>
-      <p class="hint">Borçlu cari hesap kullanımında faiz, kullanılan tutar üzerinden gün bazında işler.</p>
+      <p class="hint">Faiz yıllık oran üzerinden gün bazında işler: anapara × yıllık faiz × gün ÷ 360.</p>
       <label>Kullanılan tutar</label>
       <div class="field"><input id="b_tutar" type="text" inputmode="decimal" value="1.000.000"><span class="unit">TL</span></div>
       <div class="two">
-        <div><label>Aylık faiz</label><div class="field"><input id="b_faiz" type="text" inputmode="decimal" value="4,25"><span class="unit">%</span></div></div>
+        <div><label>Yıllık faiz</label><div class="field"><input id="b_faiz" type="text" inputmode="decimal" value="51"><span class="unit">%</span></div></div>
         <div><label>Kullanım süresi</label><div class="field"><input id="b_gun" type="text" inputmode="numeric" value="30"><span class="unit">gün</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>Gün esası</label>
+          <select id="b_esas"><option value="360">360 gün (kredi)</option><option value="365">365 gün</option></select>
+        </div>
+        <div></div>
       </div>
       <div class="two">
         <div><label>BSMV</label><div class="field"><input id="b_bsmv" type="text" inputmode="decimal" value="5"><span class="unit">%</span></div></div>
@@ -222,13 +228,15 @@ for (const id of ["b_tutar", "m_tutar", "t_tutar", "t_ucret", "k_borc", "k_odene
 
 // ---------- BCH ----------
 function calcBCH() {
-  const P = num("b_tutar"), r = num("b_faiz") / 100, g = num("b_gun");
+  const P = num("b_tutar"), ry = num("b_faiz") / 100, g = num("b_gun");
+  const esas = Number($("b_esas").value) || 360;
   const bsmv = num("b_bsmv") / 100, kkdf = num("b_kkdf") / 100;
-  const faiz = P * r * g / 30;
+  // Faiz = Anapara × Yıllık faiz × Gün / Gün esası
+  const faiz = P * ry * g / esas;
   const vB = faiz * bsmv, vK = faiz * kkdf;
   const top = faiz + vB + vK;
-  const yillik = r * 12 * 100;
-  const efektif = (Math.pow(1 + r * (1 + bsmv + kkdf), 12) - 1) * 100;
+  const aylik = ry / 12 * 100;
+  const efektif = (Math.pow(1 + (ry / 12) * (1 + bsmv + kkdf), 12) - 1) * 100;
   $("b_out").textContent = tl(top);
   rows("b_rows", [
     ["Faiz", tl(faiz)],
@@ -236,8 +244,8 @@ function calcBCH() {
     ["KKDF", tl(vK)],
     ["Günlük maliyet", tl(g ? top / g : 0)],
     ["Dönem sonu borç", tl(P + top), "total"],
-    ["Yıllık nominal faiz", pct(yillik)],
-    ["Yıllık efektif maliyet", pct(efektif)],
+    ["Aylık faiz karşılığı", pct(aylik)],
+    ["Yıllık efektif maliyet (vergiler dahil)", pct(efektif)],
   ]);
 }
 
@@ -385,7 +393,7 @@ try {
   if (t) document.querySelector(`.tabs button[data-tab="${t}"]`)?.click();
 } catch (e) {}
 
-document.querySelectorAll("#bch input").forEach((e) => e.addEventListener("input", calcBCH));
+document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventListener("input", calcBCH));
 document.querySelectorAll("#mev input, #mev select").forEach((e) => e.addEventListener("input", calcMev));
 document.querySelectorAll("#tk input").forEach((e) => e.addEventListener("input", calcTK));
 document.querySelectorAll("#kk input").forEach((e) => e.addEventListener("input", calcKK));
