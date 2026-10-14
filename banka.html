@@ -167,6 +167,21 @@
       <div class="rows" id="m_rows"></div>
     </div>
     <div class="card">
+      <h2>🧮 Vadesiz başabaş</h2>
+      <p class="hint">Anaparanın bir kısmı vadesizde kalırsa, aynı net getiriyi sağlamak için kalan tutara verilmesi gereken oran. Vadesiz kısım politika faiziyle değerlenir. Anapara, faiz, vade ve stopaj yukarıdan alınır.</p>
+      <div class="two">
+        <div><label>Politika faizi</label><div class="field"><input id="v_pf" type="text" inputmode="decimal" value="37"><span class="unit">%</span></div></div>
+        <div><label>Asgari vadesiz</label><div class="field"><input id="v_min" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>1. barem</label><div class="field"><input id="v_p1" type="text" inputmode="decimal" value="10"><span class="unit">%</span></div></div>
+        <div><label>2. barem</label><div class="field"><input id="v_p2" type="text" inputmode="decimal" value="20"><span class="unit">%</span></div></div>
+      </div>
+      <div class="big" style="margin-top:12px"><span>Hedef net getiri</span><b id="v_target">–</b></div>
+      <div id="v_out"></div>
+      <p class="note" id="v_note"></p>
+    </div>
+    <div class="card">
       <h2>⚖️ Ek faiz / rakip teklif</h2>
       <p class="hint">Müşteri başka bankadan daha yüksek oran aldıysa farkın gerçekte kaç TL ettiğini ve farkı nasıl kapatabileceğini gör. Anapara ve başlangıç tarihi yukarıdan alınır.</p>
       <div class="two">
@@ -332,7 +347,7 @@ function rows(id, list) {
   $(id).innerHTML = list.map(([k, v, cls]) => `<div class="${cls || ""}"><span>${k}</span><span>${v}</span></div>`).join("");
 }
 // Tutar alanlarını binlik ayırıcıyla biçimlendir
-for (const id of ["b_tutar", "m_tutar", "t_tutar", "t_ucret", "k_borc", "k_odenen", "k2_deger", "k2_tutar", "k2_masraf", "tr_tutar"]) {
+for (const id of ["b_tutar", "m_tutar", "v_min", "t_tutar", "t_ucret", "k_borc", "k_odenen", "k2_deger", "k2_tutar", "k2_masraf", "tr_tutar"]) {
   $(id).addEventListener("blur", () => {
     const n = num(id);
     $(id).value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 });
@@ -403,7 +418,35 @@ function quarterEnds(from, n) {
   }
   return out;
 }
+let vPfManual = false;
+function calcBreak(P, r, g, start) {
+  const sMan = stopajManual ? num("m_stopaj") / 100 : null;
+  if (!vPfManual && PPK.last && PPK.last.rate != null) $("v_pf").value = String(PPK.last.rate).replace(".", ",");
+  const pf = num("v_pf") / 100, mn = num("v_min");
+  if (!P || !g || !r) { $("v_target").textContent = "–"; $("v_out").innerHTML = ""; return; }
+  const target = netFor(P, r, g, start, sMan);
+  $("v_target").textContent = tl(target);
+  const unit = (amt) => netFor(amt, 1, g, start, sMan); // %100 oranla net getiri (oranı bulmak için)
+  const sc = [num("v_p1"), num("v_p2")].filter((x) => x > 0).map((pc) => {
+    const vad = Math.min(P, Math.max(mn, P * pc / 100));
+    const vVal = netFor(vad, pf, g, start, sMan);
+    const rest = P - vad, need = target - vVal;
+    const rate = rest > 0 ? need / unit(rest) : NaN;
+    return { pc, vad, vVal, rest, need, rate };
+  });
+  $("v_out").innerHTML = sc.map((x) => `<div class="rows" style="margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:4px 12px">
+      <div style="font-weight:700;color:var(--accent)"><span>%${nfx(x.pc)} barem${x.vad === mn && P * x.pc / 100 < mn ? " (asgari " + tl(mn) + ")" : ""}</span><span></span></div>
+      <div><span>Vadesizde kalan</span><span>${tl(x.vad)}</span></div>
+      <div><span>Vadesizin değeri (%${nfx(pf * 100)} politika faizi, net)</span><span>${tl(x.vVal)}</span></div>
+      <div><span>Kalan tutardan gereken net</span><span>${tl(x.target = x.need)}</span></div>
+      <div><span>Vadeliye giden tutar</span><span>${tl(x.rest)}</span></div>
+      <div class="total"><span>Kalan tutara verilecek oran</span><span>${isFinite(x.rate) ? "%" + nfx(Math.round(x.rate * 10000) / 100) : "–"}</span></div>
+    </div>`).join("");
+  $("v_note").textContent = `Hesap: ${tl(P)} × %${nfx(r * 100)} × ${g} gün = ${tl(target)} net hedef. Vadesizde kalan kısım politika faiziyle değerlenip hedeften düşülür; kalan tutara bu net getiriyi sağlayacak oran bulunur. Stopaj vadeye göre aynı oranda uygulanır.`;
+}
+
 function calcExtra(P, r, g, start) {
+  calcBreak(P, r, g, start);
   const sMan = stopajManual ? num("m_stopaj") / 100 : null;
   if (!m2GunManual) $("m2_gun").value = g || "";
   const r2 = num("m2_faiz") / 100, g2 = Math.round(num("m2_gun")) || g;
@@ -461,6 +504,7 @@ function calcExtra(P, r, g, start) {
     return `<div style="${k < 0 ? "opacity:.45" : ""}"><span>${fdtw(d)} ${d.getFullYear()}</span><span>${k < 0 ? "yapıldı" : k === 0 ? "bugün" : k + " gün"}</span></div>`; }).join("");
 }
 let m2GunManual = false;
+$("v_pf").addEventListener("input", () => (vPfManual = true));
 $("m2_gun").addEventListener("input", () => (m2GunManual = true));
 const nfx = (v) => Number(v).toLocaleString("tr-TR", { maximumFractionDigits: 2 });
 
