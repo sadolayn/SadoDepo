@@ -56,40 +56,40 @@ def metal(d):
             pass
     return d.isoformat(), None
 
-dates = set()
-d = dt.date(2020, 11, 27)
-while d <= TODAY:
-    dates.add(d); d += dt.timedelta(days=7)
-for i in range(21):
-    dates.add(TODAY - dt.timedelta(days=i))
-for y in range(2021, TODAY.year + 1):      # yıl sonları ve başları
-    for dd in (dt.date(y - 1, 12, 31), dt.date(y - 1, 12, 30), dt.date(y - 1, 12, 29), dt.date(y, 1, 2)):
-        if dt.date(2020, 11, 22) <= dd <= TODAY: dates.add(dd)
+# 1) LBMA resmi gösterge fiyatları (USD/ons)
+LBMA = {"xau": ["gold_pm", "gold_am"], "xag": ["silver"], "xpt": ["platinum_pm", "platinum_am"], "xpd": ["palladium_pm", "palladium_am"]}
+lb = {}
+for m, names in LBMA.items():
+    for n in names:
+        try:
+            arr = json.loads(get(f"https://prices.lbma.org.uk/json/{n}.json"))
+            ser = {}
+            for e in arr:
+                d0 = e.get("d"); v = e.get("v") or []
+                if d0 and d0 >= "2020-10-01" and v and v[0]:
+                    ser[d0] = float(v[0])
+            if len(ser) > 500:
+                lb[m] = ser
+                print(f"::notice::LBMA {n}: {len(ser)} gün, son {max(ser)}")
+                break
+        except Exception as e:
+            print(f"::warning::LBMA {n}: {str(e)[:120]}")
+if len(lb) < 4: sys.exit("::error::LBMA verisi eksik: " + ",".join(lb))
 
-with ThreadPoolExecutor(16) as ex:
-    res = dict(ex.map(metal, sorted(dates)))
-ok = {k: v for k, v in res.items() if v}
-print(f"::notice::Maden verisi {len(ok)}/{len(res)} gün")
-from collections import Counter
-print("::notice::Yıllara göre ok: " + str(sorted(Counter(k[:4] for k in ok).items())) + " eksik: " + str(sorted(Counter(k[:4] for k,v in res.items() if not v).items())))
-_miss = sorted(k for k,v in res.items() if not v)
-if _miss:
-    _d = dt.date.fromisoformat(_miss[0]); _errs = []
-    for u in metal_urls(_d):
-        try: get(u, 1); _errs.append("ok?")
-        except Exception as e: _errs.append(f"{u[:70]} -> {str(e)[:60]}")
-    print("::notice::Örnek eksik " + _miss[0] + ": " + " || ".join(_errs))
-if len(ok) < 200: sys.exit("::error::Maden verisi yetersiz")
+ok = {}
+last = {}
+for d0 in sorted(set().union(*[set(v) for v in lb.values()])):
+    for m in lb:
+        if d0 in lb[m]: last[m] = lb[m][d0]
+    if len(last) == 4: ok[d0] = dict(last)
 
-# Tek günlük hatalı sıçramaları at
-ks = sorted(ok)
-bad = set()
-for i in range(1, len(ks) - 1):
-    for m in ("xau", "xag", "xpt", "xpd"):
-        a, b, c = ok[ks[i-1]][m], ok[ks[i]][m], ok[ks[i+1]][m]
-        if abs(b/a - 1) > .2 and abs(b/c - 1) > .2: bad.add(ks[i])
-for k in bad: ok.pop(k)
-if bad: print(f"::notice::Atılan hatalı gün: {sorted(bad)}")
+# 2) LBMA'nın henüz yayınlamadığı son günler için currency-api
+lastd = dt.date.fromisoformat(max(ok))
+extra = [lastd + dt.timedelta(days=i) for i in range(1, (TODAY - lastd).days + 1)]
+with ThreadPoolExecutor(8) as ex:
+    for k, v in ex.map(metal, extra):
+        if v and dt.date.fromisoformat(k).weekday() < 5: ok[k] = v
+print(f"::notice::Toplam maden günü {len(ok)}, son {max(ok)}")
 
 cols = {k: [] for k in ["usd", "eur", "gbp", "xau", "xag", "xpt", "xpd"]}
 keep = []
