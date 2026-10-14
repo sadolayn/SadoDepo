@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Döviz &amp; Altın</title>
+<style>
+  :root {
+    --bg: #000000;
+    --card: #0d0d0d;
+    --field: #161616;
+    --ink: #f2f2f2;
+    --muted: #8a8a8a;
+    --faint: #5a5a5a;
+    --accent: #e0a24f;
+    --line: #262626;
+    --up: #3fbf7f;
+    --down: #ef5d5d;
+    --upbg: rgba(63,191,127,.14);
+    --downbg: rgba(239,93,93,.14);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 12px 16px 32px; line-height: 1.45;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  header h1 { margin: 0; font-size: 20px; }
+  .upd { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+  h2 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* Güncel */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .tile { background: var(--field); border: 1px solid var(--line); border-radius: 14px; padding: 11px 12px; cursor: pointer; text-align: left; color: var(--ink); font: inherit; }
+  .tile.sel { border-color: var(--accent); }
+  .tile .n { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; gap: 6px; }
+  .tile .v { font-size: 20px; font-weight: 700; margin: 2px 0 2px; }
+  .tile .v small { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .tile .c { font-size: 11.5px; color: var(--muted); display: flex; gap: 8px; white-space: nowrap; }
+  .tile:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .up { color: var(--up); } .down { color: var(--down); }
+
+  /* Grafik */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .chip { padding: 7px 12px; border-radius: 18px; background: var(--field); border: 1px solid var(--line); color: var(--muted); font-size: 13px; cursor: pointer; font-weight: 600; }
+  .chip.on { background: var(--accent); color: #000; border-color: var(--accent); }
+  .chart { position: relative; height: 220px; touch-action: pan-y; }
+  .chart svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .tip { position: absolute; top: 0; pointer-events: none; background: #1d1d1d; border: 1px solid #3a3a3a; border-radius: 10px; padding: 6px 9px; font-size: 12px; white-space: nowrap; display: none; transform: translateX(-50%); z-index: 2; }
+  .tip b { display: block; font-size: 14px; }
+  .chead { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+  .chead .big { font-size: 22px; font-weight: 700; }
+  .chead .chg { font-size: 13px; }
+
+  /* Tablo */
+  .tbl { overflow-x: auto; margin: 0 -16px; padding: 0 16px; }
+  table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 560px; font-size: 13px; }
+  th, td { padding: 8px 7px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; }
+  th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: var(--card); z-index: 1; }
+  td.p { border-radius: 6px; }
+  td.p.pos { background: var(--upbg); }
+  td.p.neg { background: var(--downbg); }
+  tr.tot td { font-weight: 700; border-bottom: none; }
+  .seg { display: inline-flex; background: var(--field); border: 1px solid var(--line); border-radius: 12px; padding: 3px; margin-bottom: 10px; }
+  .seg button { border: none; background: none; color: var(--muted); padding: 7px 12px; border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .seg button.on { background: var(--accent); color: #000; }
+
+  /* Simülatör */
+  .inrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  label.f { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  input[type=text], input[type=date], input[type=number] {
+    width: 100%; padding: 12px; font-size: 16px; border-radius: 12px; background: var(--field);
+    color: var(--ink); border: 1px solid var(--line); outline: none; font-family: inherit;
+  }
+  input:focus { border-color: var(--accent); }
+  input[type=date] { color-scheme: dark; }
+  .quick { display: flex; gap: 6px; flex-wrap: wrap; margin: -4px 0 12px; }
+  .quick button { padding: 5px 10px; border-radius: 14px; background: var(--field); border: 1px solid var(--line); color: var(--muted); font-size: 12px; cursor: pointer; }
+  .res { display: grid; gap: 8px; }
+  .ri { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 10px 12px; background: var(--field); border: 1px solid var(--line); border-radius: 12px; }
+  .ri .a { font-weight: 700; }
+  .ri .then { font-size: 12px; color: var(--muted); grid-column: 1; }
+  .ri .now { text-align: right; font-weight: 700; }
+  .ri .pct { text-align: right; font-size: 13px; font-weight: 700; }
+  .ri .bar { grid-column: 1 / -1; height: 4px; background: #222; border-radius: 4px; margin-top: 6px; overflow: hidden; }
+  .ri .bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; }
+  .ri.base { border-style: dashed; }
+  .rank { display: inline-block; width: 20px; color: var(--faint); font-weight: 600; }
+
+  .alloc { display: grid; gap: 10px; }
+  .al { display: grid; grid-template-columns: 92px 1fr 64px; align-items: center; gap: 10px; }
+  .al span { font-size: 14px; font-weight: 600; }
+  .al input[type=range] { width: 100%; accent-color: var(--accent); }
+  .al input[type=number] { padding: 8px 6px; text-align: right; font-size: 15px; }
+  .sum { display: flex; justify-content: space-between; align-items: center; margin: 12px 0; font-size: 14px; }
+  .sum b.bad { color: var(--down); }
+  .presets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .presets button { padding: 6px 10px; border-radius: 14px; background: var(--field); border: 1px solid var(--line); color: var(--ink); font-size: 12px; cursor: pointer; }
+  .hero { text-align: center; padding: 14px 0 8px; }
+  .hero .l { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .hero .big { font-size: 32px; font-weight: 800; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0 14px; }
+  .stats div { background: var(--field); border: 1px solid var(--line); border-radius: 12px; padding: 9px; text-align: center; }
+  .stats small { display: block; font-size: 11px; color: var(--muted); }
+  .stats b { font-size: 16px; }
+  .note { font-size: 12px; color: var(--muted); }
+  .empty { text-align: center; color: var(--muted); padding: 40px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Anasayfa" aria-label="Anasayfa">🏠</a>
+    <h1>💱 Döviz &amp; Altın</h1>
+    <span style="width:46px"></span>
+  </header>
+  <div class="upd" id="upd">Yükleniyor…</div>
+
+  <div id="app"><div class="empty">Veriler yükleniyor…</div></div>
+</div>
+
+<script>
+const A = [
+  { k: "usd", n: "Dolar", s: "USD", u: "", d: 4, ic: "💵" },
+  { k: "eur", n: "Euro", s: "EUR", u: "", d: 4, ic: "💶" },
+  { k: "gbp", n: "Sterlin", s: "GBP", u: "", d: 4, ic: "💷" },
+  { k: "xau", n: "Altın", s: "gr", u: "/gr", d: 2, ic: "🥇" },
+  { k: "xag", n: "Gümüş", s: "gr", u: "/gr", d: 2, ic: "🥈" },
+  { k: "xpt", n: "Platin", s: "gr", u: "/gr", d: 2, ic: "⚪" },
+  { k: "xpd", n: "Paladyum", s: "gr", u: "/gr", d: 2, ic: "🔘" },
+];
+const AK = Object.fromEntries(A.map((a) => [a.k, a]));
+let D = null, N = 0;
+const S = load("piyasa_v1", { sel: "xau", range: "5Y", tmode: "pct", amt: 100000, date: null, mode: "tek", w: { usd: 20, eur: 20, gbp: 0, xau: 40, xag: 10, xpt: 5, xpd: 5 } });
+
+function load(k, def) { try { return Object.assign(def, JSON.parse(localStorage.getItem(k) || "{}")); } catch (e) { return def; } }
+function save() { try { localStorage.setItem("piyasa_v1", JSON.stringify(S)); } catch (e) {} }
+const $ = (x) => document.getElementById(x);
+const nf = (v, d = 2) => Number(v).toLocaleString("tr-TR", { minimumFractionDigits: d, maximumFractionDigits: d });
+const tl = (v) => nf(v, v >= 1000 ? 0 : 2) + " TL";
+const pct = (v, d = 1) => (v > 0 ? "+" : v < 0 ? "−" : "") + nf(Math.abs(v), d) + "%";
+const cls = (v) => (v > 0 ? "up" : v < 0 ? "down" : "");
+const arrow = (v) => (v > 0 ? "▲" : v < 0 ? "▼" : "•");
+const fdate = (s, o = { day: "numeric", month: "long", year: "numeric" }) => new Date(s + "T12:00:00").toLocaleDateString("tr-TR", o);
+const iso = (d) => d.toISOString().slice(0, 10);
+
+function idxOn(s) { // tarih <= s olan son gün
+  let lo = 0, hi = N - 1;
+  if (s < D.dates[0]) return 0;
+  while (lo < hi) { const m = (lo + hi + 1) >> 1; if (D.dates[m] <= s) lo = m; else hi = m - 1; }
+  return lo;
+}
+function shiftYears(s, y) { const d = new Date(s + "T12:00:00"); d.setFullYear(d.getFullYear() + y); return iso(d); }
+function chgSince(k, s) { const i = idxOn(s); return (D[k][N - 1] / D[k][i] - 1) * 100; }
+
+/* ---------- Grafik ---------- */
+function drawLine(el, xs, ys, fmt, opt = {}) {
+  const W = el.clientWidth || 320, H = el.clientHeight || 220;
+  const pl = 6, pr = 54, pt = 10, pb = 22;
+  let min = Math.min(...ys), max = Math.max(...ys);
+  if (opt.base != null) { min = Math.min(min, opt.base); max = Math.max(max, opt.base); }
+  const pad = (max - min) * 0.08 || 1; min -= pad; max += pad;
+  const X = (i) => pl + (i / Math.max(1, xs.length - 1)) * (W - pl - pr);
+  const Y = (v) => pt + (1 - (v - min) / (max - min)) * (H - pt - pb);
+  // y eksen: 4 düzgün çizgi
+  const step = niceStep((max - min) / 4);
+  let grid = "";
+  for (let j = Math.ceil(min / step); j * step <= max; j++) {
+    const v = j * step;
+    grid += `<line x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="#1f1f1f"/>`
+      + `<text x="${W - pr + 6}" y="${Y(v) + 4}" fill="#6f6f6f" font-size="11">${shortNum(v)}</text>`;
+  }
+  // x eksen: yıllar
+  let xl = "", lastY = "";
+  xs.forEach((s, i) => {
+    const y = s.slice(0, 4);
+    if (y !== lastY && i > 0) {
+      xl += `<line x1="${X(i)}" x2="${X(i)}" y1="${pt}" y2="${H - pb}" stroke="#181818"/>`
+        + `<text x="${X(i) + 3}" y="${H - 6}" fill="#6f6f6f" font-size="11">${y}</text>`;
+    }
+    lastY = y;
+  });
+  let d = "";
+  ys.forEach((v, i) => (d += (i ? "L" : "M") + X(i).toFixed(1) + "," + Y(v).toFixed(1)));
+  const area = d + `L${X(ys.length - 1)},${H - pb}L${X(0)},${H - pb}Z`;
+  const base = opt.base != null ? `<line x1="${pl}" x2="${W - pr}" y1="${Y(opt.base)}" y2="${Y(opt.base)}" stroke="#8a8a8a" stroke-dasharray="4 4"/><text x="${pl + 2}" y="${Y(opt.base) - 5}" fill="#8a8a8a" font-size="11">${opt.baseLabel || ""}</text>` : "";
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${opt.label || ""}">
+    <defs><linearGradient id="g_${el.id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0a24f" stop-opacity=".22"/><stop offset="1" stop-color="#e0a24f" stop-opacity="0"/></linearGradient></defs>
+    ${grid}${xl}${base}
+    <path d="${area}" fill="url(#g_${el.id})"/>
+    <path d="${d}" fill="none" stroke="#e0a24f" stroke-width="2" stroke-linejoin="round"/>
+    <line class="cx" y1="${pt}" y2="${H - pb}" stroke="#bdbdbd" stroke-width="1" visibility="hidden"/>
+    <circle class="cd" r="5" fill="#e0a24f" stroke="#0d0d0d" stroke-width="2" visibility="hidden"/>
+  </svg><div class="tip"></div>`;
+  const svg = el.querySelector("svg"), cx = svg.querySelector(".cx"), cd = svg.querySelector(".cd"), tip = el.querySelector(".tip");
+  const move = (e) => {
+    const r = svg.getBoundingClientRect();
+    const px = ((e.touches ? e.touches[0].clientX : e.clientX) - r.left) * (W / r.width);
+    const i = Math.max(0, Math.min(xs.length - 1, Math.round(((px - pl) / (W - pl - pr)) * (xs.length - 1))));
+    cx.setAttribute("x1", X(i)); cx.setAttribute("x2", X(i)); cx.setAttribute("visibility", "visible");
+    cd.setAttribute("cx", X(i)); cd.setAttribute("cy", Y(ys[i])); cd.setAttribute("visibility", "visible");
+    tip.innerHTML = `<b>${fmt(ys[i])}</b>${fdate(xs[i])}`;
+    tip.style.display = "block";
+    const left = (X(i) / W) * r.width;
+    tip.style.left = Math.max(60, Math.min(r.width - 60, left)) + "px";
+  };
+  const hide = () => { cx.setAttribute("visibility", "hidden"); cd.setAttribute("visibility", "hidden"); tip.style.display = "none"; };
+  svg.addEventListener("pointermove", move);
+  svg.addEventListener("pointerdown", move);
+  svg.addEventListener("pointerleave", hide);
+  svg.addEventListener("touchmove", move, { passive: true });
+  svg.addEventListener("touchend", () => setTimeout(hide, 1500));
+}
+function niceStep(raw) { const p = Math.pow(10, Math.floor(Math.log10(raw))); const f = raw / p; return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p; }
+function shortNum(v) {
+  const a = Math.abs(v);
+  if (a < 1e-9) return "0";
+  if (a >= 1e6) return nf(v / 1e6, 1) + " mn";
+  if (a >= 1e4) return nf(v / 1e3, 0) + " bin";
+  if (a >= 100) return nf(v, 0);
+  return nf(v, a >= 10 ? 1 : 2);
+}
+function sample(lo, hi, max = 260) { // grafik için en fazla ~260 nokta
+  const out = [], step = Math.max(1, Math.ceil((hi - lo + 1) / max));
+  for (let i = lo; i <= hi; i += step) out.push(i);
+  if (out[out.length - 1] !== hi) out.push(hi);
+  return out;
+}
+
+/* ---------- Bölümler ---------- */
+function renderTiles() {
+  const last = D.dates[N - 1];
+  $("tiles").innerHTML = A.map((a) => {
+    const v = D[a.k][N - 1], c1 = chgSince(a.k, shiftYears(last, -1)), c5 = chgSince(a.k, shiftYears(last, -5));
+    return `<button class="tile ${S.sel === a.k ? "sel" : ""}" data-k="${a.k}">
+      <div class="n"><span>${a.ic} ${a.n}</span><span>${a.u ? "TL/gr" : a.s + "/TL"}</span></div>
+      <div class="v num">${nf(v, a.d)}</div>
+      <div class="c num"><span class="${cls(c1)}">1Y ${pct(c1, 0)}</span><span class="${cls(c5)}">5Y ${pct(c5, 0)}</span></div>
+    </button>`;
+  }).join("");
+}
+
+function renderChart() {
+  const a = AK[S.sel], last = D.dates[N - 1];
+  const from = { "1Y": shiftYears(last, -1), "3Y": shiftYears(last, -3), "5Y": shiftYears(last, -5), "Tümü": D.dates[0] }[S.range];
+  const lo = idxOn(from), idx = sample(lo, N - 1);
+  const ys = idx.map((i) => D[a.k][i]), xs = idx.map((i) => D.dates[i]);
+  const ch = (D[a.k][N - 1] / D[a.k][lo] - 1) * 100;
+  $("chead").innerHTML = `<div><div style="font-size:13px;color:var(--muted)">${a.ic} ${a.n} ${a.u ? "(TL/gram)" : "(TL)"}</div><div class="big num">${nf(D[a.k][N - 1], a.d)} TL</div></div>
+    <div class="chg num ${cls(ch)}" style="text-align:right">${arrow(ch)} ${pct(ch)}<div style="color:var(--muted);font-size:11px">${S.range === "Tümü" ? fdate(D.dates[0], { month: "short", year: "numeric" }) + "'den beri" : S.range.replace("Y", " yılda")}</div></div>`;
+  document.querySelectorAll("#ranges .chip").forEach((c) => c.classList.toggle("on", c.dataset.r === S.range));
+  drawLine($("chart"), xs, ys, (v) => nf(v, a.d) + " TL", { label: a.n + " fiyat grafiği" });
+}
+
+function yearEnds() {
+  const last = D.dates[N - 1], ly = +last.slice(0, 4);
+  const rows = [];
+  for (let y = 2021; y <= ly; y++) {
+    const i0 = idxOn(`${y - 1}-12-31`), i1 = y === ly ? N - 1 : idxOn(`${y}-12-31`);
+    rows.push({ y, i0, i1, ytd: y === ly });
+  }
+  return rows;
+}
+function renderTable() {
+  const rows = yearEnds(), last = D.dates[N - 1];
+  document.querySelectorAll("#tmode button").forEach((b) => b.classList.toggle("on", b.dataset.m === S.tmode));
+  let h = `<table class="num"><thead><tr><th>Yıl</th>${A.map((a) => `<th>${a.n}</th>`).join("")}</tr></thead><tbody>`;
+  for (const r of rows) {
+    h += `<tr><td>${r.y}${r.ytd ? ' <span style="color:var(--muted);font-size:11px">(bugüne)</span>' : ""}</td>`;
+    for (const a of A) {
+      const v0 = D[a.k][r.i0], v1 = D[a.k][r.i1], p = (v1 / v0 - 1) * 100;
+      h += S.tmode === "pct"
+        ? `<td class="p ${p >= 0 ? "pos" : "neg"}">${pct(p)}</td>`
+        : `<td>${nf(v1, v1 >= 1000 ? 0 : 2)}</td>`;
+    }
+    h += `</tr>`;
+  }
+  const s5 = shiftYears(last, -5);
+  h += `<tr class="tot"><td>5 yıl</td>${A.map((a) => { const p = chgSince(a.k, s5); return S.tmode === "pct" ? `<td class="p ${p >= 0 ? "pos" : "neg"}">${pct(p, 0)}</td>` : `<td style="color:var(--muted)">${nf(D[a.k][idxOn(s5)], 2)}</td>`; }).join("")}</tr>`;
+  h += `</tbody></table>`;
+  $("table").innerHTML = h;
+  $("tnote").textContent = S.tmode === "pct"
+    ? `Her yıl, bir önceki yıl sonuna göre TL bazında değişim. "5 yıl" satırı ${fdate(D.dates[idxOn(s5)])}'den bugüne.`
+    : `Yıl sonu kapanış değerleri (TL; madenler gram). "5 yıl" satırı ${fdate(D.dates[idxOn(s5)])} değeri.`;
+}
+
+function simInputs() {
+  const amt = Math.max(0, Number(String($("amt").value).replace(/\./g, "").replace(",", ".")) || 0);
+  let date = $("sdate").value || shiftYears(D.dates[N - 1], -5);
+  if (date < D.dates[0]) date = D.dates[0];
+  return { amt, i0: idxOn(date) };
+}
+
+function renderSingle() {
+  const { amt, i0 } = simInputs();
+  const list = A.map((a) => {
+    const p0 = D[a.k][i0], p1 = D[a.k][N - 1], units = amt / p0, now = units * p1;
+    return { a, units, now, p: (now / amt - 1) * 100 };
+  }).sort((x, y) => y.p - x.p);
+  const maxNow = Math.max(amt, ...list.map((x) => x.now));
+  let h = list.map((x, r) => `<div class="ri">
+      <div class="a"><span class="rank">${r + 1}.</span>${x.a.ic} ${x.a.n}</div>
+      <div class="now num">${tl(x.now)}</div>
+      <div class="then num">O gün ${nf(x.units, x.a.u ? 2 : 2)} ${x.a.u ? "gram" : x.a.s} alırdın</div>
+      <div class="pct num ${cls(x.p)}">${pct(x.p)}</div>
+      <div class="bar"><i style="width:${(x.now / maxNow) * 100}%"></i></div>
+    </div>`).join("");
+  h += `<div class="ri base"><div class="a"><span class="rank"></span>💴 TL olarak tutsaydın</div><div class="now num">${tl(amt)}</div>
+      <div class="then">Faizsiz, yastık altı</div><div class="pct num">0%</div>
+      <div class="bar"><i style="width:${(amt / maxNow) * 100}%;background:#555"></i></div></div>`;
+  $("single").innerHTML = h;
+}
+
+function renderBasket() {
+  const { amt, i0 } = simInputs();
+  const total = A.reduce((s, a) => s + (Number(S.w[a.k]) || 0), 0);
+  $("wsum").innerHTML = `<span>Toplam: <b class="${total === 100 ? "" : "bad"}">%${total}</b>${total !== 100 ? ` <span style="color:var(--muted);font-size:12px">(${total < 100 ? "%" + (100 - total) + " eksik" : "%" + (total - 100) + " fazla"})</span>` : " ✓"}</span>`;
+  A.forEach((a) => { $("r_" + a.k).value = S.w[a.k] || 0; $("n_" + a.k).value = S.w[a.k] || 0; });
+  if (!total || !amt) { $("bres").innerHTML = '<div class="note" style="text-align:center;padding:16px 0">Sepetine oran ekle.</div>'; return; }
+  // oranlar 100'e normalize edilir
+  const units = {};
+  A.forEach((a) => { const w = (Number(S.w[a.k]) || 0) / total; units[a.k] = (amt * w) / D[a.k][i0]; });
+  const valAt = (i) => A.reduce((s, a) => s + units[a.k] * D[a.k][i], 0);
+  const now = valAt(N - 1), p = (now / amt - 1) * 100;
+  const yrs = (new Date(D.dates[N - 1]) - new Date(D.dates[i0])) / (365.25 * 864e5);
+  const cagr = yrs > 0.1 ? (Math.pow(now / amt, 1 / yrs) - 1) * 100 : p;
+  const usdNow = amt / D.usd[i0] * D.usd[N - 1];
+  const vsUsd = (now / usdNow - 1) * 100;
+  const parts = A.filter((a) => units[a.k] > 0).map((a) => {
+    const v = units[a.k] * D[a.k][N - 1], inv = amt * (Number(S.w[a.k]) || 0) / total;
+    return `<div class="ri"><div class="a">${a.ic} ${a.n} <span style="color:var(--muted);font-weight:500;font-size:12px">%${Math.round((Number(S.w[a.k]) || 0) / total * 100)}</span></div>
+      <div class="now num">${tl(v)}</div>
+      <div class="then num">${tl(inv)} → ${nf(units[a.k], 2)} ${a.u ? "gram" : a.s}</div>
+      <div class="pct num ${cls(v / inv - 1)}">${pct((v / inv - 1) * 100)}</div></div>`;
+  }).join("");
+  $("bres").innerHTML = `
+    <div class="hero"><div class="l">Sepetinin bugünkü değeri</div><div class="big num">${tl(now)}</div>
+      <div class="num ${cls(p)}" style="font-weight:700">${arrow(p)} ${pct(p)} · ${tl(now - amt)} ${now >= amt ? "kazanç" : "kayıp"}</div></div>
+    <div class="stats num">
+      <div><small>Yıllık ortalama</small><b class="${cls(cagr)}">${pct(cagr)}</b></div>
+      <div><small>Süre</small><b>${nf(yrs, 1)} yıl</b></div>
+      <div><small>Dolara göre</small><b class="${cls(vsUsd)}">${pct(vsUsd)}</b></div>
+    </div>
+    <div class="chart" id="bchart" style="height:180px"></div>
+    <div class="note" style="margin:6px 0 12px">Kesikli çizgi: başlangıçtaki ${tl(amt)}.</div>
+    <div class="res">${parts}</div>`;
+  const idx = sample(i0, N - 1, 200);
+  drawLine($("bchart"), idx.map((i) => D.dates[i]), idx.map(valAt), (v) => tl(v), { base: amt, baseLabel: "Başlangıç", label: "Sepet değeri" });
+}
+
+function renderSim() {
+  document.querySelectorAll("#smode button").forEach((b) => b.classList.toggle("on", b.dataset.m === S.mode));
+  $("singleBox").style.display = S.mode === "tek" ? "" : "none";
+  $("basketBox").style.display = S.mode === "sepet" ? "" : "none";
+  const { i0 } = simInputs();
+  $("simnote").textContent = `Hesap ${fdate(D.dates[i0])} kapanışı ile ${fdate(D.dates[N - 1])} arasındadır.`;
+  if (S.mode === "tek") renderSingle(); else renderBasket();
+}
+
+function build() {
+  const last = D.dates[N - 1];
+  if (!S.date) S.date = shiftYears(last, -5);
+  $("upd").textContent = `Son veri: ${fdate(last)} · güncelleme ${D.updated.slice(11)}`;
+  $("app").innerHTML = `
+  <div class="card"><h2>Güncel</h2><div class="grid" id="tiles"></div>
+    <div class="note" style="margin-top:8px">1Y: son 1 yıl, 5Y: son 5 yıl TL bazında değişim. Bir kutuya dokununca grafiği açılır.</div></div>
+
+  <div class="card"><div class="chead" id="chead"></div>
+    <div class="chips" id="ranges">${["1Y", "3Y", "5Y", "Tümü"].map((r) => `<span class="chip" data-r="${r}">${r === "Tümü" ? "Tümü" : r.replace("Y", " yıl")}</span>`).join("")}</div>
+    <div class="chart" id="chart"></div></div>
+
+  <div class="card"><h2>Yıllık görünüm</h2>
+    <div class="seg" id="tmode"><button data-m="pct">Getiri %</button><button data-m="val">Yıl sonu değer</button></div>
+    <div class="tbl" id="table"></div>
+    <div class="note" id="tnote" style="margin-top:8px"></div></div>
+
+  <div class="card"><h2>Geçmişte yatırsaydın</h2>
+    <div class="inrow">
+      <div><label class="f" for="amt">Tutar (TL)</label><input id="amt" type="text" inputmode="numeric" value="${nf(S.amt, 0)}"></div>
+      <div><label class="f" for="sdate">Başlangıç tarihi</label><input id="sdate" type="date" min="${D.dates[0]}" max="${last}" value="${S.date}"></div>
+    </div>
+    <div class="quick" id="quick">${[1, 2, 3, 4, 5].map((y) => `<button data-y="${y}">${y} yıl önce</button>`).join("")}</div>
+    <div class="seg" id="smode"><button data-m="tek">Tek tek</button><button data-m="sepet">🧺 Sepetim</button></div>
+    <div id="singleBox"><div class="res" id="single"></div></div>
+    <div id="basketBox">
+      <div class="presets" id="presets">
+        <button data-p="esit">Eşit dağıt</button>
+        <button data-p="klasik">Klasik (½ altın, ¼ $, ¼ €)</button>
+        <button data-p="maden">Sadece madenler</button>
+        <button data-p="doviz">Sadece döviz</button>
+        <button data-p="sifir">Sıfırla</button>
+      </div>
+      <div class="alloc">${A.map((a) => `<div class="al"><span>${a.ic} ${a.n}</span>
+        <input type="range" min="0" max="100" step="5" id="r_${a.k}" data-k="${a.k}" aria-label="${a.n} oranı">
+        <input type="number" min="0" max="100" id="n_${a.k}" data-k="${a.k}" inputmode="numeric" aria-label="${a.n} yüzde"></div>`).join("")}</div>
+      <div class="sum" id="wsum"></div>
+      <div id="bres"></div>
+    </div>
+    <div class="note" id="simnote" style="margin-top:10px"></div></div>
+
+  <div class="note" style="text-align:center;padding:0 8px">${D.source} Altın gram fiyatı uluslararası ons fiyatından hesaplanır; kuyumcu ve banka alış-satış fiyatları farklıdır. Yatırım tavsiyesi değildir.</div>`;
+
+  $("tiles").onclick = (e) => { const b = e.target.closest(".tile"); if (!b) return; S.sel = b.dataset.k; save(); renderTiles(); renderChart(); $("chart").scrollIntoView({ behavior: "smooth", block: "center" }); };
+  $("ranges").onclick = (e) => { const c = e.target.closest(".chip"); if (!c) return; S.range = c.dataset.r; save(); renderChart(); };
+  $("tmode").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; S.tmode = b.dataset.m; save(); renderTable(); };
+  $("smode").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; S.mode = b.dataset.m; save(); renderSim(); };
+  $("amt").addEventListener("input", () => { const v = simInputs().amt; S.amt = v; save(); renderSim(); });
+  $("amt").addEventListener("blur", () => { $("amt").value = nf(S.amt, 0); });
+  $("sdate").addEventListener("change", () => { S.date = $("sdate").value; save(); renderSim(); });
+  $("quick").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; S.date = shiftYears(last, -b.dataset.y); $("sdate").value = S.date; save(); renderSim(); };
+  const setW = (k, v) => { S.w[k] = Math.max(0, Math.min(100, Math.round(Number(v) || 0))); save(); renderBasket(); };
+  document.querySelectorAll(".al input").forEach((inp) => inp.addEventListener("input", () => setW(inp.dataset.k, inp.value)));
+  $("presets").onclick = (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    const P = {
+      esit: { usd: 15, eur: 15, gbp: 15, xau: 15, xag: 15, xpt: 15, xpd: 10 },
+      klasik: { usd: 25, eur: 25, gbp: 0, xau: 50, xag: 0, xpt: 0, xpd: 0 },
+      maden: { usd: 0, eur: 0, gbp: 0, xau: 55, xag: 25, xpt: 10, xpd: 10 },
+      doviz: { usd: 40, eur: 40, gbp: 20, xau: 0, xag: 0, xpt: 0, xpd: 0 },
+      sifir: { usd: 0, eur: 0, gbp: 0, xau: 0, xag: 0, xpt: 0, xpd: 0 },
+    };
+    S.w = { ...P[b.dataset.p] }; save(); renderBasket();
+  };
+  let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { renderChart(); if (S.mode === "sepet") renderBasket(); }, 150); });
+
+  renderTiles(); renderChart(); renderTable(); renderSim();
+}
+
+fetch("data/piyasa.json?t=" + Date.now(), { cache: "no-store" })
+  .then((r) => r.json())
+  .then((j) => { D = j; N = j.dates.length; build(); })
+  .catch(() => { $("app").innerHTML = '<div class="empty">Veriler yüklenemedi. Biraz sonra tekrar dene.</div>'; $("upd").textContent = ""; });
+</script>
+<footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
+<script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
