@@ -144,7 +144,7 @@
       <label>Anapara</label>
       <div class="field"><input id="m_tutar" type="text" inputmode="decimal" value="500.000"><span class="unit">TL</span></div>
       <div class="two">
-        <div><label>Yıllık brüt faiz</label><div class="field"><input id="m_faiz" type="text" inputmode="decimal" value="42"><span class="unit">%</span></div></div>
+        <div><label>Yıllık brüt faiz</label><div class="field"><input id="m_faiz" type="text" inputmode="decimal" value="39"><span class="unit">%</span></div></div>
         <div><label>Vade</label><div class="field"><input id="m_gun" type="text" inputmode="numeric" value="32"><span class="unit">gün</span></div></div>
       </div>
       <div class="two">
@@ -165,6 +165,23 @@
     <div class="card">
       <div class="big"><span id="m_bigLabel">Net getiri</span><b id="m_out">–</b></div>
       <div class="rows" id="m_rows"></div>
+    </div>
+    <div class="card">
+      <h2>⚖️ Ek faiz / rakip teklif</h2>
+      <p class="hint">Müşteri başka bankadan daha yüksek oran aldıysa farkın gerçekte kaç TL ettiğini ve farkı nasıl kapatabileceğini gör. Anapara ve başlangıç tarihi yukarıdan alınır.</p>
+      <div class="two">
+        <div><label>Rakip faiz</label><div class="field"><input id="m2_faiz" type="text" inputmode="decimal" value="40"><span class="unit">%</span></div></div>
+        <div><label>Rakip vade</label><div class="field"><input id="m2_gun" type="text" inputmode="numeric" value="32"><span class="unit">gün</span></div></div>
+      </div>
+      <div class="big" style="margin-top:12px"><span id="m2_label">Fark (net)</span><b id="m2_out">–</b></div>
+      <div class="rows" id="m2_rows"></div>
+      <p class="note" id="m2_note"></p>
+    </div>
+    <div class="card">
+      <h2>📆 Bilanço günleri ve TCMB</h2>
+      <div class="rows" id="m3_rows"></div>
+      <p class="note" id="m3_note"></p>
+      <details><summary>PPK toplantı takvimi</summary><div class="rows" id="m3_ppk" style="margin-top:8px"></div></details>
     </div>
   </section>
 
@@ -367,6 +384,87 @@ function yearFrac(start, days) {
   }
   return { f, leapDays };
 }
+// Ek faiz / bilanço / PPK
+let PPK = { last: { date: "2026-09-10", rate: 37, lend: 40, borrow: 35.5 }, meetings: ["2026-10-22", "2026-12-10", "2027-01-21", "2027-03-18", "2027-04-22", "2027-06-10"] };
+fetch("data/ppk.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json()).then((j) => { PPK = j; calcMev(); }).catch(() => {});
+const fdt = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+const fdtw = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "short" });
+const dayDiff = (a, b) => Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 864e5);
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+function netFor(P, r, days, start, sManual) {
+  const s = sManual != null ? sManual : autoStopaj(days) / 100;
+  return P * r * yearFrac(start, days).f * (1 - s);
+}
+function quarterEnds(from, n) {
+  const out = []; let y = from.getFullYear(), q = Math.floor(from.getMonth() / 3);
+  while (out.length < n) {
+    const d = new Date(y, q * 3 + 3, 0, 12);
+    if (dayDiff(from, d) >= 0) out.push(d);
+    q++; if (q > 3) { q = 0; y++; }
+  }
+  return out;
+}
+function calcExtra(P, r, g, start) {
+  const sMan = stopajManual ? num("m_stopaj") / 100 : null;
+  if (!m2GunManual) $("m2_gun").value = g || "";
+  const r2 = num("m2_faiz") / 100, g2 = Math.round(num("m2_gun")) || g;
+  if (!P || !g || !r2) { $("m2_out").textContent = "–"; rows("m2_rows", []); $("m2_note").textContent = ""; }
+  else {
+    const ours = netFor(P, r, g, start, sMan), theirs = netFor(P, r2, g2, start, sMan), diff = theirs - ours;
+    $("m2_label").textContent = diff > 0 ? "Rakip daha fazla kazandırıyor" : "Bizim teklif daha iyi";
+    $("m2_out").textContent = (diff > 0 ? "+" : "") + tl(diff);
+    const list = [
+      [`Bizim net getiri (%${nfx(r * 100)} · ${g} gün)`, tl(ours)],
+      [`Rakip net getiri (%${nfx(r2 * 100)} · ${g2} gün)`, tl(theirs)],
+      ["Fark (vade başına, net)", tl(Math.abs(diff)), diff > 0 ? "neg" : "pos"],
+      ["Günlük fark", tl(Math.abs(diff) / Math.max(g, g2))],
+      ["1 yıl boyunca yenilenirse yaklaşık fark", tl(Math.abs(diff) * 365 / g2)],
+    ];
+    let note = "";
+    if (diff > 0) {
+      // Farkı kapatmak için gereken oran (aynı vade) ve gereken vade (aynı oran)
+      const unit = netFor(P, 1, g, start, sMan);
+      const rNeed = unit ? theirs / unit : 0;
+      let dNeed = null;
+      for (let d = g; d <= g * 3 + 30; d++) { if (netFor(P, r, d, start, sMan) >= theirs) { dNeed = d; break; } }
+      list.push([`Aynı ${g} günde gereken oran`, "%" + nfx(Math.ceil(rNeed * 10000) / 100)]);
+      if (dNeed) list.push([`%${nfx(r * 100)} ile gereken vade`, `${dNeed} gün (+${dNeed - g})`, "total"]);
+      note = dNeed
+        ? `Örnek: ${g} gün yerine ${dNeed} gün seçilirse bizim oranla net ${tl(netFor(P, r, dNeed, start, sMan))} kazanılır; rakibin ${g2} günlük getirisine ulaşılır (para ${dNeed - g2} gün daha bankada kalır). Fark ${tl(diff)} — müşteri için banka değiştirmeye değip değmeyeceğini bu tutar belirler.`
+        : "";
+    }
+    rows("m2_rows", list);
+    $("m2_note").textContent = note;
+  }
+  // Bilanço ve PPK
+  const today = new Date(); today.setHours(12, 0, 0, 0);
+  const end = addDays(start, g);
+  const qs = quarterEnds(today, 4);
+  const nextQ = qs[0];
+  const startQ = quarterEnds(start, 1)[0];
+  const covers = dayDiff(startQ, end) > 0;
+  const minDays = dayDiff(start, startQ) + 1;
+  const nextP = (PPK.meetings || []).map((x) => new Date(x + "T12:00:00")).filter((d) => dayDiff(today, d) >= 0);
+  const inVade = (PPK.meetings || []).map((x) => new Date(x + "T12:00:00")).filter((d) => dayDiff(start, d) >= 0 && dayDiff(d, end) > 0);
+  const L = PPK.last || {};
+  const r3 = [
+    ["Sonraki bilanço günü", `${fdtw(nextQ)} · <b>${dayDiff(today, nextQ)} gün</b> kaldı`],
+    ...qs.slice(1).map((d) => ["", `${fdt(d)} · ${dayDiff(today, d)} gün`]),
+    ["Bu mevduat bilançoyu kapsıyor mu?", covers ? `✅ Evet (${fdt(startQ)} bilançosunda)` : `❌ Hayır · en az <b>${minDays} gün</b> seçilmeli`, covers ? "pos" : "neg"],
+    ["Politika faizi", L.rate != null ? `%${nfx(L.rate)} <span style="color:var(--muted)">(${fdt(new Date(L.date + "T12:00:00"))} kararı)</span>` : "–"],
+    ["Sonraki PPK toplantısı", nextP[0] ? `${fdtw(nextP[0])} · <b>${dayDiff(today, nextP[0])} gün</b> kaldı` : "Takvim açıklanmadı"],
+    ["Vade içinde PPK", inVade.length ? `⚠️ ${inVade.map(fdt).join(", ")}` : "Yok"],
+  ];
+  $("m3_rows").innerHTML = r3.map(([k, v, c]) => `<div class="${c || ""}"><span>${k}</span><span style="text-align:right">${v}</span></div>`).join("");
+  $("m3_note").textContent = (inVade.length ? "Vade süresince faiz kararı açıklanacak: vade sonunda yenileme oranı değişebilir. " : "") +
+    `Bilanço günleri çeyrek sonlarıdır (31 Mart, 30 Haziran, 30 Eylül, 31 Aralık); mevduatın bilanço gününü kapsaması için vade sonu bu tarihten sonraya düşmelidir.`;
+  $("m3_ppk").innerHTML = (PPK.meetings || []).map((x) => { const d = new Date(x + "T12:00:00"), k = dayDiff(today, d);
+    return `<div style="${k < 0 ? "opacity:.45" : ""}"><span>${fdtw(d)} ${d.getFullYear()}</span><span>${k < 0 ? "yapıldı" : k === 0 ? "bugün" : k + " gün"}</span></div>`; }).join("");
+}
+let m2GunManual = false;
+$("m2_gun").addEventListener("input", () => (m2GunManual = true));
+const nfx = (v) => Number(v).toLocaleString("tr-TR", { maximumFractionDigits: 2 });
+
 function calcMev() {
   const g = Math.round(num("m_gun"));
   if (!stopajManual) $("m_stopaj").value = String(autoStopaj(g)).replace(".", ",");
@@ -415,6 +513,7 @@ function calcMev() {
       ["Toplam süre", `${Math.round(g * n)} gün`],
     ]);
   }
+  calcExtra(P, r, g, start);
   if ($("m_esas").value !== "365" && totalLeap > 0) leapInfo = ` Vadenin ${totalLeap} günü artık yıla denk geliyor; bu günler ÷366 ile hesaplandı.`;
   $("m_note").textContent = stopajTxt + leapInfo;
 }
