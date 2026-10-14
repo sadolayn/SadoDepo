@@ -174,6 +174,9 @@ function renderSubeler() {
     </div>
     <div class="facts"><ul>${(d.notlar || []).map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
     <a class="maxlink" href="https://www.google.com/maps/search/T%C3%BCrkiye+%C4%B0%C5%9F+Bankas%C4%B1+%C5%9Fubesi" target="_blank" rel="noopener">📍 Yakınımdaki şubeleri haritada göster ↗</a>
+    <a class="maxlink" href="https://www.isbank.com.tr/sube-ve-bankamatikler" target="_blank" rel="noopener">🔐 Kiralık kasalı şubeleri bul ↗</a>
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin:6px 4px 0;line-height:1.5">Açılan sayfada <b>Detaylı Arama</b> → il/ilçe seç → <b>“Kiralık Kasası Olan Şubeler”</b>i işaretle → <b>Sonuçları Göster</b>. Aynı yerden 24 saat açık, hafta sonu açık, döviz çeken ve engelli uyumlu şubeleri de bulabilirsin.</div>
+    <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="https://www.isbank.com.tr/kiralik-kasa" target="_blank" rel="noopener">Kiralık kasa koşulları ve ücretleri ↗</a>
     <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(d.kaynak)} ↗</a>
     ${(d.ekKaynaklar || []).map((k) => `<a class="maxlink" style="border-color:var(--line);color:var(--muted);font-weight:400;font-size:13px" href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.ad)} ↗</a>`).join("")}`;
 }
