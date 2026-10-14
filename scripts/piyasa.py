@@ -7,7 +7,9 @@ import json, urllib.request, datetime as dt, sys, os
 from concurrent.futures import ThreadPoolExecutor
 
 OZ = 31.1034768
-UA = {"User-Agent": "Mozilla/5.0 sadolayn-piyasa"}
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+      "Accept": "application/json,text/plain,*/*", "Accept-Language": "en-GB,en;q=0.9",
+      "Referer": "https://www.lbma.org.uk/", "Origin": "https://www.lbma.org.uk"}
 TODAY = dt.date.today()
 
 def get(url, tries=3):
@@ -74,7 +76,32 @@ for m, names in LBMA.items():
                 break
         except Exception as e:
             print(f"::warning::LBMA {n}: {str(e)[:120]}")
-if len(lb) < 4: sys.exit("::error::LBMA verisi eksik: " + ",".join(lb))
+import http.cookiejar, time
+def yahoo_series(sym):
+    cj = http.cookiejar.CookieJar()
+    op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+    h = {"User-Agent": UA["User-Agent"]}
+    try:
+        try: op.open(urllib.request.Request("https://fc.yahoo.com", headers=h), timeout=20)
+        except Exception: pass
+        crumb = op.open(urllib.request.Request("https://query2.finance.yahoo.com/v1/test/getcrumb", headers=h), timeout=20).read().decode()
+        p1 = int(dt.datetime(2020, 10, 1).timestamp()); p2 = int(time.time())
+        for attempt in range(4):
+            try:
+                u = f"https://query2.finance.yahoo.com/v8/finance/chart/{sym}?period1={p1}&period2={p2}&interval=1d&crumb={crumb}"
+                j = json.loads(op.open(urllib.request.Request(u, headers=h), timeout=30).read())["chart"]["result"][0]
+                return {dt.datetime.utcfromtimestamp(t).strftime("%Y-%m-%d"): c for t, c in zip(j["timestamp"], j["indicators"]["quote"][0]["close"]) if c}
+            except Exception as e:
+                print(f"::warning::yahoo {sym} deneme {attempt}: {str(e)[:80]}"); time.sleep(8)
+    except Exception as e:
+        print(f"::warning::yahoo crumb {sym}: {str(e)[:100]}")
+    return None
+for m, sym in {"xau": "GC=F", "xag": "SI=F", "xpt": "PL=F", "xpd": "PA=F"}.items():
+    if m not in lb:
+        r = yahoo_series(sym)
+        if r and len(r) > 500:
+            lb[m] = r; print(f"::notice::Yahoo {sym}: {len(r)} gün")
+if len(lb) < 4: sys.exit("::error::Maden verisi eksik: " + ",".join(lb))
 
 ok = {}
 last = {}
