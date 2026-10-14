@@ -33,22 +33,28 @@
   .bar button:disabled { opacity: .35; }
   .board {
     position: relative; border-radius: 16px; padding: 8px;
-    background: radial-gradient(ellipse at 50% 30%, var(--felt-line) 0%, var(--felt) 75%);
-    border: 1px solid var(--felt-line); min-height: 70vh; overflow: hidden;
+    background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%);
+    border: 1px solid #3a50f0; min-height: 70vh; overflow: hidden;
   }
-  .slot { position: absolute; border: 1.5px dashed rgba(255,255,255,.18); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.25); font-size: 22px; }
+  /* Arka planda SADOLAYN gölgesi */
+  .board::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background: url("img/logo.png") center 58% / 88% auto no-repeat;
+    opacity: .14; filter: grayscale(1) brightness(2.2);
+  }
+  .slot { position: absolute; z-index: 0; border: 1.5px dashed rgba(255,255,255,.28); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.25); font-size: 22px; }
   .card {
     position: absolute; border-radius: 7px; background: #f7f4ee; color: #111; border: 1px solid #b9b2a5;
     box-shadow: 0 1px 3px rgba(0,0,0,.45); font-weight: 800;
     transition: left .18s ease, top .18s ease, transform .15s;
   }
   .card.red { color: var(--red); }
-  .card .r { position: absolute; top: 3px; left: 4px; line-height: 1; }
-  .card .s1 { position: absolute; top: 3px; right: 4px; line-height: 1; }
+  .card .r { position: absolute; top: 2px; left: 3px; line-height: 1; letter-spacing: -1px; }
+  .card .s1 { position: absolute; top: 2px; right: 2px; line-height: 1; }
   .card .s2 { position: absolute; left: 0; right: 0; bottom: 6%; text-align: center; line-height: 1; }
   .card.back {
-    background: repeating-linear-gradient(45deg, #1d3f8f 0 5px, #234aa3 5px 10px);
-    border-color: #e0a24f;
+    background: repeating-linear-gradient(45deg, #c48a35 0 5px, #a8742a 5px 10px);
+    border-color: #f7f4ee; box-shadow: inset 0 0 0 2px rgba(0,0,0,.18), 0 1px 3px rgba(0,0,0,.45);
   }
   .card.back > * { display: none; }
   .card.hint { box-shadow: 0 0 0 3px var(--accent); }
@@ -301,8 +307,9 @@ function confetti() {
 
 // ---------- Çizim ----------
 function cardHTML(c, cw) {
-  const fs = Math.max(11, Math.round(cw * 0.3));
-  return `<span class="r" style="font-size:${fs}px">${RANK[c.r] || c.r}</span><span class="s1" style="font-size:${Math.round(fs * 0.85)}px">${c.s}</span><span class="s2" style="font-size:${Math.round(cw * 0.55)}px">${c.s}</span>`;
+  const fs = Math.max(14, Math.round(cw * 0.44));
+  const ten = c.r === 10 ? ";letter-spacing:-2px;transform:scaleX(.8);transform-origin:left top" : "";
+  return `<span class="r" style="font-size:${fs}px${ten}">${RANK[c.r] || c.r}</span><span class="s1" style="font-size:${Math.round(fs * 0.82)}px">${c.s}</span><span class="s2" style="font-size:${Math.round(cw * 0.72)}px">${c.s}</span>`;
 }
 function render() {
   const board = $("board");
@@ -355,7 +362,7 @@ function render() {
   S.found.forEach((f, fi) => f.forEach((c, i) => putCard(c, x(3 + fi), 8, true, i === f.length - 1 ? (e) => onCardTap(c.id, e.currentTarget) : null)));
   // Tablo
   let maxBottom = tabY + ch;
-  const downOff = Math.round(ch * 0.16), upOff = Math.round(ch * 0.3);
+  const downOff = Math.round(ch * 0.15), upOff = Math.round(ch * 0.36);
   S.tab.forEach((col, ti) => {
     let y = tabY;
     col.forEach((c, k) => {
