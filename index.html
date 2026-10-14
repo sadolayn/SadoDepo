@@ -39,6 +39,8 @@
   }
   @keyframes glow { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
   p { margin: 0 0 28px; color: var(--muted); letter-spacing: 1px; }
+  p.welcome { margin: 0 0 4px; }
+  p.greet { margin: 0 0 26px; color: var(--accent); font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 18px; letter-spacing: .5px; min-height: 24px; }
   .list { width: 100%; max-width: 380px; display: grid; gap: 12px; }
   a.game {
     display: flex;
@@ -92,7 +94,8 @@
 </head>
 <body>
   <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"></h1>
-  <p>Hoş geldiniz 👋</p>
+  <p class="welcome">Hoş geldiniz</p>
+  <p class="greet" id="greet"></p>
   <div class="list">
     <a class="game isb" href="isbank.html">
       <div class="icon isb-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg></div>
@@ -124,6 +127,17 @@
     <q>Bilgi paylaştıkça büyür</q>
     <span>— SADOLAYN</span>
   </div>
+<script>
+  (function () {
+    const h = new Date().getHours();
+    let t;
+    if (h >= 5 && h < 11) t = "Sağlıklı günler ☀️";
+    else if (h >= 11 && h < 16) t = "Sağlıklı öğlenler 🌤️";
+    else if (h >= 16 && h < 21) t = "Sağlıklı akşamlar 🌇";
+    else t = "Sağlıklı geceler 🌙";
+    document.getElementById("greet").textContent = t;
+  })();
+</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
