@@ -70,6 +70,15 @@ with ThreadPoolExecutor(16) as ex:
     res = dict(ex.map(metal, sorted(dates)))
 ok = {k: v for k, v in res.items() if v}
 print(f"::notice::Maden verisi {len(ok)}/{len(res)} gün")
+from collections import Counter
+print("::notice::Yıllara göre ok: " + str(sorted(Counter(k[:4] for k in ok).items())) + " eksik: " + str(sorted(Counter(k[:4] for k,v in res.items() if not v).items())))
+_miss = sorted(k for k,v in res.items() if not v)
+if _miss:
+    _d = dt.date.fromisoformat(_miss[0]); _errs = []
+    for u in metal_urls(_d):
+        try: get(u, 1); _errs.append("ok?")
+        except Exception as e: _errs.append(f"{u[:70]} -> {str(e)[:60]}")
+    print("::notice::Örnek eksik " + _miss[0] + ": " + " || ".join(_errs))
 if len(ok) < 200: sys.exit("::error::Maden verisi yetersiz")
 
 # Tek günlük hatalı sıçramaları at
