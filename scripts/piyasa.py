@@ -1,97 +1,113 @@
 #!/usr/bin/env python3
 """Döviz ve kıymetli maden fiyatlarını (TL) toplayıp data/piyasa.json yazar.
-Birincil kaynak: Yahoo Finance günlük kapanışlar. Kur: USD/TRY, EUR/TRY, GBP/TRY.
-Madenler USD/ons -> TL/gram (1 ons = 31.1034768 gr)."""
-import json, time, urllib.request, datetime as dt, sys, os
+Kur: Avrupa Merkez Bankası referans kurları (frankfurter.app) — USD/TRY, EUR/TRY, GBP/TRY.
+Madenler: fawazahmed0/currency-api (USD/ons) -> TL/gram (1 ons = 31.1034768 gr).
+Haftalık geçmiş (2020-11'den beri) + son 21 gün günlük."""
+import json, urllib.request, datetime as dt, sys, os
+from concurrent.futures import ThreadPoolExecutor
 
 OZ = 31.1034768
-START = dt.datetime(2020, 1, 1, tzinfo=dt.timezone.utc)
-UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124 Safari/537.36"}
+UA = {"User-Agent": "Mozilla/5.0 sadolayn-piyasa"}
+TODAY = dt.date.today()
 
-YAHOO = {"usdtry": "TRY=X", "eurtry": "EURTRY=X", "gbptry": "GBPTRY=X",
-         "xau": "GC=F", "xag": "SI=F", "xpt": "PL=F", "xpd": "PA=F"}
-
-def get(url):
-    req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return r.read().decode()
-
-def yahoo(sym):
-    p1 = int(START.timestamp()); p2 = int(time.time()) + 86400
-    for host in ("query1", "query2"):
+def get(url, tries=3):
+    last = None
+    for _ in range(tries):
         try:
-            u = f"https://{host}.finance.yahoo.com/v8/finance/chart/{sym}?period1={p1}&period2={p2}&interval=1d&events=history"
-            j = json.loads(get(u))["chart"]["result"][0]
-            ts = j["timestamp"]; cl = j["indicators"]["quote"][0]["close"]
-            out = {}
-            for t, c in zip(ts, cl):
-                if c is None or c <= 0: continue
-                d = dt.datetime.fromtimestamp(t, dt.timezone.utc).strftime("%Y-%m-%d")
-                out[d] = c
-            if len(out) > 500: return out
+            req = urllib.request.Request(url, headers=UA)
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return r.read().decode()
         except Exception as e:
-            print(f"::warning::yahoo {sym} {host}: {str(e)[:150]}")
-    return None
+            last = e
+    raise last
 
-STOOQ = {"usdtry": "usdtry", "eurtry": "eurtry", "gbptry": "gbptry",
-         "xau": "xauusd", "xag": "xagusd", "xpt": "xptusd", "xpd": "xpdusd"}
+# ---- Kurlar (ECB) ----
+fx = json.loads(get("https://api.frankfurter.app/2020-11-01..?base=USD&symbols=TRY,EUR,GBP"))["rates"]
+fx_dates = sorted(fx)
+print(f"::notice::ECB kur günleri {len(fx_dates)} ({fx_dates[0]} – {fx_dates[-1]})")
+def fx_on(d):
+    lo, hi = 0, len(fx_dates) - 1
+    if d < fx_dates[0]: return None
+    while lo < hi:
+        m = (lo + hi + 1) // 2
+        if fx_dates[m] <= d: lo = m
+        else: hi = m - 1
+    return fx[fx_dates[lo]]
 
-def stooq(sym):
-    try:
-        d2 = dt.date.today().strftime("%Y%m%d")
-        txt = get(f"https://stooq.com/q/d/l/?s={sym}&d1=20200101&d2={d2}&i=d")
-        out = {}
-        for line in txt.strip().splitlines()[1:]:
-            f = line.split(",")
-            if len(f) >= 5 and f[4] not in ("", "null"):
-                out[f[0]] = float(f[4])
-        if len(out) > 500: return out
-        print(f"::warning::stooq {sym}: {txt[:120]!r}")
-    except Exception as e:
-        print(f"::warning::stooq {sym}: {str(e)[:150]}")
-    return None
+# ---- Madenler ----
+def metal_urls(d):
+    s = d.isoformat()
+    urls = []
+    if d >= dt.date(2024, 3, 2):
+        urls += [f"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@{s}/v1/currencies/usd.min.json",
+                 f"https://{s}.currency-api.pages.dev/v1/currencies/usd.min.json"]
+    urls += [f"https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/{s}/currencies/usd.min.json"]
+    return urls
 
-def clean(series, maxjump=0.25):
-    """Tek günlük hatalı sıçramaları at (önceki ve sonraki güne göre)."""
-    ds = sorted(series)
-    bad = set()
-    for i in range(1, len(ds) - 1):
-        a, b, c = series[ds[i-1]], series[ds[i]], series[ds[i+1]]
-        if abs(b/a - 1) > maxjump and abs(b/c - 1) > maxjump: bad.add(ds[i])
-    return {d: v for d, v in series.items() if d not in bad}
+def metal(d):
+    for u in metal_urls(d):
+        try:
+            j = json.loads(get(u, 2))
+            r = j.get("usd", j)
+            vals = {k: r.get(k) for k in ("xau", "xag", "xpt", "xpd")}
+            if all(v and v > 0 for v in vals.values()):
+                return d.isoformat(), {k: 1 / v for k, v in vals.items()}
+        except Exception:
+            pass
+    return d.isoformat(), None
 
-raw = {}
-for k, s in YAHOO.items():
-    r = stooq(STOOQ[k]) or yahoo(s)
-    if not r: sys.exit(f"::error::Veri alınamadı: {k}")
-    raw[k] = clean(r)
-    print(k, len(raw[k]), min(raw[k]), max(raw[k]), file=sys.stderr)
+dates = set()
+d = dt.date(2020, 11, 27)
+while d <= TODAY:
+    dates.add(d); d += dt.timedelta(days=7)
+for i in range(21):
+    dates.add(TODAY - dt.timedelta(days=i))
+for y in range(2021, TODAY.year + 1):      # yıl sonları ve başları
+    for dd in (dt.date(y - 1, 12, 31), dt.date(y - 1, 12, 30), dt.date(y - 1, 12, 29), dt.date(y, 1, 2)):
+        if dt.date(2020, 11, 22) <= dd <= TODAY: dates.add(dd)
 
-# İş günü takvimi: kurların tarihleri birleşimi, eksikler bir önceki değerle doldurulur
-dates = sorted(set().union(*[set(v) for v in raw.values()]))
-dates = [d for d in dates if d <= dt.date.today().isoformat()]
-last = {}
+with ThreadPoolExecutor(16) as ex:
+    res = dict(ex.map(metal, sorted(dates)))
+ok = {k: v for k, v in res.items() if v}
+print(f"::notice::Maden verisi {len(ok)}/{len(res)} gün")
+if len(ok) < 200: sys.exit("::error::Maden verisi yetersiz")
+
+# Tek günlük hatalı sıçramaları at
+ks = sorted(ok)
+bad = set()
+for i in range(1, len(ks) - 1):
+    for m in ("xau", "xag", "xpt", "xpd"):
+        a, b, c = ok[ks[i-1]][m], ok[ks[i]][m], ok[ks[i+1]][m]
+        if abs(b/a - 1) > .2 and abs(b/c - 1) > .2: bad.add(ks[i])
+for k in bad: ok.pop(k)
+if bad: print(f"::notice::Atılan hatalı gün: {sorted(bad)}")
+
 cols = {k: [] for k in ["usd", "eur", "gbp", "xau", "xag", "xpt", "xpd"]}
 keep = []
-for d in dates:
-    for k in raw:
-        if d in raw[k]: last[k] = raw[k][d]
-    if len(last) < len(raw): continue
-    keep.append(d)
-    u = last["usdtry"]
+for s in sorted(ok):
+    r = fx_on(s)
+    if not r: continue
+    u = r["TRY"]
+    keep.append(s)
     cols["usd"].append(round(u, 4))
-    cols["eur"].append(round(last["eurtry"], 4))
-    cols["gbp"].append(round(last["gbptry"], 4))
+    cols["eur"].append(round(u / r["EUR"], 4))
+    cols["gbp"].append(round(u / r["GBP"], 4))
     for m in ("xau", "xag", "xpt", "xpd"):
-        cols[m].append(round(last[m] * u / OZ, 2 if m != "xag" else 3))
+        cols[m].append(round(ok[s][m] * u / OZ, 3))
+
+def sample(s):
+    i = min(range(len(keep)), key=lambda j: abs((dt.date.fromisoformat(keep[j]) - dt.date.fromisoformat(s)).days))
+    usd = cols["usd"][i]
+    return keep[i] + " " + ", ".join(f"{k}={cols[k][i]}" for k in cols) + \
+        " | USD/ons: " + ", ".join(f"{m}={round(cols[m][i]*OZ/usd)}" for m in ("xau", "xag", "xpt", "xpd"))
+for s in ("2021-10-15", "2023-12-29", keep[-1]):
+    print("::notice::" + sample(s))
 
 out = {
     "updated": dt.datetime.now(dt.timezone(dt.timedelta(hours=3))).strftime("%Y-%m-%d %H:%M"),
-    "source": "Yahoo Finance günlük kapanış (USD/TRY, EUR/TRY, GBP/TRY; altın, gümüş, platin, paladyum vadeli ons fiyatı × USD/TRY ÷ 31,1035)",
-    "dates": keep,
-    **cols,
+    "source": "Kurlar: Avrupa Merkez Bankası referans kurları (frankfurter.app). Madenler: currency-api ons fiyatları, TL/gram'a çevrilmiştir.",
+    "dates": keep, **cols,
 }
 os.makedirs("data", exist_ok=True)
-with open("data/piyasa.json", "w") as f:
-    json.dump(out, f, separators=(",", ":"))
-print("yazıldı", len(keep), "gün, son", keep[-1], {k: v[-1] for k, v in cols.items()})
+json.dump(out, open("data/piyasa.json", "w"), separators=(",", ":"))
+print("yazıldı", len(keep))
