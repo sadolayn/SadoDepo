@@ -15,7 +15,7 @@ const CFG = {
   NAME: 'Sadolayn Alerts',
   SITE: 'https://sadolayn.github.io/SadoDepo/',
   PAGE: 'https://sadolayn.github.io/SadoDepo/alerts.html',
-  MAX_KEYWORDS: 5,        // abone başına en fazla kelime
+  MAX_KEYWORDS: 10,       // abone başına en fazla kelime
   PER_KEYWORD: 5,         // e-postada kelime başına en fazla haber
   MAX_SUBS: 80,           // Gmail günlük gönderim kotası (100) için üst sınır
   DAILY_SIGNUP_LIMIT: 30, // günde en fazla yeni onay e-postası
