@@ -46,7 +46,7 @@
   <canvas id="c" width="360" height="560"></canvas>
   <div class="overlay" id="ov"><div class="box" id="box"></div></div>
 </div>
-<div class="tip">Parmağını sağa sola kaydırarak uç · ateş otomatik · yakıt depolarının üzerinden geç</div>
+<div class="tip">Parmağını sağa sola kaydırarak uç · ateş otomatik · yakıt depoları vurulamaz, üzerinden geç<br><span style="opacity:.6">Sürüm 3 · sesli</span></div>
 
 <script>
 const cv = document.getElementById("c");
@@ -332,8 +332,13 @@ function drawPlane(x, y, tilt) {
 let AC = null, master = null, eng = null, noiseBuf = null, muted = false;
 try { muted = localStorage.getItem("pilotMute") === "1"; } catch (e) {}
 function initAudio() {
-  if (AC) { if (AC.state === "suspended") AC.resume(); return; }
+  // iPhone: sessiz düğmesi açıkken de çalması için oynatma moduna geç
+  try { if (navigator.audioSession) navigator.audioSession.type = "playback"; } catch (e) {}
+  if (AC) { if (AC.state !== "running") AC.resume(); return; }
   try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
+  // Kilit açma: kısa sessiz ses çal (iOS/Safari için)
+  try { const b = AC.createBuffer(1, 1, 22050); const s0 = AC.createBufferSource(); s0.buffer = b; s0.connect(AC.destination); s0.start(0); } catch (e) {}
+  if (AC.state !== "running") AC.resume();
   master = AC.createGain(); master.gain.value = muted ? 0 : 0.9; master.connect(AC.destination);
   // Gürültü tamponu (patlama ve motor hışırtısı)
   noiseBuf = AC.createBuffer(1, AC.sampleRate * 1.5, AC.sampleRate);
@@ -426,7 +431,8 @@ function toGame(e) {
   const p = e.touches ? e.touches[0] : e;
   return ((p.clientX - r.left) / r.width) * W;
 }
-cv.addEventListener("touchstart", (e) => { e.preventDefault(); touchX = toGame(e); }, { passive: false });
+cv.addEventListener("touchstart", (e) => { e.preventDefault(); touchX = toGame(e); if (AC && AC.state !== "running") AC.resume(); }, { passive: false });
+document.addEventListener("visibilitychange", () => { if (!document.hidden && AC && AC.state !== "running") AC.resume(); });
 cv.addEventListener("touchmove", (e) => { e.preventDefault(); touchX = toGame(e); }, { passive: false });
 cv.addEventListener("touchend", (e) => { e.preventDefault(); if (!e.touches.length) touchX = null; }, { passive: false });
 cv.addEventListener("mousedown", (e) => { touchX = toGame(e); });
