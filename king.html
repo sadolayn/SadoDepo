@@ -147,6 +147,7 @@
   .panel button small { font-weight: 400; }
   #ctPanel button { font-size: 14px; padding: 10px; }
 </style>
+<script src="cardsound.js"></script>
 </head>
 <body>
 <header>
@@ -581,6 +582,7 @@ function newRound() {
   voids = [{}, {}, {}, {}];
   contract = null; trump = null; trumpBroken = false; heartsBroken = false;
   phase = "choose"; turn = -1;
+  if (window.CardSfx) CardSfx.deal(13);
   renderTrick(); render();
   if (chooser === 0) showChoosePanel();
   else {
@@ -653,6 +655,7 @@ function handOver() {
   return total >= MAX_ITEMS[contract] || hands[0].length === 0;
 }
 async function playCard(p, c) {
+  if (window.CardSfx) CardSfx.play();
   hands[p] = hands[p].filter((x) => id(x) !== id(c));
   if (trick.length && c.s !== trick[0].card.s) voids[p][trick[0].card.s] = true;
   trick.push({ p, card: c, fresh: true });
@@ -680,6 +683,7 @@ async function playCard(p, c) {
   else msg += ".";
   setStatus(msg);
   await wait(1100);
+  if (window.CardSfx) CardSfx.collect();
   trick = [];
   renderTrick();
   busy = false;

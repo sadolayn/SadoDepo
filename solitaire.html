@@ -67,6 +67,7 @@
   .confetti { position: fixed; top: -40px; font-size: 22px; pointer-events: none; z-index: 1001; animation: fall linear forwards; }
   @keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
 </style>
+<script src="cardsound.js"></script>
 </head>
 <body>
 <header>
@@ -112,6 +113,7 @@ function deal() {
   elapsed = 0; started = 0;
   clearInterval(timer); timer = null;
   $("board").innerHTML = ""; els = new Map();
+  if (window.CardSfx) CardSfx.shuffle();
   updateStats();
   render();
 }
@@ -182,6 +184,7 @@ function bestMove(id) {
   return null;
 }
 function doMove(m) {
+  if (window.CardSfx && !window.__silent) CardSfx.play();
   pushHistory();
   const cards = takeFrom(m.loc);
   if (m.to === "found") S.found[m.i].push(...cards); else S.tab[m.i].push(...cards);
@@ -195,8 +198,10 @@ function drawStock() {
     if (!S.waste.length) { history.pop(); return; }
     S.stock = S.waste.reverse().map((c) => ({ ...c, up: false }));
     S.waste = [];
+    if (window.CardSfx) CardSfx.collect();
   } else {
     for (let i = 0; i < 3 && S.stock.length; i++) { const c = S.stock.pop(); c.up = true; S.waste.push(c); }
+    if (window.CardSfx) CardSfx.flip();
   }
   S.moves++;
   startTimer();
