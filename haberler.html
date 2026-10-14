@@ -31,6 +31,8 @@
   .n:active b { color:var(--accent); }
   .sep { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--accent); padding:12px 0 2px; border-top:1px solid var(--line); }
   .sep:first-child { border-top:none; }
+  .alert { display:flex; align-items:center; gap:10px; background:#1a1608; border:1px solid #4a3a14; color:#f0d9a8; border-radius:14px; padding:10px 12px; margin-bottom:12px; font-size:14px; cursor:pointer; }
+  .alert b { color:var(--accent); }
   .empty { text-align:center; color:var(--muted); padding:40px 0; }
   .note { font-size:12px; color:var(--muted); text-align:center; margin-top:14px; }
   .stick { position:sticky; top:0; z-index:30; background:#000; margin:0 -16px 12px; padding:10px 16px; border-bottom:1px solid transparent; transition:border-color .2s, box-shadow .2s; }
@@ -53,11 +55,12 @@
     <input id="q" type="search" placeholder="Başlıklarda ara" autocomplete="off">
   </div>
   </div>
+  <div id="alert"></div>
   <div class="list" id="list"><div class="empty">Yükleniyor…</div></div>
   <p class="note">Başlıklar haber sitelerinin herkese açık RSS akışlarından gün içinde her saat otomatik derlenir. Habere dokununca yayıncının sitesinde açılır.</p>
 </div>
 <script>
-const CATS = [["gundem", "Gündem"], ["ekonomi", "Ekonomi"], ["dunya", "Dünya"], ["teknoloji", "Teknoloji"], ["spor", "Spor"]];
+const CATS = [["gundem", "Gündem"], ["okul", "🏫 Okul Tatili"], ["ekonomi", "Ekonomi"], ["dunya", "Dünya"], ["teknoloji", "Teknoloji"], ["spor", "Spor"]];
 const $ = (x) => document.getElementById(x);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 let D = null, cat = "gundem";
@@ -80,13 +83,17 @@ const dayLabel = (iso) => {
 const fold = (s) => s.toLocaleLowerCase("tr");
 function render() {
   $("cats").innerHTML = CATS.map(([k, n]) => `<span class="chip ${k === cat ? "on" : ""}" data-k="${k}">${n}</span>`).join("");
+  const okulToday = (D.cats.okul || []).filter((x) => x.d && Date.now() - new Date(x.d) < 18 * 3600e3);
+  $("alert").innerHTML = cat !== "okul" && okulToday.length
+    ? `<div class="alert" id="goOkul">🏫 <span>Son saatlerde <b>${okulToday.length}</b> okul tatili haberi var. Görmek için dokun.</span></div>` : "";
+  if ($("goOkul")) $("goOkul").onclick = () => { cat = "okul"; $("src").value = ""; render(); window.scrollTo(0, 0); };
   const items = (D.cats[cat] || []);
   const srcs = [...new Set(items.map((x) => x.s))].sort((a, b) => a.localeCompare(b, "tr"));
   const cur = $("src").value;
   $("src").innerHTML = `<option value="">Tüm kaynaklar</option>` + srcs.map((s) => `<option ${s === cur ? "selected" : ""}>${esc(s)}</option>`).join("");
   const q = fold($("q").value.trim()), src = $("src").value;
   const list = items.filter((x) => (!src || x.s === src) && (!q || fold(x.t).includes(q)));
-  if (!list.length) { $("list").innerHTML = '<div class="empty">Bu filtrede haber yok.</div>'; return; }
+  if (!list.length) { $("list").innerHTML = `<div class="empty">${cat === "okul" && !q && !src ? "Son 2 günde okul tatili haberi yok. 🎒 Okullar açık görünüyor." : "Bu filtrede haber yok."}</div>`; return; }
   let h = "", last = "";
   for (const x of list) {
     const dl = x.d ? dayLabel(x.d) : "";

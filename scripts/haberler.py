@@ -76,18 +76,30 @@ def fetch(args):
         out = []
         for it in items[:40]:
             t = text(it.find("title")) or text(it.find(f"{ns}title"))
+            se = it.find("source")
+            if se is not None and se.text:
+                src_name = se.text.strip()
+                if t.endswith(" - " + src_name): t = t[: -(len(src_name) + 3)]
+            else:
+                src_name = src
             link = text(it.find("link"))
             if not link:
                 l = it.find(f"{ns}link"); link = l.get("href") if l is not None else ""
             d = parse_date(text(it.find("pubDate")) or text(it.find(f"{ns}updated")) or text(it.find(f"{ns}published")) or text(it.find("{http://purl.org/dc/elements/1.1/}date")))
             if not t or not link.startswith("http"): continue
             if d and (d > NOW + dt.timedelta(hours=1) or NOW - d > MAX_AGE): continue
-            out.append({"t": t[:220], "s": src, "u": link, "d": d.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if d else None})
+            out.append({"t": t[:220], "s": src_name, "u": link, "d": d.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if d else None})
         return cat, src, out, None
     except Exception as e:
         return cat, src, [], str(e)[:90]
 
-jobs = [(c, s, u) for c, lst in FEEDS.items() for s, u in lst]
+# Okul tatili: Google Haberler aramaları (kaynak adı akıştan alınır)
+import urllib.parse
+GN = lambda q: "https://news.google.com/rss/search?q=" + urllib.parse.quote(q + " when:2d") + "&hl=tr&gl=TR&ceid=TR:tr"
+OKUL_FEEDS = [("Google Haberler", GN(q)) for q in ['okullar tatil', '"eğitime ara"', '"okullar tatil edildi"', '"yüz yüze eğitime"', 'kar tatili okul']]
+OKUL_RE = re.compile(r"(okul|okullar|eğitim|öğretim|ders)\w*[^.?!]{0,60}(tatil|ara ver|yapılmayacak|uzaktan|askıya)|tatil\w*[^.?!]{0,40}(okul|eğitim)", re.I)
+
+jobs = [(c, s, u) for c, lst in FEEDS.items() for s, u in lst] + [("okul", s, u) for s, u in OKUL_FEEDS]
 with ThreadPoolExecutor(12) as ex:
     res = list(ex.map(fetch, jobs))
 
@@ -98,6 +110,11 @@ for cat, src, items, err in res:
     if err: print(f"::warning::{cat}/{src}: {err}")
     else: ok_src.setdefault(cat, []).append(f"{src}:{len(items)}")
     cats.setdefault(cat, []).extend(items)
+# Okul tatili kategorisi: arama sonuçları + tüm kategorilerdeki eşleşen başlıklar
+okul = [x for x in cats.get("okul", []) if OKUL_RE.search(x["t"].lower())]
+for c, items in cats.items():
+    if c != "okul": okul += [x for x in items if OKUL_RE.search(x["t"].lower())]
+cats["okul"] = okul
 for cat, items in cats.items():
     seen, uniq = set(), []
     items.sort(key=lambda x: x["d"] or "", reverse=True)
