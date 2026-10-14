@@ -32,13 +32,13 @@
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header h1 { margin: 0; font-size: 20px; }
   .tabs {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px;
     background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px;
     margin-bottom: 14px;
   }
   .tabs button {
     border: none; background: transparent; color: var(--muted);
-    padding: 10px 2px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer;
+    padding: 9px 1px; border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer;
     line-height: 1.2;
   }
   .tabs button.active { background: var(--accent); color: #000; }
@@ -89,6 +89,7 @@
     <button data-tab="bch" class="active">BCH<br>Rotatif</button>
     <button data-tab="mev">Vadeli<br>Mevduat</button>
     <button data-tab="tk">Tüketici<br>Kredisi</button>
+    <button data-tab="konut">Konut<br>Kredisi</button>
     <button data-tab="kk">Kart<br>Gecikme</button>
   </div>
 
@@ -174,6 +175,35 @@
   </section>
 
 
+  <!-- Konut kredisi -->
+  <section class="panel" id="konut">
+    <div class="card">
+      <h2>Konut Kredisi</h2>
+      <p class="hint">Konut kredileri BSMV ve KKDF'den muaftır; taksitler yalnızca faiz üzerinden eşit ödemeli hesaplanır.</p>
+      <div class="two">
+        <div><label>Konut değeri</label><div class="field"><input id="k2_deger" type="text" inputmode="decimal" value="5.000.000"><span class="unit">TL</span></div></div>
+        <div><label>Kredi tutarı</label><div class="field"><input id="k2_tutar" type="text" inputmode="decimal" value="2.500.000"><span class="unit">TL</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>Aylık faiz</label><div class="field"><input id="k2_faiz" type="text" inputmode="decimal" value="2,79"><span class="unit">%</span></div></div>
+        <div><label>Vade</label><div class="field"><input id="k2_vade" type="text" inputmode="numeric" value="120"><span class="unit">ay</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>Tahsis ücreti</label><div class="field"><input id="k2_tahsis" type="text" inputmode="decimal" value="0,5"><span class="unit">%</span></div></div>
+        <div><label>Ekspertiz + diğer masraf</label><div class="field"><input id="k2_masraf" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
+      </div>
+      <p class="note" id="k2_note"></p>
+    </div>
+    <div class="card">
+      <div class="big"><span>Aylık taksit</span><b id="k2_out">–</b></div>
+      <div class="rows" id="k2_rows"></div>
+      <details>
+        <summary>Yıllara göre ödeme planı</summary>
+        <div class="tbl"><table id="k2_plan"></table></div>
+      </details>
+    </div>
+  </section>
+
   <!-- Kredi kartı -->
   <section class="panel" id="kk">
     <div class="card">
@@ -219,7 +249,7 @@ function rows(id, list) {
   $(id).innerHTML = list.map(([k, v, cls]) => `<div class="${cls || ""}"><span>${k}</span><span>${v}</span></div>`).join("");
 }
 // Tutar alanlarını binlik ayırıcıyla biçimlendir
-for (const id of ["b_tutar", "m_tutar", "t_tutar", "t_ucret", "k_borc", "k_odenen"]) {
+for (const id of ["b_tutar", "m_tutar", "t_tutar", "t_ucret", "k_borc", "k_odenen", "k2_deger", "k2_tutar", "k2_masraf"]) {
   $(id).addEventListener("blur", () => {
     const n = num(id);
     $(id).value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 });
@@ -378,6 +408,51 @@ function calcKK() {
   ]);
 }
 
+// ---------- Konut ----------
+function calcKonut() {
+  const deger = num("k2_deger"), P = num("k2_tutar"), r = num("k2_faiz") / 100, n = Math.round(num("k2_vade"));
+  const tahsis = P * num("k2_tahsis") / 100, masraf = num("k2_masraf");
+  if (!P || !n) { $("k2_out").textContent = "–"; rows("k2_rows", []); $("k2_plan").innerHTML = ""; return; }
+  const taksit = r === 0 ? P / n : P * r / (1 - Math.pow(1 + r, -n));
+  const toplam = taksit * n;
+  // Yıllık plan
+  let kalan = P, html = "<tr><th>Yıl</th><th>Ödenen</th><th>Anapara</th><th>Faiz</th><th>Kalan</th></tr>";
+  const fmt = (x) => x.toLocaleString("tr-TR", { maximumFractionDigits: 0 });
+  for (let y = 0; y < Math.ceil(n / 12); y++) {
+    let odenen = 0, ana = 0, fz = 0;
+    for (let k = y * 12 + 1; k <= Math.min(n, (y + 1) * 12); k++) {
+      const f = kalan * r;
+      let a = taksit - f;
+      if (k === n) a = kalan;
+      kalan = Math.max(0, kalan - a);
+      odenen += f + a; ana += a; fz += f;
+    }
+    html += `<tr><td>${y + 1}</td><td>${fmt(odenen)}</td><td>${fmt(ana)}</td><td>${fmt(fz)}</td><td>${fmt(kalan)}</td></tr>`;
+  }
+  $("k2_plan").innerHTML = html;
+  // Masraf dahil yıllık maliyet oranı
+  let lo = 0, hi = 1;
+  const net = P - tahsis - masraf;
+  for (let it = 0; it < 100; it++) {
+    const m = (lo + hi) / 2;
+    const pv = m === 0 ? taksit * n : taksit * (1 - Math.pow(1 + m, -n)) / m;
+    if (pv > net) lo = m; else hi = m;
+  }
+  const ltv = deger ? (P / deger) * 100 : 0;
+  $("k2_out").textContent = tl(taksit);
+  rows("k2_rows", [
+    ["Toplam faiz", tl(toplam - P)],
+    ["Tahsis ücreti", tl(tahsis)],
+    ["Ekspertiz + diğer masraf", tl(masraf)],
+    ["Toplam geri ödeme", tl(toplam + tahsis + masraf), "total"],
+    ["Peşinat", tl(Math.max(0, deger - P))],
+    ["Kredi / konut değeri", pct(ltv)],
+    ["Yıllık maliyet oranı (masraf dahil)", pct((Math.pow(1 + (lo + hi) / 2, 12) - 1) * 100)],
+  ]);
+  $("k2_note").textContent = (P > deger && deger ? "Kredi tutarı konut değerinden büyük görünüyor. " : "") +
+    "Kredi/değer oranı üst sınırı BDDK düzenlemelerine göre konutun değerine ve enerji sınıfına bağlıdır; bankanla teyit et. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir.";
+}
+
 // ---------- Sekmeler ----------
 document.querySelectorAll(".tabs button").forEach((b) => {
   b.addEventListener("click", () => {
@@ -397,7 +472,8 @@ document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventLi
 document.querySelectorAll("#mev input, #mev select").forEach((e) => e.addEventListener("input", calcMev));
 document.querySelectorAll("#tk input").forEach((e) => e.addEventListener("input", calcTK));
 document.querySelectorAll("#kk input").forEach((e) => e.addEventListener("input", calcKK));
-calcBCH(); calcMev(); calcTK(); calcKK();
+document.querySelectorAll("#konut input").forEach((e) => e.addEventListener("input", calcKonut));
+calcBCH(); calcMev(); calcTK(); calcKK(); calcKonut();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>

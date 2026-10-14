@@ -11,7 +11,7 @@ Telefonda kullanılabilen oyunlar ve araçlar:
 - **Oyunlar** (`oyunlar.html`): Tüm oyunların listelendiği sayfa
 - **Batak** (`batak.html`): İhaleli batak, 3 bilgisayar rakibe karşı
 - **İş Bankası Yenilikler** (`isbank.html`): Yeni ürünler, İşCep, haberler, KAP duyuruları ve Maximum kampanyaları; günde iki kez otomatik güncellenir (veri: `isbank/haberler.json`)
-- **Bankacılık** (`banka.html`): BCH rotatif kredi, vadeli mevduat , tüketici kredisi ve kredi kartı gecikme faizi hesaplama
+- **Bankacılık** (`banka.html`): BCH rotatif kredi, vadeli mevduat , tüketici ve konut kredisi, kredi kartı gecikme faizi hesaplama
 - **Resmi Gazete** (`gazete.html`): Her sabah otomatik güncellenen günlük özet (veriler `gazete/` klasöründe)
 - **King** (`king.html`): 20 ellik King, koz ve 6 ceza, kart sayan güçlü bilgisayar rakiplere karşı
 - **Solitaire** (`solitaire.html`): Klondike, kartlar 3'lü açılır; başlamadan dilek tutulur
