@@ -145,6 +145,7 @@
   .modal .btn { width: 100%; background: var(--accent); border-color: var(--accent); color: #000; }
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
 </style>
+<script src="cardsound.js"></script>
 </head>
 <body>
 <header>
@@ -382,6 +383,7 @@ function newRound() {
   trick = []; tricks = [0, 0, 0, 0]; played = new Set();
   phase = "bid";
   turn = (dealer + 1) % 4;
+  if (window.CardSfx) CardSfx.deal(13);
   renderTrick();
   render();
   bidTurn();
@@ -485,6 +487,7 @@ function humanPlay(c) {
   playCard(0, c);
 }
 async function playCard(p, c) {
+  if (window.CardSfx) CardSfx.play();
   hands[p] = hands[p].filter((x) => id(x) !== id(c));
   trick.push({ p, card: c, fresh: true });
   played.add(id(c));
@@ -503,6 +506,7 @@ async function playCard(p, c) {
   render();
   setStatus(w === 0 ? "Eli <b>sen</b> aldın! 👏" : `Eli <b>${NAMES[w]}</b> aldı.`);
   await wait(1100);
+  if (window.CardSfx) CardSfx.collect();
   trick = [];
   renderTrick();
   busy = false;
