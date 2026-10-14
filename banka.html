@@ -168,7 +168,7 @@
     </div>
     <div class="card">
       <h2>🧮 Vadesiz başabaş</h2>
-      <p class="hint">Anaparanın bir kısmı vadesizde kalırsa kalan tutara verilebilecek oran aralığı. Vadesizde müşteri faiz almaz, banka politika faiziyle kazanır. Anapara, faiz, vade ve stopaj yukarıdan alınır.</p>
+      <p class="hint">Anaparanın bir kısmı vadesizde kalırsa, müşterinin aynı net getiriyi alması için kalan tutara verilmesi gereken oran. Vadesizde müşteri faiz almaz, banka politika faiziyle kazanır. Anapara, faiz, vade ve stopaj yukarıdan alınır.</p>
       <div class="two">
         <div><label>Politika faizi</label><div class="field"><input id="v_pf" type="text" inputmode="decimal" value="37"><span class="unit">%</span></div></div>
         <div><label>Asgari vadesiz</label><div class="field"><input id="v_min" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div></div>
@@ -442,10 +442,9 @@ function calcBreak(P, r, g, start) {
       <div><span>Vadesizde kalan (müşteriye faiz yok)</span><span>${tl(x.vad)}</span></div>
       <div><span>Vadeliye giden tutar</span><span>${tl(x.rest)}</span></div>
       <div><span>Bankanın vadesiz kazancı (%${nfx(pf * 100)} politika faizi)</span><span>${tl(x.vVal)}</span></div>
-      <div><span>Asgari oran · müşteri aynı ${tl(target)} neti alır</span><span><b>${pr(x.rMin)}</b></span></div>
-      <div class="total"><span>Başabaş (azami) oran · müşteriye ${tl(x.nMax)} net</span><span>${pr(x.rMax)}</span></div>
+      <div class="total"><span>Kalan tutara verilecek oran · müşteri aynı ${tl(target)} neti alır</span><span>${pr(x.rMin)}</span></div>
     </div>`).join("");
-  $("v_note").textContent = `Vadesizde kalan kısma müşteri faiz almaz; banka bu tutarı politika faiziyle değerlendirir. Asgari oranla müşteri, paranın tamamını %${nfx(r * 100)} ile bağlamış gibi aynı net getiriyi alır. Başabaş oranda bankanın vadesizden kazandığı da müşteriye aktarılır; bunun üzerindeki her oran banka için zarar demektir. Teklif bu iki oran arasında verilebilir.`;
+  $("v_note").textContent = `Vadesizde kalan kısma müşteri faiz almaz (banka bu tutarı politika faiziyle değerlendirir). Kalan tutara bu oran verilirse müşteri, paranın tamamını %${nfx(r * 100)} ile bağlamış gibi aynı net getiriyi alır.`;
 }
 
 function calcExtra(P, r, g, start) {
