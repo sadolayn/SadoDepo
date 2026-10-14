@@ -69,6 +69,8 @@
   .bar i { display: block; height: 100%; border-radius: 99px; transition: width .25s; }
   .meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
   .meta b { color: var(--ink); }
+  .amt { white-space: nowrap; padding: 11px 12px; border-radius: 12px; background: var(--accent); color: #000; border: none; font-weight: 800; font-size: 14px; cursor: pointer; }
+  .amt:active { transform: scale(.95); }
   .tgt { background: none; border: 1px dashed #444; color: var(--accent); border-radius: 8px; padding: 2px 8px; font-size: 12px; cursor: pointer; }
 
   .heat { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
@@ -135,13 +137,18 @@
   <div class="card">
     <h3 id="heatTitle">Ayın takvimi</h3>
     <div class="heat" id="heat"></div>
-    <p class="note" style="margin:8px 0 0">Kutudaki küçük sayı o gün işlenen toplam adet. Bir güne dokununca o günü düzenlersin.</p>
+    <p class="note" style="margin:8px 0 0">Kutudaki küçük sayı o gün işlenen toplam adet (tutar ve bakiyeler hariç). Bir güne dokununca o günü düzenlersin.</p>
   </div>
 
   <div class="card edit">
     <h3>Ürünleri düzenle</h3>
     <ul id="editList"></ul>
-    <div class="addrow"><input id="newName" placeholder="Yeni ürün (ör. BES, POS)" maxlength="30"><button class="btn pri" id="addBtn" style="padding:10px 14px">Ekle</button></div>
+    <div class="addrow"><input id="newName" placeholder="Yeni kalem (ör. BES, POS)" maxlength="30"><button class="btn pri" id="addBtn" style="padding:10px 14px">Ekle</button></div>
+    <select id="newType" style="width:100%;margin-top:8px;padding:10px;font-size:14px;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:10px">
+      <option value="adet">Adet (+/− ile)</option>
+      <option value="tutar">Tutar – toplanan (milyon TL)</option>
+      <option value="bakiye">Ortalama bakiye (SFO/KFO gibi, milyon TL)</option>
+    </select>
   </div>
 
   <div class="card">
@@ -171,12 +178,16 @@ const HALF = new Set(["2026-03-19","2026-05-26","2026-10-28","2027-03-08","2027-
 // ================= Veri =================
 const KEY = "gunce_v2";
 const DEFAULT_PRODUCTS = [
-  { id: "kk", name: "Kredi kartı", icon: "💳" },
-  { id: "ek", name: "Ek hesap", icon: "🏦" },
-  { id: "ft", name: "Fatura talimatı", icon: "🧾" },
-  { id: "skk", name: "Şirket kredi kartı", icon: "🏢" },
-  { id: "cek", name: "Çek karnesi", icon: "📘" },
+  { id: "kk", name: "Kredi kartı", icon: "💳", type: "adet" },
+  { id: "ek", name: "Ek hesap", icon: "🏦", type: "adet" },
+  { id: "ft", name: "Fatura talimatı", icon: "🧾", type: "adet" },
+  { id: "skk", name: "Şirket kredi kartı", icon: "🏢", type: "adet" },
+  { id: "cek", name: "Çek karnesi", icon: "📘", type: "adet" },
+  { id: "sfo", name: "SFO", icon: "💰", type: "bakiye" },
+  { id: "kfo", name: "KFO", icon: "📊", type: "bakiye" },
+  { id: "kar", name: "Karlılık", icon: "📈", type: "tutar" },
 ];
+const TYPE_AD = { adet: "Adet", tutar: "Tutar (toplanan)", bakiye: "Ortalama bakiye" };
 const ICONS = ["📌", "📈", "🛡️", "💼", "📱", "🏠", "🚗", "💰", "🧩", "⭐"];
 let D;
 function load() {
@@ -191,6 +202,16 @@ function load() {
         for (const m of Object.values(old.months)) Object.assign(D.days, m.days || {});
       }
     } catch (e) {}
+  }
+}
+function migrate() {
+  D.bal ||= {};
+  D.targets ||= {};
+  D.days ||= {};
+  for (const p of D.products) p.type ||= "adet";
+  if (!D.v3) {
+    for (const p of DEFAULT_PRODUCTS) if (p.type !== "adet" && !D.products.some((x) => x.id === p.id)) D.products.push({ ...p });
+    D.v3 = true;
   }
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) { toast("Kaydedilemedi: tarayıcı depolaması kapalı olabilir"); } }
@@ -232,6 +253,47 @@ function monthTotal(pid, m) { let s = 0; const n = new Date(qy, m + 1, 0).getDat
 function workDaysLeft() { let n = 0; eachQuarterDay((d) => { if (d >= today) n += workVal(d); }); return n; }
 function workDaysTotal() { let n = 0; eachQuarterDay((d) => (n += workVal(d))); return n; }
 const fmt = (n) => (Math.round(n * 10) / 10).toLocaleString("tr-TR");
+const fmtMn = (n) => `${(Math.round(n * 100) / 100).toLocaleString("tr-TR")} mn`;
+const ptype = (pid) => (D.products.find((x) => x.id === pid) || {}).type || "adet";
+const qStart = () => new Date(qy, qn * 3, 1, 12);
+const qEnd = () => new Date(qy, qn * 3 + 3, 0, 12);
+function parseMn(v) {
+  // "48,5" → 48.5 (milyon TL); "1.250,75" → 1250.75
+  let t = String(v).trim().toLowerCase().replace(/milyon|mn|tl/g, "").trim();
+  if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
+  const n = Number(t);
+  return isFinite(n) ? n : NaN;
+}
+// Bakiye: belli bir günde geçerli bakiye (o güne kadarki son girilen değer)
+function balanceOn(pid, d) {
+  const h = D.bal[pid];
+  if (!h) return null;
+  const k = keyOf(d);
+  let bestK = null;
+  for (const kk of Object.keys(h)) if (kk <= k && (!bestK || kk > bestK)) bestK = kk;
+  return bestK ? h[bestK] : null;
+}
+// Çeyrek ortalaması (takvim günü), bugüne kadar
+function balanceStats(pid) {
+  const end = today < qEnd() ? today : qEnd();
+  let sum = 0, cnt = 0, missing = 0;
+  const totalDays = Math.round((qEnd() - qStart()) / 86400000) + 1;
+  if (today < qStart()) return { avg: null, sum: 0, cnt: 0, totalDays, remaining: totalDays, missing: 0, cur: balanceOn(pid, today) };
+  for (let d = new Date(qStart()); d <= end; d.setDate(d.getDate() + 1)) {
+    const b = balanceOn(pid, d);
+    if (b == null) { missing++; continue; }
+    sum += b; cnt++;
+  }
+  const elapsed = Math.round((end - qStart()) / 86400000) + 1;
+  const remaining = totalDays - elapsed;
+  return { avg: cnt ? sum / cnt : null, sum, cnt, totalDays, remaining, missing, cur: balanceOn(pid, end) };
+}
+function progressOf(p) {
+  const tgt = Number(targets()[p.id]) || 0;
+  if (!tgt) return null;
+  if (p.type === "bakiye") { const st = balanceStats(p.id); return st.avg == null ? 0 : (st.avg / tgt) * 100; }
+  return (quarterTotal(p.id) / tgt) * 100;
+}
 function color(p) { return p >= 100 ? "var(--ok)" : p >= 60 ? "var(--mid)" : "var(--low)"; }
 const qName = () => `${qy} · ${qn + 1}. çeyrek`;
 const qRange = () => `${MONTHS[qn * 3]} – ${MONTHS[qn * 3 + 2]}`;
@@ -243,24 +305,22 @@ function render() {
   renderHero(); renderChips(); renderDays(); renderProds(); renderHeat(); renderEdit();
 }
 function renderHero() {
-  const T = targets();
-  const tgt = D.products.reduce((a, p) => a + (Number(T[p.id]) || 0), 0);
-  const done = D.products.reduce((a, p) => a + quarterTotal(p.id), 0);
-  const pct = tgt ? Math.round((done / tgt) * 100) : 0;
+  const withT = D.products.filter((p) => Number(targets()[p.id]) > 0);
+  const pcts = withT.map((p) => Math.min(150, progressOf(p) || 0));
+  const pct = pcts.length ? Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length) : 0;
+  const hit = withT.filter((p) => (progressOf(p) || 0) >= 100).length;
   const L = 2 * Math.PI * 42;
   $("ringArc").setAttribute("stroke-dasharray", `${Math.min(1, pct / 100) * L} ${L}`);
   $("ringArc").setAttribute("stroke", pct >= 100 ? "#3fc283" : "#e0a24f");
   $("ringTxt").textContent = `%${pct}`;
   const left = workDaysLeft(), tot = workDaysTotal();
-  const elapsed = tot - left;
-  const pace = tgt && elapsed > 0 ? Math.round(((done / elapsed) * tot / tgt) * 100) : null;
-  $("heroTxt").innerHTML = `Çeyrek toplamı <b>${done}</b> / ${tgt || "–"} adet<br>
-    İş günü: <b>${fmt(tot)}</b> · Kalan: <b>${fmt(left)}</b><br>
-    ${tgt && done >= tgt ? "🎉 Çeyrek hedefi tamam!" : tgt ? `Hedefe <b>${tgt - done}</b> adet kaldı${pace !== null && left > 0 ? ` · Bu hızla çeyrek sonu <b>%${pace}</b>` : ""}` : "Ürünlerin çeyrek hedeflerini gir 👇"}`;
+  $("heroTxt").innerHTML = withT.length
+    ? `Ortalama başarı <b>%${pct}</b><br>Hedefi tutan: <b>${hit}</b> / ${withT.length} kalem<br>İş günü: <b>${fmt(tot)}</b> · Kalan: <b>${fmt(left)}</b>`
+    : `İş günü: <b>${fmt(tot)}</b> · Kalan: <b>${fmt(left)}</b><br>Ürünlerin çeyrek hedeflerini gir 👇`;
 }
 function renderChips() {
   $("mchips").innerHTML = qMonths().map((m) => {
-    const tot = D.products.reduce((a, p) => a + monthTotal(p.id, m), 0);
+    const tot = D.products.filter((p) => p.type === "adet").reduce((a, p) => a + monthTotal(p.id, m), 0);
     return `<button data-m="${m}" class="${m === viewMonth ? "sel" : ""}">${MONTHS[m]}<small>${tot} adet</small></button>`;
   }).join("");
   $("mchips").querySelectorAll("button").forEach((b) => (b.onclick = () => {
@@ -276,7 +336,7 @@ function renderDays() {
   for (let d = 1; d <= n; d++) {
     const dt = new Date(y, m, d, 12);
     const k = keyOf(dt);
-    const has = D.days[k] && Object.values(D.days[k]).some((v) => v > 0);
+    const has = (D.days[k] && Object.values(D.days[k]).some((v) => v > 0)) || D.products.some((p) => D.bal[p.id] && D.bal[p.id][k] != null);
     html += `<button data-d="${d}" class="${isWork(dt) ? "" : "off"} ${keyOf(selDay) === k ? "sel" : ""} ${has ? "has" : ""}"><small>${DOW[dt.getDay()]}</small><b>${d}</b></button>`;
   }
   $("days").innerHTML = html;
@@ -293,27 +353,73 @@ function renderProds() {
   const dd = dayData(selDay);
   $("prods").innerHTML = D.products.map((p) => {
     const tgt = Number(T[p.id]) || 0;
-    const done = quarterTotal(p.id);
-    const pct = tgt ? Math.round((done / tgt) * 100) : 0;
-    const need = tgt > done && left > 0 ? (tgt - done) / left : 0;
-    const months = qMonths().map((m) => `${MONTHS[m].slice(0, 3)} ${monthTotal(p.id, m)}`).join(" · ");
-    const meta = tgt
-      ? (done >= tgt ? `<span style="color:var(--ok)">✓ Hedef tamam</span>` : `Kalan <b>${tgt - done}</b> · günde <b>${fmt(need)}</b>`)
-      : `<span>Hedef girilmedi</span>`;
+    const pct = tgt ? Math.round(progressOf(p)) : 0;
+    let mid = "", meta = "", sub = "", ctrl = "";
+    if (p.type === "bakiye") {
+      const st = balanceStats(p.id);
+      const setVal = D.bal[p.id] && D.bal[p.id][keyOf(selDay)];
+      mid = `Ort: ${st.avg == null ? "–" : fmtMn(st.avg)} / <button class="tgt" data-t="${p.id}">Hedef: ${tgt ? fmtMn(tgt) : "gir"}</button>`;
+      const need = tgt && st.remaining > 0 ? (tgt * st.totalDays - st.sum - (st.missing ? 0 : 0)) / st.remaining : null;
+      meta = tgt
+        ? (st.avg != null && st.avg >= tgt && st.remaining === 0 ? `<span style="color:var(--ok)">✓ Hedef tamam</span>`
+          : need != null ? `Kalan ${st.remaining} günde ort. <b>${fmtMn(Math.max(0, need))}</b> gerekli` : (st.avg >= tgt ? `<span style="color:var(--ok)">✓ Hedef tamam</span>` : "Çeyrek bitti"))
+        : `<span>Hedef girilmedi</span>`;
+      sub = `Güncel bakiye: <b style="color:var(--ink)">${st.cur == null ? "–" : fmtMn(st.cur)}</b>${st.missing ? ` · <span style="color:var(--mid)">çeyrek başı bakiyesini gir</span>` : ""}`;
+      ctrl = `<button class="amt" data-b="${p.id}">${setVal != null ? fmtMn(setVal) : "Bakiye gir"}</button>`;
+    } else if (p.type === "tutar") {
+      const done = quarterTotal(p.id);
+      const need = tgt > done && left > 0 ? (tgt - done) / left : 0;
+      mid = `Çeyrek: ${fmtMn(done)} / <button class="tgt" data-t="${p.id}">Hedef: ${tgt ? fmtMn(tgt) : "gir"}</button>`;
+      meta = tgt ? (done >= tgt ? `<span style="color:var(--ok)">✓ Hedef tamam</span>` : `Kalan <b>${fmtMn(tgt - done)}</b> · günde <b>${fmtMn(need)}</b>`) : `<span>Hedef girilmedi</span>`;
+      sub = qMonths().map((m) => `${MONTHS[m].slice(0, 3)} ${fmtMn(monthTotal(p.id, m))}`).join(" · ");
+      ctrl = `<button class="amt" data-u="${p.id}">${dd[p.id] ? fmtMn(dd[p.id]) : "Tutar gir"}</button>`;
+    } else {
+      const done = quarterTotal(p.id);
+      const need = tgt > done && left > 0 ? (tgt - done) / left : 0;
+      mid = `Çeyrek: ${done} / <button class="tgt" data-t="${p.id}">Hedef: ${tgt || "gir"}</button>`;
+      meta = tgt ? (done >= tgt ? `<span style="color:var(--ok)">✓ Hedef tamam</span>` : `Kalan <b>${tgt - done}</b> · günde <b>${fmt(need)}</b>`) : `<span>Hedef girilmedi</span>`;
+      sub = qMonths().map((m) => `${MONTHS[m].slice(0, 3)} ${monthTotal(p.id, m)}`).join(" · ");
+      ctrl = `<button data-m="${p.id}" aria-label="Azalt">−</button><span class="v">${dd[p.id] || 0}</span><button class="plus" data-a="${p.id}" aria-label="Artır">+</button>`;
+    }
     return `<div class="prod" data-p="${p.id}">
       <div class="top">
         <div class="ic">${p.icon}</div>
-        <div class="nm"><b>${escapeHtml(p.name)}</b><span>Çeyrek: ${done} / <button class="tgt" data-t="${p.id}">Hedef: ${tgt || "gir"}</button></span></div>
-        <div class="cnt"><button data-m="${p.id}" aria-label="Azalt">−</button><span class="v">${dd[p.id] || 0}</span><button class="plus" data-a="${p.id}" aria-label="Artır">+</button></div>
+        <div class="nm"><b>${escapeHtml(p.name)}</b><span>${mid}</span></div>
+        <div class="cnt">${ctrl}</div>
       </div>
       <div class="bar"><i style="width:${Math.min(100, pct)}%;background:${color(pct)}"></i></div>
       <div class="meta"><span>%${pct}</span><span>${meta}</span></div>
-      <div class="meta" style="margin-top:4px"><span>${months}</span></div>
+      <div class="meta" style="margin-top:4px"><span>${sub}</span></div>
     </div>`;
   }).join("");
   $("prods").querySelectorAll("[data-a]").forEach((b) => (b.onclick = () => bump(b.dataset.a, 1)));
   $("prods").querySelectorAll("[data-m]").forEach((b) => (b.onclick = () => bump(b.dataset.m, -1)));
   $("prods").querySelectorAll("[data-t]").forEach((b) => (b.onclick = () => setTarget(b.dataset.t)));
+  $("prods").querySelectorAll("[data-b]").forEach((b) => (b.onclick = () => setBalance(b.dataset.b)));
+  $("prods").querySelectorAll("[data-u]").forEach((b) => (b.onclick = () => setAmount(b.dataset.u)));
+}
+function setBalance(pid) {
+  const p = D.products.find((x) => x.id === pid);
+  const k = keyOf(selDay);
+  const cur = D.bal[pid] && D.bal[pid][k] != null ? String(D.bal[pid][k]).replace(".", ",") : "";
+  const v = prompt(`${p.name} bakiyesi — ${selDay.getDate()} ${MONTHS[selDay.getMonth()]} itibarıyla (milyon TL, ör. 48,5).\nBoş bırakırsan bu günün kaydı silinir.`, cur);
+  if (v === null) return;
+  D.bal[pid] ||= {};
+  if (String(v).trim() === "") delete D.bal[pid][k];
+  else { const n = parseMn(v); if (isNaN(n)) return toast("Geçersiz tutar"); D.bal[pid][k] = n; }
+  save(); render();
+}
+function setAmount(pid) {
+  const p = D.products.find((x) => x.id === pid);
+  const dd = dayData(selDay);
+  const cur = dd[pid] ? String(dd[pid]).replace(".", ",") : "";
+  const v = prompt(`${p.name} — ${selDay.getDate()} ${MONTHS[selDay.getMonth()]} günü tutarı (milyon TL, ör. 0,25).\nBoş bırakırsan silinir.`, cur);
+  if (v === null) return;
+  if (String(v).trim() === "") delete dd[pid];
+  else { const n = parseMn(v); if (isNaN(n)) return toast("Geçersiz tutar"); if (n) dd[pid] = n; else delete dd[pid]; }
+  save(); render();
+  const tgt = Number(targets()[pid]) || 0;
+  if (tgt && quarterTotal(pid) >= tgt) toast(`🎉 ${p.name} çeyrek hedefi tamam!`);
 }
 function renderHeat() {
   const y = qy, m = viewMonth;
@@ -323,7 +429,7 @@ function renderHeat() {
   const n = new Date(y, m + 1, 0).getDate();
   let max = 1;
   const tot = {};
-  for (let d = 1; d <= n; d++) { const k = keyOf(new Date(y, m, d, 12)); const s = Object.values(D.days[k] || {}).reduce((a, b) => a + b, 0); tot[d] = s; max = Math.max(max, s); }
+  for (let d = 1; d <= n; d++) { const k = keyOf(new Date(y, m, d, 12)); const dv = D.days[k] || {}; const s = D.products.filter((p) => p.type === "adet").reduce((a, p) => a + (dv[p.id] || 0), 0); tot[d] = s; max = Math.max(max, s); }
   let html = ["P", "S", "Ç", "P", "C", "C", "P"].map((x) => `<div class="h">${x}</div>`).join("");
   for (let i = 0; i < off; i++) html += "<div></div>";
   for (let d = 1; d <= n; d++) {
@@ -337,7 +443,7 @@ function renderHeat() {
   $("heat").querySelectorAll("[data-d]").forEach((el) => (el.onclick = () => { selDay = new Date(y, m, Number(el.dataset.d), 12); render(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
 }
 function renderEdit() {
-  $("editList").innerHTML = D.products.map((p) => `<li><span style="font-size:20px">${p.icon}</span><input value="${escapeHtml(p.name)}" data-r="${p.id}" maxlength="30"><button class="x" data-x="${p.id}" aria-label="Sil">✕</button></li>`).join("");
+  $("editList").innerHTML = D.products.map((p) => `<li><span style="font-size:20px">${p.icon}</span><div style="flex:1;min-width:0"><input value="${escapeHtml(p.name)}" data-r="${p.id}" maxlength="30" style="width:100%"><div style="font-size:11px;color:var(--muted);margin-top:3px">${TYPE_AD[p.type]}</div></div><button class="x" data-x="${p.id}" aria-label="Sil">✕</button></li>`).join("");
   $("editList").querySelectorAll("[data-r]").forEach((i) => (i.onchange = () => { const p = D.products.find((x) => x.id === i.dataset.r); if (p && i.value.trim()) { p.name = i.value.trim(); save(); renderProds(); } }));
   $("editList").querySelectorAll("[data-x]").forEach((b) => (b.onclick = () => {
     const p = D.products.find((x) => x.id === b.dataset.x);
@@ -361,10 +467,11 @@ function bump(pid, delta) {
 }
 function setTarget(pid) {
   const p = D.products.find((x) => x.id === pid);
-  const cur = targets()[pid] || "";
-  const v = prompt(`${p.name} için ${qName()} (${qRange()}) hedefi (adet):`, cur);
+  const cur = targets()[pid] ? String(targets()[pid]).replace(".", ",") : "";
+  const unit = p.type === "adet" ? "adet" : p.type === "bakiye" ? "ortalama, milyon TL" : "toplam, milyon TL";
+  const v = prompt(`${p.name} için ${qName()} (${qRange()}) hedefi (${unit}):`, cur);
   if (v === null) return;
-  const n = Math.max(0, Math.round(Number(String(v).replace(",", ".")) || 0));
+  let n = p.type === "adet" ? Math.max(0, Math.round(Number(String(v).replace(",", ".")) || 0)) : Math.max(0, parseMn(v) || 0);
   if (!D.targets[qKey()]) D.targets[qKey()] = {};
   if (n) D.targets[qKey()][pid] = n; else delete D.targets[qKey()][pid];
   save(); render();
@@ -372,10 +479,11 @@ function setTarget(pid) {
 function addProduct() {
   const name = $("newName").value.trim();
   if (!name) return;
+  const type = $("newType").value;
   const id = "u" + Date.now().toString(36);
-  D.products.push({ id, name, icon: ICONS[D.products.length % ICONS.length] });
+  D.products.push({ id, name, icon: ICONS[D.products.length % ICONS.length], type });
   $("newName").value = "";
-  save(); render(); toast(`${name} eklendi`);
+  save(); render(); toast(`${name} eklendi (${TYPE_AD[type]})`);
 }
 function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 1800); }
 function download(name, text, type) {
@@ -393,23 +501,27 @@ function importJson(file) {
       const d = JSON.parse(r.result);
       if (!d || !Array.isArray(d.products) || typeof d.days !== "object") throw 0;
       if (!confirm("Yedek yüklensin mi? Bu cihazdaki mevcut veriler yedektekilerle değiştirilecek.")) return;
-      D = { products: d.products, targets: d.targets || {}, days: d.days }; save(); render(); toast("Yedek yüklendi");
+      D = { products: d.products, targets: d.targets || {}, days: d.days, bal: d.bal || {}, v3: true }; migrate(); save(); render(); toast("Yedek yüklendi");
     } catch (e) { toast("Bu dosya geçerli bir Günce yedeği değil"); }
   };
   r.readAsText(file);
 }
 function exportCsv() {
-  const head = ["Tarih", ...D.products.map((p) => p.name), "Toplam"];
+  const lbl = (p) => p.type === "adet" ? p.name : `${p.name} (mn TL${p.type === "bakiye" ? ", bakiye" : ""})`;
+  const head = ["Tarih", ...D.products.map(lbl)];
   const lines = [head];
+  const num = (n) => String(Math.round(n * 100) / 100).replace(".", ",");
   eachQuarterDay((dt) => {
     const v = D.days[keyOf(dt)] || {};
-    const row = D.products.map((p) => v[p.id] || 0);
-    lines.push([`${pad(dt.getDate())}.${pad(dt.getMonth() + 1)}.${dt.getFullYear()}`, ...row, row.reduce((a, b) => a + b, 0)]);
+    lines.push([`${pad(dt.getDate())}.${pad(dt.getMonth() + 1)}.${dt.getFullYear()}`, ...D.products.map((p) => {
+      if (p.type === "bakiye") { const b = dt <= today ? balanceOn(p.id, dt) : null; return b == null ? "" : num(b); }
+      return p.type === "tutar" ? num(v[p.id] || 0) : (v[p.id] || 0);
+    })]);
   });
-  for (const m of qMonths()) lines.push([`${MONTHS[m]} toplam`, ...D.products.map((p) => monthTotal(p.id, m)), D.products.reduce((a, p) => a + monthTotal(p.id, m), 0)]);
   const T = targets();
-  lines.push(["Çeyrek gerçekleşen", ...D.products.map((p) => quarterTotal(p.id)), D.products.reduce((a, p) => a + quarterTotal(p.id), 0)]);
-  lines.push(["Çeyrek hedef", ...D.products.map((p) => T[p.id] || 0), D.products.reduce((a, p) => a + (Number(T[p.id]) || 0), 0)]);
+  lines.push(["Çeyrek gerçekleşen", ...D.products.map((p) => p.type === "bakiye" ? (balanceStats(p.id).avg == null ? "" : num(balanceStats(p.id).avg) + " (ort.)") : p.type === "tutar" ? num(quarterTotal(p.id)) : quarterTotal(p.id))]);
+  lines.push(["Çeyrek hedef", ...D.products.map((p) => p.type === "adet" ? (T[p.id] || 0) : num(T[p.id] || 0))]);
+  lines.push(["Başarı %", ...D.products.map((p) => { const x = progressOf(p); return x == null ? "" : Math.round(x); })]);
   const csv = "\ufeff" + lines.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\r\n");
   download(`gunce-${qy}-Q${qn + 1}.csv`, csv, "text/csv;charset=utf-8");
   toast("Excel dosyası indirildi");
@@ -431,9 +543,11 @@ $("expJson").onclick = exportJson;
 $("impJson").onclick = () => $("fileIn").click();
 $("fileIn").onchange = (e) => { if (e.target.files[0]) importJson(e.target.files[0]); e.target.value = ""; };
 $("expCsv").onclick = exportCsv;
-$("resetM").onclick = () => { if (confirm(`${qName()} (${qRange()}) günlük kayıtları silinsin mi? (Hedefler kalır)`)) { eachQuarterDay((d) => delete D.days[keyOf(d)]); save(); render(); } };
+$("resetM").onclick = () => { if (confirm(`${qName()} (${qRange()}) günlük kayıtları silinsin mi? (Hedefler kalır)`)) { eachQuarterDay((d) => { delete D.days[keyOf(d)]; for (const h of Object.values(D.bal)) delete h[keyOf(d)]; }); save(); render(); } };
 
 load();
+migrate();
+save();
 render();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
