@@ -99,7 +99,11 @@ GN = lambda q: "https://news.google.com/rss/search?q=" + urllib.parse.quote(q + 
 OKUL_FEEDS = [("Google Haberler", GN(q)) for q in ['okullar tatil', '"eğitime ara"', '"okullar tatil edildi"', '"yüz yüze eğitime"', 'kar tatili okul']]
 OKUL_RE = re.compile(r"(okul|okullar|eğitim|öğretim|ders)\w*[^.?!]{0,60}(tatil|ara ver|yapılmayacak|uzaktan|askıya)|tatil\w*[^.?!]{0,40}(okul|eğitim)", re.I)
 
-jobs = [(c, s, u) for c, lst in FEEDS.items() for s, u in lst] + [("okul", s, u) for s, u in OKUL_FEEDS]
+# İş Bankası: Google Haberler aramaları + tüm kategorilerdeki eşleşen başlıklar
+ISB_FEEDS = [("Google Haberler", GN(q)) for q in ['"İş Bankası"', '"İşbank"', '"İşCep"', '"Maximum kart" OR "Maximiles" OR "MaxiPuan"', 'ISCTR']]
+ISB_RE = re.compile(r"iş ?bankası|işbank|isbank|işcep|iscep|isctr|maximiles|maxipuan|maximum kart|maximum mobil|türkiye iş bankası", re.I)
+
+jobs = [(c, s, u) for c, lst in FEEDS.items() for s, u in lst] + [("okul", s, u) for s, u in OKUL_FEEDS] + [("isbank", s, u) for s, u in ISB_FEEDS]
 with ThreadPoolExecutor(12) as ex:
     res = list(ex.map(fetch, jobs))
 
@@ -115,6 +119,11 @@ okul = [x for x in cats.get("okul", []) if OKUL_RE.search(x["t"].lower())]
 for c, items in cats.items():
     if c != "okul": okul += [x for x in items if OKUL_RE.search(x["t"].lower())]
 cats["okul"] = okul
+low = lambda t: t.replace("İ", "i").replace("I", "ı").lower()
+isb = [x for x in cats.get("isbank", []) if ISB_RE.search(low(x["t"]))]
+for c, items in cats.items():
+    if c not in ("isbank", "okul"): isb += [x for x in items if ISB_RE.search(low(x["t"]))]
+cats["isbank"] = isb
 for cat, items in cats.items():
     seen, uniq = set(), []
     items.sort(key=lambda x: x["d"] or "", reverse=True)
