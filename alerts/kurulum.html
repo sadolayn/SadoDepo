@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8">
+<link rel="icon" type="image/png" href="../img/icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Alerts Kurulum</title>
+<style>
+:root{--bg:#000;--card:#0d0d0d;--field:#161616;--ink:#f2f2f2;--muted:#8a8a8a;--accent:#e0a24f;--line:#262626}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:12px 16px 32px;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+header h1{margin:0;font-size:20px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.step h2{margin:0 0 6px;font-size:16px;display:flex;gap:10px;align-items:center}
+.n{flex:0 0 28px;height:28px;border-radius:50%;background:var(--accent);color:#000;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.step p{margin:6px 0 0;color:#c9c9c9;font-size:14px}
+.btn{display:block;width:100%;margin-top:12px;padding:14px;border-radius:12px;border:none;background:var(--accent);color:#000;font-size:16px;font-weight:800;text-align:center;text-decoration:none;cursor:pointer}
+.btn.ghost{background:var(--field);color:var(--ink);border:1px solid var(--line)}
+b.k{color:var(--accent)}
+textarea{width:100%;height:110px;margin-top:10px;background:var(--field);color:#9a9a9a;border:1px solid var(--line);border-radius:12px;padding:10px;font:12px ui-monospace,monospace}
+.tip{background:#1a1608;border:1px solid #4a3a14;color:#f0d9a8;border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:12px}
+</style></head><body><div class="wrap">
+<header><a href="../alerts.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" aria-label="Geri">🔔</a><h1>⚙️ Alerts Kurulum</h1><span style="width:46px"></span></header>
+<div class="tip">💻 En kolayı bilgisayardan yapmak. Telefondaysan Chrome menüsünden <b>“Masaüstü sitesi”</b>ni aç.</div>
+<div class="step"><h2><span class="n">1</span>Kodu kopyala</h2>
+<p>Aşağıdaki düğme kodun tamamını panoya kopyalar.</p>
+<button class="btn" id="copy">📋 Kodu kopyala</button>
+<textarea id="code" readonly>/**
+ * Sadolayn Alerts — Google Apps Script arka ucu
+ * ------------------------------------------------------------
+ * Görevleri:
+ *   - Siteden gelen abonelik isteklerini kaydeder (Google E-Tablo)
+ *   - Onay e-postası gönderir (çift onay: başkası adına abonelik olmaz)
+ *   - Her sabah 10:00 (İstanbul) Google Haberler&#x27;den anahtar kelimelere
+ *     uyan son 24 saatin haberlerini toplar ve özet e-posta gönderir
+ *   - Her e-postada &quot;abonelikten çık&quot; bağlantısı bulunur
+ *
+ * Kurulum: alerts/KURULUM.md
+ */
+
+const CFG = {
+  NAME: &#x27;Sadolayn Alerts&#x27;,
+  SITE: &#x27;https://sadolayn.github.io/SadoDepo/&#x27;,
+  PAGE: &#x27;https://sadolayn.github.io/SadoDepo/alerts.html&#x27;,
+  MAX_KEYWORDS: 5,        // abone başına en fazla kelime
+  PER_KEYWORD: 5,         // e-postada kelime başına en fazla haber
+  MAX_SUBS: 80,           // Gmail günlük gönderim kotası (100) için üst sınır
+  DAILY_SIGNUP_LIMIT: 30, // günde en fazla yeni onay e-postası
+  CONFIRM_COOLDOWN_MIN: 10,
+  HOUR: 10,
+  TZ: &#x27;Europe/Istanbul&#x27;
+};
+
+const COLS = [&#x27;email&#x27;, &#x27;keywords&#x27;, &#x27;pendingKw&#x27;, &#x27;ctoken&#x27;, &#x27;utoken&#x27;, &#x27;status&#x27;, &#x27;created&#x27;, &#x27;lastConfirmMail&#x27;, &#x27;lastSent&#x27;];
+const C = Object.fromEntries(COLS.map((c, i) =&gt; [c, i]));
+
+/* ---------- Kurulum ---------- */
+
+function setup() {
+  const sh = sheet_();
+  Logger.log(&#x27;Tablo hazır: &#x27; + sh.getParent().getUrl());
+  installTrigger();
+  Logger.log(&#x27;Günlük tetikleyici kuruldu (&#x27; + CFG.HOUR + &#x27;:00 &#x27; + CFG.TZ + &#x27;).&#x27;);
+}
+
+function installTrigger() {
+  ScriptApp.getProjectTriggers()
+    .filter(t =&gt; t.getHandlerFunction() === &#x27;dailyDigest&#x27;)
+    .forEach(t =&gt; ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger(&#x27;dailyDigest&#x27;)
+    .timeBased().atHour(CFG.HOUR).nearMinute(0).everyDays(1)
+    .inTimezone(CFG.TZ).create();
+}
+
+function sheet_() {
+  const props = PropertiesService.getScriptProperties();
+  let ss = null;
+  const id = props.getProperty(&#x27;SS&#x27;);
+  if (id) { try { ss = SpreadsheetApp.openById(id); } catch (e) { ss = null; } }
+  if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) ss = SpreadsheetApp.create(&#x27;Sadolayn Alerts — Aboneler&#x27;);
+  props.setProperty(&#x27;SS&#x27;, ss.getId());
+  let sh = ss.getSheetByName(&#x27;Aboneler&#x27;);
+  if (!sh) {
+    sh = ss.insertSheet(&#x27;Aboneler&#x27;);
+    sh.appendRow(COLS);
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+function execUrl_() {
+  return PropertiesService.getScriptProperties().getProperty(&#x27;URL&#x27;) || ScriptApp.getService().getUrl();
+}
+
+/* ---------- Web uç noktaları ---------- */
+
+function doGet(e) {
+  const p = (e &amp;&amp; e.parameter) || {};
+  if (p.action === &#x27;preview&#x27;) return json_(preview_(p.q || &#x27;&#x27;));
+  if (p.action === &#x27;confirm&#x27;) return page_(confirm_(p.t || &#x27;&#x27;));
+  if (p.action === &#x27;unsub&#x27;) return page_(unsub_(p.t || &#x27;&#x27;));
+  return json_({ ok: true, name: CFG.NAME });
+}
+
+function doPost(e) {
+  let body = {};
+  try { body = JSON.parse(e.postData.contents || &#x27;{}&#x27;); } catch (err) { return json_({ ok: false, msg: &#x27;Geçersiz istek.&#x27; }); }
+  if (body.action === &#x27;subscribe&#x27;) return json_(subscribe_(body));
+  return json_({ ok: false, msg: &#x27;Bilinmeyen işlem.&#x27; });
+}
+
+function json_(o) {
+  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+
+function page_(r) {
+  const html = `&lt;!doctype html&gt;&lt;html lang=&quot;tr&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;&gt;&lt;title&gt;${CFG.NAME}&lt;/title&gt;&lt;/head&gt;
+&lt;body style=&quot;margin:0;background:#000;color:#f2f2f2;font-family:system-ui,-apple-system,Segoe UI,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:16px&quot;&gt;
+&lt;div style=&quot;max-width:420px;width:100%;background:#0d0d0d;border:1px solid #262626;border-radius:18px;padding:24px;text-align:center&quot;&gt;
+&lt;div style=&quot;font-size:42px&quot;&gt;${r.ok ? &#x27;✅&#x27; : &#x27;⚠️&#x27;}&lt;/div&gt;
+&lt;h2 style=&quot;color:#e0a24f;margin:8px 0&quot;&gt;${esc_(r.title)}&lt;/h2&gt;
+&lt;p style=&quot;color:#bdbdbd;line-height:1.5&quot;&gt;${esc_(r.msg)}&lt;/p&gt;
+&lt;a href=&quot;${CFG.PAGE}&quot; target=&quot;_top&quot; style=&quot;display:inline-block;margin-top:10px;padding:12px 18px;border-radius:12px;background:#e0a24f;color:#000;font-weight:700;text-decoration:none&quot;&gt;Sadolayn Alerts&#x27;e dön&lt;/a&gt;
+&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;`;
+  return HtmlService.createHtmlOutput(html).setTitle(CFG.NAME)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+/* ---------- Abonelik ---------- */
+
+function cleanKeywords_(arr) {
+  if (!Array.isArray(arr)) return [];
+  const seen = {};
+  return arr.map(k =&gt; String(k || &#x27;&#x27;).replace(/\s+/g, &#x27; &#x27;).trim())
+    .filter(k =&gt; k.length &gt;= 2 &amp;&amp; k.length &lt;= 60)
+    .filter(k =&gt; { const l = k.toLocaleLowerCase(&#x27;tr&#x27;); if (seen[l]) return false; seen[l] = 1; return true; })
+    .slice(0, CFG.MAX_KEYWORDS);
+}
+
+function subscribe_(b) {
+  const email = String(b.email || &#x27;&#x27;).trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length &gt; 120)
+    return { ok: false, msg: &#x27;Geçerli bir e-posta adresi gir.&#x27; };
+  const kws = cleanKeywords_(b.keywords);
+  if (!kws.length) return { ok: false, msg: &#x27;En az bir anahtar kelime ekle.&#x27; };
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const dayKey = &#x27;signups_&#x27; + Utilities.formatDate(new Date(), CFG.TZ, &#x27;yyyyMMdd&#x27;);
+    const today = Number(props.getProperty(dayKey) || 0);
+    if (today &gt;= CFG.DAILY_SIGNUP_LIMIT) return { ok: false, msg: &#x27;Bugünlük abonelik kotası doldu, yarın tekrar dene.&#x27; };
+
+    const sh = sheet_();
+    const data = sh.getDataRange().getValues();
+    let rowIdx = -1;
+    for (let i = 1; i &lt; data.length; i++) if (data[i][C.email] === email) { rowIdx = i; break; }
+
+    const now = new Date();
+    const ctoken = Utilities.getUuid();
+    if (rowIdx === -1) {
+      const active = data.slice(1).filter(r =&gt; r[C.status] === &#x27;active&#x27;).length;
+      if (active &gt;= CFG.MAX_SUBS) return { ok: false, msg: &#x27;Şu an yeni abone alınamıyor (kapasite dolu).&#x27; };
+      const row = new Array(COLS.length).fill(&#x27;&#x27;);
+      row[C.email] = email;
+      row[C.pendingKw] = kws.join(&#x27; | &#x27;);
+      row[C.ctoken] = ctoken;
+      row[C.utoken] = Utilities.getUuid();
+      row[C.status] = &#x27;pending&#x27;;
+      row[C.created] = now;
+      row[C.lastConfirmMail] = now;
+      sh.appendRow(row);
+    } else {
+      const last = data[rowIdx][C.lastConfirmMail];
+      if (last &amp;&amp; (now - new Date(last)) &lt; CFG.CONFIRM_COOLDOWN_MIN * 60000)
+        return { ok: false, msg: &#x27;Az önce onay e-postası gönderildi. Gelen kutunu (ve spam klasörünü) kontrol et.&#x27; };
+      const r = rowIdx + 1;
+      sh.getRange(r, C.pendingKw + 1).setValue(kws.join(&#x27; | &#x27;));
+      sh.getRange(r, C.ctoken + 1).setValue(ctoken);
+      sh.getRange(r, C.lastConfirmMail + 1).setValue(now);
+      if (data[rowIdx][C.status] !== &#x27;active&#x27;) sh.getRange(r, C.status + 1).setValue(&#x27;pending&#x27;);
+    }
+
+    const link = execUrl_() + &#x27;?action=confirm&amp;t=&#x27; + ctoken;
+    MailApp.sendEmail({
+      to: email,
+      name: CFG.NAME,
+      subject: CFG.NAME + &#x27; · aboneliğini onayla&#x27;,
+      htmlBody: confirmMail_(kws, link)
+    });
+    props.setProperty(dayKey, String(today + 1));
+    return { ok: true, msg: &#x27;Onay e-postası gönderildi. E-postadaki bağlantıya tıklayınca bülten başlar.&#x27; };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function findBy_(col, val) {
+  if (!val || val.length &lt; 20) return null;
+  const sh = sheet_();
+  const data = sh.getDataRange().getValues();
+  for (let i = 1; i &lt; data.length; i++) if (data[i][col] === val) return { sh, row: i + 1, rec: data[i] };
+  return null;
+}
+
+function confirm_(t) {
+  const f = findBy_(C.ctoken, t);
+  if (!f) return { ok: false, title: &#x27;Bağlantı geçersiz&#x27;, msg: &#x27;Bu onay bağlantısı kullanılmış ya da süresi geçmiş olabilir.&#x27; };
+  f.sh.getRange(f.row, C.keywords + 1).setValue(f.rec[C.pendingKw]);
+  f.sh.getRange(f.row, C.pendingKw + 1).setValue(&#x27;&#x27;);
+  f.sh.getRange(f.row, C.ctoken + 1).setValue(&#x27;&#x27;);
+  f.sh.getRange(f.row, C.status + 1).setValue(&#x27;active&#x27;);
+  return { ok: true, title: &#x27;Abonelik onaylandı&#x27;, msg: &#x27;Takip ettiğin kelimeler: &#x27; + f.rec[C.pendingKw] + &#x27;. Her sabah 10:00 civarı haber özetin gelecek.&#x27; };
+}
+
+function unsub_(t) {
+  const f = findBy_(C.utoken, t);
+  if (!f) return { ok: false, title: &#x27;Bağlantı geçersiz&#x27;, msg: &#x27;Abonelik bulunamadı.&#x27; };
+  f.sh.getRange(f.row, C.status + 1).setValue(&#x27;unsub&#x27;);
+  return { ok: true, title: &#x27;Abonelikten çıkıldı&#x27;, msg: &#x27;Artık e-posta almayacaksın. İstersen sayfadan yeniden abone olabilirsin.&#x27; };
+}
+
+/* ---------- Haberler ---------- */
+
+function fetchNews_(kw) {
+  const cache = CacheService.getScriptCache();
+  const key = &#x27;n_&#x27; + Utilities.base64EncodeWebSafe(Utilities.newBlob(kw.toLocaleLowerCase(&#x27;tr&#x27;)).getBytes()).slice(0, 200);
+  const hit = cache.get(key);
+  if (hit) return JSON.parse(hit);
+
+  const url = &#x27;https://news.google.com/rss/search?q=&#x27; + encodeURIComponent(kw + &#x27; when:1d&#x27;) + &#x27;&amp;hl=tr&amp;gl=TR&amp;ceid=TR:tr&#x27;;
+  let items = [];
+  try {
+    const res = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+    if (res.getResponseCode() === 200) {
+      const ch = XmlService.parse(res.getContentText()).getRootElement().getChild(&#x27;channel&#x27;);
+      const limit = Date.now() - 26 * 3600 * 1000;
+      items = ch.getChildren(&#x27;item&#x27;).map(it =&gt; {
+        const srcEl = it.getChild(&#x27;source&#x27;);
+        const source = srcEl ? srcEl.getText() : &#x27;&#x27;;
+        let title = it.getChildText(&#x27;title&#x27;) || &#x27;&#x27;;
+        if (source &amp;&amp; title.endsWith(&#x27; - &#x27; + source)) title = title.slice(0, -(source.length + 3));
+        const d = new Date(it.getChildText(&#x27;pubDate&#x27;));
+        return { title, source, link: it.getChildText(&#x27;link&#x27;), ts: d.getTime() };
+      }).filter(x =&gt; x.title &amp;&amp; x.link &amp;&amp; !isNaN(x.ts) &amp;&amp; x.ts &gt;= limit)
+        .sort((a, b) =&gt; b.ts - a.ts)
+        .slice(0, 10);
+    }
+  } catch (e) { items = []; }
+  try { cache.put(key, JSON.stringify(items), 1800); } catch (e) {}
+  return items;
+}
+
+function preview_(q) {
+  const kws = cleanKeywords_(String(q).split(&#x27;,&#x27;));
+  if (!kws.length) return { ok: false, msg: &#x27;Kelime yok.&#x27; };
+  return { ok: true, results: kws.map(kw =&gt; ({ kw, items: fetchNews_(kw).slice(0, CFG.PER_KEYWORD) })) };
+}
+
+/* ---------- Günlük özet ---------- */
+
+function dailyDigest() {
+  const sh = sheet_();
+  const data = sh.getDataRange().getValues();
+  const dateStr = Utilities.formatDate(new Date(), CFG.TZ, &#x27;d MMMM yyyy&#x27;);
+  const memo = {};
+  const news = kw =&gt; (memo[kw] = memo[kw] || fetchNews_(kw));
+
+  for (let i = 1; i &lt; data.length; i++) {
+    const r = data[i];
+    if (r[C.status] !== &#x27;active&#x27; || !r[C.keywords]) continue;
+    if (MailApp.getRemainingDailyQuota() &lt; 1) break;
+
+    const kws = String(r[C.keywords]).split(&#x27; | &#x27;).filter(Boolean);
+    const used = {};
+    const sections = kws.map(kw =&gt; ({
+      kw,
+      items: news(kw).filter(x =&gt; !used[x.link] &amp;&amp; (used[x.link] = 1)).slice(0, CFG.PER_KEYWORD)
+    }));
+    const total = sections.reduce((s, x) =&gt; s + x.items.length, 0);
+    if (!total) continue; // Google Alerts gibi: haber yoksa e-posta yok
+
+    const unsub = execUrl_() + &#x27;?action=unsub&amp;t=&#x27; + r[C.utoken];
+    try {
+      MailApp.sendEmail({
+        to: r[C.email],
+        name: CFG.NAME,
+        subject: CFG.NAME + &#x27; · &#x27; + dateStr + &#x27; · &#x27; + total + &#x27; haber&#x27;,
+        htmlBody: digestMail_(sections, dateStr, unsub)
+      });
+      sh.getRange(i + 1, C.lastSent + 1).setValue(new Date());
+    } catch (e) {
+      Logger.log(&#x27;Gönderilemedi: &#x27; + r[C.email] + &#x27; — &#x27; + e);
+    }
+  }
+}
+
+/* ---------- E-posta şablonları ---------- */
+
+function esc_(s) {
+  return String(s == null ? &#x27;&#x27; : s).replace(/[&amp;&lt;&gt;&quot;]/g, c =&gt; ({ &#x27;&amp;&#x27;: &#x27;&amp;amp;&#x27;, &#x27;&lt;&#x27;: &#x27;&amp;lt;&#x27;, &#x27;&gt;&#x27;: &#x27;&amp;gt;&#x27;, &#x27;&quot;&#x27;: &#x27;&amp;quot;&#x27; }[c]));
+}
+
+function shell_(inner, footer) {
+  return `&lt;div style=&quot;background:#f4f1ea;padding:20px 10px;font-family:Arial,Helvetica,sans-serif&quot;&gt;
+&lt;div style=&quot;max-width:560px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;border:1px solid #e6e0d2&quot;&gt;
+&lt;div style=&quot;background:#111111;padding:18px 22px&quot;&gt;
+&lt;div style=&quot;color:#e0a24f;font-size:20px;font-weight:bold;letter-spacing:1px&quot;&gt;🔔 ${CFG.NAME}&lt;/div&gt;
+&lt;div style=&quot;color:#9a9a9a;font-size:12px;margin-top:2px&quot;&gt;Bilgi paylaştıkça büyür&lt;/div&gt;&lt;/div&gt;
+&lt;div style=&quot;padding:18px 22px;color:#222;font-size:15px;line-height:1.5&quot;&gt;${inner}&lt;/div&gt;
+&lt;div style=&quot;padding:14px 22px;background:#faf8f3;color:#888;font-size:12px;line-height:1.5;border-top:1px solid #eee&quot;&gt;${footer}&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;`;
+}
+
+function confirmMail_(kws, link) {
+  const chips = kws.map(k =&gt; `&lt;span style=&quot;display:inline-block;background:#fbf1e1;color:#8a5a14;border:1px solid #ecd3a8;border-radius:20px;padding:4px 10px;margin:2px;font-size:13px&quot;&gt;${esc_(k)}&lt;/span&gt;`).join(&#x27; &#x27;);
+  return shell_(
+    `&lt;p style=&quot;margin-top:0&quot;&gt;Merhaba,&lt;/p&gt;
+&lt;p&gt;${CFG.NAME} için abonelik isteği aldık. Takip edilecek kelimeler:&lt;/p&gt;
+&lt;p&gt;${chips}&lt;/p&gt;
+&lt;p&gt;Onaylarsan her sabah 10:00 civarı bu kelimelerle ilgili son 24 saatin haber bağlantıları gelecek.&lt;/p&gt;
+&lt;p style=&quot;text-align:center;margin:22px 0&quot;&gt;&lt;a href=&quot;${link}&quot; style=&quot;background:#e0a24f;color:#000;padding:12px 22px;border-radius:10px;font-weight:bold;text-decoration:none&quot;&gt;Aboneliği onayla&lt;/a&gt;&lt;/p&gt;`,
+    `Bu isteği sen yapmadıysan e-postayı yok sayman yeterli, hiçbir şey gönderilmeyecek.`
+  );
+}
+
+function digestMail_(sections, dateStr, unsub) {
+  let inner = `&lt;div style=&quot;color:#888;font-size:13px;margin-bottom:6px&quot;&gt;${esc_(dateStr)} · son 24 saat&lt;/div&gt;`;
+  for (const s of sections) {
+    inner += `&lt;h3 style=&quot;margin:18px 0 6px;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:#b8791f;border-bottom:2px solid #f0e2c8;padding-bottom:4px&quot;&gt;${esc_(s.kw)}&lt;/h3&gt;`;
+    if (!s.items.length) { inner += `&lt;div style=&quot;color:#999;font-size:13px&quot;&gt;Bugün yeni haber yok.&lt;/div&gt;`; continue; }
+    for (const it of s.items) {
+      const t = Utilities.formatDate(new Date(it.ts), CFG.TZ, &#x27;HH:mm&#x27;);
+      inner += `&lt;div style=&quot;padding:8px 0;border-bottom:1px solid #f1f1f1&quot;&gt;
+&lt;a href=&quot;${esc_(it.link)}&quot; style=&quot;color:#1a2bb8;font-weight:bold;text-decoration:none;font-size:15px&quot;&gt;${esc_(it.title)}&lt;/a&gt;
+&lt;div style=&quot;color:#888;font-size:12px;margin-top:2px&quot;&gt;${esc_(it.source)} · ${t}&lt;/div&gt;&lt;/div&gt;`;
+    }
+  }
+  return shell_(inner,
+    `Kaynak: Google Haberler (Türkçe). Başlıklar ilgili haber sitelerine aittir.&lt;br&gt;
+&lt;a href=&quot;${CFG.PAGE}&quot; style=&quot;color:#b8791f&quot;&gt;Kelimelerini değiştir&lt;/a&gt; · &lt;a href=&quot;${unsub}&quot; style=&quot;color:#b8791f&quot;&gt;Abonelikten çık&lt;/a&gt;&lt;br&gt;
+© ${new Date().getFullYear()} Sadolayn`);
+}
+
+/* ---------- Test ---------- */
+
+function testPreview() { Logger.log(JSON.stringify(preview_(&#x27;iş bankası, yapay zeka&#x27;), null, 1)); }
+function testDigestToMe() {
+  const me = Session.getActiveUser().getEmail();
+  const sections = [&#x27;iş bankası&#x27;, &#x27;yapay zeka&#x27;].map(kw =&gt; ({ kw, items: fetchNews_(kw).slice(0, CFG.PER_KEYWORD) }));
+  MailApp.sendEmail({ to: me, name: CFG.NAME, subject: CFG.NAME + &#x27; · test&#x27;, htmlBody: digestMail_(sections, &#x27;Test&#x27;, CFG.PAGE) });
+  Logger.log(&#x27;Test e-postası gönderildi: &#x27; + me);
+}
+</textarea></div>
+<div class="step"><h2><span class="n">2</span>Yeni proje aç</h2>
+<p>Gmail hesabınla açılır. Editördeki hazır satırları sil, kopyaladığın kodu yapıştır, <b class="k">💾 Kaydet</b>.</p>
+<a class="btn ghost" href="https://script.google.com/home/projects/create" target="_blank" rel="noopener">➕ script.google.com’da yeni proje</a></div>
+<div class="step"><h2><span class="n">3</span>setup’ı çalıştır</h2>
+<p>Üstteki işlev listesinden <b class="k">setup</b> seç → <b class="k">▶ Çalıştır</b>. İzin penceresinde: <b class="k">İzinleri incele → hesabın → Gelişmiş → Sadolayn Alerts'e git (güvenli değil) → İzin ver</b>. (Kendi yazdığın kod olduğu için bu uyarı normal.)</p></div>
+<div class="step"><h2><span class="n">4</span>Web uygulaması olarak dağıt</h2>
+<p>Sağ üstte <b class="k">Dağıt → Yeni dağıtım</b> → türü ⚙️ <b class="k">Web uygulaması</b>.<br>
+Şu kullanıcı olarak çalıştır: <b class="k">Ben</b><br>Erişimi olanlar: <b class="k">Herkes</b><br>→ <b class="k">Dağıt</b></p></div>
+<div class="step"><h2><span class="n">5</span>Adresi Claude’a gönder</h2>
+<p><b class="k">…/exec</b> ile biten <b>Web uygulaması URL’si</b>ni kopyalayıp sohbete yapıştır. Siteye ekleyince sistem açılır.</p></div>
+</div>
+<script>
+document.getElementById("copy").onclick=async()=>{const t=document.getElementById("code"),b=document.getElementById("copy");
+try{await navigator.clipboard.writeText(t.value)}catch(e){t.select();document.execCommand("copy")}
+b.textContent="✅ Kopyalandı";setTimeout(()=>b.textContent="📋 Kodu kopyala",2500)};
+</script></body></html>
