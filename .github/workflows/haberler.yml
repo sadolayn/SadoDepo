@@ -1,25 +1,41 @@
 name: Güncel haberler
+# GitHub'ın zamanlayıcısı bu depoda tetiklenmediği için iş, bittiğinde
+# ~1 saat bekleyip kendini yeniden başlatır (zincir). Cron yalnızca yedek.
 on:
   schedule:
-    - cron: "7 3-21 * * *"   # İstanbul 06:07 – 00:07 arası her saat
+    - cron: "7 * * * *"
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: haberler
   cancel-in-progress: false
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python scripts/haberler.py
+      - name: Haberler
+        run: python scripts/haberler.py
+        continue-on-error: true
+      - name: Piyasa (kur ve maden)
+        run: python scripts/piyasa.py
+        continue-on-error: true
       - name: Commit
         run: |
           git config user.name "sadolayn-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/haberler.json
-          git diff --cached --quiet || (git commit -m "Haberler güncellendi" && git pull --rebase -q && git push)
+          git add data/haberler.json data/piyasa.json
+          git diff --cached --quiet || (git commit -q -m "Haberler ve piyasa güncellendi" && git pull --rebase -q && git push -q)
+      - name: Bir saat sonra yeniden başlat
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sleep 3300
+          gh workflow run haberler.yml --repo "${{ github.repository }}" --ref main
