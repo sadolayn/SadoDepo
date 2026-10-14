@@ -46,7 +46,7 @@
   <canvas id="c" width="360" height="560"></canvas>
   <div class="overlay" id="ov"><div class="box" id="box"></div></div>
 </div>
-<div class="tip">Parmağını sağa sola kaydırarak uç · ateş otomatik · yakıt depoları vurulamaz, üzerinden geç<br><span style="opacity:.6">Sürüm 3 · sesli</span></div>
+<div class="tip">Parmağını sağa sola kaydırarak uç · ateş otomatik · yakıt depoları vurulamaz, üzerinden geç<br><span style="opacity:.6">Sürüm 4 · motor sesi yok</span></div>
 
 <script>
 const cv = document.getElementById("c");
@@ -344,27 +344,9 @@ function initAudio() {
   noiseBuf = AC.createBuffer(1, AC.sampleRate * 1.5, AC.sampleRate);
   const d = noiseBuf.getChannelData(0);
   for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-  // Motor: iki alçak osilatör + filtrelenmiş gürültü
-  const o1 = AC.createOscillator(), o2 = AC.createOscillator();
-  o1.type = "sawtooth"; o2.type = "square";
-  const nz = AC.createBufferSource(); nz.buffer = noiseBuf; nz.loop = true;
-  const nf = AC.createBiquadFilter(); nf.type = "lowpass"; nf.frequency.value = 500;
-  const nzg = AC.createGain(); nzg.gain.value = 0.35;
-  const lp = AC.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 380; lp.Q.value = 4;
-  const g = AC.createGain(); g.gain.value = 0;
-  o1.connect(lp); o2.connect(lp); nz.connect(nf); nf.connect(nzg); nzg.connect(lp); lp.connect(g); g.connect(master);
-  o1.start(); o2.start(); nz.start();
-  eng = { o1, o2, lp, g };
+  // Motor sesi kaldırıldı (rahatsız edici uğultu)
 }
-function setEngine(on, speed = 2) {
-  if (!eng) return;
-  const t = AC.currentTime;
-  const f = 38 + speed * 14;
-  eng.o1.frequency.setTargetAtTime(f, t, 0.08);
-  eng.o2.frequency.setTargetAtTime(f * 1.007, t, 0.08);
-  eng.lp.frequency.setTargetAtTime(260 + speed * 90, t, 0.1);
-  eng.g.gain.setTargetAtTime(on ? 0.11 : 0, t, on ? 0.15 : 0.05);
-}
+function setEngine() { /* motor sesi kapalı */ }
 function tone(freq, dur, type = "square", vol = 0.08, slideTo = null) {
   if (!AC || muted) return;
   const t = AC.currentTime;
