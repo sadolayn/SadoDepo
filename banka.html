@@ -32,13 +32,13 @@
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header h1 { margin: 0; font-size: 20px; }
   .tabs {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
     background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px;
     margin-bottom: 14px;
   }
   .tabs button {
     border: none; background: transparent; color: var(--muted);
-    padding: 9px 1px; border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer;
+    padding: 9px 2px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer;
     line-height: 1.2;
   }
   .tabs button.active { background: var(--accent); color: #000; }
@@ -100,6 +100,7 @@
     <button data-tab="tk">Tüketici<br>Kredisi</button>
     <button data-tab="konut">Konut<br>Kredisi</button>
     <button data-tab="kk">Kart<br>Gecikme</button>
+    <button data-tab="tarim">Tarım<br>Kredisi</button>
   </div>
 
   <!-- BCH -->
@@ -218,6 +219,42 @@
     </div>
   </section>
 
+  <!-- Tarım kredisi -->
+  <section class="panel" id="tarim">
+    <div class="card">
+      <h2>Tarım Kredisi</h2>
+      <p class="hint">Çiftçinin durumuna göre KKDF ve BSMV oranları otomatik seçilir; istersen elle değiştirebilirsin.</p>
+      <label>Çiftçinin durumu</label>
+      <select id="tr_durum">
+        <option value="levha">Vergi levhalı çiftçi (gerçek usul)</option>
+        <option value="cks">Levhasız, ÇKS / çiftçilik belgeli</option>
+        <option value="bireysel">Zirai amaç belgesiz (bireysel)</option>
+      </select>
+      <label>Kredi tutarı</label>
+      <div class="field"><input id="tr_tutar" type="text" inputmode="decimal" value="1.000.000"><span class="unit">TL</span></div>
+      <div class="two">
+        <div><label>Yıllık faiz</label><div class="field"><input id="tr_faiz" type="text" inputmode="decimal" value="45"><span class="unit">%</span></div></div>
+        <div><label>Vade</label><div class="field"><input id="tr_vade" type="text" inputmode="numeric" value="12"><span class="unit">ay</span></div></div>
+      </div>
+      <label>Ödeme şekli</label>
+      <select id="tr_odeme">
+        <option value="aylik">Aylık eşit taksit</option>
+        <option value="hasat">Vade sonunda tek ödeme (hasat dönemi)</option>
+        <option value="yillik">Yıllık eşit taksit</option>
+      </select>
+      <div class="two">
+        <div><label>KKDF</label><div class="field"><input id="tr_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
+        <div><label>BSMV</label><div class="field"><input id="tr_bsmv" type="text" inputmode="decimal" value="5"><span class="unit">%</span></div></div>
+      </div>
+      <div class="ltvbox" id="tr_info"></div>
+    </div>
+    <div class="card">
+      <div class="big"><span id="tr_bigLbl">Taksit</span><b id="tr_out">–</b></div>
+      <div class="rows" id="tr_rows"></div>
+    </div>
+    <p class="note">KKDF: Tüketici kredilerinde %15, ticari/zirai/mesleki faaliyet için kullandırılan ve bu amacı belgelenen kredilerde %0'dır. Çiftçiler bu amacı ÇKS kaydı, Hayvan Bilgi Sistemi kaydı, ziraat odası çiftçilik belgesi ya da (gerçek usulde) aktife kayıt ve fatura ile belgeleyebilir. BSMV: tüketici kredilerinde %15, diğer kredilerde genel oran uygulanır. Hazine faiz destekli (sübvansiyonlu) tarım kredilerinde faiz oranı ayrıca indirimlidir. Uygulamayı bankanın güncel yönergesiyle teyit et.</p>
+  </section>
+
   <!-- Kredi kartı -->
   <section class="panel" id="kk">
     <div class="card">
@@ -263,7 +300,7 @@ function rows(id, list) {
   $(id).innerHTML = list.map(([k, v, cls]) => `<div class="${cls || ""}"><span>${k}</span><span>${v}</span></div>`).join("");
 }
 // Tutar alanlarını binlik ayırıcıyla biçimlendir
-for (const id of ["b_tutar", "m_tutar", "t_tutar", "t_ucret", "k_borc", "k_odenen", "k2_deger", "k2_tutar", "k2_masraf"]) {
+for (const id of ["b_tutar", "m_tutar", "t_tutar", "t_ucret", "k_borc", "k_odenen", "k2_deger", "k2_tutar", "k2_masraf", "tr_tutar"]) {
   $(id).addEventListener("blur", () => {
     const n = num(id);
     $(id).value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 });
@@ -491,6 +528,59 @@ function calcKonut() {
   $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Uygulamayı bankanla teyit et.";
 }
 
+// ---------- Tarım ----------
+const TR_PRESET = { levha: [0, 5], cks: [0, 5], bireysel: [15, 15] };
+let trManual = false;
+["tr_kkdf", "tr_bsmv"].forEach((x) => $(x).addEventListener("input", () => (trManual = true)));
+let trLast = null;
+function trSchedule(P, ry, n, mode, tax) {
+  // dönemsel faiz ve dönem sayısı
+  if (mode === "hasat") {
+    const faiz = P * ry * (n / 12);
+    return { per: P + faiz * (1 + tax), count: 1, faiz, label: "Vade sonu ödeme" };
+  }
+  const periods = mode === "yillik" ? Math.max(1, Math.round(n / 12)) : n;
+  const r = mode === "yillik" ? ry : ry / 12;
+  const i = r * (1 + tax);
+  const per = i === 0 ? P / periods : P * i / (1 - Math.pow(1 + i, -periods));
+  // vergi hariç faiz toplamı
+  let kalan = P, faiz = 0;
+  for (let k = 0; k < periods; k++) { const f = kalan * r; const a = per - f * (1 + tax); faiz += f; kalan -= a; }
+  return { per, count: periods, faiz, label: mode === "yillik" ? "Yıllık taksit" : "Aylık taksit" };
+}
+function calcTarim() {
+  const durum = $("tr_durum").value;
+  if (durum !== trLast) { trManual = false; trLast = durum; }
+  if (!trManual) {
+    $("tr_kkdf").value = String(TR_PRESET[durum][0]);
+    $("tr_bsmv").value = String(TR_PRESET[durum][1]);
+  }
+  const P = num("tr_tutar"), ry = num("tr_faiz") / 100, n = Math.round(num("tr_vade"));
+  const kkdf = num("tr_kkdf") / 100, bsmv = num("tr_bsmv") / 100;
+  const mode = $("tr_odeme").value;
+  if (!P || !n) { $("tr_out").textContent = "–"; rows("tr_rows", []); return; }
+  const r = trSchedule(P, ry, n, mode, kkdf + bsmv);
+  const base = trSchedule(P, ry, n, mode, 0.30); // muafiyetsiz (KKDF %15 + BSMV %15)
+  const toplam = r.per * r.count;
+  const vergi = r.faiz * (kkdf + bsmv);
+  const tasarruf = base.per * base.count - toplam;
+  $("tr_bigLbl").textContent = r.label;
+  $("tr_out").textContent = tl(r.per);
+  rows("tr_rows", [
+    ["Toplam faiz", tl(r.faiz)],
+    ["KKDF", tl(r.faiz * kkdf)],
+    ["BSMV", tl(r.faiz * bsmv)],
+    ["Toplam geri ödeme", tl(toplam), "total"],
+    [durum === "bireysel" ? "Zirai amaç belgelenirse tasarruf" : "Muafiyetle tasarruf", tl(durum === "bireysel" ? (toplam - trSchedule(P, ry, n, mode, 0.05).per * r.count) : tasarruf), "pos"],
+  ]);
+  const txt = {
+    levha: "<b>KKDF %0</b>: Vergi levhalı (gerçek usulde vergilendirilen) çiftçinin zirai faaliyet için kullandığı kredi ticari/zirai kredi sayılır. Alınan makine, ekipman vb. işletme aktifine kaydedilir ve faturayla belgelenir.",
+    cks: "<b>KKDF %0</b>: Vergi levhası olmasa da zirai amaç belgelenirse muafiyet uygulanabilir: ÇKS ya da Hayvan Bilgi Sistemi kaydı, tarım il/ilçe müdürlüğü belgesi veya ziraat odasından çiftçilik belgesi, kullanım amacı beyanı ve fatura.",
+    bireysel: "<b>KKDF %15 + BSMV %15</b>: Kredinin zirai amaçla kullanıldığı belgelenemezse bireysel (tüketici) kredi gibi değerlendirilir. Belgelendirilirse KKDF %0'a, BSMV genel orana iner.",
+  }[durum];
+  $("tr_info").innerHTML = txt + (trManual ? "<br><span style='color:var(--muted)'>Vergi oranlarını elle girdin.</span>" : "");
+}
+
 // ---------- Sekmeler ----------
 document.querySelectorAll(".tabs button").forEach((b) => {
   b.addEventListener("click", () => {
@@ -511,7 +601,8 @@ document.querySelectorAll("#mev input, #mev select").forEach((e) => e.addEventLi
 document.querySelectorAll("#tk input").forEach((e) => e.addEventListener("input", calcTK));
 document.querySelectorAll("#kk input").forEach((e) => e.addEventListener("input", calcKK));
 document.querySelectorAll("#konut input, #konut select").forEach((e) => e.addEventListener("input", calcKonut));
-calcBCH(); calcMev(); calcTK(); calcKK(); calcKonut();
+document.querySelectorAll("#tarim input, #tarim select").forEach((e) => e.addEventListener("input", calcTarim));
+calcBCH(); calcMev(); calcTK(); calcKK(); calcKonut(); calcTarim();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
