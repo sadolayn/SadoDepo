@@ -46,7 +46,6 @@ FEEDS = {
     ("AA", "https://www.aa.com.tr/tr/rss/default?cat=spor"),
     ("NTV", "https://www.ntv.com.tr/sporskor.rss"),
     ("Hürriyet", "https://www.hurriyet.com.tr/rss/spor"),
-    ("TRT Spor", "https://www.trtspor.com.tr/sondakika.rss"),
   ],
 }
 NOW = dt.datetime.now(dt.timezone.utc)
