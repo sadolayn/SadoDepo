@@ -178,8 +178,11 @@
         <div><label>BSMV</label><div class="field"><input id="t_bsmv" type="text" inputmode="decimal" value="15"><span class="unit">%</span></div></div>
         <div><label>KKDF</label><div class="field"><input id="t_kkdf" type="text" inputmode="decimal" value="15"><span class="unit">%</span></div></div>
       </div>
-      <label>Tahsis / dosya ücreti</label>
-      <div class="field"><input id="t_ucret" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div>
+      <div class="two">
+        <div><label>Tahsis ücreti</label><div class="field"><input id="t_tahsis" type="text" inputmode="decimal" value="5"><span class="unit">‰</span></div></div>
+        <div><label>Diğer masraf</label><div class="field"><input id="t_ucret" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
+      </div>
+      <p class="hint" id="t_mnote">Kredi tahsis ücreti yasal olarak en fazla kredi tutarının binde 5'i olabilir ve bu ücrete %15 BSMV eklenir. Diğer masraf: varsa sigorta vb.</p>
     </div>
     <div class="card">
       <div class="big"><span>Aylık taksit</span><b id="t_out">–</b></div>
@@ -414,7 +417,12 @@ function calcMev() {
 // ---------- Tüketici ----------
 function calcTK() {
   const P = num("t_tutar"), r = num("t_faiz") / 100, n = Math.round(num("t_vade"));
-  const bsmv = num("t_bsmv") / 100, kkdf = num("t_kkdf") / 100, ucret = num("t_ucret");
+  const bsmv = num("t_bsmv") / 100, kkdf = num("t_kkdf") / 100, diger = num("t_ucret");
+  const oran = Math.min(num("t_tahsis"), 5);
+  const tahsis = P * oran / 1000, tahsisB = tahsis * bsmv, ucret = tahsis + tahsisB + diger;
+  $("t_mnote").innerHTML = num("t_tahsis") > 5
+    ? '<span style="color:#ef8a5d">Tahsis ücreti binde 5\'i geçemez; hesap binde 5 ile yapıldı.</span>'
+    : "Kredi tahsis ücreti yasal olarak en fazla kredi tutarının binde 5'i olabilir ve bu ücrete BSMV (%15) eklenir. Diğer masraf: varsa sigorta vb.";
   const i = r * (1 + bsmv + kkdf);
   if (!P || !n) { $("t_out").textContent = "–"; rows("t_rows", []); $("t_plan").innerHTML = ""; return; }
   const taksit = i === 0 ? P / n : P * i / (1 - Math.pow(1 + i, -n));
@@ -445,7 +453,11 @@ function calcTK() {
     ["Toplam faiz", tl(tF)],
     ["Toplam KKDF", tl(tK)],
     ["Toplam BSMV", tl(tB)],
-    ["Masraf", tl(ucret)],
+    [`Kredi tahsis ücreti (binde ${String(oran).replace(".", ",")})`, tl(tahsis)],
+    [`Tahsis ücretinin BSMV'si (%${String(bsmv * 100).replace(".", ",")})`, tl(tahsisB)],
+    ...(diger ? [["Diğer masraf", tl(diger)]] : []),
+    ["Toplam masraf", tl(ucret)],
+    ["Hesabınıza geçecek net tutar", tl(P - ucret)],
     ["Toplam geri ödeme", tl(toplam + ucret), "total"],
     ["Aylık efektif faiz (vergiler dahil)", pct(i * 100)],
     ["Yıllık maliyet oranı", pct((Math.pow(1 + aylikMaliyet, 12) - 1) * 100)],
