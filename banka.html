@@ -148,7 +148,14 @@
           <select id="m_yenile"><option value="1">Tek vade</option><option value="12">12 ay yenile</option><option value="6">6 ay yenile</option><option value="3">3 ay yenile</option></select>
         </div>
       </div>
+      <div class="two">
+        <div><label>Başlangıç tarihi</label><input id="m_bas" type="date" style="color-scheme:dark"></div>
+        <div><label>Yıl gün sayısı</label>
+          <select id="m_esas"><option value="act">Artık yılda 366</option><option value="365">Her zaman 365</option></select>
+        </div>
+      </div>
       <p class="note" id="m_note"></p>
+      <p class="note" style="border-left:3px solid var(--accent);padding-left:8px">📅 <b>Artık yıl notu:</b> 4'e tam bölünebilen yıllar artık yıldır (2028, 2032…) ve yıl 365 değil <b>366 gün</b> sayılır; Şubat 29 çeker. 100'e bölünüp 400'e bölünmeyen yıllar (2100 gibi) artık yıl değildir. Vade bir artık yıla denk gelen günler için faiz ÷366 ile hesaplanır.</p>
     </div>
     <div class="card">
       <div class="big"><span id="m_bigLabel">Net getiri</span><b id="m_out">–</b></div>
@@ -338,20 +345,38 @@ function autoStopaj(g) {
   if (g <= 365) return 15;
   return 10;
 }
+const isLeap = (y) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+// Vade içindeki günleri yıllara göre böl: faiz = Σ (gün / yılın gün sayısı)
+function yearFrac(start, days) {
+  if ($("m_esas").value === "365") return { f: days / 365, leapDays: 0 };
+  let f = 0, leapDays = 0;
+  const d = new Date(start);
+  for (let i = 0; i < days; i++) {
+    const L = isLeap(d.getFullYear());
+    f += 1 / (L ? 366 : 365);
+    if (L) leapDays++;
+    d.setDate(d.getDate() + 1);
+  }
+  return { f, leapDays };
+}
 function calcMev() {
-  const g = num("m_gun");
+  const g = Math.round(num("m_gun"));
   if (!stopajManual) $("m_stopaj").value = String(autoStopaj(g)).replace(".", ",");
   const P = num("m_tutar"), r = num("m_faiz") / 100, s = num("m_stopaj") / 100;
   const n = Number($("m_yenile").value);
-  const brut1 = P * r * g / 365;
+  const start = $("m_bas").value ? new Date($("m_bas").value + "T12:00:00") : new Date();
+  const y1 = yearFrac(start, g);
+  const brut1 = P * r * y1.f;
   const net1 = brut1 * (1 - s);
-  $("m_note").textContent = stopajManual
-    ? "Stopaj oranını elle girdin."
-    : `Stopaj vadeye göre otomatik seçildi (6 aya kadar %17,5 · 1 yıla kadar %15 · 1 yıldan uzun %10).`;
+  let leapInfo = "";
+  let totalLeap = y1.leapDays;
+  const stopajTxt = stopajManual ? "Stopaj oranını elle girdin." : `Stopaj vadeye göre otomatik seçildi (6 aya kadar %17,5 · 1 yıla kadar %15 · 1 yıldan uzun %10).`;
   if (n === 1) {
     $("m_bigLabel").textContent = "Net getiri";
     $("m_out").textContent = tl(net1);
+    const end = new Date(start); end.setDate(end.getDate() + g);
     rows("m_rows", [
+      ["Vade sonu tarihi", end.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })],
       ["Brüt faiz", tl(brut1)],
       ["Stopaj kesintisi", "−" + tl(brut1 * s), "neg"],
       ["Net faiz", tl(net1), "pos"],
@@ -361,13 +386,19 @@ function calcMev() {
     ]);
   } else {
     let bal = P, brutT = 0, stT = 0;
+    const d = new Date(start);
+    totalLeap = 0;
     for (let i = 0; i < n; i++) {
-      const b = bal * r * g / 365;
+      const yf = yearFrac(d, g);
+      totalLeap += yf.leapDays;
+      const b = bal * r * yf.f;
       brutT += b; stT += b * s; bal += b * (1 - s);
+      d.setDate(d.getDate() + g);
     }
     $("m_bigLabel").textContent = `${n} vade sonunda net getiri`;
     $("m_out").textContent = tl(bal - P);
     rows("m_rows", [
+      ["Son vade tarihi", d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })],
       ["İlk vade net faiz", tl(net1)],
       ["Toplam brüt faiz", tl(brutT)],
       ["Toplam stopaj", "−" + tl(stT), "neg"],
@@ -376,6 +407,8 @@ function calcMev() {
       ["Toplam süre", `${Math.round(g * n)} gün`],
     ]);
   }
+  if ($("m_esas").value !== "365" && totalLeap > 0) leapInfo = ` Vadenin ${totalLeap} günü artık yıla denk geliyor; bu günler ÷366 ile hesaplandı.`;
+  $("m_note").textContent = stopajTxt + leapInfo;
 }
 
 // ---------- Tüketici ----------
@@ -597,6 +630,7 @@ try {
 } catch (e) {}
 
 document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventListener("input", calcBCH));
+(function () { const t = new Date(); $("m_bas").value = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`; })();
 document.querySelectorAll("#mev input, #mev select").forEach((e) => e.addEventListener("input", calcMev));
 document.querySelectorAll("#tk input").forEach((e) => e.addEventListener("input", calcTK));
 document.querySelectorAll("#kk input").forEach((e) => e.addEventListener("input", calcKK));
