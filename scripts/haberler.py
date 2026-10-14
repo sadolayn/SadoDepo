@@ -105,7 +105,12 @@ for cat, items in cats.items():
         k = norm(x["t"])[:70]
         if k in seen or x["u"] in seen: continue
         seen.add(k); seen.add(x["u"]); uniq.append(x)
-    cats[cat] = uniq[:80]
+    # Tek kaynağın listeyi doldurmaması için kaynak başına en fazla 12 başlık
+    per, capped = {}, []
+    for x in uniq:
+        per[x["s"]] = per.get(x["s"], 0) + 1
+        if per[x["s"]] <= 12: capped.append(x)
+    cats[cat] = capped[:80]
 print("::notice::" + " | ".join(f"{c}: {', '.join(v)}" for c, v in ok_src.items()))
 total = sum(len(v) for v in cats.values())
 if total < 20: sys.exit(f"::error::Çok az haber ({total})")
