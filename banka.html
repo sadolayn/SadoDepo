@@ -74,6 +74,15 @@
   th, td { padding: 6px 4px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
   th { color: var(--muted); font-weight: 500; position: sticky; top: 0; background: var(--card); }
   td:first-child, th:first-child { text-align: center; }
+  .ltvbox { margin-top: 12px; background: var(--field); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 13px; line-height: 1.5; }
+  .ltvbox b { color: var(--accent); }
+  .ltvbox.warn { border-color: #ef6a4c; }
+  .ltvbox button { margin-top: 8px; width: 100%; padding: 9px; border-radius: 10px; border: 1px solid var(--accent); background: transparent; color: var(--accent); font-weight: 700; font-size: 14px; cursor: pointer; }
+  .ltvtab { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  .ltvtab th, .ltvtab td { padding: 5px 4px; border-bottom: 1px solid var(--line); text-align: center; }
+  .ltvtab th { color: var(--muted); font-weight: 600; }
+  .ltvtab td:first-child, .ltvtab th:first-child { text-align: left; }
+  .ltvtab tr.on td { color: var(--accent); font-weight: 700; }
   .note { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 8px; }
 </style>
 </head>
@@ -181,9 +190,14 @@
       <h2>Konut Kredisi</h2>
       <p class="hint">Konut kredileri BSMV ve KKDF'den muaftır; taksitler yalnızca faiz üzerinden eşit ödemeli hesaplanır.</p>
       <div class="two">
-        <div><label>Konut değeri</label><div class="field"><input id="k2_deger" type="text" inputmode="decimal" value="5.000.000"><span class="unit">TL</span></div></div>
-        <div><label>Kredi tutarı</label><div class="field"><input id="k2_tutar" type="text" inputmode="decimal" value="2.500.000"><span class="unit">TL</span></div></div>
+        <div><label>Ekspertiz değeri</label><div class="field"><input id="k2_deger" type="text" inputmode="decimal" value="5.000.000"><span class="unit">TL</span></div></div>
+        <div><label>Enerji sınıfı</label>
+          <select id="k2_enerji"><option value="AB">A veya B</option><option value="C">C</option><option value="D" selected>D ve altı</option></select>
+        </div>
       </div>
+      <div class="ltvbox" id="k2_ltv"></div>
+      <label>Kredi tutarı</label>
+      <div class="field"><input id="k2_tutar" type="text" inputmode="decimal" value="2.500.000"><span class="unit">TL</span></div>
       <div class="two">
         <div><label>Aylık faiz</label><div class="field"><input id="k2_faiz" type="text" inputmode="decimal" value="2,79"><span class="unit">%</span></div></div>
         <div><label>Vade</label><div class="field"><input id="k2_vade" type="text" inputmode="numeric" value="120"><span class="unit">ay</span></div></div>
@@ -409,7 +423,32 @@ function calcKK() {
 }
 
 // ---------- Konut ----------
+// BDDK 29.01.2026 tarihli 11364 sayılı karar: ekspertiz değerine ve enerji sınıfına göre azami kredi/değer oranı
+const LTV_BANDS = [
+  { max: 5e6, ad: "5 milyon TL'ye kadar", AB: 90, C: 80, D: 70 },
+  { max: 7e6, ad: "5 – 7 milyon TL", AB: 80, C: 70, D: 60 },
+  { max: 10e6, ad: "7 – 10 milyon TL", AB: 70, C: 60, D: 50 },
+  { max: 20e6, ad: "10 – 20 milyon TL", AB: 50, C: 40, D: 30 },
+  { max: Infinity, ad: "20 milyon TL üzeri", AB: 40, C: 30, D: 20 },
+];
+function ltvBand(v) { return LTV_BANDS.findIndex((b) => v <= b.max); }
+function renderLtv() {
+  const v = num("k2_deger"), cls = $("k2_enerji").value, P = num("k2_tutar");
+  const bi = ltvBand(v), band = LTV_BANDS[bi], rate = band[cls];
+  const maxKredi = v * rate / 100;
+  const over = P > maxKredi + 0.5;
+  const clsAd = { AB: "A/B", C: "C", D: "D ve altı" }[cls];
+  let rowsH = LTV_BANDS.map((b, i) => `<tr class="${i === bi ? "on" : ""}"><td>${b.ad}</td><td>%${b.AB}</td><td>%${b.C}</td><td>%${b.D}</td></tr>`).join("");
+  $("k2_ltv").className = "ltvbox" + (over ? " warn" : "");
+  $("k2_ltv").innerHTML = `Bu konut için azami kredi oranı <b>%${rate}</b> (${band.ad}, enerji sınıfı ${clsAd}).<br>
+    Çekilebilecek en yüksek kredi: <b>${tl(maxKredi)}</b>
+    ${over ? `<br><span style="color:#ef6a4c">Girdiğin tutar bu sınırı aşıyor.</span>` : ""}
+    <button type="button" id="k2_max">En yüksek tutarı kullan</button>
+    <table class="ltvtab"><tr><th>Ekspertiz değeri</th><th>A/B</th><th>C</th><th>D ve altı</th></tr>${rowsH}</table>`;
+  $("k2_max").onclick = () => { $("k2_tutar").value = Math.floor(maxKredi).toLocaleString("tr-TR"); calcKonut(); };
+}
 function calcKonut() {
+  renderLtv();
   const deger = num("k2_deger"), P = num("k2_tutar"), r = num("k2_faiz") / 100, n = Math.round(num("k2_vade"));
   const tahsis = P * num("k2_tahsis") / 100, masraf = num("k2_masraf");
   if (!P || !n) { $("k2_out").textContent = "–"; rows("k2_rows", []); $("k2_plan").innerHTML = ""; return; }
@@ -446,11 +485,10 @@ function calcKonut() {
     ["Ekspertiz + diğer masraf", tl(masraf)],
     ["Toplam geri ödeme", tl(toplam + tahsis + masraf), "total"],
     ["Peşinat", tl(Math.max(0, deger - P))],
-    ["Kredi / konut değeri", pct(ltv)],
+    ["Kredi / ekspertiz değeri", pct(ltv)],
     ["Yıllık maliyet oranı (masraf dahil)", pct((Math.pow(1 + (lo + hi) / 2, 12) - 1) * 100)],
   ]);
-  $("k2_note").textContent = (P > deger && deger ? "Kredi tutarı konut değerinden büyük görünüyor. " : "") +
-    "Kredi/değer oranı üst sınırı BDDK düzenlemelerine göre konutun değerine ve enerji sınıfına bağlıdır; bankanla teyit et. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir.";
+  $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Uygulamayı bankanla teyit et.";
 }
 
 // ---------- Sekmeler ----------
@@ -472,7 +510,7 @@ document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventLi
 document.querySelectorAll("#mev input, #mev select").forEach((e) => e.addEventListener("input", calcMev));
 document.querySelectorAll("#tk input").forEach((e) => e.addEventListener("input", calcTK));
 document.querySelectorAll("#kk input").forEach((e) => e.addEventListener("input", calcKK));
-document.querySelectorAll("#konut input").forEach((e) => e.addEventListener("input", calcKonut));
+document.querySelectorAll("#konut input, #konut select").forEach((e) => e.addEventListener("input", calcKonut));
 calcBCH(); calcMev(); calcTK(); calcKK(); calcKonut();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
