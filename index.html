@@ -28,21 +28,18 @@
     align-items: center;
     padding: 0 16px 16px;
   }
-  .top {
+  .top { display: flex; flex-direction: column; align-items: center; padding-top: 18px; width: 100%; }
+  .bar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 10;
-    display: flex; flex-direction: column; align-items: center;
-    padding: 18px 16px 6px;
-    background: rgba(0,0,0,.96);
-    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-    border-bottom: 1px solid transparent;
-    transition: padding .25s ease, border-color .25s ease;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    padding: 8px 16px; padding-top: calc(8px + env(safe-area-inset-top));
+    background: rgba(0,0,0,.94); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    transform: translateY(-110%); transition: transform .25s ease;
   }
-  .top.mini { padding: 8px 16px 6px; border-bottom-color: var(--line); }
-  .top h1.logo img { transition: width .25s ease; }
-  .top.mini h1.logo img { width: min(150px, 42vw); }
-  .top p.welcome, .top p.greet { transition: font-size .25s ease, margin .25s ease; }
-  .top.mini p.welcome { font-size: 12px; margin: 0; }
-  .top.mini p.greet { font-size: 14px; margin: 0; min-height: 0; }
+  .bar.show { transform: none; }
+  .bar img { height: 34px; width: auto; }
+  .bar span { font-family: Georgia, "Times New Roman", serif; font-style: italic; color: var(--accent); font-size: 14px; }
   h1 { margin: 0 0 4px; font-size: 34px; letter-spacing: 2px; color: var(--accent); }
   h1.logo { margin: 0 0 6px; line-height: 0; }
   h1.logo img {
@@ -107,12 +104,12 @@
 </style>
 </head>
 <body>
-  <div id="topSpace" style="width:100%;flex:none;height:236px"></div>
   <header class="top" id="top">
     <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"></h1>
     <p class="welcome">Hoş geldiniz</p>
     <p class="greet" id="greet"></p>
   </header>
+  <div class="bar" id="bar" aria-hidden="true"><img src="img/logo.png" alt=""><span id="greet2"></span></div>
   <div class="list">
     <a class="game isb" href="isbank.html">
       <div class="icon isb-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg></div>
@@ -173,19 +170,12 @@
     else if (h >= 16 && h < 21) t = "Sağlıklı akşamlar 🌇";
     else t = "Sağlıklı geceler 🌙";
     document.getElementById("greet").textContent = t;
-    const top = document.getElementById("top");
-    const space = document.getElementById("topSpace");
-    // Üst bölümün tam yüksekliği kadar yer ayır: küçülünce içerik zıplamaz
-    const measure = () => {
-      const was = top.classList.contains("mini");
-      top.classList.remove("mini");
-      space.style.height = top.offsetHeight + 8 + "px";
-      top.classList.toggle("mini", was);
-    };
-    const onScroll = () => top.classList.toggle("mini", window.scrollY > 24);
-    measure();
-    document.querySelector("#top img").addEventListener("load", measure);
-    window.addEventListener("resize", measure);
+    document.getElementById("greet2").textContent = t;
+    const top = document.getElementById("top"), bar = document.getElementById("bar");
+    // Büyük logo ekrandan tamamen çıkınca üstte ince şerit belirir; menü hiç örtülmez
+    const first = document.querySelector("a.isb");
+    // Şerit, ilk kart (İş Bankası) ekrandan tamamen çıktıktan sonra görünür
+    const onScroll = () => bar.classList.toggle("show", first.getBoundingClientRect().bottom < bar.offsetHeight);
     window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
   })();
 </script>
