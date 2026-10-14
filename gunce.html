@@ -6,7 +6,7 @@
 <link rel="apple-touch-icon" href="img/icon.png">
 <meta name="theme-color" content="#000000">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Günce</title>
+<title>Günce Tutma</title>
 <style>
   :root {
     --bg: #000000;
@@ -36,6 +36,11 @@
   .ring { width: 86px; height: 86px; flex: none; }
   .hero .txt { font-size: 14px; color: #c9d0ea; line-height: 1.6; }
   .hero .txt b { color: #fff; font-size: 16px; }
+  .mchips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+  .mchips button { padding: 8px 4px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 13px; font-weight: 600; cursor: pointer; }
+  .mchips button small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
+  .mchips button.sel { background: var(--accent); border-color: var(--accent); color: #000; }
+  .mchips button.sel small { color: #000; }
   .days { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 6px; scrollbar-width: none; }
   .days::-webkit-scrollbar { display: none; }
   .days button { flex: none; width: 46px; padding: 6px 0; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); cursor: pointer; text-align: center; }
@@ -96,15 +101,15 @@
 <div class="wrap">
   <header>
     <a href="index.html">← Menü</a>
-    <h1>📒 Günce</h1>
+    <h1>📒 Günce Tutma</h1>
     <span style="width:52px"></span>
   </header>
 
   <div class="card">
     <div class="mhead">
-      <button id="prevM" aria-label="Önceki ay">‹</button>
-      <b id="mTitle"></b>
-      <button id="nextM" aria-label="Sonraki ay">›</button>
+      <button id="prevM" aria-label="Önceki çeyrek">‹</button>
+      <div style="text-align:center"><b id="mTitle"></b><div id="mSub" style="font-size:12px;color:var(--muted)"></div></div>
+      <button id="nextM" aria-label="Sonraki çeyrek">›</button>
     </div>
   </div>
 
@@ -120,6 +125,7 @@
   </div>
 
   <div class="card">
+    <div class="mchips" id="mchips"></div>
     <div class="days" id="days"></div>
     <div class="dayinfo" id="dayInfo"></div>
   </div>
@@ -127,7 +133,7 @@
   <div id="prods"></div>
 
   <div class="card">
-    <h3>Ayın takvimi</h3>
+    <h3 id="heatTitle">Ayın takvimi</h3>
     <div class="heat" id="heat"></div>
     <p class="note" style="margin:8px 0 0">Kutudaki küçük sayı o gün işlenen toplam adet. Bir güne dokununca o günü düzenlersin.</p>
   </div>
@@ -143,8 +149,8 @@
     <div class="btns">
       <button class="btn" id="expJson">⬇️ Yedeği indir</button>
       <button class="btn" id="impJson">⬆️ Yedekten yükle</button>
-      <button class="btn" id="expCsv">📊 Bu ayı Excel'e aktar</button>
-      <button class="btn danger" id="resetM">Bu ayı sıfırla</button>
+      <button class="btn" id="expCsv">📊 Çeyreği Excel'e aktar</button>
+      <button class="btn danger" id="resetM">Çeyreği sıfırla</button>
     </div>
     <input type="file" id="fileIn" accept="application/json,.json" class="hide">
     <p class="note" style="margin:10px 0 0">Veriler yalnızca bu telefonda, bu tarayıcıda saklanır; kimse göremez. Tarayıcı verilerini silersen ya da başka cihaza geçersen kaybolmaması için ara ara yedek indir.</p>
@@ -163,7 +169,7 @@ const HOLIDAYS = new Set([
 const HALF = new Set(["2026-03-19","2026-05-26","2026-10-28","2027-03-08","2027-05-15","2027-10-28"]);
 
 // ================= Veri =================
-const KEY = "gunce_v1";
+const KEY = "gunce_v2";
 const DEFAULT_PRODUCTS = [
   { id: "kk", name: "Kredi kartı", icon: "💳" },
   { id: "ek", name: "Ek hesap", icon: "🏦" },
@@ -175,85 +181,102 @@ const ICONS = ["📌", "📈", "🛡️", "💼", "📱", "🏠", "🚗", "💰"
 let D;
 function load() {
   try { D = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { D = null; }
-  if (!D || !Array.isArray(D.products)) D = { products: DEFAULT_PRODUCTS.slice(), months: {} };
+  if (!D || !Array.isArray(D.products)) {
+    D = { products: DEFAULT_PRODUCTS.slice(), targets: {}, days: {} };
+    // Eski aylık sürümden günlük kayıtları taşı
+    try {
+      const old = JSON.parse(localStorage.getItem("gunce_v1") || "null");
+      if (old && old.months) {
+        D.products = old.products || D.products;
+        for (const m of Object.values(old.months)) Object.assign(D.days, m.days || {});
+      }
+    } catch (e) {}
+  }
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) { toast("Kaydedilemedi: tarayıcı depolaması kapalı olabilir"); } }
 
 const $ = (x) => document.getElementById(x);
 const pad = (n) => String(n).padStart(2, "0");
 const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-const monthKey = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
 const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 const DOW = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
 const today = new Date(); today.setHours(12, 0, 0, 0);
-let view = new Date(today.getFullYear(), today.getMonth(), 1, 12);
+// Çeyrek: yıl + q (0..3)
+let qy = today.getFullYear(), qn = Math.floor(today.getMonth() / 3);
+let viewMonth = today.getMonth();             // çeyrek içinde gösterilen ay
 let selDay = new Date(today);
+const qKey = () => `${qy}-Q${qn + 1}`;
+const qMonths = () => [qn * 3, qn * 3 + 1, qn * 3 + 2];
+const inQuarter = (d) => d.getFullYear() === qy && Math.floor(d.getMonth() / 3) === qn;
 
 const isWork = (d) => d.getDay() !== 0 && d.getDay() !== 6 && !HOLIDAYS.has(keyOf(d));
-function M() {
-  const k = monthKey(view);
-  if (!D.months[k]) {
-    // Hedefleri bir önceki aydan taşı
-    const prev = new Date(view.getFullYear(), view.getMonth() - 1, 1, 12);
-    const pk = D.months[monthKey(prev)];
-    D.months[k] = { targets: pk ? { ...pk.targets } : {}, days: {} };
+const workVal = (d) => (isWork(d) ? (HALF.has(keyOf(d)) ? 0.5 : 1) : 0);
+function targets() {
+  if (!D.targets[qKey()]) {
+    // Hedefleri bir önceki çeyrekten taşı
+    const py = qn === 0 ? qy - 1 : qy, pq = qn === 0 ? 4 : qn;
+    const prev = D.targets[`${py}-Q${pq}`];
+    if (prev) D.targets[qKey()] = { ...prev };
   }
-  return D.months[k];
+  return D.targets[qKey()] || {};
 }
-const dayData = (d) => (M().days[keyOf(d)] ||= {});
-function monthTotal(pid) {
-  let s = 0;
-  for (const v of Object.values(M().days)) s += v[pid] || 0;
-  return s;
-}
-function workDaysLeft() {
-  // Seçili ay için bugün dahil kalan iş günleri (geçmiş ay: 0, gelecek ay: tüm iş günleri)
-  const y = view.getFullYear(), m = view.getMonth();
-  const days = new Date(y, m + 1, 0).getDate();
-  let n = 0;
-  for (let d = 1; d <= days; d++) {
-    const dt = new Date(y, m, d, 12);
-    if (dt < today) continue;
-    if (isWork(dt)) n += HALF.has(keyOf(dt)) ? 0.5 : 1;
+const dayData = (d) => (D.days[keyOf(d)] ||= {});
+function eachQuarterDay(fn) {
+  for (const m of qMonths()) {
+    const n = new Date(qy, m + 1, 0).getDate();
+    for (let d = 1; d <= n; d++) fn(new Date(qy, m, d, 12));
   }
-  return n;
 }
-function workDaysTotal() {
-  const y = view.getFullYear(), m = view.getMonth();
-  let n = 0;
-  for (let d = 1; d <= new Date(y, m + 1, 0).getDate(); d++) { const dt = new Date(y, m, d, 12); if (isWork(dt)) n += HALF.has(keyOf(dt)) ? 0.5 : 1; }
-  return n;
-}
+function quarterTotal(pid) { let s = 0; eachQuarterDay((d) => { const v = D.days[keyOf(d)]; if (v) s += v[pid] || 0; }); return s; }
+function monthTotal(pid, m) { let s = 0; const n = new Date(qy, m + 1, 0).getDate(); for (let d = 1; d <= n; d++) { const v = D.days[keyOf(new Date(qy, m, d, 12))]; if (v) s += v[pid] || 0; } return s; }
+function workDaysLeft() { let n = 0; eachQuarterDay((d) => { if (d >= today) n += workVal(d); }); return n; }
+function workDaysTotal() { let n = 0; eachQuarterDay((d) => (n += workVal(d))); return n; }
 const fmt = (n) => (Math.round(n * 10) / 10).toLocaleString("tr-TR");
 function color(p) { return p >= 100 ? "var(--ok)" : p >= 60 ? "var(--mid)" : "var(--low)"; }
+const qName = () => `${qy} · ${qn + 1}. çeyrek`;
+const qRange = () => `${MONTHS[qn * 3]} – ${MONTHS[qn * 3 + 2]}`;
 
 // ================= Çizim =================
 function render() {
-  $("mTitle").textContent = `${MONTHS[view.getMonth()]} ${view.getFullYear()}`;
-  renderHero(); renderDays(); renderProds(); renderHeat(); renderEdit();
+  $("mTitle").textContent = qName();
+  $("mSub").textContent = qRange();
+  renderHero(); renderChips(); renderDays(); renderProds(); renderHeat(); renderEdit();
 }
 function renderHero() {
-  let tgt = 0, done = 0;
-  for (const p of D.products) tgt += Number(M().targets[p.id]) || 0;
-  done = D.products.reduce((a, p) => a + monthTotal(p.id), 0);
+  const T = targets();
+  const tgt = D.products.reduce((a, p) => a + (Number(T[p.id]) || 0), 0);
+  const done = D.products.reduce((a, p) => a + quarterTotal(p.id), 0);
   const pct = tgt ? Math.round((done / tgt) * 100) : 0;
   const L = 2 * Math.PI * 42;
   $("ringArc").setAttribute("stroke-dasharray", `${Math.min(1, pct / 100) * L} ${L}`);
   $("ringArc").setAttribute("stroke", pct >= 100 ? "#3fc283" : "#e0a24f");
   $("ringTxt").textContent = `%${pct}`;
   const left = workDaysLeft(), tot = workDaysTotal();
-  $("heroTxt").innerHTML = `Bu ay toplam <b>${done}</b> / ${tgt || "–"} adet<br>
+  const elapsed = tot - left;
+  const pace = tgt && elapsed > 0 ? Math.round(((done / elapsed) * tot / tgt) * 100) : null;
+  $("heroTxt").innerHTML = `Çeyrek toplamı <b>${done}</b> / ${tgt || "–"} adet<br>
     İş günü: <b>${fmt(tot)}</b> · Kalan: <b>${fmt(left)}</b><br>
-    ${tgt && done >= tgt ? "🎉 Aylık hedef tamam!" : tgt ? `Hedefe <b>${tgt - done}</b> adet kaldı` : "Ürünlerin hedeflerini gir 👇"}`;
+    ${tgt && done >= tgt ? "🎉 Çeyrek hedefi tamam!" : tgt ? `Hedefe <b>${tgt - done}</b> adet kaldı${pace !== null && left > 0 ? ` · Bu hızla çeyrek sonu <b>%${pace}</b>` : ""}` : "Ürünlerin çeyrek hedeflerini gir 👇"}`;
+}
+function renderChips() {
+  $("mchips").innerHTML = qMonths().map((m) => {
+    const tot = D.products.reduce((a, p) => a + monthTotal(p.id, m), 0);
+    return `<button data-m="${m}" class="${m === viewMonth ? "sel" : ""}">${MONTHS[m]}<small>${tot} adet</small></button>`;
+  }).join("");
+  $("mchips").querySelectorAll("button").forEach((b) => (b.onclick = () => {
+    viewMonth = Number(b.dataset.m);
+    selDay = viewMonth === today.getMonth() && qy === today.getFullYear() ? new Date(today) : new Date(qy, viewMonth, 1, 12);
+    render();
+  }));
 }
 function renderDays() {
-  const y = view.getFullYear(), m = view.getMonth();
+  const y = qy, m = viewMonth;
   const n = new Date(y, m + 1, 0).getDate();
   let html = "";
   for (let d = 1; d <= n; d++) {
     const dt = new Date(y, m, d, 12);
     const k = keyOf(dt);
-    const has = M().days[k] && Object.values(M().days[k]).some((v) => v > 0);
+    const has = D.days[k] && Object.values(D.days[k]).some((v) => v > 0);
     html += `<button data-d="${d}" class="${isWork(dt) ? "" : "off"} ${keyOf(selDay) === k ? "sel" : ""} ${has ? "has" : ""}"><small>${DOW[dt.getDay()]}</small><b>${d}</b></button>`;
   }
   $("days").innerHTML = html;
@@ -266,23 +289,26 @@ function renderDays() {
 }
 function renderProds() {
   const left = workDaysLeft();
+  const T = targets();
   const dd = dayData(selDay);
   $("prods").innerHTML = D.products.map((p) => {
-    const tgt = Number(M().targets[p.id]) || 0;
-    const done = monthTotal(p.id);
+    const tgt = Number(T[p.id]) || 0;
+    const done = quarterTotal(p.id);
     const pct = tgt ? Math.round((done / tgt) * 100) : 0;
     const need = tgt > done && left > 0 ? (tgt - done) / left : 0;
+    const months = qMonths().map((m) => `${MONTHS[m].slice(0, 3)} ${monthTotal(p.id, m)}`).join(" · ");
     const meta = tgt
       ? (done >= tgt ? `<span style="color:var(--ok)">✓ Hedef tamam</span>` : `Kalan <b>${tgt - done}</b> · günde <b>${fmt(need)}</b>`)
       : `<span>Hedef girilmedi</span>`;
     return `<div class="prod" data-p="${p.id}">
       <div class="top">
         <div class="ic">${p.icon}</div>
-        <div class="nm"><b>${escapeHtml(p.name)}</b><span>Ay: ${done} / <button class="tgt" data-t="${p.id}">Hedef: ${tgt || "gir"}</button></span></div>
+        <div class="nm"><b>${escapeHtml(p.name)}</b><span>Çeyrek: ${done} / <button class="tgt" data-t="${p.id}">Hedef: ${tgt || "gir"}</button></span></div>
         <div class="cnt"><button data-m="${p.id}" aria-label="Azalt">−</button><span class="v">${dd[p.id] || 0}</span><button class="plus" data-a="${p.id}" aria-label="Artır">+</button></div>
       </div>
       <div class="bar"><i style="width:${Math.min(100, pct)}%;background:${color(pct)}"></i></div>
       <div class="meta"><span>%${pct}</span><span>${meta}</span></div>
+      <div class="meta" style="margin-top:4px"><span>${months}</span></div>
     </div>`;
   }).join("");
   $("prods").querySelectorAll("[data-a]").forEach((b) => (b.onclick = () => bump(b.dataset.a, 1)));
@@ -290,13 +316,14 @@ function renderProds() {
   $("prods").querySelectorAll("[data-t]").forEach((b) => (b.onclick = () => setTarget(b.dataset.t)));
 }
 function renderHeat() {
-  const y = view.getFullYear(), m = view.getMonth();
+  const y = qy, m = viewMonth;
+  $("heatTitle").textContent = `${MONTHS[m]} takvimi`;
   const first = new Date(y, m, 1, 12);
   const off = (first.getDay() + 6) % 7;
   const n = new Date(y, m + 1, 0).getDate();
   let max = 1;
   const tot = {};
-  for (let d = 1; d <= n; d++) { const k = keyOf(new Date(y, m, d, 12)); const s = Object.values(M().days[k] || {}).reduce((a, b) => a + b, 0); tot[d] = s; max = Math.max(max, s); }
+  for (let d = 1; d <= n; d++) { const k = keyOf(new Date(y, m, d, 12)); const s = Object.values(D.days[k] || {}).reduce((a, b) => a + b, 0); tot[d] = s; max = Math.max(max, s); }
   let html = ["P", "S", "Ç", "P", "C", "C", "P"].map((x) => `<div class="h">${x}</div>`).join("");
   for (let i = 0; i < off; i++) html += "<div></div>";
   for (let d = 1; d <= n; d++) {
@@ -328,17 +355,18 @@ function bump(pid, delta) {
   save();
   if (navigator.vibrate) try { navigator.vibrate(12); } catch (e) {}
   const p = D.products.find((x) => x.id === pid);
-  const tgt = Number(M().targets[pid]) || 0;
-  if (delta > 0 && tgt && monthTotal(pid) === tgt) toast(`🎉 ${p.name} hedefi tamamlandı!`);
-  renderHero(); renderProds(); renderHeat(); renderDays();
+  const tgt = Number(targets()[pid]) || 0;
+  if (delta > 0 && tgt && quarterTotal(pid) === tgt) toast(`🎉 ${p.name} çeyrek hedefi tamamlandı!`);
+  renderHero(); renderChips(); renderProds(); renderHeat(); renderDays();
 }
 function setTarget(pid) {
   const p = D.products.find((x) => x.id === pid);
-  const cur = M().targets[pid] || "";
-  const v = prompt(`${p.name} için ${MONTHS[view.getMonth()]} hedefi (adet):`, cur);
+  const cur = targets()[pid] || "";
+  const v = prompt(`${p.name} için ${qName()} (${qRange()}) hedefi (adet):`, cur);
   if (v === null) return;
   const n = Math.max(0, Math.round(Number(String(v).replace(",", ".")) || 0));
-  if (n) M().targets[pid] = n; else delete M().targets[pid];
+  if (!D.targets[qKey()]) D.targets[qKey()] = {};
+  if (n) D.targets[qKey()][pid] = n; else delete D.targets[qKey()][pid];
   save(); render();
 }
 function addProduct() {
@@ -363,40 +391,47 @@ function importJson(file) {
   r.onload = () => {
     try {
       const d = JSON.parse(r.result);
-      if (!d || !Array.isArray(d.products) || typeof d.months !== "object") throw 0;
+      if (!d || !Array.isArray(d.products) || typeof d.days !== "object") throw 0;
       if (!confirm("Yedek yüklensin mi? Bu cihazdaki mevcut veriler yedektekilerle değiştirilecek.")) return;
-      D = d; save(); render(); toast("Yedek yüklendi");
+      D = { products: d.products, targets: d.targets || {}, days: d.days }; save(); render(); toast("Yedek yüklendi");
     } catch (e) { toast("Bu dosya geçerli bir Günce yedeği değil"); }
   };
   r.readAsText(file);
 }
 function exportCsv() {
-  const y = view.getFullYear(), m = view.getMonth();
-  const n = new Date(y, m + 1, 0).getDate();
   const head = ["Tarih", ...D.products.map((p) => p.name), "Toplam"];
   const lines = [head];
-  for (let d = 1; d <= n; d++) {
-    const k = keyOf(new Date(y, m, d, 12));
-    const v = M().days[k] || {};
+  eachQuarterDay((dt) => {
+    const v = D.days[keyOf(dt)] || {};
     const row = D.products.map((p) => v[p.id] || 0);
-    lines.push([`${pad(d)}.${pad(m + 1)}.${y}`, ...row, row.reduce((a, b) => a + b, 0)]);
-  }
-  lines.push(["Gerçekleşen", ...D.products.map((p) => monthTotal(p.id)), D.products.reduce((a, p) => a + monthTotal(p.id), 0)]);
-  lines.push(["Hedef", ...D.products.map((p) => M().targets[p.id] || 0), D.products.reduce((a, p) => a + (Number(M().targets[p.id]) || 0), 0)]);
-  const csv = "﻿" + lines.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\r\n");
-  download(`gunce-${y}-${pad(m + 1)}.csv`, csv, "text/csv;charset=utf-8");
+    lines.push([`${pad(dt.getDate())}.${pad(dt.getMonth() + 1)}.${dt.getFullYear()}`, ...row, row.reduce((a, b) => a + b, 0)]);
+  });
+  for (const m of qMonths()) lines.push([`${MONTHS[m]} toplam`, ...D.products.map((p) => monthTotal(p.id, m)), D.products.reduce((a, p) => a + monthTotal(p.id, m), 0)]);
+  const T = targets();
+  lines.push(["Çeyrek gerçekleşen", ...D.products.map((p) => quarterTotal(p.id)), D.products.reduce((a, p) => a + quarterTotal(p.id), 0)]);
+  lines.push(["Çeyrek hedef", ...D.products.map((p) => T[p.id] || 0), D.products.reduce((a, p) => a + (Number(T[p.id]) || 0), 0)]);
+  const csv = "\ufeff" + lines.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+  download(`gunce-${qy}-Q${qn + 1}.csv`, csv, "text/csv;charset=utf-8");
   toast("Excel dosyası indirildi");
 }
 
-$("prevM").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1, 12); selDay = new Date(view); render(); };
-$("nextM").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1, 12); selDay = new Date(view); if (monthKey(view) === monthKey(today)) selDay = new Date(today); render(); };
+function shiftQuarter(dir) {
+  qn += dir;
+  if (qn < 0) { qn = 3; qy--; } if (qn > 3) { qn = 0; qy++; }
+  const cur = qy === today.getFullYear() && qn === Math.floor(today.getMonth() / 3);
+  viewMonth = cur ? today.getMonth() : qn * 3;
+  selDay = cur ? new Date(today) : new Date(qy, viewMonth, 1, 12);
+  render();
+}
+$("prevM").onclick = () => shiftQuarter(-1);
+$("nextM").onclick = () => shiftQuarter(1);
 $("addBtn").onclick = addProduct;
 $("newName").addEventListener("keydown", (e) => { if (e.key === "Enter") addProduct(); });
 $("expJson").onclick = exportJson;
 $("impJson").onclick = () => $("fileIn").click();
 $("fileIn").onchange = (e) => { if (e.target.files[0]) importJson(e.target.files[0]); e.target.value = ""; };
 $("expCsv").onclick = exportCsv;
-$("resetM").onclick = () => { if (confirm(`${MONTHS[view.getMonth()]} ${view.getFullYear()} ayının günlük kayıtları silinsin mi? (Hedefler kalır)`)) { M().days = {}; save(); render(); } };
+$("resetM").onclick = () => { if (confirm(`${qName()} (${qRange()}) günlük kayıtları silinsin mi? (Hedefler kalır)`)) { eachQuarterDay((d) => delete D.days[keyOf(d)]); save(); render(); } };
 
 load();
 render();
