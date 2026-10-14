@@ -48,10 +48,18 @@
     flex: 1;
     min-height: 330px;
     position: relative;
-    background: radial-gradient(ellipse at center, var(--felt-line) 0%, var(--felt) 70%);
+    background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%);
     border-radius: 22px;
-    border: 1px solid var(--felt-line);
+    border: 1px solid #3a50f0;
+    overflow: hidden;
   }
+  /* Arka planda SADOLAYN gölgesi */
+  .table::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background: url("img/logo.png") center 77% / 70% auto no-repeat;
+    opacity: .2; filter: grayscale(1) brightness(2.4);
+  }
+  .seat, .slot { z-index: 1; }
   .seat {
     position: absolute;
     background: rgba(0,0,0,.55);
