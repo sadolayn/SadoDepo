@@ -72,10 +72,14 @@
   .day.fut { opacity: .35; cursor: default; }
   .cal-f { display: flex; gap: 14px; justify-content: center; font-size: 11px; color: var(--muted); margin-top: 8px; }
   .cal-f i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 5px; vertical-align: middle; }
+  .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
+  .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
+  .stick > :last-child { margin-bottom: 0; }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="stick">
   <header>
     <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Anasayfa" aria-label="Anasayfa">🏠</a>
     <h1>📜 Resmi Gazete</h1>
@@ -88,6 +92,7 @@
     <button id="prev" aria-label="Önceki gün">‹</button>
     <select id="pick"></select>
     <button id="next" aria-label="Sonraki gün">›</button>
+  </div>
   </div>
 
   <div id="content"><div class="empty">Yükleniyor…</div></div>
@@ -109,7 +114,30 @@ const AYLAR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz",
 let calY, calM, selDate = null;
 const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 
+let calCompact = false, weekRef = null;
+const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+function dayBtn(iso, today, set) {
+  const c = ["day", set.has(iso) ? "has" : "", iso === today ? "today" : "", iso === selDate ? "sel" : "", iso > today ? "fut" : ""].join(" ");
+  return `<button class="${c}" data-d="${iso}" ${iso > today ? "disabled" : ""}>${+iso.slice(8)}</button>`;
+}
+function renderWeek() {
+  const today = todayIso(), set = new Set(dates);
+  const ref = new Date((weekRef || selDate || today) + "T12:00:00");
+  const mon = new Date(ref); mon.setDate(ref.getDate() - ((ref.getDay() + 6) % 7));
+  const days = [...Array(7)].map((_, i) => { const d = new Date(mon); d.setDate(mon.getDate() + i); return d; });
+  const a = days[0], b = days[6];
+  const label = a.getMonth() === b.getMonth() ? `${a.getDate()}–${b.getDate()} ${AYLAR[b.getMonth()]} ${b.getFullYear()}` : `${a.getDate()} ${AYLAR[a.getMonth()].slice(0, 3)} – ${b.getDate()} ${AYLAR[b.getMonth()].slice(0, 3)} ${b.getFullYear()}`;
+  let h = `<div class="cal-h"><button id="cprev" aria-label="Önceki hafta">‹</button><b style="font-size:14px">${label}</b>
+    <button id="cnext" aria-label="Sonraki hafta" ${isoOf(b) >= today ? "disabled" : ""}>›</button></div><div class="cal-g">`;
+  h += ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"].map((w, i) => `<div class="wd ${i > 4 ? "we" : ""}">${w}</div>`).join("");
+  h += days.map((d) => dayBtn(isoOf(d), today, set)).join("") + "</div>";
+  $("cal").innerHTML = h;
+  const shift = (n) => { const r = new Date(ref); r.setDate(r.getDate() + n); weekRef = isoOf(r); renderWeek(); };
+  $("cprev").onclick = () => shift(-7);
+  $("cnext").onclick = () => shift(7);
+}
 function renderCal() {
+  if (calCompact) return renderWeek();
   const first = new Date(calY, calM, 1), dim = new Date(calY, calM + 1, 0).getDate();
   const lead = (first.getDay() + 6) % 7, today = todayIso(), set = new Set(dates);
   const oldest = dates.length ? dates[dates.length - 1] : today;
@@ -130,7 +158,7 @@ function renderCal() {
   $("cnext").onclick = () => { calM++; if (calM > 11) { calM = 0; calY++; } renderCal(); };
 }
 
-function setCal(date) { selDate = date; calY = +date.slice(0, 4); calM = +date.slice(5, 7) - 1; renderCal(); }
+function setCal(date) { selDate = date; weekRef = null; calY = +date.slice(0, 4); calM = +date.slice(5, 7) - 1; renderCal(); }
 
 function showMissing(date) {
   setCal(date);
@@ -193,6 +221,11 @@ async function init() {
     if (dates.includes(d)) show(d); else showMissing(d);
     history.replaceState(null, "", "#" + d);
   };
+  // Aşağı kaydırınca takvim tek haftaya iner, en üste dönünce ay görünümü geri gelir
+  window.addEventListener("scroll", () => {
+    if (!calCompact && window.scrollY > 320) { calCompact = true; renderCal(); }
+    else if (calCompact && window.scrollY < 6) { calCompact = false; calY = +(weekRef || selDate).slice(0, 4); calM = +(weekRef || selDate).slice(5, 7) - 1; renderCal(); }
+  }, { passive: true });
   const want = location.hash.slice(1);
   show(dates.includes(want) ? want : dates[0]);
 }
@@ -201,5 +234,6 @@ init();
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 </body>
 </html>

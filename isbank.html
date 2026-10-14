@@ -88,10 +88,14 @@
   .maxlink { display: block; text-align: center; margin: 12px 0 0; padding: 12px; border-radius: 12px; border: 1px solid var(--accent); color: var(--accent); text-decoration: none; font-weight: 600; }
   .empty { text-align: center; color: var(--muted); padding: 40px 0; }
   .note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 18px; line-height: 1.5; }
+  .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
+  .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
+  .stick > :last-child { margin-bottom: 0; }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="stick">
   <header>
     <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Anasayfa" aria-label="Anasayfa">🏠</a>
     <h1>🏛️ İş Bankası</h1>
@@ -100,6 +104,7 @@
   <div class="upd" id="upd"></div>
 
   <div class="chips" id="chips"></div>
+  </div>
   <div id="list"><div class="empty">Yükleniyor…</div></div>
 
   <p class="note">Haberler ve Maximum kampanyaları kamuya açık kaynaklardan günde iki kez otomatik derlenir. Kampanya koşulları için maximum.com.tr'ye bakın.</p>
@@ -247,5 +252,6 @@ function renderList() {
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 </body>
 </html>
