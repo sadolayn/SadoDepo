@@ -815,10 +815,16 @@ document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventLi
   if (q.has("calisan") || q.has("musteri")) history.replaceState(null, "", location.pathname + location.hash);
   if (on && q.size !== undefined) { const b = document.querySelector('button[data-tab="mev"]'); if (b && (q.has("calisan"))) b.click(); }
   $("empOff").onclick = () => { on = false; apply(); };
+  // Telefonda hızlı dokunuşlar çift dokunma/yakınlaştırma sanılmasın diye pointerdown kullanılır
   let taps = [];
-  $("mevTitle").addEventListener("click", () => {
-    const t = Date.now(); taps = taps.filter((x) => t - x < 2000); taps.push(t);
-    if (taps.length >= 5) { taps = []; on = !on; apply(); }
+  const title = $("mevTitle");
+  title.style.touchAction = "manipulation";
+  title.style.userSelect = "none";
+  title.style.webkitUserSelect = "none";
+  title.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    const t = Date.now(); taps = taps.filter((x) => t - x < 3000); taps.push(t);
+    if (taps.length >= 5) { taps = []; on = !on; apply(); if (navigator.vibrate) navigator.vibrate(40); }
   });
 })();
 document.querySelectorAll("#mev input, #mev select").forEach((e) => e.addEventListener("input", calcMev));
