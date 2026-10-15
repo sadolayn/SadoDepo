@@ -228,21 +228,32 @@ const mpSave = () => { try { localStorage.setItem(MP_KEY, JSON.stringify(MP)); }
 const mpFmt = (n) => n.toLocaleString("tr-TR");
 const BAHIS = [100, 250, 500, 1000];
 let gameStake = 0;
-// İş Bankası tarihçesi soruları
-const ISQ = [
+// İş Bankası tarihçesi ve ürün soruları (internetten doğrulandı: Küre Ansiklopedi, Diken, isbank.com.tr, Teknoblog)
+// 4. alan: son geçerlilik tarihi (kampanya soruları kampanya bitince sorulmaz)
+const ISQ_ALL = [
   ["Türkiye İş Bankası hangi yıl kuruldu?", ["1923", "1924", "1927", "1933"], 1],
-  ["Türkiye İş Bankası'nın kurucusu kimdir?", ["Mustafa Kemal Atatürk", "İsmet İnönü", "Celal Bayar", "Fevzi Çakmak"], 0],
-  ["İş Bankası'nın ilk genel müdürü kimdir?", ["Muammer Eriş", "Celal Bayar", "Şükrü Saracoğlu", "Hasan Saka"], 1],
+  ["Türkiye İş Bankası'nın kurucusu kimdir?", ["Mustafa Kemal Atatürk", "İsmet İnönü", "Kâzım Karabekir", "Fevzi Çakmak"], 0],
+  ["İş Bankası'nın ilk genel müdürü kimdir?", ["Muammer Eriş", "Celâl Bayar", "Şükrü Saracoğlu", "Hasan Saka"], 1],
   ["İş Bankası hangi tarihte kuruldu?", ["29 Ekim 1923", "26 Ağustos 1924", "23 Nisan 1920", "30 Ağustos 1922"], 1],
   ["İş Bankası hangi şehirde kuruldu?", ["İstanbul", "İzmir", "Ankara", "Bursa"], 2],
-  ["Atatürk, İş Bankası'ndaki hisselerini vasiyetiyle hangi kuruma bıraktı?", ["Cumhuriyet Halk Partisi", "Türkiye Büyük Millet Meclisi", "Hazine", "Kızılay"], 0],
-  ["Atatürk'ün İş Bankası hisselerinin kâr payları hangi kurumlara aktarılır?", ["TÜBİTAK ve YÖK", "Türk Dil Kurumu ve Türk Tarih Kurumu", "Kızılay ve Darüşşafaka", "Milli Eğitim ve Diyanet"], 1],
   ["İş Bankası'nın kuruluş sermayesi ne kadardı?", ["100 bin lira", "500 bin lira", "1 milyon lira", "10 milyon lira"], 2],
+  ["Atatürk, İş Bankası'nın 1 milyon liralık kuruluş sermayesinin ne kadarını karşıladı?", ["100 bin lira", "250 bin lira", "500 bin lira", "Tamamını"], 1],
+  ["Atatürk'ün İş Bankası hisseleri, vasiyeti gereği hangi parti tarafından temsil edilir?", ["Cumhuriyet Halk Partisi", "Demokrat Parti", "Hazine", "TBMM"], 0],
+  ["Atatürk'ün İş Bankası hisselerinin kâr payları hangi kurumlara gider?", ["TÜBİTAK ve YÖK", "Türk Dil Kurumu ve Türk Tarih Kurumu", "Kızılay ve Darüşşafaka", "Milli Eğitim ve Diyanet"], 1],
   ["İş Bankası'nın genel müdürlüğü bugün hangi binadadır?", ["İş Kuleleri (Levent)", "Galata Kulesi", "Atakule", "Sabancı Center"], 0],
-  ["İş Bankası Müzesi İstanbul'un hangi semtindedir?", ["Kadıköy", "Beşiktaş", "Eminönü", "Şişli"], 2],
+  ["İş Bankası İktisadi Bağımsızlık Müzesi, bankanın Ankara'daki tarihi genel müdürlük binasındadır. Bu bina hangi semttedir?", ["Kızılay", "Çankaya", "Ulus", "Bahçelievler"], 2],
   ["'Hasan Âli Yücel Klasikler Dizisi' hangi yayınevine aittir?", ["Yapı Kredi Yayınları", "İş Bankası Kültür Yayınları", "Can Yayınları", "Remzi Kitabevi"], 1],
   ["İşCep hangi bankanın mobil bankacılık uygulamasıdır?", ["Ziraat Bankası", "Garanti BBVA", "Türkiye İş Bankası", "Akbank"], 2],
+  ["Maximum kart harcamalarında kazanılan puanın adı nedir?", ["MaxiPuan", "Bonus", "ParaPuan", "Chip-para"], 0],
+  ["Telefona ya da eşyaya yapıştırılıp temassız ödeme yapılan İş Bankası kart ürününün adı nedir?", ["MaxiPara", "MaxSticker", "Maximiles Black", "İşCep Pay"], 1],
+  ["MaxSticker'ın üzerinde aşağıdakilerden hangisi bulunmaz?", ["Kart numarası, son kullanma tarihi ve CVV", "Temassız ödeme çipi", "Maximum özelliği", "MaxiPuan kazanımı"], 0],
+  ["MaxSticker başvurusu nereden yapılır?", ["Sadece şubeden", "İşCep'teki 'MaxSticker Kartlarım' menüsünden", "ATM'den", "Kargo ile"], 1],
+  ["Maximum kartla akıllı saatten ödeme ('Saat ile Öde') hangi uygulamadan etkinleştirilir?", ["Maximum Mobil", "e-Devlet", "Google Haritalar", "BiP"], 0],
+  ["İş Bankası'na uzaktan, görüntülü görüşmeyle müşteri olmak için İşCep'teki özelliğin adı nedir?", ["Hızlı Kredi", "Müşteri Olmak İstiyorum", "Kolay Adres", "QR ile Öde"], 1],
+  ["Ekim 2026 kampanyası: Maximum anlaşmalı marketlerde tek seferde 20.000 TL alışverişe kaç TL MaxiPuan veriliyor?", ["250 TL", "500 TL", "1.000 TL", "2.000 TL"], 2, "2026-10-31"],
+  ["Ekim 2026 'İş Bankası'nı Arkadaşınıza Önerin' kampanyasında davet eden ve yeni müşteri olan arkadaşı kaçar TL MaxiPuan kazanır?", ["100 TL", "250 TL", "500 TL", "1.000 TL"], 2, "2026-10-31"],
 ];
+const ISQ = ISQ_ALL.filter((q) => !q[3] || new Date() <= new Date(q[3] + "T23:59:59"));
 let roundNo = 0;
 const partner = (p) => (p + 2) % 4;
 const sameSide = (a, b) => a === b || (OPT.esli && partner(a) === b);
@@ -631,14 +642,17 @@ function showLock() {
   if (left > 0) {
     const h = Math.floor(left / 36e5), m = Math.floor((left % 36e5) / 6e4);
     $("modal").innerHTML = `<h2>💳 MaxiPuan bitti</h2>
-      <p>Yeni MaxiPuan için <b>${h} saat ${m} dakika</b> sonra gel. Seni İş Bankası tarihçesinden bir soru bekliyor; bilirsen <b>1.000 MaxiPuan</b> kazanırsın.</p>
+      <p>Yeni MaxiPuan için <b>${h} saat ${m} dakika</b> sonra gel. Seni İş Bankası tarihçesi ve ürünleriyle ilgili bir soru bekliyor; bilirsen <b>1.000 MaxiPuan</b> kazanırsın.</p>
       <a class="btn" href="oyunlar.html" style="display:block;text-decoration:none;padding:12px">Oyunlara dön</a>`;
     $("overlay").classList.add("show");
     return;
   }
   let qi; do { qi = Math.floor(Math.random() * ISQ.length); } while (ISQ.length > 1 && qi === MP.lastQ);
-  const [q, opts, ok] = ISQ[qi];
-  $("modal").innerHTML = `<h2>🏦 İş Bankası Tarihçesi</h2><p>Doğru cevap: <b>1.000 MaxiPuan</b></p>
+  const [q, opts0, ok0] = ISQ[qi];
+  // Şıkları karıştır
+  const ord = opts0.map((_, i) => i).sort(() => Math.random() - 0.5);
+  const opts = ord.map((i) => opts0[i]), ok = ord.indexOf(ok0);
+  $("modal").innerHTML = `<h2>🏦 İş Bankası Bilgi Yarışması</h2><p>Doğru cevap: <b>1.000 MaxiPuan</b></p>
     <div style="font-weight:700;font-size:16px;margin:4px 0 12px">${q}</div>
     <div class="qopts">${opts.map((o, i) => `<button type="button" data-i="${i}">${o}</button>`).join("")}</div><div id="qres" style="margin-top:12px;font-size:14px"></div>`;
   $("overlay").classList.add("show");
