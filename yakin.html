@@ -55,9 +55,9 @@
   .prad { margin: -2px 0 10px; }
   .fsbar button { padding: 9px 12px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
   #fsmap { flex: 1; width: 100%; border: 0; }
-  .fsbot { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 6px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); background: #000; border-top: 1px solid #222; }
-  .fsbot a { text-align: center; text-decoration: none; padding: 11px 4px; border-radius: 11px; font-weight: 700; font-size: 13px; }
-  .fsbot .r { background: rgba(224,71,58,.18); border: 1px solid #7a2e28; color: #ffb3aa; }
+  .fsbot { display: flex; gap: 6px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); background: #000; border-top: 1px solid #222; }
+  .fsbot a { flex: 1; text-align: center; text-decoration: none; padding: 11px 4px; border-radius: 11px; font-weight: 700; font-size: 13px; }
+  .fsbot .r { background: #1d2a6b; border: 1px solid #3a50f0; color: #dfe4ff; }
   .fsbot .g { background: rgba(224,162,79,.12); border: 1px solid #6b5326; color: #f3d19a; }
   .fsbot .b { background: #1a2a4a; border: 1px solid #2f4f8f; color: #b9cdff; }
   .fsopen { width: 100%; margin: -2px 0 10px; padding: 9px; border-radius: 10px; border: 1px dashed var(--accent); background: transparent; color: var(--accent); font: inherit; font-size: 13px; cursor: pointer; }
@@ -104,7 +104,7 @@
   <div id="fs"><div class="fsbar"><b id="fstitle"></b><button type="button" id="fsclose">📋 Liste ✕</button></div>
     <div class="fsrad rad" data-rad><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div>
     <iframe id="fsmap" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
-    <div class="fsbot"><a class="r" href="tel:112">📞 112 Acil</a><a class="g" id="fsnobet" href="#" target="_blank" rel="noopener">💊 Nöbetçi eczane</a><a class="b" id="fsgm" href="#" target="_blank" rel="noopener">🗺️ Google'da tüm sonuçlar</a></div></div>
+    <div class="fsbot"><a class="r" id="fsisb" href="#">🏦 İş Bankası şubeleri</a><a class="g" id="fsnobet" href="#" target="_blank" rel="noopener">💊 Nöbetçi eczane</a><a class="b" id="fsgm" href="#" target="_blank" rel="noopener">🗺️ Google'da tüm sonuçlar</a></div></div>
   <div id="panel">
     <div class="phead"><b id="ptitle"></b><small id="pcount"></small></div>
     <div class="rad prad" data-rad><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div>
@@ -197,19 +197,21 @@ function setGmap(c) {
   if (!S.place) return;
   const q = (GQ[c.k] || c.n.toLowerCase()) + " " + (S.place.name || "").replace(/^📡\s*/, "");
   const z = S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : S.r <= 5000 ? 13 : 12;
-  const src = S.place.gps
-    ? `https://maps.google.com/maps?q=${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}+near+${S.place.lat},${S.place.lon}&z=${z}&hl=tr&output=embed`
-    : `https://maps.google.com/maps?q=${encodeURIComponent(q)}&z=${z}&hl=tr&output=embed`;
+  // Her zaman koordinatla ara: yer adıyla aramak Google'ın başka bir noktayı seçmesine yol açabiliyor
+  const src = `https://maps.google.com/maps?q=${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}+near+${(+S.place.lat).toFixed(5)},${(+S.place.lon).toFixed(5)}&ll=${(+S.place.lat).toFixed(5)},${(+S.place.lon).toFixed(5)}&z=${z}&hl=tr&output=embed`;
   fsSrc = src.replace(/&z=\d+/, `&z=${Math.max(12, z - 1)}`);
   if ($("gmap").src !== src) $("gmap").src = src;
 }
 const CAT = {}; GROUPS.forEach(([, l]) => l.forEach(([k, e, n, sel]) => (CAT[k] = { k, e, n, sel })));
 let S = { place: null, r: 3000, cat: null };
 try { Object.assign(S, JSON.parse(localStorage.getItem("yakin_v1") || "{}")); } catch (e) {}
+// Eski sürümde aranan il/ilçe konumu sınırın ortasına düşebiliyordu; yeniden aranmasını iste
+if (S.place && !S.place.gps && S.place.v !== 2) { S.place = null; S.cat = null; }
 const save = () => { try { localStorage.setItem("yakin_v1", JSON.stringify({ place: S.place, r: S.r })); } catch (e) {} };
 
 // Kategori ızgarası
-$("cats").innerHTML = GROUPS.map(([g, l]) => `<h2>${g}</h2>${g.startsWith("🚨") ? `<div class="sos"><a class="r" href="tel:112">📞 112 Acil</a><a class="g" id="nobet" href="#" target="_blank" rel="noopener">💊 Nöbetçi eczane</a></div>` : ""}<div class="grid">${l.map(([k, e, n]) => `<button class="tile" data-k="${k}"><div class="e">${e}</div><div class="n">${n}</div></button>`).join("")}</div>`).join("");
+$("cats").innerHTML = GROUPS.map(([g, l]) => `<h2>${g}</h2>${g.startsWith("🚨") ? `<div class="sos"><a class="g" id="nobet" href="#" target="_blank" rel="noopener">💊 Nöbetçi eczane</a></div>` : ""}<div class="grid">${l.map(([k, e, n]) => `<button class="tile" data-k="${k}"><div class="e">${e}</div><div class="n">${n}</div></button>`).join("")}</div>`).join("");
+$("fsisb").addEventListener("click", (e) => { e.preventDefault(); if (S.cat === "isbank") return; openCat("isbank"); setTimeout(() => { if (fsSrc) { $("fsmap").src = fsSrc; openFsUpdate(); } }, 0); });
 $("cats").addEventListener("click", (e) => { const t = e.target.closest(".tile"); if (!t) return; openCat(t.dataset.k); if (S.place) openFs(); });
 
 function renderRad() { document.querySelectorAll("[data-rad] button").forEach((b) => b.classList.toggle("on", +b.dataset.r === S.r)); }
@@ -218,6 +220,7 @@ document.querySelectorAll("[data-rad]").forEach((g) => (g.onclick = (e) => {
   if (S.cat) { openCat(S.cat); if ($("fs").classList.contains("show") && fsSrc) $("fsmap").src = fsSrc; const c = CAT[S.cat]; if (S.place) $("fsgm").href = `https://www.google.com/maps/search/${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`; }
 }));
 function setPlace(p) {
+  if (p) p.v = 2;
   S.place = p; save();
   $("plabel").innerHTML = p ? `📍 <b>${p.name}</b>` : "Konum seçilmedi";
   $("nobet").href = p ? `https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane/@${p.lat},${p.lon},14z` : "https://www.turkiye.gov.tr/arama?aranan=n%C3%B6bet%C3%A7i+eczane";
@@ -245,8 +248,22 @@ $("q").addEventListener("input", () => {
         const d = e.target.closest("[data-i]"); if (!d) return; const x = j[+d.dataset.i], a = x.address || {};
         const main = a.suburb || a.neighbourhood || a.quarter || a.town || a.village || a.city_district || a.county || a.city || x.name;
         const prov = a.province || a.city || a.state || "";
-        setPlace({ lat: +x.lat, lon: +x.lon, name: prov && prov !== main ? `${main}, ${prov}` : main });
         $("results").classList.remove("show"); $("q").value = ""; $("q").blur();
+        (async () => {
+          let lat = +x.lat, lon = +x.lon, nm = prov && prov !== main ? `${main}, ${prov}` : main;
+          // İl ya da ilçe sınırı seçildiyse sınırın coğrafi ortası (kırsal) yerine şehir/ilçe merkezini kullan
+          const isArea = x.class === "boundary" || /^(province|state|region|county|district|municipality)$/.test(x.addresstype || "");
+          if (isArea) {
+            try {
+              const nmq = x.name || main;
+              const r2 = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(nmq)}&format=json&limit=5&countrycodes=tr&accept-language=tr&featureType=settlement`);
+              const j2 = await r2.json();
+              const best = j2.find((y) => y.class === "place" && /^(city|town)$/.test(y.type)) || j2.find((y) => y.class === "place");
+              if (best) { lat = +best.lat; lon = +best.lon; nm = /^(province|state)$/.test(x.addresstype || "") ? `${nmq} merkez` : nm; }
+            } catch (err) {}
+          }
+          setPlace({ lat, lon, name: nm });
+        })();
       };
     } catch (e) { $("results").innerHTML = '<div style="color:var(--muted)">Arama yapılamadı</div>'; $("results").classList.add("show"); }
   }, 350);
@@ -308,7 +325,7 @@ async function openCat(k) {
   $("pcount").textContent = "";
   $("pinfo").innerHTML = k === "eczane" ? `<div class="info">💊 Gece ve tatil günleri için <b>nöbetçi eczane</b>: <a href="https://www.turkiye.gov.tr/arama?aranan=n%C3%B6bet%C3%A7i+eczane" target="_blank" rel="noopener">e-Devlet sorgulama ↗</a>${S.place ? ` · <a href="https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane/@${S.place.lat},${S.place.lon},14z" target="_blank" rel="noopener">Google Haritalar ↗</a>` : ""}</div>`
     : k === "toplanma" ? `<div class="info">🟩 Deprem ve afet <b>toplanma alanları</b>nın resmi listesi için: <a href="https://www.turkiye.gov.tr/arama?aranan=toplanma+alan%C4%B1" target="_blank" rel="noopener">e-Devlet (AFAD) sorgulama ↗</a></div>`
-    : k === "polis" ? `<div class="info">🚨 Acil durumda tüm birimler için <a href="tel:112"><b>112</b></a>.</div>` : "";
+    : k === "polis" ? `<div class="info">🚨 Acil durumda tüm birimler için <b>112</b>.</div>` : "";
   if (!S.place) { $("plist").innerHTML = '<div class="msg">Önce yukarıdan konum ara ya da 📍 ile konumunu kullan.</div>'; $("map").style.display = "none"; $("gmap").style.display = "none"; $("mtog").style.display = "none"; $("panel").scrollIntoView({ behavior: "smooth" }); return; }
   $("mtog").style.display = "";
   ensureMap(); applyMapMode(); setGmap(c);
@@ -350,6 +367,13 @@ async function openCat(k) {
 }
 const esc = (s) => String(s || "").replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[m]);
 
+function openFsUpdate() {
+  const c = CAT[S.cat]; if (!c || !S.place) return;
+  $("fstitle").textContent = `${c.e} ${c.n} · ${(S.place.name || "").replace(/^📡\s*/, "")}`;
+  const term = encodeURIComponent(GQ[c.k] || c.n.toLowerCase());
+  $("fsgm").href = `https://www.google.com/maps/search/${term}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`;
+  $("fsisb").style.display = S.cat === "isbank" ? "none" : "";
+}
 function openFs() {
   if (!fsSrc || !S.cat) return;
   const c = CAT[S.cat];
@@ -358,6 +382,7 @@ function openFs() {
   const term = encodeURIComponent(GQ[c.k] || c.n.toLowerCase());
   $("fsgm").href = `https://www.google.com/maps/search/${term}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`;
   $("fsnobet").href = `https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane/@${S.place.lat},${S.place.lon},14z`;
+  $("fsisb").style.display = S.cat === "isbank" ? "none" : "";
   $("fs").classList.add("show"); document.body.style.overflow = "hidden";
   try { history.pushState({ fs: 1 }, ""); } catch (e) {}
 }
