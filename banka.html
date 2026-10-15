@@ -488,7 +488,7 @@
         <div><label>Yıl esası</label><select id="c_esas"><option value="360">360 gün</option><option value="365">365 gün</option></select></div>
       </div>
       <label>Hesap yöntemi</label>
-      <select id="c_yon"><option value="banka">Banka tablosu: tutar × faiz × gün ÷ 360 (gün = valör − kullandırım + 1)</option><option value="rees">Reeskont: tutar × faiz × gün ÷ (360 + faiz × gün)</option></select>
+      <div id="c_yon" style="padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--field,#161616);font-size:15px;line-height:1.45"><b>Tutar × faiz × gün ÷ <span id="c_yonB">360</span></b><br><span style="font-size:13px;color:var(--muted)">(gün = valör − kullandırım + 1)</span></div>
       <div class="two">
         <div><label>Valör</label><select id="c_val"><option value="1">+1 iş günü (takas)</option><option value="0">Vade günü</option><option value="2">+2 iş günü</option></select></div>
         <div><label>Komisyon / masraf</label><div class="field"><input id="c_kom" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
@@ -498,7 +498,7 @@
         <div><label>KKDF</label><div class="field"><input id="c_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
       </div>
       <div class="two">
-        <div><label>Kullandırım oranı</label><div class="field"><input id="c_oran" type="text" inputmode="decimal" value="75"><span class="unit">%</span></div></div>
+        <div><label>Kullandırım oranı</label><div class="field"><input id="c_oran" type="text" inputmode="decimal" value="100"><span class="unit">%</span></div></div>
         <div><label>Müşteri limiti (ops.)</label><div class="field"><input id="c_lim" type="text" inputmode="decimal" placeholder="boş = yok"><span class="unit">TL</span></div></div>
       </div>
     </div>
@@ -1332,8 +1332,8 @@ function renderCekList() {
 let calSel = "";
 function calcCek() {
   const isl = pDate($("c_isl").value) || new Date();
-  const ry = num("c_faiz") / 100, B = Number($("c_esas").value) || 360, ic = $("c_yon").value === "rees";
-  try { localStorage.setItem("c_yon", $("c_yon").value); } catch (e) {}
+  const ry = num("c_faiz") / 100, B = Number($("c_esas").value) || 360, ic = false;
+  $("c_yonB").textContent = B;
   const vg = Number($("c_val").value), bsmv = num("c_bsmv") / 100, kkdf = num("c_kkdf") / 100;
   const oran = Math.min(100, num("c_oran") || 0) / 100, kom = num("c_kom");
   try { localStorage.setItem("cekler", JSON.stringify(CEKLER)); } catch (e) {}
@@ -1391,7 +1391,7 @@ function calcCek() {
   rows("c_rows", [
     [`Çek toplamı (${res.length} adet)`, tl(TT)],
     [`Kullandırılan tutar (%${nfx(oran * 100)})`, tl(AA)],
-    [ic ? "İskonto faizi (reeskont)" : "İskonto faizi", "−" + tl(FF), "neg"],
+    ["İskonto faizi", "−" + tl(FF), "neg"],
     [`Faiz + BSMV`, "−" + tl(FF + BS), "neg"],
     [`BSMV (%${nfx(bsmv * 100)})`, "−" + tl(BS), "neg"],
     ...(KK ? [[`KKDF (%${nfx(kkdf * 100)})`, "−" + tl(KK), "neg"]] : []),
@@ -1447,8 +1447,7 @@ $("c_list").addEventListener("input", (e) => { const el = e.target; if (el.datas
 $("c_list").addEventListener("focusout", (e) => { const el = e.target; if (el.dataset.k === "t") { const n = parseNum(el.value); el.value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }); CEKLER[+el.dataset.i].t = el.value; } });
 $("c_list").addEventListener("click", (e) => { const b = e.target.closest("[data-del]"); if (!b) return; CEKLER.splice(+b.dataset.del, 1); renderCekList(); calcCek(); });
 $("c_add").addEventListener("click", () => { const lastV = pDate(CEKLER[CEKLER.length - 1]?.v) || new Date(); CEKLER.push({ t: "", v: ymd(addMonthsC(lastV, 1)) }); renderCekList(); calcCek(); });
-try { const yv = localStorage.getItem("c_yon"); if (yv) $("c_yon").value = yv; } catch (e) {}
-["c_isl", "c_faiz", "c_val", "c_esas", "c_yon", "c_bsmv", "c_kkdf", "c_oran", "c_kom", "c_lim"].forEach((x) => $(x).addEventListener("input", calcCek));
+["c_isl", "c_faiz", "c_val", "c_esas", "c_bsmv", "c_kkdf", "c_oran", "c_kom", "c_lim"].forEach((x) => $(x).addEventListener("input", calcCek));
 
 $("c_kom").addEventListener("blur", () => { $("c_kom").value = num("c_kom").toLocaleString("tr-TR", { maximumFractionDigits: 2 }); });
 $("c_lim").addEventListener("blur", () => { const n = num("c_lim"); $("c_lim").value = n ? n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : ""; });
