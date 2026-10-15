@@ -774,11 +774,14 @@ let aoTManual = false, ysTManual = false, ysRManual = false;
 function tkState(c, at) {
   const { r, n, bsmv, kkdf, bas, dues, plan, P } = c;
   if (!at || dayDiff(bas, at) <= 0) return { err: "Tarih kullandırım tarihinden sonra olmalı." };
-  const k = dues.filter((d) => dayDiff(d, at) >= 0).length;
+  // İşlem günü taksit gününe denk gelirse o günün taksiti henüz ödenmemiş sayılır
+  const k = dues.filter((d) => dayDiff(d, at) > 0).length;
   if (k >= n) return { err: "Bu tarihte tüm taksitler ödenmiş olur." };
+  const onDue = dayDiff(dues[k], at) === 0;
   const B = k ? plan[k - 1].bal : P, last = k ? dues[k - 1] : bas, g = dayDiff(last, at);
-  const af = R2(B * r * g / 30), acc = R2(af + R2(af * kkdf) + R2(af * bsmv));
-  return { k, B, last, g, acc, eski: plan.slice(k).reduce((a, x) => a + x.t, 0) };
+  // Taksit günündeyse dönemin faizi ödeme planındaki gibi (tam ay = 1 ay faiz), değilse gün/30
+  const af = R2(onDue ? plan[k].f : B * r * g / 30), acc = R2(af + R2(af * kkdf) + R2(af * bsmv));
+  return { k, B, last, g: onDue ? plan[k].g : g, acc, onDue, eski: plan.slice(k).reduce((a, x) => a + x.t, 0) };
 }
 // Yeni plan dönemleri: işlem tarihinden ilk taksite kırık dönem (yeni kredi gibi), sonra tam aylar
 function mkPer(from, first, cnt) {
@@ -811,8 +814,10 @@ function calcAO(c) {
       return;
     }
     if (X <= acc) return clearA(`Ara ödeme, işlemiş faizi (${tl(acc)}) karşılamalı.`);
-    const B2 = R2(B - (X - acc)), cnt = n - k;
-    const per = mkPer(at, dues[k], cnt);
+    const f0 = st.onDue ? k + 1 : k, cnt = n - f0;
+    if (cnt <= 0) return clearA(`Bugün son taksit günü; kalan borç için ${tl(kapama)} ödenmeli.`);
+    const B2 = R2(B - (X - acc));
+    const per = mkPer(at, dues[f0], cnt);
     const v = $("ao_sec").value === "v";
     const T = v ? taksit : solveT(B2, per, r, kkdf, bsmv);
     const p = tkPlan(B2, per, T, r, kkdf, bsmv, true);
@@ -824,13 +829,13 @@ function calcAO(c) {
       [`İşlemiş faiz + vergiler (${g} gün)`, tl(acc)],
       ["Anaparaya giden", tl(X - acc)],
       ["Yeni anapara", tl(B2)],
-      ...(v ? [["Taksit (değişmez)", tl(R2(taksit))], ["Kısalma", `${cnt - p.length} ay`]] : [["Eski taksit", tl(R2(taksit))], ["Vade (değişmez)", `${cnt} ay`]]),
+      ...(v ? [["Taksit (değişmez)", tl(R2(taksit))], ["Kısalma", `${n - k - p.length} ay`]] : [["Eski taksit", tl(R2(taksit))], ["Kalan taksit", `${cnt} adet`]]),
       ...(Math.abs(p[0].t - R2(T)) > 0.005 ? [[`İlk taksit (${shortD(p[0].d)}, ${p[0].g} gün)`, tl(p[0].t)]] : []),
       ["Son taksit", `${shortD(p[p.length - 1].d)} · ${tl(p[p.length - 1].t)}`],
       ["Faiz tasarrufu", tl(eski - X - sumT(p)), "pos"],
     ]);
-    $("ao_plan").innerHTML = planHead + p.map((x, j) => planRow(x, k + j + 1)).join("") + planTot(p);
-    $("ao_note").textContent = "Ara ödeme önce işlemiş faizi (gün/30, KKDF+BSMV dahil) kapatır, kalanı anaparadan düşer. Yeni planın ilk taksiti, ara ödeme gününden taksit gününe kadar olan günlerin faiziyle hesaplanır.";
+    $("ao_plan").innerHTML = planHead + p.map((x, j) => planRow(x, f0 + j + 1)).join("") + planTot(p);
+    $("ao_note").textContent = (st.onDue ? "Ara ödeme taksit gününe denk geldi: o günün taksiti ödenmemiş sayıldı, faizi ara ödemeden kapatıldı ve yeni plan bir sonraki taksit gününden başlar. " : "") + "Ara ödeme önce işlemiş faizi (gün/30, KKDF+BSMV dahil) kapatır, kalanı anaparadan düşer. Yeni planın ilk taksiti, ara ödeme gününden taksit gününe kadar olan günlerin faiziyle hesaplanır.";
   })();
 
   // ---- Yapılandırma
@@ -845,7 +850,8 @@ function calcAO(c) {
     if (eksik) pes = acc;
     const BC = R2(B - (pes - acc));
     if (BC <= 0.005) return clearY("Peşin tutar kalan borcu kapatıyor.");
-    const per = mkPer(at, dues[k], yn);
+    const yFirst = st.onDue ? (dues[k + 1] || addMonthsC(at, 1)) : dues[k];
+    const per = mkPer(at, yFirst, yn);
     const T = solveT(BC, per, yr, kkdf, bsmv);
     const p = tkPlan(BC, per, T, yr, kkdf, bsmv, true);
     const fark = pes + sumT(p) - eski;
