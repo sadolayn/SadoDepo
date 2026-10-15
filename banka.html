@@ -219,7 +219,7 @@
   <section class="panel" id="tk">
     <div class="card">
       <h2>Tüketici Kredisi (Eşit Taksit)</h2>
-      <p class="hint">Taksitler, faize eklenen BSMV ve KKDF dahil sabit tutarda hesaplanır. Faiz günlük işler: aylık oran ÷ 30 × gün. Hafta sonu veya resmi tatile denk gelen taksit ilk iş gününe kayar.</p>
+      <p class="hint">Taksitler, faize eklenen BSMV ve KKDF dahil sabit tutarda hesaplanır. Banka sistemindeki gibi her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk dönem gün/30 ile hesaplanır. Ara ödemede faiz günlük işler.</p>
       <label>Kredi tutarı</label>
       <div class="field"><input id="t_tutar" type="text" inputmode="decimal" value="200.000"><span class="unit">TL</span></div>
       <div class="two">
@@ -658,23 +658,24 @@ function addMonthsC(d, m) { // ay sonunu aşarsa ayın son günü
 }
 const shortD = (d) => d.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
 let tIlkManual = false;
-// Planı tarihlere göre kur: from tarihinden başlayarak dues[] günlerinde T taksit
-function tkPlan(B, from, dues, T, r, kkdf, bsmv, closeLast) {
-  const out = []; let bal = B, prev = from;
-  for (let j = 0; j < dues.length && bal > 0.005; j++) {
-    const g = dayDiff(prev, dues[j]);
-    const f = bal * r * g / 30, kk = f * kkdf, bs = f * bsmv;
-    let ana = T - f - kk - bs, t = T;
-    if (ana >= bal - 0.005 || (closeLast && j === dues.length - 1)) { ana = bal; t = ana + f + kk + bs; }
+// Plan dönemleri: per = [{d, fac, g}] — fac: ay oranı (tam ay = 1), g: gösterilen gün
+// Banka sistemi gibi: her tam ay dönemi aylık faizle (1 ay) işler; yalnızca kırık dönemler gün/30 ile.
+function tkPlan(B, per, T, r, kkdf, bsmv, closeLast) {
+  const out = []; let bal = B;
+  for (let j = 0; j < per.length && bal > 0.005; j++) {
+    const R2 = (x) => Math.round(x * 100) / 100; // banka gibi kuruşa yuvarla
+    const f = R2(bal * r * per[j].fac), kk = R2(f * kkdf), bs = R2(f * bsmv);
+    T = R2(T);
+    let ana = R2(T - f - kk - bs), t = T;
+    if (ana >= bal - 0.005 || (closeLast && j === per.length - 1)) { ana = bal; t = ana + f + kk + bs; }
     bal = Math.max(0, bal - ana);
-    out.push({ d: dues[j], g, t, ana, f, kk, bs, bal });
-    prev = dues[j];
+    out.push({ d: per[j].d, g: per[j].g, t, ana, f, kk, bs, bal });
   }
   return out;
 }
 // Son bakiyeyi sıfırlayan eşit taksit (bakiye T'ye göre doğrusal)
-function solveT(B, from, dues, r, kkdf, bsmv) {
-  const endBal = (T) => { let bal = B, prev = from; for (const d of dues) { bal = bal * (1 + r * (1 + kkdf + bsmv) * dayDiff(prev, d) / 30) - T; prev = d; } return bal; };
+function solveT(B, per, r, kkdf, bsmv) {
+  const endBal = (T) => { let bal = B; for (const x of per) bal = bal * (1 + r * (1 + kkdf + bsmv) * x.fac) - T; return bal; };
   const e0 = endBal(0), e1 = endBal(1);
   return e0 / (e0 - e1);
 }
@@ -695,23 +696,26 @@ function calcTK() {
   if (!tIlkManual || !$("t_ilk").value) $("t_ilk").value = ymd(addMonthsC(bas, 1));
   let ilk = pDate($("t_ilk").value);
   if (!P || !n || !ilk || dayDiff(bas, ilk) <= 0) { $("t_out").textContent = "–"; rows("t_rows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
-  const dues = []; for (let k = 0; k < n; k++) dues.push(nextBiz(addMonthsC(ilk, k)));
-  const taksit = r === 0 ? P / n : solveT(P, bas, dues, r, kkdf, bsmv);
-  const plan = tkPlan(P, bas, dues, taksit, r, kkdf, bsmv, true);
+  const dues = []; for (let k = 0; k < n; k++) dues.push(addMonthsC(ilk, k));
+  // İlk dönem: ilk taksit kullandırımdan tam 1 ay sonraysa 1 ay faiz; değilse gün/30 (kırık dönem)
+  const g1 = dayDiff(bas, ilk), tamAy = ymd(addMonthsC(bas, 1)) === ymd(ilk);
+  const per = dues.map((d, j) => j === 0 ? { d, fac: tamAy ? 1 : g1 / 30, g: g1 } : { d, fac: 1, g: 30 });
+  const taksit = r === 0 ? P / n : solveT(P, per, r, kkdf, bsmv);
+  const plan = tkPlan(P, per, taksit, r, kkdf, bsmv, true);
   let tF = 0, tB = 0, tK = 0, toplam = 0;
   plan.forEach((x) => { tF += x.f; tK += x.kk; tB += x.bs; toplam += x.t; });
   $("t_plan").innerHTML = planHead + plan.map((x, j) => planRow(x, j + 1)).join("");
   // Yıllık maliyet oranı: masraf dahil, gerçek günlerle iç verim oranı
   const net = P - ucret;
-  const pv = (m) => plan.reduce((a, x) => a + x.t / Math.pow(1 + m, dayDiff(bas, x.d) / 30), 0);
-  let lo = 0, hi = 1;
-  for (let it = 0; it < 100; it++) { const m = (lo + hi) / 2; if (pv(m) > net) lo = m; else hi = m; }
-  const aylikMaliyet = (lo + hi) / 2;
-  const kayan = plan.filter((x, j) => ymd(x.d) !== ymd(addMonthsC(ilk, j))).length;
+  const cum = []; per.reduce((a, x, j) => (cum[j] = a + x.fac), 0);
+  const irr = (net) => { const pv = (m) => plan.reduce((a, x, j) => a + x.t / Math.pow(1 + m, cum[j]), 0);
+    let lo = 0, hi = 1; for (let it = 0; it < 100; it++) { const m = (lo + hi) / 2; if (pv(m) > net) lo = m; else hi = m; } return (lo + hi) / 2; };
+  const aylikMaliyet = irr(net), aylikSade = irr(P);
+  const tatil = plan.filter((x) => isHoliday(x.d)).length;
   $("t_out").textContent = tl(taksit);
   rows("t_rows", [
     ["İlk / son taksit", `${shortD(plan[0].d)} · ${shortD(plan[plan.length - 1].d)}`],
-    ...(kayan ? [["Tatile denk gelip kayan taksit", `${kayan} adet`]] : []),
+    ...(tatil ? [["Hafta sonu / tatile denk gelen taksit", `${tatil} adet (ilk iş günü tahsil edilir)`]] : []),
     ["Toplam faiz", tl(tF)],
     ["Toplam KKDF", tl(tK)],
     ["Toplam BSMV", tl(tB)],
@@ -722,9 +726,10 @@ function calcTK() {
     ["Hesabınıza geçecek net tutar", tl(P - ucret)],
     ["Toplam geri ödeme", tl(toplam + ucret), "total"],
     ["Aylık efektif faiz (vergiler dahil)", pct(i * 100)],
-    ["Yıllık maliyet oranı", pct((Math.pow(1 + aylikMaliyet, 12) - 1) * 100)],
+    ["Yıllık maliyet oranı (ücretler hariç)", pct((Math.pow(1 + aylikSade, 12) - 1) * 100)],
+    ["Yıllık maliyet oranı (ücretler dahil)", pct((Math.pow(1 + aylikMaliyet, 12) - 1) * 100)],
   ]);
-  calcAO({ P, r, n, bsmv, kkdf, taksit, bas, dues, plan });
+  calcAO({ per, P, r, n, bsmv, kkdf, taksit, bas, dues, plan });
 }
 
 // Ara ödeme (tarihli)
@@ -732,7 +737,7 @@ let aoTManual = false;
 function calcAO(c) {
   const clear = (msg) => { rows("ao_rows", []); $("ao_opts").innerHTML = ""; $("ao_plan").innerHTML = ""; $("ao_note").textContent = msg || ""; };
   if (!c) return clear();
-  const { P, r, n, bsmv, kkdf, taksit, bas, dues, plan } = c;
+  const { per, P, r, n, bsmv, kkdf, taksit, bas, dues, plan } = c;
   if (!aoTManual || !$("ao_t").value) { const d = new Date(dues[Math.min(2, n - 1)]); d.setDate(d.getDate() + 12); $("ao_t").value = ymd(d); }
   const at = pDate($("ao_t").value), X = num("ao_x");
   if (!at || dayDiff(bas, at) <= 0) return clear("Ara ödeme tarihi kullandırım tarihinden sonra olmalı.");
@@ -762,12 +767,14 @@ function calcAO(c) {
   }
   if (X <= acc) { rows("ao_rows", head); $("ao_opts").innerHTML = ""; $("ao_plan").innerHTML = ""; $("ao_note").textContent = `Ara ödeme işlemiş faizi (${tl(acc)}) karşılamıyor.`; return; }
   const ana = X - acc, B2 = B - ana;
-  const kalanDues = dues.slice(k);
+  // Devam eden dönemin kalan kısmı yeni anapara üzerinden işler (dönem = 30 gün esası)
+  const rem = Math.max(0, per[k].fac - g / 30);
+  const kalanDues = [{ d: dues[k], fac: rem, g: Math.round(rem * 30) }, ...per.slice(k + 1)];
   // A) Vade aynı, taksit düşer
-  const tA = solveT(B2, at, kalanDues, r, kkdf, bsmv);
-  const pA = tkPlan(B2, at, kalanDues, tA, r, kkdf, bsmv, true);
+  const tA = solveT(B2, kalanDues, r, kkdf, bsmv);
+  const pA = tkPlan(B2, kalanDues, tA, r, kkdf, bsmv, true);
   // B) Taksit aynı, vade kısalır
-  const pB = tkPlan(B2, at, kalanDues, taksit, r, kkdf, bsmv, true);
+  const pB = tkPlan(B2, kalanDues, taksit, r, kkdf, bsmv, true);
   const sum = (a) => a.reduce((s, x) => s + x.t, 0);
   const sA = eski - X - sum(pA), sB = eski - X - sum(pB);
   rows("ao_rows", [
@@ -796,7 +803,7 @@ function calcAO(c) {
     ], sB);
   const pl = $("ao_sec").value === "v" ? pB : pA;
   $("ao_plan").innerHTML = planHead + pl.map((x, j) => planRow(x, k + j + 1)).join("");
-  $("ao_note").textContent = `Ödeme günü değiştikçe sonuç değişir: her gün yaklaşık ${tl(gunluk)} faiz (KKDF+BSMV dahil) işler, ara ödeme 2 gün geç yapılırsa (örneğin 13'ü yerine 15'i) anaparaya giden kısım ${tl(gunluk * 2)} azalır. Ara ödemeden sonraki ilk taksitte faiz, ara ödeme gününden taksit gününe kadar yeni anapara üzerinden işler. Tasarruf: ara ödeme olmasaydı ödenecek ${tl(eski)} ile ara ödeme + yeni taksitler toplamı arasındaki fark.`;
+  $("ao_note").textContent = `Ödeme günü değiştikçe sonuç değişir: her gün yaklaşık ${tl(gunluk)} faiz (KKDF+BSMV dahil) işler, ara ödeme 2 gün geç yapılırsa (örneğin 13'ü yerine 15'i) anaparaya giden kısım ${tl(gunluk * 2)} azalır. Ara ödemeden sonraki ilk taksitte, dönemin kalan günleri (30 gün esasıyla) yeni anapara üzerinden işler. Tasarruf: ara ödeme olmasaydı ödenecek ${tl(eski)} ile ara ödeme + yeni taksitler toplamı arasındaki fark.`;
 }
 
 
