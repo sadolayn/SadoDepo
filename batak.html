@@ -157,6 +157,12 @@
   .seg button { flex: 1; padding: 8px 4px; border: none; border-radius: 9px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
   .seg button.on { background: var(--accent); color: #000; }
   .modal { max-height: 92vh; overflow-y: auto; }
+  .mpbox { background: linear-gradient(135deg, #1a2a4a, #0f1a30); border: 1px solid #2f4f8f; color: #cfdcff; border-radius: 12px; padding: 9px 12px; font-size: 14px; margin: 4px 0 8px; }
+  .mpbox b { color: #fff; }
+  .qopts { display: grid; gap: 8px; }
+  .qopts button { padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: #161616; color: var(--ink); font-size: 15px; font-weight: 600; cursor: pointer; text-align: left; }
+  .qopts button.ok { border-color: #3fc283; background: rgba(63,194,131,.15); }
+  .qopts button.bad { border-color: #e0473a; background: rgba(224,71,58,.15); }
   .plbl { text-align: center; font-size: 12px; color: var(--accent); margin-top: 4px; }
   #phand { min-height: 70px; padding-top: 10px; }
   #phand .card { transform: scale(.85); transform-origin: top center; }
@@ -211,8 +217,32 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 let scores = [0, 0, 0, 0];
 let dealer = 3;
 // Oyun ayarları
-let OPT = { eller: 5, arti3: true, yuk: true, esli: false };
+let OPT = { eller: 5, arti3: true, yuk: true, esli: false, bahis: 100 };
 try { Object.assign(OPT, JSON.parse(localStorage.getItem("batakOpt") || "{}")); } catch (e) {}
+if (![1, 3, 5, 7].includes(OPT.eller)) OPT.eller = 5;
+// ---------- MaxiPuan ----------
+const MP_KEY = "batakMP";
+let MP = { bal: 1000, empty: 0, lastQ: -1 };
+try { Object.assign(MP, JSON.parse(localStorage.getItem(MP_KEY) || "{}")); } catch (e) {}
+const mpSave = () => { try { localStorage.setItem(MP_KEY, JSON.stringify(MP)); } catch (e) {} };
+const mpFmt = (n) => n.toLocaleString("tr-TR");
+const BAHIS = [100, 250, 500, 1000];
+let gameStake = 0;
+// İş Bankası tarihçesi soruları
+const ISQ = [
+  ["Türkiye İş Bankası hangi yıl kuruldu?", ["1923", "1924", "1927", "1933"], 1],
+  ["Türkiye İş Bankası'nın kurucusu kimdir?", ["Mustafa Kemal Atatürk", "İsmet İnönü", "Celal Bayar", "Fevzi Çakmak"], 0],
+  ["İş Bankası'nın ilk genel müdürü kimdir?", ["Muammer Eriş", "Celal Bayar", "Şükrü Saracoğlu", "Hasan Saka"], 1],
+  ["İş Bankası hangi tarihte kuruldu?", ["29 Ekim 1923", "26 Ağustos 1924", "23 Nisan 1920", "30 Ağustos 1922"], 1],
+  ["İş Bankası hangi şehirde kuruldu?", ["İstanbul", "İzmir", "Ankara", "Bursa"], 2],
+  ["Atatürk, İş Bankası'ndaki hisselerini vasiyetiyle hangi kuruma bıraktı?", ["Cumhuriyet Halk Partisi", "Türkiye Büyük Millet Meclisi", "Hazine", "Kızılay"], 0],
+  ["Atatürk'ün İş Bankası hisselerinin kâr payları hangi kurumlara aktarılır?", ["TÜBİTAK ve YÖK", "Türk Dil Kurumu ve Türk Tarih Kurumu", "Kızılay ve Darüşşafaka", "Milli Eğitim ve Diyanet"], 1],
+  ["İş Bankası'nın kuruluş sermayesi ne kadardı?", ["100 bin lira", "500 bin lira", "1 milyon lira", "10 milyon lira"], 2],
+  ["İş Bankası'nın genel müdürlüğü bugün hangi binadadır?", ["İş Kuleleri (Levent)", "Galata Kulesi", "Atakule", "Sabancı Center"], 0],
+  ["İş Bankası Müzesi İstanbul'un hangi semtindedir?", ["Kadıköy", "Beşiktaş", "Eminönü", "Şişli"], 2],
+  ["'Hasan Âli Yücel Klasikler Dizisi' hangi yayınevine aittir?", ["Yapı Kredi Yayınları", "İş Bankası Kültür Yayınları", "Can Yayınları", "Remzi Kitabevi"], 1],
+  ["İşCep hangi bankanın mobil bankacılık uygulamasıdır?", ["Ziraat Bankası", "Garanti BBVA", "Türkiye İş Bankası", "Akbank"], 2],
+];
 let roundNo = 0;
 const partner = (p) => (p + 2) % 4;
 const sameSide = (a, b) => a === b || (OPT.esli && partner(a) === b);
@@ -362,7 +392,7 @@ function setStatus(t) { $("status").innerHTML = t; }
 function renderInfo() {
   const k = trump ? `<b style="color:${isRed(trump) ? "var(--red)" : "var(--ink)"}">${trump} ${SUIT_NAMES[trump]}</b>` : "–";
   const i = bidder != null && contract ? `<b>${contract}</b> · ${NAMES[bidder]}` : "–";
-  $("info").innerHTML = `El: <b>${Math.max(1, roundNo)}/${OPT.eller}</b> · Koz: ${k}<br>İhale: ${i}`;
+  $("info").innerHTML = `El: <b>${Math.max(1, roundNo)}/${OPT.eller}</b> · Koz: ${k}<br>İhale: ${i}${gameStake ? ` · 💳 ${mpFmt(gameStake)}` : ""}`;
   $("scores").innerHTML = OPT.esli
     ? `<div style="grid-column:span 2">Sen + Sadolayn<b class="${scores[0] < 0 ? "neg" : ""}">${scores[0]}</b></div><div style="grid-column:span 2">Sadosan + Sadocan<b class="${scores[1] < 0 ? "neg" : ""}">${scores[1]}</b></div>`
     : scores.map((s, p) => `<div>${NAMES[p]}<b class="${s < 0 ? "neg" : ""}">${s}</b></div>`).join("");
@@ -595,6 +625,37 @@ function endRound() {
   $("next").onclick = () => { $("overlay").classList.remove("show"); last ? gameOver() : newRound(); };
   setStatus("");
 }
+function showLock() {
+  if (!MP.empty) { MP.empty = Date.now(); mpSave(); }
+  const left = MP.empty + 864e5 - Date.now();
+  if (left > 0) {
+    const h = Math.floor(left / 36e5), m = Math.floor((left % 36e5) / 6e4);
+    $("modal").innerHTML = `<h2>💳 MaxiPuan bitti</h2>
+      <p>Yeni MaxiPuan için <b>${h} saat ${m} dakika</b> sonra gel. Seni İş Bankası tarihçesinden bir soru bekliyor; bilirsen <b>1.000 MaxiPuan</b> kazanırsın.</p>
+      <a class="btn" href="oyunlar.html" style="display:block;text-decoration:none;padding:12px">Oyunlara dön</a>`;
+    $("overlay").classList.add("show");
+    return;
+  }
+  let qi; do { qi = Math.floor(Math.random() * ISQ.length); } while (ISQ.length > 1 && qi === MP.lastQ);
+  const [q, opts, ok] = ISQ[qi];
+  $("modal").innerHTML = `<h2>🏦 İş Bankası Tarihçesi</h2><p>Doğru cevap: <b>1.000 MaxiPuan</b></p>
+    <div style="font-weight:700;font-size:16px;margin:4px 0 12px">${q}</div>
+    <div class="qopts">${opts.map((o, i) => `<button type="button" data-i="${i}">${o}</button>`).join("")}</div><div id="qres" style="margin-top:12px;font-size:14px"></div>`;
+  $("overlay").classList.add("show");
+  $("modal").querySelector(".qopts").onclick = (e) => {
+    const b = e.target.closest("button"); if (!b || b.disabled) return;
+    $("modal").querySelectorAll(".qopts button").forEach((x) => { x.disabled = true; if (+x.dataset.i === ok) x.classList.add("ok"); });
+    MP.lastQ = qi;
+    if (+b.dataset.i === ok) {
+      MP.bal += 1000; MP.empty = 0; mpSave();
+      $("qres").innerHTML = `✅ Doğru! <b>1.000 MaxiPuan</b> hesabına yüklendi.<button class="btn" id="qgo" style="margin-top:10px">Oyuna devam</button>`;
+      $("qgo").onclick = () => showRules();
+    } else {
+      b.classList.add("bad"); MP.empty = Date.now(); mpSave();
+      $("qres").innerHTML = `❌ Yanlış. Yarın yeni bir soruyla tekrar dene.<a class="btn" href="oyunlar.html" style="display:block;text-decoration:none;padding:12px;margin-top:10px">Oyunlara dön</a>`;
+    }
+  };
+}
 function gameOver() {
   phase = "idle";
   let rows, win;
@@ -607,18 +668,32 @@ function gameOver() {
     win = order[0] === 0 ? "🎉 Kazandın!" : `${NAMES[order[0]]} kazandı`;
     rows = order.map((p, i) => `<tr><td style="text-align:left">${["🥇", "🥈", "🥉", "4."][i]} ${NAMES[p]}</td><td><b>${scores[p]}</b></td></tr>`).join("");
   }
-  $("modal").innerHTML = `<h2>${win}</h2><p>${OPT.eller} el tamamlandı</p><table>${rows}</table><button class="btn" id="again">Yeni oyun</button>`;
+  // MaxiPuan ödemesi
+  let pay = 0, payTxt = "";
+  if (OPT.esli) { const a = scores[0], b = scores[1]; pay = a > b ? gameStake * 2 : a === b ? gameStake : 0; }
+  else { const top = Math.max(...scores), tops = scores.filter((x) => x === top).length; pay = scores[0] === top ? (tops === 1 ? gameStake * 3 : gameStake) : 0; }
+  MP.bal += pay; mpSave();
+  payTxt = pay > gameStake ? `🎉 <b>+${mpFmt(pay)}</b> MaxiPuan kazandın!` : pay === gameStake && pay ? `Berabere: ${mpFmt(pay)} MaxiPuan iade edildi.` : `Bu oyunda ${mpFmt(gameStake)} MaxiPuan kaybettin.`;
+  gameStake = 0;
+  $("modal").innerHTML = `<h2>${win}</h2><p>${OPT.eller} el tamamlandı</p><table>${rows}</table>
+    <div class="mpbox" style="margin-bottom:12px">${payTxt}<br>💳 Bakiye: <b>${mpFmt(MP.bal)}</b> MaxiPuan</div>
+    <button class="btn" id="again">${MP.bal < BAHIS[0] ? "Devam" : "Yeni oyun"}</button>`;
   $("overlay").classList.add("show");
   $("again").onclick = () => showRules();
 }
 
 // ---------- Başlangıç ----------
 function showRules() {
+  if (MP.bal < BAHIS[0]) return showLock();
+  if (OPT.bahis > MP.bal) OPT.bahis = [...BAHIS].reverse().find((v) => v <= MP.bal);
   const seg = (k, opts) => `<div class="seg" data-k="${k}">${opts.map(([v, t]) => `<button type="button" data-v="${v}" class="${String(OPT[k]) === String(v) ? "on" : ""}">${t}</button>`).join("")}</div>`;
   $("modal").innerHTML = `
     <h2>♠ İhaleli Batak</h2>
+    <div class="mpbox">💳 MaxiPuan: <b>${mpFmt(MP.bal)}</b></div>
     <div class="opts">
-      <label>Kaç el oynanacak?</label>${seg("eller", [[1, "1"], [3, "3"], [5, "5"], [10, "10"]])}
+      <label>Bahis (MaxiPuan)</label>${seg("bahis", BAHIS.map((v) => [v, mpFmt(v)]))}
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Tekli oyunda birinci olursan bahsinin <b>3 katını</b>, eşli oyunda tarafın kazanırsa <b>2 katını</b> alırsın. Berabere biterse bahsin iade edilir.</div>
+      <label>Kaç el oynanacak?</label>${seg("eller", [[1, "1"], [3, "3"], [5, "5"], [7, "7"]])}
       <label>Oyun şekli</label>${seg("esli", [[false, "Eşsiz (tekli)"], [true, "Eşli (Sen + Sadolayn)"]])}
       <label>Yükseltme</label>${seg("yuk", [[true, "Yükseltmeli (kanlı)"], [false, "Yükseltmesiz"]])}
       <label>İhale +3 kuralı</label>${seg("arti3", [[true, "+3 yapan yanar"], [false, "Kapalı"]])}
@@ -628,6 +703,7 @@ function showRules() {
       <li>En yüksek ihaleyi veren kozu seçer ve ilk kartı açar (en az <b>4</b>, eşlide en az <b>7</b>). Koz oynanmadan kozla el açılamaz.</li>
       <li><b>Yükseltmeli:</b> yerdeki rengi atarken büyüğünü atmak zorundasın. <b>Yükseltmesiz:</b> renge uyman yeter; yalnızca <b>koz</b> yükseltilir.</li>
       <li>O renk yoksa koz atmalısın (yükseltebiliyorsan yükselt).</li>
+      <li><b>MaxiPuan:</b> 1.000 MaxiPuan ile başlarsın. Biterse 1 gün sonra İş Bankası tarihçesinden bir soru gelir; doğru cevap 1.000 MaxiPuan kazandırır.</li>
       <li><b>Puan:</b> ihaleyi tutan, söz verdiği her el için 15, fazla her el için 10 puan alır; tutamayan ihale × 10 eksi yazar. Diğer oyuncular aldıkları her el için 10 puan alır; <b>hiç el alamayan −50</b> yazar.</li>
       <li><b>+3 kuralı</b> (tekli): ihalenin 3 ve fazla üstüne çıkan da yanar (ihale × 10 eksi).</li>
       <li><b>Eşli:</b> karşındaki oyuncu eşindir, ellerin toplamı sayılır. İhaleyi alan, eşinin kartlarını açık görür ve <b>iki eli de o oynar</b>. +3 kuralı yoktur.</li>
@@ -641,9 +717,15 @@ function showRules() {
     g.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
     syncOpt();
   }));
-  const syncOpt = () => { $("modal").querySelectorAll('.seg[data-k="arti3"] button').forEach((x) => (x.disabled = OPT.esli)); $("a3note").style.display = OPT.esli ? "" : "none"; };
+  const syncOpt = () => {
+    $("modal").querySelectorAll('.seg[data-k="arti3"] button').forEach((x) => (x.disabled = OPT.esli)); $("a3note").style.display = OPT.esli ? "" : "none";
+    $("modal").querySelectorAll('.seg[data-k="bahis"] button').forEach((x) => (x.disabled = +x.dataset.v > MP.bal));
+    $("start").textContent = `Başla · ${mpFmt(OPT.bahis)} MaxiPuan`;
+  };
   syncOpt();
   $("start").onclick = () => {
+    if (OPT.bahis > MP.bal) return;
+    MP.bal -= OPT.bahis; gameStake = OPT.bahis; mpSave();
     try { localStorage.setItem("batakOpt", JSON.stringify(OPT)); } catch (e) {}
     scores = [0, 0, 0, 0]; roundNo = 0; saveScores();
     $("overlay").classList.remove("show"); newRound();
