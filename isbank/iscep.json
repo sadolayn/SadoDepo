@@ -1,8 +1,26 @@
 {
-  "guncelleme": "2026-10-14T01:28:00+03:00",
+  "guncelleme": "2026-10-15T09:00:00+03:00",
   "kaynak": "App Store – İşCep sürüm geçmişi",
   "kaynakUrl": "https://apps.apple.com/tr/app/id308261752",
   "surumler": [
+    {
+      "surum": "10.13.1",
+      "tarih": "2026-10-09",
+      "yenilikler": [
+        "Performans iyileştirmeleri"
+      ]
+    },
+    {
+      "surum": "10.13.0",
+      "tarih": "2026-10-01",
+      "yenilikler": [
+        "Başka bankalardaki hesap ve kartları yönetmek için \"Diğer Bankalar\" menüsü",
+        "MaxSticker başvurusu uygulamadan yapılabiliyor",
+        "Banka kartı bilgileri ana sayfada",
+        "Yapay zekâ asistanı Maxi",
+        "Maxi üzerinden çıkış harcı ödenen kişilere tekrar ödeme"
+      ]
+    },
     {
       "surum": "10.12.2",
       "tarih": "2026-09-09",
