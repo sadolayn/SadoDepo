@@ -46,7 +46,7 @@
 
   .table {
     flex: 1;
-    min-height: 330px;
+    min-height: 360px;
     position: relative;
     background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%);
     border-radius: 22px;
@@ -73,8 +73,8 @@
   }
   .seat .nm { font-weight: 700; font-size: 13px; }
   .seat .bd { color: var(--muted); }
-  .seat .mini { display: flex; flex-direction: column; align-items: center; gap: 1px; margin-top: 2px; }
-  .seat .mini span { display: flex; gap: 2px; }
+  .seat .mini { display: flex; align-items: center; justify-content: center; gap: 1px; margin-top: 2px; }
+  .seat .mini i { width: 4px; }
   .seat.turn { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(224,162,79,.35); }
   .seat.bidder .nm::after { content: " 👑"; }
   .seat-n { top: 8px; left: 50%; transform: translateX(-50%); }
@@ -83,8 +83,8 @@
   .seat-s { bottom: 8px; left: 50%; transform: translateX(-50%); }
 
   .slot { position: absolute; width: 56px; height: 84px; }
-  .slot-n { top: 64px; left: 50%; transform: translateX(-50%); }
-  .slot-s { bottom: 64px; left: 50%; transform: translateX(-50%); }
+  .slot-n { top: 76px; left: 50%; transform: translateX(-50%); }
+  .slot-s { bottom: 76px; left: 50%; transform: translateX(-50%); }
   .slot-w { left: 90px; top: 50%; transform: translateY(-50%); }
   .slot-e { right: 90px; top: 50%; transform: translateY(-50%); }
 
@@ -159,36 +159,40 @@
   #ctPanel button.locked { opacity: .35; cursor: not-allowed; }
   .cetbtn { background: #161616; border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 6px 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
   #overlay2 { z-index: 20; }
-  #overlay2 .modal { max-width: 460px; max-height: 88vh; overflow-y: auto; padding: 16px 12px; }
-  .cet { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 12px; }
-  .cet th, .cet td { padding: 5px 3px; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; }
+  #overlay2 { padding: 8px; }
+  #overlay2 .modal { max-width: 420px; max-height: 92vh; overflow-y: auto; padding: 12px 10px; }
+  #overlay2 .modal h2 { font-size: 17px; margin-bottom: 2px; }
+  #overlay2 .modal p { font-size: 12px; margin-bottom: 8px; }
+  #overlay2 .modal .btn { padding: 8px; font-size: 15px; }
+  .cet { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 8px; }
+  .cet th, .cet td { padding: 3px 2px; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; }
   .cet th { color: var(--muted); font-weight: 600; font-size: 11px; position: sticky; top: -16px; background: var(--card); }
   .cet td.oy { text-align: left; white-space: normal; }
   .cet tr.tot td { font-weight: 700; font-size: 13px; border-top: 2px solid var(--accent); }
   .cet tr.next td { color: var(--muted); }
   .grid4 { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 10px; }
-  .grid4 .blk { padding: 8px 6px 10px; text-align: center; }
+  .grid4 .blk { padding: 5px 4px 6px; text-align: center; }
   .grid4 .blk:nth-child(1) { border-right: 2px solid #3a50f0; border-bottom: 2px solid #3a50f0; }
   .grid4 .blk:nth-child(2) { border-bottom: 2px solid #3a50f0; }
   .grid4 .blk:nth-child(3) { border-right: 2px solid #3a50f0; }
   .grid4 .blk.cur .bn::after { content: " 👑"; }
   .blk .bn { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
   .blk .syms { display: flex; justify-content: center; gap: 4px; }
-  .blk .sym { display: flex; flex-direction: column; align-items: center; width: 38px; }
+  .blk .sym { display: flex; flex-direction: column; align-items: center; width: 28px; }
   .blk .sym i { font-style: normal; font-size: 9px; color: var(--muted); line-height: 1.1; height: 11px; overflow: hidden; }
   .blk .bt { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); padding: 1px 6px; }
   .blk .bt b { font-size: 12px; }
   .blk .bt.tot { border-top: 1px solid var(--line); margin-top: 3px; padding-top: 3px; color: var(--ink); }
   .blk .bt.tot b { font-size: 15px; }
-  .czl { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; text-align: left; font-size: 13px; margin-bottom: 10px; }
+  .czl { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; text-align: left; font-size: 12px; margin-bottom: 8px; }
   .czl .cz { display: flex; align-items: center; gap: 5px; }
   .czl .cn { flex: 1; }
   .czl .cz.done .cn { text-decoration: line-through; text-decoration-color: #e0473a; text-decoration-thickness: 2px; color: var(--muted); }
-  .czl .mk { width: 14px; height: 14px; border: 1.5px solid #666; border-radius: 3px; }
+  .czl .mk { width: 11px; height: 11px; border: 1.5px solid #666; border-radius: 3px; }
   .czl .mk.on { background: #e0473a; border-color: #e0473a; }
   .potk { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-  .potk div { background: #111; border: 1px solid var(--line); border-radius: 10px; padding: 7px; font-size: 11px; color: var(--muted); }
-  .potk b { display: block; color: var(--ink); font-size: 15px; }
+  .potk div { background: #111; border: 1px solid var(--line); border-radius: 10px; padding: 5px 7px; font-size: 10px; color: var(--muted); }
+  .potk b { display: block; color: var(--ink); font-size: 13px; }
   .potk i { font-style: normal; }
   .hak { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; text-align: left; font-size: 12px; margin-bottom: 12px; }
   .hak div { background: #111; border: 1px solid var(--line); border-radius: 10px; padding: 7px 8px; }
@@ -319,6 +323,7 @@ function penaltyOf(ct, cards, trickNo) {
   else if (ct === "son") n = trickNo >= 12 ? 1 : 0;
   return n;
 }
+const CEZA_TOPLAM = { el: 13 * 50, kupa: 13 * 30, erkek: 8 * 60, kiz: 4 * 100, rifki: 320, son: 2 * 180 };
 const MAX_ITEMS = { el: 13, kupa: 13, erkek: 8, kiz: 4, rifki: 1, son: 2 };
 
 // ---------- Kurallar ----------
@@ -579,21 +584,126 @@ function botPick(p) {
 }
 const opponents = (p) => [0, 1, 2, 3].filter((x) => x !== p);
 
+// ---------- Zor seviye: Monte Carlo (bilinmeyen kartlar rastgele dağıtılıp oyun sonuna kadar oynatılır) ----------
+// Botlar kendi puanını artırmaya ve aynı anda oyuncunun (Sen) puanını düşürmeye çalışır.
+const GANG = 0.6;
+function snap() {
+  return { hands: hands.map((h) => h.slice()), trick: trick.map((t) => ({ p: t.p, card: t.card })), tricksWon: tricksWon.slice(), taken: taken.slice(),
+    played: new Set(played), voids: voids.map((v) => ({ ...v })), trumpBroken, heartsBroken, contract, trump, turn };
+}
+function restore(S) {
+  hands = S.hands.map((h) => h.slice()); trick = S.trick.map((t) => ({ ...t })); tricksWon = S.tricksWon.slice(); taken = S.taken.slice();
+  played = new Set(S.played); voids = S.voids.map((v) => ({ ...v })); trumpBroken = S.trumpBroken; heartsBroken = S.heartsBroken;
+  contract = S.contract; trump = S.trump; turn = S.turn;
+}
+// p'nin bakış açısından diğer elleri yeniden dağıt (renk boşlukları dikkate alınır)
+function determinize(p) {
+  const known = new Set(hands[p].map(id));
+  const pool = [];
+  for (const o of [0, 1, 2, 3]) if (o !== p) for (const c of hands[o]) pool.push(c);
+  const need = [0, 1, 2, 3].map((o) => (o === p ? 0 : hands[o].length));
+  for (let tries = 0; tries < 30; tries++) {
+    const d = pool.slice();
+    for (let i = d.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [d[i], d[j]] = [d[j], d[i]]; }
+    const out = [[], [], [], []]; let ok = true;
+    // önce boşluk kısıtı en çok olan oyuncuya kart ver
+    const order = [0, 1, 2, 3].filter((o) => o !== p).sort((a, b) => Object.keys(voids[b]).length - Object.keys(voids[a]).length);
+    for (const o of order) {
+      for (let i = 0; i < d.length && out[o].length < need[o]; ) {
+        if (tries < 25 && voids[o][d[i].s]) { i++; continue; }
+        out[o].push(d.splice(i, 1)[0]);
+      }
+      if (out[o].length < need[o]) { ok = false; break; }
+    }
+    if (ok) { for (const o of order) hands[o] = out[o]; return; }
+  }
+}
+function simPlay(p, c) {
+  hands[p] = hands[p].filter((x) => id(x) !== id(c));
+  if (trick.length && c.s !== trick[0].card.s) voids[p][trick[0].card.s] = true;
+  trick.push({ p, card: c });
+  played.add(id(c));
+  if (contract === "koz" && c.s === trump) trumpBroken = true;
+  if (c.s === "♥") heartsBroken = true;
+  if (trick.length < 4) { turn = (p + 1) % 4; return false; }
+  const w = trickWinner(trick).p;
+  const trickNo = 13 - hands[0].length;
+  tricksWon[w]++;
+  if (contract !== "koz") taken[w] += penaltyOf(contract, trick.map((t) => t.card), trickNo);
+  trick = []; turn = w;
+  return handOver();
+}
+function rollout() { let guard = 60; while (guard-- > 0) { if (simPlay(turn, botPick(turn))) break; } }
+const roundScore = (q) => (contract === "koz" ? tricksWon[q] * 50 : -taken[q] * CEZALAR[contract].puan);
+const objective = (p) => roundScore(p) - (p !== 0 ? GANG * roundScore(0) : 0);
+function mcPick(p) {
+  const L = legal(hands[p]);
+  if (L.length === 1) return L[0];
+  const S0 = snap();
+  const tot = L.map(() => 0), cnt = L.map(() => 0);
+  const t0 = performance.now();
+  let it = 0;
+  while (it < 400 && (it < L.length * 10 || performance.now() - t0 < 260)) {
+    const i = it % L.length;
+    restore(S0); determinize(p);
+    if (!simPlay(p, L[i])) rollout();
+    tot[i] += objective(p); cnt[i]++;
+    it++;
+  }
+  restore(S0);
+  let bi = 0; for (let i = 1; i < L.length; i++) if (tot[i] / cnt[i] > tot[bi] / cnt[bi]) bi = i;
+  return L[bi];
+}
+// Oyun seçimi: her seçeneği simüle et, "adil pay"a göre en kârlısını seç
+function mcChoose(p) {
+  const av = available(p);
+  const opts = [];
+  for (const k of av) if (k === "koz") for (const t of SUITS) opts.push({ ct: "koz", trump: t }); else opts.push({ ct: k });
+  if (opts.length === 1) return opts[0];
+  const S0 = snap();
+  const fair = (o) => (o.ct === "koz" ? 13 * 50 / 4 : -CEZA_TOPLAM[o.ct] / 4);
+  let best = null, bestV = -Infinity;
+  const per = Math.max(10, Math.floor(260 / opts.length));
+  for (const o of opts) {
+    let sum = 0;
+    for (let n = 0; n < per; n++) {
+      restore(S0); determinize(p);
+      contract = o.ct; trump = o.trump || null; trumpBroken = false; heartsBroken = false;
+      trick = []; tricksWon = [0, 0, 0, 0]; taken = [0, 0, 0, 0]; played = new Set(); voids = [{}, {}, {}, {}]; turn = p;
+      rollout();
+      const f = fair(o);
+      sum += (roundScore(p) - f) - (p !== 0 ? GANG * (roundScore(0) - f) : 0);
+    }
+    // kozu erken harcamamak için küçük bir ceza (sonda zorunlu kalmasın diye dengelenir)
+    let v = sum / per;
+    if (o.ct === "koz") { const left = 5 - G.kozCount[p] - G.cezaCount[p]; v -= left > 2 ? 40 : 0; }
+    if (v > bestV) { bestV = v; best = o; }
+  }
+  restore(S0);
+  return best;
+}
+
 // ---------- Ekran ----------
-function setStatus(t) { $("status").innerHTML = t; }
+function setStatus(t) { $("status").innerHTML = t ? `<span>${t}</span>` : ""; }
 function renderInfo() {
   $("info").innerHTML = `El: <b>${Math.min(G.round + 1, 20)}/20</b><br>${phase === "play" || phase === "end" ? `<b>${contractName(contract)}</b>` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
   $("scores").innerHTML = G.scores.map((s, p) => `<div>${NAMES[p]}<b class="${s < 0 ? "neg" : s > 0 ? "pos" : ""}">${s}</b></div>`).join("");
 }
 // Koltukta mini cetvel: 3 üçgen (ceza) + 2 daire (koz); söylenenler boyalı
+// Geçmiş + şu an oynanan oyun (simgeler için)
+function histCur() {
+  const H = (G.history || []).slice();
+  if ((phase === "play" || phase === "end") && contract && !(phase === "end")) H.push({ secen: chooser, ct: contract, trump, oyun: contract === "koz" ? "Koz " + trump : CEZALAR[contract].ad });
+  return H;
+}
 function miniSyms(p) {
-  const H = (G.history || []).filter((h) => h.secen === p);
+  const H = histCur().filter((h) => h.secen === p);
   const nc = H.filter((h) => !(h.ct === "koz" || (h.oyun || "").startsWith("Koz"))).length;
   const kz = H.filter((h) => h.ct === "koz" || (h.oyun || "").startsWith("Koz"));
-  const t = (on) => `<svg viewBox="0 0 20 18" width="18" height="16"><polygon points="10,1.5 18.5,16.5 1.5,16.5" fill="${on ? "#e0473a" : "none"}" stroke="${on ? "#e0473a" : "rgba(255,255,255,.55)"}" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+  const t = (on) => `<svg viewBox="0 0 20 18" width="14" height="13"><polygon points="10,1.5 18.5,16.5 1.5,16.5" fill="${on ? "#e0473a" : "none"}" stroke="${on ? "#e0473a" : "rgba(255,255,255,.55)"}" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
   const c = (h) => { const tr = h ? (h.trump || h.oyun.replace("Koz ", "")) : ""; const red = tr === "♥" || tr === "♦";
-    return `<svg viewBox="0 0 18 18" width="17" height="17"><circle cx="9" cy="9" r="7.5" fill="${h ? "#e0a24f" : "none"}" stroke="${h ? "#e0a24f" : "rgba(255,255,255,.55)"}" stroke-width="1.8"/>${h ? `<text x="9" y="13" text-anchor="middle" font-size="10" fill="${red ? "#b3261e" : "#000"}">${tr}</text>` : ""}</svg>`; };
-  return `<div class="mini"><span>${[0, 1, 2].map((i) => t(i < nc)).join("")}</span><span>${[0, 1].map((i) => c(kz[i])).join("")}</span></div>`;
+    return `<svg viewBox="0 0 18 18" width="13" height="13"><circle cx="9" cy="9" r="7.5" fill="${h ? "#e0a24f" : "none"}" stroke="${h ? "#e0a24f" : "rgba(255,255,255,.55)"}" stroke-width="1.8"/>${h ? `<text x="9" y="13" text-anchor="middle" font-size="10" fill="${red ? "#b3261e" : "#000"}">${tr}</text>` : ""}</svg>`; };
+  return `<div class="mini">${[0, 1, 2].map((i) => t(i < nc)).join("")}<i></i>${[0, 1].map((i) => c(kz[i])).join("")}</div>`;
 }
 function renderSeats() {
   for (let p = 0; p < 4; p++) {
@@ -635,8 +745,10 @@ function renderHand() {
 function render() { renderInfo(); renderSeats(); renderHand(); }
 
 // ---------- El akışı ----------
+let roundId = 0;
 function newRound() {
   if (G.round >= 20) return gameOver();
+  if (phase === "choose" || phase === "play") return; // çift tıklamaya karşı
   chooser = G.round % 4;
   const d = newDeck();
   hands = [0, 1, 2, 3].map((i) => d.slice(i * 13, i * 13 + 13));
@@ -650,7 +762,8 @@ function newRound() {
   if (chooser === 0) showChoosePanel();
   else {
     setStatus(`${NAMES[chooser]} oyun seçiyor…`);
-    setTimeout(() => { const c = botChoose(chooser); startPlay(c.ct, c.trump); }, 900);
+    const rid = ++roundId;
+    setTimeout(() => { if (rid !== roundId || phase !== "choose") return; const c = mcChoose(chooser); startPlay(c.ct, c.trump); }, 900);
   }
 }
 function showChoosePanel() {
@@ -710,8 +823,10 @@ async function playTurn() {
   } else {
     if (trick.length) setStatus(`${NAMES[turn]} oynuyor…`);
     renderHand();
-    await wait(600);
-    playCard(turn, botPick(turn));
+    const me = turn;
+    await wait(380);
+    if (phase !== "play" || turn !== me || me <= 0 || !hands[me]) return;
+    playCard(turn, mcPick(turn));
   }
 }
 function humanPlay(c) {
@@ -803,23 +918,23 @@ function gameOver() {
 
 // ---------- Cetvel ----------
 const SHORT = ["Sen", "Sadosan", "Sadolayn", "Sadocan"];
-const CEZA_TOPLAM = { el: 13 * 50, kupa: 13 * 30, erkek: 8 * 60, kiz: 4 * 100, rifki: 320, son: 2 * 180 };
 const isKozH = (h) => h.ct === "koz" || (h.oyun || "").startsWith("Koz");
 const ctKey = (h) => h.ct || CEZA_KEYS.find((k) => CEZALAR[k].ad === h.oyun);
 function tri(h) {
   const on = !!h;
   const lbl = on ? CEZALAR[ctKey(h)]?.kisa || "" : "";
-  return `<div class="sym"><svg viewBox="0 0 40 36" width="34" height="31"><polygon points="20,3 37,33 3,33" fill="${on ? "rgba(224,71,58,.85)" : "none"}" stroke="${on ? "#e0473a" : "#666"}" stroke-width="2.5" stroke-linejoin="round"/></svg><i>${lbl || "&nbsp;"}</i></div>`;
+  return `<div class="sym"><svg viewBox="0 0 40 36" width="24" height="22"><polygon points="20,3 37,33 3,33" fill="${on ? "rgba(224,71,58,.85)" : "none"}" stroke="${on ? "#e0473a" : "#666"}" stroke-width="2.5" stroke-linejoin="round"/></svg><i>${lbl || "&nbsp;"}</i></div>`;
 }
 function circ(h) {
   const on = !!h, t = on ? (h.trump || h.oyun.replace("Koz ", "")) : "";
   const red = t === "♥" || t === "♦";
-  return `<div class="sym"><svg viewBox="0 0 36 36" width="31" height="31"><circle cx="18" cy="18" r="15" fill="${on ? "#e0a24f" : "none"}" stroke="${on ? "#e0a24f" : "#666"}" stroke-width="2.5"/>${on ? `<text x="18" y="25" text-anchor="middle" font-size="19" fill="${red ? "#b3261e" : "#000"}">${t}</text>` : ""}</svg><i>${on ? "Koz" : "&nbsp;"}</i></div>`;
+  return `<div class="sym"><svg viewBox="0 0 36 36" width="22" height="22"><circle cx="18" cy="18" r="15" fill="${on ? "#e0a24f" : "none"}" stroke="${on ? "#e0a24f" : "#666"}" stroke-width="2.5"/>${on ? `<text x="18" y="25" text-anchor="middle" font-size="19" fill="${red ? "#b3261e" : "#000"}">${t}</text>` : ""}</svg><i>${on ? "Koz" : "&nbsp;"}</i></div>`;
 }
 function showCetvel() {
   const H = G.history || [];
+  const HC = histCur();
   const blocks = [0, 1, 2, 3].map((p) => {
-    const mine = H.filter((h) => h.secen === p);
+    const mine = HC.filter((h) => h.secen === p);
     const cz = mine.filter((h) => !isKozH(h)), kz = mine.filter(isKozH);
     let topCeza = 0, topKoz = 0;
     H.forEach((h) => (isKozH(h) ? (topKoz += h.deltas[p]) : (topCeza += h.deltas[p])));
@@ -878,6 +993,7 @@ function showRules(resume) {
     <ul class="rules">
       <li>20 el oynanır. Her oyuncu sırayla 5 kez oyun seçer: <b>2 koz</b> ve <b>3 ceza</b>. Her ceza oyunda toplam 2 kez oynanabilir.</li>
       <li><b>Cezalar:</b> El almaz (el başı −50), Kupa almaz (kupa başı −30), Erkek almaz (papaz/vale −60), Kız almaz (kız −100), Rifki (kupa papazı −320), Son iki (son iki el −180).</li>
+      <li><b>Zor seviye:</b> Rakipler her hamlede olası kart dağılımlarını simüle ederek oynar ve birlikte senin puanını düşürmeye çalışır.</li>
       <li><b>Koz:</b> Aldığın her el +50. Her oyuncunun <b>ilk seçimi koz olamaz</b>; ilk turda herkes ceza seçer.</li>
       <li>Renge uymak zorunlu. Koz oyununda renk yoksa koz atılır ve yükseltmek gerekir.</li>
       <li>Ceza oyunlarında renk yoksa ceza kartı varsa onu atmak zorundasın (kupa, kız, erkek, rifki).</li>
