@@ -84,6 +84,14 @@
   .cmini { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin: -2px 0 10px; }
   .cmini b { color: var(--ink); } .cmini .r { color: #ef6a4c; }
   .ctop .cdays { margin-bottom: 0; }
+  .ctop { position: sticky; top: calc(var(--stickH, 0px) - 1px); z-index: 15; box-shadow: 0 8px 18px rgba(0,0,0,.6); }
+  .ccmp { display: none; }
+  .ctop.cmp { padding: 8px 12px; }
+  .ctop.cmp > :not(.ccmp) { display: none; }
+  .ctop.cmp .ccmp { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; text-align: center; }
+  .ccmp div { font-size: 10px; color: var(--muted); line-height: 1.25; }
+  .ccmp b { display: block; font-size: 14px; color: var(--ink); white-space: nowrap; }
+  .ccmp .n b { color: var(--accent); font-size: 15px; } .ccmp .vv b { color: #3fc283; }
   .cdays { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 2px 0 12px; }
   .cdays div { background: #111; border: 1px solid var(--line); border-radius: 12px; padding: 10px; text-align: center; }
   .cdays span { display: block; font-size: 12px; color: var(--muted); }
@@ -483,7 +491,9 @@
 
   <!-- Çek iskonto & valör -->
   <section class="panel" id="cek">
-    <div class="card ctop">
+    <div id="c_sent"></div>
+    <div class="card ctop" id="c_top">
+      <div class="ccmp" id="c_cmp"></div>
       <div class="big" style="padding-top:2px"><span>Hesaba geçecek net tutar</span><b id="c_out">–</b></div>
       <div class="cmini" id="c_mini"></div>
       <div class="cdays" id="c_days"></div>
@@ -1373,7 +1383,7 @@ function calcCek() {
     else if (weS.length) warns.push(`ℹ️ ${i + 1}. çek valörü hafta sonu nedeniyle ${fdtw(val)}.`);
     if (v.getFullYear() > 2027) warns.push(`ℹ️ ${v.getFullYear()} için bayram tarihleri girilmedi; yalnızca hafta sonu ve sabit tatiller dikkate alındı.`);
   });
-  if (!res.length) { $("c_days").innerHTML = ""; $("c_mini").innerHTML = ""; $("c_prev").textContent = ""; $("c_out").textContent = "–"; rows("c_rows", []); $("c_tab").innerHTML = ""; $("c_warn").innerHTML = warns.length ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : ""; renderCal(isl, []); return; }
+  if (!res.length) { $("c_days").innerHTML = ""; $("c_mini").innerHTML = ""; $("c_cmp").innerHTML = ""; $("c_prev").textContent = ""; $("c_out").textContent = "–"; rows("c_rows", []); $("c_tab").innerHTML = ""; $("c_warn").innerHTML = warns.length ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : ""; renderCal(isl, []); return; }
   const S = (k) => res.reduce((a, x) => a + x[k], 0);
   const TT = S("T"), AA = S("A");
   let FF = S("F"), BS = S("bs"), KK = S("kk");
@@ -1393,6 +1403,7 @@ function calcCek() {
   let ortVV = addDays(isl, Math.round(ortR) - 1);
   for (let g = 0; g < 15; g++) { const di = dayInfo(ortVV); if (!di.we && !di.hol && !di.half) break; ortVV = addDays(ortVV, 1); }
   $("c_out").textContent = tl(net);
+  $("c_cmp").innerHTML = `<div class="n"><b>${tl(net)}</b>Net tutar</div><div><b>${shortD(ortVD)}</b>Ort. vade</div><div class="vv"><b>${shortD(ortVV)}</b>Valör</div>`;
   $("c_mini").innerHTML = `<span>Toplam çek <b>${tl(TT)}</b></span><span>Faiz + BSMV <b class="r">${tl(FF + BS)}</b></span>`;
   {
     const x = res[0];
@@ -1474,6 +1485,16 @@ $("c_add").addEventListener("click", () => { const lastV = pDate(CEKLER[CEKLER.l
 $("c_kom").addEventListener("blur", () => { const k = num("c_kom"); if (k > 1.1) $("c_kom").value = "1,1"; });
 $("c_lim").addEventListener("blur", () => { const n = num("c_lim"); $("c_lim").value = n ? n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : ""; });
 $("c_isl").value = ymd(new Date());
+// Özet kartı: aşağı kaydırınca üstte tek satıra iner
+(function () {
+  const top = $("c_top"), sent = $("c_sent");
+  const f = () => {
+    if (!top.offsetParent) return;
+    const sh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--stickH")) || 0;
+    top.classList.toggle("cmp", sent.getBoundingClientRect().top < sh - 40 && !!$("c_cmp").innerHTML);
+  };
+  window.addEventListener("scroll", f, { passive: true }); window.addEventListener("resize", f);
+})();
 renderCekList();
 
 // ---------- Vergi takvimi ----------
