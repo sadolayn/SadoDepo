@@ -73,6 +73,8 @@
   }
   .seat .nm { font-weight: 700; font-size: 13px; }
   .seat .bd { color: var(--muted); }
+  .seat .mini { display: flex; flex-direction: column; align-items: center; gap: 1px; margin-top: 2px; }
+  .seat .mini span { display: flex; gap: 2px; }
   .seat.turn { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(224,162,79,.35); }
   .seat.bidder .nm::after { content: " 👑"; }
   .seat-n { top: 8px; left: 50%; transform: translateX(-50%); }
@@ -583,6 +585,16 @@ function renderInfo() {
   $("info").innerHTML = `El: <b>${Math.min(G.round + 1, 20)}/20</b><br>${phase === "play" || phase === "end" ? `<b>${contractName(contract)}</b>` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
   $("scores").innerHTML = G.scores.map((s, p) => `<div>${NAMES[p]}<b class="${s < 0 ? "neg" : s > 0 ? "pos" : ""}">${s}</b></div>`).join("");
 }
+// Koltukta mini cetvel: 3 üçgen (ceza) + 2 daire (koz); söylenenler boyalı
+function miniSyms(p) {
+  const H = (G.history || []).filter((h) => h.secen === p);
+  const nc = H.filter((h) => !(h.ct === "koz" || (h.oyun || "").startsWith("Koz"))).length;
+  const kz = H.filter((h) => h.ct === "koz" || (h.oyun || "").startsWith("Koz"));
+  const t = (on) => `<svg viewBox="0 0 20 18" width="18" height="16"><polygon points="10,1.5 18.5,16.5 1.5,16.5" fill="${on ? "#e0473a" : "none"}" stroke="${on ? "#e0473a" : "rgba(255,255,255,.55)"}" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+  const c = (h) => { const tr = h ? (h.trump || h.oyun.replace("Koz ", "")) : ""; const red = tr === "♥" || tr === "♦";
+    return `<svg viewBox="0 0 18 18" width="17" height="17"><circle cx="9" cy="9" r="7.5" fill="${h ? "#e0a24f" : "none"}" stroke="${h ? "#e0a24f" : "rgba(255,255,255,.55)"}" stroke-width="1.8"/>${h ? `<text x="9" y="13" text-anchor="middle" font-size="10" fill="${red ? "#b3261e" : "#000"}">${tr}</text>` : ""}</svg>`; };
+  return `<div class="mini"><span>${[0, 1, 2].map((i) => t(i < nc)).join("")}</span><span>${[0, 1].map((i) => c(kz[i])).join("")}</span></div>`;
+}
 function renderSeats() {
   for (let p = 0; p < 4; p++) {
     const el = $("seat" + p);
@@ -591,10 +603,8 @@ function renderSeats() {
       if (contract === "koz") bd = `El: ${tricksWon[p]}`;
       else if (contract === "el" || contract === "son") bd = `${contract === "el" ? "El" : "Ceza"}: ${taken[p]}`;
       else bd = `${CEZALAR[contract].kisa}: ${taken[p]}`;
-    } else {
-      bd = `Koz ${G.kozCount[p]}/2 · Ceza ${G.cezaCount[p]}/3`;
     }
-    el.innerHTML = `<div class="nm">${NAMES[p]}</div><div class="bd">${bd}</div>`;
+    el.innerHTML = `<div class="nm">${NAMES[p]}</div>${miniSyms(p)}${bd ? `<div class="bd">${bd}</div>` : ""}`;
     el.classList.toggle("turn", turn === p && phase === "play");
     el.classList.toggle("bidder", p === chooser && phase !== "idle");
   }
