@@ -1,59 +1,252 @@
 {
   "tarih": "2026-10-16",
   "sayi": "33402",
-  "guncelleme": "2026-10-16T01:23:03+03:00",
-  "ozet": "Günün öne çıkan kararı, Gelir İdaresi Başkanı Bekir Bayrakdar'ın Hazine ve Maliye Bakan Yardımcılığına atanması oldu; SGK, Ticaret Bakanlığı ve Dışişleri'nde de üst düzey atamalar yapıldı. TBMM, Kişisel Verileri Koruma Kurulu'na iki üye seçti; Kamu İhale Genel Tebliği'nde değişikliğe gidildi ve kamu kurumlarının ücretsiz ya da indirimli sunacağı mal ve hizmetler yeniden belirlendi.",
+  "guncelleme": "2026-10-16T02:05:18+03:00",
+  "ozet": "Günün öne çıkan kararı, Gelir İdaresi Başkanı Bekir Bayrakdar'ın Hazine ve Maliye Bakan Yardımcılığına atanması oldu; SGK, Ticaret Bakanlığı ve Dışişleri'nde de üst düzey atamalar yapıldı. Kamu İhale Genel Tebliği'nde ihaleden yasaklayan vergi ve SGK prim borcu sınırı 5 bin liradan 50 bin liraya çıkarıldı (15 Kasım 2026'dan itibaren ilan edilen ihalelerde). POLSAN'ın yönetim ve denetim yapısı değiştirildi; yönetim kurulu başkanlığı Emniyet Genel Müdürüne geçti, denetim kurulu üyelerini ağırlıklı olarak İçişleri Bakanı atayacak. AB'nin yeni makine tüzüğüne uyumlu Makine Emniyeti Yönetmeliği ile şarj cihazları ve USB-C kablolarına ortak şarj ve verimlilik kuralları getiren tebliğ yayımlandı. Er ve erbaşların taşındığı uçuşlarda kamu havalimanlarındaki bazı hizmetlerin ücretsiz olması kararlaştırıldı; TBMM de KVKK Kurulu'na iki üye seçti.",
   "onemli_atamalar": [
-    { "kurum": "Hazine ve Maliye Bakanlığı", "kisi": "Bekir Bayrakdar", "gorev": "Hazine ve Maliye Bakan Yardımcısı", "aciklama": "Haberlere göre önceki görevi Gelir İdaresi Başkanlığıydı." },
-    { "kurum": "SGK", "kisi": "Adnan Yılmaz", "gorev": "SGK Emeklilik Hizmetleri Genel Müdür Yardımcısı" },
-    { "kurum": "Ticaret Bakanlığı", "kisi": "Tuba Hatipoğlu", "gorev": "Ticaret Bakanlığı İthalat Genel Müdür Yardımcısı" },
-    { "kurum": "Ticaret Bakanlığı", "kisi": "Ayşegül Şahinoğlu Yerdeş", "gorev": "Ticaret Bakanlığı Uluslararası Anlaşmalar ve Avrupa Birliği Genel Müdür Yardımcısı" },
-    { "kurum": "Dışişleri Bakanlığı", "kisi": "Sabri Tunç Angılı", "gorev": "Dış Politika Plan ve Eşgüdüm Genel Müdürü", "aciklama": "Haberlere göre önceki görevi Kosova Büyükelçiliğiydi." },
-    { "kurum": "Milli Savunma Bakanlığı", "kisi": "Cüneyt Epcim", "gorev": "Personel Genel Müdürü" },
-    { "kurum": "Devlet Opera ve Balesi", "kisi": "Can Atilla", "gorev": "Devlet Opera ve Balesi Genel Müdürü" },
-    { "kurum": "Kişisel Verileri Koruma Kurulu", "kisi": "Recep Keskin, Cennet Alas Şekerbay", "gorev": "KVKK Kurul Üyesi", "aciklama": "TBMM kararıyla boş üyeliklere seçildiler." }
+    {
+      "kurum": "Hazine ve Maliye Bakanlığı",
+      "kisi": "Bekir Bayrakdar",
+      "gorev": "Hazine ve Maliye Bakan Yardımcısı",
+      "aciklama": "Haberlere göre önceki görevi Gelir İdaresi Başkanlığıydı."
+    },
+    {
+      "kurum": "SGK",
+      "kisi": "Adnan Yılmaz",
+      "gorev": "SGK Emeklilik Hizmetleri Genel Müdür Yardımcısı"
+    },
+    {
+      "kurum": "Ticaret Bakanlığı",
+      "kisi": "Tuba Hatipoğlu",
+      "gorev": "Ticaret Bakanlığı İthalat Genel Müdür Yardımcısı"
+    },
+    {
+      "kurum": "Ticaret Bakanlığı",
+      "kisi": "Ayşegül Şahinoğlu Yerdeş",
+      "gorev": "Ticaret Bakanlığı Uluslararası Anlaşmalar ve Avrupa Birliği Genel Müdür Yardımcısı"
+    },
+    {
+      "kurum": "Dışişleri Bakanlığı",
+      "kisi": "Sabri Tunç Angılı",
+      "gorev": "Dış Politika Plan ve Eşgüdüm Genel Müdürü",
+      "aciklama": "Haberlere göre önceki görevi Kosova Büyükelçiliğiydi."
+    },
+    {
+      "kurum": "Milli Savunma Bakanlığı",
+      "kisi": "Cüneyt Epcim",
+      "gorev": "Personel Genel Müdürü"
+    },
+    {
+      "kurum": "Devlet Opera ve Balesi",
+      "kisi": "Can Atilla",
+      "gorev": "Devlet Opera ve Balesi Genel Müdürü"
+    },
+    {
+      "kurum": "Kişisel Verileri Koruma Kurulu",
+      "kisi": "Recep Keskin, Cennet Alas Şekerbay",
+      "gorev": "KVKK Kurul Üyesi",
+      "aciklama": "TBMM kararıyla boş üyeliklere seçildiler."
+    }
   ],
   "bankacilik": [],
   "bolumler": [
-    { "baslik": "Yasama Bölümü", "maddeler": [
-      { "baslik": "Kişisel Verileri Koruma Kurulu üye seçimi (TBMM Kararı No. 1513)", "aciklama": "TBMM, kuruldaki iki boş üyeliğe seçim yaptı." }
-    ] },
-    { "baslik": "Milletlerarası Andlaşmalar", "maddeler": [
-      { "baslik": "Türkiye–KKTC fiber optik altyapı iş birliği protokolüne ek protokol", "aciklama": "KKTC'de fiber altyapının geliştirilmesi ve ev/işyerlerine hizmet sunulmasına dair 2025 protokolü değiştirildi." }
-    ] },
-    { "baslik": "Cumhurbaşkanı Kararları", "maddeler": [
-      { "baslik": "Kamu kurumlarının ücretsiz veya indirimli mal ve hizmetleri", "aciklama": "Kamu kurumlarının hangi mal ve hizmetleri bedelsiz ya da indirimli sunabileceği yeniden belirlendi." },
-      { "baslik": "Acele kamulaştırma kararları", "aciklama": "Sivas'ta hastane bağlantı yolu ile TEİAŞ'ın Kahramanmaraş ve Likya bölgesindeki enerji iletim projeleri için acele kamulaştırma yapılacak." },
-      { "baslik": "Hatay'da arazi toplulaştırma", "aciklama": "Antakya ve Reyhanlı'nın bazı bölgelerinde arazi toplulaştırma ve tarla içi geliştirme hizmetleri yürütülecek." },
-      { "baslik": "Bingöl'de köy bağlantısı değişikliği", "aciklama": "Adaklı ilçesine bağlı Hasbağlar köyü Kiğı ilçesine bağlandı." },
-      { "baslik": "Özelleştirme İdaresi kararları", "aciklama": "Özelleştirme kapsamında dört ayrı karar yayımlandı." }
-    ] },
-    { "baslik": "Atama Kararları", "maddeler": [
-      { "baslik": "13 atama kararı (2026/323–335)", "aciklama": "Hazine ve Maliye, SGK, Ticaret, Dışişleri, Milli Savunma, Vakıflar, DHMİ, DSİ, TİGEM ve Et ve Süt Kurumu'nda atama ve görevden almalar yapıldı." }
-    ] },
-    { "baslik": "Yönetmelikler", "maddeler": [
-      { "baslik": "Polis Bakım ve Yardım Sandığı Yönetmeliğinde değişiklik", "aciklama": "Polislerin yardımlaşma sandığına ilişkin kurallar güncellendi." },
-      { "baslik": "Makine Emniyeti Yönetmeliği (2023/1230/AB)", "aciklama": "Makinelerin güvenlik şartları AB'nin yeni düzenlemesiyle uyumlu hale getirildi." },
-      { "baslik": "KOSGEB Destekleyiciler Yönetmeliğinin yürürlükten kaldırılması", "aciklama": "KOSGEB'in destekleyicilere ilişkin yönetmeliği kaldırıldı." }
-    ] },
-    { "baslik": "Tebliğler", "maddeler": [
-      { "baslik": "Kamu İhale Genel Tebliğinde değişiklik", "aciklama": "İhaleye giren firmaları, yüklenicileri ve idareleri ilgilendiren uygulama kurallarında değişiklik yapıldı." },
-      { "baslik": "Ekotasarım ve enerji etiketi tebliğleri (SGM-2026/7–10)", "aciklama": "Harici güç kaynakları, kablosuz şarj cihazları ve USB-C kablolar, bekleme modu tüketimi ve çamaşır kurutucularına ilişkin AB uyumlu kurallar getirildi." }
-    ] },
-    { "baslik": "Kurul Kararları", "maddeler": [
-      { "baslik": "Kültür Varlıklarını Koruma Yüksek Kurulu ilke kararı (No. 4390)", "aciklama": "Kültürel mirasın korunmasına yönelik yeni bir ilke kararı yayımlandı." }
-    ] },
-    { "baslik": "Yargı Bölümü", "maddeler": [
-      { "baslik": "Anayasa Mahkemesi kararları", "aciklama": "Siyasi partilerin mali denetimine ilişkin 33 karar ile 3 bireysel başvuru kararı yayımlandı." }
-    ] },
-    { "baslik": "İlan Bölümü", "maddeler": [
-      { "baslik": "Yargı, ihale ve çeşitli ilanlar; döviz kurları", "aciklama": "Günlük ilanlar ile TCMB döviz kurları ve DİBS günlük değerleri." }
-    ] }
+    {
+      "baslik": "Yasama Bölümü",
+      "maddeler": [
+        {
+          "baslik": "Kişisel Verileri Koruma Kurulu üye seçimi (TBMM Kararı No. 1513)",
+          "aciklama": "TBMM, kuruldaki iki boş üyeliğe seçim yaptı."
+        }
+      ]
+    },
+    {
+      "baslik": "Milletlerarası Andlaşmalar",
+      "maddeler": [
+        {
+          "baslik": "Türkiye–KKTC fiber optik altyapı iş birliği protokolüne ek protokol",
+          "aciklama": "KKTC'de fiber altyapının geliştirilmesi ve ev/işyerlerine hizmet sunulmasına dair 2025 protokolü değiştirildi."
+        }
+      ]
+    },
+    {
+      "baslik": "Cumhurbaşkanı Kararları",
+      "maddeler": [
+        {
+          "baslik": "Kamu kurumlarının mal ve hizmetlerinden ücretsiz yararlanma – er ve erbaşlar (Karar No. 11877)",
+          "aciklama": "4736 sayılı Kanun kapsamında, kamu kurumlarınca işletilen havalimanlarında er ve erbaşların taşındığı uçuşlara bazı hizmetlerin bedelsiz sunulması kararlaştırıldı. Amaç askerlik hizmetindeki personelin ulaşım maliyetlerini azaltmak.",
+          "detaylar": [
+            "Yolcuların tamamı er ve erbaşlardan oluşan uçuşlarda iç ve dış hat konma-konaklama, yolcu servis, emniyet tedbiri, uçak ve araç yönlendirme ile çalışma saati uzatma hizmetlerinden ücret alınmayacak.",
+            "Bu uçuşlarda yolcu köprüsü ve yer hizmetleri de ücretsiz verilecek.",
+            "Uçakta er ve erbaşlar yolcuların yalnızca bir kısmıysa, sadece bu kişilere ait yolcu servis ve yolcu güvenlik hizmetleri muafiyet kapsamında olacak.",
+            "Haberlere göre karar geriye dönük olarak (1 Ocak 2025'ten itibaren) geçerli tutuldu."
+          ],
+          "yururluk": "Yayımı tarihinde (haberlere göre 1 Ocak 2025'ten geçerli)",
+          "kimi": "Er ve erbaşlar, havayolu şirketleri, DHMİ ve kamu havalimanı işletmeleri"
+        },
+        {
+          "baslik": "Acele kamulaştırma kararları",
+          "aciklama": "Sivas'ta hastane bağlantı yolu ile TEİAŞ'ın Kahramanmaraş ve Likya bölgesindeki enerji iletim projeleri için acele kamulaştırma yapılacak."
+        },
+        {
+          "baslik": "Hatay'da arazi toplulaştırma",
+          "aciklama": "Antakya ve Reyhanlı'nın bazı bölgelerinde arazi toplulaştırma ve tarla içi geliştirme hizmetleri yürütülecek."
+        },
+        {
+          "baslik": "Bingöl'de köy bağlantısı değişikliği",
+          "aciklama": "Adaklı ilçesine bağlı Hasbağlar köyü Kiğı ilçesine bağlandı."
+        },
+        {
+          "baslik": "Özelleştirme İdaresi kararları",
+          "aciklama": "Özelleştirme kapsamında dört ayrı karar yayımlandı."
+        }
+      ]
+    },
+    {
+      "baslik": "Atama Kararları",
+      "maddeler": [
+        {
+          "baslik": "13 atama kararı (2026/323–335)",
+          "aciklama": "Hazine ve Maliye, SGK, Ticaret, Dışişleri, Milli Savunma, Vakıflar, DHMİ, DSİ, TİGEM ve Et ve Süt Kurumu'nda atama ve görevden almalar yapıldı."
+        }
+      ]
+    },
+    {
+      "baslik": "Yönetmelikler",
+      "maddeler": [
+        {
+          "baslik": "Polis Bakım ve Yardım Sandığı (POLSAN) Yönetmeliğinde değişiklik",
+          "aciklama": "Değişiklik yalnızca sandığın yönetim ve denetim yapısını yeniden düzenliyor; üyelerin aidat, emeklilik, maluliyet, ölüm yardımı ve kredi gibi hakları değişmedi. Yönetim Emniyet Genel Müdürlüğüne, denetim ise İçişleri Bakanlığına daha sıkı bağlandı.",
+          "detaylar": [
+            "Yönetim kurulu asıl üye sayısı 9'dan 10'a çıktı; Emniyet Genel Müdürü kurulun tabii üyesi ve başkanı oldu, onursal başkanlık kaldırıldı. Sandık Genel Müdürü de tabii üye.",
+            "Kalan 8 üyenin 4'ü Emniyet Genel Müdürlüğünün, 3'ü sandık üyelerinin gösterdiği adaylardan, 1'i bağımsız adaylardan genel kurulca seçilecek; başkan yardımcısını başkan belirleyecek.",
+            "Genel kurula artık İçişleri Bakanının görevlendireceği bir Emniyet Genel Müdür Yardımcısı başkanlık edecek.",
+            "Denetim kurulunun 3 üyesinden 2'sini İçişleri Bakanı, 1'ini Devlet Denetleme Kurulu Başkanı atayacak (önceden DDK 2, Emniyet Genel Müdürü 1 üye atıyordu); bakan, iştirakler dahil denetim için doğrudan müfettiş/uzman görevlendirebilecek.",
+            "Yeni denetim kurulu üyeleri 15 gün içinde (31 Ekim 2026'ya kadar) atanacak; mevcut üyelerin görevi yenileri göreve başlayınca sona erecek."
+          ],
+          "yururluk": "Yayımı tarihinde",
+          "kimi": "POLSAN üyesi emniyet mensupları, sandık yönetimi ve iştirakleri"
+        },
+        {
+          "baslik": "Makine Emniyeti Yönetmeliği (2023/1230/AB) – Sanayi ve Teknoloji Bakanlığı",
+          "aciklama": "Makineler ve ilgili ürünlerin tasarım ve imalatında uyulacak sağlık ve güvenlik şartları, AB'nin 2023/1230 sayılı yeni Makine Tüzüğü esas alınarak baştan düzenlendi. Haberlere göre eski 2006/42/AT esaslı yönetmeliğin yerini alıyor.",
+          "detaylar": [
+            "Kapsam: makineler, değiştirilebilir ekipman, güvenlik bileşenleri, kaldırma aksesuarları, zincir/halat/kayışlar, sökülebilir mekanik güç aktarma tertibatları ve kısmen tamamlanmış makineler; yedek parçalar, lunapark ekipmanı, silahlar, bazı karayolu/demiryolu araçları ve askeri/polis makineleri hariç.",
+            "İmalatçı teknik dosya ve AB uygunluk beyanı hazırlayacak, CE işareti iliştirecek, belgeleri en az 10 yıl saklayacak; kullanım talimatı Türkçe olacak ve dijital verilebilecek, talep edilirse kâğıt olarak sağlanacak.",
+            "İthalatçı, dağıtıcı ve yetkili temsilciye ayrı yükümlülükler getirildi; ürünü kendi adıyla piyasaya süren veya esaslı değişiklik yapan kişi imalatçı sayılacak.",
+            "Uyumlaştırılmış standartlara uyan ürünler yönetmeliğe uygun kabul edilecek; uygunluk değerlendirmesi, yüksek riskli makineler ve geçiş hükümleri yönetmelik metninde ayrıca düzenleniyor."
+          ],
+          "yururluk": "Haberlerde belirtilmedi (AB tüzüğü 20 Ocak 2027'de uygulanmaya başlıyor)",
+          "kimi": "Makine imalatçıları, ithalatçılar, dağıtıcılar ve makine kullanan işletmeler"
+        },
+        {
+          "baslik": "KOSGEB Destekleyiciler Yönetmeliğinin yürürlükten kaldırılması",
+          "aciklama": "KOSGEB'in, destek programlarında rol alan destekleyici kişi ve kuruluşlara ilişkin ayrı yönetmeliği tamamen kaldırıldı. Haberlerde kaldırılmanın gerekçesine ilişkin ayrıntı yer almadı.",
+          "detaylar": [
+            "Destekleyicilere ilişkin kuralların bundan sonra KOSGEB'in genel destek mevzuatı çerçevesinde uygulanacağı değerlendiriliyor (haberlerde ayrıntı yok)."
+          ],
+          "yururluk": "Yayımı tarihinde",
+          "kimi": "KOSGEB destek programlarında yer alan destekleyiciler ve KOBİ'ler"
+        }
+      ]
+    },
+    {
+      "baslik": "Tebliğler",
+      "maddeler": [
+        {
+          "baslik": "Kamu İhale Genel Tebliğinde değişiklik – Kamu İhale Kurumu",
+          "aciklama": "İhaleye katılımda yasaklayıcı sayılmayan vergi ve SGK prim borcu sınırı on katına çıkarıldı. Böylece küçük tutarlı borcu olan firmaların ihale dışı kalmasının önü açıldı.",
+          "detaylar": [
+            "Madde 17.3.2: Sigorta, sosyal güvenlik destek, işsizlik sigortası primleri ile 5510 kapsamındaki prim ve genel sağlık sigortası borçlarında (fer'ileri dahil) 5.000 TL sınırı 50.000 TL oldu.",
+            "Madde 17.4.1: Gelir, kurumlar, KDV, ÖTV, MTV, damga vergisi, stopaj, geçici vergi, vergi cezası ve gecikme faizi dahil toplam vergi borcunda 5.000 TL sınırı 50.000 TL oldu.",
+            "Yeni sınır, ilan veya duyurusu 15 Kasım 2026 ve sonrasında yapılan ihalelerde uygulanacak; öncesinde ilan edilenler eski kurallarla (5.000 TL) sonuçlandırılacak (geçici madde 24).",
+            "Eski sınırlar vergi borcu için 2018'den, prim borcu için 2024'ten beri uygulanıyordu."
+          ],
+          "yururluk": "15 Kasım 2026 (yayımından 30 gün sonra)",
+          "kimi": "Kamu ihalelerine katılan firmalar, yükleniciler ve ihale yapan idareler"
+        },
+        {
+          "baslik": "Ekotasarım ve enerji etiketi tebliğleri (SGM-2026/7–10) – Sanayi ve Teknoloji Bakanlığı",
+          "aciklama": "Harici güç kaynakları, kablosuz şarj cihazları/pedleri, taşınabilir batarya şarj cihazları ve USB Tip-C kablolar için AB'nin 2025/2052 sayılı düzenlemesine uyumlu yeni çevreye duyarlı tasarım kuralları getirildi; 2020 tarihli önceki düzenlemenin yerini alıyor. Ayrıca bekleme modu tüketimi ve çamaşır kurutma makinelerine ilişkin tebliğlerde değişiklik yapıldı.",
+          "detaylar": [
+            "49 W'a kadar tek gerilimli AC-DC adaptörlerde yüksüz tüketim en fazla 0,075 W, çoklu gerilimli uyarlanabilir adaptörlerde 0,300 W olacak; 10 W üzeri adaptörlerde ortalama ve düşük yük verimliliği zorunlu.",
+            "Adaptörler birlikte çalışabilir olacak: en az bir USB Tip-C/USB-PD çıkışı ve sabit kablo olmaması şartı; taşınabilir bataryalar ve bazı kablosuz şarj cihazlarında da USB-C şartı var.",
+            "USB-C kabloların üzerinde desteklediği güce göre '60W' veya '240W' ibaresi bulunacak; uyumlu adaptörlerde Ortak Şarj Cihazı logosu kullanılacak.",
+            "Üreticiler model bilgilerini son ürün piyasaya sürüldükten sonra en az 10 yıl internette ücretsiz yayımlayacak.",
+            "Kurutma makinesi tebliğlerinde (SGM-2026/9 vb.) teknik uyum değişiklikleri yapıldı; ör. SGM-2024/3'ün 6. maddesi kaldırıldı."
+          ],
+          "yururluk": "Şarj cihazı kurallarının büyük bölümü 14 Aralık 2028'de; bazı geçiş hükümleri 2030 ve 2033'e kadar",
+          "kimi": "Elektronik cihaz ve şarj aksesuarı üreticileri, ithalatçılar ve tüketiciler"
+        }
+      ]
+    },
+    {
+      "baslik": "Kurul Kararları",
+      "maddeler": [
+        {
+          "baslik": "Kültür Varlıklarını Koruma Yüksek Kurulu ilke kararı (No. 4390)",
+          "aciklama": "Kültürel mirasın korunmasına yönelik yeni bir ilke kararı yayımlandı."
+        }
+      ]
+    },
+    {
+      "baslik": "Yargı Bölümü",
+      "maddeler": [
+        {
+          "baslik": "Anayasa Mahkemesi kararları",
+          "aciklama": "Siyasi partilerin mali denetimine ilişkin 33 karar ile 3 bireysel başvuru kararı yayımlandı."
+        }
+      ]
+    },
+    {
+      "baslik": "İlan Bölümü",
+      "maddeler": [
+        {
+          "baslik": "Yargı, ihale ve çeşitli ilanlar; döviz kurları",
+          "aciklama": "Günlük ilanlar ile TCMB döviz kurları ve DİBS günlük değerleri."
+        }
+      ]
+    }
   ],
   "kaynaklar": [
-    { "ad": "Bloomberg HT – Resmi Gazete'de bugün (16.10.2026)", "url": "https://www.bloomberght.com/resmi-gazete-de-bugun-16102026-3791526" },
-    { "ad": "Politikam – 16 Ekim 2026 Resmî Gazete atama kararları", "url": "https://www.politikam.com/16-ekim-2026-resmi-gazete-atama-kararlari-tam-liste" },
-    { "ad": "Sabah – 16 Ekim 2026 Resmi Gazete atama kararları", "url": "https://www.sabah.com.tr/yasam/resmi-gazetede-yeni-atama-kararlari-16-ekim-2026-resmi-gazete-kararlari-neler-7681731" },
-    { "ad": "Türkgün – 16 Ekim Resmî Gazete kararları", "url": "https://www.turkgun.com/gundem/16-ekim-2026-resm-gazete-kararlari-atamalar-ve-yeni-duzenlemeler/407508" }
+    {
+      "ad": "Bloomberg HT – Resmi Gazete'de bugün (16.10.2026)",
+      "url": "https://www.bloomberght.com/resmi-gazete-de-bugun-16102026-3791526"
+    },
+    {
+      "ad": "Politikam – 16 Ekim 2026 Resmî Gazete atama kararları",
+      "url": "https://www.politikam.com/16-ekim-2026-resmi-gazete-atama-kararlari-tam-liste"
+    },
+    {
+      "ad": "Sabah – 16 Ekim 2026 Resmi Gazete atama kararları",
+      "url": "https://www.sabah.com.tr/yasam/resmi-gazetede-yeni-atama-kararlari-16-ekim-2026-resmi-gazete-kararlari-neler-7681731"
+    },
+    {
+      "ad": "Türkgün – 16 Ekim Resmî Gazete kararları",
+      "url": "https://www.turkgun.com/gundem/16-ekim-2026-resm-gazete-kararlari-atamalar-ve-yeni-duzenlemeler/407508"
+    },
+    {
+      "ad": "Memurlar.net – Kamu ihalelerinde borç sınırı 50 bin liraya çıkarıldı",
+      "url": "https://www.memurlar.net/haber/1181139/kamu-ihalelerinde-borc-siniri-50-bin-liraya-cikarildi.html"
+    },
+    {
+      "ad": "Memurlar.net – POLSAN'da denetim yetkisi İçişleri Bakanlığına geçti",
+      "url": "https://www.memurlar.net/haber/1181138/polsan-da-denetim-yetkisi-icisleri-bakanligina-gecti.html"
+    },
+    {
+      "ad": "Hukuki Haber – Makine Emniyeti Yönetmeliği (2023/1230/AB)",
+      "url": "https://www.hukukihaber.net/makine-emniyeti-yonetmeligi-20231230ab"
+    },
+    {
+      "ad": "Ekonomim – Şarj cihazları ve kablolarında yeni dönem",
+      "url": "https://www.ekonomim.com/gundem/sarj-cihazlari-ve-kablolarinda-yeni-donem-kurallar-degisiyor-haberi-925032"
+    },
+    {
+      "ad": "Doğu Gazetesi – Er ve erbaşlara havalimanlarında hizmet muafiyeti",
+      "url": "https://www.dogugazetesi.com/er-ve-erbaslara-havalimanlarinda-hizmet-muafiyeti-geldi"
+    },
+    {
+      "ad": "Yeni Şafak – 16 Ekim 2026 Resmi Gazete kararları",
+      "url": "https://www.yenisafak.com/galeri/ozgun/resmi-gazete-16-ekim-2026-kararlari-bugun-resmi-gazetede-neler-var-yeni-kararlar-neler-atamalar-yonetmelikler-ve-tebligler-4864692"
+    }
   ]
 }
