@@ -151,6 +151,12 @@
   .modal th { color: var(--muted); font-weight: 500; font-size: 12px; }
   .pos { color: var(--win); }
   .neg { color: var(--red); }
+  .opts { text-align: left; margin-bottom: 10px; }
+  .opts label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 5px; }
+  .seg { display: flex; gap: 4px; background: #111; border: 1px solid var(--line); border-radius: 12px; padding: 3px; }
+  .seg button { flex: 1; padding: 8px 4px; border: none; border-radius: 9px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
+  .seg button.on { background: var(--accent); color: #000; }
+  .modal { max-height: 92vh; overflow-y: auto; }
   .modal .btn { width: 100%; background: var(--accent); border-color: var(--accent); color: #000; }
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
 </style>
@@ -198,6 +204,13 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 let scores = [0, 0, 0, 0];
 let dealer = 3;
+// Oyun ayarları
+let OPT = { eller: 5, arti3: true, yuk: true, esli: false };
+try { Object.assign(OPT, JSON.parse(localStorage.getItem("batakOpt") || "{}")); } catch (e) {}
+let roundNo = 0;
+const partner = (p) => (p + 2) % 4;
+const sameSide = (a, b) => a === b || (OPT.esli && partner(a) === b);
+const sideTricks = (p) => tricks[p] + (OPT.esli ? tricks[partner(p)] : 0);
 let hands, bids, active, highBid, highBidder, bidder, contract, trump, trumpBroken;
 let trick, turn, tricks, played, phase, busy = false;
 
@@ -253,7 +266,8 @@ function legal(hand) {
   const best = trickWinner(trick).card;
   const same = hand.filter((c) => c.s === led);
   if (same.length) {
-    if (best.s === led) {
+    // Yükseltmeli: renge uyarken yükseltmek zorunlu. Yükseltmesiz: yalnızca koz açıldıysa yükseltilir.
+    if (best.s === led && (OPT.yuk || led === trump)) {
       const higher = same.filter((c) => c.r > best.r);
       if (higher.length) return higher;
     }
@@ -316,8 +330,13 @@ function botPick(p) {
     return lowest(L);
   }
   const led = trick[0].card.s;
-  const best = trickWinner(trick).card;
+  const bw = trickWinner(trick), best = bw.card;
   const winning = L.filter((c) => beats(c, best, led));
+  const losing = L.filter((c) => !beats(c, best, led));
+  // +3 kuralı: ihale tarafı zaten ihale+2'ye ulaştıysa el almaktan kaçın
+  if (OPT.arti3 && sameSide(p, bidder) && sideTricks(bidder) >= contract + 2 && losing.length) return [...losing].sort((a, b) => b.r - a.r)[0];
+  // Eşli: eli ortak alıyorsa ve garantiyse üstüne çıkma
+  if (OPT.esli && bw.p === partner(p) && losing.length && (trick.length === 3 || isBoss(best, hand) || best.s === trump)) return lowest(losing);
   if (winning.length) {
     const asc = [...winning].sort((a, b) => a.r - b.r);
     if (trick.length === 3) return asc[0];
@@ -333,10 +352,10 @@ function setStatus(t) { $("status").innerHTML = t; }
 function renderInfo() {
   const k = trump ? `<b style="color:${isRed(trump) ? "var(--red)" : "var(--ink)"}">${trump} ${SUIT_NAMES[trump]}</b>` : "–";
   const i = bidder != null && contract ? `<b>${contract}</b> · ${NAMES[bidder]}` : "–";
-  $("info").innerHTML = `Koz: ${k}<br>İhale: ${i}`;
-  $("scores").innerHTML = scores
-    .map((s, p) => `<div>${NAMES[p]}<b class="${s < 0 ? "neg" : ""}">${s}</b></div>`)
-    .join("");
+  $("info").innerHTML = `El: <b>${Math.max(1, roundNo)}/${OPT.eller}</b> · Koz: ${k}<br>İhale: ${i}`;
+  $("scores").innerHTML = OPT.esli
+    ? `<div style="grid-column:span 2">Sen + Sadolayn<b class="${scores[0] < 0 ? "neg" : ""}">${scores[0]}</b></div><div style="grid-column:span 2">Sadosan + Sadocan<b class="${scores[1] < 0 ? "neg" : ""}">${scores[1]}</b></div>`
+    : scores.map((s, p) => `<div>${NAMES[p]}<b class="${s < 0 ? "neg" : ""}">${s}</b></div>`).join("");
 }
 function renderSeats() {
   for (let p = 0; p < 4; p++) {
@@ -345,9 +364,9 @@ function renderSeats() {
     if (phase === "bid") {
       bd = bids[p] == null ? "…" : bids[p] === "pas" ? "Pas" : `İhale ${bids[p]}`;
     } else {
-      bd = `Aldı: ${tricks[p]}` + (p === bidder ? ` / ${contract}` : "");
+      bd = `Aldı: ${tricks[p]}` + (sameSide(p, bidder) ? ` · ${OPT.esli ? "Taraf " + sideTricks(p) : ""} / ${contract}`.replace("·  /", "/") : "");
     }
-    el.innerHTML = `<div class="nm">${NAMES[p]}</div><div class="bd">${bd}</div>`;
+    el.innerHTML = `<div class="nm">${NAMES[p]}${OPT.esli && p === 2 ? " 🤝" : ""}</div><div class="bd">${bd}</div>`;
     el.classList.toggle("turn", turn === p && (phase === "bid" || phase === "play"));
     el.classList.toggle("bidder", phase !== "bid" && p === bidder);
   }
@@ -381,6 +400,7 @@ function render() { renderInfo(); renderSeats(); renderHand(); }
 
 // ---------- El dağıtımı ----------
 function newRound() {
+  roundNo++;
   dealer = (dealer + 1) % 4;
   const d = newDeck();
   hands = [0, 1, 2, 3].map((i) => d.slice(i * 13, i * 13 + 13));
@@ -415,7 +435,7 @@ async function bidTurn() {
   } else {
     setStatus(`${NAMES[turn]} düşünüyor…`);
     await wait(750);
-    const want = Math.floor(estimate(hands[turn]));
+    const want = Math.floor(estimate(hands[turn]) + (OPT.esli ? 1.5 : 0));
     const min = Math.max(4, highBid + 1);
     doBid(turn, want >= min && min <= 13 ? min : "pas");
   }
@@ -527,48 +547,83 @@ async function playCard(p, c) {
 // ---------- Puanlama ----------
 function endRound() {
   phase = "end";
-  const deltas = [0, 1, 2, 3].map((p) => {
-    if (p === bidder) return tricks[p] >= contract ? tricks[p] : -contract;
-    return tricks[p];
-  });
+  const side = sideTricks(bidder);
+  const over = OPT.arti3 && side >= contract + 3;
+  const made = side >= contract && !over;
+  let deltas;
+  if (OPT.esli) {
+    const bs = made ? side : -contract, os = 13 - side;
+    deltas = [0, 1, 2, 3].map((p) => (sameSide(p, bidder) ? bs : os));
+  } else {
+    deltas = [0, 1, 2, 3].map((p) => (p === bidder ? (made ? tricks[p] : -contract) : tricks[p]));
+  }
   deltas.forEach((d, p) => (scores[p] += d));
   saveScores();
   render();
-  const made = tricks[bidder] >= contract;
-  const title = made
-    ? (bidder === 0 ? "🎉 İhaleyi tuttun!" : `${NAMES[bidder]} ihaleyi tuttu`)
-    : (bidder === 0 ? "😬 Battın!" : `${NAMES[bidder]} battı!`);
-  const rows = [0, 1, 2, 3].map((p) => `
-    <tr><td style="text-align:left">${NAMES[p]}${p === bidder ? " 👑" : ""}</td>
-    <td>${tricks[p]}</td>
-    <td class="${deltas[p] < 0 ? "neg" : "pos"}">${deltas[p] > 0 ? "+" : ""}${deltas[p]}</td>
-    <td><b>${scores[p]}</b></td></tr>`).join("");
+  const who = OPT.esli ? (sameSide(0, bidder) ? "Tarafınız" : "Rakip taraf") : bidder === 0 ? "Sen" : NAMES[bidder];
+  const title = made ? (sameSide(0, bidder) ? "🎉 İhale tuttu!" : `${who} ihaleyi tuttu`)
+    : over ? `🔥 ${who} +3 yaptı, yandı!` : (sameSide(0, bidder) ? "😬 Battın!" : `${who} battı!`);
+  const rows = OPT.esli
+    ? [[0, "Sen + Sadolayn"], [1, "Sadosan + Sadocan"]].map(([p, n]) => `<tr><td style="text-align:left">${n}${sameSide(p, bidder) ? " 👑" : ""}</td><td>${tricks[p] + tricks[partner(p)]}</td><td class="${deltas[p] < 0 ? "neg" : "pos"}">${deltas[p] > 0 ? "+" : ""}${deltas[p]}</td><td><b>${scores[p]}</b></td></tr>`).join("")
+    : [0, 1, 2, 3].map((p) => `<tr><td style="text-align:left">${NAMES[p]}${p === bidder ? " 👑" : ""}</td><td>${tricks[p]}</td><td class="${deltas[p] < 0 ? "neg" : "pos"}">${deltas[p] > 0 ? "+" : ""}${deltas[p]}</td><td><b>${scores[p]}</b></td></tr>`).join("");
+  const last = roundNo >= OPT.eller;
   $("modal").innerHTML = `
     <h2>${title}</h2>
-    <p>İhale ${contract} · Alınan ${tricks[bidder]} · Koz ${trump}</p>
+    <p>El ${roundNo}/${OPT.eller} · İhale ${contract} · Alınan ${side}${over ? " (ihale+3)" : ""} · Koz ${trump}</p>
     <table><tr><th></th><th>El</th><th>Puan</th><th>Toplam</th></tr>${rows}</table>
-    <button class="btn" id="next">Sonraki el</button>
-    <button class="btn" id="reset" style="margin-top:8px;background:transparent;color:var(--muted);border-color:var(--line)">Puanları sıfırla</button>`;
+    <button class="btn" id="next">${last ? "Sonucu gör" : "Sonraki el"}</button>`;
   $("overlay").classList.add("show");
-  $("next").onclick = () => { $("overlay").classList.remove("show"); newRound(); };
-  $("reset").onclick = () => { scores = [0, 0, 0, 0]; saveScores(); $("overlay").classList.remove("show"); newRound(); };
+  $("next").onclick = () => { $("overlay").classList.remove("show"); last ? gameOver() : newRound(); };
   setStatus("");
+}
+function gameOver() {
+  phase = "idle";
+  let rows, win;
+  if (OPT.esli) {
+    const a = scores[0], b = scores[1];
+    win = a === b ? "Berabere!" : a > b ? "🎉 Siz kazandınız! (Sen + Sadolayn)" : "Sadosan + Sadocan kazandı";
+    rows = `<tr><td style="text-align:left">Sen + Sadolayn</td><td><b>${a}</b></td></tr><tr><td style="text-align:left">Sadosan + Sadocan</td><td><b>${b}</b></td></tr>`;
+  } else {
+    const order = [0, 1, 2, 3].sort((x, y) => scores[y] - scores[x]);
+    win = order[0] === 0 ? "🎉 Kazandın!" : `${NAMES[order[0]]} kazandı`;
+    rows = order.map((p, i) => `<tr><td style="text-align:left">${["🥇", "🥈", "🥉", "4."][i]} ${NAMES[p]}</td><td><b>${scores[p]}</b></td></tr>`).join("");
+  }
+  $("modal").innerHTML = `<h2>${win}</h2><p>${OPT.eller} el tamamlandı</p><table>${rows}</table><button class="btn" id="again">Yeni oyun</button>`;
+  $("overlay").classList.add("show");
+  $("again").onclick = () => showRules();
 }
 
 // ---------- Başlangıç ----------
 function showRules() {
+  const seg = (k, opts) => `<div class="seg" data-k="${k}">${opts.map(([v, t]) => `<button type="button" data-v="${v}" class="${String(OPT[k]) === String(v) ? "on" : ""}">${t}</button>`).join("")}</div>`;
   $("modal").innerHTML = `
     <h2>♠ İhaleli Batak</h2>
+    <div class="opts">
+      <label>Kaç el oynanacak?</label>${seg("eller", [[1, "1"], [3, "3"], [5, "5"], [10, "10"]])}
+      <label>Oyun şekli</label>${seg("esli", [[false, "Eşsiz (tekli)"], [true, "Eşli (Sen + Sadolayn)"]])}
+      <label>Yükseltme</label>${seg("yuk", [[true, "Yükseltmeli (kanlı)"], [false, "Yükseltmesiz"]])}
+      <label>İhale +3 kuralı</label>${seg("arti3", [[true, "+3 yapan yanar"], [false, "Kapalı"]])}
+    </div>
     <ul class="rules">
-      <li>Herkese 13 kart dağıtılır. En yüksek ihaleyi (en az 4) veren kozu seçer ve ilk kartı açar.</li>
-      <li>Yerdeki rengi atmak zorundasın; atabiliyorsan <b>yükseltmek</b> zorundasın.</li>
-      <li>O renk yoksa <b>koz</b> atmalısın (yükseltebiliyorsan yükselt).</li>
-      <li>Koz oynanmadan kozla el açılamaz.</li>
-      <li>İhaleyi tutan aldığı el kadar, tutamayan ihale kadar eksi yazar. Diğerleri aldığı el kadar puan alır.</li>
+      <li>En yüksek ihaleyi (en az 4) veren kozu seçer ve ilk kartı açar. Koz oynanmadan kozla el açılamaz.</li>
+      <li><b>Yükseltmeli:</b> yerdeki rengi atarken büyüğünü atmak zorundasın. <b>Yükseltmesiz:</b> renge uyman yeter; yalnızca <b>koz</b> yükseltilir.</li>
+      <li>O renk yoksa koz atmalısın (yükseltebiliyorsan yükselt).</li>
+      <li>İhaleyi tutan aldığı el kadar, tutamayan ihale kadar eksi yazar. <b>+3 kuralı açıksa</b> ihalenin 3 ve fazla üstüne çıkan da yanar.</li>
+      <li><b>Eşli:</b> karşındaki oyuncu eşindir; ihale ve puan iki kişinin aldığı ellerin toplamıyla hesaplanır.</li>
     </ul>
     <button class="btn" id="start">Başla</button>`;
   $("overlay").classList.add("show");
-  $("start").onclick = () => { $("overlay").classList.remove("show"); newRound(); };
+  $("modal").querySelectorAll(".seg").forEach((g) => (g.onclick = (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    const k = g.dataset.k, v = b.dataset.v;
+    OPT[k] = v === "true" ? true : v === "false" ? false : +v;
+    g.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+  }));
+  $("start").onclick = () => {
+    try { localStorage.setItem("batakOpt", JSON.stringify(OPT)); } catch (e) {}
+    scores = [0, 0, 0, 0]; roundNo = 0; saveScores();
+    $("overlay").classList.remove("show"); newRound();
+  };
 }
 renderInfo();
 showRules();
