@@ -163,10 +163,13 @@
   .qopts button { padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: #161616; color: var(--ink); font-size: 15px; font-weight: 600; cursor: pointer; text-align: left; }
   .qopts button.ok { border-color: #3fc283; background: rgba(63,194,131,.15); }
   .qopts button.bad { border-color: #e0473a; background: rgba(224,71,58,.15); }
-  .plbl { text-align: center; font-size: 12px; color: var(--accent); margin-top: 4px; }
-  #phand { min-height: 70px; padding-top: 10px; }
-  #phand .card { transform: scale(.85); transform-origin: top center; }
-  #phand .card.ok { transform: scale(.85) translateY(-8px); }
+  #pwrap { position: absolute; top: 58px; left: 0; right: 0; z-index: 2; display: flex; justify-content: center; pointer-events: none; }
+  #phand { padding: 8px 0 0; min-height: 0; transform: scale(.76); transform-origin: top center; pointer-events: auto; }
+  #phand .card { margin-left: -27px; }
+  #phand .card.no { opacity: .6; }
+  #phand .card:first-child { margin-left: 0; }
+  #phand .card.ok { transform: translateY(8px); }
+  .table.ph .slot-n { top: 140px; }
   .seg button:disabled { opacity: .35; cursor: not-allowed; }
   .modal .btn { width: 100%; background: var(--accent); border-color: var(--accent); color: #000; }
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
@@ -184,6 +187,7 @@
 
 <div class="table" id="table">
   <div class="seat seat-n" id="seat2"></div>
+  <div id="pwrap" style="display:none"><div class="hand" id="phand"></div></div>
   <div class="seat seat-w" id="seat3"></div>
   <div class="seat seat-e" id="seat1"></div>
   <div class="seat seat-s" id="seat0"></div>
@@ -196,7 +200,6 @@
 <div class="status" id="status"></div>
 <div class="panel" id="bidPanel"></div>
 <div class="panel" id="trumpPanel"></div>
-<div id="pwrap" style="display:none"><div class="plbl">🤝 Eşinin kartları (Sadolayn) — ihale sende, ikisini de sen oynuyorsun</div><div class="hand" id="phand"></div></div>
 <div class="hand" id="hand"></div>
 
 <div class="overlay" id="overlay">
@@ -449,6 +452,7 @@ function renderHand() {
   handInto("hand", 0);
   const showP = OPT.esli && bidder === 0 && phase === "play";
   $("pwrap").style.display = showP ? "" : "none";
+  $("table").classList.toggle("ph", showP);
   if (showP) handInto("phand", 2);
 }
 function render() { renderInfo(); renderSeats(); renderHand(); }
