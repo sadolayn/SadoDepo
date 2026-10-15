@@ -174,11 +174,8 @@
     </div>
     <div class="card emp">
       <h2>🧮 Vadesiz başabaş</h2>
-      <p class="hint">Anaparanın bir kısmı vadesizde kalırsa, müşterinin aynı net getiriyi alması için kalan tutara verilmesi gereken oran. Vadesizde müşteri faiz almaz, banka politika faiziyle kazanır. Anapara, faiz, vade ve stopaj yukarıdan alınır.</p>
-      <div class="two">
-        <div><label>Politika faizi</label><div class="field"><input id="v_pf" type="text" inputmode="decimal" value="37"><span class="unit">%</span></div></div>
-        <div><label>Asgari vadesiz</label><div class="field"><input id="v_min" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div></div>
-      </div>
+      <p class="hint">Anaparanın bir kısmı vadesizde kalırsa, müşterinin aynı net getiriyi alması için kalan tutara verilmesi gereken oran. Anapara, faiz, vade ve stopaj yukarıdan alınır.</p>
+      <label>Asgari vadesiz</label><div class="field"><input id="v_min" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div>
       <div class="two">
         <div><label>1. barem</label><div class="field"><input id="v_p1" type="text" inputmode="decimal" value="10"><span class="unit">%</span></div></div>
         <div><label>2. barem</label><div class="field"><input id="v_p2" type="text" inputmode="decimal" value="20"><span class="unit">%</span></div></div>
@@ -425,33 +422,28 @@ function quarterEnds(from, n) {
   }
   return out;
 }
-let vPfManual = false;
 function calcBreak(P, r, g, start) {
   const sMan = stopajManual ? num("m_stopaj") / 100 : null;
-  if (!vPfManual && PPK.last && PPK.last.rate != null) $("v_pf").value = String(PPK.last.rate).replace(".", ",");
-  const pf = num("v_pf") / 100, mn = num("v_min");
+  const mn = num("v_min");
   if (!P || !g || !r) { $("v_target").textContent = "–"; $("v_out").innerHTML = ""; return; }
   const target = netFor(P, r, g, start, sMan);
   $("v_target").textContent = tl(target);
   const unit = (amt) => netFor(amt, 1, g, start, sMan); // %100 oranla net getiri (oranı bulmak için)
   const sc = [num("v_p1"), num("v_p2")].filter((x) => x > 0).map((pc) => {
     const vad = Math.min(P, Math.max(mn, P * pc / 100));
-    const vVal = netFor(vad, pf, g, start, sMan);          // bankanın vadesizden politika faiziyle kazancı (net eşdeğer)
     const rest = P - vad;
     const u = rest > 0 ? unit(rest) : 0;
-    const rMin = u ? target / u : NaN;                      // müşteri aynı neti alsın
-    const rMax = u ? (target + vVal) / u : NaN;             // banka kazancını da aktarırsa (başabaş)
-    return { pc, vad, vVal, rest, rMin, rMax, nMax: target + vVal };
+    const rMin = u ? target / u : NaN;                      // müşteri kalan tutarla aynı neti alsın
+    return { pc, vad, rest, rMin };
   });
   const pr = (x) => isFinite(x) ? "%" + nfx(Math.round(x * 10000) / 100) : "–";
   $("v_out").innerHTML = sc.map((x) => `<div class="rows" style="margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:4px 12px">
       <div style="font-weight:700;color:var(--accent)"><span>%${nfx(x.pc)} barem${P * x.pc / 100 < mn && x.vad === mn ? " (asgari " + tl(mn) + ")" : ""}</span><span></span></div>
       <div><span>Vadesizde kalan (müşteriye faiz yok)</span><span>${tl(x.vad)}</span></div>
       <div><span>Vadeliye giden tutar</span><span>${tl(x.rest)}</span></div>
-      
-      <div class="total"><span>Başabaş faiz oranı (kalan tutar)</span><span>${pr(x.rMax)}</span></div>
+      <div class="total"><span>Başabaş faiz oranı (kalan tutar)</span><span>${pr(x.rMin)}</span></div>
     </div>`).join("");
-  $("v_note").textContent = `Başabaş faiz oranı: vadesiz kısım politika faiziyle (%${nfx(pf * 100)}) değerlendirildiğinde kalan tutara verilebilecek en yüksek oran. Bu oranın altındaki her teklif banka lehinedir.`;
+  $("v_note").textContent = `Başabaş faiz oranı: müşterinin kalan tutarla aynı net faizi (${tl(target)}) alması için gereken oran. Bu oranın altındaki teklif müşteriye daha az, üstündeki daha fazla net faiz getirir.`;
 }
 
 function calcExtra(P, r, g, start) {
@@ -513,7 +505,6 @@ function calcExtra(P, r, g, start) {
     return `<div style="${k < 0 ? "opacity:.45" : ""}"><span>${fdtw(d)} ${d.getFullYear()}</span><span>${k < 0 ? "yapıldı" : k === 0 ? "bugün" : k + " gün"}</span></div>`; }).join("");
 }
 let m2GunManual = false;
-$("v_pf").addEventListener("input", () => (vPfManual = true));
 
 $("m2_gun").addEventListener("input", () => (m2GunManual = true));
 const nfx = (v) => Number(v).toLocaleString("tr-TR", { maximumFractionDigits: 2 });
