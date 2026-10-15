@@ -40,6 +40,7 @@
   .sos { display: flex; gap: 8px; margin: 4px 0 2px; }
   .sos a { flex: 1; text-align: center; text-decoration: none; padding: 10px; border-radius: 12px; font-weight: 700; font-size: 14px; }
   .sos .r { background: rgba(224,71,58,.15); border: 1px solid #7a2e28; color: #ffb3aa; }
+  .sos .e { background: rgba(224,71,58,.12); border: 1px solid #7a2e28; color: #ffc9c2; }
   .sos .g { background: rgba(224,162,79,.1); border: 1px solid #6b5326; color: #f3d19a; }
   #panel { display: none; scroll-margin-top: var(--stickH, 150px); }
   #panel.show { display: block; }
@@ -58,6 +59,7 @@
   .fsbot { display: flex; gap: 6px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); background: #000; border-top: 1px solid #222; }
   .fsbot a { flex: 1; text-align: center; text-decoration: none; padding: 11px 4px; border-radius: 11px; font-weight: 700; font-size: 13px; }
   .fsbot .r { background: #1d2a6b; border: 1px solid #3a50f0; color: #dfe4ff; }
+  .fsbot .e { background: rgba(224,71,58,.12); border: 1px solid #7a2e28; color: #ffc9c2; flex: .8; }
   .fsbot .g { background: rgba(224,162,79,.12); border: 1px solid #6b5326; color: #f3d19a; }
   .fsbot .b { background: #1a2a4a; border: 1px solid #2f4f8f; color: #b9cdff; }
   .fsopen { width: 100%; margin: -2px 0 10px; padding: 9px; border-radius: 10px; border: 1px dashed var(--accent); background: transparent; color: var(--accent); font: inherit; font-size: 13px; cursor: pointer; }
@@ -104,7 +106,7 @@
   <div id="fs"><div class="fsbar"><b id="fstitle"></b><button type="button" id="fsclose">📋 Liste ✕</button></div>
     <div class="fsrad rad" data-rad><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div>
     <iframe id="fsmap" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
-    <div class="fsbot"><a class="r" id="fsisb" href="#">🏦 İş Bankası şubeleri</a><a class="g" id="fsnobet" href="#" target="_blank" rel="noopener">💊 Nöbetçi eczane</a><a class="b" id="fsgm" href="#" target="_blank" rel="noopener">🗺️ Google'da tüm sonuçlar</a></div></div>
+    <div class="fsbot"><a class="r" id="fsisb" href="#">🏦 İş Bankası</a><a class="g" id="fsnobet" href="#">💊 Nöbetçi</a><a class="e" href="https://www.turkiye.gov.tr/arama?aranan=n%C3%B6bet%C3%A7i+eczane" target="_blank" rel="noopener">🏛️ e-Devlet</a><a class="b" id="fsgm" href="#" target="_blank" rel="noopener">🗺️ Google'da aç</a></div></div>
   <div id="panel">
     <div class="phead"><b id="ptitle"></b><small id="pcount"></small></div>
     <div class="rad prad" data-rad><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div>
@@ -192,7 +194,7 @@ function applyMapMode() {
   $("map").style.display = mapMode === "o" ? "" : "none";
   if (mapMode === "o" && map) setTimeout(() => map.invalidateSize(), 50);
 }
-let fsSrc = "";
+let fsSrc = "", NOSCROLL = false;
 function setGmap(c) {
   if (!S.place) return;
   const q = (GQ[c.k] || c.n.toLowerCase()) + " " + (S.place.name || "").replace(/^📡\s*/, "");
@@ -210,9 +212,11 @@ const STALE = S.place && !S.place.gps && S.place.v !== 2;
 const save = () => { try { localStorage.setItem("yakin_v1", JSON.stringify({ place: S.place, r: S.r })); } catch (e) {} };
 
 // Kategori ızgarası
-$("cats").innerHTML = GROUPS.map(([g, l]) => `<h2>${g}</h2>${g.startsWith("🚨") ? `<div class="sos"><a class="g" id="nobet" href="#" target="_blank" rel="noopener">💊 Nöbetçi eczane</a></div>` : ""}<div class="grid">${l.map(([k, e, n]) => `<button class="tile" data-k="${k}"><div class="e">${e}</div><div class="n">${n}</div></button>`).join("")}</div>`).join("");
-$("fsisb").addEventListener("click", (e) => { e.preventDefault(); if (S.cat === "isbank") return; openCat("isbank"); setTimeout(() => { if (fsSrc) { $("fsmap").src = fsSrc; openFsUpdate(); } }, 0); });
-$("cats").addEventListener("click", (e) => { const t = e.target.closest(".tile"); if (!t) return; openCat(t.dataset.k); if (S.place) openFs(); });
+$("cats").innerHTML = GROUPS.map(([g, l]) => `<h2>${g}</h2>${g.startsWith("🚨") ? `<div class="sos"><a class="g" id="nobet" href="#">💊 Nöbetçi eczane · Google</a><a class="e" href="https://www.turkiye.gov.tr/arama?aranan=n%C3%B6bet%C3%A7i+eczane" target="_blank" rel="noopener">🏛️ Nöbetçi eczane · e-Devlet</a></div>` : ""}<div class="grid">${l.map(([k, e, n]) => `<button class="tile" data-k="${k}"><div class="e">${e}</div><div class="n">${n}</div></button>`).join("")}</div>`).join("");
+$("nobet").addEventListener("click", (e) => { e.preventDefault(); openNobet(); });
+$("fsnobet").addEventListener("click", (e) => { e.preventDefault(); openNobet(); });
+$("fsisb").addEventListener("click", (e) => { e.preventDefault(); openCat("isbank"); setTimeout(() => { if (fsSrc) { $("fsmap").src = fsSrc; openFsUpdate(); } }, 0); });
+$("cats").addEventListener("click", (e) => { const t = e.target.closest(".tile"); if (!t) return; NOSCROLL = !!S.place; openCat(t.dataset.k); NOSCROLL = false; if (S.place) openFs(); });
 
 function renderRad() { document.querySelectorAll("[data-rad] button").forEach((b) => b.classList.toggle("on", +b.dataset.r === S.r)); }
 document.querySelectorAll("[data-rad]").forEach((g) => (g.onclick = (e) => {
@@ -223,7 +227,6 @@ function setPlace(p) {
   if (p) p.v = 2;
   S.place = p; save();
   $("plabel").innerHTML = p ? `📍 <b>${p.name}</b>` : "Konum seçilmedi";
-  $("nobet").href = p ? `https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane/@${p.lat},${p.lon},14z` : "https://www.turkiye.gov.tr/arama?aranan=n%C3%B6bet%C3%A7i+eczane";
   if (S.cat) openCat(S.cat);
 }
 
@@ -332,7 +335,7 @@ async function openCat(k) {
   const { lat, lon } = S.place;
   if (map) { map.setView([lat, lon], S.r <= 1000 ? 15 : S.r <= 3000 ? 14 : S.r <= 5000 ? 13 : 12); setTimeout(() => map.invalidateSize(), 50); layer.clearLayers(); L.circleMarker([lat, lon], { radius: 8, color: "#fff", weight: 2, fillColor: "#4a7dff", fillOpacity: 1 }).addTo(layer).bindPopup(S.place.name); L.circle([lat, lon], { radius: S.r, color: "#e0a24f", weight: 1, fillOpacity: 0.03 }).addTo(layer); }
   $("plist").innerHTML = '<div class="msg">Yükleniyor…</div>';
-  $("panel").scrollIntoView({ behavior: "smooth", block: "start" });
+  if (!NOSCROLL) $("panel").scrollIntoView({ behavior: "smooth", block: "start" });
   const id = ++reqId;
   const q = `[out:json][timeout:25];(${c.sel.map((s) => `${s}(around:${S.r},${lat},${lon});`).join("")});out center tags 150;`;
   try {
@@ -374,6 +377,16 @@ function openFsUpdate() {
   $("fsgm").href = `https://www.google.com/maps/search/${term}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`;
   $("fsisb").style.display = S.cat === "isbank" ? "none" : "";
 }
+// Nöbetçi eczane: Google haritasını sayfa içinde tam ekran aç
+function openNobet() {
+  if (!S.place) { alert("Önce konum ara ya da 📍 ile konumunu kullan. İstersen e-Devlet'ten de bakabilirsin."); return; }
+  const ll = `${(+S.place.lat).toFixed(5)},${(+S.place.lon).toFixed(5)}`;
+  $("fstitle").textContent = `💊 Nöbetçi eczane · ${(S.place.name || "").replace(/^📡\s*/, "")}`;
+  $("fsmap").src = `https://maps.google.com/maps?q=n%C3%B6bet%C3%A7i+eczane+near+${ll}&z=14&hl=tr&output=embed`;
+  $("fsgm").href = `https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane/@${ll},14z`;
+  $("fsisb").style.display = "";
+  if (!$("fs").classList.contains("show")) { $("fs").classList.add("show"); document.body.style.overflow = "hidden"; try { history.pushState({ fs: 1 }, ""); } catch (e) {} }
+}
 function openFs() {
   if (!fsSrc || !S.cat) return;
   const c = CAT[S.cat];
@@ -381,7 +394,6 @@ function openFs() {
   if ($("fsmap").src !== fsSrc) $("fsmap").src = fsSrc;
   const term = encodeURIComponent(GQ[c.k] || c.n.toLowerCase());
   $("fsgm").href = `https://www.google.com/maps/search/${term}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`;
-  $("fsnobet").href = `https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane/@${S.place.lat},${S.place.lon},14z`;
   $("fsisb").style.display = S.cat === "isbank" ? "none" : "";
   $("fs").classList.add("show"); document.body.style.overflow = "hidden";
   try { history.pushState({ fs: 1 }, ""); } catch (e) {}
@@ -390,6 +402,7 @@ function closeFs(fromPop) {
   if (!$("fs").classList.contains("show")) return;
   $("fs").classList.remove("show"); document.body.style.overflow = "";
   if (!fromPop) try { history.back(); } catch (e) {}
+  if (S.cat && $("panel").classList.contains("show")) setTimeout(() => $("panel").scrollIntoView({ block: "start" }), 60);
 }
 $("fsclose").onclick = () => closeFs(false);
 $("fsopen").onclick = openFs;
