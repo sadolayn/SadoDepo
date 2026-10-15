@@ -448,9 +448,10 @@ function calcBreak(P, r, g, start) {
       <div><span>Vadesizde kalan (müşteriye faiz yok)</span><span>${tl(x.vad)}</span></div>
       <div><span>Vadeliye giden tutar</span><span>${tl(x.rest)}</span></div>
       <div><span>Bankanın vadesiz kazancı (%${nfx(pf * 100)} politika faizi)</span><span>${tl(x.vVal)}</span></div>
-      <div class="total"><span>Kalan tutara verilebilecek azami oran</span><span>${pr(x.rMin)}</span></div>
+      <div class="total"><span>Kalan tutara verilebilecek azami oran</span><span>${pr(x.rMax)}</span></div>
+      <div style="font-size:12px;color:var(--muted)"><span>Politika faizi hesaba katılmasaydı</span><span>${pr(x.rMin)}</span></div>
     </div>`).join("");
-  $("v_note").textContent = `Azami oran: banka kalan tutara bu oranı verirse, paranın tamamına %${nfx(r * 100)} vermiş gibi aynı faiz maliyetine katlanır ve müşteri aynı ${tl(target)} net getiriyi alır. Vadesizde kalan kısma faiz ödenmez.`;
+  $("v_note").textContent = `Azami oran: müşterinin paranın tamamını %${nfx(r * 100)} ile bağlamış gibi alacağı net getiri + bankanın vadesizde kalan tutardan %${nfx(pf * 100)} politika faiziyle kazandığı. Banka bu oranı verirse vadesiz kazancının tamamını müşteriye aktarmış olur; politika faizi yükseldikçe azami oran da yükselir.`;
 }
 
 function calcExtra(P, r, g, start) {
