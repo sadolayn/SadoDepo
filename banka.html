@@ -53,10 +53,18 @@
   .ckwarn { background: rgba(239,138,93,.1); border: 1px solid #6b4a36; border-radius: 10px; padding: 8px 10px; font-size: 13px; line-height: 1.45; margin-top: 10px; color: #f3c3a8; }
   .ckwarn div + div { margin-top: 4px; }
   .cal { margin-top: 10px; }
-  .cal h3 { margin: 12px 0 6px; font-size: 14px; text-align: center; }
-  .cal .g { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-  .cal .h { text-align: center; font-size: 11px; color: var(--muted); padding: 2px 0; }
-  .cal .d { position: relative; text-align: center; font-size: 13px; padding: 7px 0; border-radius: 8px; background: #121212; border: 1px solid transparent; cursor: default; }
+  .cal .yr { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 8px; }
+  @media (min-width: 440px) { .cal .yr { grid-template-columns: repeat(3, 1fr); } }
+  .cal .mo h3 { margin: 0 0 3px; font-size: 12px; text-align: center; text-transform: capitalize; }
+  .cal .g { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; }
+  .cal .h { text-align: center; font-size: 8px; color: var(--muted); }
+  .cal .d { position: relative; text-align: center; font-size: 10px; padding: 3px 0; border-radius: 4px; background: #121212; border: 1px solid transparent; cursor: pointer; }
+  .cal .d.out { opacity: .3; }
+  .cal .hls { display: grid; gap: 4px; }
+  .cal .hl { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; background: rgba(224,71,58,.08); border-left: 3px solid #e0473a; padding: 5px 8px; border-radius: 6px; }
+  .cal .hl span { color: var(--muted); white-space: nowrap; }
+  .cal .hl b { font-weight: 600; text-align: right; }
+  .cal .hl.half { background: rgba(224,162,79,.07); border-left-color: #e0a24f; }
   .cal .d.e { background: transparent; }
   .cal .d.we { color: #666; background: #0b0b0b; }
   .cal .d.hol { color: #ff7a6e; background: rgba(224,71,58,.12); }
@@ -64,13 +72,13 @@
   .cal .d.isl { border-color: #4a7dff; }
   .cal .d.vade { border-color: var(--accent); font-weight: 700; }
   .cal .d.val { background: #1f6f4a; color: #fff; font-weight: 700; }
-  .cal .d.rng::after { content: ""; position: absolute; left: 20%; right: 20%; bottom: 2px; height: 2px; background: rgba(224,162,79,.35); border-radius: 2px; }
+  .cal .d.rng-x::after { content: ""; position: absolute; left: 20%; right: 20%; bottom: 2px; height: 2px; background: rgba(224,162,79,.35); border-radius: 2px; }
   .cal .lg { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 11px; color: var(--muted); margin-top: 10px; justify-content: center; }
   .cal .lg span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
   .cal .lg .l1::before { border: 2px solid #4a7dff; } .cal .lg .l2::before { border: 2px solid var(--accent); }
   .cal .lg .l3::before { background: #1f6f4a; } .cal .lg .l4::before { background: rgba(224,71,58,.5); }
   .cal .lg .l5::before { background: rgba(224,162,79,.4); } .cal .lg .l6::before { background: #222; }
-  .cal .tip { text-align: center; font-size: 12px; color: var(--ink); min-height: 18px; margin-top: 8px; }
+  .cal .tip { text-align: center; font-size: 12px; color: var(--ink); min-height: 18px; margin: 0 0 8px; position: sticky; top: 0; }
   .panel { display: none; }
   .panel.active { display: block; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
@@ -151,7 +159,7 @@
     <button data-tab="konut">Konut<br>Kredisi</button>
     <button data-tab="kk">Kart<br>Gecikme</button>
     <button data-tab="tarim">Tarım<br>Kredisi</button>
-    <button data-tab="cek">Çek İskonto<br>&amp; Valör</button>
+    <button data-tab="cek">Çek İskonto<br>&amp; Valör Tespiti</button>
   </div>
   </div>
 
@@ -416,7 +424,8 @@
   <!-- Çek iskonto & valör -->
   <section class="panel" id="cek">
     <div class="card">
-      <h2>Çek İskonto Kredisi &amp; Valör</h2>
+      <h2>TL Çek İskontosu / İştirası Kredisi</h2>
+      <div style="color:var(--accent);font-weight:600;font-size:13px;margin:-4px 0 6px">+ Çek Valör Tespiti</div>
       <p class="hint">Çek vadesi hafta sonu ya da resmi tatile denk gelirse ilk iş gününe kayar; takas karşılığı hesaba bir sonraki iş günü geçer (valör). İskonto faizi kullandırımda peşin alınır.</p>
       <label>Kullandırım (işlem) tarihi</label>
       <input id="c_isl" type="date" style="color-scheme:dark">
@@ -448,7 +457,7 @@
       <p class="note" id="c_note"></p>
     </div>
     <div class="card">
-      <h2>📅 Takvim</h2>
+      <h2>📅 1 Yıllık Valör Takvimi</h2>
       <div class="cal" id="c_cal"></div>
     </div>
   </section>
@@ -1216,6 +1225,7 @@ function calcCek() {
     const val = vg === 0 ? vIs : addBiz(vIs, vg);
     const n = dayDiff(isl, val);
     if (n <= 0) { warns.push(`🔴 ${i + 1}. çek: valör tarihi kullandırımdan sonra olmalı.`); return; }
+    if (dayDiff(isl, v) > 365) warns.push(`🔴 ${i + 1}. çek: vade 1 yılı aşıyor (${dayDiff(isl, v)} gün). Çek iskontosunda en fazla 1 yıl vadeli çek alınır.`);
     const A = T * oran;
     const F = ic ? A * ry * n / (B + ry * n) : A * ry * n / B;
     res.push({ i, T, A, v, vIs, val, n, F, bs: F * bsmv, kk: F * kkdf });
@@ -1258,26 +1268,38 @@ function renderCal(isl, res) {
   const marks = {};
   const add = (d, c) => { const k = ymd(d); (marks[k] = marks[k] || new Set()).add(c); };
   add(isl, "isl");
-  let last = isl;
-  res.forEach((x) => { add(x.v, "vade"); add(x.val, "val"); if (x.val > last) last = x.val; });
+  res.forEach((x) => { add(x.v, "vade"); add(x.val, "val"); });
+  const t0 = new Date(); const start = new Date(t0.getFullYear(), t0.getMonth(), 1, 12);
+  const end = addDays(new Date(t0.getFullYear(), t0.getMonth(), t0.getDate(), 12), 365);
   const months = [];
-  const m0 = new Date(isl.getFullYear(), isl.getMonth(), 1, 12), m1 = new Date(last.getFullYear(), last.getMonth(), 1, 12);
-  const want = new Set([ymd(m0).slice(0, 7)]); res.forEach((x) => { want.add(ymd(x.v).slice(0, 7)); want.add(ymd(x.val).slice(0, 7)); });
-  for (let m = new Date(m0); m <= m1 && months.length < 24; m = new Date(m.getFullYear(), m.getMonth() + 1, 1, 12)) if (want.has(ymd(m).slice(0, 7))) months.push(new Date(m));
-  const lastVal = res.length ? res.reduce((a, x) => (x.val > a ? x.val : a), res[0].val) : null;
+  for (let m = new Date(start); m <= end; m = new Date(m.getFullYear(), m.getMonth() + 1, 1, 12)) months.push(new Date(m));
+  const hols = [];
   const html = months.map((m) => {
     const first = (m.getDay() + 6) % 7, dim = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
-    let cells = ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"].map((h) => `<div class="h">${h}</div>`).join("");
+    let cells = ["P", "S", "Ç", "P", "C", "C", "P"].map((h) => `<div class="h">${h}</div>`).join("");
     for (let i = 0; i < first; i++) cells += `<div class="d e"></div>`;
     for (let dd = 1; dd <= dim; dd++) {
       const d = new Date(m.getFullYear(), m.getMonth(), dd, 12), k = ymd(d), inf = dayInfo(d), mk = marks[k] || new Set();
-      const cls = ["d", inf.hol ? "hol" : inf.we ? "we" : inf.half ? "half" : "", mk.has("isl") ? "isl" : "", mk.has("vade") ? "vade" : "", mk.has("val") ? "val" : "", lastVal && d > isl && d < lastVal ? "rng" : ""].join(" ");
+      const out = d < new Date(t0.getFullYear(), t0.getMonth(), t0.getDate(), 12) || d > end;
+      if (!out && (inf.hol || inf.half)) hols.push({ d, n: inf.name, half: inf.half });
+      const cls = ["d", inf.hol ? "hol" : inf.we ? "we" : inf.half ? "half" : "", mk.has("isl") ? "isl" : "", mk.has("vade") ? "vade" : "", mk.has("val") ? "val" : "", out ? "out" : ""].join(" ");
       const tip = [mk.has("isl") ? "Kullandırım" : "", mk.has("vade") ? "Çek vadesi" : "", mk.has("val") ? "Valör (hesaba geçiş)" : "", inf.name, !inf.name && inf.we ? (d.getDay() === 6 ? "Cumartesi" : "Pazar") : ""].filter(Boolean).join(" · ");
-      cells += `<div class="${cls}" data-tip="${shortD(d)}${tip ? " — " + tip : " — İş günü"}">${dd}</div>`;
+      cells += `<div class="${cls}" data-tip="${fdtw(d)} ${d.getFullYear()}${tip ? " — " + tip : " — İş günü"}">${dd}</div>`;
     }
-    return `<h3>${m.toLocaleDateString("tr-TR", { month: "long", year: "numeric" })}</h3><div class="g">${cells}</div>`;
+    return `<div class="mo"><h3>${m.toLocaleDateString("tr-TR", { month: "long", year: "numeric" })}</h3><div class="g">${cells}</div></div>`;
   }).join("");
-  $("c_cal").innerHTML = html + `<div class="lg"><span class="l1">Kullandırım</span><span class="l2">Çek vadesi</span><span class="l3">Valör</span><span class="l4">Resmi tatil / bayram</span><span class="l5">Arife (yarım gün)</span><span class="l6">Hafta sonu</span></div><div class="tip" id="c_tip">Bir güne dokun, açıklamasını gör.</div>`;
+  // Bayram listesi (ardışık günler birleştirilir)
+  const groups = [];
+  hols.forEach((h) => {
+    const base = h.n.replace(/ \d\. gün$/, "").replace(/ \(yarım gün\)$/, "");
+    const g = groups[groups.length - 1];
+    if (g && !h.half && g.base === base && dayDiff(g.e, h.d) === 1) g.e = h.d;
+    else groups.push({ base: h.half ? h.n : base, s: h.d, e: h.d, half: h.half });
+  });
+  const list = groups.map((g) => `<div class="hl${g.half ? " half" : ""}"><span>${g.s === g.e ? fdtw(g.s) : `${g.s.getDate()}–${fdtw(g.e)}`} ${g.e.getFullYear()}</span><b>${g.base}</b></div>`).join("");
+  $("c_cal").innerHTML = `<div class="tip" id="c_tip">Bir güne dokun, açıklamasını gör.</div><div class="yr">${html}</div>
+    <div class="lg"><span class="l1">Kullandırım</span><span class="l2">Çek vadesi</span><span class="l3">Valör</span><span class="l4">Resmi / dini bayram</span><span class="l5">Arife (yarım gün)</span><span class="l6">Hafta sonu</span></div>
+    <h3 style="margin:14px 0 6px;font-size:14px">🎌 Önümüzdeki 1 yılın tatilleri</h3><div class="hls">${list}</div>`;
 }
 $("c_cal").addEventListener("click", (e) => { const d = e.target.closest(".d[data-tip]"); if (d) $("c_tip").textContent = d.dataset.tip; });
 $("c_list").addEventListener("input", (e) => { const el = e.target; if (el.dataset.i == null) return; CEKLER[+el.dataset.i][el.dataset.k] = el.value; calcCek(); });
