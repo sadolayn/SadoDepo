@@ -219,7 +219,7 @@
   <section class="panel" id="tk">
     <div class="card">
       <h2>Tüketici Kredisi (Eşit Taksit)</h2>
-      <p class="hint">Taksitler, faize eklenen BSMV ve KKDF dahil sabit tutarda hesaplanır. Banka sistemindeki gibi her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk dönem gün/30 ile hesaplanır. Ara ödemede faiz günlük işler.</p>
+      <p class="hint">Taksitler, faize eklenen BSMV ve KKDF dahil sabit tutarda hesaplanır. Banka sistemindeki gibi her taksit dönemi 1 ay faiz işler. İlk taksit kullandırımdan tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır ve ilk taksit tutarı farklı çıkar. Ara ödemede faiz günlük işler.</p>
       <label>Kredi tutarı</label>
       <div class="field"><input id="t_tutar" type="text" inputmode="decimal" value="200.000"><span class="unit">TL</span></div>
       <div class="two">
@@ -659,25 +659,27 @@ function addMonthsC(d, m) { // ay sonunu aşarsa ayın son günü
 const shortD = (d) => d.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
 let tIlkManual = false;
 // Plan dönemleri: per = [{d, fac, g}] — fac: ay oranı (tam ay = 1), g: gösterilen gün
-// Banka sistemi gibi: her tam ay dönemi aylık faizle (1 ay) işler; yalnızca kırık dönemler gün/30 ile.
+// Banka sistemi gibi: taksit, kırık dönem dikkate alınmadan standart eşit taksit formülüyle bulunur.
+// Anapara payı tam ay varsayımıyla ayrılır; kırık dönemde (fac ≠ 1) yalnızca o taksitteki faiz/KKDF/BSMV
+// gün/30 ile hesaplanır, dolayısıyla o taksit tutarı farklı çıkar.
+const R2 = (x) => Math.round(x * 100) / 100; // banka gibi kuruşa yuvarla
 function tkPlan(B, per, T, r, kkdf, bsmv, closeLast) {
-  const out = []; let bal = B;
+  const out = []; let bal = B; T = R2(T);
   for (let j = 0; j < per.length && bal > 0.005; j++) {
-    const R2 = (x) => Math.round(x * 100) / 100; // banka gibi kuruşa yuvarla
-    const f = R2(bal * r * per[j].fac), kk = R2(f * kkdf), bs = R2(f * bsmv);
-    T = R2(T);
-    let ana = R2(T - f - kk - bs), t = T;
-    if (ana >= bal - 0.005 || (closeLast && j === per.length - 1)) { ana = bal; t = ana + f + kk + bs; }
-    bal = Math.max(0, bal - ana);
+    const fFull = R2(bal * r), anaN = R2(T - fFull - R2(fFull * kkdf) - R2(fFull * bsmv));
+    const f = per[j].fac === 1 ? fFull : R2(bal * r * per[j].fac), kk = R2(f * kkdf), bs = R2(f * bsmv);
+    let ana = anaN;
+    if (ana >= bal - 0.005 || (closeLast && j === per.length - 1)) ana = bal;
+    const t = R2(ana + f + kk + bs);
+    bal = R2(Math.max(0, bal - ana));
     out.push({ d: per[j].d, g: per[j].g, t, ana, f, kk, bs, bal });
   }
   return out;
 }
-// Son bakiyeyi sıfırlayan eşit taksit (bakiye T'ye göre doğrusal)
+// Standart eşit taksit (anüite)
 function solveT(B, per, r, kkdf, bsmv) {
-  const endBal = (T) => { let bal = B; for (const x of per) bal = bal * (1 + r * (1 + kkdf + bsmv) * x.fac) - T; return bal; };
-  const e0 = endBal(0), e1 = endBal(1);
-  return e0 / (e0 - e1);
+  const i = r * (1 + kkdf + bsmv), n = per.length;
+  return i === 0 ? B / n : B * i / (1 - Math.pow(1 + i, -n));
 }
 const planHead = "<tr><th>#</th><th>Tarih</th><th>Gün</th><th>Taksit</th><th>Anapara</th><th>Faiz</th><th>KKDF</th><th>BSMV</th><th>Kalan</th></tr>";
 const fmt2 = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -712,9 +714,10 @@ function calcTK() {
     let lo = 0, hi = 1; for (let it = 0; it < 100; it++) { const m = (lo + hi) / 2; if (pv(m) > net) lo = m; else hi = m; } return (lo + hi) / 2; };
   const aylikMaliyet = irr(net), aylikSade = irr(P);
   const tatil = plan.filter((x) => isHoliday(x.d)).length;
-  $("t_out").textContent = tl(taksit);
+  $("t_out").textContent = tl(R2(taksit));
   rows("t_rows", [
     ["İlk / son taksit", `${shortD(plan[0].d)} · ${shortD(plan[plan.length - 1].d)}`],
+    ...(Math.abs(plan[0].t - R2(taksit)) > 0.005 ? [[`İlk taksit (${plan[0].g} gün)`, tl(plan[0].t)]] : []),
     ...(tatil ? [["Hafta sonu / tatile denk gelen taksit", `${tatil} adet (ilk iş günü tahsil edilir)`]] : []),
     ["Toplam faiz", tl(tF)],
     ["Toplam KKDF", tl(tK)],
