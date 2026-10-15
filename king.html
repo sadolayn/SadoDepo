@@ -154,6 +154,21 @@
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
   .panel button small { font-weight: 400; }
   #ctPanel button { font-size: 14px; padding: 10px; }
+  #ctPanel button.locked { opacity: .35; cursor: not-allowed; }
+  .cetbtn { background: #161616; border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 6px 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  #overlay2 { z-index: 20; }
+  #overlay2 .modal { max-width: 460px; max-height: 88vh; overflow-y: auto; padding: 16px 12px; }
+  .cet { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 12px; }
+  .cet th, .cet td { padding: 5px 3px; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; }
+  .cet th { color: var(--muted); font-weight: 600; font-size: 11px; position: sticky; top: -16px; background: var(--card); }
+  .cet td.oy { text-align: left; white-space: normal; }
+  .cet tr.tot td { font-weight: 700; font-size: 13px; border-top: 2px solid var(--accent); }
+  .cet tr.next td { color: var(--muted); }
+  .hak { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; text-align: left; font-size: 12px; margin-bottom: 12px; }
+  .hak div { background: #111; border: 1px solid var(--line); border-radius: 10px; padding: 7px 8px; }
+  .hak b { color: var(--ink); }
+  .hak .ok { color: var(--win); }
+  .hak .no { color: var(--muted); }
 </style>
 <script src="cardsound.js"></script>
 </head>
@@ -161,6 +176,7 @@
 <header>
   <a href="oyunlar.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Oyunlar" aria-label="Oyunlar">🎮</a>
   <h1>👑 King</h1>
+  <button class="cetbtn" id="cetBtn" type="button">📋 Cetvel</button>
   <div class="info" id="info">El: –<br>Oyun: –</div>
 </header>
 
@@ -184,6 +200,9 @@
 
 <div class="overlay" id="overlay">
   <div class="modal" id="modal"></div>
+</div>
+<div class="overlay" id="overlay2">
+  <div class="modal" id="modal2"></div>
 </div>
 
 <script>
@@ -254,10 +273,12 @@ function contractName(ct) {
   if (ct === "koz") return trump ? `Koz ${trump}` : "Koz";
   return CEZALAR[ct].ad;
 }
+// Kural: her oyuncunun ilk seçimi koz olamaz (ilk turda herkes ceza seçer)
+const ilkSecim = (p) => G.kozCount[p] + G.cezaCount[p] === 0;
 function available(p) {
   const needKoz = 2 - G.kozCount[p], needCeza = 3 - G.cezaCount[p];
   const out = [];
-  if (needKoz > 0) out.push("koz");
+  if (needKoz > 0 && !ilkSecim(p)) out.push("koz");
   if (needCeza > 0) for (const k of CEZA_KEYS) if (G.typeUsed[k] < 2) out.push(k);
   return out;
 }
@@ -600,9 +621,15 @@ function newRound() {
 }
 function showChoosePanel() {
   const av = available(0);
-  setStatus("Seçim sende. Ne oynayalım?");
+  setStatus(ilkSecim(0) ? "Seçim sende. İlk seçimde koz söylenmez, bir ceza seç." : "Seçim sende. Ne oynayalım?");
   const panel = $("ctPanel");
   panel.innerHTML = "";
+  if (ilkSecim(0)) {
+    const b = document.createElement("button");
+    b.className = "locked"; b.disabled = true;
+    b.innerHTML = `🔒 Koz <small style="opacity:.8">(ilk seçimde yok)</small>`;
+    panel.appendChild(b);
+  }
   for (const k of av) {
     const b = document.createElement("button");
     if (k === "koz") b.innerHTML = `Koz <small style="opacity:.6">(${2 - G.kozCount[0]} hak)</small>`;
@@ -703,7 +730,7 @@ function endRound() {
   phase = "end";
   const deltas = [0, 1, 2, 3].map((p) => contract === "koz" ? tricksWon[p] * 50 : -taken[p] * CEZALAR[contract].puan);
   deltas.forEach((d, p) => (G.scores[p] += d));
-  G.history.push({ el: G.round + 1, secen: chooser, oyun: contract === "koz" ? "Koz " + trump : CEZALAR[contract].ad, deltas });
+  G.history.push({ el: G.round + 1, secen: chooser, ct: contract, trump, oyun: contract === "koz" ? "Koz " + trump : CEZALAR[contract].ad, deltas });
   G.round++;
   save();
   render();
@@ -716,8 +743,10 @@ function endRound() {
     <h2>${contractName(contract)} bitti</h2>
     <p>El ${G.round}/20 · Seçen: ${NAMES[chooser]}</p>
     <table><tr><th></th><th>Bu el</th><th>Toplam</th></tr>${rows}</table>
-    <button class="btn" id="next">${last ? "Sonucu gör" : "Sonraki el"}</button>`;
+    <button class="btn" id="next">${last ? "Sonucu gör" : "Sonraki el"}</button>
+    <button class="btn" id="cet2" style="margin-top:8px;background:transparent;color:var(--ink);border-color:var(--line)">📋 Cetveli gör</button>`;
   $("overlay").classList.add("show");
+  $("cet2").onclick = showCetvel;
   $("next").onclick = () => { $("overlay").classList.remove("show"); last ? gameOver() : newRound(); };
   setStatus("");
 }
@@ -730,11 +759,47 @@ function gameOver() {
     <h2>${winner === 0 ? "🎉 Kazandın!" : `${NAMES[winner]} kazandı`}</h2>
     <p>20 el tamamlandı</p>
     <table>${rows}</table>
-    <button class="btn" id="again">Yeni oyun</button>`;
+    <button class="btn" id="again">Yeni oyun</button>
+    <button class="btn" id="cet3" style="margin-top:8px;background:transparent;color:var(--ink);border-color:var(--line)">📋 Cetveli gör</button>`;
+  $("cet3").onclick = showCetvel;
   $("overlay").classList.add("show");
   $("again").onclick = () => { $("overlay").classList.remove("show"); newGame(); newRound(); };
   try { localStorage.removeItem("kingGame"); } catch (e) {}
 }
+
+// ---------- Cetvel ----------
+const SHORT = ["Sen", "Sadosan", "Sadolayn", "Sadocan"];
+function showCetvel() {
+  const H = G.history || [];
+  const run = [0, 0, 0, 0];
+  const body = H.map((h) => {
+    h.deltas.forEach((d, p) => (run[p] += d));
+    const ad = h.ct === "koz" || (h.oyun || "").startsWith("Koz") ? `<b style="color:var(--accent)">${h.oyun}</b>` : h.oyun;
+    return `<tr><td>${h.el}</td><td class="oy">${ad}<br><span style="color:var(--muted)">${NAMES[h.secen]} 👑</span></td>${h.deltas.map((d) => `<td class="${d < 0 ? "neg" : d > 0 ? "pos" : ""}">${d > 0 ? "+" : ""}${d || "·"}</td>`).join("")}</tr>`;
+  }).join("");
+  const cur = phase === "play" && contract ? `<tr class="next"><td>${G.round + 1}</td><td class="oy">${contractName(contract)}<br>${NAMES[chooser]} 👑 · oynanıyor</td><td colspan="4">…</td></tr>` : "";
+  const tot = `<tr class="tot"><td></td><td class="oy">Toplam</td>${G.scores.map((x) => `<td class="${x < 0 ? "neg" : x > 0 ? "pos" : ""}">${x}</td>`).join("")}</tr>`;
+  // Kişi bazlı hak durumu
+  const hak = [0, 1, 2, 3].map((p) => {
+    const mine = H.filter((h) => h.secen === p);
+    const kozlar = mine.filter((h) => h.ct === "koz" || (h.oyun || "").startsWith("Koz")).map((h) => h.trump || h.oyun.replace("Koz ", ""));
+    const cezalar = mine.filter((h) => !(h.ct === "koz" || (h.oyun || "").startsWith("Koz"))).map((h) => h.oyun);
+    const kozTxt = G.kozCount[p] ? `<span class="ok">✔ söyledi ${G.kozCount[p]}/2</span> ${kozlar.join(" ")}` : `<span class="no">✘ söylemedi 0/2</span>`;
+    return `<div><b>${NAMES[p]}</b><br>Koz: ${kozTxt}<br>Ceza ${G.cezaCount[p]}/3: ${cezalar.length ? cezalar.join(", ") : "–"}</div>`;
+  }).join("");
+  const kalan = CEZA_KEYS.map((k) => `${CEZALAR[k].kisa} ×${2 - G.typeUsed[k]}`).join(" · ");
+  $("modal2").innerHTML = `
+    <h2>📋 Cetvel</h2>
+    <p>El ${Math.min(G.round, 20)}/20 oynandı</p>
+    <table class="cet"><tr><th>#</th><th style="text-align:left">Oyun · seçen</th>${SHORT.map((n) => `<th>${n}</th>`).join("")}</tr>${body}${cur}${tot}</table>
+    <div class="hak">${hak}</div>
+    <p style="font-size:12px">Kalan cezalar: ${kalan}</p>
+    <button class="btn" id="cetClose">Kapat</button>`;
+  $("overlay2").classList.add("show");
+  $("cetClose").onclick = () => $("overlay2").classList.remove("show");
+}
+$("cetBtn").onclick = showCetvel;
+$("scores").onclick = showCetvel;
 
 function showRules(resume) {
   $("modal").innerHTML = `
@@ -742,7 +807,7 @@ function showRules(resume) {
     <ul class="rules">
       <li>20 el oynanır. Her oyuncu sırayla 5 kez oyun seçer: <b>2 koz</b> ve <b>3 ceza</b>. Her ceza oyunda toplam 2 kez oynanabilir.</li>
       <li><b>Cezalar:</b> El almaz (el başı −50), Kupa almaz (kupa başı −30), Erkek almaz (papaz/vale −60), Kız almaz (kız −100), Rifki (kupa papazı −320), Son iki (son iki el −180).</li>
-      <li><b>Koz:</b> Aldığın her el +50.</li>
+      <li><b>Koz:</b> Aldığın her el +50. Her oyuncunun <b>ilk seçimi koz olamaz</b>; ilk turda herkes ceza seçer.</li>
       <li>Renge uymak zorunlu. Koz oyununda renk yoksa koz atılır ve yükseltmek gerekir.</li>
       <li>Ceza oyunlarında renk yoksa ceza kartı varsa onu atmak zorundasın (kupa, kız, erkek, rifki).</li>
     </ul>
