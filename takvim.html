@@ -106,6 +106,29 @@
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .stick > :last-child { margin-bottom: 0; }
+  .stick .tabs { margin-bottom: 8px; }
+  .sh { display: none; } .sh.on { display: block; }
+  .sh .mhead { margin-bottom: 4px; }
+  .sh .mhead .mt { cursor: pointer; }
+  .sh .dows { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 0 15px; }
+  .sh .yearsel { margin-bottom: 6px; }
+  .mstat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .mstat div { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 6px 4px; text-align: center; font-size: 11px; color: var(--muted); }
+  .mstat b { display: block; font-size: 17px; color: var(--ink); }
+  .mstat .w b { color: var(--work); } .mstat .h b { color: var(--hol); } .mstat .f b { color: var(--half); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chips button { padding: 7px 11px; border-radius: 99px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 12px; font-weight: 600; cursor: pointer; }
+  .chips button.active { background: var(--accent); color: #000; border-color: var(--accent); }
+  .card .chips { margin-top: 8px; }
+  .nextbtn { display: block; width: 100%; margin-top: 6px; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(224,162,79,.5); background: rgba(224,162,79,.1); color: var(--ink); font-size: 13px; text-align: left; cursor: pointer; }
+  .nextbtn b { color: var(--accent); }
+  .hbar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .hbar div { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px; font-size: 11px; color: var(--muted); }
+  .hbar b { display: block; font-size: 15px; color: var(--accent); }
+  .list .it.past { opacity: .4; }
+  .list .it.nx { background: rgba(224,162,79,.08); border-radius: 10px; }
+  .panel { scroll-margin-top: calc(var(--stickH, 200px) + 8px); }
+  .list .it { scroll-margin-top: calc(var(--stickH, 200px) + 10px); }
 </style>
 </head>
 <body>
@@ -123,16 +146,31 @@
     <button data-tab="hesap">İş günü</button>
     <button data-tab="liste">Liste</button>
   </div>
+  <div class="sh on" data-sh="ay">
+    <div class="mhead">
+      <button id="prev" aria-label="Önceki ay">‹</button>
+      <div class="mt" id="mtBtn" title="Bugüne dön"><b id="mTitle"></b><span id="mSub"></span></div>
+      <button id="next" aria-label="Sonraki ay">›</button>
+    </div>
+    <div class="dows" id="dows"></div>
+  </div>
+  <div class="sh" data-sh="yil">
+    <div class="yearsel" id="yearsel2"></div>
+    <div class="mstat"><div class="w"><b id="yWork">0</b>İş günü</div><div class="h"><b id="yHol">0</b>Hafta içi tatil</div><div class="f"><b id="yHalf">0</b>Yarım gün</div></div>
+  </div>
+  <div class="sh" data-sh="hesap">
+    <div class="hbar"><div><span id="hb1l">Tarihler arası</span><b id="hb1">–</b></div><div><span id="hb2l">İş günü sonrası</span><b id="hb2">–</b></div></div>
+  </div>
+  <div class="sh" data-sh="liste">
+    <div class="yearsel" id="yearsel"></div>
+    <div class="chips" id="lf"><button data-f="all" class="active">Tümü</button><button data-f="tam">Tatil</button><button data-f="yarim">Yarım gün</button><button data-f="dini">Dini gün</button><button data-f="up">Gelecek</button></div>
+    <button class="nextbtn" id="nextBtn" type="button"></button>
+  </div>
   </div>
 
   <!-- Aylık takvim -->
   <section class="panel active" id="ay">
     <div class="card">
-      <div class="mhead">
-        <button id="prev" aria-label="Önceki ay">‹</button>
-        <div class="mt"><b id="mTitle"></b><span id="mSub"></span></div>
-        <button id="next" aria-label="Sonraki ay">›</button>
-      </div>
       <div class="grid" id="grid"></div>
       <div class="legend"><span class="l1">Resmi tatil</span><span class="l2">Yarım gün</span><span class="l3">Dini gün</span><span class="l4">Hafta sonu</span></div>
     </div>
@@ -150,16 +188,7 @@
 
   <!-- Yıllık görünüm -->
   <section class="panel" id="yil">
-    <div class="yearsel" id="yearsel2"></div>
-    <div class="card">
-      <h3 id="ySumTitle"></h3>
-      <div class="stats">
-        <div class="stat"><b id="yWork">0</b><span>İş günü</span></div>
-        <div class="stat"><b id="yHol">0</b><span>Hafta içi tatil</span></div>
-        <div class="stat"><b id="yHalf">0</b><span>Yarım gün</span></div>
-      </div>
-      <div class="legend"><span class="l1">Resmi tatil</span><span class="l2">Yarım gün</span><span class="l3">Dini gün</span></div>
-    </div>
+    <div class="legend" style="margin:0 0 10px"><span class="l1">Resmi tatil</span><span class="l2">Yarım gün</span><span class="l3">Dini gün</span><span id="ySumTitle" style="margin-left:auto"></span></div>
     <div class="ygrid" id="ygrid"></div>
     <p class="note">Ayın sağ üstündeki mavi sayı o ayın iş günü sayısı. Bir aya dokununca aylık görünümde açılır.</p>
   </section>
@@ -172,6 +201,7 @@
         <div><label>Başlangıç</label><input type="date" id="h1a"></div>
         <div><label>Bitiş</label><input type="date" id="h1b"></div>
       </div>
+      <div class="chips" id="h1q"><button data-q="m">Bu ay sonu</button><button data-q="nm">Gelecek ay sonu</button><button data-q="y">Yıl sonu</button><button data-q="30">+30 gün</button><button data-q="90">+90 gün</button></div>
       <label>Yarım günler (arife)</label>
       <select id="hHalf">
         <option value="1">Tam iş günü say</option>
@@ -187,6 +217,7 @@
         <div><label>Başlangıç</label><input type="date" id="h2a"></div>
         <div><label>İş günü sayısı</label><input type="number" id="h2n" inputmode="numeric" value="10" min="0" max="500"></div>
       </div>
+      <div class="chips" id="h2q"><button>5</button><button class="active">10</button><button>15</button><button>20</button><button>30</button><button>45</button><button>60</button></div>
       <label>Yön</label>
       <select id="h2dir"><option value="1">İleri (sonrası)</option><option value="-1">Geri (öncesi)</option></select>
       <div class="big"><span id="h2lbl">Sonuç</span><b id="h2out">–</b></div>
@@ -197,7 +228,6 @@
 
   <!-- Liste -->
   <section class="panel" id="liste">
-    <div class="yearsel" id="yearsel"></div>
     <div class="card"><div class="list" id="yList"></div></div>
     <p class="note">Resmi tatiller 2429 sayılı Kanun'a göre; bayram tarihleri Diyanet takvimine göre. Hükümetin ayrıca ilan edebileceği idari izinler bu listede yer almaz.</p>
   </section>
@@ -299,7 +329,7 @@ function renderMonth() {
   $("mTitle").textContent = `${MONTHS[m]} ${y}`;
   $("mSub").textContent = inRange(view) ? "" : "Bu yıl için bayram tarihleri yüklenmedi";
   const g = $("grid");
-  g.innerHTML = DOW.map((d) => `<div class="dow">${d}</div>`).join("");
+  g.innerHTML = "";
   const first = new Date(y, m, 1, 12);
   const offset = (first.getDay() + 6) % 7;
   for (let i = 0; i < offset; i++) g.insertAdjacentHTML("beforeend", '<div class="day empty"></div>');
@@ -330,13 +360,14 @@ function renderMonth() {
   $("sHol").textContent = hol;
   $("sHalf").textContent = halfC;
   $("sumTitle").textContent = `${MONTHS[m]} ${y} özeti`;
-  $("mList").innerHTML = monthItems.length ? monthItems.map(itemHTML).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmi tatil ya da dini gün yok.</div>';
+  $("mList").innerHTML = monthItems.length ? monthItems.map((x) => itemHTML(x)).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmi tatil ya da dini gün yok.</div>';
 }
-function itemHTML(x) {
+function itemHTML(x, isNext) {
   const tag = x.type === "tam" ? '<span class="tag t1">Tatil</span>' : x.type === "yarim" ? '<span class="tag t2">Yarım gün</span>' : '<span class="tag t3">Dini gün</span>';
   const diff = Math.round((x.dt - today) / 86400000);
   const left = diff > 0 ? `${diff} gün kaldı` : diff === 0 ? "Bugün" : "";
-  return `<div class="it"><div class="dt"><b>${x.dt.getDate()}</b><span>${MONTHS[x.dt.getMonth()].slice(0, 3)}</span></div>
+  const cls = "it" + (diff < 0 ? " past" : "") + (isNext ? " nx" : "");
+  return `<div class="${cls}"><div class="dt"><b>${x.dt.getDate()}</b><span>${MONTHS[x.dt.getMonth()].slice(0, 3)}</span></div>
     <div class="nm">${x.name}<small>${x.dt.toLocaleDateString("tr-TR", { weekday: "long" })}${left ? " · " + left : ""}</small></div>${tag}</div>`;
 }
 function showDetail(d) {
@@ -347,6 +378,8 @@ function showDetail(d) {
   if (!inRange(d)) txt += "<br><span style='color:var(--muted);font-size:12px'>Bu yıl için bayram tarihleri yüklenmedi.</span>";
   $("detail").innerHTML = txt;
 }
+$("dows").innerHTML = DOW.map((d) => `<div class="dow">${d}</div>`).join("");
+$("mtBtn").onclick = () => { view = new Date(today.getFullYear(), today.getMonth(), 1, 12); selected = today; renderMonth(); showDetail(today); };
 $("prev").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1, 12); renderMonth(); };
 $("next").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1, 12); renderMonth(); };
 
@@ -367,6 +400,8 @@ function calc1() {
     work += workValue(d, halfVal());
   }
   $("h1out").textContent = fmtN(work * sign) + " gün";
+  const sh = (x) => x.toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
+  $("hb1l").textContent = sh(a) + " – " + sh(b); $("hb1").textContent = fmtN(work * sign) + " iş günü";
   $("h1rows").innerHTML = [
     ["Toplam takvim günü", total],
     ["Hafta sonu", we],
@@ -390,26 +425,58 @@ function calc2() {
   }
   $("h2lbl").textContent = `${n} iş günü ${dir > 0 ? "sonrası" : "öncesi"}`;
   $("h2out").textContent = d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+  $("hb2l").textContent = $("h2lbl").textContent; $("hb2").textContent = d.toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric", weekday: "short" });
+  $("h2q").querySelectorAll("button").forEach((b) => b.classList.toggle("active", Number(b.textContent) === n));
   $("h2rows").innerHTML = `<div><span>Gün</span><span>${d.toLocaleDateString("tr-TR", { weekday: "long" })}</span></div>` +
     (skipped.length ? `<div style="display:block"><span>Atlanan tatiller</span><br><span style="font-size:13px;color:var(--ink)">${skipped.join("<br>")}</span></div>` : "") +
     (outside ? `<div><span style="color:var(--half)">Not</span><span style="color:var(--half);font-size:12px;text-align:right">2026–2027 dışındaki bayramlar hesaba katılmadı</span></div>` : "");
 }
 ["h1a", "h1b", "hHalf"].forEach((x) => $(x).addEventListener("input", () => { calc1(); calc2(); }));
 ["h2a", "h2n", "h2dir"].forEach((x) => $(x).addEventListener("input", calc2));
+$("h2q").querySelectorAll("button").forEach((b) => (b.onclick = () => { $("h2n").value = b.textContent; calc2(); }));
+$("h1q").querySelectorAll("button").forEach((b) => (b.onclick = () => {
+  const a = $("h1a").value ? parse($("h1a").value) : new Date(today), q = b.dataset.q; let e;
+  if (q === "m") e = new Date(a.getFullYear(), a.getMonth() + 1, 0, 12);
+  else if (q === "nm") e = new Date(a.getFullYear(), a.getMonth() + 2, 0, 12);
+  else if (q === "y") e = new Date(a.getFullYear(), 11, 31, 12);
+  else { e = new Date(a); e.setDate(e.getDate() + Number(q)); }
+  $("h1b").value = keyOf(e); calc1(); calc2();
+}));
 
 // ================= Liste =================
 let listYear = YEARS.includes(today.getFullYear()) ? today.getFullYear() : YEARS[0];
+let listF = "all";
+$("lf").querySelectorAll("button").forEach((b) => (b.onclick = () => {
+  listF = b.dataset.f; $("lf").querySelectorAll("button").forEach((x) => x.classList.toggle("active", x === b)); renderList();
+}));
+$("nextBtn").onclick = () => {
+  const el = document.querySelector("#yList .it.nx");
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  else { listYear = YEARS.find((y) => y > listYear) || listYear; renderList(); }
+};
 function renderList() {
   $("yearsel").innerHTML = YEARS.map((y) => `<button data-y="${y}" class="${y === listYear ? "active" : ""}">${y}</button>`).join("");
   $("yearsel").querySelectorAll("button").forEach((b) => (b.onclick = () => { listYear = Number(b.dataset.y); renderList(); }));
   const items = [];
   for (const [k, recs] of DAYS) if (k.startsWith(listYear + "-")) for (const r of recs) items.push({ dt: parse(k), ...r });
   items.sort((a, b) => a.dt - b.dt);
+  // Sıradaki tatil/dini gün (tüm yıllar)
+  const allUp = [];
+  for (const [k, recs] of DAYS) for (const r of recs) { const dt = parse(k); if (dt >= today) allUp.push({ dt, ...r }); }
+  allUp.sort((a, b) => a.dt - b.dt);
+  const nx = allUp[0];
+  if (nx) {
+    const dd = Math.round((nx.dt - today) / 86400000);
+    $("nextBtn").innerHTML = `⏭ Sıradaki: <b>${nx.name}</b> · ${nx.dt.getDate()} ${MONTHS[nx.dt.getMonth()]} ${nx.dt.getFullYear()} · ${dd ? dd + " gün kaldı" : "Bugün"}`;
+    $("nextBtn").style.display = "";
+  } else $("nextBtn").style.display = "none";
   let wd = 0; // hafta içine denk gelen tam tatil sayısı
   const seen = new Set();
   for (const x of items) if (x.type === "tam" && !seen.has(keyOf(x.dt))) { seen.add(keyOf(x.dt)); if (x.dt.getDay() % 6 !== 0) wd++; }
+  const shown = items.filter((x) => listF === "all" ? true : listF === "up" ? x.dt >= today : x.type === listF);
   const note = listYear === 2027 && !DINI[2027].length ? '<div style="font-size:12px;color:var(--muted);padding:8px 0 4px">2027 kandil tarihleri Diyanet takvimi netleşince eklenecek.</div>' : "";
-  $("yList").innerHTML = `<div style="font-size:13px;color:var(--muted);padding-bottom:6px">${listYear} yılında hafta içine denk gelen <b style="color:var(--hol)">${wd}</b> tam gün tatil var.</div>` + items.map(itemHTML).join("") + note;
+  $("yList").innerHTML = `<div style="font-size:13px;color:var(--muted);padding-bottom:6px">${listYear} yılında hafta içine denk gelen <b style="color:var(--hol)">${wd}</b> tam gün tatil var.</div>` + shown.map((x) => itemHTML(x, nx && keyOf(x.dt) === keyOf(nx.dt) && x.name === nx.name)).join("") +
+    (shown.length ? "" : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu filtrede gün yok.</div>') + note;
 }
 
 // ================= Yıllık görünüm =================
@@ -451,7 +518,7 @@ function renderYear() {
     document.querySelector('.tabs button[data-tab="ay"]').click();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }));
-  $("ySumTitle").textContent = `${yYear} yılı özeti`;
+  $("ySumTitle").textContent = "";
   $("yWork").textContent = tw; $("yHol").textContent = th; $("yHalf").textContent = thf;
 }
 
@@ -460,14 +527,19 @@ document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("cli
   document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
   document.querySelectorAll(".panel").forEach((x) => x.classList.remove("active"));
   b.classList.add("active"); $(b.dataset.tab).classList.add("active");
+  document.querySelectorAll(".sh").forEach((x) => x.classList.toggle("on", x.dataset.sh === b.dataset.tab));
+  window.scrollTo({ top: 0 });
+  setStickH();
 }));
+function setStickH() { const s = document.querySelector(".stick"); if (s) document.documentElement.style.setProperty("--stickH", s.offsetHeight + "px"); }
+window.addEventListener("resize", setStickH);
 const iso = (d) => keyOf(d);
 $("h1a").value = iso(today);
 const endM = new Date(today.getFullYear(), today.getMonth() + 1, 0, 12);
 $("h1b").value = iso(endM);
 $("h2a").value = iso(today);
 selected = today;
-renderMonth(); showDetail(today); calc1(); calc2(); renderList(); renderYear();
+renderMonth(); showDetail(today); calc1(); calc2(); renderList(); renderYear(); setStickH();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
