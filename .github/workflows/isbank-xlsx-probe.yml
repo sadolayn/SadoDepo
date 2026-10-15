@@ -1,0 +1,15 @@
+name: isbank xlsx probe
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          mkdir -p probe
+          curl -sSL -A "Mozilla/5.0" -o probe/IsbankFinancialData.xlsx "https://www.isbank.com.tr/contentmanagement/IsbankInvestorRelationsGeneric/key-financial-indicators/IsbankFinancialData.xlsx"
+          ls -la probe; file probe/IsbankFinancialData.xlsx
+          git config user.name "sadolayn-bot"; git config user.email "actions@users.noreply.github.com"
+          git add probe && git commit -m "probe xlsx" && git pull --rebase -q && git push
