@@ -198,7 +198,7 @@ function setGmap(c) {
   const q = (GQ[c.k] || c.n.toLowerCase()) + " " + (S.place.name || "").replace(/^📡\s*/, "");
   const z = S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : S.r <= 5000 ? 13 : 12;
   // Her zaman koordinatla ara: yer adıyla aramak Google'ın başka bir noktayı seçmesine yol açabiliyor
-  const src = `https://maps.google.com/maps?q=${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}+near+${(+S.place.lat).toFixed(5)},${(+S.place.lon).toFixed(5)}&ll=${(+S.place.lat).toFixed(5)},${(+S.place.lon).toFixed(5)}&z=${z}&hl=tr&output=embed`;
+  const src = `https://maps.google.com/maps?q=${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}+near+${(+S.place.lat).toFixed(5)},${(+S.place.lon).toFixed(5)}&z=${z}&hl=tr&output=embed`;
   fsSrc = src.replace(/&z=\d+/, `&z=${Math.max(12, z - 1)}`);
   if ($("gmap").src !== src) $("gmap").src = src;
 }
@@ -206,7 +206,7 @@ const CAT = {}; GROUPS.forEach(([, l]) => l.forEach(([k, e, n, sel]) => (CAT[k] 
 let S = { place: null, r: 3000, cat: null };
 try { Object.assign(S, JSON.parse(localStorage.getItem("yakin_v1") || "{}")); } catch (e) {}
 // Eski sürümde aranan il/ilçe konumu sınırın ortasına düşebiliyordu; yeniden aranmasını iste
-if (S.place && !S.place.gps && S.place.v !== 2) { S.place = null; S.cat = null; }
+const STALE = S.place && !S.place.gps && S.place.v !== 2;
 const save = () => { try { localStorage.setItem("yakin_v1", JSON.stringify({ place: S.place, r: S.r })); } catch (e) {} };
 
 // Kategori ızgarası
@@ -398,6 +398,15 @@ $("mtog").onclick = (e) => { const b = e.target.closest("button"); if (!b) retur
 renderRad();
 setPlace(S.place);
 if (!S.place) locate(true);
+// Eski sürümde il adıyla seçilen konum ilin coğrafi ortasına düşüyordu: şehir merkezine taşı
+if (STALE && !/,/.test(S.place.name || "")) (async () => {
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(S.place.name)}&format=json&limit=5&countrycodes=tr&accept-language=tr&featureType=settlement`);
+    const j = await r.json();
+    const best = j.find((y) => y.class === "place" && /^(city|town)$/.test(y.type)) || j.find((y) => y.class === "place");
+    if (best) setPlace({ lat: +best.lat, lon: +best.lon, name: S.place.name + " merkez" });
+  } catch (e) {}
+})();
 (function () { const s = $("stick"); const f = () => s.classList.toggle("stuck", window.scrollY > 4); window.addEventListener("scroll", f, { passive: true }); f();
   const h = () => document.documentElement.style.setProperty("--stickH", (s.offsetHeight + 8) + "px"); h(); window.addEventListener("resize", h); })();
 </script>
