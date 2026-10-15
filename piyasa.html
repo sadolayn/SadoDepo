@@ -369,33 +369,43 @@ function renderSingle() {
       <div class="bar"><i style="width:${(x.now / maxNow) * 100}%"></i></div>
     </div>`;
   }).join("");
-  h += `<div class="ri base"><div class="a"><span class="rank"></span>💴 TL olarak tutsaydın</div><div class="now num">${tl(amt)}</div>
-      <div class="then num">Faizsiz, yastık altı · reel <span class="down">${pct(real(0, c))}</span></div><div class="pct num">0%</div>
-      <div class="bar"><i style="width:${(amt / maxNow) * 100}%;background:#555"></i></div></div>`;
+  const tlReal = amt / (1 + c / 100);
+  h += `<div class="ri base" style="border-color:#7a2e28;background:rgba(224,71,58,.06)"><div class="a"><span class="rank"></span>💴 TL olarak tutsaydın</div><div class="now num">${tl(amt)}</div>
+      <div class="then num">Faizsiz, yastık altı · bugünkü alım gücü <b class="down">${tl(tlReal)}</b> · ${tl(amt - tlReal)} değer kaybı</div><div class="pct num down">${pct(real(0, c))}</div>
+      <div class="bar"><i style="width:${(tlReal / maxNow) * 100}%;background:#e0473a"></i></div></div>
+      <div class="note" style="text-align:center;margin:2px 0 0">TL'de tutulan ${tl(amt)}, enflasyon yüzünden bugün ${fdate(D.dates[i0])} tarihindeki ${tl(tlReal)} kadar mal alabiliyor.</div>`;
   $("single").innerHTML = h;
 }
 
+const BA = [...A, { k: "try", n: "TL (yastık altı)", s: "TL", u: "", ic: "💴" }];
+const price = (k, i) => (k === "try" ? 1 : D[k][i]);
 function renderBasket() {
   const { amt, i0 } = simInputs();
-  const total = A.reduce((s, a) => s + (Number(S.w[a.k]) || 0), 0);
-  $("wsum").innerHTML = `<span>Toplam: <b class="${total === 100 ? "" : "bad"}">%${total}</b>${total !== 100 ? ` <span style="color:var(--muted);font-size:12px">(${total < 100 ? "%" + (100 - total) + " eksik" : "%" + (total - 100) + " fazla"})</span>` : " ✓"}</span>`;
-  A.forEach((a) => { $("r_" + a.k).value = S.w[a.k] || 0; $("n_" + a.k).value = S.w[a.k] || 0; });
-  if (!total || !amt) { $("bres").innerHTML = '<div class="note" style="text-align:center;padding:16px 0">Sepetine oran ekle.</div>'; return; }
-  // oranlar 100'e normalize edilir
+  const sumAll = BA.reduce((s, a) => s + (Number(S.w[a.k]) || 0), 0);
+  const kalan = Math.max(0, 100 - sumAll);
+  $("wsum").innerHTML = sumAll > 100
+    ? `<span>Toplam: <b class="bad">%${sumAll}</b> <span style="color:var(--muted);font-size:12px">(%${sumAll - 100} fazla — oranlar %100'e ölçeklendi)</span></span>`
+    : `<span>Toplam: <b>%${sumAll}</b>${kalan ? ` <span style="color:var(--muted);font-size:12px">· kalan <b style="color:var(--ink)">%${kalan} TL olarak</b> kalır</span>` : " ✓"}</span>`;
+  BA.forEach((a) => { $("r_" + a.k).value = S.w[a.k] || 0; $("n_" + a.k).value = S.w[a.k] || 0; });
+  if (!amt) { $("bres").innerHTML = '<div class="note" style="text-align:center;padding:16px 0">Tutar gir.</div>'; return; }
+  // Oranlar %100'den azsa kalan kısım TL olarak durur (ölçeklenmez); fazlaysa %100'e ölçeklenir
+  const div = Math.max(100, sumAll);
+  const wOf = (k) => ((Number(S.w[k]) || 0) + (k === "try" ? kalan : 0)) / div;
   const units = {};
-  A.forEach((a) => { const w = (Number(S.w[a.k]) || 0) / total; units[a.k] = (amt * w) / D[a.k][i0]; });
-  const valAt = (i) => A.reduce((s, a) => s + units[a.k] * D[a.k][i], 0);
+  BA.forEach((a) => { units[a.k] = (amt * wOf(a.k)) / price(a.k, i0); });
+  const valAt = (i) => BA.reduce((s, a) => s + units[a.k] * price(a.k, i), 0);
   const now = valAt(N - 1), p = (now / amt - 1) * 100;
   const yrs = (new Date(D.dates[N - 1]) - new Date(D.dates[i0])) / (365.25 * 864e5);
   const cagr = yrs > 0.1 ? (Math.pow(now / amt, 1 / yrs) - 1) * 100 : p;
   const usdNow = amt / D.usd[i0] * D.usd[N - 1];
   const vsUsd = (now / usdNow - 1) * 100;
   const c = cpiChg(D.dates[i0], D.dates[N - 1]), rp = real(p, c), need = amt * (1 + c / 100);
-  const parts = A.filter((a) => units[a.k] > 0).map((a) => {
-    const v = units[a.k] * D[a.k][N - 1], inv = amt * (Number(S.w[a.k]) || 0) / total;
-    return `<div class="ri"><div class="a">${a.ic} ${a.n} <span style="color:var(--muted);font-weight:500;font-size:12px">%${Math.round((Number(S.w[a.k]) || 0) / total * 100)}</span></div>
+  const parts = BA.filter((a) => units[a.k] > 0).map((a) => {
+    const v = units[a.k] * price(a.k, N - 1), inv = amt * wOf(a.k), isT = a.k === "try";
+    const rr = real((v / inv - 1) * 100, c);
+    return `<div class="ri"${isT ? ' style="border-color:#7a2e28;background:rgba(224,71,58,.06)"' : ""}><div class="a">${a.ic} ${a.n} <span style="color:var(--muted);font-weight:500;font-size:12px">%${nf(wOf(a.k) * 100, 0)}</span></div>
       <div class="now num">${tl(v)}</div>
-      <div class="then num">${tl(inv)} → ${nf(units[a.k], 2)} ${a.u ? "gram" : a.s}</div>
+      <div class="then num">${isT ? `Alım gücü bugün <b class="down">${tl(inv / (1 + c / 100))}</b>` : `${tl(inv)} → ${nf(units[a.k], 2)} ${a.u ? "gram" : a.s}`} · reel <span class="${cls(rr)}">${pct(rr)}</span></div>
       <div class="pct num ${cls(v / inv - 1)}">${pct((v / inv - 1) * 100)}</div></div>`;
   }).join("");
   $("bres").innerHTML = `
@@ -456,9 +466,10 @@ function build() {
         <button data-p="klasik">Klasik (½ altın, ¼ $, ¼ €)</button>
         <button data-p="maden">Sadece madenler</button>
         <button data-p="doviz">Sadece döviz</button>
+        <button data-p="tl">Sadece TL</button>
         <button data-p="sifir">Sıfırla</button>
       </div>
-      <div class="alloc">${A.map((a) => `<div class="al"><span>${a.ic} ${a.n}</span>
+      <div class="alloc">${BA.map((a) => `<div class="al"><span>${a.ic} ${a.n}</span>
         <input type="range" min="0" max="100" step="5" id="r_${a.k}" data-k="${a.k}" aria-label="${a.n} oranı">
         <input type="number" min="0" max="100" id="n_${a.k}" data-k="${a.k}" inputmode="numeric" aria-label="${a.n} yüzde"></div>`).join("")}</div>
       <div class="sum" id="wsum"></div>
@@ -481,11 +492,12 @@ function build() {
   $("presets").onclick = (e) => {
     const b = e.target.closest("button"); if (!b) return;
     const P = {
-      esit: { usd: 15, eur: 15, gbp: 15, xau: 15, xag: 15, xpt: 15, xpd: 10 },
-      klasik: { usd: 25, eur: 25, gbp: 0, xau: 50, xag: 0, xpt: 0, xpd: 0 },
-      maden: { usd: 0, eur: 0, gbp: 0, xau: 55, xag: 25, xpt: 10, xpd: 10 },
-      doviz: { usd: 40, eur: 40, gbp: 20, xau: 0, xag: 0, xpt: 0, xpd: 0 },
-      sifir: { usd: 0, eur: 0, gbp: 0, xau: 0, xag: 0, xpt: 0, xpd: 0 },
+      esit: { usd: 15, eur: 15, gbp: 10, xau: 15, xag: 15, xpt: 10, xpd: 5, try: 15 },
+      klasik: { usd: 25, eur: 25, gbp: 0, xau: 50, xag: 0, xpt: 0, xpd: 0, try: 0 },
+      maden: { usd: 0, eur: 0, gbp: 0, xau: 55, xag: 25, xpt: 10, xpd: 10, try: 0 },
+      doviz: { usd: 40, eur: 40, gbp: 20, xau: 0, xag: 0, xpt: 0, xpd: 0, try: 0 },
+      tl: { usd: 0, eur: 0, gbp: 0, xau: 0, xag: 0, xpt: 0, xpd: 0, try: 100 },
+      sifir: { usd: 0, eur: 0, gbp: 0, xau: 0, xag: 0, xpt: 0, xpd: 0, try: 0 },
     };
     S.w = { ...P[b.dataset.p] }; save(); renderBasket();
   };
