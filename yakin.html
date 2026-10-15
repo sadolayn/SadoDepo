@@ -114,11 +114,9 @@ const GROUPS = [
     ["ptt", "📮", "PTT", ['nwr["amenity"="post_office"]']],
     ["nufus", "🪪", "Kamu kurumu", ['nwr["office"="government"]']],
   ]],
-  ["🏦 Banka", [
-    ["isbank", "🏦", "İş Bankası", ['nwr["amenity"="bank"]["name"~"İş Bankası|İşbank|Is Bankasi|Türkiye İş",i]', 'nwr["amenity"="bank"]["brand"~"İş Bankası|İşbank|Isbank",i]']],
-    ["isatm", "🏧", "İş Bankası ATM", ['nwr["amenity"="atm"]["operator"~"İş Bankası|İşbank|Isbank",i]', 'nwr["amenity"="atm"]["brand"~"İş Bankası|İşbank|Isbank",i]', 'nwr["amenity"="atm"]["name"~"İş Bankası|İşbank",i]']],
-    ["banka", "💳", "Tüm bankalar", ['nwr["amenity"="bank"]']],
-    ["atm", "🏧", "Tüm ATM'ler", ['nwr["amenity"="atm"]']],
+  ["🏦 İş Bankası", [
+    ["isbank", "🏦", "Şube", ['nwr["amenity"="bank"]["name"~"İş Bankası|İşbank|Is Bankasi|Türkiye İş",i]', 'nwr["amenity"="bank"]["brand"~"İş Bankası|İşbank|Isbank",i]']],
+    ["isatm", "🏧", "ATM", ['nwr["amenity"="atm"]["operator"~"İş Bankası|İşbank|Isbank",i]', 'nwr["amenity"="atm"]["brand"~"İş Bankası|İşbank|Isbank",i]', 'nwr["amenity"="atm"]["name"~"İş Bankası|İşbank",i]']],
   ]],
   ["🎓 Eğitim", [
     ["universite", "🎓", "Üniversite", ['nwr["amenity"="university"]']],
