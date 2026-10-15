@@ -81,6 +81,9 @@
   .ckprev { white-space: pre-wrap; font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace; color: var(--muted); background: #0a0a0a; border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin: 0 0 6px; }
   .ckprev:empty { display: none; }
   .ckadd { width: 100%; margin: 4px 0 10px; padding: 10px; border-radius: 10px; border: 1px dashed var(--accent); background: transparent; color: var(--accent); font: inherit; font-size: 14px; cursor: pointer; }
+  .cmini { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin: -2px 0 10px; }
+  .cmini b { color: var(--ink); } .cmini .r { color: #ef6a4c; }
+  .ctop .cdays { margin-bottom: 0; }
   .cdays { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 2px 0 12px; }
   .cdays div { background: #111; border: 1px solid var(--line); border-radius: 12px; padding: 10px; text-align: center; }
   .cdays span { display: block; font-size: 12px; color: var(--muted); }
@@ -480,6 +483,11 @@
 
   <!-- Çek iskonto & valör -->
   <section class="panel" id="cek">
+    <div class="card ctop">
+      <div class="big" style="padding-top:2px"><span>Hesaba geçecek net tutar</span><b id="c_out">–</b></div>
+      <div class="cmini" id="c_mini"></div>
+      <div class="cdays" id="c_days"></div>
+    </div>
     <div class="card">
       <h2>TL Çek İskontosu / İştirası Kredisi</h2>
       <div style="color:var(--accent);font-weight:600;font-size:13px;margin:-4px 0 6px">+ Çek Valör Tespiti</div>
@@ -508,8 +516,7 @@
       <p class="hint" style="margin-top:6px">TCMB ticari müşteri ücret tebliği: kredi kullandırım ücreti işlem başına azami <b>%1,10</b> (+BSMV). Kredi tahsis ücreti limitin <b>%0,20</b>'si (1 Kasım 2025 öncesi onaylı limitlerde %0,25 = onbinde 25); limit bazında alınır, her iskontoda değil.</p>
     </div>
     <div class="card">
-      <div class="big"><span>Hesaba geçecek net tutar</span><b id="c_out">–</b></div>
-      <div class="cdays" id="c_days"></div>
+      <h2 style="margin-bottom:6px">Hesap detayı</h2>
       <div class="rows" id="c_rows"></div>
       <div id="c_warn"></div>
       <details style="margin-top:10px"><summary>Çek bazında detay</summary><div class="tbl" style="margin-top:8px"><table id="c_tab"></table></div></details>
@@ -1366,12 +1373,12 @@ function calcCek() {
     else if (weS.length) warns.push(`ℹ️ ${i + 1}. çek valörü hafta sonu nedeniyle ${fdtw(val)}.`);
     if (v.getFullYear() > 2027) warns.push(`ℹ️ ${v.getFullYear()} için bayram tarihleri girilmedi; yalnızca hafta sonu ve sabit tatiller dikkate alındı.`);
   });
-  if (!res.length) { $("c_days").innerHTML = ""; $("c_prev").textContent = ""; $("c_out").textContent = "–"; rows("c_rows", []); $("c_tab").innerHTML = ""; $("c_warn").innerHTML = warns.length ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : ""; renderCal(isl, []); return; }
+  if (!res.length) { $("c_days").innerHTML = ""; $("c_mini").innerHTML = ""; $("c_prev").textContent = ""; $("c_out").textContent = "–"; rows("c_rows", []); $("c_tab").innerHTML = ""; $("c_warn").innerHTML = warns.length ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : ""; renderCal(isl, []); return; }
   const S = (k) => res.reduce((a, x) => a + x[k], 0);
   const TT = S("T"), AA = S("A");
   let FF = S("F"), BS = S("bs"), KK = S("kk");
   if (!ic) { // banka tablosu: toplam tutar × faiz × ortalama gün (5 hane) ÷ 360
-    const og = Math.round(res.reduce((a, x) => a + x.A * x.nf, 0) / AA * 1e5) / 1e5;
+    const og = Math.ceil(res.reduce((a, x) => a + x.A * x.nf, 0) / AA * 1e5 - 1e-6) / 1e5;
     FF = AA * ry * og / B; BS = FF * bsmv; KK = FF * kkdf;
   }
   const kom = AA * komO, komBS = kom * bsmv;
@@ -1380,8 +1387,10 @@ function calcCek() {
   if (lim > 0) warns.push(AA > lim ? `🔴 Kullandırılan tutar (${tl(AA)}) müşteri limitini (${tl(lim)}) ${tl(AA - lim)} aşıyor.` : `ℹ️ Limit kullanımı: %${nfx(Math.round(AA / lim * 1000) / 10)} · kalan limit ${tl(lim - AA)}.`);
   const ortGun = res.reduce((a, x) => a + x.A * x.n, 0) / AA;
   const ortF = res.reduce((a, x) => a + x.A * x.nf, 0) / AA; // faiz gün sayısı (ağırlıklı)
-  const ortVD = addDays(isl, Math.round(ortGun)), ortVV = nextBizC(ortVD);
+  const ortR = Math.ceil(ortF * 1e5 - 1e-6) / 1e5; // banka tablosu: 5 haneye yukarı yuvarlar
+  const ortVD = addDays(isl, Math.floor(ortR)), ortVV = nextBizC(ortVD); // ort. vade günü = kullandırım + tam gün
   $("c_out").textContent = tl(net);
+  $("c_mini").innerHTML = `<span>Toplam çek <b>${tl(TT)}</b></span><span>Faiz + BSMV <b class="r">${tl(FF + BS)}</b></span>`;
   if (res.length === 1) {
     const x = res[0], ek = x.n - x.nv;
     $("c_days").innerHTML = `<div class="v"><span>Çek vade günü süresi</span><b>${x.nv} gün</b><i>${fdtw(x.v)}</i></div>
