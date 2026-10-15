@@ -84,11 +84,9 @@
   .cmini { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin: -2px 0 10px; }
   .cmini b { color: var(--ink); } .cmini .r { color: #ef6a4c; }
   .ctop .cdays { margin-bottom: 0; }
-  .ctop { position: sticky; top: calc(var(--stickH, 0px) - 1px); z-index: 15; box-shadow: 0 8px 18px rgba(0,0,0,.6); }
-  .ccmp { display: none; }
-  .ctop.cmp { padding: 8px 12px; }
-  .ctop.cmp > :not(.ccmp) { display: none; }
-  .ctop.cmp .ccmp { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; text-align: center; }
+  .cbar { position: fixed; top: calc(var(--stickH, 0px) + 4px); left: 50%; transform: translateX(-50%); width: min(480px, calc(100% - 28px)); z-index: 25; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 8px 12px; box-shadow: 0 8px 18px rgba(0,0,0,.6); opacity: 0; pointer-events: none; transition: opacity .15s; }
+  .cbar.show { opacity: 1; pointer-events: auto; }
+  .ccmp { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 6px; text-align: center; }
   .ccmp div { font-size: 10px; color: var(--muted); line-height: 1.25; }
   .ccmp b { display: block; font-size: 14px; color: var(--ink); white-space: nowrap; }
   .ccmp .n b { color: var(--accent); font-size: 15px; } .ccmp .vv b { color: #3fc283; }
@@ -491,9 +489,8 @@
 
   <!-- Çek iskonto & valör -->
   <section class="panel" id="cek">
-    <div id="c_sent"></div>
+    <div class="cbar" id="c_bar"><div class="ccmp" id="c_cmp"></div></div>
     <div class="card ctop" id="c_top">
-      <div class="ccmp" id="c_cmp"></div>
       <div class="big" style="padding-top:2px"><span>Hesaba geçecek net tutar</span><b id="c_out">–</b></div>
       <div class="cmini" id="c_mini"></div>
       <div class="cdays" id="c_days"></div>
@@ -1487,11 +1484,11 @@ $("c_lim").addEventListener("blur", () => { const n = num("c_lim"); $("c_lim").v
 $("c_isl").value = ymd(new Date());
 // Özet kartı: aşağı kaydırınca üstte tek satıra iner
 (function () {
-  const top = $("c_top"), sent = $("c_sent");
+  const top = $("c_top"), bar = $("c_bar");
   const f = () => {
-    if (!top.offsetParent) return;
+    if (!top.offsetParent) { bar.classList.remove("show"); return; }
     const sh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--stickH")) || 0;
-    top.classList.toggle("cmp", sent.getBoundingClientRect().top < sh - 40 && !!$("c_cmp").innerHTML);
+    bar.classList.toggle("show", top.getBoundingClientRect().bottom < sh + 8 && !!$("c_cmp").innerHTML);
   };
   window.addEventListener("scroll", f, { passive: true }); window.addEventListener("resize", f);
 })();
