@@ -74,6 +74,9 @@
   .ckrow .field { margin: 0; }
   .ckrow input[type=date] { width: 100%; }
   .ckdel { height: 44px; border-radius: 10px; border: 1px solid var(--line); background: #161616; color: var(--muted); font-size: 16px; cursor: pointer; }
+  .ckcopy { width: 100%; margin: 0 0 6px; padding: 11px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .ckprev { white-space: pre-wrap; font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace; color: var(--muted); background: #0a0a0a; border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin: 0 0 6px; }
+  .ckprev:empty { display: none; }
   .ckadd { width: 100%; margin: 4px 0 10px; padding: 10px; border-radius: 10px; border: 1px dashed var(--accent); background: transparent; color: var(--accent); font: inherit; font-size: 14px; cursor: pointer; }
   .cdays { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 2px 0 12px; }
   .cdays div { background: #111; border: 1px solid var(--line); border-radius: 12px; padding: 10px; text-align: center; }
@@ -483,23 +486,25 @@
       <label style="margin-top:12px">Çekler</label>
       <div id="c_list"></div>
       <button type="button" class="ckadd" id="c_add">+ Çek ekle</button>
+      <button type="button" class="ckcopy" id="c_copy">📋 Müşteriye özet kopyala</button>
+      <pre class="ckprev" id="c_prev"></pre>
       <div class="two">
         <div><label>Yıllık faiz</label><div class="field"><input id="c_faiz" type="text" inputmode="decimal" value="39"><span class="unit">%</span></div></div>
-        <div><label>Yıl esası</label><select id="c_esas"><option value="360">360 gün</option><option value="365">365 gün</option></select></div>
+        <div><label>Valör</label><select id="c_val"><option value="1">+1 iş günü (takas)</option><option value="0">Vade günü</option><option value="2">+2 iş günü</option></select></div>
       </div>
       <label>Hesap yöntemi</label>
-      <div id="c_yon" style="padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--field,#161616);font-size:15px;line-height:1.45"><b>Tutar × faiz × gün ÷ <span id="c_yonB">360</span></b><br><span style="font-size:13px;color:var(--muted)">(gün = valör − kullandırım + 1)</span></div>
-      <div class="two">
-        <div><label>Valör</label><select id="c_val"><option value="1">+1 iş günü (takas)</option><option value="0">Vade günü</option><option value="2">+2 iş günü</option></select></div>
-        <div><label>Komisyon / masraf</label><div class="field"><input id="c_kom" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
-      </div>
+      <div id="c_yon" style="padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--field,#161616);font-size:15px;line-height:1.45"><b>Tutar × faiz × gün ÷ 360</b><br><span style="font-size:13px;color:var(--muted)">(gün = valör − kullandırım + 1)</span></div>
       <div class="two">
         <div><label>BSMV</label><div class="field"><input id="c_bsmv" type="text" inputmode="decimal" value="5"><span class="unit">%</span></div></div>
         <div><label>KKDF</label><div class="field"><input id="c_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
       </div>
       <div class="two">
-        <div><label>Kullandırım oranı</label><div class="field"><input id="c_oran" type="text" inputmode="decimal" value="100"><span class="unit">%</span></div></div>
+        <div><label>Komisyon / masraf</label><div class="field"><input id="c_kom" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
         <div><label>Müşteri limiti (ops.)</label><div class="field"><input id="c_lim" type="text" inputmode="decimal" placeholder="boş = yok"><span class="unit">TL</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>Kullandırım oranı</label><div class="field"><input id="c_oran" type="text" inputmode="decimal" value="100"><span class="unit">%</span></div></div>
+        <div></div>
       </div>
     </div>
     <div class="card">
@@ -1332,8 +1337,7 @@ function renderCekList() {
 let calSel = "";
 function calcCek() {
   const isl = pDate($("c_isl").value) || new Date();
-  const ry = num("c_faiz") / 100, B = Number($("c_esas").value) || 360, ic = false;
-  $("c_yonB").textContent = B;
+  const ry = num("c_faiz") / 100, B = 360, ic = false;
   const vg = Number($("c_val").value), bsmv = num("c_bsmv") / 100, kkdf = num("c_kkdf") / 100;
   const oran = Math.min(100, num("c_oran") || 0) / 100, kom = num("c_kom");
   try { localStorage.setItem("cekler", JSON.stringify(CEKLER)); } catch (e) {}
@@ -1361,7 +1365,7 @@ function calcCek() {
     else if (weS.length) warns.push(`ℹ️ ${i + 1}. çek valörü hafta sonu nedeniyle ${fdtw(val)}.`);
     if (v.getFullYear() > 2027) warns.push(`ℹ️ ${v.getFullYear()} için bayram tarihleri girilmedi; yalnızca hafta sonu ve sabit tatiller dikkate alındı.`);
   });
-  if (!res.length) { $("c_days").innerHTML = ""; $("c_out").textContent = "–"; rows("c_rows", []); $("c_tab").innerHTML = ""; $("c_warn").innerHTML = warns.length ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : ""; renderCal(isl, []); return; }
+  if (!res.length) { $("c_days").innerHTML = ""; $("c_prev").textContent = ""; $("c_out").textContent = "–"; rows("c_rows", []); $("c_tab").innerHTML = ""; $("c_warn").innerHTML = warns.length ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : ""; renderCal(isl, []); return; }
   const S = (k) => res.reduce((a, x) => a + x[k], 0);
   const TT = S("T"), AA = S("A");
   let FF = S("F"), BS = S("bs"), KK = S("kk");
@@ -1383,9 +1387,7 @@ function calcCek() {
       <div class="x">Vadeden ${ek} gün sonra hesaba geçer · faiz ${x.nf} gün üzerinden</div>`;
   } else {
     const ov = res.reduce((a, x) => a + x.A * x.nv, 0) / AA;
-    $("c_days").innerHTML = `<div class="v"><span>Ort. vade günü süresi</span><b>${Math.round(ov)} gün</b><i>${res.length} çek, ağırlıklı</i></div>
-      <div class="h"><span>Ortalama vade gün sayısı</span><b>${ortF.toLocaleString("tr-TR", { maximumFractionDigits: 5 })}</b><i>valöre göre, ağırlıklı</i></div>
-      <div class="v"><span>Ortalama vade günü</span><b style="font-size:20px">${shortD(ortVD)}</b><i>${fdtw(ortVD).split(" ").pop()}</i></div>
+    $("c_days").innerHTML = `      <div class="v"><span>Ortalama vade günü</span><b style="font-size:20px">${shortD(ortVD)}</b><i>${fdtw(ortVD).split(" ").pop()}</i></div>
       <div class="h"><span>Ort. vade valör günü</span><b style="font-size:20px">${shortD(ortVV)}</b><i>${fdtw(ortVV).split(" ").pop()}</i></div>`;
   }
   rows("c_rows", [
@@ -1404,8 +1406,19 @@ function calcCek() {
     res.map((x) => `<tr><td>${x.i + 1}</td><td>${fmt2(x.T)}</td><td>${shortD(x.v)}</td><td>${x.nv}</td><td>${shortD(x.val)}</td><td>${x.nf}</td><td>${fmt2(x.F)}</td><td>${fmt2(x.bs)}</td></tr>`).join("");
   $("c_warn").innerHTML = warns.some((w) => !w.startsWith("ℹ️")) ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : `<div class="ckwarn" style="border-color:#1f6f4a;background:rgba(31,111,74,.12);color:#9fe0bf">✅ Vade ve valör tarihleri iş gününe denk geliyor.${warns.map((w) => `<div>${w}</div>`).join("")}</div>`;
   $("c_note").textContent = !ic ? `Banka tablosu: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ ${B}; gün = valör − kullandırım + 1 (valör günü dahil). Ortalama vade gün sayısı tutar ağırlıklıdır. Faiz kullandırımda peşin alınır.` : `Reeskont: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ (${B} + yıllık faiz × gün). Faiz kullandırımda peşin alınır; gün sayısı kullandırımdan valör (hesaba geçiş) tarihine kadardır.`;
+  const sum = [`Çek iskontosu özeti (${shortD(isl)})`, ""]
+    .concat(res.map((x) => `${x.i + 1}) ${fmt2(x.T)} TL · vade ${shortD(x.v)} · valör ${shortD(x.val)} · ${x.nf} gün`))
+    .concat(["", `Toplam çek: ${tl(TT)}`, ...(oran < 1 ? [`Kullandırılan (%${nfx(oran * 100)}): ${tl(AA)}`] : []), `Faiz oranı: yıllık %${nfx(ry * 100)}`, `Faiz + BSMV: ${tl(FF + BS)}`, ...(KK ? [`KKDF: ${tl(KK)}`] : []), ...(kom ? [`Masraf: ${tl(kom)}`] : []),
+      ...(res.length > 1 ? [`Ortalama vade: ${shortD(ortVD)} · valör ${shortD(ortVV)}`] : []), `Hesabınıza geçecek net tutar: ${tl(net)}`, "", "Bilgi amaçlıdır; kesin tutar işlem günü belirlenir."]);
+  $("c_prev").textContent = sum.join("\n");
   renderCal(isl, res);
 }
+$("c_copy").addEventListener("click", () => {
+  const t = $("c_prev").textContent; if (!t) return;
+  const done = () => { $("c_copy").textContent = "✓ Kopyalandı"; setTimeout(() => ($("c_copy").textContent = "📋 Müşteriye özet kopyala"), 1600); };
+  const fb = () => { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); } catch (e) {} a.remove(); done(); };
+  if (navigator.clipboard) navigator.clipboard.writeText(t).then(done, fb); else fb();
+});
 function renderCal(isl, res) {
   const marks = {};
   const add = (d, c) => { const k = ymd(d); (marks[k] = marks[k] || new Set()).add(c); };
@@ -1447,7 +1460,7 @@ $("c_list").addEventListener("input", (e) => { const el = e.target; if (el.datas
 $("c_list").addEventListener("focusout", (e) => { const el = e.target; if (el.dataset.k === "t") { const n = parseNum(el.value); el.value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }); CEKLER[+el.dataset.i].t = el.value; } });
 $("c_list").addEventListener("click", (e) => { const b = e.target.closest("[data-del]"); if (!b) return; CEKLER.splice(+b.dataset.del, 1); renderCekList(); calcCek(); });
 $("c_add").addEventListener("click", () => { const lastV = pDate(CEKLER[CEKLER.length - 1]?.v) || new Date(); CEKLER.push({ t: "", v: ymd(addMonthsC(lastV, 1)) }); renderCekList(); calcCek(); });
-["c_isl", "c_faiz", "c_val", "c_esas", "c_bsmv", "c_kkdf", "c_oran", "c_kom", "c_lim"].forEach((x) => $(x).addEventListener("input", calcCek));
+["c_isl", "c_faiz", "c_val", "c_bsmv", "c_kkdf", "c_oran", "c_kom", "c_lim"].forEach((x) => $(x).addEventListener("input", calcCek));
 
 $("c_kom").addEventListener("blur", () => { $("c_kom").value = num("c_kom").toLocaleString("tr-TR", { maximumFractionDigits: 2 }); });
 $("c_lim").addEventListener("blur", () => { const n = num("c_lim"); $("c_lim").value = n ? n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : ""; });
