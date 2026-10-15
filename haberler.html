@@ -62,7 +62,7 @@
   <p class="note">Başlıklar haber sitelerinin herkese açık RSS akışlarından gün içinde her saat otomatik derlenir. Habere dokununca yayıncının sitesinde açılır.</p>
 </div>
 <script>
-const CATS = [["gundem", "Gündem"], ["isbank", "İş Bankası"], ["okul", "🏫 Okul Tatili"], ["ekonomi", "Ekonomi"], ["dunya", "Dünya"], ["teknoloji", "Teknoloji"], ["spor", "Spor"]];
+const CATS = [["gundem", "Gündem"], ["isbank", "İş Bankası"], ["tarim", "🌾 Tarım"], ["yz", "🤖 Yapay Zeka"], ["okul", "🏫 Okul Tatili"], ["ekonomi", "Ekonomi"], ["dunya", "Dünya"], ["teknoloji", "Teknoloji"], ["spor", "Spor"]];
 const $ = (x) => document.getElementById(x);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 let D = null, cat = "gundem";
@@ -95,7 +95,7 @@ function render() {
   $("src").innerHTML = `<option value="">Tüm kaynaklar</option>` + srcs.map((s) => `<option ${s === cur ? "selected" : ""}>${esc(s)}</option>`).join("");
   const q = fold($("q").value.trim()), src = $("src").value;
   const list = items.filter((x) => (!src || x.s === src) && (!q || fold(x.t).includes(q)));
-  if (!list.length) { $("list").innerHTML = `<div class="empty">${cat === "okul" && !q && !src ? "Son 2 günde okul tatili haberi yok. 🎒 Okullar açık görünüyor." : cat === "isbank" && !q && !src ? "Son 2 günde İş Bankası haberi yok." : "Bu filtrede haber yok."}</div>`; return; }
+  if (!list.length) { $("list").innerHTML = `<div class="empty">${cat === "okul" && !q && !src ? "Son 2 günde okul tatili haberi yok. 🎒 Okullar açık görünüyor." : cat === "isbank" && !q && !src ? "Son 2 günde İş Bankası haberi yok." : (cat === "tarim" || cat === "yz") && !(D.cats[cat] || []).length ? "Bu kategori bir sonraki güncellemede dolacak." : "Bu filtrede haber yok."}</div>`; return; }
   let h = "", last = "";
   for (const x of list) {
     const dl = x.d ? dayLabel(x.d) : "";
