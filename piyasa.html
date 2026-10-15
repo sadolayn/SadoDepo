@@ -331,7 +331,12 @@ function renderTable() {
   };
   for (const r of rows) h += row(`${r.y}${r.ytd ? ' <span style="color:var(--muted);font-size:11px">(bugüne)</span>' : ""}`, r.i0, r.i1, 1, `${r.y - 1}-12-31`, r.ytd ? last : `${r.y}-12-31`);
   const s5 = shiftYears(last, -5);
-  h += row("5 yıl", idxOn(s5), N - 1, 0);
+  if (m === "val") {
+    // Değer modunda başlangıç (5 yıl önce) fiyatlarını ayrıca göster: yıl sonu değerleriyle karışmasın
+    const i5 = idxOn(s5);
+    h += `<tr class="tot"><td>5 yıl önce<br><span style="color:var(--muted);font-size:11px">${fdate(D.dates[i5], { day: "numeric", month: "short", year: "numeric" })}</span></td>${A.map((a) => { const v = D[a.k][i5]; return `<td>${nf(v, v >= 1000 ? 0 : 2)}</td>`; }).join("")}<td class="p" style="background:rgba(224,71,58,.08)">100,0</td></tr>`;
+    h += `<tr class="tot"><td>Bugün</td>${A.map((a) => { const v = D[a.k][N - 1]; return `<td>${nf(v, v >= 1000 ? 0 : 2)}</td>`; }).join("")}<td class="p" style="background:rgba(224,71,58,.08)">${nf(100 * cpiAt(D.dates[i5]) / cpiAt(last), 1)}</td></tr>`;
+  } else h += row("5 yıl", idxOn(s5), N - 1, 0);
   h += `</tbody></table>`;
   $("table").innerHTML = h;
   const d5 = fdate(D.dates[idxOn(s5)]);
@@ -339,7 +344,7 @@ function renderTable() {
     ? `Her yıl, bir önceki yıl sonuna göre TL bazında değişim; TL sütunu yastık altında tutulan parayı gösterir (nominal %0); son sütun aynı dönemin TÜFE enflasyonu. "5 yıl" satırı ${d5}'den bugüne. TÜFE ${cpiLast()} verisine kadardır.`
     : m === "reel"
     ? `Reel getiri = enflasyondan arındırılmış getiri. Pozitifse varlık enflasyonu yenmiş, alım gücü artmış demektir. TL sütunu, yastık altındaki paranın yıllık alım gücü kaybıdır. TÜFE ${cpiLast()} verisine kadardır.`
-    : `Yıl sonu kapanış değerleri (TL; madenler gram). TL sütunu: 2020 sonunda cebinde olan 100 TL'nin o tarihteki alım gücü ("5 yıl" satırında ${d5}'deki 100 TL'nin bugünkü alım gücü).`;
+    : `Yıl satırları o yılın 31 Aralık kapanış fiyatıdır (TL; madenler gram) — alış tarihi değildir. Alış fiyatı için "5 yıl önce" satırına bak (${d5}). TL sütunu: 2020 sonunda (alt iki satırda ${d5}'de) cebinde olan 100 TL'nin o tarihteki alım gücü.`;
 }
 
 function simInputs() {
