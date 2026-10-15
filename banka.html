@@ -183,6 +183,8 @@
         <div><label>1. barem</label><div class="field"><input id="v_p1" type="text" inputmode="decimal" value="10"><span class="unit">%</span></div></div>
         <div><label>2. barem</label><div class="field"><input id="v_p2" type="text" inputmode="decimal" value="20"><span class="unit">%</span></div></div>
       </div>
+      <label>Kalan tutara teklif edeceğin oran (isteğe bağlı)</label>
+      <div class="field"><input id="v_teklif" type="text" inputmode="decimal" placeholder="ör. 41"><span class="unit">%</span></div>
       <div class="big" style="margin-top:12px"><span>Hedef net getiri</span><b id="v_target">–</b></div>
       <div id="v_out"></div>
       <p class="note" id="v_note"></p>
@@ -440,16 +442,30 @@ function calcBreak(P, r, g, start) {
     const u = rest > 0 ? unit(rest) : 0;
     const rMin = u ? target / u : NaN;                      // müşteri aynı neti alsın
     const rMax = u ? (target + vVal) / u : NaN;             // banka kazancını da aktarırsa (başabaş)
-    return { pc, vad, vVal, rest, rMin, rMax, nMax: target + vVal };
+    // Teklif karşılaştırması: tamamı ana oranla mı, kalan tutar teklif oranıyla + vadesiz mi? (banka açısından brüt faiz maliyeti)
+    let cmp = "";
+    const tek = num("v_teklif") / 100;
+    if (tek > 0 && rest > 0) {
+      const yf = yearFrac(start, g).f;
+      const costA = P * r * yf;                       // tamamı ana oranla
+      const costB = rest * tek * yf - vad * pf * yf;  // kalan teklif oranıyla, vadesizden politika faizi kazancı düşülür
+      const adv = costA - costB;
+      const custA = target, custB = netFor(rest, tek, g, start, sMan);
+      cmp = `<div style="border-top:1px dashed var(--line);margin-top:4px"><span>Banka maliyeti · ${tl(P)} %${nfx(r * 100)}</span><span>${tl(costA)}</span></div>
+        <div><span>Banka maliyeti · ${tl(rest)} %${nfx(tek * 100)} − vadesiz kazancı</span><span>${tl(costB)}</span></div>
+        <div class="${adv >= 0 ? "pos" : "neg"}" style="font-weight:700"><span>${adv >= 0 ? "✅ Banka lehine" : "⚠️ Banka aleyhine"}</span><span>${tl(Math.abs(adv))}</span></div>
+        <div style="font-size:12px;color:var(--muted)"><span>Müşterinin net getirisi</span><span>${tl(custB)} (${custB >= custA ? "+" : "−"}${tl(Math.abs(custB - custA))})</span></div>`;
+    }
+    return { pc, vad, vVal, rest, rMin, rMax, nMax: target + vVal, cmp };
   });
   const pr = (x) => isFinite(x) ? "%" + nfx(Math.round(x * 10000) / 100) : "–";
   $("v_out").innerHTML = sc.map((x) => `<div class="rows" style="margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:4px 12px">
       <div style="font-weight:700;color:var(--accent)"><span>%${nfx(x.pc)} barem${P * x.pc / 100 < mn && x.vad === mn ? " (asgari " + tl(mn) + ")" : ""}</span><span></span></div>
       <div><span>Vadesizde kalan (müşteriye faiz yok)</span><span>${tl(x.vad)}</span></div>
       <div><span>Vadeliye giden tutar</span><span>${tl(x.rest)}</span></div>
-      <div><span>Bankanın vadesiz kazancı (%${nfx(pf * 100)} politika faizi)</span><span>${tl(x.vVal)}</span></div>
+      <div><span>Bankanın vadesiz kazancı (%${nfx(pf * 100)} politika faizi)</span><span>${tl(x.vad * pf * yearFrac(start, g).f)}</span></div>
       <div class="total"><span>Kalan tutara verilebilecek azami oran</span><span>${pr(x.rMax)}</span></div>
-      <div style="font-size:12px;color:var(--muted)"><span>Politika faizi hesaba katılmasaydı</span><span>${pr(x.rMin)}</span></div>
+      ${x.cmp || ""}
     </div>`).join("");
   $("v_note").textContent = `Azami oran: müşterinin paranın tamamını %${nfx(r * 100)} ile bağlamış gibi alacağı net getiri + bankanın vadesizde kalan tutardan %${nfx(pf * 100)} politika faiziyle kazandığı. Banka bu oranı verirse vadesiz kazancının tamamını müşteriye aktarmış olur; politika faizi yükseldikçe azami oran da yükselir.`;
 }
@@ -514,6 +530,7 @@ function calcExtra(P, r, g, start) {
 }
 let m2GunManual = false;
 $("v_pf").addEventListener("input", () => (vPfManual = true));
+$("v_teklif").addEventListener("input", calcMev);
 $("m2_gun").addEventListener("input", () => (m2GunManual = true));
 const nfx = (v) => Number(v).toLocaleString("tr-TR", { maximumFractionDigits: 2 });
 
