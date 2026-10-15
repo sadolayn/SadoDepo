@@ -106,15 +106,15 @@
   .yt-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 8px; }
   .yt-chips button { padding: 7px 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
   .yt-chips button.on { background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; border-color: #3a50f0; }
-  table.yt { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; font-size: 13.5px; font-variant-numeric: tabular-nums; }
-  table.yt th { font-size: 11.5px; color: var(--muted); font-weight: 600; text-align: right; padding: 9px 10px; border-bottom: 1px solid var(--line); background: #121212; }
+  table.yt { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; font-size: 13px; font-variant-numeric: tabular-nums; }
+  table.yt th { font-size: 11px; color: var(--muted); font-weight: 600; text-align: right; padding: 8px 6px; border-bottom: 1px solid var(--line); background: #121212; }
   table.yt th:first-child, table.yt td:first-child { text-align: left; }
-  table.yt td { padding: 10px 10px; border-bottom: 1px solid #1c1c1c; text-align: right; white-space: nowrap; }
+  table.yt td { padding: 9px 6px; border-bottom: 1px solid #1c1c1c; text-align: right; white-space: nowrap; }
   table.yt td:first-child { white-space: normal; color: #ddd; }
   table.yt tr:last-child td { border-bottom: none; }
   table.yt td.now { font-weight: 700; color: #fff; }
   table.yt td.old { color: var(--muted); }
-  .chg { display: inline-block; min-width: 62px; padding: 3px 7px; border-radius: 8px; font-weight: 700; font-size: 12.5px; text-align: center; }
+  .chg { display: inline-block; padding: 3px 5px; border-radius: 8px; font-weight: 700; font-size: 12.5px; text-align: center; }
   .chg.g { background: rgba(63,194,131,.14); color: #5fd49a; }
   .chg.b { background: rgba(224,71,58,.14); color: #f07a6e; }
   .chg.n { color: var(--muted); }
@@ -158,7 +158,7 @@ const CATS = [
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
-let yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
+let fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 
 function renderChips() {
@@ -196,7 +196,12 @@ function renderCamps() {
 }
 
 function renderSubeler() {
-  const d = subeler;
+  let d = subeler;
+  if (d && fin) { // şube, ATM ve çalışan sayısını bankanın resmi veri dosyasından al
+    const L = fin.periods.length - 1, S = fin.s;
+    d = Object.assign({}, d, { atm: S.atm[L] ?? d.atm, calisan: S.calisan[L] ?? d.calisan, calisanDonem: pLabel(fin.periods[L]),
+      yurtici: S.sube[L] != null ? S.sube[L] - d.yurtdisi : d.yurtici, donem: pLabel(fin.periods[L]) });
+  }
   if (!d) { $("list").innerHTML = '<div class="empty">Şube bilgisi yüklenemedi.</div>'; return; }
   const f = (n) => Number(n).toLocaleString("tr-TR");
   $("upd").textContent = "Veri dönemi: " + d.donem + " · banka bu verileri 3 ayda bir açıklar";
@@ -218,42 +223,94 @@ function renderSubeler() {
   bindYt();
 }
 
-let ytSel = 0;
+const AY_TR = { "3": "Mart", "6": "Haziran", "9": "Eylül", "12": "Aralık" };
+const pLabel = (p) => { const [y, m] = p.split("/"); return AY_TR[m] + " " + y; };
+const pRange = (p) => { const m = +p.split("/")[1]; return m === 3 ? "ocak–mart" : m === 6 ? "ocak–haziran" : m === 9 ? "ocak–eylül" : "yıllık"; };
+let ytSel = null;
 function ytFmt(v, tur) {
   if (v == null) return "–";
   if (tur === "pct") return "%" + v.toLocaleString("tr-TR", { minimumFractionDigits: 1, maximumFractionDigits: 2 });
-  return v >= 1000 ? (v / 1000).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " trn" : v.toLocaleString("tr-TR", { maximumFractionDigits: 1 }) + " mlr";
+  if (tur === "adet") return v >= 1e6 ? (v / 1e6).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) + " mn" : v.toLocaleString("tr-TR");
+  return v >= 1000 ? (v / 1000).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " trn" : v.toLocaleString("tr-TR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " mlr";
 }
-function ytTable(d) {
-  const rows = d.satirlar.map((r) => {
-    let txt = "–", cls = "n";
-    if (r.bu != null && r.once != null) {
-      const up = r.bu > r.once;
-      if (r.tur === "pct") { const diff = r.bu - r.once; txt = (diff >= 0 ? "▲ +" : "▼ ") + diff.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) + " puan"; }
-      else { const p = r.deg != null ? r.deg : (r.bu / r.once - 1) * 100; txt = (p >= 0 ? "▲ +%" : "▼ −%") + Math.abs(p).toLocaleString("tr-TR", { maximumFractionDigits: 1 }); }
-      if (r.bu !== r.once) cls = (up === (r.iyi === "up")) ? "g" : "b";
-    }
-    return `<tr><td>${esc(r.ad)}</td><td class="now">${ytFmt(r.bu, r.tur)}</td><td class="old">${ytFmt(r.once, r.tur)}</td><td><span class="chg ${cls}">${txt}</span></td></tr>`;
-  }).join("");
-  return `<table class="yt"><thead><tr><th>Kalem</th><th>${esc(d.ad)}</th><th>${esc(d.onceki)}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
-    <div class="yt-note">Tutarlar TL (trn = trilyon, mlr = milyar). Yeşil iyiye, kırmızı kötüye işaret eder. Kaynak: ${esc(d.kaynak)}. Bazı rakamlar haberlerden yuvarlanarak alınmıştır; kesin değerler için yatırımcı sunumuna bakın.</div>`;
+function chgCell(bu, once, tur, iyi) {
+  if (bu == null || once == null) return '<span class="chg n">–</span>';
+  let txt;
+  if (tur === "pct") { const d = bu - once; txt = (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toLocaleString("tr-TR", { maximumFractionDigits: 2 }) + " puan"; }
+  else { const p = (bu / once - 1) * 100; txt = (p >= 0 ? "▲ +%" : "▼ −%") + Math.abs(p).toLocaleString("tr-TR", { maximumFractionDigits: 1 }); }
+  const cls = bu === once ? "n" : ((bu > once) === (iyi === "up") ? "g" : "b");
+  return `<span class="chg ${cls}">${txt}</span>`;
+}
+function finRows(i) {
+  const S = fin.s, P = fin.periods, j = i - 4;          // bir yıl önceki aynı çeyrek
+  const q = (k, idx) => { // çeyreklik akım (kümülatiften)
+    if (idx < 0 || S[k][idx] == null) return null;
+    const m = +P[idx].split("/")[1];
+    return m === 3 ? S[k][idx] : (S[k][idx - 1] == null ? null : S[k][idx] - S[k][idx - 1]);
+  };
+  const R = [
+    ["Toplam aktif", S.aktif[i], S.aktif[j], "tl", "up"],
+    ["Krediler", S.kredi[i], S.kredi[j], "tl", "up"],
+    ["Mevduat", S.mevduat[i], S.mevduat[j], "tl", "up"],
+    ["Özkaynak", S.ozkaynak[i], S.ozkaynak[j], "tl", "up"],
+    [`Net kâr (${pRange(P[i])})`, S.netkar[i], S.netkar[j], "tl", "up"],
+    ["Net kâr (çeyrek)", q("netkar", i), q("netkar", j), "tl", "up"],
+    [`Net faiz geliri (${pRange(P[i])})`, S.nfg[i], S.nfg[j], "tl", "up"],
+    [`Ücret ve komisyon (${pRange(P[i])})`, S.komisyon[i], S.komisyon[j], "tl", "up"],
+    ["Özkaynak kârlılığı", S.roe[i], S.roe[j], "pct", "up"],
+    ["Aktif kârlılığı", S.roa[i], S.roa[j], "pct", "up"],
+    ["Sermaye yeterliliği", S.syr[i], S.syr[j], "pct", "up"],
+    ["Takipteki krediler oranı", S.npl[i], S.npl[j], "pct", "down"],
+    ["Şube", S.sube[i], S.sube[j], "adet", "up"],
+    ["ATM", S.atm[i], S.atm[j], "adet", "up"],
+    ["Çalışan", S.calisan[i], S.calisan[j], "adet", "up"],
+    ["Kredi kartı", S.kart[i], S.kart[j], "adet", "up"],
+  ];
+  return R;
+}
+function ytTable(i) {
+  const P = fin.periods, j = i - 4;
+  const rows = finRows(i).map(([ad, bu, once, tur, iyi]) =>
+    `<tr><td>${esc(ad)}</td><td class="now">${ytFmt(bu, tur)}</td><td class="old">${ytFmt(once, tur)}</td><td>${chgCell(bu, once, tur, iyi)}</td></tr>`).join("");
+  return `<table class="yt"><thead><tr><th>Kalem</th><th>${pLabel(P[i])}</th><th>${j >= 0 ? pLabel(P[j]) : "–"}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="yt-note">Bankanın kendi yayımladığı resmi veri. Tutarlar TL (trn = trilyon, mlr = milyar). Yeşil iyiye, kırmızı kötüye işaret eder. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · her saat kontrol edilir.</div>`;
 }
 function bindYt() {
   const c = document.getElementById("ytChips");
   if (!c) return;
-  c.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; ytSel = +b.dataset.i; c.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); document.getElementById("ytTable").innerHTML = ytTable(yat.donemler[ytSel]); };
+  c.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; ytSel = +b.dataset.i; c.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); document.getElementById("ytTable").innerHTML = ytTable(ytSel); };
 }
 function yatHtml() {
   const y = yat;
-  if (!y) return "";
-  return `<div class="day" style="margin-top:22px">📊 Yatırımcı sunumu · ${esc(y.donem)}</div>
-    <div class="stats">${y.kalemler.map((k) => `<div class="stat"><span>${esc(k.ad)}</span><b style="font-size:21px">${esc(k.deger)}</b><small>${esc(k.not)}</small></div>`).join("")}</div>
-    <div class="facts"><ul>${y.paylar.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
-    ${(y.donemler || []).length ? `<div class="day" style="margin-top:18px">📈 Bir yıl önceyle karşılaştırma</div>
-    <div class="yt-chips" id="ytChips">${y.donemler.map((d, i) => `<button data-i="${i}" class="${i === ytSel ? "on" : ""}">${esc(d.ad)}</button>`).join("")}</div>
-    <div id="ytTable">${ytTable(y.donemler[ytSel] || y.donemler[0])}</div>` : ""}
-    <a class="maxlink" href="${esc(y.pdf)}" target="_blank" rel="noopener">📄 Yatırımcı sunumunu aç (PDF) ↗</a>
-    <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(y.ir)}" target="_blank" rel="noopener">Yatırımcı ilişkileri sayfası ↗</a>`;
+  let h = "";
+  if (fin) {
+    const P = fin.periods, last = P.length - 1, S = fin.s, j = last - 4;
+    const ly = P[last].split("/")[0];
+    // Dönem düğmeleri: son yılın çeyrekleri (yeniden eskiye) + bir önceki yıl sonu
+    const opts = P.map((p, i) => ({ p, i })).filter((o) => o.p.startsWith(ly) || o.p === (+ly - 1) + "/12").reverse();
+    if (ytSel == null) ytSel = last;
+    const card = (ad, k, tur, iyi, alt) => `<div class="stat"><span>${ad}</span><b style="font-size:21px">${ytFmt(S[k][last], tur)}</b><small>${alt || ""} ${chgCell(S[k][last], S[k][j], tur, iyi)}</small></div>`;
+    h += `<div class="day" style="margin-top:22px">📊 Mali veriler · ${pLabel(P[last])}</div>
+      <div class="stats">
+        ${card("Toplam aktif", "aktif", "tl", "up", "yıllık")}
+        ${card("Krediler", "kredi", "tl", "up", "yıllık")}
+        ${card("Mevduat", "mevduat", "tl", "up", "yıllık")}
+        ${card("Özkaynak", "ozkaynak", "tl", "up", "yıllık")}
+        ${card("Net kâr (" + pRange(P[last]) + ")", "netkar", "tl", "up", "yıllık")}
+        ${card("Özkaynak kârlılığı", "roe", "pct", "up", "")}
+        ${card("Sermaye yeterliliği", "syr", "pct", "up", "")}
+        ${card("Takipteki krediler", "npl", "pct", "down", "")}
+      </div>
+      <div class="day" style="margin-top:18px">📈 Bir yıl önceyle karşılaştırma</div>
+      <div class="yt-chips" id="ytChips">${opts.map((o) => `<button data-i="${o.i}" class="${o.i === ytSel ? "on" : ""}">${pLabel(o.p)}</button>`).join("")}</div>
+      <div id="ytTable">${ytTable(ytSel)}</div>`;
+  }
+  if (y) {
+    h += `<div class="facts" style="margin-top:12px"><ul>${y.paylar.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
+      <a class="maxlink" href="${esc(y.pdf)}" target="_blank" rel="noopener">📄 Yatırımcı sunumunu aç (PDF) ↗</a>
+      <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(y.ir)}" target="_blank" rel="noopener">Yatırımcı ilişkileri sayfası ↗</a>`;
+  }
+  return h;
 }
 function renderIscep() {
   const d = iscep;
@@ -349,6 +406,7 @@ function renderList() {
       live = (h.cats && h.cats.isbank) || []; liveUpd = h.updated || null;
     } catch (e) {}
     if (!CATS.some((c) => c[0] === cat)) cat = "Tümü";
+    try { fin = await (await fetch("isbank/finans.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { yat = await (await fetch("isbank/yatirimci.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { kontrol = (await (await fetch("isbank/kontrol.json?t=" + Date.now(), { cache: "no-store" })).json()).son_kontrol; } catch (e) {}
     $("subeBtn").onclick = () => { cat = cat === "Şubeler" ? "Tümü" : "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); };
