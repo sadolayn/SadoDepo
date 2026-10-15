@@ -403,6 +403,11 @@
         <div><label>Vade</label><div class="field"><input id="k2_vade" type="text" inputmode="numeric" value="120"><span class="unit">ay</span></div></div>
       </div>
       <div class="two">
+        <div><label>Kullandırım tarihi</label><input id="k2_bas" type="date" style="color-scheme:dark"></div>
+        <div><label>İlk taksit tarihi</label><input id="k2_ilk" type="date" style="color-scheme:dark"></div>
+      </div>
+      <p class="hint" id="k2_dnote" style="margin-top:6px"></p>
+      <div class="two">
         <div><label>Tahsis ücreti</label><div class="field"><input id="k2_tahsis" type="text" inputmode="decimal" value="0,5"><span class="unit">%</span></div></div>
         <div><label>Ekspertiz + diğer masraf</label><div class="field"><input id="k2_masraf" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
       </div>
@@ -414,6 +419,10 @@
       <details>
         <summary>Yıllara göre ödeme planı</summary>
         <div class="tbl"><table id="k2_plan"></table></div>
+      </details>
+      <details>
+        <summary>Aylık ödeme planı</summary>
+        <div class="tbl"><table id="k2_mplan"></table></div>
       </details>
     </div>
   </section>
@@ -442,6 +451,11 @@
         <option value="yillik">Yıllık eşit taksit</option>
       </select>
       <div class="two">
+        <div><label>Kullandırım tarihi</label><input id="tr_bas" type="date" style="color-scheme:dark"></div>
+        <div><label id="tr_ilkLbl">İlk taksit tarihi</label><input id="tr_ilk" type="date" style="color-scheme:dark"></div>
+      </div>
+      <p class="hint" id="tr_dnote" style="margin-top:6px"></p>
+      <div class="two">
         <div><label>KKDF</label><div class="field"><input id="tr_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
         <div><label>BSMV</label><div class="field"><input id="tr_bsmv" type="text" inputmode="decimal" value="5"><span class="unit">%</span></div></div>
       </div>
@@ -450,6 +464,10 @@
     <div class="card">
       <div class="big"><span id="tr_bigLbl">Taksit</span><b id="tr_out">–</b></div>
       <div class="rows" id="tr_rows"></div>
+      <details>
+        <summary>Ödeme planını göster</summary>
+        <div class="tbl"><table id="tr_plan"></table></div>
+      </details>
     </div>
     <p class="note">KKDF: Tüketici kredilerinde %15, ticari/zirai/mesleki faaliyet için kullandırılan ve bu amacı belgelenen kredilerde %0'dır. Çiftçiler bu amacı ÇKS kaydı, Hayvan Bilgi Sistemi kaydı, ziraat odası çiftçilik belgesi ya da (gerçek usulde) aktife kayıt ve fatura ile belgeleyebilir. BSMV: tüketici kredilerinde %15, diğer kredilerde genel oran uygulanır. Hazine faiz destekli (sübvansiyonlu) tarım kredilerinde faiz oranı ayrıca indirimlidir. Uygulamayı bankanın güncel yönergesiyle teyit et.</p>
   </section>
@@ -1150,48 +1168,66 @@ function renderLtv() {
     <table class="ltvtab"><tr><th>Ekspertiz değeri</th><th>A/B</th><th>C</th><th>D ve altı</th></tr>${rowsH}</table>`;
   $("k2_max").onclick = () => { $("k2_tutar").value = Math.floor(maxKredi).toLocaleString("tr-TR"); calcKonut(); };
 }
+// Kredi tarih yardımcıları (tüketici kredisiyle aynı banka mantığı)
+function mkPerStep(bas, first, cnt, step, base) {
+  const ds = []; for (let j = 0; j < cnt; j++) ds.push(addMonthsC(first, j * step));
+  const g1 = dayDiff(bas, first), tam = ymd(addMonthsC(bas, step)) === ymd(first);
+  return ds.map((d, j) => j === 0 ? { d, fac: tam ? 1 : g1 / base, g: g1 } : { d, fac: 1, g: step === 1 ? 30 : 360 });
+}
+const dManual = {};
+function dateSetup(pre, step, cnt, minG, maxG) {
+  const bas = pDate($(pre + "_bas").value) || new Date();
+  if (!$(pre + "_bas").value) $(pre + "_bas").value = ymd(bas);
+  if (!dManual[pre] || !$(pre + "_ilk").value) $(pre + "_ilk").value = ymd(addMonthsC(bas, step));
+  const ilk = pDate($(pre + "_ilk").value);
+  const g = ilk ? dayDiff(bas, ilk) : NaN, ok = ilk && g >= minG && g <= maxG;
+  if (minG === 5) { $(pre + "_ilk").min = ymd(addDays(bas, 5)); $(pre + "_ilk").max = ymd(addDays(bas, 45)); } else { $(pre + "_ilk").min = ymd(addDays(bas, 1)); $(pre + "_ilk").removeAttribute("max"); }
+  $(pre + "_dnote").innerHTML = ok
+    ? (minG === 5 ? `İlk taksit kullandırımdan en az 5, en fazla 45 gün sonra olmalı. Şu an: <b>${g} gün</b>.` : `Kullandırımdan ödemeye <b>${g} gün</b>.`)
+    : `<span style="color:#ef8a5d">⚠️ ${minG === 5 ? `İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı (şu an ${isFinite(g) ? g : "–"} gün). Uygun tarih: ${shortD(addDays(bas, 5))} – ${shortD(addDays(bas, 45))}.` : "Ödeme tarihi kullandırımdan sonra olmalı."}</span>`;
+  return { bas, ilk, ok, g };
+}
+["k2", "tr"].forEach((p) => $(p + "_ilk").addEventListener("input", () => (dManual[p] = true)));
 function calcKonut() {
   renderLtv();
   const deger = num("k2_deger"), P = num("k2_tutar"), r = num("k2_faiz") / 100, n = Math.round(num("k2_vade"));
   const tahsis = P * num("k2_tahsis") / 100, masraf = num("k2_masraf");
-  if (!P || !n) { $("k2_out").textContent = "–"; rows("k2_rows", []); $("k2_plan").innerHTML = ""; return; }
-  const taksit = r === 0 ? P / n : P * r / (1 - Math.pow(1 + r, -n));
-  const toplam = taksit * n;
-  // Yıllık plan
-  let kalan = P, html = "<tr><th>Yıl</th><th>Ödenen</th><th>Anapara</th><th>Faiz</th><th>Kalan</th></tr>";
+  const D = dateSetup("k2", 1, n, 5, 45);
+  if (!P || !n || !D.ok) { $("k2_out").textContent = "–"; rows("k2_rows", []); $("k2_plan").innerHTML = ""; $("k2_mplan").innerHTML = ""; return; }
+  const per = mkPerStep(D.bas, D.ilk, n, 1, 30);
+  const taksit = r === 0 ? P / n : solveT(P, per, r, 0, 0);
+  const plan = tkPlan(P, per, taksit, r, 0, 0, true);
+  const toplam = plan.reduce((a, x) => a + x.t, 0), tF = plan.reduce((a, x) => a + x.f, 0);
+  // Yıllık plan (planın satırlarından)
   const fmt = (x) => x.toLocaleString("tr-TR", { maximumFractionDigits: 0 });
-  for (let y = 0; y < Math.ceil(n / 12); y++) {
-    let odenen = 0, ana = 0, fz = 0;
-    for (let k = y * 12 + 1; k <= Math.min(n, (y + 1) * 12); k++) {
-      const f = kalan * r;
-      let a = taksit - f;
-      if (k === n) a = kalan;
-      kalan = Math.max(0, kalan - a);
-      odenen += f + a; ana += a; fz += f;
-    }
-    html += `<tr><td>${y + 1}</td><td>${fmt(odenen)}</td><td>${fmt(ana)}</td><td>${fmt(fz)}</td><td>${fmt(kalan)}</td></tr>`;
+  let html = "<tr><th>Yıl</th><th>Ödenen</th><th>Anapara</th><th>Faiz</th><th>Kalan</th></tr>";
+  for (let y = 0; y < Math.ceil(plan.length / 12); y++) {
+    const ch = plan.slice(y * 12, (y + 1) * 12);
+    html += `<tr><td>${y + 1}</td><td>${fmt(ch.reduce((a, x) => a + x.t, 0))}</td><td>${fmt(ch.reduce((a, x) => a + x.ana, 0))}</td><td>${fmt(ch.reduce((a, x) => a + x.f, 0))}</td><td>${fmt(ch[ch.length - 1].bal)}</td></tr>`;
   }
   $("k2_plan").innerHTML = html;
-  // Masraf dahil yıllık maliyet oranı
-  let lo = 0, hi = 1;
+  $("k2_mplan").innerHTML = "<tr><th>#</th><th>Tarih</th><th>Gün</th><th>Taksit</th><th>Anapara</th><th>Faiz</th><th>Kalan</th></tr>" +
+    plan.map((x, j) => `<tr><td>${j + 1}</td><td>${shortD(x.d)}</td><td>${x.g}</td><td>${fmt2(x.t)}</td><td>${fmt2(x.ana)}</td><td>${fmt2(x.f)}</td><td>${fmt2(x.bal)}</td></tr>`).join("") + `<tr style="font-weight:700"><td></td><td>Toplam</td><td></td><td>${fmt2(toplam)}</td><td>${fmt2(P)}</td><td>${fmt2(tF)}</td><td></td></tr>`;
+  // Masraf dahil yıllık maliyet oranı (gerçek dönemlerle)
+  const cum = []; per.reduce((a, x, j) => (cum[j] = a + x.fac), 0);
   const net = P - tahsis - masraf;
-  for (let it = 0; it < 100; it++) {
-    const m = (lo + hi) / 2;
-    const pv = m === 0 ? taksit * n : taksit * (1 - Math.pow(1 + m, -n)) / m;
-    if (pv > net) lo = m; else hi = m;
-  }
+  const pv = (m) => plan.reduce((a, x, j) => a + x.t / Math.pow(1 + m, cum[j]), 0);
+  let lo = 0, hi = 1; for (let it = 0; it < 100; it++) { const m = (lo + hi) / 2; if (pv(m) > net) lo = m; else hi = m; }
   const ltv = deger ? (P / deger) * 100 : 0;
-  $("k2_out").textContent = tl(taksit);
+  const ilkF = Math.abs(plan[0].t - R2(taksit)) > 0.005;
+  $("k2_out").textContent = tl(R2(taksit));
   rows("k2_rows", [
-    ["Toplam faiz", tl(toplam - P)],
+    ["İlk / son taksit", `${shortD(plan[0].d)} · ${shortD(plan[plan.length - 1].d)}`],
+    ...(ilkF ? [[`İlk taksit (${plan[0].g} gün)`, tl(plan[0].t)]] : []),
+    ["Toplam faiz", tl(tF)],
+    ["Toplam geri ödeme (ödeme planı)", tl(toplam), "total"],
     ["Tahsis ücreti", tl(tahsis)],
     ["Ekspertiz + diğer masraf", tl(masraf)],
-    ["Toplam geri ödeme", tl(toplam + tahsis + masraf), "total"],
     ["Peşinat", tl(Math.max(0, deger - P))],
     ["Kredi / ekspertiz değeri", pct(ltv)],
     ["Yıllık maliyet oranı (masraf dahil)", pct((Math.pow(1 + (lo + hi) / 2, 12) - 1) * 100)],
   ]);
-  $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Uygulamayı bankanla teyit et.";
+  $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.";
 }
 
 // ---------- Tarım ----------
@@ -1199,6 +1235,7 @@ const TR_PRESET = { levha: [0, 5], cks: [0, 5], bireysel: [15, 15] };
 let trManual = false;
 ["tr_kkdf", "tr_bsmv"].forEach((x) => $(x).addEventListener("input", () => (trManual = true)));
 let trLast = null;
+let trModeLast = "aylik";
 function trSchedule(P, ry, n, mode, tax) {
   // dönemsel faiz ve dönem sayısı
   if (mode === "hasat") {
@@ -1224,21 +1261,34 @@ function calcTarim() {
   const P = num("tr_tutar"), ry = num("tr_faiz") / 100, n = Math.round(num("tr_vade"));
   const kkdf = num("tr_kkdf") / 100, bsmv = num("tr_bsmv") / 100;
   const mode = $("tr_odeme").value;
-  if (!P || !n) { $("tr_out").textContent = "–"; rows("tr_rows", []); return; }
-  const r = trSchedule(P, ry, n, mode, kkdf + bsmv);
-  const base = trSchedule(P, ry, n, mode, 0.30); // muafiyetsiz (KKDF %15 + BSMV %15)
-  const toplam = r.per * r.count;
-  const vergi = r.faiz * (kkdf + bsmv);
-  const tasarruf = base.per * base.count - toplam;
-  $("tr_bigLbl").textContent = r.label;
-  $("tr_out").textContent = tl(r.per);
+  if (mode !== trModeLast) { dManual.tr = false; trModeLast = mode; }
+  const step = mode === "aylik" ? 1 : mode === "yillik" ? 12 : Math.max(1, n);
+  const cnt = mode === "aylik" ? n : mode === "yillik" ? Math.max(1, Math.round(n / 12)) : 1;
+  $("tr_ilkLbl").textContent = mode === "hasat" ? "Ödeme (vade) tarihi" : "İlk taksit tarihi";
+  const D = dateSetup("tr", step, cnt, mode === "aylik" ? 5 : 1, mode === "aylik" ? 45 : 99999);
+  if (!P || !n || !D.ok) { $("tr_out").textContent = "–"; rows("tr_rows", []); $("tr_plan").innerHTML = ""; return; }
+  // Dönem faizi: aylık = yıllık/12 (kırık ilk dönem gün/30); yıllık ve hasat = gün/360
+  const rp = mode === "aylik" ? ry / 12 : ry;
+  const per = mode === "hasat" ? [{ d: D.ilk, fac: ymd(addMonthsC(D.bas, n)) === ymd(D.ilk) ? n / 12 : D.g / 360, g: D.g }] : mkPerStep(D.bas, D.ilk, cnt, step, mode === "aylik" ? 30 : 360);
+  const build = (kk, bs) => { const T = mode === "hasat" ? P * (1 + rp * per[0].fac * (1 + kk + bs)) : solveT(P, per, rp, kk, bs); return { T, plan: tkPlan(P, per, T, rp, kk, bs, true) }; };
+  const cur = build(kkdf, bsmv);
+  const sum = (pl, k) => pl.reduce((a, x) => a + x[k], 0);
+  const toplam = sum(cur.plan, "t"), fz = sum(cur.plan, "f");
+  const alt = durum === "bireysel" ? build(0, 0.05) : build(0.15, 0.15);
+  const fark = Math.abs(sum(alt.plan, "t") - toplam);
+  const ilkF = cur.plan.length > 1 && Math.abs(cur.plan[0].t - R2(cur.T)) > 0.005;
+  $("tr_bigLbl").textContent = mode === "hasat" ? "Vade sonu ödeme" : mode === "yillik" ? "Yıllık taksit" : "Aylık taksit";
+  $("tr_out").textContent = tl(mode === "hasat" ? cur.plan[0].t : R2(cur.T));
   rows("tr_rows", [
-    ["Toplam faiz", tl(r.faiz)],
-    ["KKDF", tl(r.faiz * kkdf)],
-    ["BSMV", tl(r.faiz * bsmv)],
+    [mode === "hasat" ? "Ödeme tarihi" : "İlk / son taksit", mode === "hasat" ? `${shortD(cur.plan[0].d)} · ${D.g} gün` : `${shortD(cur.plan[0].d)} · ${shortD(cur.plan[cur.plan.length - 1].d)}`],
+    ...(ilkF ? [[`İlk taksit (${cur.plan[0].g} gün)`, tl(cur.plan[0].t)]] : []),
+    ["Toplam faiz", tl(fz)],
+    ["KKDF", tl(sum(cur.plan, "kk"))],
+    ["BSMV", tl(sum(cur.plan, "bs"))],
     ["Toplam geri ödeme", tl(toplam), "total"],
-    [durum === "bireysel" ? "Zirai amaç belgelenirse tasarruf" : "Muafiyetle tasarruf", tl(durum === "bireysel" ? (toplam - trSchedule(P, ry, n, mode, 0.05).per * r.count) : tasarruf), "pos"],
+    [durum === "bireysel" ? "Zirai amaç belgelenirse tasarruf" : "Muafiyetle tasarruf", tl(fark), "pos"],
   ]);
+  $("tr_plan").innerHTML = planHead + cur.plan.map((x, j) => planRow(x, j + 1)).join("") + planTot(cur.plan);
   const txt = {
     levha: "<b>KKDF %0</b>: Vergi levhalı (gerçek usulde vergilendirilen) çiftçinin zirai faaliyet için kullandığı kredi ticari/zirai kredi sayılır. Alınan makine, ekipman vb. işletme aktifine kaydedilir ve faturayla belgelenir.",
     cks: "<b>KKDF %0</b>: Vergi levhası olmasa da zirai amaç belgelenirse muafiyet uygulanabilir: ÇKS ya da Hayvan Bilgi Sistemi kaydı, tarım il/ilçe müdürlüğü belgesi veya ziraat odasından çiftçilik belgesi, kullanım amacı beyanı ve fatura.",
