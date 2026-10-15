@@ -29,7 +29,8 @@
   .place { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 13px; color: var(--muted); }
   .place b { color: var(--ink); font-size: 14px; }
   .rad { display: flex; gap: 4px; }
-  .rad button { padding: 5px 9px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--muted); font-size: 12px; cursor: pointer; }
+  #plabel { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .rad button { white-space: nowrap; padding: 5px 9px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--muted); font-size: 12px; cursor: pointer; }
   .rad button.on { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
   h2 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 16px 2px 8px; font-weight: 600; }
   .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
@@ -62,7 +63,17 @@
   .fsrad button, .prad button { flex: 1; padding: 8px 4px; font-size: 13px; }
   .prad { margin: -2px 0 10px; }
   .fsbar button { padding: 9px 12px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
-  #fsmap { flex: 1; width: 100%; border: 0; }
+  .mw { position: relative; }
+  .fsmw { flex: 1; }
+  #fsmap { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .gmw { margin-bottom: 10px; }
+  .gmw #gmap { margin-bottom: 0; }
+  .mload { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: #0b0b0b; color: #cfcfcf; font-size: 14px; text-align: center; padding: 20px; border-radius: inherit; z-index: 2; }
+  .gmw .mload { border-radius: 16px; border: 1px solid var(--line); }
+  .mload.show { display: flex; }
+  .mload .sp { width: 34px; height: 34px; border: 3px solid #333; border-top-color: var(--accent); border-radius: 50%; animation: spn .8s linear infinite; }
+  @keyframes spn { to { transform: rotate(360deg); } }
+  .mload a { color: var(--accent); font-weight: 700; }
   .fsbot { display: flex; gap: 6px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); background: #000; border-top: 1px solid #222; }
   .fsbot a { flex: 1; text-align: center; text-decoration: none; padding: 11px 4px; border-radius: 11px; font-weight: 700; font-size: 13px; }
   .fsbot .r { background: #1d2a6b; border: 1px solid #3a50f0; color: #dfe4ff; }
@@ -110,16 +121,15 @@
       <div class="rad" id="rad" data-rad><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div></div>
   </div>
 
-  <div id="fs"><div class="fsbar"><b id="fstitle"></b><button type="button" id="fsclose">📋 Liste ✕</button></div>
+  <div id="fs"><div class="fsbar"><b id="fstitle"></b><button type="button" id="fsclose">✕ Kapat</button></div>
     <div class="fsrad rad" data-rad><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div>
-    <iframe id="fsmap" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
-    <div class="fsbot"><a class="r" id="fsisb" href="#">🏦 İş Bankası</a><a class="g" id="fsnobet" href="#">💊 Nöbetçi</a><a class="e" href="https://www.turkiye.gov.tr/arama?aranan=n%C3%B6bet%C3%A7i+eczane" target="_blank" rel="noopener">🏛️ e-Devlet</a><a class="b" id="fsgm" href="#" target="_blank" rel="noopener">🗺️ Google'da aç</a></div></div>
+    <div class="mw fsmw"><iframe id="fsmap" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe><div class="mload" id="fsload"></div></div>
+    <div class="fsbot"><a class="b" id="fsgm" href="#" target="_blank" rel="noopener">🗺️ Google Haritalar'da aç</a></div></div>
   <div id="panel">
     <div class="phead"><b id="ptitle"></b><small id="pcount"></small></div>
-    <div class="pstat" id="pstat"><span id="pst_m"></span><span id="pst_l"></span></div>
     <div class="rad prad" data-rad><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div>
     <div class="mtog" id="mtog"><button data-m="g" class="on">🗺️ Google Haritalar</button><button data-m="o">📋 Listedeki yerler</button></div>
-    <iframe id="gmap" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+    <div class="mw gmw" id="gmw"><iframe id="gmap" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe><div class="mload" id="gload"></div></div>
     <button type="button" class="fsopen" id="fsopen">⛶ Haritayı tam ekran aç</button>
     <div id="map"></div>
     <div id="pinfo"></div>
@@ -128,7 +138,7 @@
 
   <div id="cats"></div>
 
-  <p class="note">Yer bilgileri <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> katkıcılarından (Overpass API) alınır; konum arama Nominatim ile yapılır. Bazı yerler eksik ya da güncel olmayabilir. Üstteki harita ve "Haritada aç" / "Yol tarifi" Google Haritalar'dır.</p>
+  <p class="note">Harita ve yerler Google Haritalar'dan gösterilir; konum arama <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (Nominatim) ile yapılır.</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -203,7 +213,21 @@ function applyMapMode() {
   if (mapMode === "o" && map) setTimeout(() => map.invalidateSize(), 50);
 }
 let fsSrc = "", NOSCROLL = false;
-function pst(w, cls, html) { const el = $(w === "m" ? "pst_m" : "pst_l"); el.className = cls || ""; el.innerHTML = html || ""; }
+// Harita açılana kadar üstünü örten yükleniyor katmanı; açılmazsa haritayı hiç göstermez
+const LD = {};
+const pst = () => {};
+function mapLoad(which, src, title, gUrl) {
+  const fr = $(which === "fs" ? "fsmap" : "gmap"), ov = $(which === "fs" ? "fsload" : "gload");
+  const tok = (LD[which] = (LD[which] || 0) + 1);
+  ov.innerHTML = '<div class="sp"></div><div>Harita yükleniyor…</div>'; ov.classList.add("show");
+  if (which === "fs") $("fstitle").textContent = "⏳ Harita yükleniyor…";
+  fr.onload = () => { if (tok !== LD[which] || !fr.src) return; clearTimeout(LD[which + "t"]); ov.classList.remove("show"); if (which === "fs") $("fstitle").textContent = title; };
+  clearTimeout(LD[which + "t"]);
+  LD[which + "t"] = setTimeout(() => { if (tok !== LD[which]) return; ov.innerHTML = `<div style="font-size:28px">🗺️</div><div>Harita şu an açılamadı.</div><a href="${gUrl}" target="_blank" rel="noopener">Google Haritalar'da aç ↗</a>`; if (which === "fs") $("fstitle").textContent = "Harita açılamadı"; }, 15000);
+  fr.src = src;
+}
+const gUrlOf = (c) => `https://www.google.com/maps/search/${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`;
+const titleOf = (c) => `${c.e} ${c.n} · ${(S.place.name || "").replace(/^📡\s*/, "")}`;
 function setGmap(c) {
   if (!S.place) return;
   const q = (GQ[c.k] || c.n.toLowerCase()) + " " + (S.place.name || "").replace(/^📡\s*/, "");
@@ -211,10 +235,7 @@ function setGmap(c) {
   // Her zaman koordinatla ara: yer adıyla aramak Google'ın başka bir noktayı seçmesine yol açabiliyor
   const src = `https://maps.google.com/maps?q=${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}+near+${(+S.place.lat).toFixed(5)},${(+S.place.lon).toFixed(5)}&z=${z}&hl=tr&output=embed`;
   fsSrc = src.replace(/&z=\d+/, `&z=${Math.max(12, z - 1)}`);
-  if ($("gmap").src !== src) {
-    $("gmap").src = src; pst("m", "ld", "🗺️ Harita yükleniyor…");
-    clearTimeout(window._gmt); window._gmt = setTimeout(() => { if ($("pst_m").className === "ld") pst("m", "er", `🗺️ Harita geç yükleniyor · <a href="https://www.google.com/maps/search/${encodeURIComponent(GQ[c.k] || c.n)}/@${S.place.lat},${S.place.lon},14z" target="_blank" rel="noopener">Google'da aç ↗</a>`); }, 12000);
-  }
+  if ($("gmap").src !== src) mapLoad("g", src, titleOf(c), gUrlOf(c));
 }
 const CAT = {}; GROUPS.forEach(([, l]) => l.forEach(([k, e, n, sel]) => (CAT[k] = { k, e, n, sel })));
 let S = { place: null, r: 3000, cat: null };
@@ -224,16 +245,13 @@ const STALE = S.place && !S.place.gps && S.place.v !== 2;
 const save = () => { try { localStorage.setItem("yakin_v1", JSON.stringify({ place: S.place, r: S.r })); } catch (e) {} };
 
 // Kategori ızgarası
-$("cats").innerHTML = GROUPS.map(([g, l]) => `<h2>${g}</h2>${g.startsWith("🚨") ? `<div class="sos"><a class="g" id="nobet" href="#">💊 Nöbetçi eczane · Google</a><a class="e" href="https://www.turkiye.gov.tr/arama?aranan=n%C3%B6bet%C3%A7i+eczane" target="_blank" rel="noopener">🏛️ Nöbetçi eczane · e-Devlet</a></div>` : ""}<div class="grid">${l.map(([k, e, n]) => `<button class="tile" data-k="${k}"><div class="e">${e}</div><div class="n">${n}</div></button>`).join("")}</div>`).join("");
-$("nobet").addEventListener("click", (e) => { e.preventDefault(); openNobet(); });
-$("fsnobet").addEventListener("click", (e) => { e.preventDefault(); openNobet(); });
-$("fsisb").addEventListener("click", (e) => { e.preventDefault(); openCat("isbank"); setTimeout(() => { if (fsSrc) { $("fsmap").src = fsSrc; openFsUpdate(); } }, 0); });
+$("cats").innerHTML = GROUPS.map(([g, l]) => `<h2>${g}</h2><div class="grid">${l.map(([k, e, n]) => `<button class="tile" data-k="${k}"><div class="e">${e}</div><div class="n">${n}</div></button>`).join("")}</div>`).join("");
 $("cats").addEventListener("click", (e) => { const t = e.target.closest(".tile"); if (!t) return; NOSCROLL = !!S.place; openCat(t.dataset.k); NOSCROLL = false; if (S.place) openFs(); });
 
 function renderRad() { document.querySelectorAll("[data-rad] button").forEach((b) => b.classList.toggle("on", +b.dataset.r === S.r)); }
 document.querySelectorAll("[data-rad]").forEach((g) => (g.onclick = (e) => {
   const b = e.target.closest("button"); if (!b) return; S.r = +b.dataset.r; save(); renderRad();
-  if (S.cat) { openCat(S.cat); if ($("fs").classList.contains("show") && fsSrc) $("fsmap").src = fsSrc; const c = CAT[S.cat]; if (S.place) $("fsgm").href = `https://www.google.com/maps/search/${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`; }
+  if (S.cat) { openCat(S.cat); if ($("fs").classList.contains("show") && fsSrc && S.place) mapLoad("fs", fsSrc, titleOf(CAT[S.cat]), gUrlOf(CAT[S.cat])); const c = CAT[S.cat]; if (S.place) $("fsgm").href = `https://www.google.com/maps/search/${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`; }
 }));
 function setPlace(p) {
   if (p) p.v = 2;
@@ -338,12 +356,15 @@ async function openCat(k) {
   $("panel").classList.add("show");
   $("ptitle").textContent = `${c.e} ${c.n}`;
   $("pcount").textContent = "";
-  $("pinfo").innerHTML = k === "eczane" ? `<div class="info">💊 Gece ve tatil günleri için <b>nöbetçi eczane</b>: <a href="https://www.turkiye.gov.tr/arama?aranan=n%C3%B6bet%C3%A7i+eczane" target="_blank" rel="noopener">e-Devlet sorgulama ↗</a>${S.place ? ` · <a href="https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane/@${S.place.lat},${S.place.lon},14z" target="_blank" rel="noopener">Google Haritalar ↗</a>` : ""}</div>`
-    : k === "toplanma" ? `<div class="info">🟩 Deprem ve afet <b>toplanma alanları</b>nın resmi listesi için: <a href="https://www.turkiye.gov.tr/arama?aranan=toplanma+alan%C4%B1" target="_blank" rel="noopener">e-Devlet (AFAD) sorgulama ↗</a></div>`
+  $("pinfo").innerHTML = k === "toplanma" ? `<div class="info">🟩 Deprem ve afet <b>toplanma alanları</b>nın resmi listesi için: <a href="https://www.turkiye.gov.tr/arama?aranan=toplanma+alan%C4%B1" target="_blank" rel="noopener">e-Devlet (AFAD) sorgulama ↗</a></div>`
     : k === "polis" ? `<div class="info">🚨 Acil durumda tüm birimler için <b>112</b>.</div>` : "";
-  if (!S.place) { $("plist").innerHTML = '<div class="msg">Önce yukarıdan konum ara ya da 📍 ile konumunu kullan.</div>'; $("map").style.display = "none"; $("gmap").style.display = "none"; $("mtog").style.display = "none"; $("panel").scrollIntoView({ behavior: "smooth" }); return; }
-  $("mtog").style.display = "";
-  ensureMap(); applyMapMode(); setGmap(c);
+  $("map").style.display = "none"; $("mtog").style.display = "none";
+  if (!S.place) { $("plist").innerHTML = '<div class="msg">Önce yukarıdan konum ara ya da 📍 ile konumunu kullan.</div>'; $("gmw").style.display = "none"; $("panel").scrollIntoView({ behavior: "smooth" }); return; }
+  $("plist").innerHTML = ""; $("gmw").style.display = ""; $("gmap").style.display = "block";
+  setGmap(c);
+  if (!NOSCROLL) $("panel").scrollIntoView({ behavior: "smooth", block: "start" });
+  return; // Yer listesi (Overpass) sık hata verdiği için kapatıldı; yalnızca Google Haritalar gösteriliyor
+  ensureMap(); applyMapMode();
   const { lat, lon } = S.place;
   if (map) { map.setView([lat, lon], S.r <= 1000 ? 15 : S.r <= 3000 ? 14 : S.r <= 5000 ? 13 : 12); setTimeout(() => map.invalidateSize(), 50); layer.clearLayers(); L.circleMarker([lat, lon], { radius: 8, color: "#fff", weight: 2, fillColor: "#4a7dff", fillOpacity: 1 }).addTo(layer).bindPopup(S.place.name); L.circle([lat, lon], { radius: S.r, color: "#e0a24f", weight: 1, fillOpacity: 0.03 }).addTo(layer); }
   $("plist").innerHTML = '<div class="msg">Yükleniyor…</div>';
@@ -391,7 +412,6 @@ function openFsUpdate() {
   $("fstitle").textContent = `${c.e} ${c.n} · ${(S.place.name || "").replace(/^📡\s*/, "")}`;
   const term = encodeURIComponent(GQ[c.k] || c.n.toLowerCase());
   $("fsgm").href = `https://www.google.com/maps/search/${term}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`;
-  $("fsisb").style.display = S.cat === "isbank" ? "none" : "";
 }
 // Nöbetçi eczane: Google haritasını sayfa içinde tam ekran aç
 function openNobet() {
@@ -400,17 +420,14 @@ function openNobet() {
   $("fstitle").textContent = `💊 Nöbetçi eczane · ${(S.place.name || "").replace(/^📡\s*/, "")}`;
   $("fsmap").src = `https://maps.google.com/maps?q=n%C3%B6bet%C3%A7i+eczane+near+${ll}&z=14&hl=tr&output=embed`;
   $("fsgm").href = `https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane/@${ll},14z`;
-  $("fsisb").style.display = "";
   if (!$("fs").classList.contains("show")) { $("fs").classList.add("show"); document.body.style.overflow = "hidden"; try { history.pushState({ fs: 1 }, ""); } catch (e) {} }
 }
 function openFs() {
   if (!fsSrc || !S.cat) return;
   const c = CAT[S.cat];
-  $("fstitle").textContent = `${c.e} ${c.n} · ${(S.place.name || "").replace(/^📡\s*/, "")}`;
-  if ($("fsmap").src !== fsSrc) $("fsmap").src = fsSrc;
+  if ($("fsmap").src !== fsSrc) mapLoad("fs", fsSrc, titleOf(c), gUrlOf(c)); else $("fstitle").textContent = titleOf(c);
   const term = encodeURIComponent(GQ[c.k] || c.n.toLowerCase());
   $("fsgm").href = `https://www.google.com/maps/search/${term}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`;
-  $("fsisb").style.display = S.cat === "isbank" ? "none" : "";
   $("fs").classList.add("show"); document.body.style.overflow = "hidden";
   try { history.pushState({ fs: 1 }, ""); } catch (e) {}
 }
@@ -424,7 +441,6 @@ $("fsclose").onclick = () => closeFs(false);
 $("fsopen").onclick = openFs;
 window.addEventListener("popstate", () => closeFs(true));
 $("mtog").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; mapMode = b.dataset.m; try { localStorage.setItem("yakin_map", mapMode); } catch (er) {} applyMapMode(); };
-$("gmap").addEventListener("load", () => { if (!$("gmap").src) return; pst("m", "ok", "🗺️ Harita yüklendi"); setTimeout(() => { if ($("pst_m").className === "ok") pst("m"); }, 2500); });
 renderRad();
 { const hk = decodeURIComponent(location.hash.slice(1)); if (CAT[hk]) S.cat = hk; }
 setPlace(S.place);
