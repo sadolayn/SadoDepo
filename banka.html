@@ -515,7 +515,8 @@
         <div><label>Taksit aylık faizi</label><div class="field"><input id="v_fz" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
         <div><label>Gecikme (son günden sonra)</label><div class="field"><input id="v_gun" type="text" inputmode="numeric" value="30"><span class="unit">gün</span></div></div>
       </div>
-      <p class="hint" style="margin-top:6px">Faiz 0 = kampanyalı / faizsiz taksit. Faiz girilirse KKDF ve BSMV (%15+%15) eklenir. Taksit imkânı ve sayısı kart ve kampanyaya göre değişir.</p>
+      <p class="hint" style="margin-top:6px">Faiz 0 = kampanyalı / faizsiz taksit. Faiz girilirse KKDF ve BSMV (%15+%15) eklenir.</p>
+      <div id="v_tk"></div>
       <div class="big" style="margin-top:10px"><span id="v_lbl">Aylık taksit</span><b id="v_out">–</b></div>
       <div class="rows" id="v_rows"></div>
       <label style="margin-top:12px">Müşteriye mesaj</label>
@@ -1399,10 +1400,10 @@ function vergiEvents(from, to) {
     if (due >= from && due <= to) ev.push({ ...o, nom, d: due });
   };
   for (let y = from.getFullYear(); y <= to.getFullYear(); y++) {
-    add(y, 1, 31, { k: "mtv1", ic: "🚗", n: "MTV 1. taksit", c: "b", t: "Motorlu Taşıtlar Vergisi, yılın ilk yarısı" });
-    add(y, 7, 31, { k: "mtv2", ic: "🚗", n: "MTV 2. taksit", c: "b", t: "Motorlu Taşıtlar Vergisi, yılın ikinci yarısı" });
-    add(y, 5, 31, { k: "emk1", ic: "🏠", n: "Emlak ve ÇTV 1. taksit", c: "b", t: "Emlak vergisi + çevre temizlik vergisi (Mart–Mayıs)" });
-    add(y, 11, 30, { k: "emk2", ic: "🏠", n: "Emlak ve ÇTV 2. taksit", c: "b", t: "Emlak vergisi + çevre temizlik vergisi (Kasım)" });
+    add(y, 1, 31, { k: "mtv1", ic: "🚗", n: "MTV 1. taksit", c: "b", both: 1, t: "Motorlu Taşıtlar Vergisi, yılın ilk yarısı" });
+    add(y, 7, 31, { k: "mtv2", ic: "🚗", n: "MTV 2. taksit", c: "b", both: 1, t: "Motorlu Taşıtlar Vergisi, yılın ikinci yarısı" });
+    add(y, 5, 31, { k: "emk1", ic: "🏠", n: "Emlak ve ÇTV 1. taksit", c: "b", both: 1, t: "Emlak vergisi + çevre temizlik vergisi (Mart–Mayıs)" });
+    add(y, 11, 30, { k: "emk2", ic: "🏠", n: "Emlak ve ÇTV 2. taksit", c: "b", both: 1, t: "Emlak vergisi + çevre temizlik vergisi (Kasım)" });
     add(y, 3, 31, { k: "gv1", ic: "💼", n: "Yıllık gelir vergisi beyanı + 1. taksit", c: "b", t: "Kira, serbest meslek, ticari kazanç vb. önceki yıl gelirleri" });
     add(y, 7, 31, { k: "gv2", ic: "💼", n: "Yıllık gelir vergisi 2. taksit", c: "b", t: "Mart'ta beyan edilen gelir vergisinin ikinci yarısı" });
     add(y, 2, 28, { k: "bu", ic: "🏪", n: "Basit usul beyanı", c: "t", t: "Basit usule tabi esnafın yıllık beyanı" });
@@ -1418,6 +1419,15 @@ function vergiEvents(from, to) {
   }
   return ev.sort((a, b) => a.d - b.d);
 }
+// Kartla ödeme / taksit durumu (İş Bankası kampanya sayfalarındaki son bilgilere göre; kampanyalar dönemseldir)
+const VTK = {
+  mtv: { def: 3, max: 3, lvl: "g", txt: "🚗 <b>MTV'de taksit var (kampanyalı).</b> Maximum özellikli bireysel kartlarla Ocak/Temmuz dönemlerinde 3 aya varan taksit (Ocak 2026: 750 TL ve üzeri, tüm banka kanalları). gib.gov.tr'de peşin ödenen 2.000 TL ve üzeri MTV sonradan 2–3 taksit faizsiz yapılabildi. Ticari: <b>İş Bankası Vergi Kart</b> ile plaka sınırı olmadan toplu MTV talimatı." },
+  emk: { def: 1, max: 12, lvl: "o", txt: "🏠 <b>Emlak ve ÇTV'de taksit kampanyası genelde yok</b>, kartla tek çekim ödenir (ÇTV belediye POS'u üzerinden Vergi Kart ile de ödenebilir). Taksit seçersen standart kart faizi işler." },
+  gv: { def: 1, max: 12, lvl: "o", txt: "💼 <b>Gelir vergisinde taksit kampanyaya bağlı</b>; kampanya yoksa kartla tek çekim. Taksit seçersen standart kart faizi işler." },
+  tic: { def: 1, max: 4, lvl: "o", txt: "🏢 <b>Ticari vergilerde taksit dönemsel kampanyaya bağlı.</b> İş Bankası ticari kredi kartlarıyla geçmiş kampanyalarda 2–4 ay faizsiz taksit verildi (gib.gov.tr veya banka kanalı, taksitlendirme İşCep / Maximum İşyerim'den). <b>Vergi Kart</b>: tek çekim, ayda iki hesap kesimi (15 ve 28'i). Kampanya yoksa standart oran." },
+  sgk: { def: 2, max: 2, lvl: "o", txt: "👷 <b>SGK primi:</b> ticari kartla 5.000 TL ve üzeri ödemeye 2 ay faizsiz taksit kampanyası uygulandı (2025, talep İşCep'ten, hesap kesiminden önce). Kartla SGK ödemesinde <b>%3,10 + BSMV komisyon</b> (en az 4,94 TL + BSMV) alınır; taksit kampanyası komisyonu kapsamaz. SGK'da gecikme cezası ve gecikme zammı ayrı kurallarla hesaplanır; aşağıdaki gecikme tutarı yaklaşıktır." },
+};
+const vtkOf = (e) => (e.k.startsWith("mtv") ? VTK.mtv : e.k.startsWith("emk") ? VTK.emk : e.k.startsWith("gv") ? VTK.gv : e.k === "sgk" ? VTK.sgk : VTK.tic);
 const AYLAR_TR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 let vFilt = "all", vSel = null;
 try { vFilt = localStorage.getItem("v_filt") || "all"; } catch (e) {}
@@ -1425,7 +1435,8 @@ function vToday() { const t = new Date(); return new Date(t.getFullYear(), t.get
 function calcVergi() {
   const today = vToday(), end = addDays(today, 365);
   const all = vergiEvents(new Date(today.getFullYear(), today.getMonth(), 1, 12), end);
-  const ev = all.filter((e) => vFilt === "all" || e.c === vFilt);
+  const vShow = (e) => vFilt === "all" || e.c === vFilt || (e.both && vFilt === "t");
+  const ev = all.filter(vShow);
   document.querySelectorAll("#v_f button").forEach((b) => b.classList.toggle("on", b.dataset.f === vFilt));
   const up = ev.filter((e) => e.d >= today);
   const left = (e) => dayDiff(today, e.d);
@@ -1440,10 +1451,10 @@ function calcVergi() {
     const half = dayInfo(e.d).half ? ` · <span style="color:#f0b46a">arife, sabah öde</span>` : "";
     return `<div class="vit ${cl}${vSel && e.k === vSel.k && +e.d === +vSel.d ? " sel" : ""}" data-i="${i}">
       <div class="ic">${e.ic}</div>
-      <div><div class="t">${e.n}<span class="tag ${e.c}">${e.c === "b" ? "Bireysel" : "Ticari"}</span></div><div class="s">${fdtw(e.d)} ${e.d.getFullYear()}${shifted}${half}<br>${e.t}</div></div>
+      <div><div class="t">${e.n}${e.both ? '<span class="tag b">Bireysel</span><span class="tag t">Ticari</span>' : `<span class="tag ${e.c}">${e.c === "b" ? "Bireysel" : "Ticari"}</span>`}</div><div class="s">${fdtw(e.d)} ${e.d.getFullYear()}${shifted}${half}<br>${e.t}</div></div>
       <div class="k">${L === 0 ? "Bugün" : L}<small>${L === 0 ? "son gün" : "gün kaldı"}</small></div></div>`;
   }).join("") || '<div class="note">Bu filtrede yaklaşan vergi yok.</div>';
-  $("v_list").onclick = (e) => { const it = e.target.closest(".vit"); if (!it) return; vSel = up[+it.dataset.i]; calcVergi(); $("v_tut").scrollIntoView({ behavior: "smooth", block: "center" }); };
+  $("v_list").onclick = (e) => { const it = e.target.closest(".vit"); if (!it) return; vSel = up[+it.dataset.i]; $("v_tak").value = String(vtkOf(vSel).def); $("v_fz").value = "0"; calcVergi(); $("v_tut").scrollIntoView({ behavior: "smooth", block: "center" }); };
   calcVergiPlan(today);
   renderVergiCal(today, end, all);
 }
@@ -1456,10 +1467,14 @@ function calcVergiPlan(today) {
   const taksit = n === 1 ? T : i ? T * i / (1 - Math.pow(1 + i, -n)) : T / n;
   const top = taksit * n, ek = top - T;
   const gz = T * GZ_AYLIK / 100 * g / 30;
+  const tk = e ? vtkOf(e) : null;
+  $("v_tk").innerHTML = tk ? `<div class="valert ${n > tk.max || (tk.lvl !== "g" && n > 1 && !r) ? "r" : tk.lvl}" style="margin-top:8px">${tk.txt}${n > tk.max ? `<br>⚠️ Seçilen ${n} taksit bu vergi için kampanyalı taksit sayısını (${tk.max}) aşıyor.` : tk.lvl !== "g" && n > 1 && !r ? "<br>⚠️ Aktif kampanya yoksa bu taksit faizsiz olmaz; faiz oranını gir." : ""}<br><a href="https://www.isbank.com.tr/kampanyalar" target="_blank" rel="noopener" style="color:var(--accent)">Güncel kampanyaları kontrol et ↗</a></div>` : "";
+  const kom = e && e.k === "sgk" ? Math.max(4.94, T * 0.031) * 1.05 : 0;
   $("v_lbl").textContent = n === 1 ? "Tek çekim" : `${n} taksit · aylık`;
   $("v_out").textContent = tl(taksit);
   rows("v_rows", [
     ["Vergi tutarı", tl(T)],
+    ...(kom ? [["Kartla SGK ödeme komisyonu (%3,10 + BSMV)", "+" + tl(kom), "neg"]] : []),
     ...(n > 1 ? [[`Kartla ${n} taksit toplamı`, tl(top)], [r ? "Taksit maliyeti (faiz + KKDF + BSMV)" : "Taksit maliyeti", r ? "+" + tl(ek) : "Faizsiz", r ? "neg" : "pos"]] : []),
     [`Geç öderse: ${g} gün gecikme zammı (aylık %${nfx(GZ_AYLIK)})`, "+" + tl(gz), "neg"],
     [`${g} gün gecikmeyle toplam`, tl(T + gz), "total"],
@@ -1483,9 +1498,9 @@ function renderVergiCal(today, end, all) {
     for (let i = 0; i < first; i++) cells += `<div class="d e"></div>`;
     for (let dd = 1; dd <= dim; dd++) {
       const d = new Date(m.getFullYear(), m.getMonth(), dd, 12), k = ymd(d), inf = dayInfo(d);
-      const evs = (byDay[k] || []).filter((e) => vFilt === "all" || e.c === vFilt);
+      const evs = (byDay[k] || []).filter((e) => vFilt === "all" || e.c === vFilt || (e.both && vFilt === "t"));
       const out = d < today || d > end;
-      const cls = ["d", inf.hol ? "hol" : inf.we ? "we" : inf.half ? "half" : "", evs.some((e) => e.c === "b") ? "vb" : "", evs.some((e) => e.c === "t") ? "vt" : "", +d === +today ? "today" : "", out ? "out" : ""].join(" ");
+      const cls = ["d", inf.hol ? "hol" : inf.we ? "we" : inf.half ? "half" : "", evs.some((e) => e.c === "b") ? "vb" : "", evs.some((e) => e.c === "t" || e.both) ? "vt" : "", +d === +today ? "today" : "", out ? "out" : ""].join(" ");
       const tip = [...evs.map((e) => `${e.ic} ${e.n}`), inf.name, !inf.name && inf.we ? (d.getDay() === 6 ? "Cumartesi" : "Pazar") : ""].filter(Boolean).join(" · ");
       cells += `<div class="${cls}" data-tip="${fdtw(d)} ${d.getFullYear()}${tip ? " — " + tip : " — İş günü"}">${dd}</div>`;
     }
