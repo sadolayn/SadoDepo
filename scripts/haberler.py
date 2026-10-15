@@ -103,7 +103,15 @@ OKUL_RE = re.compile(r"(okul|okullar|eğitim|öğretim|ders)\w*[^.?!]{0,60}(tati
 ISB_FEEDS = [("Google Haberler", GN(q)) for q in ['"İş Bankası"', '"İşbank"', '"İşCep"', '"Maximum kart" OR "Maximiles" OR "MaxiPuan"', 'ISCTR']]
 ISB_RE = re.compile(r"iş ?bankası|işbank|isbank|işcep|iscep|isctr|maximiles|maxipuan|maximum kart|maximum mobil|türkiye iş bankası", re.I)
 
-jobs = [(c, s, u) for c, lst in FEEDS.items() for s, u in lst] + [("okul", s, u) for s, u in OKUL_FEEDS] + [("isbank", s, u) for s, u in ISB_FEEDS]
+# Tarım (İş Bankası tarım kredileri dahil)
+TARIM_FEEDS = [("Google Haberler", GN(q)) for q in ['tarım', 'çiftçi', '"tarım kredisi" OR "tarımsal kredi"', '"İş Bankası" tarım OR çiftçi OR "Tarım Kart" OR üretici', 'hasat OR rekolte', '"Tarım ve Orman Bakanlığı"', 'hayvancılık OR süt fiyatı']]
+TARIM_RE = re.compile(r"tarım|tarim|çiftçi|ciftci|hasat|rekolte|hayvancılık|besici|zirai|ziraat|tohum|gübre|sulama|buğday|fındık|pamuk|zeytin|çiğ süt|\btmo\b|kuraklık|don vurdu|tarla", re.I)
+# Yapay zeka
+YZ_FEEDS = [("Google Haberler", GN(q)) for q in ['"yapay zeka"', '"yapay zekâ"', 'ChatGPT OR OpenAI OR Gemini OR Anthropic OR Claude', '"üretken yapay zeka" OR "büyük dil modeli"']]
+YZ_RE = re.compile(r"yapay ?zek[aâ]|\bai\b|chatgpt|openai|gemini|anthropic|claude|copilot|dil modeli|llm|nvidia", re.I)
+
+jobs = [(c, s, u) for c, lst in FEEDS.items() for s, u in lst] + [("okul", s, u) for s, u in OKUL_FEEDS] + [("isbank", s, u) for s, u in ISB_FEEDS] \
+     + [("tarim", s, u) for s, u in TARIM_FEEDS] + [("yz", s, u) for s, u in YZ_FEEDS]
 with ThreadPoolExecutor(12) as ex:
     res = list(ex.map(fetch, jobs))
 
@@ -124,6 +132,14 @@ isb = [x for x in cats.get("isbank", []) if ISB_RE.search(low(x["t"]))]
 for c, items in cats.items():
     if c not in ("isbank", "okul"): isb += [x for x in items if ISB_RE.search(low(x["t"]))]
 cats["isbank"] = isb
+tar = [x for x in cats.get("tarim", []) if TARIM_RE.search(low(x["t"]))]
+for c, items in cats.items():
+    if c not in ("tarim", "okul", "yz"): tar += [x for x in items if TARIM_RE.search(low(x["t"]))]
+cats["tarim"] = tar
+yz = [x for x in cats.get("yz", []) if YZ_RE.search(low(x["t"]))]
+for c, items in cats.items():
+    if c not in ("yz", "okul", "tarim"): yz += [x for x in items if YZ_RE.search(low(x["t"]))]
+cats["yz"] = yz
 for cat, items in cats.items():
     seen, uniq = set(), []
     items.sort(key=lambda x: x["d"] or "", reverse=True)
