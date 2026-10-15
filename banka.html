@@ -77,6 +77,11 @@
   .ckrow input[type=date]::-webkit-calendar-picker-indicator { margin: 0; padding: 0; width: 12px; }
   .ckrow .field input { font-size: 15px; padding-right: 30px; }
   .ckdel { height: 44px; border-radius: 10px; border: 1px solid var(--line); background: #161616; color: var(--muted); font-size: 16px; cursor: pointer; }
+  .rbox { margin: 8px 0 4px; padding: 9px 11px; border: 1px solid #2a3a6b; background: rgba(42,63,224,.08); border-radius: 12px; font-size: 12.5px; color: #c9d2f2; line-height: 1.5; }
+  .rbox b { color: #fff; }
+  .rbox .rc { display: inline-block; margin: 4px 4px 0 0; padding: 4px 9px; border-radius: 99px; border: 1px solid #3a50f0; background: #121a3a; color: #dfe4ff; font-size: 12px; cursor: pointer; font-family: inherit; }
+  .rbox .rc.on { background: #3a50f0; color: #fff; }
+  .rbox a { color: #9fb4ff; font-weight: 700; }
   .ckcopy { width: 100%; margin: 0 0 6px; padding: 11px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
   .ckprev { white-space: pre-wrap; font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace; color: var(--muted); background: #0a0a0a; border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin: 0 0 6px; }
   .ckprev:empty { display: none; }
@@ -320,9 +325,10 @@
             <label>Kredi tutarı</label>
       <div class="field"><input id="t_tutar" type="text" inputmode="decimal" value="200.000"><span class="unit">TL</span></div>
       <div class="two">
-        <div><label>Aylık faiz</label><div class="field"><input id="t_faiz" type="text" inputmode="decimal" value="3,49"><span class="unit">%</span></div></div>
+        <div><label>Aylık faiz</label><div class="field"><input id="t_faiz" type="text" inputmode="decimal" value="3,90"><span class="unit">%</span></div></div>
         <div><label>Vade</label><div class="field"><input id="t_vade" type="text" inputmode="numeric" value="24"><span class="unit">ay</span></div></div>
       </div>
+      <div class="rbox" id="t_rate"></div>
       <div id="t_sum" class="tsum">
         <div class="tswarn" id="ts_warn" hidden></div>
         <div class="ts main"><span>Aylık taksit</span><b id="ts_taksit">–</b><i id="ts_ilk"></i></div>
@@ -414,9 +420,10 @@
       <label>Kredi tutarı</label>
       <div class="field"><input id="k2_tutar" type="text" inputmode="decimal" value="2.500.000"><span class="unit">TL</span></div>
       <div class="two">
-        <div><label>Aylık faiz</label><div class="field"><input id="k2_faiz" type="text" inputmode="decimal" value="2,79"><span class="unit">%</span></div></div>
+        <div><label>Aylık faiz</label><div class="field"><input id="k2_faiz" type="text" inputmode="decimal" value="3,10"><span class="unit">%</span></div></div>
         <div><label>Vade</label><div class="field"><input id="k2_vade" type="text" inputmode="numeric" value="120"><span class="unit">ay</span></div></div>
       </div>
+      <div class="rbox" id="k2_rate"></div>
       <div class="two">
         <div><label>Kullandırım tarihi</label><input id="k2_bas" type="date" style="color-scheme:dark"></div>
         <div><label>İlk taksit tarihi</label><input id="k2_ilk" type="date" style="color-scheme:dark"></div>
@@ -1482,6 +1489,30 @@ $("c_add").addEventListener("click", () => { const lastV = pDate(CEKLER[CEKLER.l
 $("c_kom").addEventListener("blur", () => { const k = num("c_kom"); if (k > 1.1) $("c_kom").value = "1,1"; });
 $("c_lim").addEventListener("blur", () => { const n = num("c_lim"); $("c_lim").value = n ? n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : ""; });
 $("c_isl").value = ymd(new Date());
+// ---------- İş Bankası güncel kredi faiz oranları (data/kredi_oran.json) ----------
+(function () {
+  let RT = { guncelleme: "2026-10-15", ihtiyac: { 12: 4.06, 24: 3.90, 36: 3.82 }, konut: { 36: 3.10, 60: 3.10, 120: 3.10 }, konut_not: "İlk konut, en düşük oran", link_ihtiyac: "https://www.isbank.com.tr/ihtiyac-kredisi", link_konut: "https://www.isbank.com.tr/ihtiyac-kredisi" };
+  const manual = { t: false, k2: false };
+  $("t_faiz").addEventListener("input", (e) => { if (e.isTrusted) manual.t = true; });
+  $("k2_faiz").addEventListener("input", (e) => { if (e.isTrusted) manual.k2 = true; });
+  const pick = (tbl, n) => { const ks = Object.keys(tbl).map(Number).sort((a, b) => a - b); let k = ks[0]; for (const x of ks) if (n >= x) k = x; return { k, v: tbl[k] }; };
+  const fmt = (v) => v.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const tarih = () => new Date(RT.guncelleme + "T12:00:00").toLocaleDateString("tr-TR");
+  function setRate(pre, v) { const el = $(pre + "_faiz"); el.value = fmt(v); el.dispatchEvent(new Event("input", { bubbles: true })); }
+  function render(pre, tbl, link, title, note) {
+    const n = Math.round(num(pre + "_vade")) || 12, sel = pick(tbl, n);
+    if (!manual[pre] && num(pre + "_faiz") !== sel.v) setRate(pre, sel.v);
+    const cur = num(pre + "_faiz");
+    $(pre + "_rate").innerHTML = `🏦 <b>İş Bankası güncel ${title}</b> (${tarih()})${note ? " · " + note : ""}<br>` +
+      Object.keys(tbl).map((k) => `<button type="button" class="rc${Math.abs(cur - tbl[k]) < 0.001 ? " on" : ""}" data-v="${tbl[k]}" data-p="${pre}">${k} ay: %${fmt(tbl[k])}</button>`).join("") +
+      `<div style="margin-top:6px">Oranlar müşteriye göre değişebilir · <a href="${link}" target="_blank" rel="noopener">isbank.com.tr'de kontrol et ↗</a></div>`;
+  }
+  const all = () => { render("t", RT.ihtiyac, RT.link_ihtiyac, "ihtiyaç kredisi oranı", ""); render("k2", RT.konut, RT.link_konut, "konut kredisi oranı", RT.konut_not || ""); };
+  document.addEventListener("click", (e) => { const b = e.target.closest(".rbox .rc"); if (!b) return; manual[b.dataset.p] = true; setRate(b.dataset.p, +b.dataset.v); all(); });
+  ["t_vade", "k2_vade", "t_faiz", "k2_faiz"].forEach((id) => $(id).addEventListener("input", () => setTimeout(all, 0)));
+  all();
+  fetch("data/kredi_oran.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.ok ? r.json() : null).then((j) => { if (j && j.ihtiyac) { RT = Object.assign(RT, j); all(); } }).catch(() => {});
+})();
 // Özet kartı: aşağı kaydırınca üstte tek satıra iner
 (function () {
   const top = $("c_top"), bar = $("c_bar");

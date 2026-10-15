@@ -1,0 +1,9 @@
+{
+  "guncelleme": "2026-10-15",
+  "kaynak": "İş Bankası kredi hesaplama aracı / HesapKurdu karşılaştırması",
+  "ihtiyac": { "12": 4.06, "24": 3.90, "36": 3.82 },
+  "konut": { "36": 3.10, "60": 3.10, "120": 3.10 },
+  "konut_not": "İlk konut (isbank.com.tr), en düşük oran",
+  "link_ihtiyac": "https://www.isbank.com.tr/ihtiyac-kredisi",
+  "link_konut": "https://www.isbank.com.tr/ihtiyac-kredisi"
+}
