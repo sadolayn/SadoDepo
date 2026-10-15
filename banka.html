@@ -234,6 +234,7 @@
         <div><label>Kullandırım tarihi</label><input id="t_bas" type="date" style="color-scheme:dark"></div>
         <div><label>İlk taksit tarihi</label><input id="t_ilk" type="date" style="color-scheme:dark"></div>
       </div>
+      <p class="hint" id="t_dnote" style="margin-top:6px">İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı.</p>
       <div class="two">
         <div><label>Tahsis ücreti</label><div class="field"><input id="t_tahsis" type="text" inputmode="decimal" value="5"><span class="unit">‰</span></div></div>
         <div><label>Diğer masraf</label><div class="field"><input id="t_ucret" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
@@ -719,7 +720,12 @@ function calcTK() {
   const bas = pDate($("t_bas").value) || new Date();
   if (!tIlkManual || !$("t_ilk").value) $("t_ilk").value = ymd(addMonthsC(bas, 1));
   let ilk = pDate($("t_ilk").value);
-  if (!P || !n || !ilk || dayDiff(bas, ilk) <= 0) { $("t_out").textContent = "–"; rows("t_rows", []); rows("t_prows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
+  $("t_ilk").min = ymd(addDays(bas, 5)); $("t_ilk").max = ymd(addDays(bas, 45));
+  const gIlk = ilk ? dayDiff(bas, ilk) : NaN, okIlk = gIlk >= 5 && gIlk <= 45;
+  $("t_dnote").innerHTML = okIlk || !ilk
+    ? `İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı.${ilk ? ` Şu an: <b>${gIlk} gün</b>.` : ""}`
+    : `<span style="color:#ef8a5d">⚠️ İlk taksit tarihi kullandırım tarihinden en az 5, en fazla 45 gün sonra olmalı (şu an ${gIlk} gün). Uygun tarih: ${shortD(addDays(bas, 5))} – ${shortD(addDays(bas, 45))}.</span>`;
+  if (!P || !n || !ilk || !okIlk) { $("t_out").textContent = "–"; rows("t_rows", []); rows("t_prows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
   const dues = []; for (let k = 0; k < n; k++) dues.push(addMonthsC(ilk, k));
   // İlk dönem: ilk taksit kullandırımdan tam 1 ay sonraysa 1 ay faiz; değilse gün/30 (kırık dönem)
   const g1 = dayDiff(bas, ilk), tamAy = ymd(addMonthsC(bas, 1)) === ymd(ilk);
@@ -736,10 +742,12 @@ function calcTK() {
     let lo = 0, hi = 1; for (let it = 0; it < 100; it++) { const m = (lo + hi) / 2; if (pv(m) > net) lo = m; else hi = m; } return (lo + hi) / 2; };
   const aylikMaliyet = irr(net), aylikSade = irr(P);
   const tatil = plan.filter((x) => isHoliday(x.d)).length;
-  $("t_out").textContent = tl(R2(taksit));
+  const tek = plan.length === 1;
+  $("t_out").textContent = tl(tek ? plan[0].t : R2(taksit));
   rows("t_rows", [
-    ["İlk / son taksit", `${shortD(plan[0].d)} · ${shortD(plan[plan.length - 1].d)}`],
-    ...(Math.abs(plan[0].t - R2(taksit)) > 0.005 ? [[`İlk taksit (${plan[0].g} gün)`, tl(plan[0].t)]] : []),
+    [tek ? "Taksit tarihi" : "İlk / son taksit", tek ? shortD(plan[0].d) : `${shortD(plan[0].d)} · ${shortD(plan[plan.length - 1].d)}`],
+    ...(!tek && Math.abs(plan[0].t - R2(taksit)) > 0.005 ? [[`İlk taksit (${plan[0].g} gün)`, tl(plan[0].t)]] : []),
+    ...(tek ? [["Vade", `${plan[0].g} gün`]] : []),
     ...(tatil ? [["Hafta sonu / tatile denk gelen taksit", `${tatil} adet (ilk iş günü tahsil edilir)`]] : []),
     ["Toplam geri ödeme", tl(toplam), "total"],
     [`Kredi tahsis ücreti (binde ${String(oran).replace(".", ",")})`, tl(tahsis)],
