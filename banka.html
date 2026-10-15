@@ -173,6 +173,17 @@
       <div class="rows" id="m_rows"></div>
     </div>
     <div class="card emp">
+      <h2>🏦 Banka maliyeti</h2>
+      <p class="hint">Politika faizini bankanın fon maliyeti kabul eder. Verilen oran bunun üstündeyse banka faiz gideri, altındaysa faiz geliri elde eder. Anapara, oran ve vade yukarıdan alınır.</p>
+      <label>Politika faizi (maliyet)</label>
+      <div class="field"><input id="bm_pf" type="text" inputmode="decimal" value="37"><span class="unit">%</span></div>
+      <p class="note" id="bm_pfNote" style="margin-top:6px"></p>
+      <div class="big" style="margin-top:12px"><span id="bm_label">Banka sonucu</span><b id="bm_out">–</b></div>
+      <div class="rows" id="bm_rows"></div>
+      <details style="margin-top:10px"><summary>Oran tablosu</summary><div class="rows" id="bm_tab" style="margin-top:8px"></div></details>
+      <p class="note">Hesap brüt faiz üzerinden yapılır: stopaj müşterinin vergisidir, banka brüt faizi öder. Politika faizi alanını değiştirerek farklı maliyet senaryolarını deneyebilirsin.</p>
+    </div>
+    <div class="card emp">
       <h2>🧮 Vadesiz başabaş</h2>
       <p class="hint">Anaparanın bir kısmı vadesizde kalırsa, müşterinin aynı net getiriyi alması için kalan tutara verilmesi gereken oran. Anapara, faiz, vade ve stopaj yukarıdan alınır.</p>
       <label>Asgari vadesiz</label><div class="field"><input id="v_min" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div>
@@ -422,7 +433,45 @@ function quarterEnds(from, n) {
   }
   return out;
 }
+let bPfManual = false;
+function calcCost(P, r, g, start) {
+  const L = PPK.last || {};
+  if (!bPfManual && L.rate != null) $("bm_pf").value = String(L.rate).replace(".", ",");
+  $("bm_pfNote").innerHTML = L.rate != null
+    ? `TCMB politika faizi: <b>%${nfx(L.rate)}</b>${bPfManual ? ` · <a href="#" id="bm_reset" style="color:var(--accent)">TCMB oranına dön</a>` : " (otomatik)"}`
+    : "";
+  const rs = $("bm_reset");
+  if (rs) rs.onclick = (e) => { e.preventDefault(); bPfManual = false; calcMev(); };
+  const pf = num("bm_pf") / 100;
+  if (!P || !g || !r || !pf) { $("bm_out").textContent = "–"; $("bm_rows").innerHTML = ""; $("bm_tab").innerHTML = ""; return; }
+  const f = yearFrac(start, g).f;
+  const sMan = stopajManual ? num("m_stopaj") / 100 : null;
+  const res = (rate) => P * (pf - rate) * f; // + gelir, − gider
+  const v = res(r), sp = (r - pf) * 100;
+  const sign = (x) => (x > 0.005 ? "+" : x < -0.005 ? "−" : "") + tl(Math.abs(x));
+  const cls = (x) => (x > 0.005 ? "pos" : x < -0.005 ? "neg" : "");
+  $("bm_label").textContent = v > 0.005 ? "Faiz geliri" : v < -0.005 ? "Faiz gideri" : "Başabaş";
+  $("bm_out").style.color = v > 0.005 ? "var(--pos)" : v < -0.005 ? "var(--neg)" : ""; $("bm_out").textContent = sign(v);
+  const pt = (x) => (x > 0 ? "+" : x < 0 ? "−" : "") + nfx(Math.round(Math.abs(x) * 100) / 100) + " puan";
+  $("bm_rows").innerHTML = [
+    ["Verilen oran", "%" + nfx(r * 100)],
+    ["Politika faizi", "%" + nfx(pf * 100)],
+    ["Fark", pt(sp), cls(-sp)],
+    ["Müşteriye ödenen brüt faiz", tl(P * r * f)],
+    ["Politika faiziyle karşılığı", tl(P * pf * f)],
+  ].map(([a, b, c]) => `<div><span>${a}</span><span${c ? ` class="${c}"` : ""}>${b}</span></div>`).join("")
+    + `<div class="total"><span>${v >= 0 ? "Banka faiz geliri" : "Banka faiz gideri"}</span><span class="${cls(v)}">${sign(v)}</span></div>`;
+  const base = Math.round(pf * 100);
+  const rates = [];
+  for (let k = -4; k <= 4; k++) rates.push((base + k) / 100);
+  if (!rates.some((x) => Math.abs(x - r) < 1e-9)) rates.push(r);
+  rates.sort((a, b) => a - b);
+  $("bm_tab").innerHTML = `<div style="font-weight:700;font-size:12px;color:var(--muted)"><span>Oran · müşteri net</span><span>Banka</span></div>`
+    + rates.map((x) => { const cur = Math.abs(x - r) < 1e-9, y = res(x);
+      return `<div${cur ? ' style="font-weight:700;background:var(--soft,rgba(0,0,0,.04));border-radius:8px;padding-left:6px;padding-right:6px"' : ""}><span>%${nfx(Math.round(x * 10000) / 100)}${cur ? " ◀" : ""} · ${tl(netFor(P, x, g, start, sMan))}</span><span class="${cls(y)}">${sign(y)}</span></div>`; }).join("");
+}
 function calcBreak(P, r, g, start) {
+  calcCost(P, r, g, start);
   const sMan = stopajManual ? num("m_stopaj") / 100 : null;
   const mn = num("v_min");
   if (!P || !g || !r) { $("v_target").textContent = "–"; $("v_out").innerHTML = ""; return; }
@@ -507,6 +556,7 @@ function calcExtra(P, r, g, start) {
 let m2GunManual = false;
 
 $("m2_gun").addEventListener("input", () => (m2GunManual = true));
+$("bm_pf").addEventListener("input", () => (bPfManual = true));
 const nfx = (v) => Number(v).toLocaleString("tr-TR", { maximumFractionDigits: 2 });
 
 function calcMev() {
