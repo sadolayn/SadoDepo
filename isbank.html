@@ -92,6 +92,8 @@
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .stick > :last-child { margin-bottom: 0; }
   .chipbar { position: sticky; z-index: 29; background: #000; margin: 0 -16px 10px; padding: 6px 16px 4px; }
+  .subebtn { padding: 9px 16px; border-radius: 20px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .subebtn.on { outline: 2px solid var(--accent); }
   .sum { background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%); border: 1px solid #3a50f0; border-radius: 18px; padding: 14px 12px 10px; margin-bottom: 12px; text-align: center; }
   .sum .big { font-size: 12px; color: #c9d0ff; letter-spacing: .5px; }
   .sum .big b { display: block; font-size: 34px; color: #fff; font-variant-numeric: tabular-nums; line-height: 1.15; }
@@ -117,7 +119,7 @@
   </header>
   </div>
   <div class="upd" id="upd"></div>
-  <div id="sum"></div>
+  <div style="text-align:center;margin:-4px 0 10px"><button id="subeBtn" type="button" class="subebtn">🏦 Şubeler · ATM · Kiralık kasa</button></div>
   <div class="chipbar" id="chipbar"><div class="chips" id="chips"></div></div>
   <div id="list"><div class="empty">Yükleniyor…</div></div>
 
@@ -135,13 +137,12 @@ const CATS = [
   ["Haber", "var(--haber)"],
   ["İşCep", "var(--dijital)"],
   ["Maximum", "var(--accent)"],
-  ["Şubeler", "#5d8fe0"],
   ["📰 Güncel", "#5d8fe0"],
 ];
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
-let iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
+let kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 
 function renderChips() {
@@ -154,6 +155,7 @@ function renderChips() {
     try { localStorage.setItem("isbankCat", cat); } catch (e) {}
     renderChips(); renderList();
   }));
+  $("subeBtn").classList.toggle("on", cat === "Şubeler");
 }
 
 function daysLeft(d) {
@@ -161,7 +163,7 @@ function daysLeft(d) {
   return Math.ceil((end - now) / 86400000);
 }
 function renderCamps() {
-  if (campUpd) $("upd").textContent = "Kampanyalar güncellendi: " + new Date(campUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
   if (!camps.length) { $("list").innerHTML = '<div class="empty">Şu an listelenen kampanya yok.</div>'; return; }
   let html = "";
   for (const k of camps) {
@@ -181,7 +183,7 @@ function renderSubeler() {
   const d = subeler;
   if (!d) { $("list").innerHTML = '<div class="empty">Şube bilgisi yüklenemedi.</div>'; return; }
   const f = (n) => Number(n).toLocaleString("tr-TR");
-  $("upd").textContent = "Veri dönemi: " + d.donem;
+  $("upd").textContent = "Veri dönemi: " + d.donem + " · banka bu verileri 3 ayda bir açıklar";
   $("list").innerHTML = `
     <div class="stats">
       <div class="stat hero"><span>Toplam müşteri</span><b>${esc(d.musteri)}</b><small style="color:#b9c0d6">${esc(d.musteriDonem)}</small></div>
@@ -204,7 +206,7 @@ function renderSubeler() {
 function renderIscep() {
   const d = iscep;
   if (!d) { $("list").innerHTML = '<div class="empty">İşCep sürüm bilgisi yüklenemedi.</div>'; return; }
-  $("upd").textContent = "Son kontrol: " + new Date(d.guncelleme).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "En son sürüm: " + new Date(d.surumler[0].tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
   const fmt = (t) => new Date(t + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
   let html = "";
   d.surumler.forEach((v, i) => {
@@ -217,6 +219,7 @@ function renderIscep() {
   $("list").innerHTML = html;
 }
 
+const fmtT = (t) => new Date(t).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
 function renderSum() {
   const d = subeler;
   if (!d) { $("sum").innerHTML = ""; return; }
@@ -252,7 +255,7 @@ function renderList() {
   if (cat === "İşCep") return renderIscep();
   if (cat === "Maximum") return renderCamps();
   if (cat === "Şubeler") return renderSubeler();
-  if (newsUpd) $("upd").textContent = "Son güncelleme: " + new Date(newsUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "") + " · günde 2 kez";
   const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
   if (!items.length) { $("list").innerHTML = '<div class="empty">Bu kategoride henüz haber yok.</div>'; return; }
   let html = "", last = "";
@@ -294,7 +297,9 @@ function renderList() {
       live = (h.cats && h.cats.isbank) || []; liveUpd = h.updated || null;
     } catch (e) {}
     if (!CATS.some((c) => c[0] === cat)) cat = "Tümü";
-    renderSum(); renderChips(); renderList();
+    try { kontrol = (await (await fetch("isbank/kontrol.json?t=" + Date.now(), { cache: "no-store" })).json()).son_kontrol; } catch (e) {}
+    $("subeBtn").onclick = () => { cat = cat === "Şubeler" ? "Tümü" : "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); };
+    renderChips(); renderList();
   } catch (e) {
     $("list").innerHTML = '<div class="empty">Haberler yüklenemedi.</div>';
   }
