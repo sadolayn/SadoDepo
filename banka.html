@@ -70,6 +70,16 @@
   details { margin-top: 4px; }
   summary { cursor: pointer; color: var(--accent); font-size: 14px; padding: 8px 0; }
   .tbl { overflow-x: auto; }
+  .tsum { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0 6px; }
+  .tsum .ts { background: rgba(224,162,79,.07); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+  .tsum .ts span { display: block; font-size: 12px; color: var(--muted); }
+  .tsum .ts b { display: block; font-size: 18px; margin-top: 2px; overflow-wrap: anywhere; }
+  .tsum .ts i { display: block; font-style: normal; font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .tsum .ts.main { grid-column: 1 / -1; border-color: var(--accent); }
+  .tsum .ts.main b { font-size: 26px; color: var(--accent); }
+  .tsum .ts.wide { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .tsum .ts.wide b { font-size: 16px; margin: 0; }
+  .tscopy { grid-column: 1 / -1; background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 10px; padding: 9px; font: inherit; font-size: 14px; cursor: pointer; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
   th, td { padding: 6px 4px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
   th { color: var(--muted); font-weight: 500; position: sticky; top: 0; background: var(--card); }
@@ -219,12 +229,19 @@
   <section class="panel" id="tk">
     <div class="card">
       <h2>Tüketici Kredisi (Eşit Taksit)</h2>
-      <p class="hint">Taksitler, faize eklenen BSMV ve KKDF dahil sabit tutarda hesaplanır. Banka sistemindeki gibi her taksit dönemi 1 ay faiz işler. İlk taksit kullandırımdan tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır ve ilk taksit tutarı farklı çıkar. Ara ödemede faiz günlük işler.</p>
-      <label>Kredi tutarı</label>
+            <label>Kredi tutarı</label>
       <div class="field"><input id="t_tutar" type="text" inputmode="decimal" value="200.000"><span class="unit">TL</span></div>
       <div class="two">
         <div><label>Aylık faiz</label><div class="field"><input id="t_faiz" type="text" inputmode="decimal" value="3,49"><span class="unit">%</span></div></div>
         <div><label>Vade</label><div class="field"><input id="t_vade" type="text" inputmode="numeric" value="24"><span class="unit">ay</span></div></div>
+      </div>
+      <div id="t_sum" class="tsum">
+        <div class="ts main"><span>Aylık taksit</span><b id="ts_taksit">–</b><i id="ts_ilk"></i></div>
+        <div class="ts"><span>Toplam geri ödeme</span><b id="ts_toplam">–</b></div>
+        <div class="ts"><span>Toplam masraf</span><b id="ts_masraf">–</b><i>tahsis ücreti + BSMV</i></div>
+        <div class="ts"><span>Hayat sigortası (tahmini)</span><b id="ts_sig">–</b><i id="ts_sigi"></i></div>
+        <div class="ts"><span>Hesaba geçecek</span><b id="ts_net">–</b></div>
+        <button type="button" id="ts_copy" class="tscopy">📋 Müşteriye özet kopyala</button>
       </div>
       <div class="two">
         <div><label>BSMV</label><div class="field"><input id="t_bsmv" type="text" inputmode="decimal" value="15"><span class="unit">%</span></div></div>
@@ -239,7 +256,13 @@
         <div><label>Tahsis ücreti</label><div class="field"><input id="t_tahsis" type="text" inputmode="decimal" value="5"><span class="unit">‰</span></div></div>
         <div><label>Diğer masraf</label><div class="field"><input id="t_ucret" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
       </div>
-      <p class="hint" id="t_mnote">Kredi tahsis ücreti yasal olarak en fazla kredi tutarının binde 5'i olabilir ve bu ücrete %15 BSMV eklenir. Diğer masraf: varsa sigorta vb.</p>
+      <p class="hint">Banka sistemindeki gibi her taksit dönemi 1 ay faiz işler (KKDF ve BSMV dahil). İlk taksit kullandırımdan tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır.</p>
+      <p class="hint" id="t_mnote">Kredi tahsis ücreti yasal olarak en fazla kredi tutarının binde 5'i olabilir ve bu ücrete %15 BSMV eklenir.</p>
+      <div class="two">
+        <div><label>Hayat sigortası oranı</label><div class="field"><input id="t_sig" type="text" inputmode="decimal" value="4"><span class="unit">‰ / yıl</span></div></div>
+        <div><label>Sigorta türü</label><select id="t_sigtip"><option value="tek">Tek prim (peşin)</option><option value="yok">Sigorta yok</option></select></div>
+      </div>
+      <p class="hint">Tahmini prim = kredi tutarı × yıllık oran (binde) × vade (yıl). Oran yaşa ve sigorta şirketinin tarifesine göre değişir; tarifedeki oranı yaz, sayfa bu cihazda hatırlar. Sigorta, toplam masrafa ve geri ödemeye eklenmez.</p>
     </div>
     <div class="card">
       <div class="big"><span>Aylık taksit</span><b id="t_out">–</b></div>
@@ -598,6 +621,13 @@ let m2GunManual = false;
 $("m2_gun").addEventListener("input", () => (m2GunManual = true));
 $("bm_pf").addEventListener("input", () => (bPfManual = true));
 $("t_ilk").addEventListener("input", () => (tIlkManual = true));
+try { const v = localStorage.getItem("tk_sig"); if (v) $("t_sig").value = v; const t = localStorage.getItem("tk_sigtip"); if (t) $("t_sigtip").value = t; } catch (e) {}
+$("ts_copy").addEventListener("click", () => {
+  if (!tkSummary) return;
+  const done = () => { const b = $("ts_copy"); b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = "📋 Müşteriye özet kopyala"), 1500); };
+  if (navigator.clipboard) navigator.clipboard.writeText(tkSummary).then(done, () => prompt("Kopyala:", tkSummary));
+  else prompt("Kopyala:", tkSummary);
+});
 $("ao_t").addEventListener("input", () => (aoTManual = true));
 $("ys_r").addEventListener("input", () => (ysRManual = true));
 $("ys_t").addEventListener("input", () => (ysTManual = true));
@@ -678,7 +708,7 @@ function addMonthsC(d, m) { // ay sonunu aşarsa ayın son günü
   return x;
 }
 const shortD = (d) => d.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
-let tIlkManual = false;
+let tIlkManual = false, tkSummary = "";
 // Plan dönemleri: per = [{d, fac, g}] — fac: ay oranı (tam ay = 1), g: gösterilen gün
 // Banka sistemi gibi: taksit, kırık dönem dikkate alınmadan standart eşit taksit formülüyle bulunur.
 // Anapara payı tam ay varsayımıyla ayrılır; kırık dönemde (fac ≠ 1) yalnızca o taksitteki faiz/KKDF/BSMV
@@ -725,7 +755,7 @@ function calcTK() {
   $("t_dnote").innerHTML = okIlk || !ilk
     ? `İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı.${ilk ? ` Şu an: <b>${gIlk} gün</b>.` : ""}`
     : `<span style="color:#ef8a5d">⚠️ İlk taksit tarihi kullandırım tarihinden en az 5, en fazla 45 gün sonra olmalı (şu an ${gIlk} gün). Uygun tarih: ${shortD(addDays(bas, 5))} – ${shortD(addDays(bas, 45))}.</span>`;
-  if (!P || !n || !ilk || !okIlk) { $("t_out").textContent = "–"; rows("t_rows", []); rows("t_prows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
+  if (!P || !n || !ilk || !okIlk) { ["ts_taksit", "ts_toplam", "ts_masraf", "ts_sig", "ts_net"].forEach((x) => ($(x).textContent = "–")); $("ts_ilk").textContent = ""; tkSummary = ""; $("t_out").textContent = "–"; rows("t_rows", []); rows("t_prows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
   const dues = []; for (let k = 0; k < n; k++) dues.push(addMonthsC(ilk, k));
   // İlk dönem: ilk taksit kullandırımdan tam 1 ay sonraysa 1 ay faiz; değilse gün/30 (kırık dönem)
   const g1 = dayDiff(bas, ilk), tamAy = ymd(addMonthsC(bas, 1)) === ymd(ilk);
@@ -756,6 +786,27 @@ function calcTK() {
     ["Toplam masraf", tl(ucret)],
     ["Hesaba geçecek tutar", tl(P - ucret)],
   ]);
+  // Özet kutuları
+  const sigOn = $("t_sigtip").value !== "yok", sigOran = num("t_sig");
+  const sig = sigOn ? R2(P * sigOran / 1000 * n / 12) : 0;
+  try { localStorage.setItem("tk_sig", $("t_sig").value); localStorage.setItem("tk_sigtip", $("t_sigtip").value); } catch (e) {}
+  const ilkFark = !tek && Math.abs(plan[0].t - R2(taksit)) > 0.005;
+  $("ts_taksit").textContent = tl(tek ? plan[0].t : R2(taksit));
+  $("ts_ilk").textContent = tek ? `Tek taksit · ${shortD(plan[0].d)}` : `${n} ay` + (ilkFark ? ` · ilk taksit ${tl(plan[0].t)}` : "");
+  $("ts_toplam").textContent = tl(toplam);
+  $("ts_masraf").textContent = tl(ucret);
+  $("ts_sig").textContent = sigOn ? tl(sig) : "Yok";
+  $("ts_sigi").textContent = sigOn ? `binde ${nfx(sigOran)} × ${nfx(n / 12)} yıl` : "";
+  $("ts_net").textContent = tl(P - ucret);
+  tkSummary = [
+    `Kredi tutarı: ${tl(P)} · ${tek ? "tek taksit" : n + " ay"} · aylık %${nfx(r * 100)}`,
+    `${tek ? "Ödenecek tutar" : "Aylık taksit"}: ${tl(tek ? plan[0].t : R2(taksit))}` + (ilkFark ? ` (ilk taksit ${tl(plan[0].t)})` : ""),
+    `Toplam geri ödeme: ${tl(toplam)}`,
+    `Masraf: ${tl(ucret)} (tahsis ücreti ${tl(tahsis)} + BSMV ${tl(tahsisB)}${diger ? " + diğer " + tl(diger) : ""})`,
+    ...(sigOn ? [`Tahmini hayat sigortası: ${tl(sig)}`] : []),
+    `Hesaba geçecek tutar: ${tl(P - ucret)}`,
+    `İlk taksit tarihi: ${shortD(plan[0].d)}`,
+  ].join("\n");
   rows("t_prows", [
     ["Toplam faiz", tl(tF)],
     ["Toplam KKDF", tl(tK)],
