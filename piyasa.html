@@ -313,7 +313,8 @@ function renderTable() {
   document.querySelectorAll("#tmode button").forEach((b) => b.classList.toggle("on", b.dataset.m === m));
   const cell = (p, d = 1) => `<td class="p ${p >= 0 ? "pos" : "neg"}">${pct(p, d)}</td>`;
   const cpiCell = (c, d = 1) => `<td class="p" style="background:#1c1c1c;color:#d0d0d0">${pct(c, d)}</td>`;
-  let h = `<table class="num"><thead><tr><th>Yıl</th>${A.map((a) => `<th>${a.n}</th>`).join("")}${m !== "val" ? "<th>TÜFE</th>" : ""}</tr></thead><tbody>`;
+  let h = `<table class="num"><thead><tr><th>Yıl</th>${A.map((a) => `<th>${a.n}</th>`).join("")}<th>TL${m === "val" ? " (100 TL)" : ""}</th>${m !== "val" ? "<th>TÜFE</th>" : ""}</tr></thead><tbody>`;
+  const tlCell = (v) => `<td class="p" style="background:rgba(224,71,58,.08)">${v}</td>`;
   const row = (label, i0, i1, d, c0, c1) => {
     const c = cpiChg(c0 || D.dates[i0], c1 || D.dates[i1]);
     let r = `<tr${d === 0 ? ' class="tot"' : ""}><td>${label}</td>`;
@@ -321,6 +322,10 @@ function renderTable() {
       const v0 = D[a.k][i0], v1 = D[a.k][i1], p = (v1 / v0 - 1) * 100;
       r += m === "pct" ? cell(p, d) : m === "reel" ? cell(real(p, c), d) : `<td>${nf(v1, v1 >= 1000 ? 0 : 2)}</td>`;
     }
+    // TL (yastık altı): nominal 0, reel = enflasyon kadar kayıp; değer modunda 2020 sonundaki 100 TL'nin alım gücü
+    if (m === "pct") r += tlCell(`${pct(0, d)}`);
+    else if (m === "reel") r += `<td class="p neg" style="background:rgba(224,71,58,.08)">${pct(real(0, c), d)}</td>`;
+    else r += tlCell(nf(100 * cpiAt(d === 0 ? D.dates[i0] : "2020-12-31") / cpiAt(c1 || D.dates[i1]), 1));
     if (m !== "val") r += cpiCell(c, d);
     return r + "</tr>";
   };
@@ -331,10 +336,10 @@ function renderTable() {
   $("table").innerHTML = h;
   const d5 = fdate(D.dates[idxOn(s5)]);
   $("tnote").textContent = m === "pct"
-    ? `Her yıl, bir önceki yıl sonuna göre TL bazında değişim; son sütun aynı dönemin TÜFE enflasyonu. "5 yıl" satırı ${d5}'den bugüne. TÜFE ${cpiLast()} verisine kadardır.`
+    ? `Her yıl, bir önceki yıl sonuna göre TL bazında değişim; TL sütunu yastık altında tutulan parayı gösterir (nominal %0); son sütun aynı dönemin TÜFE enflasyonu. "5 yıl" satırı ${d5}'den bugüne. TÜFE ${cpiLast()} verisine kadardır.`
     : m === "reel"
-    ? `Reel getiri = enflasyondan arındırılmış getiri. Pozitifse varlık enflasyonu yenmiş, alım gücü artmış demektir. TÜFE ${cpiLast()} verisine kadardır.`
-    : `Yıl sonu kapanış değerleri (TL; madenler gram). "5 yıl" satırı ${d5} itibarıyla.`;
+    ? `Reel getiri = enflasyondan arındırılmış getiri. Pozitifse varlık enflasyonu yenmiş, alım gücü artmış demektir. TL sütunu, yastık altındaki paranın yıllık alım gücü kaybıdır. TÜFE ${cpiLast()} verisine kadardır.`
+    : `Yıl sonu kapanış değerleri (TL; madenler gram). TL sütunu: 2020 sonunda cebinde olan 100 TL'nin o tarihteki alım gücü ("5 yıl" satırında ${d5}'deki 100 TL'nin bugünkü alım gücü).`;
 }
 
 function simInputs() {
