@@ -6,7 +6,7 @@
 <link rel="apple-touch-icon" href="img/icon.png">
 <meta name="theme-color" content="#000000">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>İş Bankası Yenilikler</title>
+<title>İş Bankası Gündemi</title>
 <style>
   :root {
     --bg: #000000;
@@ -91,6 +91,20 @@
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .stick > :last-child { margin-bottom: 0; }
+  .chipbar { position: sticky; z-index: 29; background: #000; margin: 0 -16px 10px; padding: 6px 16px 4px; }
+  .sum { background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%); border: 1px solid #3a50f0; border-radius: 18px; padding: 14px 12px 10px; margin-bottom: 12px; text-align: center; }
+  .sum .big { font-size: 12px; color: #c9d0ff; letter-spacing: .5px; }
+  .sum .big b { display: block; font-size: 34px; color: #fff; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .sum .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+  .sum .grid div { background: rgba(0,0,0,.22); border-radius: 10px; padding: 7px 2px; }
+  .sum .grid b { display: block; font-size: 16px; color: #fff; font-variant-numeric: tabular-nums; }
+  .sum .grid span { font-size: 10.5px; color: #c9d0ff; }
+  .sum .foot { font-size: 11px; color: #aab3e6; margin-top: 8px; }
+  .sum .foot a { color: #fff; font-weight: 600; text-decoration: none; margin-left: 4px; }
+  a.live { display: block; background: var(--card); border: 1px solid var(--line); border-left: 3px solid #5d8fe0; border-radius: 12px; padding: 11px 12px; margin-bottom: 8px; color: var(--ink); text-decoration: none; }
+  a.live b { display: block; font-size: 15px; font-weight: 600; line-height: 1.35; }
+  a.live span { font-size: 12px; color: var(--muted); }
+  a.live span i { font-style: normal; color: #8fb0ff; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -98,16 +112,16 @@
   <div class="stick">
   <header>
     <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Anasayfa" aria-label="Anasayfa">🏠</a>
-    <h1>🏛️ İş Bankası</h1>
+    <h1>🏛️ İş Bankası Gündemi</h1>
     <span style="width:52px"></span>
   </header>
-  <div class="upd" id="upd"></div>
-
-  <div class="chips" id="chips"></div>
   </div>
+  <div class="upd" id="upd"></div>
+  <div id="sum"></div>
+  <div class="chipbar" id="chipbar"><div class="chips" id="chips"></div></div>
   <div id="list"><div class="empty">Yükleniyor…</div></div>
 
-  <p class="note">Haberler ve Maximum kampanyaları kamuya açık kaynaklardan günde iki kez otomatik derlenir. Kampanya koşulları için maximum.com.tr'ye bakın.</p>
+  <p class="note">Seçilmiş haberler ve Maximum kampanyaları kamuya açık kaynaklardan günde iki kez, "Güncel" sekmesi her saat otomatik derlenir. Kampanya koşulları için maximum.com.tr'ye bakın.</p>
 </div>
 
 <script>
@@ -122,16 +136,17 @@ const CATS = [
   ["İşCep", "var(--dijital)"],
   ["Maximum", "var(--accent)"],
   ["Şubeler", "#5d8fe0"],
+  ["📰 Güncel", "#5d8fe0"],
 ];
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
-let iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü";
+let iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 
 function renderChips() {
   $("chips").innerHTML = CATS.map(([k]) => {
-    const n = k === "Tümü" ? all.length : k === "Maximum" ? camps.length : k === "İşCep" ? (iscep ? iscep.surumler.length : 0) : k === "Şubeler" ? (subeler ? subeler.yurtici + subeler.yurtdisi : 0) : all.filter((h) => h.kategori === k).length;
+    const n = k === "Tümü" ? all.length : k === "Maximum" ? camps.length : k === "İşCep" ? (iscep ? iscep.surumler.length : 0) : k === "Şubeler" ? (subeler ? subeler.yurtici + subeler.yurtdisi : 0) : k === "📰 Güncel" ? live.length : all.filter((h) => h.kategori === k).length;
     return `<button data-k="${k}" class="${k === cat ? "active" : ""}">${k}<b>${n}</b></button>`;
   }).join("");
   $("chips").querySelectorAll("button").forEach((b) => (b.onclick = () => {
@@ -202,7 +217,38 @@ function renderIscep() {
   $("list").innerHTML = html;
 }
 
+function renderSum() {
+  const d = subeler;
+  if (!d) { $("sum").innerHTML = ""; return; }
+  const f = (n) => Number(n).toLocaleString("tr-TR");
+  $("sum").innerHTML = `<div class="sum">
+    <div class="big">Toplam müşteri<b>${esc(d.musteri)}</b></div>
+    <div class="grid">
+      <div><b>${f(d.yurtici + d.yurtdisi)}</b><span>Şube</span></div>
+      <div><b>${f(d.atm)}</b><span>ATM</span></div>
+      <div><b>${f(d.calisan)}</b><span>Çalışan</span></div>
+      <div><b>${esc(String(d.iscep).replace(" milyon", " mn"))}</b><span>İşCep</span></div>
+    </div>
+    <div class="foot">${esc(d.donem)} · ${f(d.ulke)} ülkede yurt dışı şube<a href="#" id="toSube">Şube ve kasa ›</a></div>
+  </div>`;
+  $("toSube").onclick = (e) => { e.preventDefault(); cat = "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (er) {} renderChips(); renderList(); $("chipbar").scrollIntoView({ behavior: "smooth" }); };
+}
+function agoTxt(iso) {
+  const m = Math.max(0, Math.round((Date.now() - new Date(iso)) / 60000));
+  if (m < 60) return m + " dk önce";
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + " sa önce";
+  return new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
+}
+function renderLive() {
+  if (liveUpd) $("upd").textContent = "Her saat otomatik · son: " + new Date(liveUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  if (!live.length) { $("list").innerHTML = '<div class="empty">Son 2 günde İş Bankası haberi yok.</div>'; return; }
+  $("list").innerHTML = live.map((x) => `<a class="live" href="${esc(x.u)}" target="_blank" rel="noopener"><b>${esc(x.t)}</b><span><i>${esc(x.s)}</i>${x.d ? " · " + agoTxt(x.d) : ""}</span></a>`).join("")
+    + `<p class="note" style="margin-top:8px">Bu liste haber sitelerinden ve Google Haberler'den her saat otomatik toplanır; habere dokununca yayıncının sitesinde açılır.</p>`;
+}
+
 function renderList() {
+  if (cat === "📰 Güncel") return renderLive();
   if (cat === "İşCep") return renderIscep();
   if (cat === "Maximum") return renderCamps();
   if (cat === "Şubeler") return renderSubeler();
@@ -242,8 +288,13 @@ function renderList() {
       const rs = await fetch("isbank/subeler.json?t=" + Date.now(), { cache: "no-store" });
       subeler = await rs.json();
     } catch (e) {}
+    try {
+      const rh = await fetch("data/haberler.json?t=" + Date.now(), { cache: "no-store" });
+      const h = await rh.json();
+      live = (h.cats && h.cats.isbank) || []; liveUpd = h.updated || null;
+    } catch (e) {}
     if (!CATS.some((c) => c[0] === cat)) cat = "Tümü";
-    renderChips(); renderList();
+    renderSum(); renderChips(); renderList();
   } catch (e) {
     $("list").innerHTML = '<div class="empty">Haberler yüklenemedi.</div>';
   }
@@ -252,6 +303,7 @@ function renderList() {
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>(function(){var s=document.querySelector(".stick"),c=document.getElementById("chipbar");var t=function(){c.style.top=s.offsetHeight+"px"};t();window.addEventListener("resize",t);})();</script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 </body>
 </html>
