@@ -56,6 +56,23 @@
   .temp sup { font-size: 28px; }
   .cond { font-size: 17px; margin-top: 6px; }
   .hl { color: var(--muted); font-size: 14px; margin-top: 4px; }
+  .sun { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+  .sun h3 { margin: 0 0 10px; font-size: 13px; color: var(--muted); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; }
+  .sun .dn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .sun .dn div { text-align: center; }
+  .sun .dn b { display: block; font-size: 22px; }
+  .sun .dn .d b { color: #f5c04a; } .sun .dn .n b { color: #8fa8ff; }
+  .sun .dn span { font-size: 12px; color: var(--muted); }
+  .sun .tl { position: relative; height: 14px; border-radius: 99px; background: #1b2140; margin: 12px 0 4px; overflow: hidden; }
+  .sun .tl i { position: absolute; top: 0; bottom: 0; background: linear-gradient(90deg, #f0a94a, #f5d36a, #f0a94a); }
+  .sun .tl u { position: absolute; top: -2px; bottom: -2px; width: 2px; background: #fff; box-shadow: 0 0 4px #fff; }
+  .sun .tlx { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+  .sun .chg { text-align: center; font-size: 13px; margin: 8px 0 4px; }
+  .sun .ev { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  .sun .ev .e { font-size: 22px; width: 30px; text-align: center; }
+  .sun .ev .t { flex: 1; } .sun .ev small { display: block; color: var(--muted); font-size: 12px; }
+  .sun .ev .r { text-align: right; font-weight: 600; white-space: nowrap; } .sun .ev .r small { font-weight: 400; }
+  .sun svg { width: 100%; height: 70px; display: block; margin-top: 6px; }
   .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
   .cell { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
   .cell span { display: block; font-size: 12px; color: var(--muted); }
@@ -192,6 +209,7 @@ function render(place, d) {
       <div class="cond">${now.text}</div>
       <div class="hl">En yüksek ${round(dl.temperature_2m_max[0])}° · En düşük ${round(dl.temperature_2m_min[0])}°</div>
     </div>
+    ${sunHTML(place, dl.sunrise[0], dl.sunset[0])}
     <div class="grid">
       <div class="cell"><span>Hissedilen</span><b>${round(c.apparent_temperature)}°</b></div>
       <div class="cell"><span>Nem</span><b>%${round(c.relative_humidity_2m)}</b></div>
@@ -204,6 +222,63 @@ function render(place, d) {
     <div class="hours">${hours}</div>
     <h2>7 günlük</h2>
     <div class="days">${days}</div>`;
+}
+
+// ---- Gündüz / gece süresi ve ekinokslar ----
+// Gün uzunluğu (saat): güneşin merkezi ufkun 0,833° altına indiği an (gün doğumu/batımı tanımı)
+function dayLen(lat, date) {
+  const rad = Math.PI / 180, d = (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12) - Date.UTC(2000, 0, 1, 12)) / 864e5;
+  const g = (357.529 + 0.98560028 * d) * rad, q = 280.459 + 0.98564736 * d;
+  const L = (q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * rad;
+  const e = (23.439 - 0.00000036 * d) * rad, dec = Math.asin(Math.sin(e) * Math.sin(L));
+  const c = (Math.sin(-0.833 * rad) - Math.sin(lat * rad) * Math.sin(dec)) / (Math.cos(lat * rad) * Math.cos(dec));
+  return c >= 1 ? 0 : c <= -1 ? 24 : (2 * Math.acos(c) / rad) / 15;
+}
+// Ekinoks ve gündönümleri (Türkiye saati)
+const SEASONS = [
+  ["2026-03-20", "🌱", "İlkbahar ekinoksu", "Gece ve gündüz eşitlenir"], ["2026-06-21", "☀️", "Yaz gündönümü", "Yılın en uzun günü"],
+  ["2026-09-23", "🍂", "Sonbahar ekinoksu", "Gece ve gündüz eşitlenir"], ["2026-12-21", "❄️", "Kış gündönümü", "Yılın en kısa günü"],
+  ["2027-03-20", "🌱", "İlkbahar ekinoksu", "Gece ve gündüz eşitlenir"], ["2027-06-21", "☀️", "Yaz gündönümü", "Yılın en uzun günü"],
+  ["2027-09-23", "🍂", "Sonbahar ekinoksu", "Gece ve gündüz eşitlenir"], ["2027-12-22", "❄️", "Kış gündönümü", "Yılın en kısa günü"],
+  ["2028-03-20", "🌱", "İlkbahar ekinoksu", "Gece ve gündüz eşitlenir"], ["2028-06-20", "☀️", "Yaz gündönümü", "Yılın en uzun günü"],
+  ["2028-09-22", "🍂", "Sonbahar ekinoksu", "Gece ve gündüz eşitlenir"], ["2028-12-21", "❄️", "Kış gündönümü", "Yılın en kısa günü"],
+];
+const hm = (h) => { const m = Math.round(Math.abs(h) * 60); return `${Math.floor(m / 60)} sa ${m % 60} dk`; };
+const ms = (h) => { const s = Math.round(Math.abs(h) * 3600); return s >= 60 ? `${Math.floor(s / 60)} dk ${s % 60} sn` : `${s} sn`; };
+function sunHTML(place, rise, set) {
+  const today = new Date(); today.setHours(12, 0, 0, 0);
+  const toMin = (s) => +s.slice(11, 13) * 60 + +s.slice(14, 16);
+  const r = toMin(rise), st = toMin(set), dayH = (st - r) / 60;
+  const now = new Date(), nm = now.getHours() * 60 + now.getMinutes();
+  const y = new Date(today); y.setDate(y.getDate() - 1);
+  const diff = dayLen(place.lat, today) - dayLen(place.lat, y);
+  const isDay = nm >= r && nm < st;
+  const left = isDay ? `☀️ Güneşin batmasına ${hm((st - nm) / 60)}` : `🌙 Güneşin doğmasına ${hm(((nm < r ? r : r + 1440) - nm) / 60)}`;
+  const ups = SEASONS.map(([d, e, n, x]) => ({ d: new Date(d + "T12:00:00"), e, n, x })).filter((v) => v.d >= today).slice(0, 3);
+  const evs = ups.map((v) => {
+    const days = Math.round((v.d - today) / 864e5), L = dayLen(place.lat, v.d), ch = L - dayLen(place.lat, today);
+    return `<div class="ev"><div class="e">${v.e}</div><div class="t">${v.n}<small>${v.d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })} · ${days} gün sonra</small></div>
+      <div class="r">☀️ ${hm(L)}<small>gece ${hm(24 - L)} · ${ch >= 0 ? "+" : "−"}${hm(ch)}</small></div></div>`;
+  }).join("");
+  // 1 yıllık gündüz süresi grafiği
+  const N = 365, W = 300, H = 60, pts = [];
+  let mn = 24, mx = 0;
+  const vals = [...Array(N)].map((_, i) => { const dd = new Date(today); dd.setDate(dd.getDate() + i); const v = dayLen(place.lat, dd); mn = Math.min(mn, v); mx = Math.max(mx, v); return v; });
+  const yOf = (v) => H - 6 - ((v - mn) / Math.max(0.01, mx - mn)) * (H - 14);
+  vals.forEach((v, i) => pts.push(`${(i / (N - 1) * W).toFixed(1)},${yOf(v).toFixed(1)}`));
+  const y12 = yOf(12);
+  const marks = SEASONS.map(([d, e]) => ({ i: Math.round((new Date(d + "T12:00:00") - today) / 864e5), e })).filter((m) => m.i >= 0 && m.i < N)
+    .map((m) => `<line x1="${m.i / (N - 1) * W}" x2="${m.i / (N - 1) * W}" y1="0" y2="${H}" stroke="#333" stroke-dasharray="2 2"/><text x="${m.i / (N - 1) * W}" y="10" font-size="9" text-anchor="middle">${m.e}</text>`).join("");
+  const svg = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${marks}
+    ${mn < 12 && mx > 12 ? `<line x1="0" x2="${W}" y1="${y12}" y2="${y12}" stroke="#555" stroke-width=".6"/><text x="${W - 2}" y="${y12 - 2}" font-size="8" fill="#777" text-anchor="end">12 sa</text>` : ""}
+    <polyline points="${pts.join(" ")}" fill="none" stroke="#f5c04a" stroke-width="1.6"/><circle cx="0" cy="${yOf(vals[0])}" r="3" fill="#fff"/></svg>`;
+  return `<div class="sun"><h3>☀️ Gündüz ve gece</h3>
+    <div class="dn"><div class="d"><b>${hm(dayH)}</b><span>Gündüz (${rise.slice(11, 16)} – ${set.slice(11, 16)})</span></div><div class="n"><b>${hm(24 - dayH)}</b><span>Gece</span></div></div>
+    <div class="tl"><i style="left:${r / 14.4}%;right:${100 - st / 14.4}%"></i><u style="left:${nm / 14.4}%"></u></div>
+    <div class="tlx"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+    <div class="chg">${left} · Gündüz dünden <b style="color:${diff >= 0 ? "#3fc283" : "#ef6a4c"}">${ms(diff)} ${diff >= 0 ? "uzun" : "kısa"}</b></div>
+    ${evs}
+    ${svg}<div class="tlx"><span>Bugün</span><span>Önümüzdeki 12 ay gündüz süresi</span><span>+1 yıl</span></div></div>`;
 }
 
 // Şehir arama
