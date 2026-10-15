@@ -157,6 +157,11 @@
   .seg button { flex: 1; padding: 8px 4px; border: none; border-radius: 9px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
   .seg button.on { background: var(--accent); color: #000; }
   .modal { max-height: 92vh; overflow-y: auto; }
+  .plbl { text-align: center; font-size: 12px; color: var(--accent); margin-top: 4px; }
+  #phand { min-height: 70px; padding-top: 10px; }
+  #phand .card { transform: scale(.85); transform-origin: top center; }
+  #phand .card.ok { transform: scale(.85) translateY(-8px); }
+  .seg button:disabled { opacity: .35; cursor: not-allowed; }
   .modal .btn { width: 100%; background: var(--accent); border-color: var(--accent); color: #000; }
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
 </style>
@@ -185,6 +190,7 @@
 <div class="status" id="status"></div>
 <div class="panel" id="bidPanel"></div>
 <div class="panel" id="trumpPanel"></div>
+<div id="pwrap" style="display:none"><div class="plbl">🤝 Eşinin kartları (Sadolayn) — ihale sende, ikisini de sen oynuyorsun</div><div class="hand" id="phand"></div></div>
 <div class="hand" id="hand"></div>
 
 <div class="overlay" id="overlay">
@@ -210,6 +216,10 @@ try { Object.assign(OPT, JSON.parse(localStorage.getItem("batakOpt") || "{}")); 
 let roundNo = 0;
 const partner = (p) => (p + 2) % 4;
 const sameSide = (a, b) => a === b || (OPT.esli && partner(a) === b);
+const MINB = () => (OPT.esli ? 7 : 4);
+const A3 = () => OPT.arti3 && !OPT.esli; // eşlide +3 kuralı yok
+// Eşli: ihaleyi alan eşinin kartlarını da oynar
+const humanCtl = (p) => p === 0 ? !(OPT.esli && bidder === 2 && phase === "play") : (p === 2 && OPT.esli && bidder === 0 && phase === "play");
 const sideTricks = (p) => tricks[p] + (OPT.esli ? tricks[partner(p)] : 0);
 let hands, bids, active, highBid, highBidder, bidder, contract, trump, trumpBroken;
 let trick, turn, tricks, played, phase, busy = false;
@@ -334,7 +344,7 @@ function botPick(p) {
   const winning = L.filter((c) => beats(c, best, led));
   const losing = L.filter((c) => !beats(c, best, led));
   // +3 kuralı: ihale tarafı zaten ihale+2'ye ulaştıysa el almaktan kaçın
-  if (OPT.arti3 && sameSide(p, bidder) && sideTricks(bidder) >= contract + 2 && losing.length) return [...losing].sort((a, b) => b.r - a.r)[0];
+  if (A3() && sameSide(p, bidder) && sideTricks(bidder) >= contract + 2 && losing.length) return [...losing].sort((a, b) => b.r - a.r)[0];
   // Eşli: eli ortak alıyorsa ve garantiyse üstüne çıkma
   if (OPT.esli && bw.p === partner(p) && losing.length && (trick.length === 3 || isBoss(best, hand) || best.s === trump)) return lowest(losing);
   if (winning.length) {
@@ -380,21 +390,25 @@ function renderTrick(winnerP) {
     $("slot" + t.p).appendChild(el);
   }
 }
-function renderHand() {
-  const h = $("hand");
+function handInto(elId, p) {
+  const h = $(elId);
   h.innerHTML = "";
-  const myTurn = phase === "play" && turn === 0 && !busy;
-  const ok = myTurn ? new Set(legal(hands[0]).map(id)) : null;
-  for (const c of hands[0]) {
+  const myTurn = phase === "play" && turn === p && humanCtl(p) && !busy;
+  const ok = myTurn ? new Set(legal(hands[p]).map(id)) : null;
+  for (const c of hands[p]) {
     const el = cardEl(c);
     if (myTurn) {
-      if (ok.has(id(c))) {
-        el.classList.add("ok");
-        el.onclick = () => humanPlay(c);
-      } else el.classList.add("no");
+      if (ok.has(id(c))) { el.classList.add("ok"); el.onclick = () => humanPlay(c, p); }
+      else el.classList.add("no");
     }
     h.appendChild(el);
   }
+}
+function renderHand() {
+  handInto("hand", 0);
+  const showP = OPT.esli && bidder === 0 && phase === "play";
+  $("pwrap").style.display = showP ? "" : "none";
+  if (showP) handInto("phand", 2);
 }
 function render() { renderInfo(); renderSeats(); renderHand(); }
 
@@ -423,8 +437,8 @@ async function bidTurn() {
   const act = [0, 1, 2, 3].filter((i) => active[i]);
   if (highBidder >= 0 && act.length === 1) return endBidding();
   if (act.length === 0) {
-    highBid = 4; highBidder = dealer;
-    setStatus(`Herkes pas geçti, ihale ${NAMES[dealer]}'e 4 ile kaldı.`);
+    highBid = MINB(); highBidder = dealer;
+    setStatus(`Herkes pas geçti, ihale ${NAMES[dealer]}'e ${MINB()} ile kaldı.`);
     await wait(1200);
     return endBidding();
   }
@@ -435,13 +449,13 @@ async function bidTurn() {
   } else {
     setStatus(`${NAMES[turn]} düşünüyor…`);
     await wait(750);
-    const want = Math.floor(estimate(hands[turn]) + (OPT.esli ? 1.5 : 0));
-    const min = Math.max(4, highBid + 1);
+    const want = Math.floor(estimate(hands[turn]) + (OPT.esli ? 3.2 : 0));
+    const min = Math.max(MINB(), highBid + 1);
     doBid(turn, want >= min && min <= 13 ? min : "pas");
   }
 }
 function showBidPanel() {
-  const min = Math.max(4, highBid + 1);
+  const min = Math.max(MINB(), highBid + 1);
   setStatus(highBid ? `En yüksek ihale: <b>${highBid}</b> (${NAMES[highBidder]}). Senin sıran.` : "İhale sende. Kaç el alırsın?");
   const panel = $("bidPanel");
   panel.innerHTML = "";
@@ -501,19 +515,20 @@ function startPlay(t) {
 }
 async function playTurn() {
   renderSeats();
-  if (turn === 0) {
-    setStatus(trick.length === 0 ? "Sıra sende, bir kart aç." : "Sıra sende.");
+  if (humanCtl(turn)) {
+    const who = turn === 2 ? "Eşinin (Sadolayn) sırası — onun kartını sen seç." : "";
+    setStatus(who || (trick.length === 0 ? "Sıra sende, bir kart aç." : "Sıra sende."));
     renderHand();
   } else {
-    setStatus(`${NAMES[turn]} oynuyor…`);
+    setStatus(turn === 0 ? "İhale eşinde: Sadolayn senin kartını oynuyor…" : `${NAMES[turn]} oynuyor…`);
     renderHand();
     await wait(650);
     playCard(turn, botPick(turn));
   }
 }
-function humanPlay(c) {
-  if (phase !== "play" || turn !== 0 || busy) return;
-  playCard(0, c);
+function humanPlay(c, p = 0) {
+  if (phase !== "play" || turn !== p || !humanCtl(p) || busy) return;
+  playCard(p, c);
 }
 async function playCard(p, c) {
   if (window.CardSfx) CardSfx.play();
@@ -548,14 +563,18 @@ async function playCard(p, c) {
 function endRound() {
   phase = "end";
   const side = sideTricks(bidder);
-  const over = OPT.arti3 && side >= contract + 3;
+  const over = A3() && side >= contract + 3;
   const made = side >= contract && !over;
+  // Puan: ihaleyi tutan taahhüt başına 15, fazla el başına 10; tutamayan (ya da +3 yapan) −10 × ihale.
+  // Diğerleri el başına 10; hiç el almayan −50.
+  const bidPts = made ? contract * 15 + (side - contract) * 10 : -contract * 10;
+  const other = (t) => (t > 0 ? t * 10 : -50);
   let deltas;
   if (OPT.esli) {
-    const bs = made ? side : -contract, os = 13 - side;
-    deltas = [0, 1, 2, 3].map((p) => (sameSide(p, bidder) ? bs : os));
+    const os = other(13 - side);
+    deltas = [0, 1, 2, 3].map((p) => (sameSide(p, bidder) ? bidPts : os));
   } else {
-    deltas = [0, 1, 2, 3].map((p) => (p === bidder ? (made ? tricks[p] : -contract) : tricks[p]));
+    deltas = [0, 1, 2, 3].map((p) => (p === bidder ? bidPts : other(tricks[p])));
   }
   deltas.forEach((d, p) => (scores[p] += d));
   saveScores();
@@ -603,13 +622,15 @@ function showRules() {
       <label>Oyun şekli</label>${seg("esli", [[false, "Eşsiz (tekli)"], [true, "Eşli (Sen + Sadolayn)"]])}
       <label>Yükseltme</label>${seg("yuk", [[true, "Yükseltmeli (kanlı)"], [false, "Yükseltmesiz"]])}
       <label>İhale +3 kuralı</label>${seg("arti3", [[true, "+3 yapan yanar"], [false, "Kapalı"]])}
+      <div id="a3note" style="font-size:11px;color:var(--muted);margin-top:4px">Eşli oyunda +3 kuralı uygulanmaz.</div>
     </div>
     <ul class="rules">
-      <li>En yüksek ihaleyi (en az 4) veren kozu seçer ve ilk kartı açar. Koz oynanmadan kozla el açılamaz.</li>
+      <li>En yüksek ihaleyi veren kozu seçer ve ilk kartı açar (en az <b>4</b>, eşlide en az <b>7</b>). Koz oynanmadan kozla el açılamaz.</li>
       <li><b>Yükseltmeli:</b> yerdeki rengi atarken büyüğünü atmak zorundasın. <b>Yükseltmesiz:</b> renge uyman yeter; yalnızca <b>koz</b> yükseltilir.</li>
       <li>O renk yoksa koz atmalısın (yükseltebiliyorsan yükselt).</li>
-      <li>İhaleyi tutan aldığı el kadar, tutamayan ihale kadar eksi yazar. <b>+3 kuralı açıksa</b> ihalenin 3 ve fazla üstüne çıkan da yanar.</li>
-      <li><b>Eşli:</b> karşındaki oyuncu eşindir; ihale ve puan iki kişinin aldığı ellerin toplamıyla hesaplanır.</li>
+      <li><b>Puan:</b> ihaleyi tutan, söz verdiği her el için 15, fazla her el için 10 puan alır; tutamayan ihale × 10 eksi yazar. Diğer oyuncular aldıkları her el için 10 puan alır; <b>hiç el alamayan −50</b> yazar.</li>
+      <li><b>+3 kuralı</b> (tekli): ihalenin 3 ve fazla üstüne çıkan da yanar (ihale × 10 eksi).</li>
+      <li><b>Eşli:</b> karşındaki oyuncu eşindir, ellerin toplamı sayılır. İhaleyi alan, eşinin kartlarını açık görür ve <b>iki eli de o oynar</b>. +3 kuralı yoktur.</li>
     </ul>
     <button class="btn" id="start">Başla</button>`;
   $("overlay").classList.add("show");
@@ -618,7 +639,10 @@ function showRules() {
     const k = g.dataset.k, v = b.dataset.v;
     OPT[k] = v === "true" ? true : v === "false" ? false : +v;
     g.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+    syncOpt();
   }));
+  const syncOpt = () => { $("modal").querySelectorAll('.seg[data-k="arti3"] button').forEach((x) => (x.disabled = OPT.esli)); $("a3note").style.display = OPT.esli ? "" : "none"; };
+  syncOpt();
   $("start").onclick = () => {
     try { localStorage.setItem("batakOpt", JSON.stringify(OPT)); } catch (e) {}
     scores = [0, 0, 0, 0]; roundNo = 0; saveScores();
