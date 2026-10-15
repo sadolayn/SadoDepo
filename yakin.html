@@ -226,7 +226,10 @@ function mapLoad(which, src, title, gUrl) {
   LD[which + "t"] = setTimeout(() => { if (tok !== LD[which]) return; ov.innerHTML = `<div style="font-size:28px">🗺️</div><div>Harita şu an açılamadı.</div><a href="${gUrl}" target="_blank" rel="noopener">Google Haritalar'da aç ↗</a>`; if (which === "fs") $("fstitle").textContent = "Harita açılamadı"; }, 15000);
   fr.src = src;
 }
-const gUrlOf = (c) => `https://www.google.com/maps/search/${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`;
+// Google Haritalar'da aç: bilgisayarda Google konumu internet bağlantısından (İstanbul) aldığı için
+// arama metnine sol üstteki yer adını da ekliyoruz: "karakol Çine, Aydın"
+const placeTxt = () => { const n = (S.place && S.place.name || "").replace(/^📡\s*/, "").replace(/\s*merkez$/i, "").trim(); return n && n !== "Bulunduğun yer" ? n : ""; };
+const gUrlOf = (c) => { const q = (GQ[c.k] || c.n.toLowerCase()) + (placeTxt() ? " " + placeTxt() : ""); return `https://www.google.com/maps/search/${encodeURIComponent(q)}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`; };
 const titleOf = (c) => `${c.e} ${c.n} · ${(S.place.name || "").replace(/^📡\s*/, "")}`;
 function setGmap(c) {
   if (!S.place) return;
@@ -256,7 +259,7 @@ $("cats").addEventListener("click", (e) => { const t = e.target.closest(".tile")
 function renderRad() { document.querySelectorAll("[data-rad] button").forEach((b) => b.classList.toggle("on", +b.dataset.r === S.r)); }
 document.querySelectorAll("[data-rad]").forEach((g) => (g.onclick = (e) => {
   const b = e.target.closest("button"); if (!b) return; S.r = +b.dataset.r; save(); renderRad();
-  if (S.cat) { openCat(S.cat); if ($("fs").classList.contains("show") && fsSrc && S.place) mapLoad("fs", fsSrc, titleOf(CAT[S.cat]), gUrlOf(CAT[S.cat])); const c = CAT[S.cat]; if (S.place) $("fsgm").href = `https://www.google.com/maps/search/${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`; }
+  if (S.cat) { openCat(S.cat); if ($("fs").classList.contains("show") && fsSrc && S.place) mapLoad("fs", fsSrc, titleOf(CAT[S.cat]), gUrlOf(CAT[S.cat])); const c = CAT[S.cat]; if (S.place) $("fsgm").href = gUrlOf(c); }
 }));
 function setPlace(p) {
   if (p) p.v = 2;
@@ -416,7 +419,7 @@ function openFsUpdate() {
   const c = CAT[S.cat]; if (!c || !S.place) return;
   $("fstitle").textContent = `${c.e} ${c.n} · ${(S.place.name || "").replace(/^📡\s*/, "")}`;
   const term = encodeURIComponent(GQ[c.k] || c.n.toLowerCase());
-  $("fsgm").href = `https://www.google.com/maps/search/${term}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`;
+  $("fsgm").href = gUrlOf(c);
 }
 // Nöbetçi eczane: Google haritasını sayfa içinde tam ekran aç
 function openNobet() {
@@ -432,7 +435,7 @@ function openFs() {
   const c = CAT[S.cat];
   if ($("fsmap").src !== fsSrc) mapLoad("fs", fsSrc, titleOf(c), gUrlOf(c)); else $("fstitle").textContent = titleOf(c);
   const term = encodeURIComponent(GQ[c.k] || c.n.toLowerCase());
-  $("fsgm").href = `https://www.google.com/maps/search/${term}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`;
+  $("fsgm").href = gUrlOf(c);
   $("fs").classList.add("show"); document.body.style.overflow = "hidden";
   try { history.pushState({ fs: 1 }, ""); } catch (e) {}
 }
