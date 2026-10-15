@@ -79,6 +79,8 @@
   .tsum .ts.main b { font-size: 26px; color: var(--accent); }
   .tsum .ts.wide { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
   .tsum .ts.wide b { font-size: 16px; margin: 0; }
+  .tswarn { grid-column: 1 / -1; background: rgba(239,138,93,.12); border: 1px solid #ef8a5d; color: #f3b394; border-radius: 12px; padding: 9px 12px; font-size: 13px; line-height: 1.4; }
+  .tswarn b { color: #ffd2bd; }
   .tscopy { grid-column: 1 / -1; background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 10px; padding: 9px; font: inherit; font-size: 14px; cursor: pointer; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
   th, td { padding: 6px 4px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
@@ -236,6 +238,7 @@
         <div><label>Vade</label><div class="field"><input id="t_vade" type="text" inputmode="numeric" value="24"><span class="unit">ay</span></div></div>
       </div>
       <div id="t_sum" class="tsum">
+        <div class="tswarn" id="ts_warn" hidden></div>
         <div class="ts main"><span>Aylık taksit</span><b id="ts_taksit">–</b><i id="ts_ilk"></i></div>
         <div class="ts"><span>Toplam geri ödeme</span><b id="ts_toplam">–</b></div>
         <div class="ts"><span>Toplam masraf</span><b id="ts_masraf">–</b><i>tahsis ücreti + BSMV</i></div>
@@ -709,6 +712,12 @@ function addMonthsC(d, m) { // ay sonunu aşarsa ayın son günü
 }
 const shortD = (d) => d.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
 let tIlkManual = false, tkSummary = "";
+// BDDK (13.02.2025, 11152 sayılı karar) ihtiyaç kredisi azami vadeleri; yapılandırmalarda da geçerli
+const tkMaxVade = (P) => (P <= 125000 ? 36 : P <= 250000 ? 24 : 12);
+const tkVadeUyari = (P, n) => {
+  const m = tkMaxVade(P);
+  return n > m ? `⚠️ <b>Vade sınırı:</b> ${P <= 125000 ? "125.000 TL'ye kadar" : P <= 250000 ? "125.000 – 250.000 TL arası" : "250.000 TL üzeri"} ihtiyaç kredilerinde azami vade <b>${m} ay</b> (BDDK). Hesap bilgi amaçlı yapıldı.` : "";
+};
 // Plan dönemleri: per = [{d, fac, g}] — fac: ay oranı (tam ay = 1), g: gösterilen gün
 // Banka sistemi gibi: taksit, kırık dönem dikkate alınmadan standart eşit taksit formülüyle bulunur.
 // Anapara payı tam ay varsayımıyla ayrılır; kırık dönemde (fac ≠ 1) yalnızca o taksitteki faiz/KKDF/BSMV
@@ -755,7 +764,7 @@ function calcTK() {
   $("t_dnote").innerHTML = okIlk || !ilk
     ? `İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı.${ilk ? ` Şu an: <b>${gIlk} gün</b>.` : ""}`
     : `<span style="color:#ef8a5d">⚠️ İlk taksit tarihi kullandırım tarihinden en az 5, en fazla 45 gün sonra olmalı (şu an ${gIlk} gün). Uygun tarih: ${shortD(addDays(bas, 5))} – ${shortD(addDays(bas, 45))}.</span>`;
-  if (!P || !n || !ilk || !okIlk) { ["ts_taksit", "ts_toplam", "ts_masraf", "ts_sig", "ts_net"].forEach((x) => ($(x).textContent = "–")); $("ts_ilk").textContent = ""; tkSummary = ""; $("t_out").textContent = "–"; rows("t_rows", []); rows("t_prows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
+  if (!P || !n || !ilk || !okIlk) { $("ts_warn").hidden = true; ["ts_taksit", "ts_toplam", "ts_masraf", "ts_sig", "ts_net"].forEach((x) => ($(x).textContent = "–")); $("ts_ilk").textContent = ""; tkSummary = ""; $("t_out").textContent = "–"; rows("t_rows", []); rows("t_prows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
   const dues = []; for (let k = 0; k < n; k++) dues.push(addMonthsC(ilk, k));
   // İlk dönem: ilk taksit kullandırımdan tam 1 ay sonraysa 1 ay faiz; değilse gün/30 (kırık dönem)
   const g1 = dayDiff(bas, ilk), tamAy = ymd(addMonthsC(bas, 1)) === ymd(ilk);
@@ -786,6 +795,7 @@ function calcTK() {
     ["Toplam masraf", tl(ucret)],
     ["Hesaba geçecek tutar", tl(P - ucret)],
   ]);
+  { const w = tkVadeUyari(P, n); $("ts_warn").hidden = !w; $("ts_warn").innerHTML = w; }
   // Özet kutuları
   const sigOn = $("t_sigtip").value !== "yok", sigOran = num("t_sig");
   const sig = sigOn ? R2(P * sigOran / 1000 * n / 12) : 0;
@@ -920,7 +930,8 @@ function calcAO(c) {
       [fark >= 0 ? "Eski plana göre ek maliyet" : "Eski plana göre tasarruf", tl(Math.abs(fark)), fark >= 0 ? "neg" : "pos"],
     ]);
     $("ys_plan").innerHTML = planHead + p.map((x, j) => planRow(x, j + 1)).join("") + planTot(p);
-    $("ys_note").textContent = (eksik ? `Peşin tutar en az işlemiş faiz + vergiler (${tl(acc)}) kadar olmalı; hesap bu tutarla yapıldı. ` : "") + "Peşin tutar önce işlemiş faizi kapatır, kalanı anaparadan düşer. Yeni planın ilk taksiti bir sonraki taksit günüdür. Yapılandırmada alınabilecek ücretler dahil değildir.";
+    const yw = tkVadeUyari(BC, yn).replace(" ihtiyaç kredilerinde", " yapılandırmalarda");
+    $("ys_note").innerHTML = (yw ? `<span style="color:#ef8a5d">${yw}</span><br>` : "") + (eksik ? `Peşin tutar en az işlemiş faiz + vergiler (${tl(acc)}) kadar olmalı; hesap bu tutarla yapıldı. ` : "") + "Peşin tutar önce işlemiş faizi kapatır, kalanı anaparadan düşer. Yeni planın ilk taksiti bir sonraki taksit günüdür. Yapılandırmada alınabilecek ücretler dahil değildir.";
   })();
 }
 
