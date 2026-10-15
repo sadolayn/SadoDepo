@@ -47,6 +47,16 @@
   .hero p { margin: 0; font-size: 15px; }
   .sec { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 6px 16px; margin-bottom: 12px; }
   .sec h2 { margin: 10px 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); }
+  .status { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: 12px; color: var(--muted); background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; margin-bottom: 12px; }
+  .status b { color: var(--ink); font-weight: 600; }
+  .status .dot { width: 8px; height: 8px; border-radius: 50%; background: #3fc283; display: inline-block; margin-right: 4px; }
+  .status .dot.old { background: #e8b52b; }
+  .warnbox { background: rgba(232,181,43,.1); border: 1px solid rgba(232,181,43,.45); color: #f1d27a; border-radius: 12px; padding: 10px 12px; font-size: 13px; margin-bottom: 12px; }
+  .warnbox a { color: var(--accent); }
+  .sec.imp { border-color: rgba(224,162,79,.6); background: linear-gradient(180deg, rgba(224,162,79,.10), var(--card) 60%); }
+  .sec.bnk { border-color: rgba(90,169,240,.5); background: linear-gradient(180deg, rgba(90,169,240,.08), var(--card) 60%); }
+  .sec.bnk h2 { color: #5aa9f0; }
+  .kurum { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: rgba(224,162,79,.18); color: var(--accent); margin-bottom: 4px; }
   .item { padding: 10px 0; border-top: 1px solid var(--line); }
   .item:first-of-type { border-top: none; }
   .item b { display: block; font-size: 15px; }
@@ -85,6 +95,7 @@
     <span style="width:52px"></span>
   </header>
 
+  <div class="status" id="status">Kontrol bilgisi yükleniyor…</div>
   <div class="cal" id="cal"></div>
 
   <div class="stick">
@@ -110,6 +121,19 @@ async function getJSON(url) {
   return r.json();
 }
 
+const fmtTime = (iso) => { const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }); };
+async function renderStatus() {
+  let k = null; try { k = await getJSON("gazete/kontrol.json"); } catch (e) {}
+  const today = todayIso(), have = dates.includes(today);
+  const last = k && k.son_kontrol ? new Date(k.son_kontrol) : null;
+  const ageH = last ? (Date.now() - last) / 36e5 : 99;
+  $("status").innerHTML = `<span><span class="dot${ageH > 12 ? " old" : ""}"></span>Son kontrol: <b>${last ? esc(fmtTime(k.son_kontrol)) : "—"}</b></span>
+    <span>Kontroller: her gün 01:19 · 09:19 · 14:19 · 20:19</span>`;
+  if (!have) {
+    const h = new Date().getHours();
+    $("status").insertAdjacentHTML("afterend", `<div class="warnbox" id="nowarn">📭 Bugünün (${esc(fmtDate(today))}) özeti henüz eklenmedi${h < 2 ? " — kontrol sürüyor, birazdan eklenecek" : "; bir sonraki kontrolde eklenecek"}. Şimdilik <a href="https://www.resmigazete.gov.tr/" target="_blank" rel="noopener">Resmi Gazete'nin sitesine</a> bakabilirsin.</div>`);
+  }
+}
 const AYLAR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 let calY, calM, selDate = null;
 const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
@@ -186,7 +210,16 @@ async function show(date) {
         <div class="date">${esc(fmtDate(date))}</div>
         <div class="meta">${g.sayi ? "Sayı: " + esc(g.sayi) : ""}</div>
         <p>${esc(g.ozet)}</p>
+        ${g.guncelleme ? `<div class="meta" style="margin:10px 0 0">🕐 Bu özet en son ${esc(fmtTime(g.guncelleme))} güncellendi</div>` : ""}
       </div>`;
+    const atm = g.onemli_atamalar || [];
+    if (atm.length) {
+      html += `<div class="sec imp"><h2>🏛️ Önemli atamalar</h2>` + atm.map((a) => `<div class="item"><span class="kurum">${esc(a.kurum)}</span><b>${esc(a.kisi)}</b><span>${esc(a.gorev)}${a.aciklama ? " · " + esc(a.aciklama) : ""}</span></div>`).join("") + `</div>`;
+    }
+    const bnk = g.bankacilik || [];
+    if (bnk.length) {
+      html += `<div class="sec bnk"><h2>🏦 Bankacılığı ilgilendirenler</h2>` + bnk.map((it) => `<div class="item"><b>${esc(it.baslik)}</b>${it.aciklama ? `<span>${esc(it.aciklama)}</span>` : ""}</div>`).join("") + `</div>`;
+    }
     for (const b of g.bolumler || []) {
       html += `<div class="sec"><h2>${esc(b.baslik)}</h2>`;
       for (const it of b.maddeler || []) {
@@ -226,6 +259,7 @@ async function init() {
     if (false) { calCompact = true; renderCal(); }
     else if (calCompact && window.scrollY < 6) { calCompact = false; calY = +(weekRef || selDate).slice(0, 4); calM = +(weekRef || selDate).slice(5, 7) - 1; renderCal(); }
   }, { passive: true });
+  renderStatus();
   const want = location.hash.slice(1);
   show(dates.includes(want) ? want : dates[0]);
 }
