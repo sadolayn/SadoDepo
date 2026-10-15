@@ -219,7 +219,7 @@
   <section class="panel" id="tk">
     <div class="card">
       <h2>Tüketici Kredisi (Eşit Taksit)</h2>
-      <p class="hint">Taksitler, faize eklenen BSMV ve KKDF dahil sabit tutarda hesaplanır.</p>
+      <p class="hint">Taksitler, faize eklenen BSMV ve KKDF dahil sabit tutarda hesaplanır. Faiz günlük işler: aylık oran ÷ 30 × gün. Hafta sonu veya resmi tatile denk gelen taksit ilk iş gününe kayar.</p>
       <label>Kredi tutarı</label>
       <div class="field"><input id="t_tutar" type="text" inputmode="decimal" value="200.000"><span class="unit">TL</span></div>
       <div class="two">
@@ -229,6 +229,10 @@
       <div class="two">
         <div><label>BSMV</label><div class="field"><input id="t_bsmv" type="text" inputmode="decimal" value="15"><span class="unit">%</span></div></div>
         <div><label>KKDF</label><div class="field"><input id="t_kkdf" type="text" inputmode="decimal" value="15"><span class="unit">%</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>Kullandırım tarihi</label><input id="t_bas" type="date" style="color-scheme:dark"></div>
+        <div><label>İlk taksit tarihi</label><input id="t_ilk" type="date" style="color-scheme:dark"></div>
       </div>
       <div class="two">
         <div><label>Tahsis ücreti</label><div class="field"><input id="t_tahsis" type="text" inputmode="decimal" value="5"><span class="unit">‰</span></div></div>
@@ -246,9 +250,9 @@
     </div>
     <div class="card">
       <h2>💸 Ara ödeme</h2>
-      <p class="hint">Müşteri birkaç taksit ödedikten sonra ara ödeme yaparsa kalan borç, yeni taksit veya yeni vade ve faiz tasarrufu. Kredi bilgileri yukarıdan alınır; ara ödemenin taksit gününde, o ayın taksiti ödendikten sonra yapıldığı varsayılır.</p>
+      <p class="hint">Ara ödeme tarihine kadar ödenen taksitler düşülür. Son taksitten o güne işleyen günlük faiz (KKDF ve BSMV dahil) önce kapatılır, kalan kısım anaparadan düşer. Kredi bilgileri yukarıdan alınır.</p>
       <div class="two">
-        <div><label>Ödenen taksit</label><div class="field"><input id="ao_k" type="text" inputmode="numeric" value="3"><span class="unit">adet</span></div></div>
+        <div><label>Ara ödeme tarihi</label><input id="ao_t" type="date" style="color-scheme:dark"></div>
         <div><label>Ara ödeme</label><div class="field"><input id="ao_x" type="text" inputmode="decimal" value="30.000"><span class="unit">TL</span></div></div>
       </div>
       <div class="rows" id="ao_rows" style="margin-top:12px"></div>
@@ -574,6 +578,8 @@ let m2GunManual = false;
 
 $("m2_gun").addEventListener("input", () => (m2GunManual = true));
 $("bm_pf").addEventListener("input", () => (bPfManual = true));
+$("t_ilk").addEventListener("input", () => (tIlkManual = true));
+$("ao_t").addEventListener("input", () => (aoTManual = true));
 const nfx = (v) => Number(v).toLocaleString("tr-TR", { maximumFractionDigits: 2 });
 
 function calcMev() {
@@ -634,6 +640,48 @@ function calcMev() {
 }
 
 // ---------- Tüketici ----------
+// Tatiller (takvim.html ile aynı kaynak): sabit resmi tatiller + bayramlar (tam gün)
+const TK_FIXED = ["01-01", "04-23", "05-01", "05-19", "07-15", "08-30", "10-29"];
+const TK_REL = { 2026: ["03-20", "03-21", "03-22", "05-27", "05-28", "05-29", "05-30"], 2027: ["03-09", "03-10", "03-11", "05-16", "05-17", "05-18", "05-19"] };
+const ymd = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const pDate = (v) => (v ? new Date(v + "T12:00:00") : null);
+function isHoliday(d) {
+  const w = d.getDay(); if (w === 0 || w === 6) return true;
+  const md = ymd(d).slice(5);
+  return TK_FIXED.includes(md) || (TK_REL[d.getFullYear()] || []).includes(md);
+}
+function nextBiz(d) { const x = new Date(d); while (isHoliday(x)) x.setDate(x.getDate() + 1); return x; }
+function addMonthsC(d, m) { // ay sonunu aşarsa ayın son günü
+  const day = d.getDate(), x = new Date(d.getFullYear(), d.getMonth() + m, 1, 12);
+  x.setDate(Math.min(day, new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate()));
+  return x;
+}
+const shortD = (d) => d.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+let tIlkManual = false;
+// Planı tarihlere göre kur: from tarihinden başlayarak dues[] günlerinde T taksit
+function tkPlan(B, from, dues, T, r, kkdf, bsmv, closeLast) {
+  const out = []; let bal = B, prev = from;
+  for (let j = 0; j < dues.length && bal > 0.005; j++) {
+    const g = dayDiff(prev, dues[j]);
+    const f = bal * r * g / 30, kk = f * kkdf, bs = f * bsmv;
+    let ana = T - f - kk - bs, t = T;
+    if (ana >= bal - 0.005 || (closeLast && j === dues.length - 1)) { ana = bal; t = ana + f + kk + bs; }
+    bal = Math.max(0, bal - ana);
+    out.push({ d: dues[j], g, t, ana, f, kk, bs, bal });
+    prev = dues[j];
+  }
+  return out;
+}
+// Son bakiyeyi sıfırlayan eşit taksit (bakiye T'ye göre doğrusal)
+function solveT(B, from, dues, r, kkdf, bsmv) {
+  const endBal = (T) => { let bal = B, prev = from; for (const d of dues) { bal = bal * (1 + r * (1 + kkdf + bsmv) * dayDiff(prev, d) / 30) - T; prev = d; } return bal; };
+  const e0 = endBal(0), e1 = endBal(1);
+  return e0 / (e0 - e1);
+}
+const planHead = "<tr><th>#</th><th>Tarih</th><th>Gün</th><th>Taksit</th><th>Anapara</th><th>Faiz</th><th>KKDF</th><th>BSMV</th><th>Kalan</th></tr>";
+const fmt2 = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const planRow = (x, no) => `<tr><td>${no}</td><td>${shortD(x.d)}</td><td>${x.g}</td><td>${fmt2(x.t)}</td><td>${fmt2(x.ana)}</td><td>${fmt2(x.f)}</td><td>${fmt2(x.kk)}</td><td>${fmt2(x.bs)}</td><td>${fmt2(x.bal)}</td></tr>`;
+
 function calcTK() {
   const P = num("t_tutar"), r = num("t_faiz") / 100, n = Math.round(num("t_vade"));
   const bsmv = num("t_bsmv") / 100, kkdf = num("t_kkdf") / 100, diger = num("t_ucret");
@@ -643,32 +691,27 @@ function calcTK() {
     ? '<span style="color:#ef8a5d">Tahsis ücreti binde 5\'i geçemez; hesap binde 5 ile yapıldı.</span>'
     : "Kredi tahsis ücreti yasal olarak en fazla kredi tutarının binde 5'i olabilir ve bu ücrete BSMV (%15) eklenir. Diğer masraf: varsa sigorta vb.";
   const i = r * (1 + bsmv + kkdf);
-  if (!P || !n) { $("t_out").textContent = "–"; rows("t_rows", []); $("t_plan").innerHTML = ""; return; }
-  const taksit = i === 0 ? P / n : P * i / (1 - Math.pow(1 + i, -n));
-  let kalan = P, tF = 0, tB = 0, tK = 0;
-  let html = "<tr><th>#</th><th>Taksit</th><th>Anapara</th><th>Faiz</th><th>KKDF</th><th>BSMV</th><th>Kalan</th></tr>";
-  for (let k = 1; k <= n; k++) {
-    const f = kalan * r, kk = f * kkdf, bs = f * bsmv;
-    let ana = taksit - f - kk - bs;
-    if (k === n) ana = kalan;
-    kalan = Math.max(0, kalan - ana);
-    tF += f; tK += kk; tB += bs;
-    const fmt = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    html += `<tr><td>${k}</td><td>${fmt(taksit)}</td><td>${fmt(ana)}</td><td>${fmt(f)}</td><td>${fmt(kk)}</td><td>${fmt(bs)}</td><td>${fmt(kalan)}</td></tr>`;
-  }
-  $("t_plan").innerHTML = html;
-  const toplam = taksit * n;
-  // Yıllık maliyet oranı: masraf dahil aylık iç verim oranı
-  let lo = 0, hi = 1;
+  const bas = pDate($("t_bas").value) || new Date();
+  if (!tIlkManual || !$("t_ilk").value) $("t_ilk").value = ymd(addMonthsC(bas, 1));
+  let ilk = pDate($("t_ilk").value);
+  if (!P || !n || !ilk || dayDiff(bas, ilk) <= 0) { $("t_out").textContent = "–"; rows("t_rows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
+  const dues = []; for (let k = 0; k < n; k++) dues.push(nextBiz(addMonthsC(ilk, k)));
+  const taksit = r === 0 ? P / n : solveT(P, bas, dues, r, kkdf, bsmv);
+  const plan = tkPlan(P, bas, dues, taksit, r, kkdf, bsmv, true);
+  let tF = 0, tB = 0, tK = 0, toplam = 0;
+  plan.forEach((x) => { tF += x.f; tK += x.kk; tB += x.bs; toplam += x.t; });
+  $("t_plan").innerHTML = planHead + plan.map((x, j) => planRow(x, j + 1)).join("");
+  // Yıllık maliyet oranı: masraf dahil, gerçek günlerle iç verim oranı
   const net = P - ucret;
-  for (let it = 0; it < 100; it++) {
-    const m = (lo + hi) / 2;
-    const pv = m === 0 ? taksit * n : taksit * (1 - Math.pow(1 + m, -n)) / m;
-    if (pv > net) lo = m; else hi = m;
-  }
+  const pv = (m) => plan.reduce((a, x) => a + x.t / Math.pow(1 + m, dayDiff(bas, x.d) / 30), 0);
+  let lo = 0, hi = 1;
+  for (let it = 0; it < 100; it++) { const m = (lo + hi) / 2; if (pv(m) > net) lo = m; else hi = m; }
   const aylikMaliyet = (lo + hi) / 2;
+  const kayan = plan.filter((x, j) => ymd(x.d) !== ymd(addMonthsC(ilk, j))).length;
   $("t_out").textContent = tl(taksit);
   rows("t_rows", [
+    ["İlk / son taksit", `${shortD(plan[0].d)} · ${shortD(plan[plan.length - 1].d)}`],
+    ...(kayan ? [["Tatile denk gelip kayan taksit", `${kayan} adet`]] : []),
     ["Toplam faiz", tl(tF)],
     ["Toplam KKDF", tl(tK)],
     ["Toplam BSMV", tl(tB)],
@@ -681,78 +724,79 @@ function calcTK() {
     ["Aylık efektif faiz (vergiler dahil)", pct(i * 100)],
     ["Yıllık maliyet oranı", pct((Math.pow(1 + aylikMaliyet, 12) - 1) * 100)],
   ]);
-  calcAO(P, r, n, bsmv, kkdf, taksit);
+  calcAO({ P, r, n, bsmv, kkdf, taksit, bas, dues, plan });
 }
 
-// Ara ödeme
-function calcAO(P, r, n, bsmv, kkdf, taksit) {
-  const i = r * (1 + bsmv + kkdf);
-  const fmt = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const sched = (B, T, max) => { // B bakiyeden T taksitle plan; son taksit kalanı kapatır
-    const out = []; let bal = B;
-    for (let k = 1; k <= max && bal > 0.005; k++) {
-      const f = bal * r, kk = f * kkdf, bs = f * bsmv;
-      let ana = T - f - kk - bs, t = T;
-      if (ana >= bal - 0.005 || k === max) { ana = bal; t = ana + f + kk + bs; }
-      bal = Math.max(0, bal - ana);
-      out.push({ t, ana, f, kk, bs, bal });
-    }
-    return out;
-  };
-  const k = Math.round(num("ao_k")), X = num("ao_x");
+// Ara ödeme (tarihli)
+let aoTManual = false;
+function calcAO(c) {
   const clear = (msg) => { rows("ao_rows", []); $("ao_opts").innerHTML = ""; $("ao_plan").innerHTML = ""; $("ao_note").textContent = msg || ""; };
-  if (!P || !n || !(taksit > 0)) return clear();
-  if (k < 0 || k >= n) return clear(`Ödenen taksit 0 ile ${n - 1} arasında olmalı.`);
-  const ilk = sched(P, taksit, n);
-  const B = k ? ilk[k - 1].bal : P;            // k. taksitten sonra kalan anapara
-  const kalanN = n - k;
-  const eski = ilk.slice(k).reduce((a, x) => a + x.t, 0);
-  const sum = (a) => a.reduce((s, x) => s + x.t, 0);
-  if (X >= B - 0.005) {
-    rows("ao_rows", [
-      ["Kalan anapara (erken kapama tutarı)", tl(B), "total"],
-      ["Kalan taksitlerin toplamı", tl(eski)],
-      ["Kapamada tasarruf (faiz + KKDF + BSMV)", tl(eski - B), "pos"],
-    ]);
+  if (!c) return clear();
+  const { P, r, n, bsmv, kkdf, taksit, bas, dues, plan } = c;
+  if (!aoTManual || !$("ao_t").value) { const d = new Date(dues[Math.min(2, n - 1)]); d.setDate(d.getDate() + 12); $("ao_t").value = ymd(d); }
+  const at = pDate($("ao_t").value), X = num("ao_x");
+  if (!at || dayDiff(bas, at) <= 0) return clear("Ara ödeme tarihi kullandırım tarihinden sonra olmalı.");
+  const k = dues.filter((d) => dayDiff(d, at) >= 0).length; // o güne kadar ödenen taksit
+  if (k >= n) return clear("Bu tarihte tüm taksitler ödenmiş olur.");
+  const B = k ? plan[k - 1].bal : P;
+  const last = k ? dues[k - 1] : bas;
+  const g = dayDiff(last, at);
+  const af = B * r * g / 30, akk = af * kkdf, abs = af * bsmv, acc = af + akk + abs;
+  const gunluk = B * r / 30 * (1 + kkdf + bsmv);
+  const kapama = B + acc;
+  const eskiPlan = plan.slice(k), eski = eskiPlan.reduce((a, x) => a + x.t, 0);
+  const head = [
+    ["Ödenmiş taksit", `${k} adet${k ? ` (son: ${shortD(last)})` : ""}`],
+    ["Kalan anapara", tl(B)],
+    [`İşleyen gün (${shortD(last)} → ${shortD(at)})`, `${g} gün`],
+    ["Günlük faiz (KKDF+BSMV dahil)", tl(gunluk)],
+    ["İşlemiş faiz + KKDF + BSMV", tl(acc)],
+    ["Bu tarihte erken kapama tutarı", tl(kapama)],
+  ];
+  if (!X) { rows("ao_rows", head); $("ao_opts").innerHTML = ""; $("ao_plan").innerHTML = ""; $("ao_note").textContent = ""; return; }
+  if (X >= kapama - 0.005) {
+    rows("ao_rows", [...head, ["Kalan taksitlerin toplamı", tl(eski)], ["Kapamada tasarruf", tl(eski - kapama), "pos"]]);
     $("ao_opts").innerHTML = ""; $("ao_plan").innerHTML = "";
-    $("ao_note").textContent = `Ara ödeme kalan borcu (${tl(B)}) karşılıyor; kredi kapanır. Fazlası: ${tl(X - B)}.`;
+    $("ao_note").textContent = `Ara ödeme kapama tutarını (${tl(kapama)}) karşılıyor; kredi kapanır. Fazlası: ${tl(X - kapama)}.`;
     return;
   }
-  const B2 = B - X;
+  if (X <= acc) { rows("ao_rows", head); $("ao_opts").innerHTML = ""; $("ao_plan").innerHTML = ""; $("ao_note").textContent = `Ara ödeme işlemiş faizi (${tl(acc)}) karşılamıyor.`; return; }
+  const ana = X - acc, B2 = B - ana;
+  const kalanDues = dues.slice(k);
   // A) Vade aynı, taksit düşer
-  const tA = i === 0 ? B2 / kalanN : B2 * i / (1 - Math.pow(1 + i, -kalanN));
-  const pA = sched(B2, tA, kalanN);
+  const tA = solveT(B2, at, kalanDues, r, kkdf, bsmv);
+  const pA = tkPlan(B2, at, kalanDues, tA, r, kkdf, bsmv, true);
   // B) Taksit aynı, vade kısalır
-  const pB = sched(B2, taksit, 1000);
+  const pB = tkPlan(B2, at, kalanDues, taksit, r, kkdf, bsmv, true);
+  const sum = (a) => a.reduce((s, x) => s + x.t, 0);
   const sA = eski - X - sum(pA), sB = eski - X - sum(pB);
-  const ayKisalma = kalanN - pB.length;
   rows("ao_rows", [
-    [`${k}. taksitten sonra kalan anapara`, tl(B)],
-    ["Ara ödeme", "−" + tl(X), "neg"],
+    ...head,
+    ["Ara ödeme", tl(X)],
+    ["Önce işlemiş faize giden", "−" + tl(acc), "neg"],
+    ["Anaparaya giden", tl(ana)],
     ["Yeni anapara", tl(B2), "total"],
-    ["Eski kalan taksitler", `${kalanN} × ${tl(taksit)}`],
   ]);
   const box = (title, items, save) => `<div class="rows" style="margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:4px 12px">
       <div style="font-weight:700;color:var(--accent)"><span>${title}</span><span></span></div>
       ${items.map(([a, b]) => `<div><span>${a}</span><span>${b}</span></div>`).join("")}
       <div class="total"><span>Faiz tasarrufu</span><span class="pos">${tl(save)}</span></div>
     </div>`;
-  const sonB = pB[pB.length - 1];
+  const sonB = pB[pB.length - 1], ilkA = pA[0];
   $("ao_opts").innerHTML =
     box("A · Taksit düşsün", [
       ["Yeni taksit", `<b>${tl(tA)}</b>`],
-      ["Kalan vade", `${kalanN} ay (değişmez)`],
-      ["Taksitteki düşüş", tl(taksit - tA)],
+      ["Kalan vade", `${kalanDues.length} taksit (değişmez)`],
+      ["Sonraki taksit", `${shortD(ilkA.d)} · ${ilkA.g} gün faiz`],
     ], sA) +
     box("B · Vade kısalsın", [
       ["Taksit", `${tl(taksit)} (değişmez)`],
-      ["Kalan vade", `<b>${pB.length} ay</b> (${ayKisalma} ay erken biter)`],
-      ...(Math.abs(sonB.t - taksit) > 0.01 ? [["Son taksit", tl(sonB.t)]] : []),
+      ["Kalan vade", `<b>${pB.length} taksit</b> (${kalanDues.length - pB.length} ay erken biter)`],
+      ["Son taksit", `${shortD(sonB.d)} · ${tl(sonB.t)}`],
     ], sB);
-  const plan = $("ao_sec").value === "v" ? pB : pA;
-  $("ao_plan").innerHTML = "<tr><th>#</th><th>Taksit</th><th>Anapara</th><th>Faiz</th><th>KKDF</th><th>BSMV</th><th>Kalan</th></tr>" +
-    plan.map((x, j) => `<tr><td>${k + j + 1}</td><td>${fmt(x.t)}</td><td>${fmt(x.ana)}</td><td>${fmt(x.f)}</td><td>${fmt(x.kk)}</td><td>${fmt(x.bs)}</td><td>${fmt(x.bal)}</td></tr>`).join("");
-  $("ao_note").textContent = `Faiz tasarrufu: ara ödeme olmasaydı ödenecek ${tl(eski)} ile ara ödeme + yeni taksitler toplamı arasındaki fark (faiz, KKDF ve BSMV dahil). Vade kısaltmak daha çok tasarruf sağlar; taksit düşürmek aylık yükü hafifletir.`;
+  const pl = $("ao_sec").value === "v" ? pB : pA;
+  $("ao_plan").innerHTML = planHead + pl.map((x, j) => planRow(x, k + j + 1)).join("");
+  $("ao_note").textContent = `Ödeme günü değiştikçe sonuç değişir: her gün yaklaşık ${tl(gunluk)} faiz (KKDF+BSMV dahil) işler, ara ödeme 2 gün geç yapılırsa (örneğin 13'ü yerine 15'i) anaparaya giden kısım ${tl(gunluk * 2)} azalır. Ara ödemeden sonraki ilk taksitte faiz, ara ödeme gününden taksit gününe kadar yeni anapara üzerinden işler. Tasarruf: ara ödeme olmasaydı ödenecek ${tl(eski)} ile ara ödeme + yeni taksitler toplamı arasındaki fark.`;
 }
 
 
@@ -933,6 +977,7 @@ try {
 } catch (e) {}
 
 document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventListener("input", calcBCH));
+(function () { const t = new Date(); $("t_bas").value = ymd(t); })();
 (function () { const t = new Date(); $("m_bas").value = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`; })();
 // Çalışan modu: ?calisan ile açılır, ?musteri ile kapanır; başlığa 5 kez hızlı dokunmak da açıp kapatır
 (function () {
