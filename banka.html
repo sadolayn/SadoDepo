@@ -433,7 +433,7 @@
     <div class="card">
       <h2>TL Çek İskontosu / İştirası Kredisi</h2>
       <div style="color:var(--accent);font-weight:600;font-size:13px;margin:-4px 0 6px">+ Çek Valör Tespiti</div>
-      <p class="hint">Çek vadesi hafta sonu ya da resmi tatile denk gelirse ilk iş gününe kayar; takas karşılığı hesaba bir sonraki iş günü geçer (valör). Faiz reeskont usulüyle kullandırımda peşin alınır. Kullandırım oranı = 100 ÷ marj oranı (ör. %133,33 marj → %75).</p>
+      <p class="hint">Çek vadesi hafta sonu ya da resmi tatile denk gelirse ilk iş gününe kayar; takas karşılığı hesaba bir sonraki iş günü geçer (valör). Faiz reeskont usulüyle kullandırımda peşin alınır.</p>
       <label>Kullandırım (işlem) tarihi</label>
       <input id="c_isl" type="date" style="color-scheme:dark">
       <label style="margin-top:12px">Çekler</label>
@@ -452,8 +452,8 @@
         <div><label>KKDF</label><div class="field"><input id="c_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
       </div>
       <div class="two">
-        <div><label>Marj oranı</label><div class="field"><input id="c_marj" type="text" inputmode="decimal" value="133,33"><span class="unit">%</span></div></div>
         <div><label>Kullandırım oranı</label><div class="field"><input id="c_oran" type="text" inputmode="decimal" value="75"><span class="unit">%</span></div></div>
+        <div></div>
       </div>
     </div>
     <div class="card">
@@ -1264,7 +1264,7 @@ function calcCek() {
   }
   rows("c_rows", [
     [`Çek toplamı (${res.length} adet)`, tl(TT)],
-    [`Kullandırılan tutar (%${nfx(oran * 100)} · marj %${nfx(oran ? 100 / oran : 0)})`, tl(AA)],
+    [`Kullandırılan tutar (%${nfx(oran * 100)})`, tl(AA)],
     ["İskonto faizi (reeskont)", "−" + tl(FF), "neg"],
     [`BSMV (%${nfx(bsmv * 100)})`, "−" + tl(BS), "neg"],
     ...(KK ? [[`KKDF (%${nfx(kkdf * 100)})`, "−" + tl(KK), "neg"]] : []),
@@ -1321,9 +1321,7 @@ $("c_list").addEventListener("focusout", (e) => { const el = e.target; if (el.da
 $("c_list").addEventListener("click", (e) => { const b = e.target.closest("[data-del]"); if (!b) return; CEKLER.splice(+b.dataset.del, 1); renderCekList(); calcCek(); });
 $("c_add").addEventListener("click", () => { const lastV = pDate(CEKLER[CEKLER.length - 1]?.v) || new Date(); CEKLER.push({ t: "", v: ymd(addMonthsC(lastV, 1)) }); renderCekList(); calcCek(); });
 ["c_isl", "c_faiz", "c_val", "c_esas", "c_bsmv", "c_kkdf", "c_oran", "c_kom"].forEach((x) => $(x).addEventListener("input", calcCek));
-// Marj ↔ kullandırım oranı: kullandırım = 100 ÷ marj
-$("c_marj").addEventListener("input", () => { const m = num("c_marj"); if (m > 0) $("c_oran").value = nfx(Math.round(10000 / m * 100) / 100); calcCek(); });
-$("c_oran").addEventListener("input", () => { const o = num("c_oran"); if (o > 0) $("c_marj").value = nfx(Math.round(10000 / o * 100) / 100); });
+
 $("c_kom").addEventListener("blur", () => { $("c_kom").value = num("c_kom").toLocaleString("tr-TR", { maximumFractionDigits: 2 }); });
 $("c_isl").value = ymd(new Date());
 renderCekList();
