@@ -41,7 +41,7 @@
   .sos a { flex: 1; text-align: center; text-decoration: none; padding: 10px; border-radius: 12px; font-weight: 700; font-size: 14px; }
   .sos .r { background: rgba(224,71,58,.15); border: 1px solid #7a2e28; color: #ffb3aa; }
   .sos .g { background: rgba(224,162,79,.1); border: 1px solid #6b5326; color: #f3d19a; }
-  #panel { display: none; }
+  #panel { display: none; scroll-margin-top: var(--stickH, 150px); }
   #panel.show { display: block; }
   .phead { display: flex; align-items: center; justify-content: space-between; margin: 16px 2px 8px; }
   .phead b { font-size: 17px; }
@@ -52,6 +52,11 @@
   .fsbar b { font-size: 16px; }
   .fsbar button { padding: 9px 12px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
   #fsmap { flex: 1; width: 100%; border: 0; }
+  .fsbot { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 6px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); background: #000; border-top: 1px solid #222; }
+  .fsbot a { text-align: center; text-decoration: none; padding: 11px 4px; border-radius: 11px; font-weight: 700; font-size: 13px; }
+  .fsbot .r { background: rgba(224,71,58,.18); border: 1px solid #7a2e28; color: #ffb3aa; }
+  .fsbot .g { background: rgba(224,162,79,.12); border: 1px solid #6b5326; color: #f3d19a; }
+  .fsbot .b { background: #1a2a4a; border: 1px solid #2f4f8f; color: #b9cdff; }
   .fsopen { width: 100%; margin: -2px 0 10px; padding: 9px; border-radius: 10px; border: 1px dashed var(--accent); background: transparent; color: var(--accent); font: inherit; font-size: 13px; cursor: pointer; }
   .mtog { display: flex; gap: 6px; margin-bottom: 8px; }
   .mtog button { flex: 1; padding: 7px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--muted); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
@@ -93,7 +98,9 @@
       <div class="rad" id="rad"><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div></div>
   </div>
 
-  <div id="fs"><div class="fsbar"><b id="fstitle"></b><button type="button" id="fsclose">📋 Listeye dön ✕</button></div><iframe id="fsmap" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+  <div id="fs"><div class="fsbar"><b id="fstitle"></b><button type="button" id="fsclose">📋 Liste ✕</button></div>
+    <iframe id="fsmap" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <div class="fsbot"><a class="r" href="tel:112">📞 112 Acil</a><a class="g" id="fsnobet" href="#" target="_blank" rel="noopener">💊 Nöbetçi eczane</a><a class="b" id="fsgm" href="#" target="_blank" rel="noopener">🗺️ Google'da tüm sonuçlar</a></div></div>
   <div id="panel">
     <div class="phead"><b id="ptitle"></b><small id="pcount"></small></div>
     <div class="mtog" id="mtog"><button data-m="g" class="on">🗺️ Google Haritalar</button><button data-m="o">📋 Listedeki yerler</button></div>
@@ -340,6 +347,9 @@ function openFs() {
   const c = CAT[S.cat];
   $("fstitle").textContent = `${c.e} ${c.n} · ${(S.place.name || "").replace(/^📡\s*/, "")}`;
   if ($("fsmap").src !== fsSrc) $("fsmap").src = fsSrc;
+  const term = encodeURIComponent(GQ[c.k] || c.n.toLowerCase());
+  $("fsgm").href = `https://www.google.com/maps/search/${term}/@${S.place.lat},${S.place.lon},${S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : 13}z`;
+  $("fsnobet").href = `https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane/@${S.place.lat},${S.place.lon},14z`;
   $("fs").classList.add("show"); document.body.style.overflow = "hidden";
   try { history.pushState({ fs: 1 }, ""); } catch (e) {}
 }
@@ -355,7 +365,8 @@ $("mtog").onclick = (e) => { const b = e.target.closest("button"); if (!b) retur
 renderRad();
 setPlace(S.place);
 if (!S.place) locate(true);
-(function () { const s = $("stick"); const f = () => s.classList.toggle("stuck", window.scrollY > 4); window.addEventListener("scroll", f, { passive: true }); f(); })();
+(function () { const s = $("stick"); const f = () => s.classList.toggle("stuck", window.scrollY > 4); window.addEventListener("scroll", f, { passive: true }); f();
+  const h = () => document.documentElement.style.setProperty("--stickH", (s.offsetHeight + 8) + "px"); h(); window.addEventListener("resize", h); })();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
