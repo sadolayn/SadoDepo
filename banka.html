@@ -1489,27 +1489,22 @@ $("c_add").addEventListener("click", () => { const lastV = pDate(CEKLER[CEKLER.l
 $("c_kom").addEventListener("blur", () => { const k = num("c_kom"); if (k > 1.1) $("c_kom").value = "1,1"; });
 $("c_lim").addEventListener("blur", () => { const n = num("c_lim"); $("c_lim").value = n ? n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : ""; });
 $("c_isl").value = ymd(new Date());
-// ---------- İş Bankası güncel kredi faiz oranları (data/kredi_oran.json) ----------
+// ---------- İş Bankası güncel kredi faiz oranı (data/kredi_oran.json) ----------
+// Varsayılan: isbank.com.tr hesaplama aracındaki örnek (tüketici 200.000 TL / 24 ay; konut ilk konut). Kullanıcı faizi istediği gibi değiştirebilir.
 (function () {
-  let RT = { guncelleme: "2026-10-15", ihtiyac: { 12: 4.06, 24: 3.90, 36: 3.82 }, konut: { 36: 3.10, 60: 3.10, 120: 3.10 }, konut_not: "İlk konut, en düşük oran", link_ihtiyac: "https://www.isbank.com.tr/ihtiyac-kredisi", link_konut: "https://www.isbank.com.tr/ihtiyac-kredisi" };
-  const manual = { t: false, k2: false };
-  $("t_faiz").addEventListener("input", (e) => { if (e.isTrusted) manual.t = true; });
-  $("k2_faiz").addEventListener("input", (e) => { if (e.isTrusted) manual.k2 = true; });
-  const pick = (tbl, n) => { const ks = Object.keys(tbl).map(Number).sort((a, b) => a - b); let k = ks[0]; for (const x of ks) if (n >= x) k = x; return { k, v: tbl[k] }; };
+  let RT = { guncelleme: "2026-10-15", ihtiyac: { 24: 3.90 }, konut: { 120: 3.10 }, link_ihtiyac: "https://www.isbank.com.tr/ihtiyac-kredisi", link_konut: "https://www.isbank.com.tr/ihtiyac-kredisi" };
+  const touched = { t: false, k2: false };
+  $("t_faiz").addEventListener("input", (e) => { if (e.isTrusted) touched.t = true; });
+  $("k2_faiz").addEventListener("input", (e) => { if (e.isTrusted) touched.k2 = true; });
   const fmt = (v) => v.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const tarih = () => new Date(RT.guncelleme + "T12:00:00").toLocaleDateString("tr-TR");
-  function setRate(pre, v) { const el = $(pre + "_faiz"); el.value = fmt(v); el.dispatchEvent(new Event("input", { bubbles: true })); }
-  function render(pre, tbl, link, title, note) {
-    const n = Math.round(num(pre + "_vade")) || 12, sel = pick(tbl, n);
-    if (!manual[pre] && num(pre + "_faiz") !== sel.v) setRate(pre, sel.v);
-    const cur = num(pre + "_faiz");
-    $(pre + "_rate").innerHTML = `🏦 <b>İş Bankası güncel ${title}</b> (${tarih()})${note ? " · " + note : ""}<br>` +
-      Object.keys(tbl).map((k) => `<button type="button" class="rc${Math.abs(cur - tbl[k]) < 0.001 ? " on" : ""}" data-v="${tbl[k]}" data-p="${pre}">${k} ay: %${fmt(tbl[k])}</button>`).join("") +
-      `<div style="margin-top:6px">Oranlar müşteriye göre değişebilir · <a href="${link}" target="_blank" rel="noopener">isbank.com.tr'de kontrol et ↗</a></div>`;
+  const first = (tbl, key) => (tbl && (tbl[key] ?? Object.values(tbl)[0]));
+  function render(pre, v, link, txt) {
+    if (v == null) return;
+    if (!touched[pre]) { const el = $(pre + "_faiz"); if (num(pre + "_faiz") !== v) { el.value = fmt(v); el.dispatchEvent(new Event("input", { bubbles: true })); } }
+    $(pre + "_rate").innerHTML = `🏦 İş Bankası güncel ${txt}: <b>%${fmt(v)}</b> (${tarih()}) · Oran müşteriye göre değişebilir · <a href="${link}" target="_blank" rel="noopener">isbank.com.tr'de kontrol et ↗</a>`;
   }
-  const all = () => { render("t", RT.ihtiyac, RT.link_ihtiyac, "ihtiyaç kredisi oranı", ""); render("k2", RT.konut, RT.link_konut, "konut kredisi oranı", RT.konut_not || ""); };
-  document.addEventListener("click", (e) => { const b = e.target.closest(".rbox .rc"); if (!b) return; manual[b.dataset.p] = true; setRate(b.dataset.p, +b.dataset.v); all(); });
-  ["t_vade", "k2_vade", "t_faiz", "k2_faiz"].forEach((id) => $(id).addEventListener("input", () => setTimeout(all, 0)));
+  const all = () => { render("t", first(RT.ihtiyac, "24"), RT.link_ihtiyac, "ihtiyaç kredisi faizi (200.000 TL, 24 ay)"); render("k2", first(RT.konut, "120"), RT.link_konut, "konut kredisi faizi (ilk konut)"); };
   all();
   fetch("data/kredi_oran.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.ok ? r.json() : null).then((j) => { if (j && j.ihtiyac) { RT = Object.assign(RT, j); all(); } }).catch(() => {});
 })();
