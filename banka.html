@@ -145,7 +145,7 @@
   <section class="panel" id="mev">
     <div class="card">
       <div class="empbar">🔓 Çalışan modu açık <button type="button" id="empOff">Gizle</button></div>
-      <h2 id="mevTitle">Vadeli Mevduat Getirisi</h2>
+      <h2 id="mevTitle" style="display:flex;align-items:center;justify-content:space-between;gap:8px">Vadeli Mevduat Getirisi<button type="button" id="empLock" aria-label="Çalışan modu" style="flex:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:16px;cursor:pointer;touch-action:manipulation">🔒</button></h2>
       <p class="hint">Faiz yıllık oran üzerinden gün/365 ile hesaplanır, stopaj kesildikten sonraki net getiri gösterilir.</p>
       <label>Anapara</label>
       <div class="field"><input id="m_tutar" type="text" inputmode="decimal" value="500.000"><span class="unit">TL</span></div>
@@ -810,11 +810,19 @@ document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventLi
   try { on = localStorage.getItem(KEY) === "1"; } catch (e) {}
   if (q.has("calisan")) on = true;
   if (q.has("musteri")) on = false;
-  const apply = () => { document.body.classList.toggle("calisan", on); try { on ? localStorage.setItem(KEY, "1") : localStorage.removeItem(KEY); } catch (e) {} };
+  const apply = () => { document.body.classList.toggle("calisan", on); const lk = $("empLock"); if (lk) lk.textContent = on ? "🔓" : "🔒"; try { on ? localStorage.setItem(KEY, "1") : localStorage.removeItem(KEY); } catch (e) {} };
   apply();
   if (q.has("calisan") || q.has("musteri")) history.replaceState(null, "", location.pathname + location.hash);
   if (on && q.size !== undefined) { const b = document.querySelector('button[data-tab="mev"]'); if (b && (q.has("calisan"))) b.click(); }
   $("empOff").onclick = () => { on = false; apply(); };
+  // Kilit düğmesi: kapalıyken kod sorar, açıkken tek dokunuşla gizler
+  $("empLock").addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (on) { on = false; apply(); return; }
+    const v = (prompt("Çalışan kodu:") || "").trim();
+    if (v === "1924") { on = true; apply(); }
+    else if (v) alert("Kod hatalı.");
+  });
   // Telefonda hızlı dokunuşlar çift dokunma/yakınlaştırma sanılmasın diye pointerdown kullanılır
   let taps = [];
   const title = $("mevTitle");
@@ -822,6 +830,7 @@ document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventLi
   title.style.userSelect = "none";
   title.style.webkitUserSelect = "none";
   title.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("#empLock")) return;
     e.preventDefault();
     const t = Date.now(); taps = taps.filter((x) => t - x < 3000); taps.push(t);
     if (taps.length >= 5) { taps = []; on = !on; apply(); if (navigator.vibrate) navigator.vibrate(40); }
