@@ -216,7 +216,7 @@ function renderSubeler() {
       <div class="stat"><span>İşCep müşterisi</span><b>${esc(d.iscep)}</b><small>${esc(d.iscepDonem)}</small></div>
     </div>
     <div class="facts"><ul>${(d.notlar || []).map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
-    <a class="maxlink" href="https://www.google.com/maps/search/T%C3%BCrkiye+%C4%B0%C5%9F+Bankas%C4%B1+%C5%9Fubesi" target="_blank" rel="noopener">📍 Yakınımdaki şubeleri haritada göster ↗</a>
+    <a class="maxlink" id="nearIsb" href="yakin.html#isbank">📍 Yakınımdaki şubeleri haritada göster ↗</a>
     ${yatHtml()}
     <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(d.kaynak)} ↗</a>
     ${(d.ekKaynaklar || []).map((k) => `<a class="maxlink" style="border-color:var(--line);color:var(--muted);font-weight:400;font-size:13px" href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.ad)} ↗</a>`).join("")}`;
@@ -421,5 +421,23 @@ function renderList() {
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick"),c=document.getElementById("chipbar");var t=function(){c.style.top=s.offsetHeight+"px"};t();window.addEventListener("resize",t);})();</script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
+<script>
+// Yakınımdaki şubeler: konumu cihazdan al (kurum ağı İstanbul'dan çıktığı için Google tek başına Ataşehir gösteriyordu)
+(function () {
+  const go = (lat, lon) => window.open(`https://www.google.com/maps/search/T%C3%BCrkiye+%C4%B0%C5%9F+Bankas%C4%B1/@${lat},${lon},14z`, "_blank", "noopener");
+  const saved = () => { try { const p = (JSON.parse(localStorage.getItem("yakin_v1") || "{}") || {}).place; return p && p.lat ? p : null; } catch (e) { return null; } };
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest("#nearIsb"); if (!el) return;
+    e.preventDefault();
+    const old = el.textContent; el.textContent = "📍 Konum alınıyor…";
+    const fallback = () => { el.textContent = old; const p = saved(); if (p) go(p.lat, p.lon); else location.href = "yakin.html#isbank"; };
+    if (!navigator.geolocation) return fallback();
+    let done = false;
+    const t = setTimeout(() => { if (!done) { done = true; fallback(); } }, 8000);
+    navigator.geolocation.getCurrentPosition((pos) => { if (done) return; done = true; clearTimeout(t); el.textContent = old; go(pos.coords.latitude, pos.coords.longitude); },
+      () => { if (done) return; done = true; clearTimeout(t); fallback(); }, { enableHighAccuracy: true, timeout: 7000, maximumAge: 300000 });
+  });
+})();
+</script>
 </body>
 </html>
