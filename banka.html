@@ -70,9 +70,12 @@
   .cal .lg .l7::before { background: #e0a24f; height: 4px; } .cal .lg .l8::before { background: #4a7dff; height: 4px; }
   .vmsg { width: 100%; box-sizing: border-box; min-height: 110px; background: #121212; color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 10px; font: inherit; font-size: 13px; line-height: 1.45; resize: vertical; }
   /* Çek */
-  .ckrow { display: grid; grid-template-columns: 1.35fr 1fr 34px; gap: 6px; align-items: end; margin-bottom: 6px; }
+  .ckrow { display: grid; grid-template-columns: 1.2fr 1fr 32px; gap: 6px; align-items: end; margin-bottom: 6px; }
   .ckrow .field { margin: 0; }
-  .ckrow input[type=date] { width: 100%; }
+  .ckrow input[type=date] { width: 100%; min-width: 0; font-size: 14px; padding-left: 8px; padding-right: 6px; }
+  .ckrow > div { min-width: 0; }
+  .ckrow input[type=date]::-webkit-calendar-picker-indicator { margin: 0; padding: 0; width: 12px; }
+  .ckrow .field input { font-size: 15px; padding-right: 30px; }
   .ckdel { height: 44px; border-radius: 10px; border: 1px solid var(--line); background: #161616; color: var(--muted); font-size: 16px; cursor: pointer; }
   .ckcopy { width: 100%; margin: 0 0 6px; padding: 11px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
   .ckprev { white-space: pre-wrap; font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace; color: var(--muted); background: #0a0a0a; border: 1px solid var(--line); border-radius: 10px; padding: 10px; margin: 0 0 6px; }
@@ -480,17 +483,17 @@
     <div class="card">
       <h2>TL Çek İskontosu / İştirası Kredisi</h2>
       <div style="color:var(--accent);font-weight:600;font-size:13px;margin:-4px 0 6px">+ Çek Valör Tespiti</div>
-      <p class="hint">Çek vadesi hafta sonu, resmi tatil ya da resmi tatile denk gelirse ilk iş gününe kayar; takas karşılığı hesaba bir sonraki iş günü geçer (valör). Arife (yarım gün) takas ve valör günü sayılır: 27 Ekim vadeli çek 28 Ekim valörlü, 28 Ekim vadeli çek 30 Ekim valörlü olur. Faiz kullandırımda peşin alınır.</p>
+      <p class="hint">Çek vadesi hafta sonu, resmi tatil ya da resmi tatile denk gelirse ilk iş gününe kayar; takas karşılığı hesaba bir sonraki iş günü geçer (valör). Arife (yarım gün) takas ve valör günü sayılır. Faiz kullandırımda peşin alınır.</p>
       <label>Kullandırım (işlem) tarihi</label>
       <input id="c_isl" type="date" style="color-scheme:dark">
       <label style="margin-top:12px">Çekler</label>
       <div id="c_list"></div>
       <button type="button" class="ckadd" id="c_add">+ Çek ekle</button>
       <button type="button" class="ckcopy" id="c_copy">📋 Müşteriye özet kopyala</button>
-      <pre class="ckprev" id="c_prev"></pre>
+      <pre class="ckprev" id="c_prev" hidden></pre>
       <div class="two">
         <div><label>Yıllık faiz</label><div class="field"><input id="c_faiz" type="text" inputmode="decimal" value="39"><span class="unit">%</span></div></div>
-        <div><label>Valör</label><select id="c_val"><option value="1">+1 iş günü (takas)</option><option value="0">Vade günü</option><option value="2">+2 iş günü</option></select></div>
+        <div><label>Kullandırım oranı</label><div class="field"><input id="c_oran" type="text" inputmode="decimal" value="100"><span class="unit">%</span></div></div>
       </div>
       <label>Hesap yöntemi</label>
       <div id="c_yon" style="padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--field,#161616);font-size:15px;line-height:1.45"><b>Tutar × faiz × gün ÷ 360</b><br><span style="font-size:13px;color:var(--muted)">(gün = valör − kullandırım + 1)</span></div>
@@ -499,13 +502,10 @@
         <div><label>KKDF</label><div class="field"><input id="c_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
       </div>
       <div class="two">
-        <div><label>Komisyon / masraf</label><div class="field"><input id="c_kom" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
+        <div><label>Kullandırım komisyonu</label><div class="field"><input id="c_kom" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
         <div><label>Müşteri limiti (ops.)</label><div class="field"><input id="c_lim" type="text" inputmode="decimal" placeholder="boş = yok"><span class="unit">TL</span></div></div>
       </div>
-      <div class="two">
-        <div><label>Kullandırım oranı</label><div class="field"><input id="c_oran" type="text" inputmode="decimal" value="100"><span class="unit">%</span></div></div>
-        <div></div>
-      </div>
+      <p class="hint" style="margin-top:6px">TCMB ticari müşteri ücret tebliği: kredi kullandırım ücreti işlem başına azami <b>%1,10</b> (+BSMV). Kredi tahsis ücreti limitin <b>%0,20</b>'si (1 Kasım 2025 öncesi onaylı limitlerde %0,25 = onbinde 25); limit bazında alınır, her iskontoda değil.</p>
     </div>
     <div class="card">
       <div class="big"><span>Hesaba geçecek net tutar</span><b id="c_out">–</b></div>
@@ -1339,8 +1339,8 @@ let calSel = "";
 function calcCek() {
   const isl = pDate($("c_isl").value) || new Date();
   const ry = num("c_faiz") / 100, B = 360, ic = false;
-  const vg = Number($("c_val").value), bsmv = num("c_bsmv") / 100, kkdf = num("c_kkdf") / 100;
-  const oran = Math.min(100, num("c_oran") || 0) / 100, kom = num("c_kom");
+  const vg = 1, bsmv = num("c_bsmv") / 100, kkdf = num("c_kkdf") / 100;
+  const oran = Math.min(100, num("c_oran") || 0) / 100, komO = Math.min(1.1, num("c_kom")) / 100;
   try { localStorage.setItem("cekler", JSON.stringify(CEKLER)); } catch (e) {}
   const warns = [];
   const islWhy = dayWhy(isl);
@@ -1374,7 +1374,8 @@ function calcCek() {
     const og = Math.round(res.reduce((a, x) => a + x.A * x.nf, 0) / AA * 1e5) / 1e5;
     FF = AA * ry * og / B; BS = FF * bsmv; KK = FF * kkdf;
   }
-  const net = AA - FF - BS - KK - kom;
+  const kom = AA * komO, komBS = kom * bsmv;
+  const net = AA - FF - BS - KK - kom - komBS;
   const lim = num("c_lim");
   if (lim > 0) warns.push(AA > lim ? `🔴 Kullandırılan tutar (${tl(AA)}) müşteri limitini (${tl(lim)}) ${tl(AA - lim)} aşıyor.` : `ℹ️ Limit kullanımı: %${nfx(Math.round(AA / lim * 1000) / 10)} · kalan limit ${tl(lim - AA)}.`);
   const ortGun = res.reduce((a, x) => a + x.A * x.n, 0) / AA;
@@ -1398,7 +1399,7 @@ function calcCek() {
     [`Faiz + BSMV`, "−" + tl(FF + BS), "neg"],
     [`BSMV (%${nfx(bsmv * 100)})`, "−" + tl(BS), "neg"],
     ...(KK ? [[`KKDF (%${nfx(kkdf * 100)})`, "−" + tl(KK), "neg"]] : []),
-    ...(kom ? [["Komisyon / masraf", "−" + tl(kom), "neg"]] : []),
+    ...(kom ? [[`Kullandırım komisyonu (%${nfx(komO * 100)})`, "−" + tl(kom), "neg"], ["Komisyon BSMV", "−" + tl(komBS), "neg"]] : []),
     ["Hesaba geçecek net tutar", tl(net), "total"],
     ["Faiz oranı", `yıllık %${nfx(ry * 100)}`],
 
@@ -1409,7 +1410,7 @@ function calcCek() {
   $("c_note").textContent = !ic ? `Banka tablosu: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ ${B}; gün = valör − kullandırım + 1 (valör günü dahil). Ortalama vade gün sayısı tutar ağırlıklıdır. Faiz kullandırımda peşin alınır.` : `Reeskont: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ (${B} + yıllık faiz × gün). Faiz kullandırımda peşin alınır; gün sayısı kullandırımdan valör (hesaba geçiş) tarihine kadardır.`;
   const sum = [`Çek iskontosu özeti (${shortD(isl)})`, ""]
     .concat(res.map((x) => `${x.i + 1}) ${fmt2(x.T)} TL · vade ${shortD(x.v)} · valör ${shortD(x.val)} · ${x.nf} gün`))
-    .concat(["", `Toplam çek: ${tl(TT)}`, ...(oran < 1 ? [`Kullandırılan (%${nfx(oran * 100)}): ${tl(AA)}`] : []), `Faiz oranı: yıllık %${nfx(ry * 100)}`, `Faiz + BSMV: ${tl(FF + BS)}`, ...(KK ? [`KKDF: ${tl(KK)}`] : []), ...(kom ? [`Masraf: ${tl(kom)}`] : []),
+    .concat(["", `Toplam çek: ${tl(TT)}`, ...(oran < 1 ? [`Kullandırılan (%${nfx(oran * 100)}): ${tl(AA)}`] : []), `Faiz oranı: yıllık %${nfx(ry * 100)}`, `Faiz + BSMV: ${tl(FF + BS)}`, ...(KK ? [`KKDF: ${tl(KK)}`] : []), ...(kom ? [`Kullandırım komisyonu + BSMV: ${tl(kom + komBS)}`] : []),
       ...(res.length > 1 ? [`Ortalama vade: ${shortD(ortVD)} · valör ${shortD(ortVV)}`] : []), `Hesabınıza geçecek net tutar: ${tl(net)}`, "", "Bilgi amaçlıdır; kesin tutar işlem günü belirlenir."]);
   $("c_prev").textContent = sum.join("\n");
   renderCal(isl, res);
@@ -1461,9 +1462,9 @@ $("c_list").addEventListener("input", (e) => { const el = e.target; if (el.datas
 $("c_list").addEventListener("focusout", (e) => { const el = e.target; if (el.dataset.k === "t") { const n = parseNum(el.value); el.value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }); CEKLER[+el.dataset.i].t = el.value; } });
 $("c_list").addEventListener("click", (e) => { const b = e.target.closest("[data-del]"); if (!b) return; CEKLER.splice(+b.dataset.del, 1); renderCekList(); calcCek(); });
 $("c_add").addEventListener("click", () => { const lastV = pDate(CEKLER[CEKLER.length - 1]?.v) || new Date(); CEKLER.push({ t: "", v: ymd(addMonthsC(lastV, 1)) }); renderCekList(); calcCek(); });
-["c_isl", "c_faiz", "c_val", "c_bsmv", "c_kkdf", "c_oran", "c_kom", "c_lim"].forEach((x) => $(x).addEventListener("input", calcCek));
+["c_isl", "c_faiz", "c_bsmv", "c_kkdf", "c_oran", "c_kom", "c_lim"].forEach((x) => $(x).addEventListener("input", calcCek));
 
-$("c_kom").addEventListener("blur", () => { $("c_kom").value = num("c_kom").toLocaleString("tr-TR", { maximumFractionDigits: 2 }); });
+$("c_kom").addEventListener("blur", () => { const k = num("c_kom"); if (k > 1.1) $("c_kom").value = "1,1"; });
 $("c_lim").addEventListener("blur", () => { const n = num("c_lim"); $("c_lim").value = n ? n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : ""; });
 $("c_isl").value = ymd(new Date());
 renderCekList();
