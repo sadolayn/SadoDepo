@@ -1,7 +1,7 @@
 {
   "tarih": "2026-10-16",
   "sayi": "33402",
-  "guncelleme": "2026-10-16T02:05:18+03:00",
+  "guncelleme": "2026-10-16T02:05:55+03:00",
   "ozet": "Günün öne çıkan kararı, Gelir İdaresi Başkanı Bekir Bayrakdar'ın Hazine ve Maliye Bakan Yardımcılığına atanması oldu; SGK, Ticaret Bakanlığı ve Dışişleri'nde de üst düzey atamalar yapıldı. Kamu İhale Genel Tebliği'nde ihaleden yasaklayan vergi ve SGK prim borcu sınırı 5 bin liradan 50 bin liraya çıkarıldı (15 Kasım 2026'dan itibaren ilan edilen ihalelerde). POLSAN'ın yönetim ve denetim yapısı değiştirildi; yönetim kurulu başkanlığı Emniyet Genel Müdürüne geçti, denetim kurulu üyelerini ağırlıklı olarak İçişleri Bakanı atayacak. AB'nin yeni makine tüzüğüne uyumlu Makine Emniyeti Yönetmeliği ile şarj cihazları ve USB-C kablolarına ortak şarj ve verimlilik kuralları getiren tebliğ yayımlandı. Er ve erbaşların taşındığı uçuşlarda kamu havalimanlarındaki bazı hizmetlerin ücretsiz olması kararlaştırıldı; TBMM de KVKK Kurulu'na iki üye seçti.",
   "onemli_atamalar": [
     {
@@ -63,8 +63,13 @@
       "baslik": "Milletlerarası Andlaşmalar",
       "maddeler": [
         {
-          "baslik": "Türkiye–KKTC fiber optik altyapı iş birliği protokolüne ek protokol",
-          "aciklama": "KKTC'de fiber altyapının geliştirilmesi ve ev/işyerlerine hizmet sunulmasına dair 2025 protokolü değiştirildi."
+          "baslik": "Türkiye–KKTC fiber optik altyapı iş birliği protokolüne ek protokol (Karar No. 11876)",
+          "aciklama": "KKTC'de fiber altyapının geliştirilmesi ve ev/işyerlerine hizmet sunulmasına dair 2025 protokolü değiştirildi.",
+          "detaylar": [
+            "24 Eylül 2025'te imzalanan ana protokolde değişiklik öngören ek protokol onaylandı."
+          ],
+          "yururluk": "Yayımı tarihinde onaylandı",
+          "kimi": "KKTC'deki ev ve işyeri internet aboneleri, altyapı işletmecileri"
         }
       ]
     },
@@ -85,19 +90,30 @@
         },
         {
           "baslik": "Acele kamulaştırma kararları",
-          "aciklama": "Sivas'ta hastane bağlantı yolu ile TEİAŞ'ın Kahramanmaraş ve Likya bölgesindeki enerji iletim projeleri için acele kamulaştırma yapılacak."
+          "aciklama": "Sivas'ta hastane bağlantı yolu ile TEİAŞ'ın Kahramanmaraş ve Likya bölgesindeki enerji iletim projeleri için acele kamulaştırma yapılacak.",
+          "detaylar": [
+            "Sivas Cumhuriyet Üniversitesi Yeni Hastanesi bağlantı yolu için bazı taşınmazlar Sivas Belediyesince acele kamulaştırılacak.",
+            "154 kV Türkoğlu OSB TM–Kipaş Kağıt TM enerji iletim hattı projesi için TEİAŞ'a acele kamulaştırma yetkisi verildi.",
+            "400/154 kV Likya Havza Transformatör Merkezi sahası için de TEİAŞ acele kamulaştırma yapacak."
+          ],
+          "yururluk": "Yayımı tarihinde",
+          "kimi": "İlgili bölgelerdeki taşınmaz sahipleri"
         },
         {
           "baslik": "Hatay'da arazi toplulaştırma",
-          "aciklama": "Antakya ve Reyhanlı'nın bazı bölgelerinde arazi toplulaştırma ve tarla içi geliştirme hizmetleri yürütülecek."
+          "aciklama": "Antakya ve Reyhanlı'nın bazı bölgelerinde arazi toplulaştırma ve tarla içi geliştirme hizmetleri yürütülecek.",
+          "yururluk": "Yayımı tarihinde",
+          "kimi": "Antakya ve Reyhanlı'daki çiftçiler ve arazi sahipleri"
         },
         {
           "baslik": "Bingöl'de köy bağlantısı değişikliği",
-          "aciklama": "Adaklı ilçesine bağlı Hasbağlar köyü Kiğı ilçesine bağlandı."
+          "aciklama": "Adaklı ilçesine bağlı Hasbağlar köyü Kiğı ilçesine bağlandı.",
+          "yururluk": "Yayımı tarihinde",
+          "kimi": "Hasbağlar köyü sakinleri"
         },
         {
           "baslik": "Özelleştirme İdaresi kararları",
-          "aciklama": "Özelleştirme kapsamında dört ayrı karar yayımlandı."
+          "aciklama": "Özelleştirme İdaresi Başkanlığına ilişkin 11883–11886 sayılı dört karar yayımlandı; haberlerde konuları ayrıntılı verilmedi."
         }
       ]
     },
