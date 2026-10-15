@@ -233,6 +233,13 @@ const BAHIS = [100, 250, 500, 1000];
 let gameStake = 0;
 // İş Bankası tarihçesi ve ürün soruları (internetten doğrulandı: Küre Ansiklopedi, Diken, isbank.com.tr, Teknoblog)
 // 4. alan: son geçerlilik tarihi (kampanya soruları kampanya bitince sorulmaz)
+// İzmir Şubesi 12 Temmuz 1925'te açıldı; yıl sayısı bugüne göre hesaplanır
+function izmirQ() {
+  const t = new Date();
+  let y = t.getFullYear() - 1925;
+  if (t < new Date(t.getFullYear(), 6, 12)) y--;
+  return ["İş Bankası İzmir Şubesi kaç yıldır hizmet veriyor? (" + t.toLocaleDateString("tr-TR") + " itibarıyla)", [(y - 25) + " yıl", (y - 10) + " yıl", y + " yıl", (y + 6) + " yıl"], 2];
+}
 const ISQ_ALL = [
   ["Türkiye İş Bankası hangi yıl kuruldu?", ["1923", "1924", "1927", "1933"], 1],
   ["Türkiye İş Bankası'nın kurucusu kimdir?", ["Mustafa Kemal Atatürk", "İsmet İnönü", "Kâzım Karabekir", "Fevzi Çakmak"], 0],
@@ -251,10 +258,11 @@ const ISQ_ALL = [
   ["Telefona ya da eşyaya yapıştırılıp temassız ödeme yapılan İş Bankası kart ürününün adı nedir?", ["MaxiPara", "MaxSticker", "Maximiles Black", "İşCep Pay"], 1],
   ["MaxSticker'ın üzerinde aşağıdakilerden hangisi bulunmaz?", ["Kart numarası, son kullanma tarihi ve CVV", "Temassız ödeme çipi", "Maximum özelliği", "MaxiPuan kazanımı"], 0],
   ["MaxSticker başvurusu nereden yapılır?", ["Sadece şubeden", "İşCep'teki 'MaxSticker Kartlarım' menüsünden", "ATM'den", "Kargo ile"], 1],
-  ["Maximum kartla akıllı saatten ödeme ('Saat ile Öde') hangi uygulamadan etkinleştirilir?", ["Maximum Mobil", "e-Devlet", "Google Haritalar", "BiP"], 0],
+  ["Maximum kartla akıllı saatten ödeme ('Saat ile Öde') hangi uygulamadan etkinleştirilir?", ["İşCep", "Maximum Mobil", "İşCep ve Maximum Mobil", "İmece Mobil"], 2],
   ["İş Bankası'na uzaktan, görüntülü görüşmeyle müşteri olmak için İşCep'teki özelliğin adı nedir?", ["Hızlı Kredi", "Müşteri Olmak İstiyorum", "Kolay Adres", "QR ile Öde"], 1],
   ["İş Bankası Gişematik'ten tek seferde en fazla kaç TL para çekilebilir?", ["20.000 TL", "50.000 TL", "120.000 TL", "250.000 TL"], 2],
   ["İş Bankası Gişematik'e tek seferde en fazla kaç TL para yatırılabilir?", ["100.000 TL", "250.000 TL", "500.000 TL", "1.000.000 TL"], 2],
+  izmirQ(),
   ["İş Bankası İzmir Şubesi'nin şube kodu kaçtır?", ["1000", "3400", "3500", "4200"], 1],
   ["Ekim 2026 kampanyası: Maximum anlaşmalı marketlerde tek seferde 20.000 TL alışverişe kaç TL MaxiPuan veriliyor?", ["250 TL", "500 TL", "1.000 TL", "2.000 TL"], 2, "2026-10-31"],
   ["Ekim 2026 'İş Bankası'nı Arkadaşınıza Önerin' kampanyasında davet eden ve yeni müşteri olan arkadaşı kaçar TL MaxiPuan kazanır?", ["100 TL", "250 TL", "500 TL", "1.000 TL"], 2, "2026-10-31"],
