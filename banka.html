@@ -477,7 +477,7 @@
     <div class="card">
       <h2>TL Çek İskontosu / İştirası Kredisi</h2>
       <div style="color:var(--accent);font-weight:600;font-size:13px;margin:-4px 0 6px">+ Çek Valör Tespiti</div>
-      <p class="hint">Çek vadesi hafta sonu, resmi tatil ya da arifeye (arife günü takas çalışmaz) denk gelirse ilk iş gününe kayar; takas karşılığı hesaba bir sonraki iş günü geçer (valör). Faiz reeskont usulüyle kullandırımda peşin alınır.</p>
+      <p class="hint">Çek vadesi hafta sonu, resmi tatil ya da resmi tatile denk gelirse ilk iş gününe kayar; takas karşılığı hesaba bir sonraki iş günü geçer (valör). Arife (yarım gün) takas ve valör günü sayılır: 27 Ekim vadeli çek 28 Ekim valörlü, 28 Ekim vadeli çek 30 Ekim valörlü olur. Faiz kullandırımda peşin alınır.</p>
       <label>Kullandırım (işlem) tarihi</label>
       <input id="c_isl" type="date" style="color-scheme:dark">
       <label style="margin-top:12px">Çekler</label>
@@ -487,6 +487,8 @@
         <div><label>Yıllık faiz</label><div class="field"><input id="c_faiz" type="text" inputmode="decimal" value="39"><span class="unit">%</span></div></div>
         <div><label>Yıl esası</label><select id="c_esas"><option value="360">360 gün</option><option value="365">365 gün</option></select></div>
       </div>
+      <label>Hesap yöntemi</label>
+      <select id="c_yon"><option value="banka">Banka tablosu: tutar × faiz × gün ÷ 360 (gün = valör − kullandırım + 1)</option><option value="rees">Reeskont: tutar × faiz × gün ÷ (360 + faiz × gün)</option></select>
       <div class="two">
         <div><label>Valör</label><select id="c_val"><option value="1">+1 iş günü (takas)</option><option value="0">Vade günü</option><option value="2">+2 iş günü</option></select></div>
         <div><label>Komisyon / masraf</label><div class="field"><input id="c_kom" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
@@ -1313,7 +1315,7 @@ function dayInfo(d) {
   if (r) { if (r[1]) { info.half = true; info.name = r[0] + " (yarım gün)"; } else { info.hol = true; info.name = r[0]; } }
   return info;
 }
-const isBizDay = (d) => { const i = dayInfo(d); return !i.we && !i.hol && !i.half; }; // takas: arife günü de çalışmaz
+const isBizDay = (d) => { const i = dayInfo(d); return !i.we && !i.hol; }; // arife (yarım gün) takas/valör günü sayılır (banka tablosu)
 const nextBizC = (d) => { const x = new Date(d); while (!isBizDay(x)) x.setDate(x.getDate() + 1); return x; };
 const addBiz = (d, n) => { let x = nextBizC(d); for (let i = 0; i < n; i++) { x = addDays(x, 1); x = nextBizC(x); } return x; };
 const dayWhy = (d) => { const i = dayInfo(d); return i.hol ? i.name : i.we ? (d.getDay() === 6 ? "Cumartesi" : "Pazar") : i.half ? i.name : ""; };
@@ -1330,7 +1332,8 @@ function renderCekList() {
 let calSel = "";
 function calcCek() {
   const isl = pDate($("c_isl").value) || new Date();
-  const ry = num("c_faiz") / 100, B = Number($("c_esas").value) || 360, ic = true;
+  const ry = num("c_faiz") / 100, B = Number($("c_esas").value) || 360, ic = $("c_yon").value === "rees";
+  try { localStorage.setItem("c_yon", $("c_yon").value); } catch (e) {}
   const vg = Number($("c_val").value), bsmv = num("c_bsmv") / 100, kkdf = num("c_kkdf") / 100;
   const oran = Math.min(100, num("c_oran") || 0) / 100, kom = num("c_kom");
   try { localStorage.setItem("cekler", JSON.stringify(CEKLER)); } catch (e) {}
@@ -1347,40 +1350,49 @@ function calcCek() {
     const n = dayDiff(isl, val);
     if (n <= 0) { warns.push(`🔴 ${i + 1}. çek: valör tarihi kullandırımdan sonra olmalı.`); return; }
     if (dayDiff(isl, v) > 365) warns.push(`🔴 ${i + 1}. çek: vade 1 yılı aşıyor (${dayDiff(isl, v)} gün). Çek iskontosunda en fazla 1 yıl vadeli çek alınır.`);
-    const A = T * oran;
-    const F = ic ? A * ry * n / (B + ry * n) : A * ry * n / B;
-    res.push({ i, T, A, v, vIs, val, n, nv: dayDiff(isl, v), F, bs: F * bsmv, kk: F * kkdf });
+    const A = T * oran, nf = ic ? n : n + 1; // banka tablosu: valör günü dahil (+1)
+    const F = ic ? A * ry * nf / (B + ry * nf) : A * ry * nf / B;
+    res.push({ i, T, A, v, vIs, val, n, nf, nv: dayDiff(isl, v), F, bs: F * bsmv, kk: F * kkdf });
     const why = dayWhy(v);
-    if (dayInfo(v).half) warns.push(`🟠 ${i + 1}. çek vadesi ${fdtw(v)} → ${why}. Arife günü takas çalışmaz; çek bayramdan sonraki ilk iş günü ${fdtw(vIs)} takasa girer.`);
+    if (dayInfo(v).half) warns.push(`🟠 ${i + 1}. çek vadesi ${fdtw(v)} → ${why}. Arife günü takasa girer; valör bayram sonrası ilk iş günü ${fdtw(val)}.`);
     else if (!isBizDay(v)) warns.push(`🟠 ${i + 1}. çek vadesi ${fdtw(v)} → ${why}. Takasa ${fdtw(vIs)} girer.`);
-    if (!dayInfo(v).half && !isBizDay(v)) { const ar = []; for (let x = v; x < vIs; x = addDays(x, 1)) if (dayInfo(x).half) ar.push(shortD(x)); if (ar.length) warns.push(`🟠 ${i + 1}. çek: arada arife günü var (${ar.join(", ")}), takas çalışmadığı için ${fdtw(vIs)} tarihine kaydı.`); }
-    const skipped = [], weS = []; for (let x = addDays(vIs, 1); x < val; x = addDays(x, 1)) if (!isBizDay(x)) { if (dayInfo(x).hol || dayInfo(x).half) skipped.push(`${shortD(x)} ${dayWhy(x)}`); else weS.push(dayWhy(x)); }
+    const skipped = [], weS = []; for (let x = addDays(vIs, 1); x < val; x = addDays(x, 1)) if (!isBizDay(x)) { if (dayInfo(x).hol) skipped.push(`${shortD(x)} ${dayWhy(x)}`); else weS.push(dayWhy(x)); }
     if (skipped.length) warns.push(`🟠 ${i + 1}. çek valörü tatil nedeniyle ${fdtw(val)} tarihine kayıyor (${skipped.join(", ")}).`);
     else if (weS.length) warns.push(`ℹ️ ${i + 1}. çek valörü hafta sonu nedeniyle ${fdtw(val)}.`);
     if (v.getFullYear() > 2027) warns.push(`ℹ️ ${v.getFullYear()} için bayram tarihleri girilmedi; yalnızca hafta sonu ve sabit tatiller dikkate alındı.`);
   });
   if (!res.length) { $("c_days").innerHTML = ""; $("c_out").textContent = "–"; rows("c_rows", []); $("c_tab").innerHTML = ""; $("c_warn").innerHTML = warns.length ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : ""; renderCal(isl, []); return; }
   const S = (k) => res.reduce((a, x) => a + x[k], 0);
-  const TT = S("T"), AA = S("A"), FF = S("F"), BS = S("bs"), KK = S("kk");
+  const TT = S("T"), AA = S("A");
+  let FF = S("F"), BS = S("bs"), KK = S("kk");
+  if (!ic) { // banka tablosu: toplam tutar × faiz × ortalama gün (5 hane) ÷ 360
+    const og = Math.round(res.reduce((a, x) => a + x.A * x.nf, 0) / AA * 1e5) / 1e5;
+    FF = AA * ry * og / B; BS = FF * bsmv; KK = FF * kkdf;
+  }
   const net = AA - FF - BS - KK - kom;
   const lim = num("c_lim");
   if (lim > 0) warns.push(AA > lim ? `🔴 Kullandırılan tutar (${tl(AA)}) müşteri limitini (${tl(lim)}) ${tl(AA - lim)} aşıyor.` : `ℹ️ Limit kullanımı: %${nfx(Math.round(AA / lim * 1000) / 10)} · kalan limit ${tl(lim - AA)}.`);
   const ortGun = res.reduce((a, x) => a + x.A * x.n, 0) / AA;
+  const ortF = res.reduce((a, x) => a + x.A * x.nf, 0) / AA; // faiz gün sayısı (ağırlıklı)
+  const ortVD = addDays(isl, Math.round(ortGun)), ortVV = nextBizC(ortVD);
   $("c_out").textContent = tl(net);
   if (res.length === 1) {
     const x = res[0], ek = x.n - x.nv;
     $("c_days").innerHTML = `<div class="v"><span>Çek vade günü süresi</span><b>${x.nv} gün</b><i>${fdtw(x.v)}</i></div>
       <div class="h"><span>Hesaba geçiş süresi (valör)</span><b>${x.n} gün</b><i>${fdtw(x.val)}</i></div>
-      <div class="x">Vadeden ${ek} gün sonra hesaba geçer · faiz ${x.n} gün üzerinden</div>`;
+      <div class="x">Vadeden ${ek} gün sonra hesaba geçer · faiz ${x.nf} gün üzerinden</div>`;
   } else {
     const ov = res.reduce((a, x) => a + x.A * x.nv, 0) / AA;
     $("c_days").innerHTML = `<div class="v"><span>Ort. vade günü süresi</span><b>${Math.round(ov)} gün</b><i>${res.length} çek, ağırlıklı</i></div>
-      <div class="h"><span>Ort. hesaba geçiş süresi</span><b>${Math.round(ortGun)} gün</b><i>valöre göre, ağırlıklı</i></div>`;
+      <div class="h"><span>Ortalama vade gün sayısı</span><b>${ortF.toLocaleString("tr-TR", { maximumFractionDigits: 5 })}</b><i>valöre göre, ağırlıklı</i></div>
+      <div class="v"><span>Ortalama vade günü</span><b style="font-size:20px">${shortD(ortVD)}</b><i>${fdtw(ortVD).split(" ").pop()}</i></div>
+      <div class="h"><span>Ort. vade valör günü</span><b style="font-size:20px">${shortD(ortVV)}</b><i>${fdtw(ortVV).split(" ").pop()}</i></div>`;
   }
   rows("c_rows", [
     [`Çek toplamı (${res.length} adet)`, tl(TT)],
     [`Kullandırılan tutar (%${nfx(oran * 100)})`, tl(AA)],
-    ["İskonto faizi (reeskont)", "−" + tl(FF), "neg"],
+    [ic ? "İskonto faizi (reeskont)" : "İskonto faizi", "−" + tl(FF), "neg"],
+    [`Faiz + BSMV`, "−" + tl(FF + BS), "neg"],
     [`BSMV (%${nfx(bsmv * 100)})`, "−" + tl(BS), "neg"],
     ...(KK ? [[`KKDF (%${nfx(kkdf * 100)})`, "−" + tl(KK), "neg"]] : []),
     ...(kom ? [["Komisyon / masraf", "−" + tl(kom), "neg"]] : []),
@@ -1388,10 +1400,10 @@ function calcCek() {
     ["Faiz oranı", `yıllık %${nfx(ry * 100)}`],
 
   ]);
-  $("c_tab").innerHTML = "<tr><th>#</th><th>Tutar</th><th>Vade</th><th>Vade gün</th><th>Valör</th><th>Valör gün</th><th>Faiz</th><th>BSMV</th></tr>" +
-    res.map((x) => `<tr><td>${x.i + 1}</td><td>${fmt2(x.T)}</td><td>${shortD(x.v)}</td><td>${x.nv}</td><td>${shortD(x.val)}</td><td>${x.n}</td><td>${fmt2(x.F)}</td><td>${fmt2(x.bs)}</td></tr>`).join("");
+  $("c_tab").innerHTML = "<tr><th>#</th><th>Tutar</th><th>Vade</th><th>Vade gün</th><th>Valör</th><th>Gün</th><th>Faiz</th><th>BSMV</th></tr>" +
+    res.map((x) => `<tr><td>${x.i + 1}</td><td>${fmt2(x.T)}</td><td>${shortD(x.v)}</td><td>${x.nv}</td><td>${shortD(x.val)}</td><td>${x.nf}</td><td>${fmt2(x.F)}</td><td>${fmt2(x.bs)}</td></tr>`).join("");
   $("c_warn").innerHTML = warns.some((w) => !w.startsWith("ℹ️")) ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : `<div class="ckwarn" style="border-color:#1f6f4a;background:rgba(31,111,74,.12);color:#9fe0bf">✅ Vade ve valör tarihleri iş gününe denk geliyor.${warns.map((w) => `<div>${w}</div>`).join("")}</div>`;
-  $("c_note").textContent = `Reeskont: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ (${B} + yıllık faiz × gün). Faiz kullandırımda peşin alınır; gün sayısı kullandırımdan valör (hesaba geçiş) tarihine kadardır.`;
+  $("c_note").textContent = !ic ? `Banka tablosu: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ ${B}; gün = valör − kullandırım + 1 (valör günü dahil). Ortalama vade gün sayısı tutar ağırlıklıdır. Faiz kullandırımda peşin alınır.` : `Reeskont: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ (${B} + yıllık faiz × gün). Faiz kullandırımda peşin alınır; gün sayısı kullandırımdan valör (hesaba geçiş) tarihine kadardır.`;
   renderCal(isl, res);
 }
 function renderCal(isl, res) {
@@ -1428,14 +1440,15 @@ function renderCal(isl, res) {
   });
   const list = groups.map((g) => `<div class="hl${g.half ? " half" : ""}"><span>${g.s === g.e ? fdtw(g.s) : `${g.s.getDate()}–${fdtw(g.e)}`} ${g.e.getFullYear()}</span><b>${g.base}</b></div>`).join("");
   $("c_cal").innerHTML = `<div class="tip" id="c_tip">Bir güne dokun, açıklamasını gör.</div><div class="yr">${html}</div>
-    <div class="lg"><span class="l1">Kullandırım</span><span class="l2">Çek vadesi</span><span class="l3">Valör</span><span class="l4">Resmi / dini bayram</span><span class="l5">Arife (takas yok)</span><span class="l6">Hafta sonu</span></div>`;
+    <div class="lg"><span class="l1">Kullandırım</span><span class="l2">Çek vadesi</span><span class="l3">Valör</span><span class="l4">Resmi / dini bayram</span><span class="l5">Arife (yarım gün)</span><span class="l6">Hafta sonu</span></div>`;
 }
 $("c_cal").addEventListener("click", (e) => { const d = e.target.closest(".d[data-tip]"); if (d) $("c_tip").textContent = d.dataset.tip; });
 $("c_list").addEventListener("input", (e) => { const el = e.target; if (el.dataset.i == null) return; CEKLER[+el.dataset.i][el.dataset.k] = el.value; calcCek(); });
 $("c_list").addEventListener("focusout", (e) => { const el = e.target; if (el.dataset.k === "t") { const n = parseNum(el.value); el.value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }); CEKLER[+el.dataset.i].t = el.value; } });
 $("c_list").addEventListener("click", (e) => { const b = e.target.closest("[data-del]"); if (!b) return; CEKLER.splice(+b.dataset.del, 1); renderCekList(); calcCek(); });
 $("c_add").addEventListener("click", () => { const lastV = pDate(CEKLER[CEKLER.length - 1]?.v) || new Date(); CEKLER.push({ t: "", v: ymd(addMonthsC(lastV, 1)) }); renderCekList(); calcCek(); });
-["c_isl", "c_faiz", "c_val", "c_esas", "c_bsmv", "c_kkdf", "c_oran", "c_kom", "c_lim"].forEach((x) => $(x).addEventListener("input", calcCek));
+try { const yv = localStorage.getItem("c_yon"); if (yv) $("c_yon").value = yv; } catch (e) {}
+["c_isl", "c_faiz", "c_val", "c_esas", "c_yon", "c_bsmv", "c_kkdf", "c_oran", "c_kom", "c_lim"].forEach((x) => $(x).addEventListener("input", calcCek));
 
 $("c_kom").addEventListener("blur", () => { $("c_kom").value = num("c_kom").toLocaleString("tr-TR", { maximumFractionDigits: 2 }); });
 $("c_lim").addEventListener("blur", () => { const n = num("c_lim"); $("c_lim").value = n ? n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : ""; });
