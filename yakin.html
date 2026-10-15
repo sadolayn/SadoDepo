@@ -233,7 +233,12 @@ function setGmap(c) {
   const q = (GQ[c.k] || c.n.toLowerCase()) + " " + (S.place.name || "").replace(/^📡\s*/, "");
   const z = S.r <= 1000 ? 16 : S.r <= 3000 ? 14 : S.r <= 5000 ? 13 : 12;
   // Her zaman koordinatla ara: yer adıyla aramak Google'ın başka bir noktayı seçmesine yol açabiliyor
-  const src = `https://maps.google.com/maps?q=${encodeURIComponent(GQ[c.k] || c.n.toLowerCase())}+near+${(+S.place.lat).toFixed(5)},${(+S.place.lon).toFixed(5)}&z=${z}&hl=tr&output=embed`;
+  // Google gömülü harita "near lat,lon" ifadesini yok sayıp internet bağlantısının konumunu (İstanbul) kullanabiliyor.
+  // Bu yüzden arama metnine yer adını ekliyor, harita merkezini (ll) ve arama merkezini (sll) koordinatla sabitliyoruz.
+  const ll = `${(+S.place.lat).toFixed(5)},${(+S.place.lon).toFixed(5)}`;
+  const pn = (S.place.name || "").replace(/^📡\s*/, "").replace(/\s*merkez$/i, "").trim();
+  const qtxt = (GQ[c.k] || c.n.toLowerCase()) + (pn && pn !== "Bulunduğun yer" ? " " + pn : "");
+  const src = `https://maps.google.com/maps?q=${encodeURIComponent(qtxt)}&ll=${ll}&sll=${ll}&z=${z}&hl=tr&output=embed`;
   fsSrc = src.replace(/&z=\d+/, `&z=${Math.max(12, z - 1)}`);
   if ($("gmap").src !== src) mapLoad("g", src, titleOf(c), gUrlOf(c));
 }
