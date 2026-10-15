@@ -32,7 +32,7 @@
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header h1 { margin: 0; font-size: 20px; }
   .tabs {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+    display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px;
     background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px;
     margin-bottom: 14px;
   }
@@ -41,7 +41,36 @@
     padding: 9px 2px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer;
     line-height: 1.2;
   }
+  .tabs button { grid-column: span 3; }
+  .tabs button:nth-child(n+5) { grid-column: span 4; }
   .tabs button.active { background: var(--accent); color: #000; }
+  /* Çek */
+  .ckrow { display: grid; grid-template-columns: 1.35fr 1fr 34px; gap: 6px; align-items: end; margin-bottom: 6px; }
+  .ckrow .field { margin: 0; }
+  .ckrow input[type=date] { width: 100%; }
+  .ckdel { height: 44px; border-radius: 10px; border: 1px solid var(--line); background: #161616; color: var(--muted); font-size: 16px; cursor: pointer; }
+  .ckadd { width: 100%; margin: 4px 0 10px; padding: 10px; border-radius: 10px; border: 1px dashed var(--accent); background: transparent; color: var(--accent); font: inherit; font-size: 14px; cursor: pointer; }
+  .ckwarn { background: rgba(239,138,93,.1); border: 1px solid #6b4a36; border-radius: 10px; padding: 8px 10px; font-size: 13px; line-height: 1.45; margin-top: 10px; color: #f3c3a8; }
+  .ckwarn div + div { margin-top: 4px; }
+  .cal { margin-top: 10px; }
+  .cal h3 { margin: 12px 0 6px; font-size: 14px; text-align: center; }
+  .cal .g { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal .h { text-align: center; font-size: 11px; color: var(--muted); padding: 2px 0; }
+  .cal .d { position: relative; text-align: center; font-size: 13px; padding: 7px 0; border-radius: 8px; background: #121212; border: 1px solid transparent; cursor: default; }
+  .cal .d.e { background: transparent; }
+  .cal .d.we { color: #666; background: #0b0b0b; }
+  .cal .d.hol { color: #ff7a6e; background: rgba(224,71,58,.12); }
+  .cal .d.half { color: #f0b46a; background: rgba(224,162,79,.1); }
+  .cal .d.isl { border-color: #4a7dff; }
+  .cal .d.vade { border-color: var(--accent); font-weight: 700; }
+  .cal .d.val { background: #1f6f4a; color: #fff; font-weight: 700; }
+  .cal .d.rng::after { content: ""; position: absolute; left: 20%; right: 20%; bottom: 2px; height: 2px; background: rgba(224,162,79,.35); border-radius: 2px; }
+  .cal .lg { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 11px; color: var(--muted); margin-top: 10px; justify-content: center; }
+  .cal .lg span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+  .cal .lg .l1::before { border: 2px solid #4a7dff; } .cal .lg .l2::before { border: 2px solid var(--accent); }
+  .cal .lg .l3::before { background: #1f6f4a; } .cal .lg .l4::before { background: rgba(224,71,58,.5); }
+  .cal .lg .l5::before { background: rgba(224,162,79,.4); } .cal .lg .l6::before { background: #222; }
+  .cal .tip { text-align: center; font-size: 12px; color: var(--ink); min-height: 18px; margin-top: 8px; }
   .panel { display: none; }
   .panel.active { display: block; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
@@ -122,6 +151,7 @@
     <button data-tab="konut">Konut<br>Kredisi</button>
     <button data-tab="kk">Kart<br>Gecikme</button>
     <button data-tab="tarim">Tarım<br>Kredisi</button>
+    <button data-tab="cek">Çek İskonto<br>&amp; Valör</button>
   </div>
   </div>
 
@@ -381,6 +411,46 @@
       <div class="rows" id="tr_rows"></div>
     </div>
     <p class="note">KKDF: Tüketici kredilerinde %15, ticari/zirai/mesleki faaliyet için kullandırılan ve bu amacı belgelenen kredilerde %0'dır. Çiftçiler bu amacı ÇKS kaydı, Hayvan Bilgi Sistemi kaydı, ziraat odası çiftçilik belgesi ya da (gerçek usulde) aktife kayıt ve fatura ile belgeleyebilir. BSMV: tüketici kredilerinde %15, diğer kredilerde genel oran uygulanır. Hazine faiz destekli (sübvansiyonlu) tarım kredilerinde faiz oranı ayrıca indirimlidir. Uygulamayı bankanın güncel yönergesiyle teyit et.</p>
+  </section>
+
+  <!-- Çek iskonto & valör -->
+  <section class="panel" id="cek">
+    <div class="card">
+      <h2>Çek İskonto Kredisi &amp; Valör</h2>
+      <p class="hint">Çek vadesi hafta sonu ya da resmi tatile denk gelirse ilk iş gününe kayar; takas karşılığı hesaba bir sonraki iş günü geçer (valör). İskonto faizi kullandırımda peşin alınır.</p>
+      <label>Kullandırım (işlem) tarihi</label>
+      <input id="c_isl" type="date" style="color-scheme:dark">
+      <label style="margin-top:12px">Çekler</label>
+      <div id="c_list"></div>
+      <button type="button" class="ckadd" id="c_add">+ Çek ekle</button>
+      <div class="two">
+        <div><label>Aylık faiz</label><div class="field"><input id="c_faiz" type="text" inputmode="decimal" value="3,25"><span class="unit">%</span></div></div>
+        <div><label>Hesap yöntemi</label><select id="c_yon"><option value="ic">Reeskonto</option><option value="dis">Dış iskonto</option></select></div>
+      </div>
+      <div class="two">
+        <div><label>Valör</label><select id="c_val"><option value="1">+1 iş günü (takas)</option><option value="0">Vade günü</option><option value="2">+2 iş günü</option></select></div>
+        <div><label>Yıl esası</label><select id="c_esas"><option value="360">360 gün</option><option value="365">365 gün</option></select></div>
+      </div>
+      <div class="two">
+        <div><label>BSMV</label><div class="field"><input id="c_bsmv" type="text" inputmode="decimal" value="5"><span class="unit">%</span></div></div>
+        <div><label>KKDF</label><div class="field"><input id="c_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>Kullandırım oranı</label><div class="field"><input id="c_oran" type="text" inputmode="decimal" value="100"><span class="unit">%</span></div></div>
+        <div><label>Komisyon / masraf</label><div class="field"><input id="c_kom" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="big"><span>Hesaba geçecek net tutar</span><b id="c_out">–</b></div>
+      <div class="rows" id="c_rows"></div>
+      <div id="c_warn"></div>
+      <details style="margin-top:10px"><summary>Çek bazında detay</summary><div class="tbl" style="margin-top:8px"><table id="c_tab"></table></div></details>
+      <p class="note" id="c_note"></p>
+    </div>
+    <div class="card">
+      <h2>📅 Takvim</h2>
+      <div class="cal" id="c_cal"></div>
+    </div>
   </section>
 
   <!-- Kredi kartı -->
@@ -1097,6 +1167,128 @@ function calcTarim() {
   $("tr_info").innerHTML = txt + (trManual ? "<br><span style='color:var(--muted)'>Vergi oranlarını elle girdin.</span>" : "");
 }
 
+// ---------- Çek iskonto & valör ----------
+const HOL_FIXED = { "01-01": "Yılbaşı", "04-23": "Ulusal Egemenlik ve Çocuk Bayramı", "05-01": "Emek ve Dayanışma Günü", "05-19": "Atatürk'ü Anma, Gençlik ve Spor Bayramı", "07-15": "Demokrasi ve Millî Birlik Günü", "08-30": "Zafer Bayramı", "10-29": "Cumhuriyet Bayramı" };
+const HOL_REL = {
+  2026: { "03-19": ["Ramazan Bayramı arifesi", 1], "03-20": ["Ramazan Bayramı 1. gün"], "03-21": ["Ramazan Bayramı 2. gün"], "03-22": ["Ramazan Bayramı 3. gün"], "05-26": ["Kurban Bayramı arifesi", 1], "05-27": ["Kurban Bayramı 1. gün"], "05-28": ["Kurban Bayramı 2. gün"], "05-29": ["Kurban Bayramı 3. gün"], "05-30": ["Kurban Bayramı 4. gün"] },
+  2027: { "03-08": ["Ramazan Bayramı arifesi", 1], "03-09": ["Ramazan Bayramı 1. gün"], "03-10": ["Ramazan Bayramı 2. gün"], "03-11": ["Ramazan Bayramı 3. gün"], "05-15": ["Kurban Bayramı arifesi", 1], "05-16": ["Kurban Bayramı 1. gün"], "05-17": ["Kurban Bayramı 2. gün"], "05-18": ["Kurban Bayramı 3. gün"], "05-19": ["Kurban Bayramı 4. gün"] },
+};
+// Günün durumu: {we, hol, half, name}
+function dayInfo(d) {
+  const md = ymd(d).slice(5), y = d.getFullYear(), w = d.getDay();
+  const r = (HOL_REL[y] || {})[md];
+  const info = { we: w === 0 || w === 6, hol: false, half: false, name: "" };
+  if (HOL_FIXED[md]) { info.hol = true; info.name = HOL_FIXED[md]; }
+  if (md === "10-28") { info.half = true; info.name = "Cumhuriyet Bayramı arifesi (yarım gün)"; }
+  if (r) { if (r[1]) { info.half = true; info.name = r[0] + " (yarım gün)"; } else { info.hol = true; info.name = r[0]; } }
+  return info;
+}
+const isBizDay = (d) => { const i = dayInfo(d); return !i.we && !i.hol; };
+const nextBizC = (d) => { const x = new Date(d); while (!isBizDay(x)) x.setDate(x.getDate() + 1); return x; };
+const addBiz = (d, n) => { let x = nextBizC(d); for (let i = 0; i < n; i++) { x = addDays(x, 1); x = nextBizC(x); } return x; };
+const dayWhy = (d) => { const i = dayInfo(d); return i.hol ? i.name : i.we ? (d.getDay() === 6 ? "Cumartesi" : "Pazar") : i.half ? i.name : ""; };
+const parseNum = (v) => { v = String(v || "").trim().replace(/\s/g, ""); const c = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : (/^\d{1,3}(\.\d{3})+$/.test(v) ? v.replace(/\./g, "") : v); const n = parseFloat(c); return isFinite(n) ? n : 0; };
+let CEKLER = [{ t: "1.000.000", v: "2026-11-27" }];
+try { const sv = JSON.parse(localStorage.getItem("cekler") || "null"); if (Array.isArray(sv) && sv.length) CEKLER = sv; } catch (e) {}
+function renderCekList() {
+  $("c_list").innerHTML = CEKLER.map((c, i) => `<div class="ckrow">
+      <div><label style="margin-top:0">${i + 1}. çek tutarı</label><div class="field"><input data-i="${i}" data-k="t" type="text" inputmode="decimal" value="${c.t}"><span class="unit">TL</span></div></div>
+      <div><label style="margin-top:0">Vade</label><input data-i="${i}" data-k="v" type="date" value="${c.v}" style="color-scheme:dark"></div>
+      <button type="button" class="ckdel" data-del="${i}" title="Sil" ${CEKLER.length === 1 ? "disabled" : ""}>✕</button>
+    </div>`).join("");
+}
+let calSel = "";
+function calcCek() {
+  const isl = pDate($("c_isl").value) || new Date();
+  const ry = num("c_faiz") / 100 * 12, B = Number($("c_esas").value) || 360, ic = $("c_yon").value === "ic";
+  const vg = Number($("c_val").value), bsmv = num("c_bsmv") / 100, kkdf = num("c_kkdf") / 100;
+  const oran = Math.min(100, num("c_oran") || 100) / 100, kom = num("c_kom");
+  try { localStorage.setItem("cekler", JSON.stringify(CEKLER)); } catch (e) {}
+  const warns = [];
+  const islWhy = dayWhy(isl);
+  if (!isBizDay(isl)) warns.push(`🔴 Kullandırım tarihi ${shortD(isl)} iş günü değil (${islWhy}).`);
+  else if (dayInfo(isl).half) warns.push(`🟠 Kullandırım tarihi ${shortD(isl)}: ${islWhy}.`);
+  const res = [];
+  CEKLER.forEach((c, i) => {
+    const T = parseNum(c.t), v = pDate(c.v);
+    if (!T || !v) return;
+    const vIs = nextBizC(v);
+    const val = vg === 0 ? vIs : addBiz(vIs, vg);
+    const n = dayDiff(isl, val);
+    if (n <= 0) { warns.push(`🔴 ${i + 1}. çek: valör tarihi kullandırımdan sonra olmalı.`); return; }
+    const A = T * oran;
+    const F = ic ? A * ry * n / (B + ry * n) : A * ry * n / B;
+    res.push({ i, T, A, v, vIs, val, n, F, bs: F * bsmv, kk: F * kkdf });
+    const why = dayWhy(v);
+    if (!isBizDay(v)) warns.push(`🟠 ${i + 1}. çek vadesi ${fdtw(v)} → ${why}. Takasa ${fdtw(vIs)} girer.`);
+    else if (dayInfo(v).half) warns.push(`🟠 ${i + 1}. çek vadesi ${fdtw(v)}: ${why}; takas saatleri kısa olabilir.`);
+    if (dayInfo(vIs).half && isBizDay(v)) {} else if (dayInfo(vIs).half) warns.push(`🟠 ${i + 1}. çek takas günü ${fdtw(vIs)}: ${dayWhy(vIs)}; takas saatleri kısa olabilir.`);
+    const skipped = [], weS = []; for (let x = addDays(vIs, 1); x < val; x = addDays(x, 1)) if (!isBizDay(x)) { if (dayInfo(x).hol) skipped.push(`${shortD(x)} ${dayWhy(x)}`); else weS.push(dayWhy(x)); }
+    if (skipped.length) warns.push(`🟠 ${i + 1}. çek valörü tatil nedeniyle ${fdtw(val)} tarihine kayıyor (${skipped.join(", ")}).`);
+    else if (weS.length) warns.push(`ℹ️ ${i + 1}. çek valörü hafta sonu nedeniyle ${fdtw(val)}.`);
+    if (v.getFullYear() > 2027) warns.push(`ℹ️ ${v.getFullYear()} için bayram tarihleri girilmedi; yalnızca hafta sonu ve sabit tatiller dikkate alındı.`);
+  });
+  if (!res.length) { $("c_out").textContent = "–"; rows("c_rows", []); $("c_tab").innerHTML = ""; $("c_warn").innerHTML = warns.length ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : ""; renderCal(isl, []); return; }
+  const S = (k) => res.reduce((a, x) => a + x[k], 0);
+  const TT = S("T"), AA = S("A"), FF = S("F"), BS = S("bs"), KK = S("kk");
+  const net = AA - FF - BS - KK - kom;
+  const ortGun = res.reduce((a, x) => a + x.A * x.n, 0) / AA;
+  $("c_out").textContent = tl(net);
+  rows("c_rows", [
+    [`Çek toplamı (${res.length} adet)`, tl(TT)],
+    ...(oran < 1 ? [[`Kullandırım (%${nfx(oran * 100)})`, tl(AA)]] : []),
+    [`İskonto faizi (${ic ? "reeskonto" : "dış iskonto"})`, "−" + tl(FF), "neg"],
+    [`BSMV (%${nfx(bsmv * 100)})`, "−" + tl(BS), "neg"],
+    ...(KK ? [[`KKDF (%${nfx(kkdf * 100)})`, "−" + tl(KK), "neg"]] : []),
+    ...(kom ? [["Komisyon / masraf", "−" + tl(kom), "neg"]] : []),
+    ["Hesaba geçecek net tutar", tl(net), "total"],
+    ["Ortalama vade (ağırlıklı)", `${Math.round(ortGun)} gün`],
+    ["Faiz oranı", `aylık %${nfx(ry * 100 / 12)} · yıllık %${nfx(ry * 100)}`],
+    ...(res.length === 1 ? [["Valör tarihi", `${fdtw(res[0].val)} · ${res[0].n} gün`]] : []),
+  ]);
+  $("c_tab").innerHTML = "<tr><th>#</th><th>Tutar</th><th>Vade</th><th>Valör</th><th>Gün</th><th>Faiz</th><th>BSMV</th></tr>" +
+    res.map((x) => `<tr><td>${x.i + 1}</td><td>${fmt2(x.T)}</td><td>${shortD(x.v)}</td><td>${shortD(x.val)}</td><td>${x.n}</td><td>${fmt2(x.F)}</td><td>${fmt2(x.bs)}</td></tr>`).join("");
+  $("c_warn").innerHTML = warns.some((w) => !w.startsWith("ℹ️")) ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : `<div class="ckwarn" style="border-color:#1f6f4a;background:rgba(31,111,74,.12);color:#9fe0bf">✅ Vade ve valör tarihleri iş gününe denk geliyor.${warns.map((w) => `<div>${w}</div>`).join("")}</div>`;
+  $("c_note").textContent = ic
+    ? `Reeskonto (iç iskonto): Faiz = Tutar × yıllık faiz × gün ÷ (${B} + yıllık faiz × gün). Faiz kullandırımda peşin alınır; gün sayısı kullandırımdan valör tarihine kadardır.`
+    : `Dış iskonto: Faiz = Tutar × yıllık faiz × gün ÷ ${B}. Faiz kullandırımda peşin alınır; gün sayısı kullandırımdan valör tarihine kadardır.`;
+  renderCal(isl, res);
+}
+function renderCal(isl, res) {
+  const marks = {};
+  const add = (d, c) => { const k = ymd(d); (marks[k] = marks[k] || new Set()).add(c); };
+  add(isl, "isl");
+  let last = isl;
+  res.forEach((x) => { add(x.v, "vade"); add(x.val, "val"); if (x.val > last) last = x.val; });
+  const months = [];
+  const m0 = new Date(isl.getFullYear(), isl.getMonth(), 1, 12), m1 = new Date(last.getFullYear(), last.getMonth(), 1, 12);
+  const want = new Set([ymd(m0).slice(0, 7)]); res.forEach((x) => { want.add(ymd(x.v).slice(0, 7)); want.add(ymd(x.val).slice(0, 7)); });
+  for (let m = new Date(m0); m <= m1 && months.length < 24; m = new Date(m.getFullYear(), m.getMonth() + 1, 1, 12)) if (want.has(ymd(m).slice(0, 7))) months.push(new Date(m));
+  const lastVal = res.length ? res.reduce((a, x) => (x.val > a ? x.val : a), res[0].val) : null;
+  const html = months.map((m) => {
+    const first = (m.getDay() + 6) % 7, dim = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
+    let cells = ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"].map((h) => `<div class="h">${h}</div>`).join("");
+    for (let i = 0; i < first; i++) cells += `<div class="d e"></div>`;
+    for (let dd = 1; dd <= dim; dd++) {
+      const d = new Date(m.getFullYear(), m.getMonth(), dd, 12), k = ymd(d), inf = dayInfo(d), mk = marks[k] || new Set();
+      const cls = ["d", inf.hol ? "hol" : inf.we ? "we" : inf.half ? "half" : "", mk.has("isl") ? "isl" : "", mk.has("vade") ? "vade" : "", mk.has("val") ? "val" : "", lastVal && d > isl && d < lastVal ? "rng" : ""].join(" ");
+      const tip = [mk.has("isl") ? "Kullandırım" : "", mk.has("vade") ? "Çek vadesi" : "", mk.has("val") ? "Valör (hesaba geçiş)" : "", inf.name, !inf.name && inf.we ? (d.getDay() === 6 ? "Cumartesi" : "Pazar") : ""].filter(Boolean).join(" · ");
+      cells += `<div class="${cls}" data-tip="${shortD(d)}${tip ? " — " + tip : " — İş günü"}">${dd}</div>`;
+    }
+    return `<h3>${m.toLocaleDateString("tr-TR", { month: "long", year: "numeric" })}</h3><div class="g">${cells}</div>`;
+  }).join("");
+  $("c_cal").innerHTML = html + `<div class="lg"><span class="l1">Kullandırım</span><span class="l2">Çek vadesi</span><span class="l3">Valör</span><span class="l4">Resmi tatil / bayram</span><span class="l5">Arife (yarım gün)</span><span class="l6">Hafta sonu</span></div><div class="tip" id="c_tip">Bir güne dokun, açıklamasını gör.</div>`;
+}
+$("c_cal").addEventListener("click", (e) => { const d = e.target.closest(".d[data-tip]"); if (d) $("c_tip").textContent = d.dataset.tip; });
+$("c_list").addEventListener("input", (e) => { const el = e.target; if (el.dataset.i == null) return; CEKLER[+el.dataset.i][el.dataset.k] = el.value; calcCek(); });
+$("c_list").addEventListener("focusout", (e) => { const el = e.target; if (el.dataset.k === "t") { const n = parseNum(el.value); el.value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }); CEKLER[+el.dataset.i].t = el.value; } });
+$("c_list").addEventListener("click", (e) => { const b = e.target.closest("[data-del]"); if (!b) return; CEKLER.splice(+b.dataset.del, 1); renderCekList(); calcCek(); });
+$("c_add").addEventListener("click", () => { const lastV = pDate(CEKLER[CEKLER.length - 1]?.v) || new Date(); CEKLER.push({ t: "", v: ymd(addMonthsC(lastV, 1)) }); renderCekList(); calcCek(); });
+["c_isl", "c_faiz", "c_yon", "c_val", "c_esas", "c_bsmv", "c_kkdf", "c_oran", "c_kom"].forEach((x) => $(x).addEventListener("input", calcCek));
+$("c_kom").addEventListener("blur", () => { $("c_kom").value = num("c_kom").toLocaleString("tr-TR", { maximumFractionDigits: 2 }); });
+$("c_isl").value = ymd(new Date());
+renderCekList();
+
 // ---------- Sekmeler ----------
 document.querySelectorAll(".tabs button").forEach((b) => {
   b.addEventListener("click", () => {
@@ -1154,7 +1346,7 @@ document.querySelectorAll("#tk input, #tk select").forEach((e) => e.addEventList
 document.querySelectorAll("#kk input").forEach((e) => e.addEventListener("input", calcKK));
 document.querySelectorAll("#konut input, #konut select").forEach((e) => e.addEventListener("input", calcKonut));
 document.querySelectorAll("#tarim input, #tarim select").forEach((e) => e.addEventListener("input", calcTarim));
-calcBCH(); calcMev(); calcTK(); calcKK(); calcKonut(); calcTarim();
+calcBCH(); calcMev(); calcTK(); calcKK(); calcKonut(); calcTarim(); calcCek();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
