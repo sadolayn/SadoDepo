@@ -119,7 +119,7 @@
   </header>
   </div>
   <div class="upd" id="upd"></div>
-  <div style="text-align:center;margin:-4px 0 10px"><button id="subeBtn" type="button" class="subebtn">🏦 Şubeler · ATM · Kiralık kasa</button></div>
+  <div style="text-align:center;margin:-4px 0 10px"><button id="subeBtn" type="button" class="subebtn">🏦 Şubeler · 📊 Yatırımcı Sunumu</button></div>
   <div class="chipbar" id="chipbar"><div class="chips" id="chips"></div></div>
   <div id="list"><div class="empty">Yükleniyor…</div></div>
 
@@ -142,7 +142,7 @@ const CATS = [
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
-let kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
+let yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 
 function renderChips() {
@@ -196,13 +196,20 @@ function renderSubeler() {
     </div>
     <div class="facts"><ul>${(d.notlar || []).map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
     <a class="maxlink" href="https://www.google.com/maps/search/T%C3%BCrkiye+%C4%B0%C5%9F+Bankas%C4%B1+%C5%9Fubesi" target="_blank" rel="noopener">📍 Yakınımdaki şubeleri haritada göster ↗</a>
-    <a class="maxlink" href="https://www.isbank.com.tr/sube-ve-bankamatikler" target="_blank" rel="noopener">🔐 Kiralık kasalı şubeleri bul ↗</a>
-    <div style="font-size:12px;color:var(--muted);text-align:center;margin:6px 4px 0;line-height:1.5">Açılan sayfada <b>Detaylı Arama</b> → il/ilçe seç → <b>“Kiralık Kasası Olan Şubeler”</b>i işaretle → <b>Sonuçları Göster</b>. Aynı yerden 24 saat açık, hafta sonu açık, döviz çeken ve engelli uyumlu şubeleri de bulabilirsin.</div>
-    <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="https://www.isbank.com.tr/kiralik-kasa" target="_blank" rel="noopener">Kiralık kasa koşulları ve ücretleri ↗</a>
+    ${yatHtml()}
     <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(d.kaynak)} ↗</a>
     ${(d.ekKaynaklar || []).map((k) => `<a class="maxlink" style="border-color:var(--line);color:var(--muted);font-weight:400;font-size:13px" href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.ad)} ↗</a>`).join("")}`;
 }
 
+function yatHtml() {
+  const y = yat;
+  if (!y) return "";
+  return `<div class="day" style="margin-top:22px">📊 Yatırımcı sunumu · ${esc(y.donem)}</div>
+    <div class="stats">${y.kalemler.map((k) => `<div class="stat"><span>${esc(k.ad)}</span><b style="font-size:21px">${esc(k.deger)}</b><small>${esc(k.not)}</small></div>`).join("")}</div>
+    <div class="facts"><ul>${y.paylar.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
+    <a class="maxlink" href="${esc(y.pdf)}" target="_blank" rel="noopener">📄 Yatırımcı sunumunu aç (PDF) ↗</a>
+    <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(y.ir)}" target="_blank" rel="noopener">Yatırımcı ilişkileri sayfası ↗</a>`;
+}
 function renderIscep() {
   const d = iscep;
   if (!d) { $("list").innerHTML = '<div class="empty">İşCep sürüm bilgisi yüklenemedi.</div>'; return; }
@@ -297,6 +304,7 @@ function renderList() {
       live = (h.cats && h.cats.isbank) || []; liveUpd = h.updated || null;
     } catch (e) {}
     if (!CATS.some((c) => c[0] === cat)) cat = "Tümü";
+    try { yat = await (await fetch("isbank/yatirimci.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { kontrol = (await (await fetch("isbank/kontrol.json?t=" + Date.now(), { cache: "no-store" })).json()).son_kontrol; } catch (e) {}
     $("subeBtn").onclick = () => { cat = cat === "Şubeler" ? "Tümü" : "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); };
     renderChips(); renderList();
