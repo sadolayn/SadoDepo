@@ -85,6 +85,7 @@
   input[type=date] { color-scheme: dark; }
   .quick { display: flex; gap: 6px; flex-wrap: wrap; margin: -4px 0 12px; }
   .quick button { padding: 5px 10px; border-radius: 14px; background: var(--field); border: 1px solid var(--line); color: var(--muted); font-size: 12px; cursor: pointer; }
+  .quick button.on { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
   .res { display: grid; gap: 8px; }
   .ri { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 10px 12px; background: var(--field); border: 1px solid var(--line); border-radius: 12px; }
   .ri .a { font-weight: 700; }
@@ -411,6 +412,10 @@ function renderBasket() {
   $("bres").innerHTML = `
     <div class="hero"><div class="l">Sepetinin bugünkü değeri</div><div class="big num">${tl(now)}</div>
       <div class="num ${cls(p)}" style="font-weight:700">${arrow(p)} ${pct(p)} · ${tl(now - amt)} ${now >= amt ? "kazanç" : "kayıp"}</div></div>
+    <div class="ri base" style="border-color:#7a2e28;background:rgba(224,71,58,.06);margin:-4px 0 12px">
+      <div class="a"><span class="rank"></span>💴 Aynı parayı TL (yastık altı) tutsaydın</div><div class="now num">${tl(amt)}</div>
+      <div class="then num">Bugünkü alım gücü <b class="down">${tl(amt / (1 + c / 100))}</b> · sepet TL'ye göre <b class="${cls(now - amt)}">${now >= amt ? "+" : "−"}${tl(Math.abs(now - amt))}</b></div>
+      <div class="pct num down">${pct(real(0, c))}</div></div>
     <div class="stats num" style="grid-template-columns:repeat(2,1fr)">
       <div><small>Enflasyondan arındırılmış</small><b class="${cls(rp)}">${pct(rp)}</b></div>
       <div><small>Aynı dönemde TÜFE</small><b>${pct(c)}</b></div>
@@ -426,7 +431,12 @@ function renderBasket() {
   drawLine($("bchart"), idx.map((i) => D.dates[i]), idx.map(valAt), (v) => tl(v), { base: amt, baseLabel: "Başlangıç", label: "Sepet değeri", ref: idx.map((i) => amt * cpiAt(D.dates[i]) / cpiAt(d0)), refLabel: "Enflasyon" });
 }
 
+function markQuick() {
+  const last = D.dates[N - 1], cur = $("sdate").value;
+  document.querySelectorAll("#quick button").forEach((b) => b.classList.toggle("on", cur === shiftYears(last, -b.dataset.y)));
+}
 function renderSim() {
+  markQuick();
   document.querySelectorAll("#smode button").forEach((b) => b.classList.toggle("on", b.dataset.m === S.mode));
   $("singleBox").style.display = S.mode === "tek" ? "" : "none";
   $("basketBox").style.display = S.mode === "sepet" ? "" : "none";
