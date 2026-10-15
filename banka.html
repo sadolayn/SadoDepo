@@ -1388,17 +1388,15 @@ function calcCek() {
   const ortGun = res.reduce((a, x) => a + x.A * x.n, 0) / AA;
   const ortF = res.reduce((a, x) => a + x.A * x.nf, 0) / AA; // faiz gün sayısı (ağırlıklı)
   const ortR = Math.ceil(ortF * 1e5 - 1e-6) / 1e5; // banka tablosu: 5 haneye yukarı yuvarlar
-  const ortVD = addDays(isl, Math.floor(ortR)), ortVV = nextBizC(ortVD); // ort. vade günü = kullandırım + tam gün
+  // Banka tablosu: ort. vade günü = kullandırım + tam gün; ort. valör günü = kullandırım + yuvarlanmış gün − 1, tam iş gününe (hafta sonu/tatil/arife hariç) kaydırılır
+  const ortVD = addDays(isl, Math.floor(ortR));
+  let ortVV = addDays(isl, Math.round(ortR) - 1);
+  for (let g = 0; g < 15; g++) { const di = dayInfo(ortVV); if (!di.we && !di.hol && !di.half) break; ortVV = addDays(ortVV, 1); }
   $("c_out").textContent = tl(net);
   $("c_mini").innerHTML = `<span>Toplam çek <b>${tl(TT)}</b></span><span>Faiz + BSMV <b class="r">${tl(FF + BS)}</b></span>`;
-  if (res.length === 1) {
-    const x = res[0], ek = x.n - x.nv;
-    $("c_days").innerHTML = `<div class="v"><span>Çek vade günü süresi</span><b>${x.nv} gün</b><i>${fdtw(x.v)}</i></div>
-      <div class="h"><span>Hesaba geçiş süresi (valör)</span><b>${x.n} gün</b><i>${fdtw(x.val)}</i></div>
-      <div class="x">Vadeden ${ek} gün sonra hesaba geçer · faiz ${x.nf} gün üzerinden</div>`;
-  } else {
-    const ov = res.reduce((a, x) => a + x.A * x.nv, 0) / AA;
-    $("c_days").innerHTML = `      <div class="v"><span>Ortalama vade günü</span><b style="font-size:20px">${shortD(ortVD)}</b><i>${fdtw(ortVD).split(" ").pop()}</i></div>
+  {
+    const x = res[0];
+    $("c_days").innerHTML = (res.length === 1 ? `<div class="x">Çek vadesi ${fdtw(x.v)} → valör ${fdtw(x.val)} · faiz ${x.nf} gün</div>` : "") + `      <div class="v"><span>Ortalama vade günü</span><b style="font-size:20px">${shortD(ortVD)}</b><i>${fdtw(ortVD).split(" ").pop()}</i></div>
       <div class="h"><span>Ort. vade valör günü</span><b style="font-size:20px">${shortD(ortVV)}</b><i>${fdtw(ortVV).split(" ").pop()}</i></div>`;
   }
   rows("c_rows", [
@@ -1420,7 +1418,7 @@ function calcCek() {
   const sum = [`Çek iskontosu özeti (${shortD(isl)})`, ""]
     .concat(res.map((x) => `${x.i + 1}) ${fmt2(x.T)} TL · vade ${shortD(x.v)} · valör ${shortD(x.val)} · ${x.nf} gün`))
     .concat(["", `Toplam çek: ${tl(TT)}`, ...(oran < 1 ? [`Kullandırılan (%${nfx(oran * 100)}): ${tl(AA)}`] : []), `Faiz oranı: yıllık %${nfx(ry * 100)}`, `Faiz + BSMV: ${tl(FF + BS)}`, ...(KK ? [`KKDF: ${tl(KK)}`] : []), ...(kom ? [`Kullandırım komisyonu + BSMV: ${tl(kom + komBS)}`] : []),
-      ...(res.length > 1 ? [`Ortalama vade: ${shortD(ortVD)} · valör ${shortD(ortVV)}`] : []), `Hesabınıza geçecek net tutar: ${tl(net)}`, "", "Bilgi amaçlıdır; kesin tutar işlem günü belirlenir."]);
+      `Ortalama vade: ${shortD(ortVD)} · valör ${shortD(ortVV)}`, `Hesabınıza geçecek net tutar: ${tl(net)}`, "", "Bilgi amaçlıdır; kesin tutar işlem günü belirlenir."]);
   $("c_prev").textContent = sum.join("\n");
   renderCal(isl, res);
 }
