@@ -424,7 +424,7 @@
       <div id="c_list"></div>
       <button type="button" class="ckadd" id="c_add">+ Çek ekle</button>
       <div class="two">
-        <div><label>Aylık faiz</label><div class="field"><input id="c_faiz" type="text" inputmode="decimal" value="3,25"><span class="unit">%</span></div></div>
+        <div><label>Yıllık faiz</label><div class="field"><input id="c_faiz" type="text" inputmode="decimal" value="39"><span class="unit">%</span></div></div>
         <div><label>Hesap yöntemi</label><select id="c_yon"><option value="ic">Reeskonto</option><option value="dis">Dış iskonto</option></select></div>
       </div>
       <div class="two">
@@ -1200,7 +1200,7 @@ function renderCekList() {
 let calSel = "";
 function calcCek() {
   const isl = pDate($("c_isl").value) || new Date();
-  const ry = num("c_faiz") / 100 * 12, B = Number($("c_esas").value) || 360, ic = $("c_yon").value === "ic";
+  const ry = num("c_faiz") / 100, B = Number($("c_esas").value) || 360, ic = $("c_yon").value === "ic";
   const vg = Number($("c_val").value), bsmv = num("c_bsmv") / 100, kkdf = num("c_kkdf") / 100;
   const oran = Math.min(100, num("c_oran") || 100) / 100, kom = num("c_kom");
   try { localStorage.setItem("cekler", JSON.stringify(CEKLER)); } catch (e) {}
@@ -1243,7 +1243,7 @@ function calcCek() {
     ...(kom ? [["Komisyon / masraf", "−" + tl(kom), "neg"]] : []),
     ["Hesaba geçecek net tutar", tl(net), "total"],
     ["Ortalama vade (ağırlıklı)", `${Math.round(ortGun)} gün`],
-    ["Faiz oranı", `aylık %${nfx(ry * 100 / 12)} · yıllık %${nfx(ry * 100)}`],
+    ["Faiz oranı", `yıllık %${nfx(ry * 100)}`],
     ...(res.length === 1 ? [["Valör tarihi", `${fdtw(res[0].val)} · ${res[0].n} gün`]] : []),
   ]);
   $("c_tab").innerHTML = "<tr><th>#</th><th>Tutar</th><th>Vade</th><th>Valör</th><th>Gün</th><th>Faiz</th><th>BSMV</th></tr>" +
