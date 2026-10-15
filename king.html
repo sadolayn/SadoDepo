@@ -164,6 +164,30 @@
   .cet td.oy { text-align: left; white-space: normal; }
   .cet tr.tot td { font-weight: 700; font-size: 13px; border-top: 2px solid var(--accent); }
   .cet tr.next td { color: var(--muted); }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 10px; }
+  .grid4 .blk { padding: 8px 6px 10px; text-align: center; }
+  .grid4 .blk:nth-child(1) { border-right: 2px solid #3a50f0; border-bottom: 2px solid #3a50f0; }
+  .grid4 .blk:nth-child(2) { border-bottom: 2px solid #3a50f0; }
+  .grid4 .blk:nth-child(3) { border-right: 2px solid #3a50f0; }
+  .grid4 .blk.cur .bn::after { content: " 👑"; }
+  .blk .bn { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .blk .syms { display: flex; justify-content: center; gap: 4px; }
+  .blk .sym { display: flex; flex-direction: column; align-items: center; width: 38px; }
+  .blk .sym i { font-style: normal; font-size: 9px; color: var(--muted); line-height: 1.1; height: 11px; overflow: hidden; }
+  .blk .bt { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); padding: 1px 6px; }
+  .blk .bt b { font-size: 12px; }
+  .blk .bt.tot { border-top: 1px solid var(--line); margin-top: 3px; padding-top: 3px; color: var(--ink); }
+  .blk .bt.tot b { font-size: 15px; }
+  .czl { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; text-align: left; font-size: 13px; margin-bottom: 10px; }
+  .czl .cz { display: flex; align-items: center; gap: 5px; }
+  .czl .cn { flex: 1; }
+  .czl .cz.done .cn { text-decoration: line-through; text-decoration-color: #e0473a; text-decoration-thickness: 2px; color: var(--muted); }
+  .czl .mk { width: 14px; height: 14px; border: 1.5px solid #666; border-radius: 3px; }
+  .czl .mk.on { background: #e0473a; border-color: #e0473a; }
+  .potk { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+  .potk div { background: #111; border: 1px solid var(--line); border-radius: 10px; padding: 7px; font-size: 11px; color: var(--muted); }
+  .potk b { display: block; color: var(--ink); font-size: 15px; }
+  .potk i { font-style: normal; }
   .hak { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; text-align: left; font-size: 12px; margin-bottom: 12px; }
   .hak div { background: #111; border: 1px solid var(--line); border-radius: 10px; padding: 7px 8px; }
   .hak b { color: var(--ink); }
@@ -769,31 +793,68 @@ function gameOver() {
 
 // ---------- Cetvel ----------
 const SHORT = ["Sen", "Sadosan", "Sadolayn", "Sadocan"];
+const CEZA_TOPLAM = { el: 13 * 50, kupa: 13 * 30, erkek: 8 * 60, kiz: 4 * 100, rifki: 320, son: 2 * 180 };
+const isKozH = (h) => h.ct === "koz" || (h.oyun || "").startsWith("Koz");
+const ctKey = (h) => h.ct || CEZA_KEYS.find((k) => CEZALAR[k].ad === h.oyun);
+function tri(h) {
+  const on = !!h;
+  const lbl = on ? CEZALAR[ctKey(h)]?.kisa || "" : "";
+  return `<div class="sym"><svg viewBox="0 0 40 36" width="34" height="31"><polygon points="20,3 37,33 3,33" fill="${on ? "rgba(224,71,58,.85)" : "none"}" stroke="${on ? "#e0473a" : "#666"}" stroke-width="2.5" stroke-linejoin="round"/></svg><i>${lbl || "&nbsp;"}</i></div>`;
+}
+function circ(h) {
+  const on = !!h, t = on ? (h.trump || h.oyun.replace("Koz ", "")) : "";
+  const red = t === "♥" || t === "♦";
+  return `<div class="sym"><svg viewBox="0 0 36 36" width="31" height="31"><circle cx="18" cy="18" r="15" fill="${on ? "#e0a24f" : "none"}" stroke="${on ? "#e0a24f" : "#666"}" stroke-width="2.5"/>${on ? `<text x="18" y="25" text-anchor="middle" font-size="19" fill="${red ? "#b3261e" : "#000"}">${t}</text>` : ""}</svg><i>${on ? "Koz" : "&nbsp;"}</i></div>`;
+}
 function showCetvel() {
   const H = G.history || [];
-  const run = [0, 0, 0, 0];
-  const body = H.map((h) => {
-    h.deltas.forEach((d, p) => (run[p] += d));
-    const ad = h.ct === "koz" || (h.oyun || "").startsWith("Koz") ? `<b style="color:var(--accent)">${h.oyun}</b>` : h.oyun;
-    return `<tr><td>${h.el}</td><td class="oy">${ad}<br><span style="color:var(--muted)">${NAMES[h.secen]} 👑</span></td>${h.deltas.map((d) => `<td class="${d < 0 ? "neg" : d > 0 ? "pos" : ""}">${d > 0 ? "+" : ""}${d || "·"}</td>`).join("")}</tr>`;
+  const blocks = [0, 1, 2, 3].map((p) => {
+    const mine = H.filter((h) => h.secen === p);
+    const cz = mine.filter((h) => !isKozH(h)), kz = mine.filter(isKozH);
+    let topCeza = 0, topKoz = 0;
+    H.forEach((h) => (isKozH(h) ? (topKoz += h.deltas[p]) : (topCeza += h.deltas[p])));
+    const sc = G.scores[p];
+    return `<div class="blk${p === chooser && phase !== "idle" ? " cur" : ""}">
+      <div class="bn">${NAMES[p]}</div>
+      <div class="syms">${[0, 1, 2].map((i) => tri(cz[i])).join("")}</div>
+      <div class="syms">${[0, 1].map((i) => circ(kz[i])).join("")}</div>
+      <div class="bt"><span>Ceza</span><b class="neg">${topCeza}</b></div>
+      <div class="bt"><span>Koz</span><b class="pos">+${topKoz}</b></div>
+      <div class="bt tot"><span>Puan</span><b class="${sc < 0 ? "neg" : sc > 0 ? "pos" : ""}">${sc}</b></div>
+    </div>`;
+  }).join("");
+  // Ceza listesi: her ceza 2 kez; kullanılanlar kırmızı çizilir
+  const list = CEZA_KEYS.map((k) => {
+    const u = G.typeUsed[k];
+    const marks = [0, 1].map((i) => `<span class="mk${i < u ? " on" : ""}"></span>`).join("");
+    return `<div class="cz${u >= 2 ? " done" : ""}"><span class="cn">${CEZALAR[k].ad}</span>${marks}</div>`;
+  }).join("");
+  // Kalan potansiyel
+  const kozKalan = 8 - G.kozCount.reduce((a, b) => a + b, 0);
+  const cezaKalan = CEZA_KEYS.reduce((a, k) => a + (2 - G.typeUsed[k]) * CEZA_TOPLAM[k], 0);
+  const kozPuan = kozKalan * 13 * 50;
+  const lead = Math.max(...G.scores);
+  const pot = [0, 1, 2, 3].map((p) => {
+    const best = G.scores[p] + kozPuan; // tüm kalan koz ellerini alırsa, hiç ceza yemezse
+    const fark = lead - G.scores[p];
+    const ok = best >= lead;
+    return `<tr><td style="text-align:left">${NAMES[p]}</td><td>${fark ? "−" + fark : "lider"}</td><td class="${ok ? "pos" : "neg"}">${best}</td><td>${ok ? "✔" : "✘"}</td></tr>`;
   }).join("");
   const cur = phase === "play" && contract ? `<tr class="next"><td>${G.round + 1}</td><td class="oy">${contractName(contract)}<br>${NAMES[chooser]} 👑 · oynanıyor</td><td colspan="4">…</td></tr>` : "";
-  const tot = `<tr class="tot"><td></td><td class="oy">Toplam</td>${G.scores.map((x) => `<td class="${x < 0 ? "neg" : x > 0 ? "pos" : ""}">${x}</td>`).join("")}</tr>`;
-  // Kişi bazlı hak durumu
-  const hak = [0, 1, 2, 3].map((p) => {
-    const mine = H.filter((h) => h.secen === p);
-    const kozlar = mine.filter((h) => h.ct === "koz" || (h.oyun || "").startsWith("Koz")).map((h) => h.trump || h.oyun.replace("Koz ", ""));
-    const cezalar = mine.filter((h) => !(h.ct === "koz" || (h.oyun || "").startsWith("Koz"))).map((h) => h.oyun);
-    const kozTxt = G.kozCount[p] ? `<span class="ok">✔ söyledi ${G.kozCount[p]}/2</span> ${kozlar.join(" ")}` : `<span class="no">✘ söylemedi 0/2</span>`;
-    return `<div><b>${NAMES[p]}</b><br>Koz: ${kozTxt}<br>Ceza ${G.cezaCount[p]}/3: ${cezalar.length ? cezalar.join(", ") : "–"}</div>`;
-  }).join("");
-  const kalan = CEZA_KEYS.map((k) => `${CEZALAR[k].kisa} ×${2 - G.typeUsed[k]}`).join(" · ");
+  const body = H.map((h) => `<tr><td>${h.el}</td><td class="oy">${isKozH(h) ? `<b style="color:var(--accent)">${h.oyun}</b>` : h.oyun}<br><span style="color:var(--muted)">${NAMES[h.secen]}</span></td>${h.deltas.map((d) => `<td class="${d < 0 ? "neg" : d > 0 ? "pos" : ""}">${d > 0 ? "+" : ""}${d || "·"}</td>`).join("")}</tr>`).join("");
   $("modal2").innerHTML = `
     <h2>📋 Cetvel</h2>
-    <p>El ${Math.min(G.round, 20)}/20 oynandı</p>
-    <table class="cet"><tr><th>#</th><th style="text-align:left">Oyun · seçen</th>${SHORT.map((n) => `<th>${n}</th>`).join("")}</tr>${body}${cur}${tot}</table>
-    <div class="hak">${hak}</div>
-    <p style="font-size:12px">Kalan cezalar: ${kalan}</p>
+    <p>El ${Math.min(G.round, 20)}/20 · △ ceza (3) · ○ koz (2)</p>
+    <div class="grid4">${blocks}</div>
+    <div class="czl">${list}</div>
+    <div class="potk">
+      <div><span>Kalan koz</span><b>${kozKalan} el</b><i>${kozPuan} puan dağıtılacak</i></div>
+      <div><span>Kalan ceza</span><b>${CEZA_KEYS.reduce((a, k) => a + 2 - G.typeUsed[k], 0)} oyun</b><i>−${cezaKalan} puan dağıtılacak</i></div>
+    </div>
+    <table class="cet"><tr><th style="text-align:left">Çıkabilir mi?</th><th>Lidere fark</th><th>En iyi ihtimal</th><th></th></tr>${pot}</table>
+    <p style="font-size:11px;margin-top:-6px">En iyi ihtimal: kalan tüm koz ellerini alıp hiç ceza yemezse ulaşabileceği puan (liderin puanı sabit kalırsa).</p>
+    <details><summary style="cursor:pointer;color:var(--accent);font-size:13px;margin-bottom:8px">El el detay</summary>
+    <table class="cet"><tr><th>#</th><th style="text-align:left">Oyun · seçen</th>${SHORT.map((n) => `<th>${n}</th>`).join("")}</tr>${body}${cur}</table></details>
     <button class="btn" id="cetClose">Kapat</button>`;
   $("overlay2").classList.add("show");
   $("cetClose").onclick = () => $("overlay2").classList.remove("show");
