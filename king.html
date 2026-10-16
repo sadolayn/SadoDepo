@@ -171,39 +171,45 @@
   .cetbtn { background: #161616; border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 6px 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
   #overlay2 { z-index: 20; }
   #overlay2 { padding: 8px; }
-  #overlay2 .modal { max-width: 420px; max-height: 92vh; overflow-y: auto; padding: 12px 10px; }
-  #overlay2 .modal h2 { font-size: 17px; margin-bottom: 2px; }
-  #overlay2 .modal p { font-size: 12px; margin-bottom: 8px; }
-  #overlay2 .modal .btn { padding: 8px; font-size: 15px; }
-  .cet { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 8px; }
-  .cet th, .cet td { padding: 3px 2px; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; }
+  #overlay2 { padding: 6px; }
+  #overlay2 .modal { max-width: 400px; max-height: 97vh; overflow-y: auto; padding: 8px 8px 10px; }
+  #overlay2 .modal h2 { font-size: 15px; margin-bottom: 0; }
+  #overlay2 .modal p { font-size: 11px; margin-bottom: 4px; }
+  #overlay2 .modal .btn { padding: 7px; font-size: 14px; margin-top: 4px; }
+  .cet { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 6px; }
+  .cet th, .cet td { padding: 2px 2px; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; }
   .cet th { color: var(--muted); font-weight: 600; font-size: 11px; position: sticky; top: -16px; background: var(--card); }
   .cet td.oy { text-align: left; white-space: normal; }
   .cet tr.tot td { font-weight: 700; font-size: 13px; border-top: 2px solid var(--accent); }
   .cet tr.next td { color: var(--muted); }
-  .grid4 { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 10px; }
-  .grid4 .blk { padding: 5px 4px 6px; text-align: center; }
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 6px; }
+  .grid4 .blk { padding: 3px 3px 4px; text-align: center; }
   .grid4 .blk:nth-child(1) { border-right: 2px solid #3a50f0; border-bottom: 2px solid #3a50f0; }
   .grid4 .blk:nth-child(2) { border-bottom: 2px solid #3a50f0; }
   .grid4 .blk:nth-child(3) { border-right: 2px solid #3a50f0; }
   .grid4 .blk.cur .bn::after { content: " 👑"; }
-  .blk .bn { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
-  .blk .syms { display: flex; justify-content: center; gap: 4px; }
-  .blk .sym { display: flex; flex-direction: column; align-items: center; width: 28px; }
-  .blk .sym i { font-style: normal; font-size: 9px; color: var(--muted); line-height: 1.1; height: 11px; overflow: hidden; }
+  .blk .bn { font-weight: 700; font-size: 12px; margin-bottom: 1px; }
+  .blk .syms { display: flex; justify-content: center; gap: 1px; }
+  .blk .syms .sp { width: 4px; }
+  .blk .sym { display: flex; flex-direction: column; align-items: center; width: 22px; }
+  .blk .sym i { font-style: normal; font-size: 7.5px; color: var(--muted); line-height: 1.1; height: 9px; overflow: hidden; white-space: nowrap; }
+  .blk .bt2 { display: flex; align-items: baseline; justify-content: space-between; gap: 4px; font-size: 10px; color: var(--muted); padding: 1px 4px 0; border-top: 1px solid var(--line); margin-top: 2px; }
+  .blk .bt2 b { font-size: 10.5px; }
+  .blk .bt2 .pp { font-size: 15px; font-weight: 700; color: var(--ink); }
+  .blk .bt2 .pp.neg { color: #e0473a; } .blk .bt2 .pp.pos { color: var(--win); }
   .blk .bt { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); padding: 1px 6px; }
   .blk .bt b { font-size: 12px; }
   .blk .bt.tot { border-top: 1px solid var(--line); margin-top: 3px; padding-top: 3px; color: var(--ink); }
   .blk .bt.tot b { font-size: 15px; }
-  .czl { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; text-align: left; font-size: 12px; margin-bottom: 8px; }
+  .czl { display: grid; grid-template-columns: 1fr 1fr; gap: 1px 10px; text-align: left; font-size: 11px; margin-bottom: 5px; }
   .czl .cz { display: flex; align-items: center; gap: 5px; }
   .czl .cn { flex: 1; }
   .czl .cz.done .cn { text-decoration: line-through; text-decoration-color: #e0473a; text-decoration-thickness: 2px; color: var(--muted); }
-  .czl .mk { width: 11px; height: 11px; border: 1.5px solid #666; border-radius: 3px; }
+  .czl .mk { width: 9px; height: 9px; border: 1.5px solid #666; border-radius: 3px; }
   .czl .mk.on { background: #e0473a; border-color: #e0473a; }
-  .potk { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-  .potk div { background: #111; border: 1px solid var(--line); border-radius: 10px; padding: 5px 7px; font-size: 10px; color: var(--muted); }
-  .potk b { display: block; color: var(--ink); font-size: 13px; }
+  .potk { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 5px; }
+  .potk div { background: #111; border: 1px solid var(--line); border-radius: 8px; padding: 3px 6px; font-size: 9.5px; color: var(--muted); line-height: 1.3; }
+  .potk b { color: var(--ink); font-size: 12px; margin: 0 3px; }
   .potk i { font-style: normal; }
   .hak { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; text-align: left; font-size: 12px; margin-bottom: 12px; }
   .hak div { background: #111; border: 1px solid var(--line); border-radius: 10px; padding: 7px 8px; }
@@ -958,12 +964,12 @@ const ctKey = (h) => h.ct || CEZA_KEYS.find((k) => CEZALAR[k].ad === h.oyun);
 function tri(h) {
   const on = !!h;
   const lbl = on ? CEZALAR[ctKey(h)]?.kisa || "" : "";
-  return `<div class="sym"><svg viewBox="0 0 40 36" width="24" height="22"><polygon points="20,3 37,33 3,33" fill="${on ? "rgba(224,71,58,.85)" : "none"}" stroke="${on ? "#e0473a" : "#666"}" stroke-width="2.5" stroke-linejoin="round"/></svg><i>${lbl || "&nbsp;"}</i></div>`;
+  return `<div class="sym"><svg viewBox="0 0 40 36" width="18" height="16"><polygon points="20,3 37,33 3,33" fill="${on ? "rgba(224,71,58,.85)" : "none"}" stroke="${on ? "#e0473a" : "#666"}" stroke-width="2.5" stroke-linejoin="round"/></svg><i>${lbl || "&nbsp;"}</i></div>`;
 }
 function circ(h) {
   const on = !!h, t = on ? (h.trump || h.oyun.replace("Koz ", "")) : "";
   const red = t === "♥" || t === "♦";
-  return `<div class="sym"><svg viewBox="0 0 36 36" width="22" height="22"><circle cx="18" cy="18" r="15" fill="${on ? "#e0a24f" : "none"}" stroke="${on ? "#e0a24f" : "#666"}" stroke-width="2.5"/>${on ? `<text x="18" y="25" text-anchor="middle" font-size="19" fill="${red ? "#b3261e" : "#000"}">${t}</text>` : ""}</svg><i>${on ? "Koz" : "&nbsp;"}</i></div>`;
+  return `<div class="sym"><svg viewBox="0 0 36 36" width="16" height="16"><circle cx="18" cy="18" r="15" fill="${on ? "#e0a24f" : "none"}" stroke="${on ? "#e0a24f" : "#666"}" stroke-width="2.5"/>${on ? `<text x="18" y="25" text-anchor="middle" font-size="19" fill="${red ? "#b3261e" : "#000"}">${t}</text>` : ""}</svg><i>${on ? "Koz" : "&nbsp;"}</i></div>`;
 }
 function showCetvel() {
   const H = G.history || [];
@@ -976,11 +982,8 @@ function showCetvel() {
     const sc = G.scores[p];
     return `<div class="blk${p === chooser && phase !== "idle" ? " cur" : ""}">
       <div class="bn">${NAMES[p]}</div>
-      <div class="syms">${[0, 1, 2].map((i) => tri(cz[i])).join("")}</div>
-      <div class="syms">${[0, 1].map((i) => circ(kz[i])).join("")}</div>
-      <div class="bt"><span>Ceza</span><b class="neg">${topCeza}</b></div>
-      <div class="bt"><span>Koz</span><b class="pos">+${topKoz}</b></div>
-      <div class="bt tot"><span>Puan</span><b class="${sc < 0 ? "neg" : sc > 0 ? "pos" : ""}">${sc}</b></div>
+      <div class="syms">${[0, 1, 2].map((i) => tri(cz[i])).join("")}<span class="sp"></span>${[0, 1].map((i) => circ(kz[i])).join("")}</div>
+      <div class="bt2"><span>C <b class="neg">${topCeza}</b></span><span>K <b class="pos">+${topKoz}</b></span><span class="pp ${sc < 0 ? "neg" : sc > 0 ? "pos" : ""}">${sc}</span></div>
     </div>`;
   }).join("");
   // Ceza listesi: her ceza 2 kez; kullanılanlar kırmızı çizilir
@@ -1008,12 +1011,12 @@ function showCetvel() {
     <div class="grid4">${blocks}</div>
     <div class="czl">${list}</div>
     <div class="potk">
-      <div><span>Kalan koz</span><b>${kozKalan} el</b><i>${kozPuan} puan dağıtılacak</i></div>
-      <div><span>Kalan ceza</span><b>${CEZA_KEYS.reduce((a, k) => a + 2 - G.typeUsed[k], 0)} oyun</b><i>−${cezaKalan} puan dağıtılacak</i></div>
+      <div><span>Kalan koz</span><b>${kozKalan} el</b><br><i>${kozPuan} puan dağıtılacak</i></div>
+      <div><span>Kalan ceza</span><b>${CEZA_KEYS.reduce((a, k) => a + 2 - G.typeUsed[k], 0)} oyun</b><br><i>−${cezaKalan} puan dağıtılacak</i></div>
     </div>
     <table class="cet"><tr><th style="text-align:left">Çıkabilir mi?</th><th>Lidere fark</th><th>En iyi ihtimal</th><th></th></tr>${pot}</table>
-    <p style="font-size:11px;margin-top:-6px">En iyi ihtimal: kalan tüm koz ellerini alıp hiç ceza yemezse ulaşabileceği puan (liderin puanı sabit kalırsa).</p>
-    <details><summary style="cursor:pointer;color:var(--accent);font-size:13px;margin-bottom:8px">El el detay</summary>
+    <p style="font-size:9.5px;margin-top:-5px;color:var(--muted)">En iyi ihtimal: kalan tüm kozları alıp hiç ceza yemezse (lider sabit kalırsa).</p>
+    <details><summary style="cursor:pointer;color:var(--accent);font-size:12px;margin-bottom:4px">El el detay</summary>
     <table class="cet"><tr><th>#</th><th style="text-align:left">Oyun · seçen</th>${SHORT.map((n) => `<th>${n}</th>`).join("")}</tr>${body}${cur}</table></details>
     <button class="btn" id="cetClose">Kapat</button>`;
   $("overlay2").classList.add("show");
