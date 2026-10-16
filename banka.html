@@ -1686,8 +1686,12 @@ document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventLi
     e.stopPropagation();
     if (on) { on = false; apply(); return; }
     const v = (prompt("Çalışan kodu:") || "").trim();
-    if (v === "1924") { on = true; apply(); }
-    else if (v) alert("Kod hatalı.");
+    if (!v) return;
+    // Kod düz yazılmaz; yalnızca SHA-256 özeti karşılaştırılır
+    crypto.subtle.digest("SHA-256", new TextEncoder().encode("sado:" + v)).then((b) => {
+      const h = [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
+      if (h === "a13883ee1619136f64e87588b295f71e9c24819b89c8e5eb31fed7096830adf6") { on = true; apply(); } else alert("Kod hatalı.");
+    }).catch(() => alert("Kod hatalı."));
   });
   // Telefonda hızlı dokunuşlar çift dokunma/yakınlaştırma sanılmasın diye pointerdown kullanılır
   let taps = [];
