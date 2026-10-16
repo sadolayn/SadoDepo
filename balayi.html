@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="gate.js"></script>
+<script src="isimler.js"></script>
 <link rel="icon" type="image/png" href="img/icon.png">
 <link rel="apple-touch-icon" href="img/icon.png">
 <meta name="theme-color" content="#000000">
@@ -108,7 +109,10 @@
 const SUITS = ["♠", "♥", "♣", "♦"];
 const SUIT_NAMES = { "♠": "Maça", "♥": "Kupa", "♣": "Sinek", "♦": "Karo" };
 const RANKS = { 11: "J", 12: "Q", 13: "K", 14: "A" };
-const NAMES = ["Sen", "Sadosan"];
+let NAMES = [];
+// Rakip her zaman Sadolayn; senin adını yazabilirsin (en fazla 8 karakter)
+function setNames() { NAMES = [ISIM.ben(), "Sadolayn"]; }
+setNames();
 // Oyunlar ve çarpanları
 const GAMES = [
   { k: "♣", ad: "Sinek koz", x: 1 },
@@ -307,7 +311,9 @@ function render() { renderInfo(); renderWho(); renderPiles(); renderHand(); }
 function newRound() {
   if (G.round >= DEALS) return gameOver();
   chooser = G.round % 2;
-  const d = newDeck();
+  // Sadolayn şanslıdır: 4 karıştırmadan ona en güçlü kartları veren dağıtım seçilir
+  const pow = (d) => { let a = 0, b = 0; d.forEach((c, i) => { const v = Math.max(0, c.r - 9) ** 1.6; const p = i < 40 ? (i % 20 < 10 ? 0 : 1) : (i < 46 ? 0 : 1); if (p) b += v; else a += v; }); return b - a; };
+  let d = newDeck(); for (let i = 0; i < 3; i++) { const e = newDeck(); if (pow(e) > pow(d)) d = e; }
   // her oyuncuya 10 kapalı + üstüne 10 açık, kalan 12 kart 6'şar ele
   piles = [[], []];
   let k = 0;
@@ -408,6 +414,7 @@ function gameOver() {
 }
 function showRules(resume) {
   $("modal").innerHTML = `<h2>💞 Balayı King</h2>
+    ${ISIM.html([["ben", "Sen", "Senin adın"], [null, "Sadolayn", "Rakibin"]])}
     <ul class="rules">
       <li>İki kişilik King. Her oyuncunun önünde <b>10 kapalı kart</b>, üstlerinde <b>10 açık kart</b> ve elinde <b>6 kart</b> olur (26 kart, 26 el).</li>
       <li>Açık kartlar ve elindeki kartlar oynanabilir. Açık kart oynanınca altındaki kapalı kart açılır.</li>
@@ -418,6 +425,7 @@ function showRules(resume) {
     <button class="btn" id="start">${resume ? "Devam et" : "Başla"}</button>
     ${resume ? '<button class="btn" id="fresh" style="margin-top:8px;background:transparent;color:var(--muted);border-color:var(--line)">Yeni oyun başlat</button>' : ""}`;
   $("overlay").classList.add("show");
+  ISIM.bind($("modal"), () => { setNames(); try { renderInfo(); } catch (e) {} });
   $("start").onclick = () => { $("overlay").classList.remove("show"); newRound(); };
   if (resume) $("fresh").onclick = () => { $("overlay").classList.remove("show"); newGame(); newRound(); };
 }
