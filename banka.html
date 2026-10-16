@@ -172,6 +172,22 @@
   .tswarn { grid-column: 1 / -1; background: rgba(239,138,93,.12); border: 1px solid #ef8a5d; color: #f3b394; border-radius: 12px; padding: 9px 12px; font-size: 13px; line-height: 1.4; }
   .tswarn b { color: #ffd2bd; }
   .tsum .ts.wide2 { grid-column: 1 / -1; }
+  .tcplan td { white-space: nowrap; }
+  @media print {
+    body.pr-tic { background: #fff !important; padding: 0 !important; }
+    body.pr-tic * { visibility: hidden !important; }
+    body.pr-tic #tc_doc, body.pr-tic #tc_doc * { visibility: visible !important; color: #000 !important; background: transparent !important; border-color: #999 !important; }
+    body.pr-tic #tc_doc { position: absolute; left: 0; top: 0; width: 100%; border: none !important; padding: 0 !important; font-family: "Times New Roman", serif; }
+    body.pr-tic #tc_doc .rows div { padding: 2px 0 !important; border: none !important; }
+    body.pr-tic #tc_doc table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+    body.pr-tic #tc_doc th { background: #555 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body.pr-tic #tc_doc td, body.pr-tic #tc_doc th { border: 1px solid #999 !important; padding: 2px 5px !important; }
+    body.pr-tic #tc_doc tr.tot td { background: #f4e9a6 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body.pr-tic #tc_doc summary, body.pr-tic #tc_print { display: none !important; }
+    body.pr-tic #tc_doc .tbl { overflow: visible !important; }
+    @page { size: A4; margin: 12mm 10mm; }
+    body.pr-tic #tc_doc .big b { font-size: 18px; }
+  }
   .tscopy { grid-column: 1 / -1; background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 10px; padding: 9px; font: inherit; font-size: 14px; cursor: pointer; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
   th, td { padding: 6px 4px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
@@ -538,8 +554,8 @@
         <div class="ts"><span>Toplam faiz</span><b id="tcs_faiz">–</b></div>
         <div class="ts"><span>Toplam vergi ve fon</span><b id="tcs_vergi">–</b></div>
         <div class="ts"><span>Geri ödenecek toplam</span><b id="tcs_toplam">–</b></div>
-        <div class="ts"><span>Yıllık maliyet oranı</span><b id="tcs_ymo">–</b><i>ücret ve masraflar hariç</i></div>
-        <button type="button" id="tc_pdf" class="tscopy">📄 Ödeme planı PDF</button>
+        <div class="ts"><span>Yıllık maliyet oranı</span><b id="tcs_ymo">–</b><i id="tcs_ymoi">ücret ve masraflar hariç</i></div>
+        <button type="button" id="tc_copy" class="tscopy">📋 Müşteriye özet kopyala</button>
       </div>
       <div class="two">
         <div><label>Kredi veriliş tarihi</label><input id="tc_bas" type="date" style="color-scheme:dark"></div>
@@ -552,13 +568,17 @@
       </div>
       <p class="hint">Banka sistemindeki gibi: her taksitte faiz, kalan anapara × aylık faiz × gün/30 ile işler; ilk taksit de diğerleriyle <b>eşittir</b> (kırık dönem taksiti küçültmez, anaparadan düşer). Hafta sonu ve resmî/dinî bayrama denk gelen ödeme ilk iş gününe kayar. Taksitli ticari kredide KKDF %0, BSMV %5'tir.</p>
     </div>
-    <div class="card">
-      <div class="big"><span>Taksit tutarı</span><b id="tc_out">–</b></div>
+    <div class="card" id="tc_doc">
+      <h2 class="pr-title">Taksitli Ticari Kredi Ödeme Planı</h2>
+      <div class="rows" id="tc_head"></div>
+      <div class="big" style="margin-top:10px"><span>Taksit tutarı</span><b id="tc_out">–</b></div>
       <div class="rows" id="tc_rows"></div>
-      <details>
-        <summary>Ödeme planını göster</summary>
-        <div class="tbl"><table id="tc_plan"></table></div>
+      <details open>
+        <summary>Ödeme planı</summary>
+        <div class="tbl"><table id="tc_plan" class="tcplan"></table></div>
       </details>
+      <p class="note" id="tc_note"></p>
+      <button type="button" id="tc_print" class="tscopy" style="width:100%;margin-top:10px">🖨️ Ödeme planını yazdır / PDF kaydet</button>
     </div>
   </section>
 
@@ -1355,7 +1375,7 @@ function calcKonut() {
 // ---------- Taksitli ticari kredi (banka sistemiyle birebir) ----------
 // Faiz = kalan × aylık faiz × gün/30 (gerçek gün, kayan tarihlerle), vergi/fon faiz üzerinden.
 // Taksit eşit; kuruşa yukarı yuvarlanır, son taksit kalan anaparayı kapatır.
-let tcIlkManual = false, tcLast = null;
+let tcIlkManual = false, tcLast = null, tcSummary = "";
 function tcPlan(P, r, g, T, bsmv, kkdf) {
   let b = P; const out = [];
   for (let k = 0; k < g.length; k++) {
@@ -1375,97 +1395,79 @@ function calcTic() {
   const ilk = pDate($("tc_ilk").value);
   const ok = ilk && ilk > bas;
   $("tc_dnote").innerHTML = ok ? `Ödeme günü: her ayın <b>${ilk.getDate()}.</b> günü; hafta sonu ya da bayrama denk gelirse ilk iş günü.` : '<span style="color:#ef8a5d">⚠️ Ödeme başlangıç tarihi kredi veriliş tarihinden sonra olmalı.</span>';
-  const clear = () => { ["tcs_taksit", "tcs_faiz", "tcs_vergi", "tcs_toplam", "tcs_ymo"].forEach((x) => ($(x).textContent = "–")); $("tcs_ilk").textContent = ""; $("tc_out").textContent = "–"; rows("tc_rows", []); $("tc_plan").innerHTML = ""; tcLast = null; };
+  const clear = () => { ["tcs_taksit", "tcs_faiz", "tcs_vergi", "tcs_toplam", "tcs_ymo"].forEach((x) => ($(x).textContent = "–")); $("tcs_ilk").textContent = ""; $("tc_out").textContent = "–"; rows("tc_rows", []); rows("tc_head", []); $("tc_plan").innerHTML = ""; $("tc_note").textContent = ""; tcLast = null; tcSummary = ""; };
   if (!P || !n || n > 600 || !ok) return clear();
   const dues = []; for (let k = 0; k < n; k++) dues.push(nextBiz(addMonthsC(ilk, k)));
   const g = []; let prev = bas; for (const d of dues) { g.push(dayDiff(prev, d)); prev = d; }
   // taksiti bul: son taksit ≈ diğerleri olacak şekilde, sonra kuruşa yukarı yuvarla
   let lo = 0, hi = P * 2 + 1; for (let it = 0; it < 80; it++) { const m = (lo + hi) / 2; const pl = tcPlan(P, r, g, m, bsmv, kkdf); if (pl[n - 1].t > m) lo = m; else hi = m; }
-  const T = Math.ceil(R2(hi * 100) - 1e-6) / 100;
-  const plan = tcPlan(P, r, g, T, bsmv, kkdf);
+  // banka gibi: son taksit diğerlerine en yakın olacak kuruşluk tutar
+  let T = 0, plan = null, best = Infinity;
+  for (const c of [-2, -1, 0, 1, 2].map((x) => Math.round(hi * 100 + x) / 100)) { const pl = tcPlan(P, r, g, c, bsmv, kkdf), d = Math.abs(pl[n - 1].t - c); if (d < best - 1e-9) { best = d; T = c; plan = pl; } }
   const sum = (k) => R2(plan.reduce((s, x) => s + x[k], 0));
   const tF = sum("f"), tV = sum("v"), tFo = sum("fo"), top = sum("t");
   // Yıllık maliyet oranı: ilk dönem gün/30, sonra her taksit 1 ay; (1+aylık)^12 − 1
   const ex = plan.map((_, k) => g[0] / 30 + k);
   let a = 0, b = 1; for (let it = 0; it < 120; it++) { const m = (a + b) / 2; const pv = plan.reduce((s, x, k) => s + x.t / Math.pow(1 + m, ex[k]), 0); if (pv > P) a = m; else b = m; }
-  const ymo = (Math.pow(1 + (a + b) / 2, 12) - 1) * 100;
+  // İlk dönem 30 günü aşarsa banka YMO'yu farklı yöntemle buluyor; o durumda gösterme
+  const ymo = g[0] <= 30 ? (Math.pow(1 + (a + b) / 2, 12) - 1) * 100 : NaN;
   const f4 = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
   $("tc_out").textContent = tl(T);
   $("tcs_taksit").textContent = tl(T);
   $("tcs_ilk").textContent = `${n} taksit · ilk ${shortD(dues[0])}` + (Math.abs(plan[n - 1].t - T) > 0.004 ? ` · son taksit ${tl(plan[n - 1].t)}` : "");
-  $("tcs_faiz").textContent = tl(tF); $("tcs_vergi").textContent = tl(tV + tFo); $("tcs_toplam").textContent = tl(top); $("tcs_ymo").textContent = "%" + f4(ymo);
+  $("tcs_faiz").textContent = tl(tF); $("tcs_vergi").textContent = tl(tV + tFo); $("tcs_toplam").textContent = tl(top);
+  $("tcs_ymo").textContent = isFinite(ymo) ? "%" + f4(ymo) : "Banka sistemi";
+  $("tcs_ymoi").textContent = isFinite(ymo) ? "ücret ve masraflar hariç" : "ilk dönem 30 günü aşınca bankadan bak";
+  const dd = (x) => shortD(x).replace(/\./g, "-");
+  rows("tc_head", [
+    ["Döviz kodu", "TL"],
+    ["Ödeme planı hazırlama tarihi", dd(new Date())],
+    ["Kredi veriliş tarihi", dd(bas)],
+    ["Ödeme başlangıç tarihi", dd(dues[0])],
+    ["Kredi tutarı", tl(P)],
+    ["Akdi faiz oranı (aylık / yıllık)", `%${nfx(r * 100)} / %${nfx(r * 1200)}`],
+    ["Vergi / fon oranı", `%${nfx(bsmv * 100)} / %${nfx(kkdf * 100)}`],
+    ["Taksit sayısı", String(n)],
+  ]);
+  $("tc_note").innerHTML = (isFinite(ymo) ? "" : "İlk taksit kullandırımdan 30 günden uzun sonra olduğu için yıllık maliyet oranını banka sistemiyle birebir hesaplayamıyoruz; kesin oranı banka sisteminden al. ") +
+    `Yıllık maliyet oranı ödeme planı üzerinden hesaplanır; ücret, masraf ve komisyonlar dahil değildir. Bu plan ${dd(new Date())} tarihindeki vergi/fon oranları ve girilen faizle bilgi amacıyla hazırlanmıştır; kesin plan kullandırımda banka sisteminden alınır.`;
+  tcSummary = [
+    `Taksitli ticari kredi: ${tl(P)} · ${n} taksit · aylık %${nfx(r * 100)}`,
+    `Taksit tutarı: ${tl(T)}` + (Math.abs(plan[n - 1].t - T) > 0.004 ? ` (son taksit ${tl(plan[n - 1].t)})` : ""),
+    `Toplam faiz: ${tl(tF)}`,
+    `Toplam vergi ve fon: ${tl(tV + tFo)}`,
+    `Geri ödenecek toplam: ${tl(top)}`,
+    ...(isFinite(ymo) ? [`Yıllık maliyet oranı: %${f4(ymo)}`] : []),
+    `Ödeme başlangıç tarihi: ${shortD(dues[0])} · son taksit: ${shortD(dues[n - 1])}`,
+  ].join("\n");
   rows("tc_rows", [
     ["İlk / son taksit", `${shortD(dues[0])} · ${shortD(dues[n - 1])}`],
-    ["Akdi faiz (aylık / yıllık)", `%${nfx(r * 100)} / %${nfx(r * 1200)}`],
     ["Toplam faiz", tl(tF)],
     [`Toplam vergi (BSMV %${nfx(bsmv * 100)})`, tl(tV)],
     [`Toplam fon (KKDF %${nfx(kkdf * 100)})`, tl(tFo)],
     ["Geri ödenecek toplam", tl(top), "total"],
     ...(Math.abs(plan[n - 1].t - T) > 0.004 ? [["Son taksit", tl(plan[n - 1].t)]] : []),
-    ["Yıllık maliyet oranı", "%" + f4(ymo)],
+    ["Yıllık maliyet oranı", isFinite(ymo) ? "%" + f4(ymo) : "banka sisteminden bak"],
   ]);
   $("tc_plan").innerHTML = "<tr><th>#</th><th>Vade</th><th>Gün</th><th>Anapara</th><th>Faiz</th><th>Fon</th><th>Vergi</th><th>Taksit</th><th>Kalan</th></tr>" +
     plan.map((x, k) => `<tr><td>${k + 1}</td><td>${shortD(dues[k])}</td><td>${x.g}</td><td>${fmt2(x.a)}</td><td>${fmt2(x.f)}</td><td>${fmt2(x.fo)}</td><td>${fmt2(x.v)}</td><td>${fmt2(x.t)}</td><td>${fmt2(x.b)}</td></tr>`).join("") +
-    `<tr style="font-weight:700"><td></td><td>Toplam</td><td></td><td>${fmt2(P)}</td><td>${fmt2(tF)}</td><td>${fmt2(tFo)}</td><td>${fmt2(tV)}</td><td>${fmt2(top)}</td><td></td></tr>`;
+    `<tr class="tot" style="font-weight:700"><td></td><td>Toplam</td><td></td><td>${fmt2(P)}</td><td>${fmt2(tF)}</td><td>${fmt2(tFo)}</td><td>${fmt2(tV)}</td><td>${fmt2(top)}</td><td></td></tr>`;
   tcLast = { P, r, n, bsmv, kkdf, bas, ilk: dues[0], dues, plan, T, tF, tV, tFo, top, ymo, f4 };
 }
-function tcPdf() {
-  const L = tcLast; if (!L) return;
-  const d = (x) => shortD(x).replace(/\./g, "-"), f = fmt2;
-  const today = d(new Date());
-  const w = window.open("", "_blank"); if (!w) { alert("Açılır pencereye izin ver, sonra tekrar dene."); return; }
-  w.document.write(`<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>OdemePlani</title><style>
-    @page { size: A4; margin: 14mm 12mm; }
-    body { font-family: "Times New Roman", Times, serif; color: #000; font-size: 12.5px; margin: 0; }
-    h1 { font-size: 15px; margin: 0 0 6px; font-weight: 700; letter-spacing: .3px; }
-    .hd div { margin: 3px 0; }
-    table { border-collapse: collapse; width: 100%; margin-top: 12px; font-size: 11.5px; }
-    th { background: #555; color: #fff; font-weight: 700; padding: 5px 4px; border: 1px solid #444; }
-    td { border: 1px solid #999; padding: 3px 6px; text-align: right; }
-    td:nth-child(1), td:nth-child(2) { text-align: center; }
-    tr:nth-child(even) td { background: #f3f3f3; }
-    tr.tot td { background: #f4e9a6; font-weight: 700; }
-    .sum { margin-top: 16px; font-size: 13.5px; } .sum div { margin: 5px 0; }
-    .note { margin-top: 16px; font-size: 12.5px; line-height: 1.5; }
-    .bar { position: sticky; top: 0; background: #fffbe8; border-bottom: 1px solid #ddd; padding: 8px; text-align: center; font-family: system-ui, sans-serif; }
-    .bar button { font: inherit; font-size: 14px; padding: 7px 16px; border-radius: 8px; border: 1px solid #c90; background: #e0a24f; cursor: pointer; }
-    @media print { .bar { display: none; } }
-    .pg { padding: 18px 22px; }
-  </style></head><body>
-  <div class="bar"><button onclick="print()">🖨️ Yazdır / PDF olarak kaydet</button></div>
-  <div class="pg">
-  <h1>TAKSİTLİ TİCARİ KREDİ ÖDEME PLANI</h1>
-  <div class="hd">
-    <div>DVZ KODU TL</div>
-    <div>Ödeme Planı Hazırlama Tarihi : ${today}</div>
-    <div>Kredi Veriliş Tarihi : ${d(L.bas)}</div>
-    <div>Ödeme Başlangıç Tarihi : ${d(L.ilk)}</div>
-    <div>Kredi Tutarı : ${f(L.P)} TL</div>
-    <div>Akdi Faiz Oranı (%) (Aylık) : ${L.f4(L.r * 100).replace(/0$/, "")}</div>
-    <div>Akdi Faiz Oranı (%) (Yıllık) : ${(L.r * 1200).toLocaleString("tr-TR", { minimumFractionDigits: 3, maximumFractionDigits: 3 })}</div>
-    <div>Vergi Oranı (%) : ${(L.bsmv * 100).toLocaleString("tr-TR", { minimumFractionDigits: 3 })}</div>
-    <div>Fon Oranı (%) : ${(L.kkdf * 100).toLocaleString("tr-TR", { minimumFractionDigits: 3 })}</div>
-    <div>Taksit Sayısı : ${L.n}</div>
-  </div>
-  <table><tr><th>Sıra<br>No</th><th>Taksit Tarihi</th><th>Gün</th><th>Anapara</th><th>Faiz</th><th>Fon</th><th>Vergi</th><th>Taksit Tutarı</th><th>Kalan Anapara</th></tr>
-  ${L.plan.map((x, k) => `<tr><td>${k + 1}</td><td>${d(L.dues[k])}</td><td>${x.g}</td><td>${f(x.a)}</td><td>${f(x.f)}</td><td>${f(x.fo)}</td><td>${f(x.v)}</td><td>${f(x.t)}</td><td>${f(x.b)}</td></tr>`).join("")}
-  <tr class="tot"><td></td><td>TOPLAM:</td><td></td><td>${f(L.P)}</td><td>${f(L.tF)}</td><td>${f(L.tFo)}</td><td>${f(L.tV)}</td><td>${f(L.top)}</td><td></td></tr></table>
-  <div class="sum">
-    <div>Toplam Faiz : ${f(L.tF)} TL</div>
-    <div>Toplam Vergi : ${f(L.tV)} TL</div>
-    <div>Toplam Fon : ${f(L.tFo)} TL</div>
-    <div>Genel Toplam : ${f(L.top)} TL</div>
-    <div>Taksit Tutarı : ${f(L.T)} TL</div>
-  </div>
-  <div class="note">
-    <div style="font-size:13.5px">Yıllık Maliyet Oranı (%) : ${L.f4(L.ymo)}</div>
-    <p>Yıllık maliyet oranı ödeme planı üzerinden hesaplanmıştır; krediye ilişkin ücret, masraf ve komisyonlar dahil değildir.</p>
-    <p>Bu plan ${today} tarihindeki vergi/fon oranları ve girilen faiz oranıyla, yalnızca bilgi amacıyla hazırlanmış taslaktır. Kesin ödeme planı kredi kullandırımında banka sisteminden alınır; tutar, tarih ve oranlar değişebilir.</p>
-  </div></div></body></html>`);
-  w.document.close();
-}
 $("tc_ilk").addEventListener("input", () => (tcIlkManual = true));
-$("tc_pdf").addEventListener("click", tcPdf);
+$("tc_copy").addEventListener("click", () => {
+  if (!tcSummary) return;
+  const done = () => { const b = $("tc_copy"); b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = "📋 Müşteriye özet kopyala"), 1500); };
+  if (navigator.clipboard) navigator.clipboard.writeText(tcSummary).then(done, () => prompt("Kopyala:", tcSummary));
+  else prompt("Kopyala:", tcSummary);
+});
+$("tc_print").addEventListener("click", () => {
+  if (!tcLast) return;
+  const d = $("tc_doc").querySelector("details"); const was = d.open; d.open = true;
+  document.body.classList.add("pr-tic");
+  const done = () => { document.body.classList.remove("pr-tic"); d.open = was; window.removeEventListener("afterprint", done); };
+  window.addEventListener("afterprint", done); window.print();
+});
 
 // ---------- Tarım ----------
 const TR_PRESET = { levha: [0, 5], cks: [0, 5], bireysel: [15, 15] };
