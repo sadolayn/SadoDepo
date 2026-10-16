@@ -112,6 +112,10 @@ YZ_RE = re.compile(r"yapay ?zek[aâ]|\bai\b|chatgpt|openai|gemini|anthropic|clau
 
 jobs = [(c, s, u) for c, lst in FEEDS.items() for s, u in lst] + [("okul", s, u) for s, u in OKUL_FEEDS] + [("isbank", s, u) for s, u in ISB_FEEDS] \
      + [("tarim", s, u) for s, u in TARIM_FEEDS] + [("yz", s, u) for s, u in YZ_FEEDS]
+# Ekonomim: tek genel akış; haberler bağlantıdaki bölüme göre sekmelere dağıtılır
+EKONOMIM = ("Ekonomim", "https://www.ekonomim.com/rss")
+EKONOMIM_ROUTE = {"gundem": "gundem", "dunya": "dunya", "teknoloji": "teknoloji", "spor": "spor"}  # gerisi (ekonomi, finans, piyasa…) → ekonomi
+jobs += [("_ekonomim", *EKONOMIM)]
 with ThreadPoolExecutor(12) as ex:
     res = list(ex.map(fetch, jobs))
 
@@ -121,6 +125,11 @@ ok_src = {}
 for cat, src, items, err in res:
     if err: print(f"::warning::{cat}/{src}: {err}")
     else: ok_src.setdefault(cat, []).append(f"{src}:{len(items)}")
+    if cat == "_ekonomim":
+        for x in items:
+            seg = urllib.parse.urlparse(x["u"]).path.strip("/").split("/")[0]
+            cats.setdefault(EKONOMIM_ROUTE.get(seg, "ekonomi"), []).append(x)
+        continue
     cats.setdefault(cat, []).extend(items)
 # Okul tatili kategorisi: arama sonuçları + tüm kategorilerdeki eşleşen başlıklar
 okul = [x for x in cats.get("okul", []) if OKUL_RE.search(x["t"].lower())]
