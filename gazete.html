@@ -91,25 +91,27 @@
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .stick > :last-child { margin-bottom: 0; }
+  html { overflow-anchor: none; }
+  .stick header { margin-bottom: 8px; }
+  .stick .cal { margin-top: 8px; }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="stick">
   <header>
     <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Anasayfa" aria-label="Anasayfa">🏠</a>
     <h1>📜 Resmi Gazete</h1>
     <span style="width:52px"></span>
   </header>
-
-  <div class="stick">
   <div class="status" id="status">Kontrol bilgisi yükleniyor…</div>
   <div class="bar">
     <button id="prev" aria-label="Önceki gün">‹</button>
     <select id="pick"></select>
     <button id="next" aria-label="Sonraki gün">›</button>
   </div>
-  </div>
   <div class="cal" id="cal"></div>
+  </div>
 
   <div id="content"><div class="empty">Yükleniyor…</div></div>
 </div>
@@ -264,7 +266,7 @@ async function init() {
   };
   // Aşağı kaydırınca takvim tek haftaya iner, en üste dönünce ay görünümü geri gelir
   window.addEventListener("scroll", () => {
-    if (false) { calCompact = true; renderCal(); }
+    if (!calCompact && window.scrollY > 80) { calCompact = true; renderCal(); }
     else if (calCompact && window.scrollY < 6) { calCompact = false; calY = +(weekRef || selDate).slice(0, 4); calM = +(weekRef || selDate).slice(5, 7) - 1; renderCal(); }
   }, { passive: true });
   renderStatus();
