@@ -226,6 +226,11 @@
       <div><div class="t">Takvim</div><div class="d">Resmi ve dini günler, iş günü hesabı</div></div>
       <div class="arrow">›</div>
     </a>
+    <a class="game" href="ajanda.html">
+      <div class="icon">🗓️</div>
+      <div><div class="t">Ajanda</div><div class="d" id="ajD">Kişisel notlar, görevler, randevular</div></div>
+      <div class="arrow">›</div>
+    </a>
     <a class="game" href="oyunlar.html">
       <div class="icon">🎮</div>
       <div><div class="t">Oyunlar</div><div class="d">Batak, King, Solitaire, UçUç…</div></div>
@@ -249,10 +254,12 @@
     // Alt satır: birkaç saniyede bir yumuşakça değişir
     (function () {
       const el = document.getElementById("welcome"), n = new Date(), wd = n.getDay() > 0 && n.getDay() < 6 && n.getHours() >= 8 && n.getHours() < 18;
-      const L = ["Hoş geldiniz", "Keyifli gezinmeler", ...(wd ? ["İyi çalışmalar"] : [])];
+      const ONR = "Öneri ve isteklerinizi en alttan iletebilirsiniz ✉️";
+      const L = ["Hoş geldiniz", "Keyifli gezinmeler", ...(wd ? ["İyi çalışmalar"] : []), ONR];
+      el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); });
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       let k = 0;
-      setInterval(() => { el.classList.add("fade"); setTimeout(() => { k = (k + 1) % L.length; el.textContent = L[k]; el.classList.remove("fade"); }, 600); }, 4500);
+      setInterval(() => { el.classList.add("fade"); setTimeout(() => { k = (k + 1) % L.length; el.textContent = L[k]; el.style.cursor = L[k] === ONR ? "pointer" : ""; el.classList.remove("fade"); }, 600); }, 4500);
     })();
     // Saat ve tarih
     const AY = ["OCAK", "ŞUBAT", "MART", "NİSAN", "MAYIS", "HAZİRAN", "TEMMUZ", "AĞUSTOS", "EYLÜL", "EKİM", "KASIM", "ARALIK"];
@@ -282,6 +289,10 @@
       }
     };
     tick(); setInterval(tick, 1000);
+    // Ajanda kartı: bugünkü açık kayıt sayısı
+    try { const A = JSON.parse(localStorage.getItem("ajanda_v1") || "[]"), tk = new Date(), k = `${tk.getFullYear()}-${String(tk.getMonth() + 1).padStart(2, "0")}-${String(tk.getDate()).padStart(2, "0")}`;
+      const t = A.filter((x) => !x.done && x.d === k).length, l = A.filter((x) => !x.done && x.d < k).length;
+      if (t || l) document.getElementById("ajD").textContent = [t ? `Bugün ${t} kayıt` : "", l ? `${l} geciken` : ""].filter(Boolean).join(" · "); } catch (e) {}
     // Takvim kutusuna dokununca Takvim sayfası açılır
     document.querySelectorAll(".datec").forEach((el) => { el.setAttribute("role", "link"); el.title = "Takvim"; el.addEventListener("click", () => (location.href = "takvim.html")); });
     const top = document.getElementById("top"), bar = document.getElementById("bar");
