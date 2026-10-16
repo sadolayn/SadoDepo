@@ -60,7 +60,11 @@
   .legend .l4::before { background: #222; }
   .detail { font-size: 14px; line-height: 1.5; min-height: 22px; }
   .detail b { color: var(--accent); }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .ozet { font-size: 12.5px; color: var(--muted); text-align: center; margin-top: 8px; line-height: 1.5; }
+  .ozet b { color: var(--ink); }
+  .ozet.kalan { margin-top: 6px; padding: 8px 10px; border-radius: 10px; background: var(--field); color: var(--ink); }
+  .ozet.kalan:empty { display: none; }
   .stat { background: var(--field); border-radius: 12px; padding: 10px; text-align: center; }
   .stat b { display: block; font-size: 22px; }
   .stat span { font-size: 11px; color: var(--muted); }
@@ -112,7 +116,7 @@
   .sh .mhead .mt { cursor: pointer; }
   .sh .dows { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 0 15px; }
   .sh .yearsel { margin-bottom: 6px; }
-  .mstat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .mstat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
   .mstat div { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 6px 4px; text-align: center; font-size: 11px; color: var(--muted); }
   .mstat b { display: block; font-size: 17px; color: var(--ink); }
   .mstat .w b { color: var(--work); } .mstat .h b { color: var(--hol); } .mstat .f b { color: var(--half); }
@@ -156,7 +160,9 @@
   </div>
   <div class="sh" data-sh="yil">
     <div class="yearsel" id="yearsel2"></div>
-    <div class="mstat"><div class="w"><b id="yWork">0</b>İş günü</div><div class="h"><b id="yHol">0</b>Hafta içi tatil</div><div class="f"><b id="yHalf">0</b>Yarım gün</div></div>
+    <div class="mstat"><div class="w"><b id="yWork">0</b>İş günü</div><div class="h"><b id="yHol">0</b>Hafta içi tatil</div><div class="f"><b id="yHalf">0</b>Yarım gün</div><div class="e"><b id="yWe">0</b>Hafta sonu</div></div>
+    <div class="ozet" id="yTot"></div>
+    <div class="ozet kalan" id="yKalan"></div>
   </div>
   <div class="sh" data-sh="hesap">
     <div class="hbar"><div><span id="hb1l">Tarihler arası</span><b id="hb1">–</b></div><div><span id="hb2l">İş günü sonrası</span><b id="hb2">–</b></div></div>
@@ -181,7 +187,10 @@
         <div class="stat"><b id="sWork">0</b><span>İş günü</span></div>
         <div class="stat"><b id="sHol">0</b><span>Tatil (hafta içi)</span></div>
         <div class="stat"><b id="sHalf">0</b><span>Yarım gün</span></div>
+        <div class="stat"><b id="sWe">0</b><span>Hafta sonu</span></div>
       </div>
+      <div class="ozet" id="sTot"></div>
+      <div class="ozet kalan" id="sKalan"></div>
       <div class="list" id="mList" style="margin-top:8px"></div>
     </div>
   </section>
@@ -235,7 +244,7 @@
 
 <script>
 // ================= Veri =================
-const YEARS = [2026, 2027];
+const YEARS = [2026, 2027, 2028];
 const FIXED = [
   ["01-01", "Yılbaşı", "tam"],
   ["04-23", "Ulusal Egemenlik ve Çocuk Bayramı", "tam"],
@@ -269,6 +278,17 @@ const RELIGIOUS = {
     ["05-18", "Kurban Bayramı 3. gün", "tam"],
     ["05-19", "Kurban Bayramı 4. gün", "tam"],
   ],
+  2028: [
+    ["02-25", "Ramazan Bayramı arifesi", "yarim"],
+    ["02-26", "Ramazan Bayramı 1. gün", "tam"],
+    ["02-27", "Ramazan Bayramı 2. gün", "tam"],
+    ["02-28", "Ramazan Bayramı 3. gün", "tam"],
+    ["05-04", "Kurban Bayramı arifesi", "yarim"],
+    ["05-05", "Kurban Bayramı 1. gün", "tam"],
+    ["05-06", "Kurban Bayramı 2. gün", "tam"],
+    ["05-07", "Kurban Bayramı 3. gün", "tam"],
+    ["05-08", "Kurban Bayramı 4. gün", "tam"],
+  ],
 };
 // Tatil olmayan dini günler (Diyanet)
 const DINI = {
@@ -283,6 +303,7 @@ const DINI = {
     ["12-10", "Üç Ayların başlangıcı · Regaip Kandili"],
   ],
   2027: [],
+  2028: [],
 };
 
 // Tarih anahtarı → kayıtlar
@@ -318,6 +339,16 @@ function workValue(d, halfVal) {
   return 1;
 }
 const inRange = (d) => YEARS.includes(d.getFullYear());
+// İki tarih arası (dahil) gün dağılımı: iş günü (yarım günler dahil), hafta içi tatil, yarım gün, hafta sonu
+function sayGun(a, b) {
+  const o = { work: 0, hol: 0, half: 0, we: 0, total: 0 };
+  for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) {
+    const i = info(d); o.total++;
+    if (i.we) o.we++; else if (i.full) o.hol++; else { o.work++; if (i.half) o.half++; }
+  }
+  return o;
+}
+const ozetHTML = (o) => `<b style="color:var(--work)">${o.work}</b> iş günü${o.half ? ` <span style="color:var(--half)">(${o.half} yarım)</span>` : ""} · <b>${o.we}</b> hafta sonu${o.hol ? ` · <b style="color:var(--hol)">${o.hol}</b> resmî/dinî tatil` : ""}`;
 
 // ================= Aylık görünüm =================
 const today = new Date(); today.setHours(12, 0, 0, 0);
@@ -359,6 +390,11 @@ function renderMonth() {
   $("sWork").textContent = work;
   $("sHol").textContent = hol;
   $("sHalf").textContent = halfC;
+  const weC = days - work - hol;
+  $("sWe").textContent = weC;
+  $("sTot").innerHTML = `${work} iş günü + ${hol} hafta içi tatil + ${weC} hafta sonu = <b>${days} gün</b>${halfC ? ` · yarım günler iş gününe dahil` : ""}`;
+  const mEnd = new Date(y, m + 1, 0, 12), mStart = new Date(y, m, 1, 12);
+  $("sKalan").innerHTML = mEnd < today ? "" : `⏳ ${mStart > today ? "Ayın tamamı" : "Bugünden ay sonuna"} (${sayGun(mStart > today ? mStart : today, mEnd).total} gün): ${ozetHTML(sayGun(mStart > today ? mStart : today, mEnd))}`;
   $("sumTitle").textContent = `${MONTHS[m]} ${y} özeti`;
   $("mList").innerHTML = monthItems.length ? monthItems.map((x) => itemHTML(x)).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmi tatil ya da dini gün yok.</div>';
 }
@@ -408,7 +444,7 @@ function calc1() {
     ["Hafta içi resmi tatil", hol],
     ["Yarım gün (arife)", half],
   ].map(([k, v]) => `<div><span>${k}</span><span>${v}</span></div>`).join("") +
-    (outside ? `<div><span style="color:var(--half)">Not</span><span style="color:var(--half);font-size:12px;text-align:right">2026–2027 dışındaki bayramlar hesaba katılmadı</span></div>` : "");
+    (outside ? `<div><span style="color:var(--half)">Not</span><span style="color:var(--half);font-size:12px;text-align:right">2026–2028 dışındaki bayramlar hesaba katılmadı</span></div>` : "");
 }
 function calc2() {
   if (!$("h2a").value) return;
@@ -429,7 +465,7 @@ function calc2() {
   $("h2q").querySelectorAll("button").forEach((b) => b.classList.toggle("active", Number(b.textContent) === n));
   $("h2rows").innerHTML = `<div><span>Gün</span><span>${d.toLocaleDateString("tr-TR", { weekday: "long" })}</span></div>` +
     (skipped.length ? `<div style="display:block"><span>Atlanan tatiller</span><br><span style="font-size:13px;color:var(--ink)">${skipped.join("<br>")}</span></div>` : "") +
-    (outside ? `<div><span style="color:var(--half)">Not</span><span style="color:var(--half);font-size:12px;text-align:right">2026–2027 dışındaki bayramlar hesaba katılmadı</span></div>` : "");
+    (outside ? `<div><span style="color:var(--half)">Not</span><span style="color:var(--half);font-size:12px;text-align:right">2026–2028 dışındaki bayramlar hesaba katılmadı</span></div>` : "");
 }
 ["h1a", "h1b", "hHalf"].forEach((x) => $(x).addEventListener("input", () => { calc1(); calc2(); }));
 ["h2a", "h2n", "h2dir"].forEach((x) => $(x).addEventListener("input", calc2));
@@ -474,7 +510,7 @@ function renderList() {
   const seen = new Set();
   for (const x of items) if (x.type === "tam" && !seen.has(keyOf(x.dt))) { seen.add(keyOf(x.dt)); if (x.dt.getDay() % 6 !== 0) wd++; }
   const shown = items.filter((x) => listF === "all" ? true : listF === "up" ? x.dt >= today : x.type === listF);
-  const note = listYear === 2027 && !DINI[2027].length ? '<div style="font-size:12px;color:var(--muted);padding:8px 0 4px">2027 kandil tarihleri Diyanet takvimi netleşince eklenecek.</div>' : "";
+  const note = !(DINI[listYear] || []).length ? `<div style="font-size:12px;color:var(--muted);padding:8px 0 4px">${listYear} kandil tarihleri Diyanet takvimi netleşince eklenecek.</div>` : "";
   $("yList").innerHTML = `<div style="font-size:13px;color:var(--muted);padding-bottom:6px">${listYear} yılında hafta içine denk gelen <b style="color:var(--hol)">${wd}</b> tam gün tatil var.</div>` + shown.map((x) => itemHTML(x, nx && keyOf(x.dt) === keyOf(nx.dt) && x.name === nx.name)).join("") +
     (shown.length ? "" : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu filtrede gün yok.</div>') + note;
 }
@@ -520,6 +556,12 @@ function renderYear() {
   }));
   $("ySumTitle").textContent = "";
   $("yWork").textContent = tw; $("yHol").textContent = th; $("yHalf").textContent = thf;
+  const yDays = (new Date(yYear + 1, 0, 1) - new Date(yYear, 0, 1)) / 864e5, yWe = Math.round(yDays) - tw - th;
+  $("yWe").textContent = yWe;
+  $("yTot").innerHTML = `${tw} iş günü + ${th} hafta içi tatil + ${yWe} hafta sonu = <b>${Math.round(yDays)} gün</b>${thf ? ` · ${thf} yarım gün iş gününe dahil` : ""}`;
+  const yEnd = new Date(yYear, 11, 31, 12), yStart = new Date(yYear, 0, 1, 12);
+  if (yEnd < today) $("yKalan").innerHTML = "";
+  else { const st = yStart > today ? yStart : today, o = sayGun(st, yEnd); $("yKalan").innerHTML = `⏳ ${yStart > today ? "Yılın tamamı" : "Bugünden yıl sonuna"} (${o.total} gün): ${ozetHTML(o)}`; }
 }
 
 // ================= Sekmeler ve başlangıç =================
