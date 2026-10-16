@@ -65,7 +65,8 @@ def parse_date(s):
     return d
 
 def fetch(args):
-    cat, src, url = args
+    cat, src, url = args[:3]
+    max_age = args[3] if len(args) > 3 else MAX_AGE
     try:
         req = urllib.request.Request(url, headers=UA)
         raw = urllib.request.urlopen(req, timeout=20).read()
@@ -87,7 +88,7 @@ def fetch(args):
                 l = it.find(f"{ns}link"); link = l.get("href") if l is not None else ""
             d = parse_date(text(it.find("pubDate")) or text(it.find(f"{ns}updated")) or text(it.find(f"{ns}published")) or text(it.find("{http://purl.org/dc/elements/1.1/}date")))
             if not t or not link.startswith("http"): continue
-            if d and (d > NOW + dt.timedelta(hours=1) or NOW - d > MAX_AGE): continue
+            if d and (d > NOW + dt.timedelta(hours=1) or NOW - d > max_age): continue
             out.append({"t": t[:220], "s": src_name, "u": link, "d": d.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if d else None})
         return cat, src, out, None
     except Exception as e:
@@ -116,6 +117,19 @@ jobs = [(c, s, u) for c, lst in FEEDS.items() for s, u in lst] + [("okul", s, u)
 EKONOMIM = ("Ekonomim", "https://www.ekonomim.com/rss")
 EKONOMIM_ROUTE = {"gundem": "gundem", "dunya": "dunya", "teknoloji": "teknoloji", "spor": "spor"}  # gerisi (ekonomi, finans, piyasa…) → ekonomi
 jobs += [("_ekonomim", *EKONOMIM)]
+
+# ---------- Yazarlar ----------
+# Yeni yazar eklemek için listeye bir satır ekle: (kısa ad, görünen ad, Google Haberler araması, [ek RSS akışları])
+YAZARLAR = [
+  ("mahfi", "Mahfi Eğilmez", '"Mahfi Eğilmez"', [("Kendi Kendine Ekonomi", "https://www.mahfiegilmez.com/feeds/posts/default?alt=rss")]),
+  ("aliekber", "Ali Ekber Yıldırım", '"Ali Ekber Yıldırım"', []),
+  ("irfan", "İrfan Donat", '"İrfan Donat"', []),
+  ("ece", "Ece Üner", '"Ece Üner"', []),
+]
+YAZAR_AGE = dt.timedelta(days=14)
+GNY = lambda q: "https://news.google.com/rss/search?q=" + urllib.parse.quote(q + " when:14d") + "&hl=tr&gl=TR&ceid=TR:tr"
+for k, n, q, extra in YAZARLAR:
+    jobs += [("_y_" + k, "Google Haberler", GNY(q), YAZAR_AGE)] + [("_y_" + k, s, u, YAZAR_AGE) for s, u in extra]
 with ThreadPoolExecutor(12) as ex:
     res = list(ex.map(fetch, jobs))
 
@@ -125,6 +139,8 @@ ok_src = {}
 for cat, src, items, err in res:
     if err: print(f"::warning::{cat}/{src}: {err}")
     else: ok_src.setdefault(cat, []).append(f"{src}:{len(items)}")
+    if cat.startswith("_y_"):
+        cats.setdefault(cat, []).extend(items); continue
     if cat == "_ekonomim":
         for x in items:
             seg = urllib.parse.urlparse(x["u"]).path.strip("/").split("/")[0]
@@ -149,6 +165,14 @@ yz = [x for x in cats.get("yz", []) if YZ_RE.search(low(x["t"]))]
 for c, items in cats.items():
     if c not in ("yz", "okul", "tarim"): yz += [x for x in items if YZ_RE.search(low(x["t"]))]
 cats["yz"] = yz
+yazarlar = []
+for k, n, q, extra in YAZARLAR:
+    seen, lst = set(), []
+    for x in sorted(cats.pop("_y_" + k, []), key=lambda x: x["d"] or "", reverse=True):
+        key = norm(x["t"])[:70]
+        if key in seen or x["u"] in seen: continue
+        seen.add(key); seen.add(x["u"]); lst.append(x)
+    yazarlar.append({"k": k, "n": n, "items": lst[:30]})
 for cat, items in cats.items():
     seen, uniq = set(), []
     items.sort(key=lambda x: x["d"] or "", reverse=True)
@@ -166,5 +190,6 @@ print("::notice::" + " | ".join(f"{c}: {', '.join(v)}" for c, v in ok_src.items(
 total = sum(len(v) for v in cats.values())
 if total < 20: sys.exit(f"::error::Çok az haber ({total})")
 os.makedirs("data", exist_ok=True)
-json.dump({"updated": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"), "cats": cats}, open("data/haberler.json", "w"), ensure_ascii=False, separators=(",", ":"))
+print("::notice::yazarlar: " + ", ".join(f"{y['n']}:{len(y['items'])}" for y in yazarlar))
+json.dump({"updated": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"), "cats": cats, "yazarlar": yazarlar}, open("data/haberler.json", "w"), ensure_ascii=False, separators=(",", ":"))
 print("yazıldı", total)
