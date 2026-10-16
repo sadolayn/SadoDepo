@@ -172,22 +172,15 @@
   .tswarn { grid-column: 1 / -1; background: rgba(239,138,93,.12); border: 1px solid #ef8a5d; color: #f3b394; border-radius: 12px; padding: 9px 12px; font-size: 13px; line-height: 1.4; }
   .tswarn b { color: #ffd2bd; }
   .tsum .ts.wide2 { grid-column: 1 / -1; }
-  .tcplan td { white-space: nowrap; }
-  @media print {
-    body.pr-tic { background: #fff !important; padding: 0 !important; }
-    body.pr-tic * { visibility: hidden !important; }
-    body.pr-tic #tc_doc, body.pr-tic #tc_doc * { visibility: visible !important; color: #000 !important; background: transparent !important; border-color: #999 !important; }
-    body.pr-tic #tc_doc { position: absolute; left: 0; top: 0; width: 100%; border: none !important; padding: 0 !important; font-family: "Times New Roman", serif; }
-    body.pr-tic #tc_doc .rows div { padding: 2px 0 !important; border: none !important; }
-    body.pr-tic #tc_doc table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
-    body.pr-tic #tc_doc th { background: #555 !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    body.pr-tic #tc_doc td, body.pr-tic #tc_doc th { border: 1px solid #999 !important; padding: 2px 5px !important; }
-    body.pr-tic #tc_doc tr.tot td { background: #f4e9a6 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    body.pr-tic #tc_doc summary, body.pr-tic #tc_print { display: none !important; }
-    body.pr-tic #tc_doc .tbl { overflow: visible !important; }
-    @page { size: A4; margin: 12mm 10mm; }
-    body.pr-tic #tc_doc .big b { font-size: 18px; }
-  }
+  .two input[type="date"] { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
+  .two > div { min-width: 0; }
+  /* Banka formatında ödeme planı */
+  table.bankplan { font-size: 11.5px; border: 1px solid #3a3a3a; }
+  table.bankplan th { background: #4a4a4a; color: #fff; font-weight: 700; text-align: center; border: 1px solid #5a5a5a; padding: 5px 4px; line-height: 1.15; position: static; }
+  table.bankplan td { border: 1px solid #2c2c2c; padding: 4px 6px; }
+  table.bankplan td:nth-child(2) { text-align: center; }
+  table.bankplan tr:nth-child(odd) td { background: rgba(255,255,255,.035); }
+  table.bankplan tr.tot td { background: #3a3414; color: #f4e9a6; font-weight: 700; }
   .tscopy { grid-column: 1 / -1; background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 10px; padding: 9px; font: inherit; font-size: 14px; cursor: pointer; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
   th, td { padding: 6px 4px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
@@ -353,6 +346,11 @@
         <div><label>Aylık faiz</label><div class="field"><input id="t_faiz" type="text" inputmode="decimal" value="3,90"><span class="unit">%</span></div></div>
         <div><label>Vade</label><div class="field"><input id="t_vade" type="text" inputmode="numeric" value="24"><span class="unit">ay</span></div></div>
       </div>
+      <div class="two">
+        <div><label>Kullandırım tarihi</label><input id="t_bas" type="date" style="color-scheme:dark"></div>
+        <div><label>İlk taksit tarihi</label><input id="t_ilk" type="date" style="color-scheme:dark"></div>
+      </div>
+      <p class="hint" id="t_dnote" style="margin-top:6px">İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı.</p>
       <div class="rbox" id="t_rate"></div>
       <div id="t_sum" class="tsum">
         <div class="tswarn" id="ts_warn" hidden></div>
@@ -367,11 +365,6 @@
         <div><label>BSMV</label><div class="field"><input id="t_bsmv" type="text" inputmode="decimal" value="15"><span class="unit">%</span></div></div>
         <div><label>KKDF</label><div class="field"><input id="t_kkdf" type="text" inputmode="decimal" value="15"><span class="unit">%</span></div></div>
       </div>
-      <div class="two">
-        <div><label>Kullandırım tarihi</label><input id="t_bas" type="date" style="color-scheme:dark"></div>
-        <div><label>İlk taksit tarihi</label><input id="t_ilk" type="date" style="color-scheme:dark"></div>
-      </div>
-      <p class="hint" id="t_dnote" style="margin-top:6px">İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı.</p>
       <div class="two">
         <div><label>Tahsis ücreti</label><div class="field"><input id="t_tahsis" type="text" inputmode="decimal" value="5"><span class="unit">‰</span></div></div>
         <div><label>Diğer masraf</label><div class="field"><input id="t_ucret" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
@@ -390,7 +383,7 @@
       <details>
         <summary>Ödeme planını göster</summary>
         <div class="rows" id="t_prows" style="margin-top:8px"></div>
-        <div class="tbl" style="margin-top:8px"><table id="t_plan"></table></div>
+        <div class="tbl" style="margin-top:8px"><table id="t_plan" class="bankplan"></table></div>
       </details>
     </div>
     <div class="card">
@@ -440,6 +433,11 @@
         <div><label>Aylık faiz</label><div class="field"><input id="k2_faiz" type="text" inputmode="decimal" value="3,10"><span class="unit">%</span></div></div>
         <div><label>Vade</label><div class="field"><input id="k2_vade" type="text" inputmode="numeric" value="120"><span class="unit">ay</span></div></div>
       </div>
+      <div class="two">
+        <div><label>Kullandırım tarihi</label><input id="k2_bas" type="date" style="color-scheme:dark"></div>
+        <div><label>İlk taksit tarihi</label><input id="k2_ilk" type="date" style="color-scheme:dark"></div>
+      </div>
+      <p class="hint" id="k2_dnote" style="margin-top:6px"></p>
       <div class="rbox" id="k2_rate"></div>
       <div class="tsum">
         <div class="tswarn" id="k2s_warn" hidden></div>
@@ -451,11 +449,6 @@
         <button type="button" id="k2s_copy" class="tscopy">📋 Müşteriye özet kopyala</button>
       </div>
       <p class="hint">Konut kredileri BSMV ve KKDF'den muaftır; taksitler yalnızca faiz üzerinden eşit ödemeli hesaplanır.</p>
-      <div class="two">
-        <div><label>Kullandırım tarihi</label><input id="k2_bas" type="date" style="color-scheme:dark"></div>
-        <div><label>İlk taksit tarihi</label><input id="k2_ilk" type="date" style="color-scheme:dark"></div>
-      </div>
-      <p class="hint" id="k2_dnote" style="margin-top:6px"></p>
       <div class="two">
         <div><label>Tahsis ücreti</label><div class="field"><input id="k2_tahsis" type="text" inputmode="decimal" value="0,5"><span class="unit">%</span></div></div>
         <div><label>Diğer masraf</label><div class="field"><input id="k2_masraf" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
@@ -488,7 +481,7 @@
       </details>
       <details>
         <summary>Aylık ödeme planı</summary>
-        <div class="tbl"><table id="k2_mplan"></table></div>
+        <div class="tbl"><table id="k2_mplan" class="bankplan"></table></div>
       </details>
       <p class="note" id="k2_note"></p>
     </div>
@@ -549,36 +542,31 @@
         <div><label>Aylık faiz</label><div class="field"><input id="tc_faiz" type="text" inputmode="decimal" value="4,05"><span class="unit">%</span></div></div>
         <div><label>Taksit sayısı</label><div class="field"><input id="tc_vade" type="text" inputmode="numeric" value="36"><span class="unit">ay</span></div></div>
       </div>
-      <div class="tsum">
-        <div class="ts main"><span>Taksit tutarı</span><b id="tcs_taksit">–</b><i id="tcs_ilk"></i></div>
-        <div class="ts"><span>Toplam faiz</span><b id="tcs_faiz">–</b></div>
-        <div class="ts"><span>Toplam vergi ve fon</span><b id="tcs_vergi">–</b></div>
-        <div class="ts"><span>Geri ödenecek toplam</span><b id="tcs_toplam">–</b></div>
-        <div class="ts"><span>Yıllık maliyet oranı</span><b id="tcs_ymo">–</b><i id="tcs_ymoi">ücret ve masraflar hariç</i></div>
-        <button type="button" id="tc_copy" class="tscopy">📋 Müşteriye özet kopyala</button>
-      </div>
       <div class="two">
         <div><label>Kredi veriliş tarihi</label><input id="tc_bas" type="date" style="color-scheme:dark"></div>
         <div><label>Ödeme başlangıç tarihi</label><input id="tc_ilk" type="date" style="color-scheme:dark"></div>
       </div>
       <p class="hint" id="tc_dnote" style="margin-top:6px"></p>
+      <div class="tsum">
+        <div class="ts main"><span>Taksit tutarı</span><b id="tcs_taksit">–</b><i id="tcs_ilk"></i></div>
+        <div class="ts"><span>Toplam faiz</span><b id="tcs_faiz">–</b></div>
+        <div class="ts"><span>Toplam vergi ve fon</span><b id="tcs_vergi">–</b></div>
+        <div class="ts wide2"><span>Geri ödenecek toplam</span><b id="tcs_toplam">–</b></div>
+        <button type="button" id="tc_copy" class="tscopy">📋 Müşteriye özet kopyala</button>
+      </div>
       <div class="two">
         <div><label>BSMV (vergi)</label><div class="field"><input id="tc_bsmv" type="text" inputmode="decimal" value="5"><span class="unit">%</span></div></div>
         <div><label>KKDF (fon)</label><div class="field"><input id="tc_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
       </div>
       <p class="hint">Banka sistemindeki gibi: her taksitte faiz, kalan anapara × aylık faiz × gün/30 ile işler; ilk taksit de diğerleriyle <b>eşittir</b> (kırık dönem taksiti küçültmez, anaparadan düşer). Hafta sonu ve resmî/dinî bayrama denk gelen ödeme ilk iş gününe kayar. Taksitli ticari kredide KKDF %0, BSMV %5'tir.</p>
     </div>
-    <div class="card" id="tc_doc">
-      <h2 class="pr-title">Taksitli Ticari Kredi Ödeme Planı</h2>
-      <div class="rows" id="tc_head"></div>
-      <div class="big" style="margin-top:10px"><span>Taksit tutarı</span><b id="tc_out">–</b></div>
+    <div class="card">
+      <div class="big"><span>Taksit tutarı</span><b id="tc_out">–</b></div>
       <div class="rows" id="tc_rows"></div>
-      <details open>
-        <summary>Ödeme planı</summary>
-        <div class="tbl"><table id="tc_plan" class="tcplan"></table></div>
+      <details>
+        <summary>Ödeme planını göster</summary>
+        <div class="tbl"><table id="tc_plan" class="bankplan"></table></div>
       </details>
-      <p class="note" id="tc_note"></p>
-      <button type="button" id="tc_print" class="tscopy" style="width:100%;margin-top:10px">🖨️ Ödeme planını yazdır / PDF kaydet</button>
     </div>
   </section>
 
@@ -694,7 +682,6 @@
     </div>
   </section>
 
-  <p class="note">Hesaplamalar bilgi amaçlıdır; bankanın uyguladığı oran, masraf ve yuvarlamalara göre gerçek tutarlar farklılık gösterebilir. Vergi oranlarını kendi durumuna göre değiştirebilirsin.</p>
 </div>
 
 <script src="numfmt.js"></script>
@@ -1395,7 +1382,7 @@ function calcTic() {
   const ilk = pDate($("tc_ilk").value);
   const ok = ilk && ilk > bas;
   $("tc_dnote").innerHTML = ok ? `Ödeme günü: her ayın <b>${ilk.getDate()}.</b> günü; hafta sonu ya da bayrama denk gelirse ilk iş günü.` : '<span style="color:#ef8a5d">⚠️ Ödeme başlangıç tarihi kredi veriliş tarihinden sonra olmalı.</span>';
-  const clear = () => { ["tcs_taksit", "tcs_faiz", "tcs_vergi", "tcs_toplam", "tcs_ymo"].forEach((x) => ($(x).textContent = "–")); $("tcs_ilk").textContent = ""; $("tc_out").textContent = "–"; rows("tc_rows", []); rows("tc_head", []); $("tc_plan").innerHTML = ""; $("tc_note").textContent = ""; tcLast = null; tcSummary = ""; };
+  const clear = () => { ["tcs_taksit", "tcs_faiz", "tcs_vergi", "tcs_toplam"].forEach((x) => ($(x).textContent = "–")); $("tcs_ilk").textContent = ""; $("tc_out").textContent = "–"; rows("tc_rows", []); $("tc_plan").innerHTML = ""; tcLast = null; tcSummary = ""; };
   if (!P || !n || n > 600 || !ok) return clear();
   const dues = []; for (let k = 0; k < n; k++) dues.push(nextBiz(addMonthsC(ilk, k)));
   const g = []; let prev = bas; for (const d of dues) { g.push(dayDiff(prev, d)); prev = d; }
@@ -1406,38 +1393,17 @@ function calcTic() {
   for (const c of [-2, -1, 0, 1, 2].map((x) => Math.round(hi * 100 + x) / 100)) { const pl = tcPlan(P, r, g, c, bsmv, kkdf), d = Math.abs(pl[n - 1].t - c); if (d < best - 1e-9) { best = d; T = c; plan = pl; } }
   const sum = (k) => R2(plan.reduce((s, x) => s + x[k], 0));
   const tF = sum("f"), tV = sum("v"), tFo = sum("fo"), top = sum("t");
-  // Yıllık maliyet oranı: ilk dönem gün/30, sonra her taksit 1 ay; (1+aylık)^12 − 1
-  const ex = plan.map((_, k) => g[0] / 30 + k);
-  let a = 0, b = 1; for (let it = 0; it < 120; it++) { const m = (a + b) / 2; const pv = plan.reduce((s, x, k) => s + x.t / Math.pow(1 + m, ex[k]), 0); if (pv > P) a = m; else b = m; }
-  // İlk dönem 30 günü aşarsa banka YMO'yu farklı yöntemle buluyor; o durumda gösterme
-  const ymo = g[0] <= 30 ? (Math.pow(1 + (a + b) / 2, 12) - 1) * 100 : NaN;
   const f4 = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
   $("tc_out").textContent = tl(T);
   $("tcs_taksit").textContent = tl(T);
   $("tcs_ilk").textContent = `${n} taksit · ilk ${shortD(dues[0])}` + (Math.abs(plan[n - 1].t - T) > 0.004 ? ` · son taksit ${tl(plan[n - 1].t)}` : "");
   $("tcs_faiz").textContent = tl(tF); $("tcs_vergi").textContent = tl(tV + tFo); $("tcs_toplam").textContent = tl(top);
-  $("tcs_ymo").textContent = isFinite(ymo) ? "%" + f4(ymo) : "Banka sistemi";
-  $("tcs_ymoi").textContent = isFinite(ymo) ? "ücret ve masraflar hariç" : "ilk dönem 30 günü aşınca bankadan bak";
-  const dd = (x) => shortD(x).replace(/\./g, "-");
-  rows("tc_head", [
-    ["Döviz kodu", "TL"],
-    ["Ödeme planı hazırlama tarihi", dd(new Date())],
-    ["Kredi veriliş tarihi", dd(bas)],
-    ["Ödeme başlangıç tarihi", dd(dues[0])],
-    ["Kredi tutarı", tl(P)],
-    ["Akdi faiz oranı (aylık / yıllık)", `%${nfx(r * 100)} / %${nfx(r * 1200)}`],
-    ["Vergi / fon oranı", `%${nfx(bsmv * 100)} / %${nfx(kkdf * 100)}`],
-    ["Taksit sayısı", String(n)],
-  ]);
-  $("tc_note").innerHTML = (isFinite(ymo) ? "" : "İlk taksit kullandırımdan 30 günden uzun sonra olduğu için yıllık maliyet oranını banka sistemiyle birebir hesaplayamıyoruz; kesin oranı banka sisteminden al. ") +
-    `Yıllık maliyet oranı ödeme planı üzerinden hesaplanır; ücret, masraf ve komisyonlar dahil değildir. Bu plan ${dd(new Date())} tarihindeki vergi/fon oranları ve girilen faizle bilgi amacıyla hazırlanmıştır; kesin plan kullandırımda banka sisteminden alınır.`;
   tcSummary = [
     `Taksitli ticari kredi: ${tl(P)} · ${n} taksit · aylık %${nfx(r * 100)}`,
     `Taksit tutarı: ${tl(T)}` + (Math.abs(plan[n - 1].t - T) > 0.004 ? ` (son taksit ${tl(plan[n - 1].t)})` : ""),
     `Toplam faiz: ${tl(tF)}`,
     `Toplam vergi ve fon: ${tl(tV + tFo)}`,
     `Geri ödenecek toplam: ${tl(top)}`,
-    ...(isFinite(ymo) ? [`Yıllık maliyet oranı: %${f4(ymo)}`] : []),
     `Ödeme başlangıç tarihi: ${shortD(dues[0])} · son taksit: ${shortD(dues[n - 1])}`,
   ].join("\n");
   rows("tc_rows", [
@@ -1447,12 +1413,11 @@ function calcTic() {
     [`Toplam fon (KKDF %${nfx(kkdf * 100)})`, tl(tFo)],
     ["Geri ödenecek toplam", tl(top), "total"],
     ...(Math.abs(plan[n - 1].t - T) > 0.004 ? [["Son taksit", tl(plan[n - 1].t)]] : []),
-    ["Yıllık maliyet oranı", isFinite(ymo) ? "%" + f4(ymo) : "banka sisteminden bak"],
   ]);
-  $("tc_plan").innerHTML = "<tr><th>#</th><th>Vade</th><th>Gün</th><th>Anapara</th><th>Faiz</th><th>Fon</th><th>Vergi</th><th>Taksit</th><th>Kalan</th></tr>" +
+  $("tc_plan").innerHTML = "<tr><th>Sıra<br>No</th><th>Vade</th><th>Fark<br>(Gün)</th><th>Anapara</th><th>Faiz</th><th>Fon</th><th>Vergi</th><th>Taksit Tutarı</th><th>Kalan Anapara</th></tr>" +
     plan.map((x, k) => `<tr><td>${k + 1}</td><td>${shortD(dues[k])}</td><td>${x.g}</td><td>${fmt2(x.a)}</td><td>${fmt2(x.f)}</td><td>${fmt2(x.fo)}</td><td>${fmt2(x.v)}</td><td>${fmt2(x.t)}</td><td>${fmt2(x.b)}</td></tr>`).join("") +
-    `<tr class="tot" style="font-weight:700"><td></td><td>Toplam</td><td></td><td>${fmt2(P)}</td><td>${fmt2(tF)}</td><td>${fmt2(tFo)}</td><td>${fmt2(tV)}</td><td>${fmt2(top)}</td><td></td></tr>`;
-  tcLast = { P, r, n, bsmv, kkdf, bas, ilk: dues[0], dues, plan, T, tF, tV, tFo, top, ymo, f4 };
+    `<tr class="tot"><td></td><td>TOPLAM:</td><td></td><td>${fmt2(P)}</td><td>${fmt2(tF)}</td><td>${fmt2(tFo)}</td><td>${fmt2(tV)}</td><td>${fmt2(top)}</td><td></td></tr>`;
+  tcLast = { P, n, plan };
 }
 $("tc_ilk").addEventListener("input", () => (tcIlkManual = true));
 $("tc_copy").addEventListener("click", () => {
@@ -1460,13 +1425,6 @@ $("tc_copy").addEventListener("click", () => {
   const done = () => { const b = $("tc_copy"); b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = "📋 Müşteriye özet kopyala"), 1500); };
   if (navigator.clipboard) navigator.clipboard.writeText(tcSummary).then(done, () => prompt("Kopyala:", tcSummary));
   else prompt("Kopyala:", tcSummary);
-});
-$("tc_print").addEventListener("click", () => {
-  if (!tcLast) return;
-  const d = $("tc_doc").querySelector("details"); const was = d.open; d.open = true;
-  document.body.classList.add("pr-tic");
-  const done = () => { document.body.classList.remove("pr-tic"); d.open = was; window.removeEventListener("afterprint", done); };
-  window.addEventListener("afterprint", done); window.print();
 });
 
 // ---------- Tarım ----------
