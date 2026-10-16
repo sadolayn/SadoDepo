@@ -1502,7 +1502,7 @@ $("c_isl").value = ymd(new Date());
   function render(pre, v, link, txt) {
     if (v == null) return;
     if (!touched[pre]) { const el = $(pre + "_faiz"); if (num(pre + "_faiz") !== v) { el.value = fmt(v); el.dispatchEvent(new Event("input", { bubbles: true })); } }
-    $(pre + "_rate").innerHTML = `🏦 İş Bankası güncel ${txt}: <b>%${fmt(v)}</b> (${tarih()}) · Oran müşteriye göre değişebilir · <a href="${link}" target="_blank" rel="noopener">isbank.com.tr'de kontrol et ↗</a>`;
+    $(pre + "_rate").innerHTML = `Oranlar müşteriye göre değişebilir · <a href="${link}" target="_blank" rel="noopener">isbank.com.tr'de kontrol et ↗</a>`;
   }
   const all = () => { render("t", first(RT.ihtiyac, "24"), RT.link_ihtiyac, "ihtiyaç kredisi faizi (200.000 TL, 24 ay)"); render("k2", first(RT.konut, "120"), RT.link_konut, "konut kredisi faizi (ilk konut)"); };
   all();
