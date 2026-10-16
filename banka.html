@@ -32,7 +32,7 @@
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header h1 { margin: 0; font-size: 20px; }
   .tabs {
-    display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px;
+    display: grid; grid-template-columns: repeat(20, 1fr); gap: 4px;
     background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px;
     margin-bottom: 14px;
   }
@@ -41,7 +41,8 @@
     padding: 9px 2px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer;
     line-height: 1.2;
   }
-  .tabs button { grid-column: span 3; }
+  .tabs button { grid-column: span 4; }
+  .tabs button:nth-child(n+6) { grid-column: span 5; }
   .tabs button.active { background: var(--accent); color: #000; }
   /* Vergi */
   .vstick { position: sticky; top: var(--stickH, 0px); z-index: 20; background: var(--card); margin: 0 -16px; padding: 6px 16px 2px; }
@@ -218,6 +219,7 @@
     <button data-tab="konut">Konut<br>Kredisi</button>
     <button data-tab="kk">Kart<br>Gecikme</button>
     <button data-tab="tarim">Tarım<br>Kredisi</button>
+    <button data-tab="tic">Taksitli<br>Ticari</button>
     <button data-tab="cek">Çek İskonto<br>&amp; Valör Tespiti</button>
     <button data-tab="vergi">Vergi<br>Takvimi</button>
   </div>
@@ -521,6 +523,45 @@
     <p class="note">KKDF: Tüketici kredilerinde %15, ticari/zirai/mesleki faaliyet için kullandırılan ve bu amacı belgelenen kredilerde %0'dır. Çiftçiler bu amacı ÇKS kaydı, Hayvan Bilgi Sistemi kaydı, ziraat odası çiftçilik belgesi ya da (gerçek usulde) aktife kayıt ve fatura ile belgeleyebilir. BSMV: tüketici kredilerinde %15, diğer kredilerde genel oran uygulanır. Hazine faiz destekli (sübvansiyonlu) tarım kredilerinde faiz oranı ayrıca indirimlidir. Uygulamayı bankanın güncel yönergesiyle teyit et.</p>
   </section>
 
+  <!-- Taksitli ticari kredi -->
+  <section class="panel" id="tic">
+    <div class="card">
+      <h2>Taksitli Ticari Kredi</h2>
+      <label>Kredi tutarı</label>
+      <div class="field"><input id="tc_tutar" type="text" inputmode="decimal" value="150.000"><span class="unit">TL</span></div>
+      <div class="two">
+        <div><label>Aylık faiz</label><div class="field"><input id="tc_faiz" type="text" inputmode="decimal" value="4,05"><span class="unit">%</span></div></div>
+        <div><label>Taksit sayısı</label><div class="field"><input id="tc_vade" type="text" inputmode="numeric" value="36"><span class="unit">ay</span></div></div>
+      </div>
+      <div class="tsum">
+        <div class="ts main"><span>Taksit tutarı</span><b id="tcs_taksit">–</b><i id="tcs_ilk"></i></div>
+        <div class="ts"><span>Toplam faiz</span><b id="tcs_faiz">–</b></div>
+        <div class="ts"><span>Toplam vergi ve fon</span><b id="tcs_vergi">–</b></div>
+        <div class="ts"><span>Geri ödenecek toplam</span><b id="tcs_toplam">–</b></div>
+        <div class="ts"><span>Yıllık maliyet oranı</span><b id="tcs_ymo">–</b><i>ücret ve masraflar hariç</i></div>
+        <button type="button" id="tc_pdf" class="tscopy">📄 Ödeme planı PDF</button>
+      </div>
+      <div class="two">
+        <div><label>Kredi veriliş tarihi</label><input id="tc_bas" type="date" style="color-scheme:dark"></div>
+        <div><label>Ödeme başlangıç tarihi</label><input id="tc_ilk" type="date" style="color-scheme:dark"></div>
+      </div>
+      <p class="hint" id="tc_dnote" style="margin-top:6px"></p>
+      <div class="two">
+        <div><label>BSMV (vergi)</label><div class="field"><input id="tc_bsmv" type="text" inputmode="decimal" value="5"><span class="unit">%</span></div></div>
+        <div><label>KKDF (fon)</label><div class="field"><input id="tc_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
+      </div>
+      <p class="hint">Banka sistemindeki gibi: her taksitte faiz, kalan anapara × aylık faiz × gün/30 ile işler; ilk taksit de diğerleriyle <b>eşittir</b> (kırık dönem taksiti küçültmez, anaparadan düşer). Hafta sonu ve resmî/dinî bayrama denk gelen ödeme ilk iş gününe kayar. Taksitli ticari kredide KKDF %0, BSMV %5'tir.</p>
+    </div>
+    <div class="card">
+      <div class="big"><span>Taksit tutarı</span><b id="tc_out">–</b></div>
+      <div class="rows" id="tc_rows"></div>
+      <details>
+        <summary>Ödeme planını göster</summary>
+        <div class="tbl"><table id="tc_plan"></table></div>
+      </details>
+    </div>
+  </section>
+
   <!-- Çek iskonto & valör -->
   <section class="panel" id="cek">
     <div class="cbar" id="c_bar"><div class="ccmp" id="c_cmp"></div></div>
@@ -652,7 +693,7 @@ function rows(id, list) {
   $(id).innerHTML = list.map(([k, v, cls]) => `<div class="${cls || ""}"><span>${k}</span><span>${v}</span></div>`).join("");
 }
 // Tutar alanlarını binlik ayırıcıyla biçimlendir
-for (const id of ["b_tutar", "m_tutar", "v_min", "t_tutar", "t_ucret", "ao_x", "ys_p", "k_borc", "k_odenen", "k2_deger", "k2_tutar", "k2_masraf", "tr_tutar"]) {
+for (const id of ["b_tutar", "m_tutar", "v_min", "t_tutar", "t_ucret", "ao_x", "ys_p", "k_borc", "k_odenen", "k2_deger", "k2_tutar", "k2_masraf", "tr_tutar", "tc_tutar"]) {
   $(id).addEventListener("blur", () => {
     const n = num(id);
     $(id).value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 });
@@ -920,7 +961,8 @@ function calcMev() {
 // ---------- Tüketici ----------
 // Tatiller (takvim.html ile aynı kaynak): sabit resmi tatiller + bayramlar (tam gün)
 const TK_FIXED = ["01-01", "04-23", "05-01", "05-19", "07-15", "08-30", "10-29"];
-const TK_REL = { 2026: ["03-20", "03-21", "03-22", "05-27", "05-28", "05-29", "05-30"], 2027: ["03-09", "03-10", "03-11", "05-16", "05-17", "05-18", "05-19"] };
+const TK_REL = { 2026: ["03-20", "03-21", "03-22", "05-27", "05-28", "05-29", "05-30"], 2027: ["03-09", "03-10", "03-11", "05-16", "05-17", "05-18", "05-19"],
+  2028: ["02-26", "02-27", "02-28", "05-05", "05-06", "05-07", "05-08"], 2029: ["02-14", "02-15", "02-16", "04-24", "04-25", "04-26", "04-27"] };
 const ymd = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 const pDate = (v) => (v ? new Date(v + "T12:00:00") : null);
 function isHoliday(d) {
@@ -1309,6 +1351,121 @@ function calcKonut() {
   ].join("\n");
   $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.";
 }
+
+// ---------- Taksitli ticari kredi (banka sistemiyle birebir) ----------
+// Faiz = kalan × aylık faiz × gün/30 (gerçek gün, kayan tarihlerle), vergi/fon faiz üzerinden.
+// Taksit eşit; kuruşa yukarı yuvarlanır, son taksit kalan anaparayı kapatır.
+let tcIlkManual = false, tcLast = null;
+function tcPlan(P, r, g, T, bsmv, kkdf) {
+  let b = P; const out = [];
+  for (let k = 0; k < g.length; k++) {
+    const f = R2(b * r * g[k] / 30), v = R2(f * bsmv), fo = R2(f * kkdf);
+    let a = R2(T - f - v - fo), t = T;
+    if (k === g.length - 1) { a = b; t = R2(a + f + v + fo); }
+    b = R2(b - a); out.push({ g: g[k], a, f, v, fo, t, b });
+  }
+  return out;
+}
+function calcTic() {
+  const P = num("tc_tutar"), r = num("tc_faiz") / 100, n = Math.round(num("tc_vade"));
+  const bsmv = num("tc_bsmv") / 100, kkdf = num("tc_kkdf") / 100;
+  const bas = pDate($("tc_bas").value) || new Date();
+  if (!$("tc_bas").value) $("tc_bas").value = ymd(bas);
+  if (!tcIlkManual || !$("tc_ilk").value) $("tc_ilk").value = ymd(addMonthsC(bas, 1));
+  const ilk = pDate($("tc_ilk").value);
+  const ok = ilk && ilk > bas;
+  $("tc_dnote").innerHTML = ok ? `Ödeme günü: her ayın <b>${ilk.getDate()}.</b> günü; hafta sonu ya da bayrama denk gelirse ilk iş günü.` : '<span style="color:#ef8a5d">⚠️ Ödeme başlangıç tarihi kredi veriliş tarihinden sonra olmalı.</span>';
+  const clear = () => { ["tcs_taksit", "tcs_faiz", "tcs_vergi", "tcs_toplam", "tcs_ymo"].forEach((x) => ($(x).textContent = "–")); $("tcs_ilk").textContent = ""; $("tc_out").textContent = "–"; rows("tc_rows", []); $("tc_plan").innerHTML = ""; tcLast = null; };
+  if (!P || !n || n > 600 || !ok) return clear();
+  const dues = []; for (let k = 0; k < n; k++) dues.push(nextBiz(addMonthsC(ilk, k)));
+  const g = []; let prev = bas; for (const d of dues) { g.push(dayDiff(prev, d)); prev = d; }
+  // taksiti bul: son taksit ≈ diğerleri olacak şekilde, sonra kuruşa yukarı yuvarla
+  let lo = 0, hi = P * 2 + 1; for (let it = 0; it < 80; it++) { const m = (lo + hi) / 2; const pl = tcPlan(P, r, g, m, bsmv, kkdf); if (pl[n - 1].t > m) lo = m; else hi = m; }
+  const T = Math.ceil(R2(hi * 100) - 1e-6) / 100;
+  const plan = tcPlan(P, r, g, T, bsmv, kkdf);
+  const sum = (k) => R2(plan.reduce((s, x) => s + x[k], 0));
+  const tF = sum("f"), tV = sum("v"), tFo = sum("fo"), top = sum("t");
+  // Yıllık maliyet oranı: ilk dönem gün/30, sonra her taksit 1 ay; (1+aylık)^12 − 1
+  const ex = plan.map((_, k) => g[0] / 30 + k);
+  let a = 0, b = 1; for (let it = 0; it < 120; it++) { const m = (a + b) / 2; const pv = plan.reduce((s, x, k) => s + x.t / Math.pow(1 + m, ex[k]), 0); if (pv > P) a = m; else b = m; }
+  const ymo = (Math.pow(1 + (a + b) / 2, 12) - 1) * 100;
+  const f4 = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+  $("tc_out").textContent = tl(T);
+  $("tcs_taksit").textContent = tl(T);
+  $("tcs_ilk").textContent = `${n} taksit · ilk ${shortD(dues[0])}` + (Math.abs(plan[n - 1].t - T) > 0.004 ? ` · son taksit ${tl(plan[n - 1].t)}` : "");
+  $("tcs_faiz").textContent = tl(tF); $("tcs_vergi").textContent = tl(tV + tFo); $("tcs_toplam").textContent = tl(top); $("tcs_ymo").textContent = "%" + f4(ymo);
+  rows("tc_rows", [
+    ["İlk / son taksit", `${shortD(dues[0])} · ${shortD(dues[n - 1])}`],
+    ["Akdi faiz (aylık / yıllık)", `%${nfx(r * 100)} / %${nfx(r * 1200)}`],
+    ["Toplam faiz", tl(tF)],
+    [`Toplam vergi (BSMV %${nfx(bsmv * 100)})`, tl(tV)],
+    [`Toplam fon (KKDF %${nfx(kkdf * 100)})`, tl(tFo)],
+    ["Geri ödenecek toplam", tl(top), "total"],
+    ...(Math.abs(plan[n - 1].t - T) > 0.004 ? [["Son taksit", tl(plan[n - 1].t)]] : []),
+    ["Yıllık maliyet oranı", "%" + f4(ymo)],
+  ]);
+  $("tc_plan").innerHTML = "<tr><th>#</th><th>Vade</th><th>Gün</th><th>Anapara</th><th>Faiz</th><th>Fon</th><th>Vergi</th><th>Taksit</th><th>Kalan</th></tr>" +
+    plan.map((x, k) => `<tr><td>${k + 1}</td><td>${shortD(dues[k])}</td><td>${x.g}</td><td>${fmt2(x.a)}</td><td>${fmt2(x.f)}</td><td>${fmt2(x.fo)}</td><td>${fmt2(x.v)}</td><td>${fmt2(x.t)}</td><td>${fmt2(x.b)}</td></tr>`).join("") +
+    `<tr style="font-weight:700"><td></td><td>Toplam</td><td></td><td>${fmt2(P)}</td><td>${fmt2(tF)}</td><td>${fmt2(tFo)}</td><td>${fmt2(tV)}</td><td>${fmt2(top)}</td><td></td></tr>`;
+  tcLast = { P, r, n, bsmv, kkdf, bas, ilk: dues[0], dues, plan, T, tF, tV, tFo, top, ymo, f4 };
+}
+function tcPdf() {
+  const L = tcLast; if (!L) return;
+  const d = (x) => shortD(x).replace(/\./g, "-"), f = fmt2;
+  const today = d(new Date());
+  const w = window.open("", "_blank"); if (!w) { alert("Açılır pencereye izin ver, sonra tekrar dene."); return; }
+  w.document.write(`<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>OdemePlani</title><style>
+    @page { size: A4; margin: 14mm 12mm; }
+    body { font-family: "Times New Roman", Times, serif; color: #000; font-size: 12.5px; margin: 0; }
+    h1 { font-size: 15px; margin: 0 0 6px; font-weight: 700; letter-spacing: .3px; }
+    .hd div { margin: 3px 0; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; font-size: 11.5px; }
+    th { background: #555; color: #fff; font-weight: 700; padding: 5px 4px; border: 1px solid #444; }
+    td { border: 1px solid #999; padding: 3px 6px; text-align: right; }
+    td:nth-child(1), td:nth-child(2) { text-align: center; }
+    tr:nth-child(even) td { background: #f3f3f3; }
+    tr.tot td { background: #f4e9a6; font-weight: 700; }
+    .sum { margin-top: 16px; font-size: 13.5px; } .sum div { margin: 5px 0; }
+    .note { margin-top: 16px; font-size: 12.5px; line-height: 1.5; }
+    .bar { position: sticky; top: 0; background: #fffbe8; border-bottom: 1px solid #ddd; padding: 8px; text-align: center; font-family: system-ui, sans-serif; }
+    .bar button { font: inherit; font-size: 14px; padding: 7px 16px; border-radius: 8px; border: 1px solid #c90; background: #e0a24f; cursor: pointer; }
+    @media print { .bar { display: none; } }
+    .pg { padding: 18px 22px; }
+  </style></head><body>
+  <div class="bar"><button onclick="print()">🖨️ Yazdır / PDF olarak kaydet</button></div>
+  <div class="pg">
+  <h1>TAKSİTLİ TİCARİ KREDİ ÖDEME PLANI</h1>
+  <div class="hd">
+    <div>DVZ KODU TL</div>
+    <div>Ödeme Planı Hazırlama Tarihi : ${today}</div>
+    <div>Kredi Veriliş Tarihi : ${d(L.bas)}</div>
+    <div>Ödeme Başlangıç Tarihi : ${d(L.ilk)}</div>
+    <div>Kredi Tutarı : ${f(L.P)} TL</div>
+    <div>Akdi Faiz Oranı (%) (Aylık) : ${L.f4(L.r * 100).replace(/0$/, "")}</div>
+    <div>Akdi Faiz Oranı (%) (Yıllık) : ${(L.r * 1200).toLocaleString("tr-TR", { minimumFractionDigits: 3, maximumFractionDigits: 3 })}</div>
+    <div>Vergi Oranı (%) : ${(L.bsmv * 100).toLocaleString("tr-TR", { minimumFractionDigits: 3 })}</div>
+    <div>Fon Oranı (%) : ${(L.kkdf * 100).toLocaleString("tr-TR", { minimumFractionDigits: 3 })}</div>
+    <div>Taksit Sayısı : ${L.n}</div>
+  </div>
+  <table><tr><th>Sıra<br>No</th><th>Taksit Tarihi</th><th>Gün</th><th>Anapara</th><th>Faiz</th><th>Fon</th><th>Vergi</th><th>Taksit Tutarı</th><th>Kalan Anapara</th></tr>
+  ${L.plan.map((x, k) => `<tr><td>${k + 1}</td><td>${d(L.dues[k])}</td><td>${x.g}</td><td>${f(x.a)}</td><td>${f(x.f)}</td><td>${f(x.fo)}</td><td>${f(x.v)}</td><td>${f(x.t)}</td><td>${f(x.b)}</td></tr>`).join("")}
+  <tr class="tot"><td></td><td>TOPLAM:</td><td></td><td>${f(L.P)}</td><td>${f(L.tF)}</td><td>${f(L.tFo)}</td><td>${f(L.tV)}</td><td>${f(L.top)}</td><td></td></tr></table>
+  <div class="sum">
+    <div>Toplam Faiz : ${f(L.tF)} TL</div>
+    <div>Toplam Vergi : ${f(L.tV)} TL</div>
+    <div>Toplam Fon : ${f(L.tFo)} TL</div>
+    <div>Genel Toplam : ${f(L.top)} TL</div>
+    <div>Taksit Tutarı : ${f(L.T)} TL</div>
+  </div>
+  <div class="note">
+    <div style="font-size:13.5px">Yıllık Maliyet Oranı (%) : ${L.f4(L.ymo)}</div>
+    <p>Yıllık maliyet oranı ödeme planı üzerinden hesaplanmıştır; krediye ilişkin ücret, masraf ve komisyonlar dahil değildir.</p>
+    <p>Bu plan ${today} tarihindeki vergi/fon oranları ve girilen faiz oranıyla, yalnızca bilgi amacıyla hazırlanmış taslaktır. Kesin ödeme planı kredi kullandırımında banka sisteminden alınır; tutar, tarih ve oranlar değişebilir.</p>
+  </div></div></body></html>`);
+  w.document.close();
+}
+$("tc_ilk").addEventListener("input", () => (tcIlkManual = true));
+$("tc_pdf").addEventListener("click", tcPdf);
 
 // ---------- Tarım ----------
 const TR_PRESET = { levha: [0, 5], cks: [0, 5], bireysel: [15, 15] };
@@ -1776,7 +1933,8 @@ $("k2s_copy").addEventListener("click", () => {
   else prompt("Kopyala:", k2Summary);
 });
 document.querySelectorAll("#tarim input, #tarim select").forEach((e) => e.addEventListener("input", calcTarim));
-calcBCH(); calcMev(); calcTK(); calcKK(); calcKonut(); calcTarim(); calcCek(); calcVergi();
+document.querySelectorAll("#tic input").forEach((e) => e.addEventListener("input", calcTic));
+calcBCH(); calcMev(); calcTK(); calcKK(); calcKonut(); calcTarim(); calcTic(); calcCek(); calcVergi();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
