@@ -1396,7 +1396,9 @@ function calcTic() {
   if (!tcIlkManual || !$("tc_ilk").value) $("tc_ilk").value = ymd(addMonthsC(bas, 1));
   const ilk = pDate($("tc_ilk").value);
   const ok = ilk && ilk > bas;
-  $("tc_dnote").innerHTML = ok ? `Ödeme günü: her ayın <b>${ilk.getDate()}.</b> günü; hafta sonu ya da bayrama denk gelirse ilk iş günü.` : '<span style="color:#ef8a5d">⚠️ Ödeme başlangıç tarihi kredi veriliş tarihinden sonra olmalı.</span>';
+  const ilkK = ok ? nextBiz(ilk) : null, kay = ok && ymd(ilkK) !== ymd(ilk);
+  $("tc_dnote").innerHTML = ok ? (kay ? `${shortD(ilk)} ${ilk.toLocaleDateString("tr-TR", { weekday: "long" })} olduğu için ilk taksit <b>${shortD(ilkK)}</b> tarihine kayar. ` : "") + `Ödeme günü: her ayın <b>${ilk.getDate()}.</b> günü; hafta sonu ya da bayrama denk gelirse ilk iş günü.`  +
+    (!kay && isHoliday(addDays(ilk, -1)) && ilk.getDate() > 1 ? `<br><span style="color:#e0a24f">💡 Bankaya ödeme günü ${shortD(addDays(ilk, -1))} girildiyse (tatil olduğu için planda ${shortD(ilk)} görünür) burada da ${shortD(addDays(ilk, -1))} gir; yoksa sonraki taksit günleri kayar.</span>` : "") : '<span style="color:#ef8a5d">⚠️ Ödeme başlangıç tarihi kredi veriliş tarihinden sonra olmalı.</span>';
   const clear = () => { ["tcs_taksit", "tcs_faiz", "tcs_vergi", "tcs_toplam"].forEach((x) => ($(x).textContent = "–")); $("tcs_ilk").textContent = ""; $("tc_out").textContent = "–"; rows("tc_rows", []); $("tc_plan").innerHTML = ""; tcLast = null; tcSummary = ""; };
   if (!P || !n || n > 600 || !ok) return clear();
   const dues = []; for (let k = 0; k < n; k++) dues.push(nextBiz(addMonthsC(ilk, k)));
