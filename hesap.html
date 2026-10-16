@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hesaplamalar</title>
+<style>
+  :root { --bg: #000; --card: #0d0d0d; --field: #161616; --ink: #f2f2f2; --muted: #8a8a8a; --accent: #e0a24f; --line: #262626; --ok: #3fc283; --red: #ef6a4c; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 12px 14px 28px; }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  header h1 { margin: 0; font-size: 20px; }
+  .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -14px 12px; padding: 10px 14px 8px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
+  .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
+  .tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
+  .tabs button { border: none; background: transparent; color: var(--muted); padding: 8px 2px; border-radius: 10px; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; line-height: 1.2; }
+  .tabs button b { display: block; font-size: 18px; margin-bottom: 2px; }
+  .tabs button.on { background: var(--accent); color: #000; }
+  .panel { display: none; } .panel.on { display: block; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+  h2 { margin: 0 0 10px; font-size: 16px; }
+  label { display: block; font-size: 12px; color: var(--muted); margin: 10px 0 4px; }
+  .field { display: flex; align-items: center; background: var(--field); border: 1px solid var(--line); border-radius: 12px; }
+  .field input { flex: 1; min-width: 0; background: transparent; border: none; color: var(--ink); padding: 11px 12px; font: inherit; font-size: 16px; outline: none; }
+  .field span { padding-right: 12px; color: var(--muted); font-size: 14px; }
+  .field:focus-within { border-color: var(--accent); }
+  input[type=date], select { width: 100%; background: var(--field); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font: inherit; font-size: 16px; color-scheme: dark; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .two > div { min-width: 0; }
+  .seg { display: grid; grid-auto-flow: column; gap: 4px; background: var(--field); border-radius: 12px; padding: 4px; }
+  .seg button { border: none; background: transparent; color: var(--muted); padding: 8px 4px; border-radius: 9px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .seg button.on { background: var(--accent); color: #000; }
+  .res { margin-top: 12px; padding: 12px; border-radius: 14px; background: rgba(224,162,79,.07); border: 1px solid #3a2c14; }
+  .res .big { font-size: 26px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .res .big small { font-size: 13px; color: var(--muted); font-weight: 500; display: block; margin-bottom: 2px; }
+  .rows div { display: flex; justify-content: space-between; gap: 8px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  .rows div:first-child { border-top: none; }
+  .rows b { font-variant-numeric: tabular-nums; text-align: right; }
+  .hint { font-size: 12px; color: var(--muted); line-height: 1.5; margin: 8px 0 0; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .chips button { border: 1px solid var(--line); background: var(--field); color: var(--ink); border-radius: 999px; padding: 6px 11px; font: inherit; font-size: 12.5px; cursor: pointer; }
+
+  /* ===== Eski tip masa hesap makinesi ===== */
+  .calc { margin: 0 auto; max-width: 360px; border-radius: 22px; padding: 16px 14px 18px;
+    background: linear-gradient(160deg, #3a3631, #26231f 55%, #1c1a17); border: 1px solid #4a4540;
+    box-shadow: 0 10px 30px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08); }
+  .brand { display: flex; justify-content: space-between; align-items: center; margin: 0 4px 8px; }
+  .brand b { font-family: Georgia, serif; font-style: italic; color: #e0c48f; font-size: 15px; letter-spacing: 1px; }
+  .brand i { font-style: normal; font-size: 9.5px; letter-spacing: 2px; color: #9b9184; }
+  .solar { width: 64px; height: 14px; border-radius: 3px; background: repeating-linear-gradient(90deg, #2b1f15 0 15px, #3d2c1e 15px 16px); border: 1px solid #111; }
+  .lcd { position: relative; border-radius: 10px; padding: 10px 12px 8px; margin-bottom: 14px; background: linear-gradient(180deg, #a9b49a, #96a288); border: 3px solid #141414; box-shadow: inset 0 3px 8px rgba(0,0,0,.35); color: #1d2418; }
+  .lcd .ind { display: flex; gap: 10px; font-size: 10px; font-weight: 800; letter-spacing: 1px; min-height: 12px; opacity: .85; }
+  .lcd .ind span { opacity: .12; } .lcd .ind span.on { opacity: 1; }
+  .lcd .op { position: absolute; left: 12px; bottom: 10px; font-size: 18px; font-weight: 800; opacity: .8; }
+  .lcd .num { text-align: right; font-family: "Courier New", ui-monospace, monospace; font-weight: 700; font-size: 34px; letter-spacing: 1px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+  .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px; }
+  .k { height: 50px; border: none; border-radius: 10px; font: inherit; font-size: 20px; font-weight: 700; cursor: pointer; user-select: none;
+    background: linear-gradient(180deg, #4a4540, #34302b); color: #f1eadf; box-shadow: 0 4px 0 #15130f, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.12); transition: transform .05s, box-shadow .05s; }
+  .k:active, .k.down { transform: translateY(3px); box-shadow: 0 1px 0 #15130f, inset 0 1px 0 rgba(255,255,255,.08); }
+  .k.n { background: linear-gradient(180deg, #ece4d4, #d4cab6); color: #2a241c; box-shadow: 0 4px 0 #8b8270, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 #fff; }
+  .k.n:active, .k.n.down { box-shadow: 0 1px 0 #8b8270; }
+  .k.o { background: linear-gradient(180deg, #6b625a, #4c453f); color: #ffe2b3; }
+  .k.r { background: linear-gradient(180deg, #e0763f, #b9542a); color: #fff; box-shadow: 0 4px 0 #6d2e13, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.25); }
+  .k.eq { background: linear-gradient(180deg, #e8b05d, #c98a35); color: #1a1205; box-shadow: 0 4px 0 #7a5420, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.3); grid-row: span 2; height: auto; }
+  .k.sm { font-size: 13px; letter-spacing: .5px; }
+  .k.z { grid-column: span 2; }
+  /* kâğıt rulo */
+  .tape { position: relative; margin: 18px auto 0; max-width: 300px; background: #f4efe3; color: #2b2620; border-radius: 4px 4px 0 0; padding: 12px 14px 22px; font-family: "Courier New", ui-monospace, monospace; font-size: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.5); max-height: 280px; overflow-y: auto;
+    -webkit-mask-image: linear-gradient(#000 85%, transparent); mask-image: linear-gradient(#000 85%, transparent); }
+  .tape div { display: flex; justify-content: space-between; gap: 10px; line-height: 1.55; }
+  .tape div.t { border-top: 1px dashed #b5ab98; margin-top: 3px; padding-top: 3px; font-weight: 700; }
+  .tape div.c { color: #a33; }
+  .tape .e { color: #9b9184; text-align: center; display: block; }
+  .tapebar { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+  .tapebar button { background: transparent; border: 1px solid var(--line); color: var(--accent); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer; }
+
+  /* ===== Cetvel ===== */
+  .ruler-wrap { position: relative; height: calc(100vh - 200px); min-height: 420px; margin: 0 -14px; overflow: hidden; }
+  #ruler { position: absolute; left: 0; top: 0; height: 100%; }
+  .rinfo { position: absolute; right: 14px; top: 10px; width: 52%; text-align: right; font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .rinfo b { color: var(--accent); font-size: 22px; display: block; }
+  .card-cal { position: relative; height: 54mm; border: 2px dashed var(--accent); border-radius: 10px; margin: 12px 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; text-align: center; background: rgba(224,162,79,.05); }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="stick">
+    <header>
+      <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Anasayfa" aria-label="Anasayfa">🏠</a>
+      <h1>🧮 Hesaplamalar</h1>
+      <span style="width:46px"></span>
+    </header>
+    <div class="tabs" id="tabs">
+      <button data-t="calc" class="on"><b>🧮</b>Makine</button>
+      <button data-t="faiz"><b>💵</b>Faiz</button>
+      <button data-t="tarih"><b>📆</b>Tarih</button>
+      <button data-t="yuzde"><b>％</b>Yüzde·KDV</button>
+      <button data-t="cetvel"><b>📏</b>Cetvel</button>
+    </div>
+  </div>
+
+  <!-- ===== Hesap makinesi ===== -->
+  <section class="panel on" id="calc">
+    <div class="calc">
+      <div class="brand"><b>Sadolayn</b><div class="solar"></div><i>SL-12 · 12 HANE</i></div>
+      <div class="lcd"><div class="ind"><span id="iM">M</span><span id="iE">E</span><span id="iK">−</span></div><div class="op" id="lOp"></div><div class="num" id="lNum">0</div></div>
+      <div class="keys" id="keys">
+        <button class="k o sm" data-k="MC">MC</button><button class="k o sm" data-k="MR">MR</button><button class="k o sm" data-k="M-">M−</button><button class="k o sm" data-k="M+">M+</button><button class="k r sm" data-k="C">C</button>
+        <button class="k o" data-k="%">%</button><button class="k n" data-k="7">7</button><button class="k n" data-k="8">8</button><button class="k n" data-k="9">9</button><button class="k o" data-k="/">÷</button>
+        <button class="k o sm" data-k="±">+/−</button><button class="k n" data-k="4">4</button><button class="k n" data-k="5">5</button><button class="k n" data-k="6">6</button><button class="k o" data-k="*">×</button>
+        <button class="k o sm" data-k="CE">CE</button><button class="k n" data-k="1">1</button><button class="k n" data-k="2">2</button><button class="k n" data-k="3">3</button><button class="k o" data-k="-">−</button>
+        <button class="k o" data-k="⌫">⌫</button><button class="k n z" data-k="0">0</button><button class="k n" data-k=",">,</button><button class="k o" data-k="+">+</button>
+      </div>
+      <div class="keys" style="margin-top:9px;grid-template-columns:repeat(5,1fr)"><button class="k o sm" data-k="00" style="grid-column:span 2">00</button><button class="k o sm" data-k="√">√</button><button class="k eq" data-k="=" style="grid-row:auto;height:50px;grid-column:span 2">=</button></div>
+    </div>
+    <div class="tape" id="tape"><span class="e">— rulo boş —</span></div>
+    <div class="tapebar"><button id="tCopy">📋 Ruloyu kopyala</button><button id="tClear">🧻 Ruloyu kopar</button></div>
+    <p class="hint" style="text-align:center">Kesirli sayılarla tam hesap yapar: 10 ÷ 3 × 3 = <b>10</b>. Klavyeden de çalışır.</p>
+  </section>
+
+  <!-- ===== Faiz ===== -->
+  <section class="panel" id="faiz">
+    <div class="card">
+      <h2>Basit faiz hesabı</h2>
+      <div class="seg" id="fMod"><button data-m="kredi" class="on">Kredi (360)</button><button data-m="mevduat">Vadeli mevduat (365)</button></div>
+      <label>Tutar</label><div class="field"><input id="fP" inputmode="decimal" value="100.000"><span>TL</span></div>
+      <div class="two">
+        <div><label>Yıllık faiz</label><div class="field"><input id="fR" inputmode="decimal" value="45"><span>%</span></div></div>
+        <div><label>Gün</label><div class="field"><input id="fG" inputmode="numeric" value="32"><span>gün</span></div></div>
+      </div>
+      <div class="two">
+        <div><label>Başlangıç (isteğe bağlı)</label><input type="date" id="fA"></div>
+        <div><label>Bitiş (isteğe bağlı)</label><input type="date" id="fB"></div>
+      </div>
+      <div id="fTaxBox"><label id="fTaxL">Stopaj</label><div class="field"><input id="fTax" inputmode="decimal" value=""><span>%</span></div></div>
+      <div class="res"><div class="big"><small id="fBigL">Faiz</small><span id="fOut">–</span></div><div class="rows" id="fRows" style="margin-top:6px"></div></div>
+      <p class="hint" id="fNote"></p>
+    </div>
+  </section>
+
+  <!-- ===== Tarih ===== -->
+  <section class="panel" id="tarih">
+    <div class="card">
+      <h2>İki tarih arası</h2>
+      <div class="two"><div><label>Başlangıç</label><input type="date" id="tA"></div><div><label>Bitiş</label><input type="date" id="tB"></div></div>
+      <div class="chips" id="tQ"><button data-q="0">Bugün</button><button data-q="m">Ay sonu</button><button data-q="y">Yıl sonu</button><button data-q="30">+30 gün</button><button data-q="90">+90 gün</button><button data-q="365">+1 yıl</button></div>
+      <div class="res"><div class="big"><small>Aradaki gün</small><span id="tOut">–</span></div><div class="rows" id="tRows" style="margin-top:6px"></div></div>
+    </div>
+    <div class="card">
+      <h2>Tarihe gün ekle / çıkar</h2>
+      <div class="two"><div><label>Tarih</label><input type="date" id="aD"></div><div><label>Gün (eksi olabilir)</label><div class="field"><input id="aN" inputmode="numeric" value="45"><span>gün</span></div></div></div>
+      <div class="res"><div class="big"><small>Sonuç</small><span id="aOut">–</span></div><div class="rows" id="aRows" style="margin-top:6px"></div></div>
+    </div>
+  </section>
+
+  <!-- ===== Yüzde & KDV ===== -->
+  <section class="panel" id="yuzde">
+    <div class="card">
+      <h2>Yüzde</h2>
+      <div class="two"><div><label>Sayı (A)</label><div class="field"><input id="yA" inputmode="decimal" value="250"></div></div><div><label>Sayı (B)</label><div class="field"><input id="yB" inputmode="decimal" value="20"></div></div></div>
+      <div class="rows" id="yRows" style="margin-top:12px"></div>
+    </div>
+    <div class="card">
+      <h2>KDV</h2>
+      <label>Tutar</label><div class="field"><input id="kT" inputmode="decimal" value="1.000"><span>TL</span></div>
+      <label>KDV oranı</label><div class="seg" id="kO"><button data-o="1">%1</button><button data-o="10">%10</button><button data-o="20" class="on">%20</button></div>
+      <div class="rows" id="kRows" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <!-- ===== Cetvel ===== -->
+  <section class="panel" id="cetvel">
+    <div class="ruler-wrap" id="rwrap">
+      <canvas id="ruler"></canvas>
+      <div class="rinfo"><span id="rDev"></span><b id="rLen">–</b>Cetvelin üst ucu 0'dır. Ekrana dokununca o noktaya kadar ölçer; parmağını kaydırabilirsin.</div>
+    </div>
+    <div class="card">
+      <h2>Cetveli telefonuna ayarla</h2>
+      <p class="hint" style="margin-top:0">Her telefonun ekran yoğunluğu farklıdır. Bir banka kartını aşağıdaki çerçevenin üstüne yatay koy ve kaydırıcıyla çerçeveyi kartın genişliğine eşitle (kart genişliği her yerde 85,6 mm). Ayar bu cihazda hatırlanır.</p>
+      <div class="card-cal" id="cardBox">💳 Kartı buraya yatır<br>çerçeve = kart genişliği</div>
+      <input type="range" id="cal" min="2" max="12" step="0.01">
+      <div class="tapebar"><button id="calReset">Varsayılana dön</button></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+// ===== Sekmeler =====
+$("tabs").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-t]"); if (!b) return;
+  document.querySelectorAll("#tabs button").forEach((x) => x.classList.toggle("on", x === b));
+  document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("on", p.id === b.dataset.t));
+  try { localStorage.setItem("hesapTab", b.dataset.t); } catch (e) {}
+  if (b.dataset.t === "cetvel") drawRuler();
+  window.scrollTo({ top: 0 });
+});
+// Türkçe sayı okuma/yazma
+function num(v) { v = String(v).trim().replace(/\s/g, ""); if (!v) return 0; const c = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : (/^-?\d{1,3}(\.\d{3})+$/.test(v) ? v.replace(/\./g, "") : v); const n = parseFloat(c); return isFinite(n) ? n : 0; }
+const tl = (n, d = 2) => (isFinite(n) ? n.toLocaleString("tr-TR", { minimumFractionDigits: d, maximumFractionDigits: d }) : "–");
+const nf = (n, d = 2) => (isFinite(n) ? n.toLocaleString("tr-TR", { maximumFractionDigits: d }) : "–");
+const rows = (id, list) => ($(id).innerHTML = list.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join(""));
+document.querySelectorAll('input[inputmode="decimal"]').forEach((i) => i.addEventListener("blur", () => { const n = num(i.value); if (i.value.trim() && Math.abs(n) >= 1000) i.value = n.toLocaleString("tr-TR", { maximumFractionDigits: 6 }); }));
+
+// ===== Hesap makinesi: kesirli (rasyonel) aritmetik, yuvarlama hatası yok =====
+const gcd = (a, b) => { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) [a, b] = [b, a % b]; return a || 1n; };
+const Q = (n, d = 1n) => { if (d < 0n) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
+const qAdd = (a, b) => Q(a.n * b.d + b.n * a.d, a.d * b.d), qSub = (a, b) => Q(a.n * b.d - b.n * a.d, a.d * b.d);
+const qMul = (a, b) => Q(a.n * b.n, a.d * b.d), qDiv = (a, b) => (b.n === 0n ? null : Q(a.n * b.d, a.d * b.n));
+function qParse(s) { s = s.replace(",", "."); const neg = s.startsWith("-"); if (neg) s = s.slice(1); const [i, f = ""] = s.split("."); const n = BigInt((i || "0") + f) * (neg ? -1n : 1n); return Q(n, 10n ** BigInt(f.length)); }
+function qFmt(q, maxDigits = 12) {
+  const neg = q.n < 0n; let n = neg ? -q.n : q.n; const d = q.d; let ip = n / d, rem = n % d;
+  const intStr = ip.toString(); if (intStr.length > maxDigits) return null;
+  const room = Math.max(0, maxDigits - intStr.length); let frac = "";
+  for (let i = 0; i < room + 1 && rem !== 0n; i++) { rem *= 10n; frac += (rem / d).toString(); rem %= d; }
+  // yuvarla
+  if (frac.length > room) { const up = +frac[room] >= 5; frac = frac.slice(0, room); if (up) { let s = (intStr + frac); let carry = BigInt(s) + 1n; s = carry.toString().padStart(s.length, "0"); const il = s.length - frac.length; return fmtParts(neg, s.slice(0, il), s.slice(il)); } }
+  return fmtParts(neg, intStr, frac);
+}
+function fmtParts(neg, i, f) { f = f.replace(/0+$/, ""); const ig = i.replace(/\B(?=(\d{3})+(?!\d))/g, "."); const s = (neg && (i !== "0" || f) ? "-" : "") + ig + (f ? "," + f : ""); return s; }
+let acc = null, op = null, entry = null, lastOp = null, lastB = null, mem = null, err = false, fresh = true;
+const tapeL = [];
+const OPS = { "+": "+", "-": "−", "*": "×", "/": "÷" };
+const apply = (a, o, b) => (o === "+" ? qAdd(a, b) : o === "-" ? qSub(a, b) : o === "*" ? qMul(a, b) : qDiv(a, b));
+const shown = () => (entry !== null ? entry : acc ? qFmt(acc) : "0");
+function disp() {
+  let t = err ? "Hata" : entry !== null ? fmtEntry(entry) : acc ? qFmt(acc) || "Taşma" : "0";
+  if (t === "Taşma") err = true;
+  $("lNum").textContent = t; $("lOp").textContent = op ? OPS[op] : "";
+  $("iM").classList.toggle("on", !!mem && mem.n !== 0n); $("iE").classList.toggle("on", err); $("iK").classList.toggle("on", !err && t.startsWith("-"));
+}
+function fmtEntry(e) { const neg = e.startsWith("-"), s = neg ? e.slice(1) : e, [i, f] = s.split(","); return (neg ? "-" : "") + i.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (f !== undefined ? "," + f : ""); }
+function tape(a, b, cls) { tapeL.push([a, b, cls]); if (tapeL.length > 200) tapeL.shift(); const el = $("tape"); el.innerHTML = tapeL.map(([x, y, c]) => `<div class="${c || ""}"><span>${x}</span><span>${y}</span></div>`).join(""); el.scrollTop = el.scrollHeight; }
+const curQ = () => (entry !== null ? qParse(entry === "-" ? "0" : entry) : acc || Q(0n));
+function press(k) {
+  if (err && k !== "C") return;
+  if (/^\d$/.test(k) || k === "00") {
+    if (fresh || entry === null) { entry = k === "00" ? "0" : k; fresh = false; }
+    else { const digits = entry.replace(/[-,]/g, ""); if (digits.length >= 12) return; entry = entry === "0" ? (k === "00" ? "0" : k) : entry === "-0" ? "-" + k : entry + k; }
+  } else if (k === ",") { if (fresh || entry === null) { entry = "0,"; fresh = false; } else if (!entry.includes(",")) entry += ","; }
+  else if (k === "⌫") { if (entry !== null && !fresh) { entry = entry.slice(0, -1); if (entry === "" || entry === "-") entry = "0"; } }
+  else if (k === "CE") { entry = "0"; fresh = true; }
+  else if (k === "C") { acc = op = entry = lastOp = lastB = null; err = false; fresh = true; tape("", "C", "c"); }
+  else if (k === "±") { if (entry !== null) entry = entry.startsWith("-") ? entry.slice(1) : "-" + entry; else if (acc) { acc = Q(-acc.n, acc.d); } }
+  else if (k in OPS) {
+    if (entry !== null) { const b = curQ(); if (acc === null || op === null) { acc = b; tape(qFmt(acc), ""); } else { tape(qFmt(b), OPS[op]); const r = apply(acc, op, b); if (!r) { err = true; disp(); return; } acc = r; } entry = null; }
+    else if (acc === null) acc = Q(0n);
+    op = k; fresh = true;
+  } else if (k === "=") {
+    let b;
+    if (op && entry !== null) { b = curQ(); lastOp = op; lastB = b; tape(qFmt(b), OPS[op]); }
+    else if (op && entry === null) { b = acc; lastOp = op; lastB = b; tape(qFmt(b), OPS[op]); }
+    else if (lastOp && acc) { b = lastB; tape(qFmt(b), OPS[lastOp]); }
+    else { if (entry !== null) { acc = curQ(); entry = null; } disp(); return; }
+    const r = apply(acc ?? Q(0n), op || lastOp, b); if (!r) { err = true; disp(); return; }
+    acc = r; op = null; entry = null; fresh = true; tape(qFmt(acc) || "Taşma", "=", "t");
+  } else if (k === "%") {
+    const b = curQ(); let r;
+    if (op === "+" || op === "-") r = qDiv(qMul(acc, b), Q(100n)); else r = qDiv(b, Q(100n));
+    entry = qFmt(r).replace(/\./g, ""); fresh = true;
+  } else if (k === "√") {
+    const v = Number(curQ().n) / Number(curQ().d); if (v < 0) { err = true; disp(); return; }
+    const s = Math.sqrt(v); entry = String(+s.toPrecision(12)).replace(".", ","); fresh = true; tape("√", entry);
+  } else if (k === "M+" || k === "M-") { const v = curQ(); mem = mem ? (k === "M+" ? qAdd(mem, v) : qSub(mem, v)) : (k === "M+" ? v : Q(-v.n, v.d)); fresh = true; if (entry === null && acc) entry = null; tape(qFmt(v), k === "M+" ? "M+" : "M−"); }
+  else if (k === "MR") { if (mem) { entry = qFmt(mem).replace(/\./g, ""); fresh = true; } }
+  else if (k === "MC") { mem = null; }
+  disp();
+}
+$("keys").parentElement.addEventListener("click", (e) => { const b = e.target.closest("[data-k]"); if (b) press(b.dataset.k); });
+document.addEventListener("keydown", (e) => {
+  if (!$("calc").classList.contains("on") || e.target.closest("input")) return;
+  const m = { Enter: "=", "=": "=", Backspace: "⌫", Escape: "C", Delete: "CE", ".": ",", ",": ",", "%": "%", "+": "+", "-": "-", "*": "*", "x": "*", "/": "/" };
+  const k = /^\d$/.test(e.key) ? e.key : m[e.key]; if (!k) return; e.preventDefault(); press(k);
+  const b = document.querySelector(`.calc [data-k="${CSS.escape(k)}"]`); if (b) { b.classList.add("down"); setTimeout(() => b.classList.remove("down"), 90); }
+});
+$("tClear").onclick = () => { tapeL.length = 0; $("tape").innerHTML = '<span class="e">— rulo boş —</span>'; };
+$("tCopy").onclick = () => { const t = tapeL.map(([a, b]) => `${b ? b + " " : ""}${a}`.trim()).join("\n"); if (!t) return; (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { $("tCopy").textContent = "✅ Kopyalandı"; setTimeout(() => ($("tCopy").textContent = "📋 Ruloyu kopyala"), 1400); }, () => prompt("Kopyala:", t)); };
+disp();
+
+// ===== Tarih yardımcıları ve tatiller =====
+const pad = (n) => String(n).padStart(2, "0");
+const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const pD = (s) => (s ? new Date(s + "T12:00:00") : null);
+const addD = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const dd = (a, b) => Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 864e5);
+const longD = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
+const HF = ["01-01", "04-23", "05-01", "05-19", "07-15", "08-30", "10-29"], HALF = ["10-28"];
+const HR = { 2026: ["03-20", "03-21", "03-22", "05-27", "05-28", "05-29", "05-30"], 2027: ["03-09", "03-10", "03-11", "05-16", "05-17", "05-18", "05-19"], 2028: ["02-26", "02-27", "02-28", "05-05", "05-06", "05-07", "05-08"] };
+const HH = { 2026: ["03-19", "05-26"], 2027: ["03-08", "05-15"], 2028: ["02-25", "05-04"] };
+const isWE = (d) => d.getDay() === 0 || d.getDay() === 6;
+const isHol = (d) => { const md = ymd(d).slice(5); return HF.includes(md) || (HR[d.getFullYear()] || []).includes(md); };
+const isHalf = (d) => { const md = ymd(d).slice(5); return HALF.includes(md) || (HH[d.getFullYear()] || []).includes(md); };
+const isLeap = (y) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+const today = new Date(); today.setHours(12, 0, 0, 0);
+
+// ===== Faiz =====
+let fMod = "kredi";
+$("fMod").addEventListener("click", (e) => { const b = e.target.closest("button[data-m]"); if (!b) return; fMod = b.dataset.m; $("fMod").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); calcF(); });
+["fA", "fB"].forEach((id) => $(id).addEventListener("input", () => { const a = pD($("fA").value), b = pD($("fB").value); if (a && b && b > a) $("fG").value = dd(a, b); calcF(); }));
+["fP", "fR", "fG", "fTax"].forEach((id) => $(id).addEventListener("input", calcF));
+function calcF() {
+  const P = num($("fP").value), r = num($("fR").value), g = Math.round(num($("fG").value));
+  const kr = fMod === "kredi";
+  // Mevduatta paydanın yılı: başlangıç tarihi girildiyse onun yılı, yoksa bugünün yılı
+  const yr = (pD($("fA").value) || today).getFullYear(), base = kr ? 36000 : isLeap(yr) ? 36600 : 36500;
+  $("fTaxL").textContent = kr ? "BSMV (faiz üzerinden, isteğe bağlı)" : "Stopaj (isteğe bağlı)";
+  if (!P || !r || !g) { $("fOut").textContent = "–"; rows("fRows", []); $("fNote").textContent = ""; return; }
+  const gun = (P * r) / base, faiz = gun * g, tax = faiz * num($("fTax").value) / 100;
+  $("fBigL").textContent = `${g} günlük ${kr ? "faiz" : "brüt faiz"}`;
+  $("fOut").textContent = tl(faiz) + " TL";
+  rows("fRows", [
+    ["Formül", `${tl(P, 0)} × %${nf(r)} × ${g} ÷ ${base.toLocaleString("tr-TR")}`],
+    ["Günlük faiz", tl(gun) + " TL"],
+    ["Aylık (30 gün)", tl(gun * 30) + " TL"],
+    ...(tax ? [[kr ? "BSMV" : "Stopaj", tl(tax) + " TL"]] : []),
+    [kr ? "Toplam geri ödeme" : "Net faiz", tl(kr ? P + faiz + tax : faiz - tax) + " TL"],
+    ...(!kr ? [["Vade sonu toplam (net)", tl(P + faiz - tax) + " TL"]] : []),
+  ]);
+  $("fNote").textContent = kr ? "Kredide günlük faiz: tutar × yıllık oran ÷ 36.000 (yıl 360 gün sayılır)." : `Mevduatta günlük faiz: tutar × yıllık oran ÷ ${base === 36600 ? "36.600 (artık yıl, 366 gün)" : "36.500 (365 gün)"}.`;
+}
+
+// ===== İki tarih arası =====
+function wdCount(a, b) { let w = 0, h = 0, hf = 0, we = 0; for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) { if (isWE(d)) we++; else if (isHol(d)) h++; else { w++; if (isHalf(d)) hf++; } } return { w, h, hf, we }; }
+function calcT() {
+  const a = pD($("tA").value), b = pD($("tB").value);
+  if (!a || !b) { $("tOut").textContent = "–"; rows("tRows", []); return; }
+  const [x, y] = a <= b ? [a, b] : [b, a], g = dd(x, y);
+  // yıl/ay/gün
+  let Y = y.getFullYear() - x.getFullYear(), M = y.getMonth() - x.getMonth(), D = y.getDate() - x.getDate();
+  if (D < 0) { M--; D += new Date(y.getFullYear(), y.getMonth(), 0).getDate(); } if (M < 0) { Y--; M += 12; }
+  const c = wdCount(addD(x, 1), y);
+  $("tOut").textContent = `${g.toLocaleString("tr-TR")} gün`;
+  rows("tRows", [
+    ["Yıl · ay · gün", [Y && `${Y} yıl`, M && `${M} ay`, `${D} gün`].filter(Boolean).join(" ")],
+    ["Hafta", `${Math.floor(g / 7)} hafta ${g % 7} gün`],
+    ["İş günü (başlangıç hariç)", `${c.w}${c.hf ? ` (${c.hf} yarım)` : ""}`],
+    ["Hafta sonu / tatil", `${c.we} / ${c.h}`],
+    ["Başlangıç dahil sayılırsa", `${g + 1} gün`],
+    ["Saat / dakika", `${(g * 24).toLocaleString("tr-TR")} sa · ${(g * 1440).toLocaleString("tr-TR")} dk`],
+  ]);
+}
+["tA", "tB"].forEach((id) => $(id).addEventListener("input", calcT));
+$("tQ").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-q]"); if (!b) return; const a = pD($("tA").value) || today, q = b.dataset.q;
+  const r = q === "0" ? today : q === "m" ? new Date(a.getFullYear(), a.getMonth() + 1, 0, 12) : q === "y" ? new Date(a.getFullYear(), 11, 31, 12) : addD(a, +q);
+  $("tB").value = ymd(r); calcT();
+});
+function calcA() {
+  const d = pD($("aD").value), n = Math.round(num($("aN").value));
+  if (!d) { $("aOut").textContent = "–"; rows("aRows", []); return; }
+  const r = addD(d, n);
+  $("aOut").textContent = r.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+  let iw = new Date(r); while (isWE(iw) || isHol(iw)) iw = addD(iw, 1);
+  rows("aRows", [["Gün", r.toLocaleDateString("tr-TR", { weekday: "long", day: "numeric", month: "long" })], ...(ymd(iw) !== ymd(r) ? [["Tatile denk geliyor; ilk iş günü", longD(iw)]] : []), ["Bugüne uzaklık", `${dd(today, r)} gün`]]);
+}
+["aD", "aN"].forEach((id) => $(id).addEventListener("input", calcA));
+$("tA").value = ymd(today); $("tB").value = ymd(new Date(today.getFullYear(), 11, 31, 12)); $("aD").value = ymd(today);
+calcT(); calcA(); calcF();
+
+// ===== Yüzde & KDV =====
+function calcY() {
+  const A = num($("yA").value), B = num($("yB").value);
+  rows("yRows", [
+    [`${nf(A)}'in %${nf(B)}'si`, nf(A * B / 100, 4)],
+    [`${nf(A)} + %${nf(B)}`, nf(A * (1 + B / 100), 4)],
+    [`${nf(A)} − %${nf(B)}`, nf(A * (1 - B / 100), 4)],
+    [`${nf(B)}, ${nf(A)}'in yüzde kaçı?`, A ? "%" + nf(B / A * 100, 4) : "–"],
+    [`${nf(A)} → ${nf(B)} değişim`, A ? (B >= A ? "+" : "") + "%" + nf((B - A) / A * 100, 4) : "–"],
+  ]);
+}
+let kO = 20;
+$("kO").addEventListener("click", (e) => { const b = e.target.closest("button[data-o]"); if (!b) return; kO = +b.dataset.o; $("kO").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); calcK(); });
+function calcK() {
+  const T = num($("kT").value), o = kO / 100;
+  rows("kRows", [
+    [`KDV hariç → dahil (%${kO})`, ""],
+    ["KDV tutarı", tl(T * o) + " TL"], ["KDV dahil", tl(T * (1 + o)) + " TL"],
+    [`KDV dahil → hariç (%${kO})`, ""],
+    ["KDV hariç", tl(T / (1 + o)) + " TL"], ["İçindeki KDV", tl(T - T / (1 + o)) + " TL"],
+  ]);
+  $("kRows").querySelectorAll("div").forEach((d, i) => { if (i === 0 || i === 3) d.style.cssText = "color:var(--accent);font-size:12.5px;font-weight:700;border-top:" + (i ? "1px solid var(--line)" : "none"); });
+}
+["yA", "yB"].forEach((id) => $(id).addEventListener("input", calcY)); $("kT").addEventListener("input", calcK);
+calcY(); calcK();
+
+// ===== Cetvel =====
+// Varsayılan: dokunmatik cihazlarda ~6,3 CSS px/mm, bilgisayarda 96 dpi (3,78 px/mm). Banka kartıyla ayarlanır.
+const DEF = matchMedia("(pointer: coarse)").matches ? 6.3 : 96 / 25.4;
+let ppm = DEF; try { const s = +localStorage.getItem("cetvelPPM"); if (s > 1) ppm = s; } catch (e) {}
+let mark = null;
+function drawRuler() {
+  const c = $("ruler"), w = $("rwrap"), H = w.clientHeight, W = 120, dpr = window.devicePixelRatio || 1;
+  c.width = W * dpr; c.height = H * dpr; c.style.width = W + "px"; c.style.height = H + "px";
+  const g = c.getContext("2d"); g.scale(dpr, dpr);
+  const grd = g.createLinearGradient(0, 0, W, 0); grd.addColorStop(0, "#e8c27a"); grd.addColorStop(1, "#c9984a");
+  g.fillStyle = grd; g.fillRect(0, 0, W - 18, H);
+  g.fillStyle = "#2a1c08"; g.strokeStyle = "#2a1c08"; g.font = "bold 13px system-ui"; g.textBaseline = "middle";
+  for (let mm = 0; mm * ppm <= H; mm++) {
+    const y = mm * ppm, L = mm % 10 === 0 ? 34 : mm % 5 === 0 ? 22 : 12;
+    g.lineWidth = mm % 10 === 0 ? 1.4 : 1; g.beginPath(); g.moveTo(0, y + .5); g.lineTo(L, y + .5); g.stroke();
+    if (mm % 10 === 0 && mm) g.fillText(String(mm / 10), 40, y);
+  }
+  g.font = "10px system-ui"; g.fillText("cm", 66, 10);
+  if (mark !== null) { g.strokeStyle = "#ef4a3a"; g.lineWidth = 2; g.beginPath(); g.moveTo(0, mark); g.lineTo(W - 18, mark); g.stroke(); }
+  $("rDev").textContent = Math.abs(ppm - DEF) < .001 ? "Varsayılan ayar — kartla ayarla ↓" : "Bu cihaza ayarlı ✓";
+  $("rLen").textContent = mark !== null ? `${nf(mark / ppm / 10, 1)} cm · ${nf(mark / ppm, 0)} mm` : "Ölçmek için dokun";
+  $("cardBox").style.width = (85.6 * ppm) + "px"; $("cardBox").style.height = (53.98 * ppm) + "px"; $("cardBox").style.maxWidth = "none";
+  $("cal").value = ppm;
+}
+$("rwrap").addEventListener("pointerdown", (e) => { const r = $("rwrap").getBoundingClientRect(); mark = e.clientY - r.top; drawRuler(); });
+$("rwrap").addEventListener("pointermove", (e) => { if (e.buttons) { const r = $("rwrap").getBoundingClientRect(); mark = e.clientY - r.top; drawRuler(); } });
+$("cal").addEventListener("input", () => { ppm = +$("cal").value; try { localStorage.setItem("cetvelPPM", ppm); } catch (e) {} drawRuler(); });
+$("calReset").onclick = () => { ppm = DEF; try { localStorage.removeItem("cetvelPPM"); } catch (e) {} drawRuler(); };
+window.addEventListener("resize", () => { if ($("cetvel").classList.contains("on")) drawRuler(); });
+try { const t = localStorage.getItem("hesapTab"); if (t && $(t)) document.querySelector(`#tabs [data-t="${t}"]`).click(); } catch (e) {}
+</script>
+<footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
+<script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
+</body>
+</html>
