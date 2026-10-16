@@ -68,11 +68,26 @@
   .sun .tl u { position: absolute; top: -2px; bottom: -2px; width: 2px; background: #fff; box-shadow: 0 0 4px #fff; }
   .sun .tlx { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
   .sun .chg { text-align: center; font-size: 13px; margin: 8px 0 4px; }
+  .sun .ev:first-child { border-top: none; padding-top: 0; }
   .sun .ev { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 14px; }
   .sun .ev .e { font-size: 22px; width: 30px; text-align: center; }
   .sun .ev .t { flex: 1; } .sun .ev small { display: block; color: var(--muted); font-size: 12px; }
   .sun .ev .r { text-align: right; font-weight: 600; white-space: nowrap; } .sun .ev .r small { font-weight: 400; }
   .sun svg { width: 100%; height: 70px; display: block; margin-top: 6px; }
+  .alerts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .al { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); }
+  .al .e { font-size: 26px; line-height: 1; flex: 0 0 30px; text-align: center; padding-top: 2px; }
+  .al .t { flex: 1; min-width: 0; }
+  .al b { display: block; font-size: 15px; }
+  .al span { display: block; font-size: 13px; color: #c9c2b6; margin-top: 3px; line-height: 1.4; }
+  .al small { display: block; font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .al.red { border-color: #ef4a3a; background: linear-gradient(120deg, #2a0c08, #140705); } .al.red b { color: #ff8a70; }
+  .al.org { border-color: #e0902f; background: linear-gradient(120deg, #2a1806, #140c04); } .al.org b { color: #ffbe63; }
+  .al.blu { border-color: #3d7fd6; background: linear-gradient(120deg, #0b1a2e, #070d17); } .al.blu b { color: #8cc0ff; }
+  .al.grn { border-color: #3fae6f; background: linear-gradient(120deg, #0b2416, #06120b); } .al.grn b { color: #7fe0a8; }
+  .al.hol { border-color: #b98af0; background: linear-gradient(120deg, #1d1030, #0e0818); } .al.hol b { color: #d6b8ff; }
+  .al .days2 { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .al .days2 i { font-style: normal; font-size: 12px; padding: 4px 8px; border-radius: 10px; background: rgba(255,255,255,.06); color: #e6dccb; white-space: nowrap; }
   .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
   .cell { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
   .cell span { display: block; font-size: 12px; color: var(--muted); }
@@ -157,19 +172,21 @@ async function show(place) {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${place.lat}&longitude=${place.lon}`
     + `&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m,is_day,pressure_msl`
     + `&hourly=temperature_2m,weather_code,precipitation_probability,is_day`
-    + `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max`
-    + `&timezone=auto&forecast_days=7`;
+    + `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,snowfall_sum,wind_gusts_10m_max,sunrise,sunset,uv_index_max`
+    + `&timezone=auto&forecast_days=16`;
+  const polUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${place.lat}&longitude=${place.lon}&hourly=${POLLEN.map((x) => x[0]).join(",")}&forecast_days=4&timezone=auto`;
   try {
     const r = await fetch(url);
     if (!r.ok) throw new Error(r.status);
-    render(place, await r.json());
+    const pol = await fetch(polUrl).then((x) => (x.ok ? x.json() : null)).catch(() => null);
+    render(place, await r.json(), pol);
     save(place);
   } catch (e) {
     $("out").innerHTML = '<div class="msg">Hava durumu alınamadı. İnternet bağlantını kontrol edip tekrar dene.</div>';
   }
 }
 
-function render(place, d) {
+function render(place, d, pol) {
   const c = d.current, dl = d.daily, h = d.hourly;
   const now = wmo(c.weather_code, c.is_day);
   const tTime = (s) => s.slice(11, 16);
@@ -184,10 +201,11 @@ function render(place, d) {
       <div class="p">${p >= 20 ? "💧" + p + "%" : ""}</div></div>`;
   }
 
-  const lo = Math.min(...dl.temperature_2m_min), hi = Math.max(...dl.temperature_2m_max);
+  const N7 = Math.min(7, dl.time.length);
+  const lo = Math.min(...dl.temperature_2m_min.slice(0, N7)), hi = Math.max(...dl.temperature_2m_max.slice(0, N7));
   const span = Math.max(1, hi - lo);
   let days = "";
-  dl.time.forEach((t, i) => {
+  dl.time.slice(0, N7).forEach((t, i) => {
     const w = wmo(dl.weather_code[i]);
     const name = i === 0 ? "Bugün" : new Date(t + "T12:00:00").toLocaleDateString("tr-TR", { weekday: "long" });
     const a = dl.temperature_2m_min[i], b = dl.temperature_2m_max[i];
@@ -202,6 +220,7 @@ function render(place, d) {
   });
 
   $("out").innerHTML = `
+    ${dayNightHTML(place, dl.sunrise[0], dl.sunset[0])}
     <div class="now">
       <div class="place">${esc(place.name)}<small>${esc(place.admin || "")}</small></div>
       <div class="big-ico">${now.icon}</div>
@@ -209,7 +228,7 @@ function render(place, d) {
       <div class="cond">${now.text}</div>
       <div class="hl">En yüksek ${round(dl.temperature_2m_max[0])}° · En düşük ${round(dl.temperature_2m_min[0])}°</div>
     </div>
-    ${sunHTML(place, dl.sunrise[0], dl.sunset[0])}
+    ${alertsHTML(dl, pol)}
     <div class="grid">
       <div class="cell"><span>Hissedilen</span><b>${round(c.apparent_temperature)}°</b></div>
       <div class="cell"><span>Nem</span><b>%${round(c.relative_humidity_2m)}</b></div>
@@ -221,7 +240,94 @@ function render(place, d) {
     <h2>Saatlik</h2>
     <div class="hours">${hours}</div>
     <h2>7 günlük</h2>
-    <div class="days">${days}</div>`;
+    <div class="days">${days}</div>
+    <h2>Ekinoks ve gündönümleri</h2>
+    ${seasonsHTML(place)}`;
+}
+
+// ---- Önemli hava olayları ve tatil tahmini ----
+const POLLEN = [["grass_pollen", "Çimen", 50], ["olive_pollen", "Zeytin", 200], ["birch_pollen", "Huş", 100], ["alder_pollen", "Kızılağaç", 100], ["mugwort_pollen", "Pelin", 50], ["ragweed_pollen", "Ambrosia", 50]];
+// Resmî ve dinî tatiller (yarım gün arife dahil)
+const HOL_FIXED = { "01-01": "Yılbaşı", "04-23": "23 Nisan", "05-01": "1 Mayıs", "05-19": "19 Mayıs", "07-15": "15 Temmuz", "08-30": "Zafer Bayramı", "10-28": "Cumhuriyet Bayramı", "10-29": "Cumhuriyet Bayramı" };
+const HOL_REL = {
+  2026: { "03-19": "Ramazan Bayramı", "03-20": "Ramazan Bayramı", "03-21": "Ramazan Bayramı", "03-22": "Ramazan Bayramı", "05-26": "Kurban Bayramı", "05-27": "Kurban Bayramı", "05-28": "Kurban Bayramı", "05-29": "Kurban Bayramı", "05-30": "Kurban Bayramı" },
+  2027: { "03-08": "Ramazan Bayramı", "03-09": "Ramazan Bayramı", "03-10": "Ramazan Bayramı", "03-11": "Ramazan Bayramı", "05-15": "Kurban Bayramı", "05-16": "Kurban Bayramı", "05-17": "Kurban Bayramı", "05-18": "Kurban Bayramı", "05-19": "Kurban Bayramı" },
+};
+const holName = (iso) => (HOL_REL[+iso.slice(0, 4)] || {})[iso.slice(5)] || HOL_FIXED[iso.slice(5)];
+const dLabel = (iso, i) => i === 0 ? "Bugün" : i === 1 ? "Yarın" : new Date(iso + "T12:00:00").toLocaleDateString("tr-TR", { weekday: "long", day: "numeric", month: "short" });
+const dShort = (iso) => new Date(iso + "T12:00:00").toLocaleDateString("tr-TR", { weekday: "short", day: "numeric" });
+function alertsHTML(dl, pol) {
+  const A = [], n = dl.time.length, W = Math.min(n, 10);
+  const mx = dl.temperature_2m_max, mn = dl.temperature_2m_min, pr = dl.precipitation_sum || [], sn = dl.snowfall_sum || [], gu = dl.wind_gusts_10m_max || [], wc = dl.weather_code, pp = dl.precipitation_probability_max;
+  const far = (i) => (i >= 7 ? " · uzak tahmin, değişebilir" : "");
+  const first = (f, from = 0, to = W) => { for (let i = from; i < to; i++) if (f(i)) return i; return -1; };
+  const count = (f, i) => { let k = 0; while (i + k < W && f(i + k)) k++; return k; };
+  // Sert soğuma / ısınma (bugüne göre)
+  const base = (mx[0] + (mx[1] ?? mx[0])) / 2;
+  let i = first((j) => j >= 1 && mx[j] <= base - 7);
+  if (i >= 0) A.push({ c: "blu", e: "🥶", t: "Hava sert soğuyor", s: `${dLabel(dl.time[i], i)} en yüksek sıcaklık ${Math.round(mx[i])}°'ye iniyor (bugün ${Math.round(mx[0])}°). Kalın giyinmeyi unutma.${far(i)}`, o: 3 });
+  i = first((j) => j >= 1 && mx[j] >= base + 8);
+  if (i >= 0) A.push({ c: "org", e: "🌡️", t: "Hava hızla ısınıyor", s: `${dLabel(dl.time[i], i)} ${Math.round(mx[i])}° bekleniyor (bugün ${Math.round(mx[0])}°).${far(i)}`, o: 5 });
+  // Aşırı sıcak
+  i = first((j) => mx[j] >= 35);
+  if (i >= 0) { const k = count((j) => mx[j] >= 35, i); const top = Math.max(...mx.slice(i, i + k)); A.push({ c: top >= 38 ? "red" : "org", e: "🔥", t: top >= 38 ? "Aşırı sıcak" : "Çok sıcak", s: `${dLabel(dl.time[i], i)}${k > 1 ? ` başlayarak ${k} gün` : ""} sıcaklık ${Math.round(top)}°'ye çıkıyor. Öğle saatlerinde güneşten korun, bol su iç.${far(i)}`, o: top >= 38 ? 1 : 2 }); }
+  // Don
+  i = first((j) => mn[j] <= 0);
+  if (i >= 0) A.push({ c: mn[i] <= -5 ? "red" : "blu", e: "🧊", t: mn[i] <= -5 ? "Sert don" : "Don / buzlanma riski", s: `${dLabel(dl.time[i], i)} gece sıcaklık ${Math.round(mn[i])}°'ye düşüyor. Yollarda buzlanma, tarım ürünlerinde zirai don olabilir.${far(i)}`, o: 2 });
+  // Kar
+  i = first((j) => sn[j] >= 1);
+  if (i >= 0) A.push({ c: sn[i] >= 10 ? "red" : "blu", e: "❄️", t: sn[i] >= 10 ? "Yoğun kar yağışı" : "Kar yağışı", s: `${dLabel(dl.time[i], i)} ${Math.round(sn[i])} cm kar bekleniyor.${far(i)}`, o: 1 });
+  // Şiddetli yağış
+  i = first((j) => pr[j] >= 20);
+  if (i >= 0) { const k = count((j) => pr[j] >= 10, i); const tot = pr.slice(i, i + Math.max(1, k)).reduce((a, b) => a + b, 0); A.push({ c: pr[i] >= 50 ? "red" : "org", e: "⛈️", t: pr[i] >= 50 ? "Çok kuvvetli yağış — sel riski" : "Kuvvetli yağış", s: `${dLabel(dl.time[i], i)}${k > 1 ? ` başlayarak ${k} gün` : ""} toplam ${Math.round(tot)} mm yağış bekleniyor. Su baskını ve ani sele dikkat.${far(i)}`, o: pr[i] >= 50 ? 0 : 1 }); }
+  else { i = first((j) => wc[j] >= 95); if (i >= 0) A.push({ c: "org", e: "⛈️", t: "Gök gürültülü sağanak", s: `${dLabel(dl.time[i], i)} yer yer gök gürültülü sağanak${wc[i] >= 96 ? " ve dolu" : ""} bekleniyor.${far(i)}`, o: 2 }); }
+  // Rüzgâr
+  i = first((j) => gu[j] >= 60);
+  if (i >= 0) A.push({ c: gu[i] >= 80 ? "red" : "org", e: "💨", t: gu[i] >= 80 ? "Fırtına" : "Kuvvetli rüzgâr", s: `${dLabel(dl.time[i], i)} rüzgâr hamlesi ${Math.round(gu[i])} km/s'ye ulaşabilir. Çatı uçması ve devrilen ağaçlara dikkat.${far(i)}`, o: gu[i] >= 80 ? 0 : 2 });
+  // UV
+  if ((dl.uv_index_max[0] || 0) >= 8) A.push({ c: "org", e: "🕶️", t: "UV çok yüksek", s: `Bugün UV indeksi ${Math.round(dl.uv_index_max[0])}. 11:00–16:00 arası güneşten korun.`, o: 4 });
+  // Polen
+  if (pol && pol.hourly) {
+    const hi = POLLEN.map(([k, ad, lim]) => { const v = (pol.hourly[k] || []).filter((x) => x != null); const m = v.length ? Math.max(...v) : 0; return { ad, m, lim }; }).filter((x) => x.m >= x.lim);
+    if (hi.length) A.push({ c: "org", e: "🤧", t: "Polen yüksek", s: `Önümüzdeki günlerde ${hi.map((x) => x.ad).join(", ")} poleni yüksek. Alerjisi olanlar dikkat.`, o: 3 });
+  }
+  A.sort((a, b) => a.o - b.o);
+  return `<div class="alerts">${A.slice(0, 4).map(card).join("")}${holidayCards(dl)}</div>`;
+}
+const card = (a) => `<div class="al ${a.c}"><div class="e">${a.e}</div><div class="t"><b>${a.t}</b><span>${a.s}</span>${a.x || ""}</div></div>`;
+// Tatil öncesi hava: önümüzdeki 16 gündeki resmî/dinî tatil ve hafta sonu
+function holidayCards(dl) {
+  const out = [], n = dl.time.length, used = new Set();
+  const today = dl.time[0];
+  for (let i = 0; i < n; i++) {
+    const nm = holName(dl.time[i]); if (!nm || used.has(i)) continue;
+    let j = i; while (j + 1 < n && holName(dl.time[j + 1]) === nm) j++;
+    // bayrama bitişik hafta sonunu da kat
+    while (j + 1 < n && [0, 6].includes(new Date(dl.time[j + 1] + "T12:00:00").getDay())) j++;
+    let a = i; while (a - 1 >= 1 && [0, 6].includes(new Date(dl.time[a - 1] + "T12:00:00").getDay())) a--;
+    for (let k = a; k <= j; k++) used.add(k);
+    out.push(tatilCard(dl, a, j, nm));
+  }
+  // Hafta sonu (bayramla birleşmediyse)
+  const sat = dl.time.findIndex((t, k) => k >= 0 && new Date(t + "T12:00:00").getDay() === 6);
+  if (sat >= 0 && !used.has(sat) && sat < 8) out.push(tatilCard(dl, sat, Math.min(sat + 1, n - 1), "Hafta sonu"));
+  return out.join("");
+}
+function tatilCard(dl, a, b, nm) {
+  const idx = []; for (let k = a; k <= b; k++) idx.push(k);
+  const mxs = idx.map((k) => dl.temperature_2m_max[k]), rain = idx.filter((k) => dl.precipitation_probability_max[k] >= 55 || (dl.precipitation_sum || [])[k] >= 3);
+  const tmax = Math.max(...mxs), tmin = Math.min(...idx.map((k) => dl.temperature_2m_min[k])), avg = mxs.reduce((x, y) => x + y, 0) / mxs.length;
+  let c, e, t;
+  if (rain.length === idx.length) { c = "blu"; e = "☔"; t = "yağışlı görünüyor"; }
+  else if (rain.length) { c = "blu"; e = "🌦️"; t = `${rain.map((k) => dShort(dl.time[k])).join(", ")} yağış var, diğer günler açık`; }
+  else if (avg >= 18 && avg <= 30) { c = "grn"; e = "😎"; t = "hava çok güzel olacak"; }
+  else if (avg > 30) { c = "org"; e = "🏖️"; t = "çok sıcak, deniz havası"; }
+  else if (avg < 10) { c = "blu"; e = "🧣"; t = "kuru ama soğuk"; }
+  else { c = "grn"; e = "🌤️"; t = "yağış yok, serin"; }
+  const isHol = nm !== "Hafta sonu";
+  const rng = a === b ? dLabel(dl.time[a], a) : `${dShort(dl.time[a])} – ${dShort(dl.time[b])}`;
+  const chips = `<div class="days2">${idx.map((k) => `<i>${dShort(dl.time[k])} ${wmo(dl.weather_code[k]).icon} ${Math.round(dl.temperature_2m_max[k])}°${holName(dl.time[k]) ? " 🎉" : ""}</i>`).join("")}</div>`;
+  return card({ c: isHol ? "hol" : c, e: isHol ? "🎉" : e, t: `${nm}: ${t}`, s: `${isHol ? e + " " : ""}${rng} · ${Math.round(tmin)}° – ${Math.round(tmax)}°${a >= 7 ? " · uzak tahmin, değişebilir" : ""}`, x: chips });
 }
 
 // ---- Gündüz / gece süresi ve ekinokslar ----
@@ -245,7 +351,7 @@ const SEASONS = [
 ];
 const hm = (h) => { const m = Math.round(Math.abs(h) * 60); return `${Math.floor(m / 60)} sa ${m % 60} dk`; };
 const ms = (h) => { const s = Math.round(Math.abs(h) * 3600); return s >= 60 ? `${Math.floor(s / 60)} dk ${s % 60} sn` : `${s} sn`; };
-function sunHTML(place, rise, set) {
+function dayNightHTML(place, rise, set) {
   const today = new Date(); today.setHours(12, 0, 0, 0);
   const toMin = (s) => +s.slice(11, 13) * 60 + +s.slice(14, 16);
   const r = toMin(rise), st = toMin(set), dayH = (st - r) / 60;
@@ -254,7 +360,16 @@ function sunHTML(place, rise, set) {
   const diff = dayLen(place.lat, today) - dayLen(place.lat, y);
   const isDay = nm >= r && nm < st;
   const left = isDay ? `☀️ Güneşin batmasına ${hm((st - nm) / 60)}` : `🌙 Güneşin doğmasına ${hm(((nm < r ? r : r + 1440) - nm) / 60)}`;
-  const ups = SEASONS.map(([d, e, n, x]) => ({ d: new Date(d + "T12:00:00"), e, n, x })).filter((v) => v.d >= today).slice(0, 3);
+  return `<div class="sun"><h3>☀️ Gündüz ve gece</h3>
+    <div class="dn"><div class="d"><b>${hm(dayH)}</b><span>Gündüz (${rise.slice(11, 16)} – ${set.slice(11, 16)})</span></div><div class="n"><b>${hm(24 - dayH)}</b><span>Gece</span></div></div>
+    <div class="tl"><i style="left:${r / 14.4}%;right:${100 - st / 14.4}%"></i><u style="left:${nm / 14.4}%"></u></div>
+    <div class="tlx"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+    <div class="chg">${left} · Gündüz dünden <b style="color:${diff >= 0 ? "#3fc283" : "#ef6a4c"}">${ms(diff)} ${diff >= 0 ? "uzun" : "kısa"}</b></div></div>`;
+}
+// Önümüzdeki 2 ekinoks + 2 gündönümü ve 1 yıllık gündüz grafiği
+function seasonsHTML(place) {
+  const today = new Date(); today.setHours(12, 0, 0, 0);
+  const ups = SEASONS.map(([d, e, n, x]) => ({ d: new Date(d + "T12:00:00"), e, n, x })).filter((v) => v.d >= today).slice(0, 4);
   const evs = ups.map((v) => {
     const days = Math.round((v.d - today) / 864e5), L = dayLen(place.lat, v.d), ch = L - dayLen(place.lat, today);
     return `<div class="ev"><div class="e">${v.e}</div><div class="t">${v.n}<small>${v.d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })} · ${days} gün sonra</small></div>
@@ -272,11 +387,7 @@ function sunHTML(place, rise, set) {
   const svg = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${marks}
     ${mn < 12 && mx > 12 ? `<line x1="0" x2="${W}" y1="${y12}" y2="${y12}" stroke="#555" stroke-width=".6"/><text x="${W - 2}" y="${y12 - 2}" font-size="8" fill="#777" text-anchor="end">12 sa</text>` : ""}
     <polyline points="${pts.join(" ")}" fill="none" stroke="#f5c04a" stroke-width="1.6"/><circle cx="0" cy="${yOf(vals[0])}" r="3" fill="#fff"/></svg>`;
-  return `<div class="sun"><h3>☀️ Gündüz ve gece</h3>
-    <div class="dn"><div class="d"><b>${hm(dayH)}</b><span>Gündüz (${rise.slice(11, 16)} – ${set.slice(11, 16)})</span></div><div class="n"><b>${hm(24 - dayH)}</b><span>Gece</span></div></div>
-    <div class="tl"><i style="left:${r / 14.4}%;right:${100 - st / 14.4}%"></i><u style="left:${nm / 14.4}%"></u></div>
-    <div class="tlx"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
-    <div class="chg">${left} · Gündüz dünden <b style="color:${diff >= 0 ? "#3fc283" : "#ef6a4c"}">${ms(diff)} ${diff >= 0 ? "uzun" : "kısa"}</b></div>
+  return `<div class="sun">
     ${evs}
     ${svg}<div class="tlx"><span>Bugün</span><span>Önümüzdeki 12 ay gündüz süresi</span><span>+1 yıl</span></div></div>`;
 }
