@@ -35,6 +35,16 @@
   .clock { display: flex; flex-direction: column; align-items: center; gap: 3px; }
   .clock svg { width: 62px; height: 62px; display: block; filter: drop-shadow(0 2px 8px rgba(224,162,79,.18)); }
   .clock .dig { font-size: 12px; color: var(--accent); font-variant-numeric: tabular-nums; letter-spacing: 1px; font-weight: 600; }
+  /* Dijital saat: mini Nixie tüpler */
+  .clock .dig { display: flex; align-items: center; gap: 2px; letter-spacing: 0; }
+  .dig .nx { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 12px; height: 18px; border-radius: 5px 5px 2px 2px; overflow: hidden;
+    background: radial-gradient(ellipse at 50% 60%, #6a1a02 0%, #2a0800 60%, #120400 100%); border: 1px solid #4a1a08; box-shadow: 0 0 4px rgba(255,90,0,.35);
+    font-family: "Courier New", ui-monospace, monospace; font-size: 13px; font-weight: 700; line-height: 1; color: #ffc46e; text-shadow: 0 0 2px #ff8a1a, 0 0 5px #ff5a00; }
+  .dig .nx::after { content: ""; position: absolute; left: 1px; top: 2px; width: 1.5px; height: 55%; border-radius: 2px; background: linear-gradient(rgba(255,255,255,.35), rgba(255,255,255,0)); }
+  .dig .nc { display: inline-flex; flex-direction: column; gap: 4px; margin: 0 1px; }
+  .dig .nc i { width: 3px; height: 3px; border-radius: 50%; background: #ff7a1a; box-shadow: 0 0 3px #ff5a00; transition: opacity .2s; }
+  .dig.off .nc i { opacity: .25; box-shadow: none; }
+  .datec { cursor: pointer; }
   .datec { justify-self: center; width: 60px; border-radius: 12px; overflow: hidden; border: 1px solid #5a4320; background: #0f0f0f; text-align: center; box-shadow: 0 2px 10px rgba(224,162,79,.14); }
   .datec .m { background: linear-gradient(180deg, #e8b05d, #c98a35); color: #1a1205; font-size: 10.5px; font-weight: 800; letter-spacing: 1.5px; padding: 3px 0 2px; }
   .datec .d { font-size: 27px; font-weight: 800; line-height: 1.05; padding-top: 4px; color: #f6e7cc; font-variant-numeric: tabular-nums; }
@@ -68,22 +78,6 @@
   }
   @keyframes glow { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
   p { margin: 0 0 28px; color: var(--muted); letter-spacing: 1px; }
-  /* Nixie saat (akıllı saatteki gibi, küçük) */
-  .nixie { display: flex; justify-content: center; align-items: center; gap: 4px; margin: -12px auto 22px; }
-  .nixie .tube { position: relative; width: 26px; height: 42px; border-radius: 9px 9px 6px 6px; overflow: hidden;
-    background: radial-gradient(ellipse at 50% 60%, #6a1a02 0%, #2a0800 55%, #120400 100%); border: 1px solid #4a1a08;
-    box-shadow: 0 0 8px rgba(255,90,0,.35), inset 0 0 6px rgba(0,0,0,.8); }
-  .nixie .tube::before { content: ""; position: absolute; inset: 0; opacity: .35;
-    background: repeating-linear-gradient(60deg, transparent 0 3px, rgba(255,150,80,.18) 3px 3.6px), repeating-linear-gradient(-60deg, transparent 0 3px, rgba(255,150,80,.18) 3px 3.6px); }
-  .nixie .tube::after { content: ""; position: absolute; left: 3px; top: 3px; width: 3px; height: 55%; border-radius: 3px; background: linear-gradient(rgba(255,255,255,.35), rgba(255,255,255,0)); }
-  .nixie .tube b { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: "Courier New", ui-monospace, monospace; font-size: 31px; font-weight: 400; line-height: 1;
-    color: transparent; -webkit-text-stroke: 1.1px #ffd36e; text-shadow: 0 0 3px #ff8a1a, 0 0 8px #ff5a00, 0 0 14px rgba(255,70,0,.8); }
-  .nixie .tube b.flip { animation: nxflip .3s ease-out; }
-  @keyframes nxflip { 0% { opacity: .2; } 100% { opacity: 1; } }
-  .nixie .dots { display: flex; flex-direction: column; gap: 9px; margin: 0 2px; }
-  .nixie .dots i { width: 5px; height: 5px; border-radius: 50%; background: #ff7a1a; box-shadow: 0 0 5px #ff5a00, 0 0 9px rgba(255,80,0,.7); border: 1px solid #ffb35a; }
-  .nixie.off .dots i { opacity: .25; box-shadow: none; }
-  @media (prefers-reduced-motion: reduce) { .nixie .tube b.flip { animation: none; } }
   p.welcome { margin: 0 0 4px; }
   p.greet { margin: 0 0 26px; color: var(--accent); font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 18px; letter-spacing: .5px; min-height: 24px; }
   .list { width: 100%; max-width: 380px; display: grid; gap: 12px; }
@@ -163,24 +157,6 @@
       </div>
     </div>
   </header>
-  <div class="nixie" id="nixie" role="img" aria-label="Saat">
-    <div class="tube"><b>0</b></div><div class="tube"><b>0</b></div>
-    <div class="dots"><i></i><i></i></div>
-    <div class="tube"><b>0</b></div><div class="tube"><b>0</b></div>
-  </div>
-  <script>
-  (function () {
-    const nx = document.getElementById("nixie"), bs = nx.querySelectorAll(".tube b");
-    let last = "";
-    function tick() {
-      const d = new Date(), p = (n) => String(n).padStart(2, "0"), t = p(d.getHours()) + p(d.getMinutes());
-      t.split("").forEach((ch, i) => { if (last[i] !== ch) { bs[i].textContent = ch; bs[i].classList.remove("flip"); void bs[i].offsetWidth; bs[i].classList.add("flip"); } });
-      last = t; nx.classList.toggle("off", d.getSeconds() % 2 === 1);
-      setTimeout(tick, 1000 - (Date.now() % 1000) + 5);
-    }
-    tick();
-  })();
-  </script>
   <div class="bar" id="bar" aria-hidden="true">
     <div class="clock bc"><svg viewBox="0 0 100 100" aria-hidden="true">
           <defs><radialGradient id="cf2" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#1c1710"/><stop offset="1" stop-color="#070707"/></radialGradient></defs>
@@ -278,7 +254,12 @@
       rot("hh", (h % 12) * 30 + m * 0.5);
       rot("mh", m * 6 + sec * 0.1);
       rot("sh", sec * 6);
-      put("dig", String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0"));
+      const hm = String(h).padStart(2, "0") + String(m).padStart(2, "0");
+      ["dig", "dig2"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el.dataset.t !== hm) { el.dataset.t = hm; el.innerHTML = `<span class="nx">${hm[0]}</span><span class="nx">${hm[1]}</span><span class="nc"><i></i><i></i></span><span class="nx">${hm[2]}</span><span class="nx">${hm[3]}</span>`; el.setAttribute("aria-label", hm.slice(0, 2) + ":" + hm.slice(2)); }
+        el.classList.toggle("off", sec % 2 === 1);
+      });
       if (n.getDate() !== lastDay) {
         lastDay = n.getDate();
         put("dm", AY[n.getMonth()]);
@@ -289,6 +270,8 @@
       }
     };
     tick(); setInterval(tick, 1000);
+    // Takvim kutusuna dokununca Takvim sayfası açılır
+    document.querySelectorAll(".datec").forEach((el) => { el.setAttribute("role", "link"); el.title = "Takvim"; el.addEventListener("click", () => (location.href = "takvim.html")); });
     const top = document.getElementById("top"), bar = document.getElementById("bar");
     // Büyük logo ekrandan tamamen çıkınca üstte ince şerit belirir; menü hiç örtülmez
     const first = document.querySelector("a.isb");
