@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="gate.js"></script>
+<script src="isimler.js"></script>
 <link rel="icon" type="image/png" href="img/icon.png">
 <link rel="apple-touch-icon" href="img/icon.png">
 <meta name="theme-color" content="#000000">
@@ -211,7 +212,10 @@
 const SUITS = ["♠", "♥", "♣", "♦"];
 const SUIT_NAMES = { "♠": "Maça", "♥": "Kupa", "♣": "Sinek", "♦": "Karo" };
 const RANKS = { 11: "J", 12: "Q", 13: "K", 14: "A" };
-const NAMES = ["Sen", "Sadosan", "Sadolayn", "Sadocan"];
+let NAMES = [];
+// İsimler: Sadolayn sabit; diğerlerini kullanıcı yazar (en fazla 8 karakter, tüm oyunlarda ortak)
+function setNames() { NAMES = [ISIM.ben(), ISIM.get("sag", "Sadosan"), "Sadolayn", ISIM.get("sol", "Sadocan")]; }
+setNames();
 const isRed = (s) => s === "♥" || s === "♦";
 const rankText = (r) => RANKS[r] || String(r);
 const id = (c) => c.s + c.r;
@@ -385,7 +389,7 @@ function renderInfo() {
   const i = bidder != null && contract ? `<b>${contract}</b> · ${NAMES[bidder]}` : "–";
   $("info").innerHTML = `El: <b>${Math.max(1, roundNo)}/${OPT.eller}</b> · Koz: ${k}<br>İhale: ${i}${gameStake ? ` · 💳 ${mpFmt(gameStake)}` : ""}`;
   $("scores").innerHTML = OPT.esli
-    ? `<div style="grid-column:span 2">Sen + Sadolayn<b class="${scores[0] < 0 ? "neg" : ""}">${scores[0]}</b></div><div style="grid-column:span 2">Sadosan + Sadocan<b class="${scores[1] < 0 ? "neg" : ""}">${scores[1]}</b></div>`
+    ? `<div style="grid-column:span 2">${NAMES[0]} + Sadolayn<b class="${scores[0] < 0 ? "neg" : ""}">${scores[0]}</b></div><div style="grid-column:span 2">${NAMES[1]} + ${NAMES[3]}<b class="${scores[1] < 0 ? "neg" : ""}">${scores[1]}</b></div>`
     : scores.map((s, p) => `<div>${NAMES[p]}<b class="${s < 0 ? "neg" : ""}">${s}</b></div>`).join("");
 }
 function renderSeats() {
@@ -605,7 +609,7 @@ function endRound() {
   const title = made ? (sameSide(0, bidder) ? "🎉 İhale tuttu!" : `${who} ihaleyi tuttu`)
     : over ? `🔥 ${who} +3 yaptı, yandı!` : (sameSide(0, bidder) ? "😬 Battın!" : `${who} battı!`);
   const rows = OPT.esli
-    ? [[0, "Sen + Sadolayn"], [1, "Sadosan + Sadocan"]].map(([p, n]) => `<tr><td style="text-align:left">${n}${sameSide(p, bidder) ? " 👑" : ""}</td><td>${tricks[p] + tricks[partner(p)]}</td><td class="${deltas[p] < 0 ? "neg" : "pos"}">${deltas[p] > 0 ? "+" : ""}${deltas[p]}</td><td><b>${scores[p]}</b></td></tr>`).join("")
+    ? [[0, `${NAMES[0]} + Sadolayn`], [1, `${NAMES[1]} + ${NAMES[3]}`]].map(([p, n]) => `<tr><td style="text-align:left">${n}${sameSide(p, bidder) ? " 👑" : ""}</td><td>${tricks[p] + tricks[partner(p)]}</td><td class="${deltas[p] < 0 ? "neg" : "pos"}">${deltas[p] > 0 ? "+" : ""}${deltas[p]}</td><td><b>${scores[p]}</b></td></tr>`).join("")
     : [0, 1, 2, 3].map((p) => `<tr><td style="text-align:left">${NAMES[p]}${p === bidder ? " 👑" : ""}</td><td>${tricks[p]}</td><td class="${deltas[p] < 0 ? "neg" : "pos"}">${deltas[p] > 0 ? "+" : ""}${deltas[p]}</td><td><b>${scores[p]}</b></td></tr>`).join("");
   const last = roundNo >= OPT.eller;
   $("modal").innerHTML = `
@@ -656,8 +660,8 @@ function gameOver() {
   let rows, win;
   if (OPT.esli) {
     const a = scores[0], b = scores[1];
-    win = a === b ? "Berabere!" : a > b ? "🎉 Siz kazandınız! (Sen + Sadolayn)" : "Sadosan + Sadocan kazandı";
-    rows = `<tr><td style="text-align:left">Sen + Sadolayn</td><td><b>${a}</b></td></tr><tr><td style="text-align:left">Sadosan + Sadocan</td><td><b>${b}</b></td></tr>`;
+    win = a === b ? "Berabere!" : a > b ? `🎉 Siz kazandınız! (${NAMES[0]} + Sadolayn)` : `${NAMES[1]} + ${NAMES[3]} kazandı`;
+    rows = `<tr><td style="text-align:left">${NAMES[0]} + Sadolayn</td><td><b>${a}</b></td></tr><tr><td style="text-align:left">${NAMES[1]} + ${NAMES[3]}</td><td><b>${b}</b></td></tr>`;
   } else {
     const order = [0, 1, 2, 3].sort((x, y) => scores[y] - scores[x]);
     win = order[0] === 0 ? "🎉 Kazandın!" : `${NAMES[order[0]]} kazandı`;
@@ -688,8 +692,9 @@ function showRules() {
     <div class="opts">
       <label>Bahis (MaxiPuan)</label>${seg("bahis", BAHIS.map((v) => [v, mpFmt(v)]))}
       <div style="font-size:11px;color:var(--muted);margin-top:4px">Tekli oyunda birinci olursan bahsinin <b>3 katını</b>, eşli oyunda tarafın kazanırsa <b>2 katını</b> alırsın. Berabere biterse bahsin iade edilir.</div>
+      <label>İsimler</label>${ISIM.html([["ben", "Sen", "Senin adın"], ["sag", "Sadosan", "Sağındaki"], [null, "Sadolayn", "Karşındaki"], ["sol", "Sadocan", "Solundaki"]])}
       <label>Kaç el oynanacak?</label>${seg("eller", [[1, "1"], [3, "3"], [5, "5"], [7, "7"]])}
-      <label>Oyun şekli</label>${seg("esli", [[false, "Eşsiz (tekli)"], [true, "Eşli (Sen + Sadolayn)"]])}
+      <label>Oyun şekli</label>${seg("esli", [[false, "Eşsiz (tekli)"], [true, "Eşli (Sadolayn eşin)"]])}
       <label>Yükseltme</label>${seg("yuk", [[true, "Yükseltmeli (kanlı)"], [false, "Yükseltmesiz"]])}
       <label>İhale +3 kuralı</label>${seg("arti3", [[true, "+3 yapan yanar"], [false, "Kapalı"]])}
       <div id="a3note" style="font-size:11px;color:var(--muted);margin-top:4px">Eşli oyunda +3 kuralı uygulanmaz.</div>
@@ -705,6 +710,7 @@ function showRules() {
     </ul>
     <button class="btn" id="start">Başla</button>`;
   $("overlay").classList.add("show");
+  ISIM.bind($("modal"), () => { setNames(); if (typeof render === "function") try { render(); } catch (e) {} });
   $("modal").querySelectorAll(".seg").forEach((g) => (g.onclick = (e) => {
     const b = e.target.closest("button"); if (!b) return;
     const k = g.dataset.k, v = b.dataset.v;

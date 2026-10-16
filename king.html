@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="gate.js"></script>
+<script src="isimler.js"></script>
 <link rel="icon" type="image/png" href="img/icon.png">
 <link rel="apple-touch-icon" href="img/icon.png">
 <meta name="theme-color" content="#000000">
@@ -257,7 +258,10 @@
 const SUITS = ["♠", "♥", "♣", "♦"];
 const SUIT_NAMES = { "♠": "Maça", "♥": "Kupa", "♣": "Sinek", "♦": "Karo" };
 const RANKS = { 11: "J", 12: "Q", 13: "K", 14: "A" };
-const NAMES = ["Sen", "Sadosan", "Sadolayn", "Sadocan"];
+let NAMES = [];
+// İsimler: Sadolayn sabit; diğerlerini kullanıcı yazar (en fazla 8 karakter, tüm oyunlarda ortak)
+function setNames() { NAMES = [ISIM.ben(), ISIM.get("sag", "Sadosan"), "Sadolayn", ISIM.get("sol", "Sadocan")]; }
+setNames();
 const CEZALAR = {
   el:    { ad: "El almaz",    kisa: "El",     puan: 50,  aciklama: "Aldığın her el −50" },
   kupa:  { ad: "Kupa almaz",  kisa: "Kupa",   puan: 30,  aciklama: "Aldığın her kupa −30" },
@@ -711,7 +715,8 @@ const PEN_LIST = {
   rifki: () => [{ s: "♥", r: 13 }],
   kupa: () => [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2].map((r) => ({ s: "♥", r })),
 };
-const INI = ["Sen", "San", "Lyn", "Can"];
+const INI0 = ["Sen", "San", "Lyn", "Can"], DEF = ["Sen", "Sadosan", "Sadolayn", "Sadocan"];
+const ini = (w) => (NAMES[w] === DEF[w] ? INI0[w] : NAMES[w].slice(0, 3));
 function renderPens() {
   const el = $("pens");
   const f = (phase === "play" || phase === "end") && PEN_LIST[contract];
@@ -721,7 +726,7 @@ function renderPens() {
   const out = list.filter((c) => takenBy[id(c)] != null).length;
   el.innerHTML = `<span class="pl">${CEZALAR[contract].kisa}: ${out}/${list.length} çıktı</span>` + list.map((c) => {
     const w = takenBy[id(c)];
-    return `<div class="pc${isRed(c.s) ? " red" : ""}${w != null ? " out" + (w === 0 ? " me" : "") : " wait"}">${rankText(c.r)}${c.s}<i>${w != null ? INI[w] : "–"}</i></div>`;
+    return `<div class="pc${isRed(c.s) ? " red" : ""}${w != null ? " out" + (w === 0 ? " me" : "") : " wait"}">${rankText(c.r)}${c.s}<i>${w != null ? ini(w) : "–"}</i></div>`;
   }).join("");
 }
 function renderInfo() {
@@ -958,7 +963,6 @@ function gameOver() {
 }
 
 // ---------- Cetvel ----------
-const SHORT = ["Sen", "Sadosan", "Sadolayn", "Sadocan"];
 const isKozH = (h) => h.ct === "koz" || (h.oyun || "").startsWith("Koz");
 const ctKey = (h) => h.ct || CEZA_KEYS.find((k) => CEZALAR[k].ad === h.oyun);
 function tri(h) {
@@ -1017,7 +1021,7 @@ function showCetvel() {
     <table class="cet"><tr><th style="text-align:left">Çıkabilir mi?</th><th>Lidere fark</th><th>En iyi ihtimal</th><th></th></tr>${pot}</table>
     <p style="font-size:9.5px;margin-top:-5px;color:var(--muted)">En iyi ihtimal: kalan tüm kozları alıp hiç ceza yemezse (lider sabit kalırsa).</p>
     <details><summary style="cursor:pointer;color:var(--accent);font-size:12px;margin-bottom:4px">El el detay</summary>
-    <table class="cet"><tr><th>#</th><th style="text-align:left">Oyun · seçen</th>${SHORT.map((n) => `<th>${n}</th>`).join("")}</tr>${body}${cur}</table></details>
+    <table class="cet"><tr><th>#</th><th style="text-align:left">Oyun · seçen</th>${NAMES.map((n) => `<th>${n}</th>`).join("")}</tr>${body}${cur}</table></details>
     <button class="btn" id="cetClose">Kapat</button>`;
   $("overlay2").classList.add("show");
   $("cetClose").onclick = () => $("overlay2").classList.remove("show");
@@ -1028,6 +1032,7 @@ $("scores").onclick = showCetvel;
 function showRules(resume) {
   $("modal").innerHTML = `
     <h2>👑 King</h2>
+    ${ISIM.html([["ben", "Sen", "Senin adın"], ["sag", "Sadosan", "Sağındaki"], [null, "Sadolayn", "Karşındaki"], ["sol", "Sadocan", "Solundaki"]])}
     <ul class="rules">
       <li>20 el oynanır. Her oyuncu sırayla 5 kez oyun seçer: <b>2 koz</b> ve <b>3 ceza</b>. Her ceza oyunda toplam 2 kez oynanabilir.</li>
       <li><b>Cezalar:</b> El almaz (el başı −50), Kupa almaz (kupa başı −30), Erkek almaz (papaz/vale −60), Kız almaz (kız −100), Rifki (kupa papazı −320), Son iki (son iki el −180).</li>
@@ -1039,6 +1044,7 @@ function showRules(resume) {
     <button class="btn" id="start">${resume ? "Devam et" : "Başla"}</button>
     ${resume ? '<button class="btn" id="fresh" style="margin-top:8px;background:transparent;color:var(--muted);border-color:var(--line)">Yeni oyun başlat</button>' : ""}`;
   $("overlay").classList.add("show");
+  ISIM.bind($("modal"), () => { setNames(); try { renderInfo(); } catch (e) {} });
   $("start").onclick = () => { $("overlay").classList.remove("show"); newRound(); };
   if (resume) $("fresh").onclick = () => { $("overlay").classList.remove("show"); newGame(); newRound(); };
 }
