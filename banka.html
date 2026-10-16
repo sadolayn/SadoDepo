@@ -181,6 +181,7 @@
   table.bankplan td:nth-child(2) { text-align: center; }
   table.bankplan tr:nth-child(odd) td { background: rgba(255,255,255,.035); }
   table.bankplan tr.tot td { background: #3a3414; color: #f4e9a6; font-weight: 700; }
+  .pdfbtn { width: 100%; margin-top: 12px; }
   .tscopy { grid-column: 1 / -1; background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 10px; padding: 9px; font: inherit; font-size: 14px; cursor: pointer; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
   th, td { padding: 6px 4px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
@@ -385,6 +386,7 @@
         <div class="rows" id="t_prows" style="margin-top:8px"></div>
         <div class="tbl" style="margin-top:8px"><table id="t_plan" class="bankplan"></table></div>
       </details>
+      <button type="button" id="t_pdf" class="tscopy pdfbtn">📄 Ödeme planı PDF indir</button>
     </div>
     <div class="card">
       <h2>💸 Ara ödeme</h2>
@@ -483,6 +485,7 @@
         <summary>Aylık ödeme planı</summary>
         <div class="tbl"><table id="k2_mplan" class="bankplan"></table></div>
       </details>
+      <button type="button" id="k2_pdf" class="tscopy pdfbtn">📄 Ödeme planı PDF indir</button>
       <p class="note" id="k2_note"></p>
     </div>
   </section>
@@ -496,7 +499,6 @@
       <select id="tr_durum">
         <option value="levha">Vergi levhalı çiftçi (gerçek usul)</option>
         <option value="cks">Levhasız, ÇKS / çiftçilik belgeli</option>
-        <option value="bireysel">Zirai amaç belgesiz (bireysel)</option>
       </select>
       <label>Kredi tutarı</label>
       <div class="field"><input id="tr_tutar" type="text" inputmode="decimal" value="1.000.000"><span class="unit">TL</span></div>
@@ -529,7 +531,7 @@
         <div class="tbl"><table id="tr_plan"></table></div>
       </details>
     </div>
-    <p class="note">KKDF: Tüketici kredilerinde %15, ticari/zirai/mesleki faaliyet için kullandırılan ve bu amacı belgelenen kredilerde %0'dır. Çiftçiler bu amacı ÇKS kaydı, Hayvan Bilgi Sistemi kaydı, ziraat odası çiftçilik belgesi ya da (gerçek usulde) aktife kayıt ve fatura ile belgeleyebilir. BSMV: tüketici kredilerinde %15, diğer kredilerde genel oran uygulanır. Hazine faiz destekli (sübvansiyonlu) tarım kredilerinde faiz oranı ayrıca indirimlidir. Uygulamayı bankanın güncel yönergesiyle teyit et.</p>
+    <p class="note">Vergi levhalı (gerçek usul) çiftçide KKDF %0, BSMV %5. Levhasız, ÇKS / çiftçilik belgeli çiftçide KKDF %15, BSMV %5; kredi tutarı 15.000 TL'ye kadarsa KKDF %0. Hazine faiz destekli (sübvansiyonlu) tarım kredilerinde faiz oranı ayrıca indirimlidir. Uygulamayı bankanın güncel yönergesiyle teyit et.</p>
   </section>
 
   <!-- Taksitli ticari kredi -->
@@ -567,6 +569,7 @@
         <summary>Ödeme planını göster</summary>
         <div class="tbl"><table id="tc_plan" class="bankplan"></table></div>
       </details>
+      <button type="button" id="tc_pdf" class="tscopy pdfbtn">📄 Ödeme planı PDF indir</button>
     </div>
   </section>
 
@@ -1083,6 +1086,7 @@ function calcTK() {
   $("ts_sigi").textContent = sigOn ? `binde ${nfx(sigOran)} × ${nfx(n / 12)} yıl` : "";
   $("ts_net").textContent = tl(P - ucret);
   $("ts_net").parentElement.classList.toggle("wide2", !sigOn);
+  tkPdf = { tur: "Tüketici Kredisi", bas, P, r, n, bsmv, kkdf, tF, tV: tB, tFo: tK, top: toplam, T: tek ? plan[0].t : R2(taksit), rows: plan.map((x) => ({ d: x.d, a: x.ana, f: x.f, fo: x.kk, v: x.bs, t: x.t, b: x.bal })) };
   tkSummary = krediOzet({ tur: "Tüketici Kredisi", P, n, r, taksit: tek ? plan[0].t : R2(taksit), plan, bsmv, kkdf, tF, tB, tK, toplam, d0: plan[0].d, d1: plan[plan.length - 1].d, tek });
   rows("t_prows", [
     ["Toplam faiz", tl(tF)],
@@ -1339,8 +1343,51 @@ function calcKonut() {
   $("k2s_masraf").textContent = tl(tahsis + masraf);
   $("k2s_masrafi").textContent = masraf ? "tahsis + diğer masraf" : "tahsis ücreti";
   $("k2s_net").textContent = tl(P - tahsis - masraf);
+  k2Pdf = { tur: "Konut Kredisi", bas: D.bas, P, r, n, bsmv: 0, kkdf: 0, tF, tV: 0, tFo: 0, top: toplam, T: R2(taksit), rows: plan.map((x) => ({ d: x.d, a: x.ana, f: x.f, fo: 0, v: 0, t: x.t, b: x.bal })) };
   k2Summary = krediOzet({ tur: "Konut Kredisi", P, n, r, taksit: R2(taksit), plan, bsmv: 0, kkdf: 0, tF, tB: 0, tK: 0, toplam, d0: plan[0].d, d1: plan[plan.length - 1].d });
   $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.";
+}
+
+// ---------- Ödeme planı PDF (banka formatında, üç kredide ortak) ----------
+let tkPdf = null, k2Pdf = null, tcPdf = null;
+const PDF_NOTE = "*** Bilgi amaçlıdır; kesin tutar işlem günü belirlenir. Krediye ilişkin ücret, masraf ve komisyon bilgileri dahil edilmemiştir.";
+function planPdfHTML(o) {
+  const d = (x) => shortD(x).replace(/\./g, "-"), f = fmt2, o3 = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+  const S = (k) => R2(o.rows.reduce((a, x) => a + x[k], 0));
+  const head = [
+    ["Döviz Kodu", "TL"], ["Ödeme Planı Hazırlama Tarihi", d(new Date())], ["Kredi Veriliş Tarihi", d(o.bas)], ["Ödeme Başlangıç Tarihi", d(o.rows[0].d)],
+    ["Kredi Tutarı", f(o.P) + " TL"], ["Akdi Faiz Oranı (%) (Aylık)", o3(o.r * 100)], ["Akdi Faiz Oranı (%) (Yıllık)", o3(o.r * 1200)],
+    ["Vergi Oranı (%)", o3(o.bsmv * 100)], ["Fon Oranı (%)", o3(o.kkdf * 100)], ["Taksit Sayısı", String(o.rows.length)],
+    ["Toplam Faiz", f(o.tF) + " TL"], ["Toplam Vergi", f(o.tV) + " TL"], ["Toplam Fon", f(o.tFo) + " TL"], ["Genel Toplam", f(o.top) + " TL"], ["Taksit Tutarı", f(o.T) + " TL"],
+  ];
+  const cell = "border:1px solid #9a9a9a;padding:3px 6px;text-align:right";
+  return `<div style="width:760px;padding:28px 34px;background:#fff;color:#000;font-family:'Times New Roman',Times,serif;font-size:12.5px;line-height:1.35">
+    <div style="font-size:15px;font-weight:700;letter-spacing:.3px;margin-bottom:6px">${o.tur.toLocaleUpperCase("tr-TR")} ÖDEME PLANI</div>
+    ${head.map(([k, v], i) => `<div style="margin:2px 0${i === 10 ? ";margin-top:10px" : ""}">${k} : <b>${v}</b></div>`).join("")}
+    <table style="width:100%;border-collapse:collapse;margin-top:14px;font-size:11px">
+      <thead><tr>${["Sıra<br>No", "Taksit Tarihi", "Anapara", "Faiz", "Fon", "Vergi", "Taksit Tutarı", "Kalan Anapara"].map((h) => `<th style="background:#5a5a5a;color:#fff;border:1px solid #4a4a4a;padding:5px 4px;font-weight:700;text-align:center;position:static;white-space:normal">${h}</th>`).join("")}</tr></thead>
+      <tbody>${o.rows.map((x, k) => `<tr style="page-break-inside:avoid;background:${k % 2 ? "#f1f1f1" : "#fff"}"><td style="${cell};text-align:center">${k + 1}</td><td style="${cell};text-align:center">${d(x.d)}</td><td style="${cell}">${f(x.a)}</td><td style="${cell}">${f(x.f)}</td><td style="${cell}">${f(x.fo)}</td><td style="${cell}">${f(x.v)}</td><td style="${cell}">${f(x.t)}</td><td style="${cell}">${f(x.b)}</td></tr>`).join("")}
+      <tr style="background:#f4e9a6;font-weight:700"><td style="${cell}"></td><td style="${cell};text-align:center">TOPLAM:</td><td style="${cell}">${f(S("a"))}</td><td style="${cell}">${f(S("f"))}</td><td style="${cell}">${f(S("fo"))}</td><td style="${cell}">${f(S("v"))}</td><td style="${cell}">${f(S("t"))}</td><td style="${cell}"></td></tr></tbody>
+    </table>
+    <p style="margin-top:16px;font-size:12px">${PDF_NOTE}</p></div>`;
+}
+let h2pP = null;
+const loadH2P = () => h2pP || (h2pP = new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"; sc.onload = () => ok(window.html2pdf); sc.onerror = () => { h2pP = null; no(); }; document.head.appendChild(sc); }));
+function planPdf(o, btn) {
+  if (!o) return;
+  const html = planPdfHTML(o), name = `OdemePlani_${o.tur.replace(/\s+/g, "")}_${Math.round(o.P)}TL.pdf`.replace(/[İı]/g, "I").replace(/[Şş]/g, "S").replace(/[Ğğ]/g, "G").replace(/[Üü]/g, "U").replace(/[Öö]/g, "O").replace(/[Çç]/g, "C");
+  const lbl = btn.textContent; btn.textContent = "⏳ PDF hazırlanıyor…"; btn.disabled = true;
+  const done = () => { btn.textContent = lbl; btn.disabled = false; };
+  loadH2P().then((h2p) => {
+    const box = document.createElement("div"); box.style.cssText = "position:fixed;left:-10000px;top:0;z-index:-1"; box.innerHTML = html; document.body.appendChild(box);
+    return h2p().set({ margin: [8, 6, 10, 6], filename: name, image: { type: "jpeg", quality: 0.96 }, html2canvas: { scale: 2, backgroundColor: "#ffffff" }, jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }, pagebreak: { mode: ["css", "legacy"], avoid: "tr" } })
+      .from(box.firstElementChild).save().then(() => box.remove(), () => box.remove());
+  }).then(done, () => {
+    // İndirme kitaplığı yüklenemezse: aynı sayfada yazdır (PDF olarak kaydet)
+    const fr = document.createElement("iframe"); fr.style.cssText = "position:fixed;width:0;height:0;border:0;right:0;bottom:0"; document.body.appendChild(fr);
+    fr.contentDocument.write(`<!doctype html><html><head><meta charset="utf-8"><title>${name}</title><style>@page{size:A4;margin:10mm}body{margin:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>${html}</body></html>`); fr.contentDocument.close();
+    setTimeout(() => { fr.contentWindow.print(); setTimeout(() => fr.remove(), 2000); done(); }, 300);
+  });
 }
 
 // ---------- Müşteriye özet: üç kredide ortak şablon (WhatsApp / e-posta) ----------
@@ -1420,6 +1467,7 @@ function calcTic() {
   $("tcs_taksit").textContent = tl(T);
   $("tcs_ilk").textContent = `${n} taksit · ilk ${shortD(dues[0])}` + (Math.abs(plan[n - 1].t - T) > 0.004 ? ` · son taksit ${tl(plan[n - 1].t)}` : "");
   $("tcs_faiz").textContent = tl(tF); $("tcs_vergi").textContent = tl(tV + tFo); $("tcs_toplam").textContent = tl(top);
+  tcPdf = { tur: "Taksitli Ticari Kredi", bas, P, r, n, bsmv, kkdf, tF, tV, tFo, top, T, rows: plan.map((x, k) => ({ d: dues[k], a: x.a, f: x.f, fo: x.fo, v: x.v, t: x.t, b: x.b })) };
   tcSummary = krediOzet({ tur: "Taksitli Ticari Kredi", P, n, r, taksit: T, plan, bsmv, kkdf, tF, tB: tV, tK: tFo, toplam: top, d0: dues[0], d1: dues[n - 1] });
   rows("tc_rows", [
     ["İlk / son taksit", `${shortD(dues[0])} · ${shortD(dues[n - 1])}`],
@@ -1435,6 +1483,9 @@ function calcTic() {
   tcLast = { P, n, plan };
 }
 $("tc_ilk").addEventListener("input", () => (tcIlkManual = true));
+$("t_pdf").addEventListener("click", (e) => tkSummary && planPdf(tkPdf, e.currentTarget));
+$("k2_pdf").addEventListener("click", (e) => k2Summary && planPdf(k2Pdf, e.currentTarget));
+$("tc_pdf").addEventListener("click", (e) => tcSummary && planPdf(tcPdf, e.currentTarget));
 $("tc_copy").addEventListener("click", () => {
   if (!tcSummary) return;
   const done = () => { const b = $("tc_copy"); b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = "📋 Müşteriye özet kopyala"), 1500); };
@@ -1443,7 +1494,9 @@ $("tc_copy").addEventListener("click", () => {
 });
 
 // ---------- Tarım ----------
-const TR_PRESET = { levha: [0, 5], cks: [0, 5], bireysel: [15, 15] };
+// [KKDF, BSMV] — levhasız ÇKS/çiftçilik belgeli: KKDF %15, ancak 15.000 TL'ye kadar olan kredide %0
+const TR_PRESET = { levha: [0, 5], cks: [15, 5] };
+const trKkdf = (durum, P) => (durum === "cks" && P <= 15000 ? 0 : TR_PRESET[durum][0]);
 let trManual = false;
 ["tr_kkdf", "tr_bsmv"].forEach((x) => $(x).addEventListener("input", () => (trManual = true)));
 let trLast = null;
@@ -1464,10 +1517,10 @@ function trSchedule(P, ry, n, mode, tax) {
   return { per, count: periods, faiz, label: mode === "yillik" ? "Yıllık taksit" : "Aylık taksit" };
 }
 function calcTarim() {
-  const durum = $("tr_durum").value;
+  const durum = TR_PRESET[$("tr_durum").value] ? $("tr_durum").value : "levha";
   if (durum !== trLast) { trManual = false; trLast = durum; }
   if (!trManual) {
-    $("tr_kkdf").value = String(TR_PRESET[durum][0]);
+    $("tr_kkdf").value = String(trKkdf(durum, num("tr_tutar")));
     $("tr_bsmv").value = String(TR_PRESET[durum][1]);
   }
   const P = num("tr_tutar"), ry = num("tr_faiz") / 100, n = Math.round(num("tr_vade"));
@@ -1486,8 +1539,8 @@ function calcTarim() {
   const cur = build(kkdf, bsmv);
   const sum = (pl, k) => pl.reduce((a, x) => a + x[k], 0);
   const toplam = sum(cur.plan, "t"), fz = sum(cur.plan, "f");
-  const alt = durum === "bireysel" ? build(0, 0.05) : build(0.15, 0.15);
-  const fark = Math.abs(sum(alt.plan, "t") - toplam);
+  const alt = durum === "levha" ? build(0.15, bsmv) : null;
+  const fark = alt ? Math.abs(sum(alt.plan, "t") - toplam) : 0;
   const ilkF = cur.plan.length > 1 && Math.abs(cur.plan[0].t - R2(cur.T)) > 0.005;
   $("tr_bigLbl").textContent = mode === "hasat" ? "Vade sonu ödeme" : mode === "yillik" ? "Yıllık taksit" : "Aylık taksit";
   $("tr_out").textContent = tl(mode === "hasat" ? cur.plan[0].t : R2(cur.T));
@@ -1498,13 +1551,12 @@ function calcTarim() {
     ["KKDF", tl(sum(cur.plan, "kk"))],
     ["BSMV", tl(sum(cur.plan, "bs"))],
     ["Toplam geri ödeme", tl(toplam), "total"],
-    [durum === "bireysel" ? "Zirai amaç belgelenirse tasarruf" : "Muafiyetle tasarruf", tl(fark), "pos"],
+    ...(alt && fark > 0.005 ? [["Levhasıza göre tasarruf (KKDF yok)", tl(fark), "pos"]] : []),
   ]);
   $("tr_plan").innerHTML = planHead + cur.plan.map((x, j) => planRow(x, j + 1)).join("") + planTot(cur.plan);
   const txt = {
     levha: "<b>KKDF %0</b>: Vergi levhalı (gerçek usulde vergilendirilen) çiftçinin zirai faaliyet için kullandığı kredi ticari/zirai kredi sayılır. Alınan makine, ekipman vb. işletme aktifine kaydedilir ve faturayla belgelenir.",
-    cks: "<b>KKDF %0</b>: Vergi levhası olmasa da zirai amaç belgelenirse muafiyet uygulanabilir: ÇKS ya da Hayvan Bilgi Sistemi kaydı, tarım il/ilçe müdürlüğü belgesi veya ziraat odasından çiftçilik belgesi, kullanım amacı beyanı ve fatura.",
-    bireysel: "<b>KKDF %15 + BSMV %15</b>: Kredinin zirai amaçla kullanıldığı belgelenemezse bireysel (tüketici) kredi gibi değerlendirilir. Belgelendirilirse KKDF %0'a, BSMV genel orana iner.",
+    cks: num("tr_tutar") <= 15000 ? "<b>KKDF %0 + BSMV %5</b>: Levhasız, ÇKS / çiftçilik belgeli çiftçide kredi tutarı 15.000 TL'ye kadar olduğu için KKDF alınmaz." : "<b>KKDF %15 + BSMV %5</b>: Vergi levhası olmayan, ÇKS / çiftçilik belgeli çiftçide KKDF %15 uygulanır. Kredi tutarı 15.000 TL'ye kadar olursa KKDF %0 olur.",
   }[durum];
   $("tr_info").innerHTML = txt + (trManual ? "<br><span style='color:var(--muted)'>Vergi oranlarını elle girdin.</span>" : "");
 }
