@@ -1380,21 +1380,50 @@ function planPdfHTML(o) {
     </table>
     <p style="margin-top:16px;font-size:12px">${PDF_NOTE}</p></div>`;
 }
-let h2pP = null;
-const loadH2P = () => h2pP || (h2pP = new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"; sc.onload = () => ok(window.html2pdf); sc.onerror = () => { h2pP = null; no(); }; document.head.appendChild(sc); }));
+// PDF kitaplıkları sitenin kendi içinde (lib/), dış bağlantı gerekmez; ilk tıklamada yüklenir
+const loadJs = (src) => new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
+let pdfLibP = null;
+const loadPdfLib = () => pdfLibP || (pdfLibP = loadJs("lib/jspdf.umd.min.js").then(() => loadJs("lib/jspdf.plugin.autotable.min.js")).then(() => loadJs("lib/pdffont.js")).catch((e) => { pdfLibP = null; throw e; }));
+function buildPlanPdf(o, name) {
+  const doc = new window.jspdf.jsPDF({ unit: "mm", format: "a4" });
+  doc.addFileToVFS("FS.ttf", PDF_FONTS.regular); doc.addFont("FS.ttf", "FS", "normal");
+  doc.addFileToVFS("FSB.ttf", PDF_FONTS.bold); doc.addFont("FSB.ttf", "FS", "bold");
+  const d = (x) => shortD(x).replace(/\./g, "-"), f = fmt2, o3 = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+  const S = (k) => R2(o.rows.reduce((a, x) => a + x[k], 0));
+  const L = 14; let y = 16;
+  doc.setFont("FS", "bold"); doc.setFontSize(13); doc.text(`${o.tur.toLocaleUpperCase("tr-TR")} ÖDEME PLANI`, L, y); y += 7;
+  doc.setFontSize(10);
+  const line = (k, v, gap) => { if (gap) y += 2.5; doc.setFont("FS", "normal"); const t = k + " : "; doc.text(t, L, y); doc.setFont("FS", "bold"); doc.text(v, L + doc.getTextWidth(t), y); y += 4.8; };
+  [["Döviz Kodu", "TL"], ["Ödeme Planı Hazırlama Tarihi", d(new Date())], ["Kredi Veriliş Tarihi", d(o.bas)], ["Ödeme Başlangıç Tarihi", d(o.rows[0].d)],
+    ["Kredi Tutarı", f(o.P) + " TL"], ["Akdi Faiz Oranı (%) (Aylık)", o3(o.r * 100)], ["Akdi Faiz Oranı (%) (Yıllık)", o3(o.r * 1200)],
+    ["Vergi Oranı (%)", o3(o.bsmv * 100)], ["Fon Oranı (%)", o3(o.kkdf * 100)], ["Taksit Sayısı", String(o.rows.length)]].forEach(([k, v]) => line(k, v));
+  [["Toplam Faiz", f(o.tF) + " TL"], ["Toplam Vergi", f(o.tV) + " TL"], ["Toplam Fon", f(o.tFo) + " TL"], ["Genel Toplam", f(o.top) + " TL"], ["Taksit Tutarı", f(o.T) + " TL"]].forEach(([k, v], i) => line(k, v, i === 0));
+  doc.autoTable({
+    startY: y + 2, margin: { left: L, right: L }, theme: "grid", showHead: "everyPage", showFoot: "lastPage",
+    head: [["Sıra No", "Taksit Tarihi", "Anapara", "Faiz", "Fon", "Vergi", "Taksit Tutarı", "Kalan Anapara"]],
+    body: o.rows.map((x, k) => [k + 1, d(x.d), f(x.a), f(x.f), f(x.fo), f(x.v), f(x.t), f(x.b)]),
+    foot: [["", "TOPLAM:", f(S("a")), f(S("f")), f(S("fo")), f(S("v")), f(S("t")), ""]],
+    styles: { font: "FS", fontSize: 8.5, cellPadding: 1.3, halign: "right", textColor: 0, lineColor: [150, 150, 150], lineWidth: 0.15 },
+    headStyles: { font: "FS", fontStyle: "bold", fillColor: [90, 90, 90], textColor: 255, halign: "center", valign: "middle" },
+    footStyles: { font: "FS", fontStyle: "bold", fillColor: [244, 233, 166], textColor: 0, halign: "right" },
+    alternateRowStyles: { fillColor: [242, 242, 242] },
+    columnStyles: { 0: { halign: "center", cellWidth: 11 }, 1: { halign: "center", cellWidth: 23 } },
+  });
+  y = doc.lastAutoTable.finalY + 8;
+  if (y > 280) { doc.addPage(); y = 18; }
+  doc.setFont("FS", "normal"); doc.setFontSize(9.5);
+  doc.text(doc.splitTextToSize(PDF_NOTE, 182), L, y);
+  doc.save(name);
+}
 function planPdf(o, btn) {
   if (!o) return;
-  const html = planPdfHTML(o), name = `OdemePlani_${o.tur.replace(/\s+/g, "")}_${Math.round(o.P)}TL.pdf`.replace(/[İı]/g, "I").replace(/[Şş]/g, "S").replace(/[Ğğ]/g, "G").replace(/[Üü]/g, "U").replace(/[Öö]/g, "O").replace(/[Çç]/g, "C");
+  const name = `OdemePlani_${o.tur.replace(/\s+/g, "")}_${Math.round(o.P)}TL.pdf`.replace(/İ/g, "I").replace(/ı/g, "i").replace(/Ş/g, "S").replace(/ş/g, "s").replace(/Ğ/g, "G").replace(/ğ/g, "g").replace(/Ü/g, "U").replace(/ü/g, "u").replace(/Ö/g, "O").replace(/ö/g, "o").replace(/Ç/g, "C").replace(/ç/g, "c");
   const lbl = btn.textContent; btn.textContent = "⏳ PDF hazırlanıyor…"; btn.disabled = true;
   const done = () => { btn.textContent = lbl; btn.disabled = false; };
-  loadH2P().then((h2p) => {
-    const box = document.createElement("div"); box.style.cssText = "position:fixed;left:-10000px;top:0;z-index:-1"; box.innerHTML = html; document.body.appendChild(box);
-    return h2p().set({ margin: [8, 6, 10, 6], filename: name, image: { type: "jpeg", quality: 0.96 }, html2canvas: { scale: 2, backgroundColor: "#ffffff" }, jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }, pagebreak: { mode: ["css", "legacy"], avoid: "tr" } })
-      .from(box.firstElementChild).save().then(() => box.remove(), () => box.remove());
-  }).then(done, () => {
-    // İndirme kitaplığı yüklenemezse: aynı sayfada yazdır (PDF olarak kaydet)
+  loadPdfLib().then(() => { buildPlanPdf(o, name); done(); }).catch(() => {
+    // Kitaplık yüklenemezse: aynı sayfada yazdır (PDF olarak kaydet)
     const fr = document.createElement("iframe"); fr.style.cssText = "position:fixed;width:0;height:0;border:0;right:0;bottom:0"; document.body.appendChild(fr);
-    fr.contentDocument.write(`<!doctype html><html><head><meta charset="utf-8"><title>${name}</title><style>@page{size:A4;margin:10mm}body{margin:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>${html}</body></html>`); fr.contentDocument.close();
+    fr.contentDocument.write(`<!doctype html><html><head><meta charset="utf-8"><title>${name}</title><style>@page{size:A4;margin:10mm}body{margin:0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>${planPdfHTML(o)}</body></html>`); fr.contentDocument.close();
     setTimeout(() => { fr.contentWindow.print(); setTimeout(() => fr.remove(), 2000); done(); }, 300);
   });
 }
