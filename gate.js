@@ -1,6 +1,12 @@
 // Oyunlar için çalışan kodu kilidi (Vadeli Mevduat'taki çalışan moduyla aynı kod)
 (function () {
-  var KEY = "sado_oyun", EMP = "sado_calisan", CODE = "1924";
+  var KEY = "sado_oyun", EMP = "sado_calisan";
+  // Kod düz yazılmaz; yalnızca SHA-256 özeti saklanır
+  var HASH = "a13883ee1619136f64e87588b295f71e9c24819b89c8e5eb31fed7096830adf6";
+  function check(v) {
+    try { return crypto.subtle.digest("SHA-256", new TextEncoder().encode("sado:" + v)).then(function (b) { return Array.from(new Uint8Array(b)).map(function (x) { return x.toString(16).padStart(2, "0"); }).join("") === HASH; }); }
+    catch (e) { return Promise.resolve(false); }
+  }
   var ok = false;
   try { ok = localStorage.getItem(KEY) === "1" || localStorage.getItem(EMP) === "1"; } catch (e) {}
   if (ok) return;
@@ -30,7 +36,8 @@
     document.body.appendChild(g);
     var inp = document.getElementById("gateIn");
     function tryIt() {
-      if (inp.value.trim() === CODE) {
+      check(inp.value.trim()).then(function (good) {
+      if (good) {
         try { localStorage.setItem(KEY, "1"); } catch (e) {}
         de.classList.remove("gate-locked");
         g.remove();
@@ -40,6 +47,7 @@
         var b = g.querySelector(".gbox"); b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake");
         inp.value = ""; inp.focus();
       }
+      });
     }
     document.getElementById("gateBtn").onclick = tryIt;
     inp.addEventListener("keydown", function (e) { if (e.key === "Enter") tryIt(); });
