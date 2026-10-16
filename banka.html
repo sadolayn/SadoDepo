@@ -1395,9 +1395,14 @@ function calcTic() {
   if (!$("tc_bas").value) $("tc_bas").value = ymd(bas);
   if (!tcIlkManual || !$("tc_ilk").value) $("tc_ilk").value = ymd(addMonthsC(bas, 1));
   const ilk = pDate($("tc_ilk").value);
-  const ok = ilk && ilk > bas;
-  const ilkK = ok ? nextBiz(ilk) : null, kay = ok && ymd(ilkK) !== ymd(ilk);
-  $("tc_dnote").innerHTML = ok ? (kay ? `${shortD(ilk)} ${ilk.toLocaleDateString("tr-TR", { weekday: "long" })} olduğu için ilk taksit <b>${shortD(ilkK)}</b> tarihine kayar. ` : "") + `Ödeme günü: her ayın <b>${ilk.getDate()}.</b> günü; hafta sonu ya da bayrama denk gelirse ilk iş günü.`  +
+  // Banka kuralı: ilk taksit (iş gününe kaymış hâliyle) kullandırımdan en fazla 45 gün sonra olabilir
+  $("tc_ilk").min = ymd(addDays(bas, 1)); $("tc_ilk").max = ymd(addDays(bas, 45));
+  const ilkK = ilk ? nextBiz(ilk) : null, gun = ilk ? dayDiff(bas, ilkK) : NaN;
+  const ok = ilk && ilk > bas && gun <= 45;
+  const kay = ok && ymd(ilkK) !== ymd(ilk);
+  $("tc_dnote").innerHTML = ilk && ilk > bas && gun > 45
+    ? `<span style="color:#ef8a5d">⚠️ İlk taksit kredi veriliş tarihinden en fazla <b>45 gün</b> sonra olabilir; ${kay || ymd(ilkK) !== ymd(ilk) ? `iş gününe kaymış hâliyle (${shortD(ilkK)}) ` : ""}şu an <b>${gun} gün</b>. ${shortD(bas)} için en geç ${shortD(addDays(bas, 45))} seç (iş günü olmalı).</span>`
+    : ok ? `İlk taksite <b>${gun} gün</b>. ` + (kay ? `${shortD(ilk)} ${ilk.toLocaleDateString("tr-TR", { weekday: "long" })} olduğu için ilk taksit <b>${shortD(ilkK)}</b> tarihine kayar. ` : "") + `Ödeme günü: her ayın <b>${ilk.getDate()}.</b> günü; hafta sonu ya da bayrama denk gelirse ilk iş günü.`  +
     (!kay && isHoliday(addDays(ilk, -1)) && ilk.getDate() > 1 ? `<br><span style="color:#e0a24f">💡 Bankaya ödeme günü ${shortD(addDays(ilk, -1))} girildiyse (tatil olduğu için planda ${shortD(ilk)} görünür) burada da ${shortD(addDays(ilk, -1))} gir; yoksa sonraki taksit günleri kayar.</span>` : "") : '<span style="color:#ef8a5d">⚠️ Ödeme başlangıç tarihi kredi veriliş tarihinden sonra olmalı.</span>';
   const clear = () => { ["tcs_taksit", "tcs_faiz", "tcs_vergi", "tcs_toplam"].forEach((x) => ($(x).textContent = "–")); $("tcs_ilk").textContent = ""; $("tc_out").textContent = "–"; rows("tc_rows", []); $("tc_plan").innerHTML = ""; tcLast = null; tcSummary = ""; };
   if (!P || !n || n > 600 || !ok) return clear();
