@@ -1083,15 +1083,7 @@ function calcTK() {
   $("ts_sigi").textContent = sigOn ? `binde ${nfx(sigOran)} × ${nfx(n / 12)} yıl` : "";
   $("ts_net").textContent = tl(P - ucret);
   $("ts_net").parentElement.classList.toggle("wide2", !sigOn);
-  tkSummary = [
-    `Kredi tutarı: ${tl(P)} · ${tek ? "tek taksit" : n + " ay"} · aylık %${nfx(r * 100)}`,
-    `${tek ? "Ödenecek tutar" : "Aylık taksit"}: ${tl(tek ? plan[0].t : R2(taksit))}` + (ilkFark ? ` (ilk taksit ${tl(plan[0].t)})` : ""),
-    `Toplam geri ödeme: ${tl(toplam)}`,
-    `Masraf: ${tl(ucret)} (tahsis ücreti ${tl(tahsis)} + BSMV ${tl(tahsisB)}${diger ? " + diğer " + tl(diger) : ""})`,
-    ...(sigOn ? [`Tahmini hayat sigortası: ${tl(sig)}`] : []),
-    `Hesaba geçecek tutar: ${tl(P - ucret)}`,
-    `İlk taksit tarihi: ${shortD(plan[0].d)}`,
-  ].join("\n");
+  tkSummary = krediOzet({ tur: "Tüketici Kredisi", P, n, r, taksit: tek ? plan[0].t : R2(taksit), plan, bsmv, kkdf, tF, tB, tK, toplam, d0: plan[0].d, d1: plan[plan.length - 1].d, tek });
   rows("t_prows", [
     ["Toplam faiz", tl(tF)],
     ["Toplam KKDF", tl(tK)],
@@ -1347,16 +1339,39 @@ function calcKonut() {
   $("k2s_masraf").textContent = tl(tahsis + masraf);
   $("k2s_masrafi").textContent = masraf ? "tahsis + diğer masraf" : "tahsis ücreti";
   $("k2s_net").textContent = tl(P - tahsis - masraf);
-  k2Summary = [
-    `Konut kredisi: ${tl(P)} · ${n} ay · aylık %${nfx(r * 100)}`,
-    `Aylık taksit: ${tl(R2(taksit))}` + (ilkF ? ` (ilk taksit ${tl(plan[0].t)})` : ""),
-    `Toplam geri ödeme: ${tl(toplam)} (faiz ${tl(tF)})`,
-    `Masraf: ${tl(tahsis + masraf)} (tahsis ücreti ${tl(tahsis)}${masraf ? " + diğer " + tl(masraf) : ""})`,
-    `Hesaba geçecek tutar: ${tl(P - tahsis - masraf)}`,
-    ...(eksOn && deger ? [`Ekspertiz değeri: ${tl(deger)} · peşinat ${tl(Math.max(0, deger - P))}`] : []),
-    `İlk taksit tarihi: ${shortD(plan[0].d)}`,
-  ].join("\n");
+  k2Summary = krediOzet({ tur: "Konut Kredisi", P, n, r, taksit: R2(taksit), plan, bsmv: 0, kkdf: 0, tF, tB: 0, tK: 0, toplam, d0: plan[0].d, d1: plan[plan.length - 1].d });
   $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.";
+}
+
+// ---------- Müşteriye özet: üç kredide ortak şablon (WhatsApp / e-posta) ----------
+// Ücret, masraf, komisyon ve sigorta bu özete bilerek dahil edilmez.
+function krediOzet(o) {
+  const L = "──────────────────", pc = (x) => "%" + nfx(x * 100);
+  const first = o.plan[0].t, last = o.plan[o.plan.length - 1].t;
+  const ilkF = !o.tek && Math.abs(first - o.taksit) > 0.004, sonF = !o.tek && Math.abs(last - o.taksit) > 0.004;
+  return [
+    "KREDİ ÖDEME ÖZETİ",
+    L,
+    `Kredi türü: ${o.tur}`,
+    `Kredi tutarı: ${tl(o.P)}`,
+    `Vade: ${o.tek ? "Tek taksit" : o.n + " ay"}`,
+    `Aylık faiz oranı: %${(o.r * 100).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`,
+    L,
+    `${o.tek ? "Ödenecek tutar" : "Aylık taksit tutarı"}: ${tl(o.taksit)}`,
+    ...(ilkF ? [`İlk taksit tutarı: ${tl(first)}`] : []),
+    ...(sonF ? [`Son taksit tutarı: ${tl(last)}`] : []),
+    `Toplam geri ödeme: ${tl(o.toplam)}`,
+    L,
+    `Toplam faiz: ${tl(o.tF)}`,
+    `BSMV oranı: ${pc(o.bsmv)} · BSMV tutarı: ${tl(o.tB)}`,
+    `KKDF oranı: ${pc(o.kkdf)} · KKDF tutarı: ${tl(o.tK)}`,
+    `Toplam vergi (BSMV + KKDF): ${tl(o.tB + o.tK)}`,
+    L,
+    `İlk taksit tarihi: ${shortD(o.d0)}`,
+    `Son taksit tarihi: ${shortD(o.d1)}`,
+    L,
+    "Bilgi amaçlıdır; kesin tutar işlem günü belirlenir. Krediye ilişkin ücret, masraf ve komisyon bilgileri dahil edilmemiştir.",
+  ].join("\n");
 }
 
 // ---------- Taksitli ticari kredi (banka sistemiyle birebir) ----------
@@ -1398,14 +1413,7 @@ function calcTic() {
   $("tcs_taksit").textContent = tl(T);
   $("tcs_ilk").textContent = `${n} taksit · ilk ${shortD(dues[0])}` + (Math.abs(plan[n - 1].t - T) > 0.004 ? ` · son taksit ${tl(plan[n - 1].t)}` : "");
   $("tcs_faiz").textContent = tl(tF); $("tcs_vergi").textContent = tl(tV + tFo); $("tcs_toplam").textContent = tl(top);
-  tcSummary = [
-    `Taksitli ticari kredi: ${tl(P)} · ${n} taksit · aylık %${nfx(r * 100)}`,
-    `Taksit tutarı: ${tl(T)}` + (Math.abs(plan[n - 1].t - T) > 0.004 ? ` (son taksit ${tl(plan[n - 1].t)})` : ""),
-    `Toplam faiz: ${tl(tF)}`,
-    `Toplam vergi ve fon: ${tl(tV + tFo)}`,
-    `Geri ödenecek toplam: ${tl(top)}`,
-    `Ödeme başlangıç tarihi: ${shortD(dues[0])} · son taksit: ${shortD(dues[n - 1])}`,
-  ].join("\n");
+  tcSummary = krediOzet({ tur: "Taksitli Ticari Kredi", P, n, r, taksit: T, plan, bsmv, kkdf, tF, tB: tV, tK: tFo, toplam: top, d0: dues[0], d1: dues[n - 1] });
   rows("tc_rows", [
     ["İlk / son taksit", `${shortD(dues[0])} · ${shortD(dues[n - 1])}`],
     ["Toplam faiz", tl(tF)],
