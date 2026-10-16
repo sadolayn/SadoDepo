@@ -263,8 +263,8 @@ const aiColor = () => (COLORS[OPT.col].light ? (OPT.col === "agac" ? "maun" : "m
 let S, dice = [], rem = [], played = [], legal = [], turnStart = null, phase = "idle", sel = null, score = [0, 0], gameNo = 1, starter = 0;
 
 // ---------- Geometri ----------
-const W = 640, H = 700, FR = 22, FRR = 34, BAR = 34;
-const HW = (W - FR - FRR - BAR) / 2, PW = HW / 6, R = PW * 0.46, TRI = (H - 2 * FR) * 0.38;
+const W = 640, H = 700, FR = 22, FRR = 34, BAR = 46;
+const HW = (W - FR - FRR - BAR) / 2, PW = HW / 6, R = PW * 0.46, TRI = (H - 2 * FR) * 0.33;
 const xL = FR, xR = FR + HW + BAR;
 function ptCol(i) { // nokta → {x merkez, top}
   if (i >= 1 && i <= 6) return { x: xR + (6 - i) * PW + PW / 2, top: false };
@@ -330,19 +330,22 @@ function drawStatic() {
   h += `<rect x="${bx}" y="0" width="${BAR}" height="${H}" fill="url(#frame)"/><rect x="${bx}" y="0" width="${BAR}" height="${H}" fill="#000" filter="url(#grain)" opacity=".45"/>`;
   h += `<rect x="${bx + 2}" y="0" width="1.2" height="${H}" fill="#000" opacity=".5"/><rect x="${bx + BAR - 3}" y="0" width="1.2" height="${H}" fill="#000" opacity=".5"/>`;
   for (const yy of [H * 0.22, H * 0.72]) h += `<rect x="${bx + BAR / 2 - 6}" y="${yy}" width="12" height="44" rx="2" fill="#2b2b2b" stroke="#555"/><circle cx="${bx + BAR / 2}" cy="${yy + 8}" r="1.6" fill="#888"/><circle cx="${bx + BAR / 2}" cy="${yy + 36}" r="1.6" fill="#888"/>`;
-  h += `<text x="${bx + BAR / 2}" y="${H * 0.1}" transform="rotate(-90 ${bx + BAR / 2} ${H * 0.1})" text-anchor="end" font-size="13" fill="#1a0f08" font-style="italic" font-family="Georgia,serif" opacity=".85">21.12.2022</text>`;
+  // sırt yazıları: üstte bugünün tarihi, ortada 21.12.2022, en altta gün (hepsi yukarıdan aşağıya, beyaz)
+  const vt = (id, y, size, extra, txt) => `<text${id ? ` id="${id}"` : ""} x="${bx + BAR / 2}" y="${y}" transform="rotate(90 ${bx + BAR / 2} ${y})" text-anchor="middle" dominant-baseline="central" font-size="${size}" fill="#ffffff" ${extra} pointer-events="none">${txt || ""}</text>`;
+  h += vt("barDate", (FR + H * 0.22) / 2 + 6, 16, `font-weight="700" letter-spacing="1.5" font-family="system-ui,Segoe UI,sans-serif" stroke="#000" stroke-opacity=".35" stroke-width=".6"`);
+  h += vt("", (H * 0.22 + 44 + H / 2 - 26) / 2, 12, `font-style="italic" font-family="Georgia,serif" opacity=".55"`, "21.12.2022");
+  h += vt("barDay", (H * 0.72 + 44 + H - FR) / 2 + 4, 16, `font-weight="800" letter-spacing="4" font-family="system-ui,Segoe UI,sans-serif" stroke="#000" stroke-opacity=".35" stroke-width=".6"`);
 
   // kakma motif + isim (sol düz, sağ ters)
   const cy = H / 2;
-  h += diamond(xL + HW / 2, cy - 14, 24) + diamond(xR + HW / 2, cy - 14, 24);
-  const eng = (x, rot) => `<g transform="translate(${x},${cy - 57})${rot ? " rotate(180)" : ""}"><text x="0" y="14" text-anchor="middle" font-family="'Dancing Script',cursive" font-weight="700" font-size="44" fill="#f3d6a0" stroke="#1c0e05" stroke-width="2.4" paint-order="stroke" letter-spacing="1.5">PNR TKN</text></g>`;
+  const eng = (x, rot) => `<g transform="translate(${x},${cy})${rot ? " rotate(180)" : ""}">${diamond(0, -42, 19)}<text x="0" y="-62" text-anchor="middle" font-family="'Dancing Script',cursive" font-weight="700" font-size="44" fill="#f3d6a0" stroke="#1c0e05" stroke-width="2.4" paint-order="stroke" letter-spacing="1.5">PNR TKN</text></g>`;
   h += eng(xL + HW / 2, false) + eng(xR + HW / 2, true);
   // toplama alanları (sağ çerçeve)
   h += `<rect id="offA" x="${W - FRR + 4}" y="${FR}" width="${FRR - 8}" height="${H / 2 - FR - 8}" rx="5" fill="#000" opacity=".28"/>`;
   h += `<rect id="offH" x="${W - FRR + 4}" y="${H / 2 + 8}" width="${FRR - 8}" height="${H / 2 - FR - 8}" rx="5" fill="#000" opacity=".28"/>`;
   h += `<g id="dyn"></g>`;
   // tarih-saat plaketi (tam orta)
-  h += `<g transform="translate(${bx + BAR / 2},${cy})" pointer-events="none"><rect x="-60" y="-24" width="120" height="48" rx="9" fill="#170d06" stroke="#c9a066" stroke-width="1.6" opacity=".93"/><text id="clockD" x="0" y="-5" text-anchor="middle" font-size="14" font-weight="700" fill="#e9c98f" font-family="system-ui,Segoe UI,sans-serif"></text><text id="clockT" x="0" y="16" text-anchor="middle" font-size="18" font-weight="800" fill="#fff1d2" font-family="ui-monospace,Menlo,Consolas,monospace" letter-spacing="1"></text></g>`;
+  h += `<g transform="translate(${bx + BAR / 2},${cy})" pointer-events="none"><rect x="-${BAR / 2 - 2}" y="-24" width="${BAR - 4}" height="48" rx="7" fill="#170d06" stroke="#c9a066" stroke-width="1.3" opacity=".93"/><text id="clockT" x="0" y="-4" text-anchor="middle" font-size="14" font-weight="800" fill="#fff1d2" font-family="ui-monospace,Menlo,Consolas,monospace"></text><text id="clockS" x="0" y="15" text-anchor="middle" font-size="14" font-weight="800" fill="#e9c98f" font-family="ui-monospace,Menlo,Consolas,monospace"></text></g>`;
   h += `<g id="drag"></g>`;
   SVG.innerHTML = h;
 }
@@ -393,8 +396,8 @@ function render() {
   for (let k = 0; k < S.off[0]; k++) el("rect", { x: ox - 11, y: H - FR - 6 - k * 9 - 7, width: 22, height: 7, rx: 2, fill: COLORS[hc].base, stroke: COLORS[hc].dark, "stroke-width": 0.8 }, g);
   for (let k = 0; k < S.off[1]; k++) el("rect", { x: ox - 11, y: FR + 6 + k * 9, width: 22, height: 7, rx: 2, fill: COLORS[ac].base, stroke: COLORS[ac].dark, "stroke-width": 0.8 }, g);
   // zarlar: benim zarım sağ yarıda, Sadolayn'ınki sol yarıda
-  const DS = 34, dyy = H / 2 + 42;
-  const pair = (cx, faces, rolling, act, dim, label) => {
+  const DS = 34, dyy = H / 2;
+  const pair = (cx, faces, rolling, act, dim, label, up) => {
     if (!faces || !faces.length) return;
     const dbl = faces.length === 2 && faces[0] === faces[1];
     if (faces.length === 1) { dieSVG(g, cx, dyy, faces[0], DS, false, rolling); }
@@ -406,7 +409,7 @@ function render() {
       dieSVG(g, cx + 23, dyy - 2, faces[1], DS, u1 || allUsed || dim, rolling);
       if (act && dbl && !rolling && rem.length) el("text", { x: cx + 58, y: dyy + 5, "text-anchor": "middle", "font-size": 14, "font-weight": 800, fill: "#f3d19a" }, g).textContent = `×${rem.length}`;
     }
-    if (label) el("text", { x: cx, y: dyy + 32, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: "#f3d19a", opacity: 0.9 }, g).textContent = label;
+    if (label) el("text", { x: cx, y: up ? dyy - 25 : dyy + 33, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: "#f3d19a", opacity: 0.9 }, g).textContent = label;
   };
   let lf = null, rf = null, lroll = false, rroll = false, lact = false, ract = false, ldim = false;
   if (rollingFaces) {
@@ -420,7 +423,7 @@ function render() {
     if (phase === "human" && dice.length) { rf = dice; ract = true; }
   }
   pair(xL + HW / 2, lf, lroll, lact, ldim, lf ? "Sadolayn" : "");
-  pair(xR + HW / 2, rf, rroll, ract, false, rf ? "Sen" : "");
+  pair(xR + HW / 2, rf, rroll, ract, false, rf ? "Sen" : "", true);
   // tıklama alanları
   for (let i = 1; i <= 24; i++) {
     const { x, top } = ptCol(i);
@@ -659,7 +662,7 @@ SVG.addEventListener("pointercancel", () => { drag = null; $("drag").innerHTML =
 
 drawStatic();
 S = startPos(); render();
-function tick() { const a = $("clockD"), b = $("clockT"); if (!a) return; const d = new Date(), p = (n) => String(n).padStart(2, "0"); a.textContent = `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()}`; b.textContent = `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
+function tick() { const t = $("clockT"); if (!t) return; const d = new Date(), p = (n) => String(n).padStart(2, "0"); t.textContent = `${p(d.getHours())}:${p(d.getMinutes())}`; $("clockS").textContent = p(d.getSeconds()); $("barDate").textContent = `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()}`; $("barDay").textContent = d.toLocaleDateString("tr-TR", { weekday: "long" }).toLocaleUpperCase("tr-TR"); }
 tick(); setInterval(tick, 1000);
 openOptions();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawStatic(); render(); tick(); });
