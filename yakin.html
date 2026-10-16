@@ -253,7 +253,7 @@ const STALE = S.place && !S.place.gps && S.place.v !== 2;
 const save = () => { try { localStorage.setItem("yakin_v1", JSON.stringify({ place: S.place, r: S.r })); } catch (e) {} };
 
 // Kategori ızgarası
-$("cats").innerHTML = GROUPS.map(([g, l]) => `<h2>${g}</h2><div class="grid">${l.map(([k, e, n]) => `<button class="tile" data-k="${k}"><div class="e">${e}</div><div class="n">${n}</div></button>`).join("")}</div>`).join("");
+$("cats").innerHTML = GROUPS.map(([g, l]) => `<h2>${g}</h2>${g.startsWith("🚨") ? `<div class="sos"><a class="g" id="nobetG" href="#" target="_blank" rel="noopener">💊 Nöbetçi eczane · Google</a><a class="e" href="https://www.turkiye.gov.tr/arama?aranan=n%C3%B6bet%C3%A7i+eczane" target="_blank" rel="noopener">🏛️ Nöbetçi eczane · e-Devlet</a></div>` : ""}<div class="grid">${l.map(([k, e, n]) => `<button class="tile" data-k="${k}"><div class="e">${e}</div><div class="n">${n}</div></button>`).join("")}</div>`).join("");
 $("cats").addEventListener("click", (e) => { const t = e.target.closest(".tile"); if (!t) return; NOSCROLL = !!S.place; openCat(t.dataset.k); NOSCROLL = false; if (S.place) openFs(); });
 
 function renderRad() { document.querySelectorAll("[data-rad] button").forEach((b) => b.classList.toggle("on", +b.dataset.r === S.r)); }
@@ -264,6 +264,7 @@ document.querySelectorAll("[data-rad]").forEach((g) => (g.onclick = (e) => {
 function setPlace(p) {
   if (p) p.v = 2;
   S.place = p; save();
+  { const el = $("nobetG"); if (el) { const n = p ? (p.name || "").replace(/^📡\s*/, "").replace(/\s*merkez$/i, "").trim() : ""; const q = "nöbetçi eczane" + (n && n !== "Bulunduğun yer" ? " " + n : ""); el.href = p ? `https://www.google.com/maps/search/${encodeURIComponent(q)}/@${p.lat},${p.lon},14z` : "https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane"; } }
   $("plabel").innerHTML = p ? `📍 <b>${p.name}</b>` : "Konum seçilmedi";
   if (S.cat) openCat(S.cat);
 }
