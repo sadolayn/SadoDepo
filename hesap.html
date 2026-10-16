@@ -16,8 +16,8 @@
   header h1 { margin: 0; font-size: 20px; }
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -14px 12px; padding: 10px 14px 8px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
-  .tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
-  .tabs button { border: none; background: transparent; color: var(--muted); padding: 8px 2px; border-radius: 10px; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; line-height: 1.2; }
+  .tabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
+  .tabs button { border: none; background: transparent; color: var(--muted); padding: 7px 1px; border-radius: 10px; font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; line-height: 1.2; }
   .tabs button b { display: block; font-size: 18px; margin-bottom: 2px; }
   .tabs button.on { background: var(--accent); color: #000; }
   .panel { display: none; } .panel.on { display: block; }
@@ -44,20 +44,22 @@
   .chips button { border: 1px solid var(--line); background: var(--field); color: var(--ink); border-radius: 999px; padding: 6px 11px; font: inherit; font-size: 12.5px; cursor: pointer; }
 
   /* ===== Eski tip masa hesap makinesi ===== */
-  .calc { margin: 0 auto; max-width: 360px; border-radius: 22px; padding: 16px 14px 18px;
+  .calcbox { position: sticky; top: var(--sh, 120px); z-index: 20; background: #000; padding-bottom: 8px; }
+  .calc { margin: 0 auto; max-width: 290px; border-radius: 20px; padding: 11px 11px 13px;
     background: linear-gradient(160deg, #3a3631, #26231f 55%, #1c1a17); border: 1px solid #4a4540;
     box-shadow: 0 10px 30px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08); }
-  .brand { display: flex; justify-content: space-between; align-items: center; margin: 0 4px 8px; }
+  .brand { display: flex; justify-content: space-between; align-items: center; margin: 0 2px 7px; }
+  .brand button { background: none; border: none; font-size: 15px; cursor: pointer; padding: 0 2px; opacity: .85; }
   .brand b { font-family: Georgia, serif; font-style: italic; color: #e0c48f; font-size: 15px; letter-spacing: 1px; }
   .brand i { font-style: normal; font-size: 9.5px; letter-spacing: 2px; color: #9b9184; }
   .solar { width: 64px; height: 14px; border-radius: 3px; background: repeating-linear-gradient(90deg, #2b1f15 0 15px, #3d2c1e 15px 16px); border: 1px solid #111; }
-  .lcd { position: relative; border-radius: 10px; padding: 10px 12px 8px; margin-bottom: 14px; background: linear-gradient(180deg, #a9b49a, #96a288); border: 3px solid #141414; box-shadow: inset 0 3px 8px rgba(0,0,0,.35); color: #1d2418; }
+  .lcd { position: relative; border-radius: 9px; padding: 6px 10px 5px; margin-bottom: 10px; background: linear-gradient(180deg, #a9b49a, #96a288); border: 3px solid #141414; box-shadow: inset 0 3px 8px rgba(0,0,0,.35); color: #1d2418; }
   .lcd .ind { display: flex; gap: 10px; font-size: 10px; font-weight: 800; letter-spacing: 1px; min-height: 12px; opacity: .85; }
   .lcd .ind span { opacity: .12; } .lcd .ind span.on { opacity: 1; }
   .lcd .op { position: absolute; left: 12px; bottom: 10px; font-size: 18px; font-weight: 800; opacity: .8; }
-  .lcd .num { text-align: right; font-family: "Courier New", ui-monospace, monospace; font-weight: 700; font-size: 34px; letter-spacing: 1px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-shadow: 1px 1px 0 rgba(0,0,0,.12); }
-  .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px; }
-  .k { height: 50px; border: none; border-radius: 10px; font: inherit; font-size: 20px; font-weight: 700; cursor: pointer; user-select: none;
+  .lcd .num { text-align: right; font-family: "Courier New", ui-monospace, monospace; font-weight: 700; font-size: 27px; letter-spacing: 1px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+  .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+  .k { height: 38px; border: none; border-radius: 8px; font: inherit; font-size: 17px; font-weight: 700; cursor: pointer; user-select: none;
     background: linear-gradient(180deg, #4a4540, #34302b); color: #f1eadf; box-shadow: 0 4px 0 #15130f, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.12); transition: transform .05s, box-shadow .05s; }
   .k:active, .k.down { transform: translateY(3px); box-shadow: 0 1px 0 #15130f, inset 0 1px 0 rgba(255,255,255,.08); }
   .k.n { background: linear-gradient(180deg, #ece4d4, #d4cab6); color: #2a241c; box-shadow: 0 4px 0 #8b8270, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 #fff; }
@@ -65,12 +67,13 @@
   .k.o { background: linear-gradient(180deg, #6b625a, #4c453f); color: #ffe2b3; }
   .k.r { background: linear-gradient(180deg, #e0763f, #b9542a); color: #fff; box-shadow: 0 4px 0 #6d2e13, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.25); }
   .k.eq { background: linear-gradient(180deg, #e8b05d, #c98a35); color: #1a1205; box-shadow: 0 4px 0 #7a5420, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.3); grid-row: span 2; height: auto; }
-  .k.sm { font-size: 13px; letter-spacing: .5px; }
+  .k.sm { font-size: 11.5px; letter-spacing: .3px; }
   .k.z { grid-column: span 2; }
   /* kâğıt rulo */
-  .tape { position: relative; margin: 18px auto 0; max-width: 300px; background: #f4efe3; color: #2b2620; border-radius: 4px 4px 0 0; padding: 12px 14px 22px; font-family: "Courier New", ui-monospace, monospace; font-size: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.5); max-height: 280px; overflow-y: auto;
+  .tape { position: relative; margin: 6px auto 0; max-width: 270px; background: #f4efe3; color: #2b2620; border-radius: 4px 4px 0 0; padding: 12px 14px 22px; font-family: "Courier New", ui-monospace, monospace; font-size: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.5); min-height: 120px; max-height: 60vh; overflow-y: auto;
     -webkit-mask-image: linear-gradient(#000 85%, transparent); mask-image: linear-gradient(#000 85%, transparent); }
-  .tape div { display: flex; justify-content: space-between; gap: 10px; line-height: 1.55; }
+  .tape div { display: flex; justify-content: space-between; gap: 10px; line-height: 1.55; font-variant-numeric: tabular-nums; }
+  .tape div span:first-child { color: #8a7f6c; min-width: 22px; }
   .tape div.t { border-top: 1px dashed #b5ab98; margin-top: 3px; padding-top: 3px; font-weight: 700; }
   .tape div.c { color: #a33; }
   .tape .e { color: #9b9184; text-align: center; display: block; }
@@ -84,6 +87,18 @@
   .rinfo b { color: var(--accent); font-size: 22px; display: block; }
   .card-cal { position: relative; height: 54mm; border: 2px dashed var(--accent); border-radius: 10px; margin: 12px 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; text-align: center; background: rgba(224,162,79,.05); }
   input[type=range] { width: 100%; accent-color: var(--accent); }
+  .btn-go { display: block; width: 100%; margin-top: 12px; padding: 12px; border-radius: 12px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .notes { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 10px; }
+  .notes button { height: 34px; border-radius: 8px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: inherit; font-weight: 700; font-size: 15px; cursor: pointer; }
+  .notes button.y { background: rgba(63,194,131,.2); border-color: var(--ok); color: #9ff0c8; }
+  .notes button.n { background: rgba(239,106,76,.12); border-color: #5a2a20; color: #6f4a42; text-decoration: line-through; }
+  .bmcols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .bmcols .card { padding: 10px; min-width: 0; }
+  .bmh { margin: 0 0 6px; font-size: 12px; color: var(--muted); }
+  .gr { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  .gr:first-child { border-top: none; }
+  .gr b { font-family: "Courier New", ui-monospace, monospace; font-size: 17px; letter-spacing: 2px; }
+  .gr span { font-size: 13px; font-weight: 700; white-space: nowrap; } .gr .p { color: var(--ok); } .gr .m { color: var(--red); } .gr .z { color: var(--muted); }
+  .gr.win b { color: var(--accent); }
 </style>
 </head>
 <body>
@@ -96,17 +111,18 @@
     </header>
     <div class="tabs" id="tabs">
       <button data-t="calc" class="on"><b>🧮</b>Makine</button>
+      <button data-t="cetvel"><b>📏</b>Cetvel</button>
       <button data-t="faiz"><b>💵</b>Faiz</button>
       <button data-t="tarih"><b>📆</b>Tarih</button>
-      <button data-t="yuzde"><b>％</b>Yüzde·KDV</button>
-      <button data-t="cetvel"><b>📏</b>Cetvel</button>
+      <button data-t="yuzde"><b>％</b>Yüzde</button>
+      <button data-t="bulmaca"><b>🔢</b>Bulmaca</button>
     </div>
   </div>
 
   <!-- ===== Hesap makinesi ===== -->
   <section class="panel on" id="calc">
-    <div class="calc">
-      <div class="brand"><b>Sadolayn</b><div class="solar"></div><i>SL-12 · 12 HANE</i></div>
+    <div class="calcbox"><div class="calc">
+      <div class="brand"><b>Sadolayn</b><div class="solar"></div><button type="button" id="snd" aria-label="Tuş sesi">🔊</button><i>SL-12</i></div>
       <div class="lcd"><div class="ind"><span id="iM">M</span><span id="iE">E</span><span id="iK">−</span></div><div class="op" id="lOp"></div><div class="num" id="lNum">0</div></div>
       <div class="keys" id="keys">
         <button class="k o sm" data-k="MC">MC</button><button class="k o sm" data-k="MR">MR</button><button class="k o sm" data-k="M-">M−</button><button class="k o sm" data-k="M+">M+</button><button class="k r sm" data-k="C">C</button>
@@ -115,8 +131,8 @@
         <button class="k o sm" data-k="CE">CE</button><button class="k n" data-k="1">1</button><button class="k n" data-k="2">2</button><button class="k n" data-k="3">3</button><button class="k o" data-k="-">−</button>
         <button class="k o" data-k="⌫">⌫</button><button class="k n z" data-k="0">0</button><button class="k n" data-k=",">,</button><button class="k o" data-k="+">+</button>
       </div>
-      <div class="keys" style="margin-top:9px;grid-template-columns:repeat(5,1fr)"><button class="k o sm" data-k="00" style="grid-column:span 2">00</button><button class="k o sm" data-k="√">√</button><button class="k eq" data-k="=" style="grid-row:auto;height:50px;grid-column:span 2">=</button></div>
-    </div>
+      <div class="keys" style="margin-top:7px;grid-template-columns:repeat(5,1fr)"><button class="k o sm" data-k="00" style="grid-column:span 2">00</button><button class="k o sm" data-k="√">√</button><button class="k eq" data-k="=" style="grid-row:auto;height:38px;grid-column:span 2">=</button></div>
+    </div></div>
     <div class="tape" id="tape"><span class="e">— rulo boş —</span></div>
     <div class="tapebar"><button id="tCopy">📋 Ruloyu kopyala</button><button id="tClear">🧻 Ruloyu kopar</button></div>
     <p class="hint" style="text-align:center">Kesirli sayılarla tam hesap yapar: 10 ÷ 3 × 3 = <b>10</b>. Klavyeden de çalışır.</p>
@@ -186,6 +202,37 @@
       <div class="tapebar"><button id="calReset">Varsayılana dön</button></div>
     </div>
   </section>
+
+  <!-- ===== Sayı Bulmaca (+ / −) ===== -->
+  <section class="panel" id="bulmaca">
+    <div class="card" id="bmSetup">
+      <h2>🔢 Sayı Bulmaca · Sadolayn'a karşı</h2>
+      <p class="hint" style="margin-top:0">İkiniz de rakamları birbirinden farklı, 0 ile başlamayan gizli bir sayı tutarsınız. Sırayla birbirinizin sayısını tahmin edersiniz. Her tahmine ipucu verilir: <b style="color:var(--ok)">+</b> rakam doğru ve <b>yeri doğru</b>, <b style="color:var(--red)">−</b> rakam var ama <b>yeri yanlış</b>. Örn. gizli 4271, tahmin 1234 → <b>+1 −2</b>. Önce bulan kazanır; aynı turda bulursanız berabere.</p>
+      <label>Basamak</label>
+      <div class="seg" id="bmLen"><button data-n="4" class="on">4 basamak</button><button data-n="5">5 basamak (çok zor)</button></div>
+      <label>Senin gizli sayın (Sadolayn bunu bulmaya çalışacak)</label>
+      <div class="field"><input id="bmMine" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="ör. 4271" style="letter-spacing:4px;-webkit-text-security:disc"><span><button type="button" id="bmEye" style="background:none;border:none;font-size:16px;cursor:pointer">👁</button></span></div>
+      <div class="chips"><button type="button" id="bmRand">🎲 Benim yerime rastgele seç</button></div>
+      <p class="hint" id="bmErr" style="color:var(--red)"></p>
+      <button type="button" class="btn-go" id="bmGo">Oyuna başla</button>
+    </div>
+    <div id="bmGame" hidden>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="margin:0">Tur <span id="bmTur">1</span></h2><span class="hint" style="margin:0">Senin sayın: <b id="bmMineShow" style="letter-spacing:2px;color:var(--ink)"></b></span></div>
+        <label>Sadolayn'ın sayısı için tahminin</label>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px"><div class="field"><input id="bmGuess" inputmode="numeric" autocomplete="off" style="letter-spacing:6px;font-size:20px;font-weight:700"></div><button type="button" class="btn-go" id="bmSend" style="width:auto;margin:0;padding:0 18px">Tahmin</button></div>
+        <p class="hint" id="bmMsg"></p>
+        <div class="notes" id="bmNotes" title="Not: rakama dokundukça yeşil / kırmızı / boş"></div>
+        <p class="hint" style="margin-top:4px">Not defteri: rakamlara dokunarak <span style="color:var(--ok)">var</span> / <span style="color:var(--red)">yok</span> diye işaretle.</p>
+      </div>
+      <div class="bmcols">
+        <div class="card"><h3 class="bmh">Senin tahminlerin</h3><div id="bmMeL"></div></div>
+        <div class="card"><h3 class="bmh">Sadolayn'ın tahminleri</h3><div id="bmAiL"></div></div>
+      </div>
+      <div class="card" id="bmEnd" hidden><div class="res" style="margin:0;text-align:center"><div class="big" id="bmEndT"></div><p class="hint" id="bmEndS"></p></div><button type="button" class="btn-go" id="bmAgain">Yeni oyun</button></div>
+      <div class="chips" style="justify-content:center"><button type="button" id="bmQuit">Oyunu bırak</button></div>
+    </div>
+  </section>
 </div>
 
 <script>
@@ -199,6 +246,24 @@ $("tabs").addEventListener("click", (e) => {
   if (b.dataset.t === "cetvel") drawRuler();
   window.scrollTo({ top: 0 });
 });
+// Yapışkan üst bölüm yüksekliği (makine onun altında sabit kalır)
+const setSH = () => document.documentElement.style.setProperty("--sh", document.querySelector(".stick").offsetHeight + "px");
+setSH(); window.addEventListener("resize", setSH);
+// Eski hesap makinesi tuş sesi (plastik "tık")
+let SND = true; try { SND = localStorage.getItem("hesapSes") !== "0"; } catch (e) {}
+let AC = null;
+function tik(big) {
+  if (!SND) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume();
+    const t = AC.currentTime, len = Math.floor(AC.sampleRate * 0.03), buf = AC.createBuffer(1, len, AC.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 6);
+    const src = AC.createBufferSource(); src.buffer = buf;
+    const bp = AC.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = big ? 1700 : 2600; bp.Q.value = 1.4;
+    const g = AC.createGain(); g.gain.value = 0.9; src.connect(bp).connect(g).connect(AC.destination); src.start(t);
+    const o = AC.createOscillator(), og = AC.createGain(); o.type = "square"; o.frequency.setValueAtTime(big ? 180 : 240, t); og.gain.setValueAtTime(0.06, t); og.gain.exponentialRampToValueAtTime(0.0001, t + 0.025); o.connect(og).connect(AC.destination); o.start(t); o.stop(t + 0.03);
+  } catch (e) {}
+}
 // Türkçe sayı okuma/yazma
 function num(v) { v = String(v).trim().replace(/\s/g, ""); if (!v) return 0; const c = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : (/^-?\d{1,3}(\.\d{3})+$/.test(v) ? v.replace(/\./g, "") : v); const n = parseFloat(c); return isFinite(n) ? n : 0; }
 const tl = (n, d = 2) => (isFinite(n) ? n.toLocaleString("tr-TR", { minimumFractionDigits: d, maximumFractionDigits: d }) : "–");
@@ -234,7 +299,7 @@ function disp() {
   $("iM").classList.toggle("on", !!mem && mem.n !== 0n); $("iE").classList.toggle("on", err); $("iK").classList.toggle("on", !err && t.startsWith("-"));
 }
 function fmtEntry(e) { const neg = e.startsWith("-"), s = neg ? e.slice(1) : e, [i, f] = s.split(","); return (neg ? "-" : "") + i.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (f !== undefined ? "," + f : ""); }
-function tape(a, b, cls) { tapeL.push([a, b, cls]); if (tapeL.length > 200) tapeL.shift(); const el = $("tape"); el.innerHTML = tapeL.map(([x, y, c]) => `<div class="${c || ""}"><span>${x}</span><span>${y}</span></div>`).join(""); el.scrollTop = el.scrollHeight; }
+function tape(a, b, cls) { tapeL.push([a, b, cls]); if (tapeL.length > 200) tapeL.shift(); const el = $("tape"); el.innerHTML = tapeL.map(([x, y, c]) => `<div class="${c || ""}"><span>${y}</span><span>${x}</span></div>`).join(""); el.scrollTop = el.scrollHeight; }
 const curQ = () => (entry !== null ? qParse(entry === "-" ? "0" : entry) : acc || Q(0n));
 function press(k) {
   if (err && k !== "C") return;
@@ -270,11 +335,14 @@ function press(k) {
   else if (k === "MC") { mem = null; }
   disp();
 }
+$("keys").parentElement.addEventListener("pointerdown", (e) => { const b = e.target.closest("[data-k]"); if (b) tik(b.dataset.k === "=" || b.dataset.k === "C"); });
 $("keys").parentElement.addEventListener("click", (e) => { const b = e.target.closest("[data-k]"); if (b) press(b.dataset.k); });
+const sndUI = () => ($("snd").textContent = SND ? "🔊" : "🔇");
+$("snd").onclick = () => { SND = !SND; try { localStorage.setItem("hesapSes", SND ? "1" : "0"); } catch (e) {} sndUI(); tik(); }; sndUI();
 document.addEventListener("keydown", (e) => {
   if (!$("calc").classList.contains("on") || e.target.closest("input")) return;
   const m = { Enter: "=", "=": "=", Backspace: "⌫", Escape: "C", Delete: "CE", ".": ",", ",": ",", "%": "%", "+": "+", "-": "-", "*": "*", "x": "*", "/": "/" };
-  const k = /^\d$/.test(e.key) ? e.key : m[e.key]; if (!k) return; e.preventDefault(); press(k);
+  const k = /^\d$/.test(e.key) ? e.key : m[e.key]; if (!k) return; e.preventDefault(); tik(k === "=" || k === "C"); press(k);
   const b = document.querySelector(`.calc [data-k="${CSS.escape(k)}"]`); if (b) { b.classList.add("down"); setTimeout(() => b.classList.remove("down"), 90); }
 });
 $("tClear").onclick = () => { tapeL.length = 0; $("tape").innerHTML = '<span class="e">— rulo boş —</span>'; };
@@ -416,6 +484,68 @@ $("rwrap").addEventListener("pointermove", (e) => { if (e.buttons) { const r = $
 $("cal").addEventListener("input", () => { ppm = +$("cal").value; try { localStorage.setItem("cetvelPPM", ppm); } catch (e) {} drawRuler(); });
 $("calReset").onclick = () => { ppm = DEF; try { localStorage.removeItem("cetvelPPM"); } catch (e) {} drawRuler(); };
 window.addEventListener("resize", () => { if ($("cetvel").classList.contains("on")) drawRuler(); });
+
+// ===== Sayı Bulmaca =====
+const BM = { n: 4, mine: "", ai: "", cand: [], me: [], aiL: [], over: false, tur: 1 };
+const distinct = (s) => new Set(s).size === s.length;
+const validNum = (s, n) => new RegExp(`^[1-9]\\d{${n - 1}}$`).test(s) && distinct(s);
+function randNum(n) { const d = "0123456789".split(""); let s; do { for (let i = d.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [d[i], d[j]] = [d[j], d[i]]; } s = d.slice(0, n).join(""); } while (s[0] === "0"); return s; }
+function score(sec, g) { let p = 0, m = 0; for (let i = 0; i < g.length; i++) { if (sec[i] === g[i]) p++; else if (sec.includes(g[i])) m++; } return [p, m]; }
+function allNums(n) { const out = [], rec = (pre, used) => { if (pre.length === n) { out.push(pre); return; } for (let d = 0; d <= 9; d++) { if (used & (1 << d)) continue; if (!pre && !d) continue; rec(pre + d, used | (1 << d)); } }; rec("", 0); return out; }
+const fb = ([p, m]) => p === 0 && m === 0 ? '<span class="z">0</span>' : `<span>${p ? `<span class="p">+${p}</span>` : ""}${p && m ? " " : ""}${m ? `<span class="m">−${m}</span>` : ""}</span>`;
+// Sadolayn'ın tahmini: tutarlı adaylar arasından en kötü durumda en az aday bırakanı seçer (minimax)
+function aiGuess() {
+  const C = BM.cand; if (C.length === 1) return C[0];
+  if (BM.aiL.length === 0) return C[Math.floor(Math.random() * C.length)];
+  const sample = (arr, k) => { if (arr.length <= k) return arr; const r = []; for (let i = 0; i < k; i++) r.push(arr[Math.floor(Math.random() * arr.length)]); return r; };
+  const G = sample(C, C.length > 1500 ? 120 : 350), T = sample(C, 700);
+  let best = G[0], bw = Infinity;
+  for (const g of G) { const cnt = new Map(); let w = 0; for (const t of T) { const k = score(t, g).join(","); const v = (cnt.get(k) || 0) + 1; cnt.set(k, v); if (v > w) w = v; if (w >= bw) break; } if (w < bw) { bw = w; best = g; } }
+  return best;
+}
+function bmRender() {
+  $("bmTur").textContent = BM.tur;
+  const row = (x, win) => `<div class="gr${win ? " win" : ""}"><b>${x.g}</b>${fb(x.s)}</div>`;
+  $("bmMeL").innerHTML = BM.me.slice().reverse().map((x) => row(x, x.s[0] === BM.n)).join("") || '<p class="hint">Henüz yok</p>';
+  $("bmAiL").innerHTML = BM.aiL.slice().reverse().map((x) => row(x, x.s[0] === BM.n)).join("") || '<p class="hint">Henüz yok</p>';
+}
+function bmEnd(t, s) { BM.over = true; $("bmEnd").hidden = false; $("bmEndT").textContent = t; $("bmEndS").innerHTML = s; $("bmGuess").disabled = $("bmSend").disabled = true; }
+$("bmLen").addEventListener("click", (e) => { const b = e.target.closest("button[data-n]"); if (!b) return; BM.n = +b.dataset.n; $("bmLen").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); $("bmMine").maxLength = BM.n; $("bmMine").placeholder = BM.n === 4 ? "ör. 4271" : "ör. 42715"; });
+$("bmEye").onclick = () => { const i = $("bmMine"); i.style.webkitTextSecurity = i.style.webkitTextSecurity === "none" ? "disc" : "none"; };
+$("bmRand").onclick = () => { $("bmMine").value = randNum(BM.n); $("bmErr").textContent = ""; };
+$("bmGo").onclick = () => {
+  const v = $("bmMine").value.trim();
+  if (!validNum(v, BM.n)) { $("bmErr").textContent = `${BM.n} basamaklı, rakamları farklı ve 0 ile başlamayan bir sayı yaz (ya da rastgele seç).`; return; }
+  Object.assign(BM, { mine: v, ai: randNum(BM.n), cand: allNums(BM.n), me: [], aiL: [], over: false, tur: 1 });
+  $("bmMineShow").textContent = v; $("bmSetup").hidden = true; $("bmGame").hidden = false; $("bmEnd").hidden = true;
+  $("bmGuess").disabled = $("bmSend").disabled = false; $("bmGuess").maxLength = BM.n; $("bmGuess").value = ""; $("bmMsg").textContent = "Sıra sende. Sadolayn da senin sayını arıyor…";
+  $("bmNotes").innerHTML = "0123456789".split("").map((d) => `<button type="button" data-d="${d}">${d}</button>`).join("");
+  bmRender(); setTimeout(() => $("bmGuess").focus(), 100);
+};
+$("bmNotes").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; b.className = b.className === "" ? "y" : b.className === "y" ? "n" : ""; });
+function bmSend() {
+  if (BM.over) return;
+  const g = $("bmGuess").value.trim();
+  if (!validNum(g, BM.n)) { $("bmMsg").innerHTML = `<span style="color:var(--red)">${BM.n} basamaklı, rakamları farklı, 0 ile başlamayan bir sayı yaz.</span>`; return; }
+  const s1 = score(BM.ai, g); BM.me.push({ g, s: s1 }); $("bmGuess").value = "";
+  // Sadolayn'ın sırası
+  const ag = aiGuess(), s2 = score(BM.mine, ag); BM.aiL.push({ g: ag, s: s2 });
+  BM.cand = BM.cand.filter((c) => score(c, ag).join() === s2.join());
+  const youWin = s1[0] === BM.n, aiWin = s2[0] === BM.n;
+  bmRender();
+  if (youWin && aiWin) return bmEnd("🤝 Berabere!", `İkiniz de ${BM.tur}. turda buldunuz. Sadolayn'ın sayısı <b>${BM.ai}</b>.`);
+  if (youWin) return bmEnd("🏆 Kazandın!", `${BM.tur} tahminde buldun. Sadolayn'ın elinde ${BM.cand.length} olasılık kalmıştı.`);
+  if (aiWin) return bmEnd("🎲 Sadolayn kazandı", `Senin sayını ${BM.tur} tahminde buldu. Onun sayısı <b>${BM.ai}</b> idi.`);
+  if (!BM.cand.length) return bmEnd("🤔 Bir şeyler karıştı", "Sadolayn'a göre senin sayın hiçbir ipucuyla uyuşmuyor.");
+  BM.tur++; $("bmTur").textContent = BM.tur;
+  $("bmMsg").textContent = `Sadolayn ${ag} dedi${BM.cand.length <= 3 ? " — dikkat, çok yaklaştı!" : "."}`;
+}
+$("bmSend").onclick = bmSend;
+$("bmGuess").addEventListener("keydown", (e) => { if (e.key === "Enter") bmSend(); });
+$("bmGuess").addEventListener("input", () => { $("bmGuess").value = $("bmGuess").value.replace(/\D/g, "").slice(0, BM.n); });
+$("bmMine").addEventListener("input", () => { $("bmMine").value = $("bmMine").value.replace(/\D/g, "").slice(0, BM.n); });
+$("bmAgain").onclick = () => { $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; };
+$("bmQuit").onclick = () => { if (BM.over || confirm("Oyun bırakılsın mı?")) { if (!BM.over) bmEnd("🏳️ Oyunu bıraktın", `Sadolayn'ın sayısı <b>${BM.ai}</b> idi.`); $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; } };
 try { const t = localStorage.getItem("hesapTab"); if (t && $(t)) document.querySelector(`#tabs [data-t="${t}"]`).click(); } catch (e) {}
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
