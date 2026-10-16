@@ -31,7 +31,9 @@
   .top { display: flex; flex-direction: column; align-items: center; padding-top: 18px; width: 100%; }
   .hello { display: grid; grid-template-columns: 76px 1fr 76px; align-items: center; gap: 6px; width: 100%; max-width: 420px; margin: 4px 0 22px; }
   .hello .mid { text-align: center; min-width: 0; }
-  .hello .mid p.greet { margin: 0; font-size: 17px; }
+  .hello .mid p.greet { margin: 0; font-size: 19px; min-height: 0; }
+  .hello .mid p.welcome { margin: 5px 0 0; font-size: 12.5px; letter-spacing: 1.2px; color: var(--muted); transition: opacity .6s ease; min-height: 17px; }
+  .hello .mid p.welcome.fade { opacity: 0; }
   .clock { display: flex; flex-direction: column; align-items: center; gap: 3px; }
   .clock svg { width: 62px; height: 62px; display: block; filter: drop-shadow(0 2px 8px rgba(224,162,79,.18)); }
   .clock .dig { font-size: 12px; color: var(--accent); font-variant-numeric: tabular-nums; letter-spacing: 1px; font-weight: 600; }
@@ -149,8 +151,8 @@
         <div class="dig" id="dig">--:--</div>
       </div>
       <div class="mid">
-        <p class="welcome">Hoş geldiniz</p>
         <p class="greet" id="greet"></p>
+        <p class="welcome" id="welcome">Hoş geldiniz</p>
       </div>
       <div class="datec" aria-label="Tarih" id="datec">
         <div class="m" id="dm"></div><div class="d" id="dd"></div><div class="w" id="dw"></div>
@@ -242,6 +244,14 @@
     else t = "Sağlıklı geceler 🌙";
     document.getElementById("greet").textContent = t;
     document.getElementById("greet2").textContent = t;
+    // Alt satır: birkaç saniyede bir yumuşakça değişir
+    (function () {
+      const el = document.getElementById("welcome"), n = new Date(), wd = n.getDay() > 0 && n.getDay() < 6 && n.getHours() >= 8 && n.getHours() < 18;
+      const L = ["Hoş geldiniz", "Keyifli gezinmeler", ...(wd ? ["İyi çalışmalar"] : [])];
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      let k = 0;
+      setInterval(() => { el.classList.add("fade"); setTimeout(() => { k = (k + 1) % L.length; el.textContent = L[k]; el.classList.remove("fade"); }, 600); }, 4500);
+    })();
     // Saat ve tarih
     const AY = ["OCAK", "ŞUBAT", "MART", "NİSAN", "MAYIS", "HAZİRAN", "TEMMUZ", "AĞUSTOS", "EYLÜL", "EKİM", "KASIM", "ARALIK"];
     const GUN = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
@@ -278,6 +288,60 @@
     // Şerit, ilk kart (İş Bankası) ekrandan tamamen çıktıktan sonra görünür
     const onScroll = () => bar.classList.toggle("show", first.getBoundingClientRect().bottom < bar.offsetHeight);
     window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+  })();
+</script>
+<div class="oneri-wrap"><button type="button" class="oneri-btn" id="oneriBtn">💡 Öneri / görüş gönder</button></div>
+<div class="oneri-ov" id="oneriOv" hidden>
+  <form class="oneri-box" id="oneriForm">
+    <h3>💡 Öneri / görüş</h3>
+    <p>Siteyle ilgili fikrini, isteğini ya da gördüğün bir hatayı yaz. İsim yazmak zorunlu değil.</p>
+    <textarea id="oneriMsg" maxlength="1500" rows="5" placeholder="Önerin…" required></textarea>
+    <input id="oneriKim" maxlength="80" placeholder="Adın ya da iletişim (isteğe bağlı)" autocomplete="off">
+    <div class="oneri-act"><button type="button" id="oneriKapat">Vazgeç</button><button type="submit" id="oneriGonder">Gönder</button></div>
+    <div class="oneri-msg" id="oneriDurum"></div>
+  </form>
+</div>
+<style>
+  .oneri-wrap { display: flex; justify-content: center; margin: 26px 0 0; }
+  .oneri-btn { background: transparent; color: var(--accent); border: 1px solid #5a4320; border-radius: 999px; padding: 9px 18px; font: inherit; font-size: 14px; cursor: pointer; }
+  .oneri-ov { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.7); display: flex; align-items: flex-end; justify-content: center; padding: 16px; }
+  .oneri-ov[hidden] { display: none; }
+  .oneri-box { width: 100%; max-width: 420px; background: #111; border: 1px solid #3a2c14; border-radius: 18px; padding: 18px; color: #f2f2f2; margin-bottom: env(safe-area-inset-bottom); }
+  .oneri-box h3 { margin: 0 0 6px; color: var(--accent); font-size: 17px; }
+  .oneri-box p { margin: 0 0 12px; font-size: 13px; color: #9a9a9a; line-height: 1.45; }
+  .oneri-box textarea, .oneri-box input { width: 100%; box-sizing: border-box; background: #181818; color: #f2f2f2; border: 1px solid #2a2a2a; border-radius: 12px; padding: 11px 12px; font: inherit; font-size: 16px; margin-bottom: 8px; resize: vertical; }
+  .oneri-box textarea:focus, .oneri-box input:focus { outline: none; border-color: var(--accent); }
+  .oneri-act { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; margin-top: 4px; }
+  .oneri-act button { padding: 11px; border-radius: 12px; font: inherit; font-size: 15px; cursor: pointer; border: 1px solid #2a2a2a; background: #181818; color: #ccc; }
+  .oneri-act button[type=submit] { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+  .oneri-msg { font-size: 13px; margin-top: 10px; text-align: center; min-height: 18px; }
+</style>
+<script>
+  // Öneri formu → Google Form. Formu oluşturunca bu üç değeri doldur (bkz. açıklama).
+  const ONERI = {
+    action: "",   // ör. https://docs.google.com/forms/d/e/XXXX/formResponse
+    mesaj: "",    // ör. entry.123456789  (Öneri sorusu)
+    kimden: "",   // ör. entry.987654321  (İsim / iletişim sorusu)
+  };
+  (function () {
+    const $ = (id) => document.getElementById(id), ov = $("oneriOv");
+    const ac = () => { ov.hidden = false; $("oneriDurum").textContent = ""; setTimeout(() => $("oneriMsg").focus(), 50); };
+    const kapa = () => (ov.hidden = true);
+    $("oneriBtn").onclick = ac; $("oneriKapat").onclick = kapa;
+    ov.addEventListener("click", (e) => { if (e.target === ov) kapa(); });
+    $("oneriForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const msg = $("oneriMsg").value.trim(), d = $("oneriDurum");
+      if (!msg) return;
+      if (!ONERI.action || !ONERI.mesaj) { d.style.color = "#ef8a5d"; d.textContent = "Form henüz bağlanmadı; çok yakında 🙂"; return; }
+      const f = new FormData(); f.append(ONERI.mesaj, msg); if (ONERI.kimden) f.append(ONERI.kimden, $("oneriKim").value.trim());
+      $("oneriGonder").disabled = true; d.style.color = "#9a9a9a"; d.textContent = "Gönderiliyor…";
+      fetch(ONERI.action, { method: "POST", mode: "no-cors", body: f }).then(() => {
+        d.style.color = "#3fc283"; d.textContent = "Teşekkürler, önerin ulaştı 🙏"; $("oneriMsg").value = ""; $("oneriKim").value = "";
+        setTimeout(kapa, 1800);
+      }, () => { d.style.color = "#ef8a5d"; d.textContent = "Gönderilemedi, internet bağlantını kontrol edip tekrar dene."; })
+        .finally(() => ($("oneriGonder").disabled = false));
+    });
   })();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
