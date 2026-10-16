@@ -226,9 +226,9 @@
       <div><div class="t">Takvim</div><div class="d">Resmi ve dini günler, iş günü hesabı</div></div>
       <div class="arrow">›</div>
     </a>
-    <a class="game" href="ajanda.html">
-      <div class="icon">🗓️</div>
-      <div><div class="t">Ajanda</div><div class="d" id="ajD">Kişisel notlar, görevler, randevular</div></div>
+    <a class="game" href="hesap.html">
+      <div class="icon">🧮</div>
+      <div><div class="t">Hesaplamalar</div><div class="d">Hesap makinesi, faiz, tarih, yüzde/KDV, cetvel</div></div>
       <div class="arrow">›</div>
     </a>
     <a class="game" href="oyunlar.html">
@@ -289,10 +289,6 @@
       }
     };
     tick(); setInterval(tick, 1000);
-    // Ajanda kartı: bugünkü açık kayıt sayısı
-    try { const A = JSON.parse(localStorage.getItem("ajanda_v1") || "[]"), tk = new Date(), k = `${tk.getFullYear()}-${String(tk.getMonth() + 1).padStart(2, "0")}-${String(tk.getDate()).padStart(2, "0")}`;
-      const t = A.filter((x) => !x.done && x.d === k).length, l = A.filter((x) => !x.done && x.d < k).length;
-      if (t || l) document.getElementById("ajD").textContent = [t ? `Bugün ${t} kayıt` : "", l ? `${l} geciken` : ""].filter(Boolean).join(" · "); } catch (e) {}
     // Takvim kutusuna dokununca Takvim sayfası açılır
     document.querySelectorAll(".datec").forEach((el) => { el.setAttribute("role", "link"); el.title = "Takvim"; el.addEventListener("click", () => (location.href = "takvim.html")); });
     const top = document.getElementById("top"), bar = document.getElementById("bar");
