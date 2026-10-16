@@ -170,11 +170,18 @@
   .tsum .ts.wide b { font-size: 16px; margin: 0; }
   .tswarn { grid-column: 1 / -1; background: rgba(239,138,93,.12); border: 1px solid #ef8a5d; color: #f3b394; border-radius: 12px; padding: 9px 12px; font-size: 13px; line-height: 1.4; }
   .tswarn b { color: #ffd2bd; }
+  .tsum .ts.wide2 { grid-column: 1 / -1; }
   .tscopy { grid-column: 1 / -1; background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 10px; padding: 9px; font: inherit; font-size: 14px; cursor: pointer; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
   th, td { padding: 6px 4px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
   th { color: var(--muted); font-weight: 500; position: sticky; top: 0; background: var(--card); }
   td:first-child, th:first-child { text-align: center; }
+  .ekshead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .ekshead h2 { margin: 0; }
+  .eksbtn { flex: 0 0 auto; padding: 8px 14px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .eks.on .eksbtn { background: transparent; color: var(--muted); border-color: var(--line); }
+  .eks.on { border-color: var(--accent); }
+  #k2_ekshint { margin-top: 8px; }
   .ltvbox { margin-top: 12px; background: var(--field); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 13px; line-height: 1.5; }
   .ltvbox b { color: var(--accent); }
   .ltvbox.warn { border-color: #ef6a4c; }
@@ -334,7 +341,7 @@
         <div class="ts main"><span>Aylık taksit</span><b id="ts_taksit">–</b><i id="ts_ilk"></i></div>
         <div class="ts"><span>Toplam geri ödeme</span><b id="ts_toplam">–</b></div>
         <div class="ts"><span>Toplam masraf</span><b id="ts_masraf">–</b><i>tahsis ücreti + BSMV</i></div>
-        <div class="ts"><span>Hayat sigortası (tahmini)</span><b id="ts_sig">–</b><i id="ts_sigi"></i></div>
+        <div class="ts" id="ts_sigbox" hidden><span>Hayat sigortası (tahmini)</span><b id="ts_sig">–</b><i id="ts_sigi"></i></div>
         <div class="ts"><span>Hesaba geçecek</span><b id="ts_net">–</b></div>
         <button type="button" id="ts_copy" class="tscopy">📋 Müşteriye özet kopyala</button>
       </div>
@@ -354,10 +361,10 @@
       <p class="hint">Banka sistemindeki gibi her taksit dönemi 1 ay faiz işler (KKDF ve BSMV dahil). İlk taksit kullandırımdan tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır.</p>
       <p class="hint" id="t_mnote">Kredi tahsis ücreti yasal olarak en fazla kredi tutarının binde 5'i olabilir ve bu ücrete %15 BSMV eklenir.</p>
       <div class="two">
-        <div><label>Hayat sigortası oranı</label><div class="field"><input id="t_sig" type="text" inputmode="decimal" value="4"><span class="unit">‰ / yıl</span></div></div>
-        <div><label>Sigorta türü</label><select id="t_sigtip"><option value="tek">Tek prim (peşin)</option><option value="yok">Sigorta yok</option></select></div>
+        <div><label>Hayat sigortası</label><select id="t_sigtip"><option value="yok" selected>Sigorta yok</option><option value="tek">Tek prim (peşin)</option></select></div>
+        <div id="t_sigwrap" hidden><label>Sigorta oranı</label><div class="field"><input id="t_sig" type="text" inputmode="decimal" value="4"><span class="unit">‰ / yıl</span></div></div>
       </div>
-      <p class="hint">Tahmini prim = kredi tutarı × yıllık oran (binde) × vade (yıl). Oran yaşa ve sigorta şirketinin tarifesine göre değişir; tarifedeki oranı yaz, sayfa bu cihazda hatırlar. Sigorta, toplam masrafa ve geri ödemeye eklenmez.</p>
+      <p class="hint" id="t_sighint" hidden>Tahmini prim = kredi tutarı × yıllık oran (binde) × vade (yıl). Oran yaşa ve sigorta şirketinin tarifesine göre değişir; tarifedeki oranı yaz, sayfa bu cihazda hatırlar. Sigorta, toplam masrafa ve geri ödemeye eklenmez.</p>
     </div>
     <div class="card">
       <div class="big"><span>Aylık taksit</span><b id="t_out">–</b></div>
@@ -409,14 +416,6 @@
   <section class="panel" id="konut">
     <div class="card">
       <h2>Konut Kredisi</h2>
-      <p class="hint">Konut kredileri BSMV ve KKDF'den muaftır; taksitler yalnızca faiz üzerinden eşit ödemeli hesaplanır.</p>
-      <div class="two">
-        <div><label>Ekspertiz değeri</label><div class="field"><input id="k2_deger" type="text" inputmode="decimal" value="5.000.000"><span class="unit">TL</span></div></div>
-        <div><label>Enerji sınıfı</label>
-          <select id="k2_enerji"><option value="AB">A veya B</option><option value="C">C</option><option value="D" selected>D ve altı</option></select>
-        </div>
-      </div>
-      <div class="ltvbox" id="k2_ltv"></div>
       <label>Kredi tutarı</label>
       <div class="field"><input id="k2_tutar" type="text" inputmode="decimal" value="2.500.000"><span class="unit">TL</span></div>
       <div class="two">
@@ -424,6 +423,16 @@
         <div><label>Vade</label><div class="field"><input id="k2_vade" type="text" inputmode="numeric" value="120"><span class="unit">ay</span></div></div>
       </div>
       <div class="rbox" id="k2_rate"></div>
+      <div class="tsum">
+        <div class="tswarn" id="k2s_warn" hidden></div>
+        <div class="ts main"><span>Aylık taksit</span><b id="k2s_taksit">–</b><i id="k2s_ilk"></i></div>
+        <div class="ts"><span>Toplam geri ödeme</span><b id="k2s_toplam">–</b></div>
+        <div class="ts"><span>Toplam faiz</span><b id="k2s_faiz">–</b></div>
+        <div class="ts"><span>Masraf</span><b id="k2s_masraf">–</b><i id="k2s_masrafi">tahsis ücreti</i></div>
+        <div class="ts"><span>Hesaba geçecek</span><b id="k2s_net">–</b></div>
+        <button type="button" id="k2s_copy" class="tscopy">📋 Müşteriye özet kopyala</button>
+      </div>
+      <p class="hint">Konut kredileri BSMV ve KKDF'den muaftır; taksitler yalnızca faiz üzerinden eşit ödemeli hesaplanır.</p>
       <div class="two">
         <div><label>Kullandırım tarihi</label><input id="k2_bas" type="date" style="color-scheme:dark"></div>
         <div><label>İlk taksit tarihi</label><input id="k2_ilk" type="date" style="color-scheme:dark"></div>
@@ -431,9 +440,26 @@
       <p class="hint" id="k2_dnote" style="margin-top:6px"></p>
       <div class="two">
         <div><label>Tahsis ücreti</label><div class="field"><input id="k2_tahsis" type="text" inputmode="decimal" value="0,5"><span class="unit">%</span></div></div>
-        <div><label>Ekspertiz + diğer masraf</label><div class="field"><input id="k2_masraf" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
+        <div><label>Diğer masraf</label><div class="field"><input id="k2_masraf" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
       </div>
-      <p class="note" id="k2_note"></p>
+      <p class="hint" style="margin-top:6px">Diğer masraf: ekspertiz ücreti, ipotek tesis vb.</p>
+    </div>
+    <div class="card eks" id="k2_eks">
+      <div class="ekshead">
+        <h2>🏠 Ekspertiz kontrolü</h2>
+        <button type="button" id="k2_eksbtn" class="eksbtn">Ekspertizi başlat</button>
+      </div>
+      <p class="hint" id="k2_ekshint">Ekspertiz raporu gelince değeri gir: BDDK sınırına göre çekilebilecek en yüksek krediyi, peşinatı ve kredi/değer oranını kontrol eder.</p>
+      <div id="k2_eksbody" hidden>
+        <div class="two">
+          <div><label>Ekspertiz değeri</label><div class="field"><input id="k2_deger" type="text" inputmode="decimal" value="" placeholder="ör. 5.000.000"><span class="unit">TL</span></div></div>
+          <div><label>Enerji sınıfı</label>
+            <select id="k2_enerji"><option value="AB">A veya B</option><option value="C">C</option><option value="D" selected>D ve altı</option></select>
+          </div>
+        </div>
+        <div class="ltvbox" id="k2_ltv"></div>
+        <div class="rows" id="k2e_rows"></div>
+      </div>
     </div>
     <div class="card">
       <div class="big"><span>Aylık taksit</span><b id="k2_out">–</b></div>
@@ -446,6 +472,7 @@
         <summary>Aylık ödeme planı</summary>
         <div class="tbl"><table id="k2_mplan"></table></div>
       </details>
+      <p class="note" id="k2_note"></p>
     </div>
   </section>
 
@@ -821,7 +848,7 @@ let m2GunManual = false;
 $("m2_gun").addEventListener("input", () => (m2GunManual = true));
 $("bm_pf").addEventListener("input", () => (bPfManual = true));
 $("t_ilk").addEventListener("input", () => (tIlkManual = true));
-try { const v = localStorage.getItem("tk_sig"); if (v) $("t_sig").value = v; const t = localStorage.getItem("tk_sigtip"); if (t) $("t_sigtip").value = t; } catch (e) {}
+try { const v = localStorage.getItem("tk_sig"); if (v) $("t_sig").value = v; } catch (e) {}
 $("ts_copy").addEventListener("click", () => {
   if (!tkSummary) return;
   const done = () => { const b = $("ts_copy"); b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = "📋 Müşteriye özet kopyala"), 1500); };
@@ -996,7 +1023,8 @@ function calcTK() {
   // Özet kutuları
   const sigOn = $("t_sigtip").value !== "yok", sigOran = num("t_sig");
   const sig = sigOn ? R2(P * sigOran / 1000 * n / 12) : 0;
-  try { localStorage.setItem("tk_sig", $("t_sig").value); localStorage.setItem("tk_sigtip", $("t_sigtip").value); } catch (e) {}
+  $("ts_sigbox").hidden = $("t_sigwrap").hidden = $("t_sighint").hidden = !sigOn;
+  try { localStorage.setItem("tk_sig", $("t_sig").value); } catch (e) {}
   const ilkFark = !tek && Math.abs(plan[0].t - R2(taksit)) > 0.005;
   $("ts_taksit").textContent = tl(tek ? plan[0].t : R2(taksit));
   $("ts_ilk").textContent = tek ? `Tek taksit · ${shortD(plan[0].d)}` : `${n} ay` + (ilkFark ? ` · ilk taksit ${tl(plan[0].t)}` : "");
@@ -1005,6 +1033,7 @@ function calcTK() {
   $("ts_sig").textContent = sigOn ? tl(sig) : "Yok";
   $("ts_sigi").textContent = sigOn ? `binde ${nfx(sigOran)} × ${nfx(n / 12)} yıl` : "";
   $("ts_net").textContent = tl(P - ucret);
+  $("ts_net").parentElement.classList.toggle("wide2", !sigOn);
   tkSummary = [
     `Kredi tutarı: ${tl(P)} · ${tek ? "tek taksit" : n + " ay"} · aylık %${nfx(r * 100)}`,
     `${tek ? "Ödenecek tutar" : "Aylık taksit"}: ${tl(tek ? plan[0].t : R2(taksit))}` + (ilkFark ? ` (ilk taksit ${tl(plan[0].t)})` : ""),
@@ -1182,8 +1211,10 @@ const LTV_BANDS = [
   { max: Infinity, ad: "20 milyon TL üzeri", AB: 40, C: 30, D: 20 },
 ];
 function ltvBand(v) { return LTV_BANDS.findIndex((b) => v <= b.max); }
+let eksOn = false;
 function renderLtv() {
   const v = num("k2_deger"), cls = $("k2_enerji").value, P = num("k2_tutar");
+  if (!eksOn || !v) { $("k2_ltv").className = "ltvbox"; $("k2_ltv").innerHTML = eksOn ? "Ekspertiz değerini girince azami kredi oranı burada görünür." : ""; return null; }
   const bi = ltvBand(v), band = LTV_BANDS[bi], rate = band[cls];
   const maxKredi = v * rate / 100;
   const over = P > maxKredi + 0.5;
@@ -1196,6 +1227,7 @@ function renderLtv() {
     <button type="button" id="k2_max">En yüksek tutarı kullan</button>
     <table class="ltvtab"><tr><th>Ekspertiz değeri</th><th>A/B</th><th>C</th><th>D ve altı</th></tr>${rowsH}</table>`;
   $("k2_max").onclick = () => { $("k2_tutar").value = Math.floor(maxKredi).toLocaleString("tr-TR"); calcKonut(); };
+  return { over, maxKredi, rate };
 }
 // Kredi tarih yardımcıları (tüketici kredisiyle aynı banka mantığı)
 function mkPerStep(bas, first, cnt, step, base) {
@@ -1217,12 +1249,17 @@ function dateSetup(pre, step, cnt, minG, maxG) {
   return { bas, ilk, ok, g };
 }
 ["k2", "tr"].forEach((p) => $(p + "_ilk").addEventListener("input", () => (dManual[p] = true)));
+let k2Summary = "";
 function calcKonut() {
-  renderLtv();
+  const L = renderLtv();
   const deger = num("k2_deger"), P = num("k2_tutar"), r = num("k2_faiz") / 100, n = Math.round(num("k2_vade"));
   const tahsis = P * num("k2_tahsis") / 100, masraf = num("k2_masraf");
   const D = dateSetup("k2", 1, n, 5, 45);
-  if (!P || !n || !D.ok) { $("k2_out").textContent = "–"; rows("k2_rows", []); $("k2_plan").innerHTML = ""; $("k2_mplan").innerHTML = ""; return; }
+  const ltvRows = (eksOn && deger) ? [["Peşinat", tl(Math.max(0, deger - P))], ["Kredi / ekspertiz değeri", pct((P / deger) * 100)]] : [];
+  rows("k2e_rows", ltvRows);
+  $("k2s_warn").hidden = !(L && L.over);
+  if (L && L.over) $("k2s_warn").innerHTML = `⚠️ Kredi tutarı ekspertize göre sınırı aşıyor. En yüksek: <b>${tl(L.maxKredi)}</b> (%${L.rate}).`;
+  if (!P || !n || !D.ok) { ["k2s_taksit", "k2s_toplam", "k2s_faiz", "k2s_masraf", "k2s_net"].forEach((x) => ($(x).textContent = "–")); $("k2s_ilk").textContent = ""; k2Summary = ""; $("k2_out").textContent = "–"; rows("k2_rows", []); $("k2_plan").innerHTML = ""; $("k2_mplan").innerHTML = ""; return; }
   const per = mkPerStep(D.bas, D.ilk, n, 1, 30);
   const taksit = r === 0 ? P / n : solveT(P, per, r, 0, 0);
   const plan = tkPlan(P, per, taksit, r, 0, 0, true);
@@ -1242,7 +1279,6 @@ function calcKonut() {
   const net = P - tahsis - masraf;
   const pv = (m) => plan.reduce((a, x, j) => a + x.t / Math.pow(1 + m, cum[j]), 0);
   let lo = 0, hi = 1; for (let it = 0; it < 100; it++) { const m = (lo + hi) / 2; if (pv(m) > net) lo = m; else hi = m; }
-  const ltv = deger ? (P / deger) * 100 : 0;
   const ilkF = Math.abs(plan[0].t - R2(taksit)) > 0.005;
   $("k2_out").textContent = tl(R2(taksit));
   rows("k2_rows", [
@@ -1251,11 +1287,26 @@ function calcKonut() {
     ["Toplam faiz", tl(tF)],
     ["Toplam geri ödeme (ödeme planı)", tl(toplam), "total"],
     ["Tahsis ücreti", tl(tahsis)],
-    ["Ekspertiz + diğer masraf", tl(masraf)],
-    ["Peşinat", tl(Math.max(0, deger - P))],
-    ["Kredi / ekspertiz değeri", pct(ltv)],
+    ...(masraf ? [["Diğer masraf", tl(masraf)]] : []),
+    ["Hesaba geçecek tutar", tl(P - tahsis - masraf)],
     ["Yıllık maliyet oranı (masraf dahil)", pct((Math.pow(1 + (lo + hi) / 2, 12) - 1) * 100)],
   ]);
+  $("k2s_taksit").textContent = tl(R2(taksit));
+  $("k2s_ilk").textContent = `${n} ay · ${n % 12 ? nfx(n / 12) : n / 12} yıl` + (ilkF ? ` · ilk taksit ${tl(plan[0].t)}` : "");
+  $("k2s_toplam").textContent = tl(toplam);
+  $("k2s_faiz").textContent = tl(tF);
+  $("k2s_masraf").textContent = tl(tahsis + masraf);
+  $("k2s_masrafi").textContent = masraf ? "tahsis + diğer masraf" : "tahsis ücreti";
+  $("k2s_net").textContent = tl(P - tahsis - masraf);
+  k2Summary = [
+    `Konut kredisi: ${tl(P)} · ${n} ay · aylık %${nfx(r * 100)}`,
+    `Aylık taksit: ${tl(R2(taksit))}` + (ilkF ? ` (ilk taksit ${tl(plan[0].t)})` : ""),
+    `Toplam geri ödeme: ${tl(toplam)} (faiz ${tl(tF)})`,
+    `Masraf: ${tl(tahsis + masraf)} (tahsis ücreti ${tl(tahsis)}${masraf ? " + diğer " + tl(masraf) : ""})`,
+    `Hesaba geçecek tutar: ${tl(P - tahsis - masraf)}`,
+    ...(eksOn && deger ? [`Ekspertiz değeri: ${tl(deger)} · peşinat ${tl(Math.max(0, deger - P))}`] : []),
+    `İlk taksit tarihi: ${shortD(plan[0].d)}`,
+  ].join("\n");
   $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.";
 }
 
@@ -1710,6 +1761,20 @@ document.querySelectorAll("#mev input, #mev select").forEach((e) => e.addEventLi
 document.querySelectorAll("#tk input, #tk select").forEach((e) => e.addEventListener("input", calcTK));
 document.querySelectorAll("#kk input").forEach((e) => e.addEventListener("input", calcKK));
 document.querySelectorAll("#konut input, #konut select").forEach((e) => e.addEventListener("input", calcKonut));
+$("k2_eksbtn").addEventListener("click", () => {
+  eksOn = !eksOn;
+  $("k2_eks").classList.toggle("on", eksOn);
+  $("k2_eksbody").hidden = !eksOn; $("k2_ekshint").hidden = eksOn;
+  $("k2_eksbtn").textContent = eksOn ? "Kapat" : "Ekspertizi başlat";
+  calcKonut();
+  if (eksOn) setTimeout(() => $("k2_deger").focus(), 50);
+});
+$("k2s_copy").addEventListener("click", () => {
+  if (!k2Summary) return;
+  const done = () => { const b = $("k2s_copy"); b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = "📋 Müşteriye özet kopyala"), 1500); };
+  if (navigator.clipboard) navigator.clipboard.writeText(k2Summary).then(done, () => prompt("Kopyala:", k2Summary));
+  else prompt("Kopyala:", k2Summary);
+});
 document.querySelectorAll("#tarim input, #tarim select").forEach((e) => e.addEventListener("input", calcTarim));
 calcBCH(); calcMev(); calcTK(); calcKK(); calcKonut(); calcTarim(); calcCek(); calcVergi();
 </script>
