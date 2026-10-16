@@ -174,7 +174,7 @@
   .tsum .ts.wide2 { grid-column: 1 / -1; }
   .two input[type="date"] { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
   .two > div { min-width: 0; }
-  /* Banka formatında ödeme planı */
+  /* Ödeme planı tablosu */
   table.bankplan { font-size: 11.5px; border: 1px solid #3a3a3a; }
   table.bankplan th { background: #4a4a4a; color: #fff; font-weight: 700; text-align: center; border: 1px solid #5a5a5a; padding: 5px 4px; line-height: 1.15; position: static; }
   table.bankplan td { border: 1px solid #2c2c2c; padding: 4px 6px; }
@@ -384,7 +384,7 @@
         <div><label>Tahsis ücreti</label><div class="field"><input id="t_tahsis" type="text" inputmode="decimal" value="5"><span class="unit">‰</span></div></div>
         <div><label>Diğer masraf</label><div class="field"><input id="t_ucret" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
       </div>
-      <p class="hint">Banka sistemindeki gibi her taksit dönemi 1 ay faiz işler (KKDF ve BSMV dahil). İlk taksit kullandırımdan tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır.</p>
+      <p class="hint">Her taksit dönemi 1 ay faiz işler (KKDF ve BSMV dahil). İlk taksit kullandırımdan tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır.</p>
       <p class="hint" id="t_mnote">Kredi tahsis ücreti yasal olarak en fazla kredi tutarının binde 5'i olabilir ve bu ücrete %15 BSMV eklenir.</p>
       <div class="two">
         <div><label>Hayat sigortası</label><select id="t_sigtip"><option value="yok" selected>Sigorta yok</option><option value="tek">Tek prim (peşin)</option></select></div>
@@ -590,7 +590,7 @@
         <div><label>BSMV (vergi)</label><div class="field"><input id="tc_bsmv" type="text" inputmode="decimal" value="5"><span class="unit">%</span></div></div>
         <div><label>KKDF (fon)</label><div class="field"><input id="tc_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
       </div>
-      <p class="hint">Banka sistemindeki gibi: her taksitte faiz, kalan anapara × aylık faiz × gün/30 ile işler; ilk taksit de diğerleriyle <b>eşittir</b> (kırık dönem taksiti küçültmez, anaparadan düşer). Hafta sonu ve resmî/dinî bayrama denk gelen ödeme ilk iş gününe kayar. Taksitli ticari kredide KKDF %0, BSMV %5'tir.</p>
+      <p class="hint">Her taksitte faiz, kalan anapara × aylık faiz × gün/30 ile işler; ilk taksit de diğerleriyle <b>eşittir</b> (kırık dönem taksiti küçültmez, anaparadan düşer). Hafta sonu ve resmî/dinî bayrama denk gelen ödeme ilk iş gününe kayar. Taksitli ticari kredide KKDF %0, BSMV %5'tir.</p>
     </div>
     <div class="card vkcard">
       <h2>🔁 Vade karşılaştırma &amp; ters hesap</h2>
@@ -1033,12 +1033,12 @@ const tkVadeUyari = (P, n) => {
   return n > m ? `⚠️ <b>Vade sınırı:</b> ${P <= 125000 ? "125.000 TL'ye kadar" : P <= 250000 ? "125.000 – 250.000 TL arası" : "250.000 TL üzeri"} ihtiyaç kredilerinde azami vade <b>${m} ay</b> (BDDK). Hesap bilgi amaçlı yapıldı.` : "";
 };
 // Plan dönemleri: per = [{d, fac, g}] — fac: ay oranı (tam ay = 1), g: gösterilen gün
-// Banka sistemi gibi: taksit, kırık dönem dikkate alınmadan standart eşit taksit formülüyle bulunur.
+// Taksit, kırık dönem dikkate alınmadan standart eşit taksit formülüyle bulunur.
 // Anapara payı tam ay varsayımıyla ayrılır; kırık dönemde (fac ≠ 1) yalnızca o taksitteki faiz/KKDF/BSMV
 // gün/30 ile hesaplanır, dolayısıyla o taksit tutarı farklı çıkar.
-const R2 = (x) => Math.round(x * 100) / 100; // banka gibi kuruşa yuvarla
+const R2 = (x) => Math.round(x * 100) / 100; // kuruşa yuvarla
 function tkPlan(B, per, T, r, kkdf, bsmv, closeLast) {
-  // Banka yöntemi: faiz+vergi (brüt) önce kuruşa yuvarlanır, faiz brütten ayrılır, KKDF/BSMV faizden hesaplanır.
+  // Yöntem: faiz+vergi (brüt) önce kuruşa yuvarlanır, faiz brütten ayrılır, KKDF/BSMV faizden hesaplanır.
   // Son taksit, eşit taksite çok yakınsa tam taksite sabitlenir; kuruş farkı vergi/fona (yoksa faize) yazılır.
   const out = []; let bal = B; T = R2(T); const tx = 1 + kkdf + bsmv;
   const fOf = (x) => R2(R2(x * tx) / tx);
@@ -1321,7 +1321,7 @@ function renderLtv() {
   $("k2_max").onclick = () => { $("k2_tutar").value = Math.floor(maxKredi).toLocaleString("tr-TR"); calcKonut(); };
   return { over, maxKredi, rate };
 }
-// Kredi tarih yardımcıları (tüketici kredisiyle aynı banka mantığı)
+// Kredi tarih yardımcıları (tüketici kredisiyle aynı mantık)
 function mkPerStep(bas, first, cnt, step, base) {
   const ds = []; for (let j = 0; j < cnt; j++) ds.push(addMonthsC(first, j * step));
   const g1 = dayDiff(bas, first), tam = ymd(addMonthsC(bas, step)) === ymd(first);
@@ -1413,7 +1413,7 @@ function tcCore(P, r, n, bsmv, kkdf, bas, ilk) {
   const dues = []; for (let k = 0; k < n; k++) dues.push(nextBiz(addMonthsC(ilk, k)));
   const g = []; let prev = bas; for (const d of dues) { g.push(dayDiff(prev, d)); prev = d; }
   let lo = 0, hi = P * 2 + 1; for (let it = 0; it < 80; it++) { const m = (lo + hi) / 2; const pl = tcPlan(P, r, g, m, bsmv, kkdf); if (pl[n - 1].t > m) lo = m; else hi = m; }
-  // banka gibi: son taksit diğerlerine en yakın olacak kuruşluk tutar
+  // son taksit diğerlerine en yakın olacak kuruşluk tutar
   let T = 0, plan = null, best = Infinity;
   for (const c of [-2, -1, 0, 1, 2].map((x) => Math.round(hi * 100 + x) / 100)) { const pl = tcPlan(P, r, g, c, bsmv, kkdf), d = Math.abs(pl[n - 1].t - c); if (d < best - 1e-9) { best = d; T = c; plan = pl; } }
   return { T, plan, dues, g };
@@ -1460,7 +1460,7 @@ function shareText(txt) {
   window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
 }
 
-// ---------- Ödeme planı PDF (banka formatında, üç kredide ortak) ----------
+// ---------- Ödeme planı PDF (üç kredide ortak) ----------
 let tkPdf = null, k2Pdf = null, tcPdf = null;
 const PDF_NOTE = "*** Bilgi amaçlıdır; kesin tutar işlem günü belirlenir. Krediye ilişkin ücret, masraf ve komisyon bilgileri dahil edilmemiştir.";
 function planPdfHTML(o) {
@@ -1562,7 +1562,7 @@ function krediOzet(o) {
   ].join("\n");
 }
 
-// ---------- Taksitli ticari kredi (banka sistemiyle birebir) ----------
+// ---------- Taksitli ticari kredi ----------
 // Faiz = kalan × aylık faiz × gün/30 (gerçek gün, kayan tarihlerle), vergi/fon faiz üzerinden.
 // Taksit eşit; kuruşa yukarı yuvarlanır, son taksit kalan anaparayı kapatır.
 let tcIlkManual = false, tcLast = null, tcSummary = "";
