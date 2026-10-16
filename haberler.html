@@ -35,6 +35,43 @@
   .sep:first-child { border-top:none; }
   .alert { display:flex; align-items:center; gap:10px; background:#1a1608; border:1px solid #4a3a14; color:#f0d9a8; border-radius:14px; padding:10px 12px; margin-bottom:12px; font-size:14px; cursor:pointer; }
   .alert b { color:var(--accent); }
+  /* Trend kartları: 5+ = dikkat (amber), 10+ = sıcak (kor turuncu) */
+  .trends { display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
+  .tr { position:relative; display:flex; align-items:center; gap:12px; padding:11px 12px 11px 14px; border-radius:14px; cursor:pointer; overflow:hidden; background:#1a1608; border:1px solid #4a3a14; color:#f0d9a8; }
+  .tr .ic { flex:0 0 auto; font-size:22px; line-height:1; }
+  .tr .tx { flex:1; min-width:0; }
+  .tr .lb { display:flex; align-items:center; gap:6px; font-size:10.5px; font-weight:800; letter-spacing:1.1px; text-transform:uppercase; color:var(--accent); margin-bottom:2px; }
+  .tr .lb em { font-style:normal; font-weight:600; letter-spacing:.2px; text-transform:none; color:#b89a66; }
+  .tr .hd { font-size:14.5px; font-weight:600; line-height:1.3; color:#f6e7c8; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .tr .ct { flex:0 0 auto; min-width:38px; text-align:center; font-size:20px; font-weight:800; color:var(--accent); line-height:1; }
+  .tr .ct small { display:block; font-size:9.5px; font-weight:700; letter-spacing:.6px; color:#b89a66; margin-top:3px; }
+  .tr:active { transform:scale(.985); }
+  .tr.l2 { background:linear-gradient(120deg,#2b0f06 0%,#1c0b05 55%,#150903 100%); border-color:#ff6a3d; color:#ffd9c7; box-shadow:0 0 0 1px rgba(255,106,61,.25), 0 6px 22px rgba(255,80,30,.18); }
+  .tr.l2::before { content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(#ffb03d,#ff4d1f); }
+  .tr.l2 .lb, .tr.l2 .ct { color:#ff8a4c; }
+  .tr.l2 .lb em, .tr.l2 .ct small { color:#d39a80; }
+  .tr.l2 .hd { color:#fff1ea; }
+  .dot { width:7px; height:7px; border-radius:50%; background:#ff5a2a; box-shadow:0 0 0 0 rgba(255,90,42,.7); animation:ping 1.6s infinite; }
+  .tr.l2 .ct { animation:glow 2.4s ease-in-out infinite; }
+  @keyframes ping { 0% { box-shadow:0 0 0 0 rgba(255,90,42,.7); } 70% { box-shadow:0 0 0 7px rgba(255,90,42,0); } 100% { box-shadow:0 0 0 0 rgba(255,90,42,0); } }
+  @keyframes glow { 50% { text-shadow:0 0 12px rgba(255,120,60,.85); } }
+  .more { align-self:center; font-size:12.5px; font-weight:600; color:var(--muted); background:var(--field); border:1px solid var(--line); border-radius:14px; padding:5px 12px; cursor:pointer; }
+  /* Sekme rozetleri */
+  .chip { position:relative; }
+  .chip .bd { position:absolute; top:-7px; right:-6px; min-width:19px; height:19px; padding:0 5px; border-radius:10px; font-size:11px; font-weight:800; line-height:19px; text-align:center; background:var(--accent); color:#000; border:2px solid #000; }
+  .chip.h1:not(.on) { border-color:#7a5a20; color:#f0d9a8; }
+  .chip.h2:not(.on) { border-color:#ff6a3d; color:#ffd9c7; box-shadow:0 0 10px rgba(255,90,40,.35); }
+  .chip.h2 .bd { background:#ff5a2a; color:#fff; animation:ping 1.6s infinite; }
+  /* Listede: sıcak konuya ait haber */
+  .n .fire { display:inline-block; margin-left:6px; padding:0 7px; border-radius:9px; font-size:11px; font-weight:700; background:#2a1a08; color:var(--accent); border:1px solid #4a3a14; }
+  .n .fire.l2 { background:#2b0f06; color:#ff8a4c; border-color:#7a2e14; }
+  .n.hot { box-shadow:inset 3px 0 0 #ff6a3d; margin-left:-14px; padding-left:14px; }
+  .sbar { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding:10px 12px; border-radius:14px; background:#1c0b05; border:1px solid #ff6a3d; color:#ffd9c7; font-size:13.5px; }
+  .sbar .st { flex:1; min-width:0; }
+  .sbar b { font-weight:600; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.3; }
+  .sbar small { display:block; font-size:11.5px; color:#d39a80; margin-top:2px; }
+  .sbar button { flex:0 0 auto; background:#2b0f06; color:#ff8a4c; border:1px solid #7a2e14; border-radius:10px; padding:5px 10px; font:inherit; font-weight:700; cursor:pointer; }
+  @media (prefers-reduced-motion: reduce) { .dot, .tr.l2 .ct, .chip.h2 .bd { animation:none; } }
   .empty { text-align:center; color:var(--muted); padding:40px 0; }
   .note { font-size:12px; color:var(--muted); text-align:center; margin-top:14px; }
   .stick { position:sticky; top:0; z-index:30; background:#000; margin:0 -16px 12px; padding:10px 16px; border-bottom:1px solid transparent; transition:border-color .2s, box-shadow .2s; }
@@ -83,13 +120,83 @@ const dayLabel = (iso) => {
   return d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
 };
 const fold = (s) => s.toLocaleLowerCase("tr");
+
+// ---------- Trend tespiti ----------
+// Eşikler: 5+ haber = dikkat, 10+ haber = çok konuşulan
+const T1 = 5, T2 = 10, STORY_H = 12, SEC_H = 18;
+const lvl = (n) => (n >= T2 ? 2 : n >= T1 ? 1 : 0);
+// Bölüm uyarısı verilen konu sekmeleri (gündem gibi genel sekmeler zaten hep dolu)
+const SEC = { okul: ["🏫", "Okul tatili", "okul tatili haberi"], isbank: ["🏦", "İş Bankası", "İş Bankası haberi"] };
+const STOP = new Set("son dakika haber haberi haberleri açıklama açıklaması açıkladı oldu olan olarak nerede bugün yarın için ile gibi daha sonra kadar çok yeni büyük ilk önce sonrası tarafından ocak şubat mart nisan mayıs haziran temmuz ağustos eylül ekim kasım aralık pazartesi salı çarşamba perşembe cuma cumartesi pazar ve veya ama ancak bir iki üç bu şu da de mi mı mu mü ne neden nasıl hangi kim var yok değil diye olduğu ortaya çıktı geldi verdi etti dedi canlı video foto galeri izle işte tüm il en bakan bakanı başkan başkanı".split(" "));
+const toks = (t) => [...new Set(fold(t).replace(/[’'`´][a-zçğıöşü]+/g, "").replace(/[^a-zçğıöşüâîû0-9 ]+/g, " ").split(/\s+/)
+  .filter((w) => w.length >= 4 && !STOP.has(w) && !/^\d+$/.test(w)).map((w) => w.slice(0, 5)))];
+let TR = { stories: [], byUrl: new Map(), sec: [], chip: {} }, story = null, showAll = false;
+function analyze() {
+  const now = Date.now(), seen = new Map();
+  for (const [c, arr] of Object.entries(D.cats)) for (const x of arr) {
+    if (!x.d || now - new Date(x.d) > STORY_H * 3600e3) continue;
+    if (seen.has(x.u)) { seen.get(x.u).cs.add(c); continue; }
+    seen.set(x.u, { ...x, cs: new Set([c]), k: toks(x.t) });
+  }
+  const byT = new Map(); for (const x of seen.values()) { const t = fold(x.t); if (!byT.has(t)) byT.set(t, x); }
+  const it = [...byT.values()];
+  // Her yerde geçen kelimeler (örn. "yapay zeka") konu ayırt etmez: ele
+  const df = new Map(); for (const x of it) for (const w of x.k) df.set(w, (df.get(w) || 0) + 1);
+  const cap = Math.max(8, it.length * 0.06); for (const x of it) x.k = x.k.filter((w) => df.get(w) <= cap);
+  const sim = (a, b) => { let s = 0; for (const w of a.k) if (b.k.includes(w)) s++; return s >= 2 && s / Math.min(a.k.length, b.k.length) >= 0.4; };
+  const nb = it.map((a, i) => it.map((b, j) => (i !== j && sim(a, b) ? j : -1)).filter((j) => j >= 0));
+  const used = new Set(), out = [];
+  for (;;) {
+    let best = -1, bn = [];
+    it.forEach((_, i) => { if (used.has(i)) return; const n = nb[i].filter((j) => !used.has(j)); if (n.length > bn.length) { best = i; bn = n; } });
+    if (best < 0 || bn.length + 1 < T1) break;
+    const mem = [best, ...bn]; mem.forEach((j) => used.add(j));
+    const srcN = new Set(mem.map((j) => it[j].s)).size;
+    if (srcN < 3) continue; // tek kaynağın tekrarı "konu" sayılmaz
+    // Başlık: kümede en çok bağı olan, çok uzun olmayan haber
+    const inC = (j) => nb[j].filter((x) => mem.includes(x)).length;
+    const head = [...mem].sort((a, b) => (it[a].t.length > 120) - (it[b].t.length > 120) || inC(b) - inC(a))[0];
+    const cc = {}; mem.forEach((j) => it[j].cs.forEach((c) => (cc[c] = (cc[c] || 0) + 1)));
+    // Konu sekmeleri (tarım, yapay zeka) geniş toplar; genel sekmeler öncelikli
+    const W = { tarim: 0.4, yz: 0.4 };
+    const main = Object.entries(cc).sort((a, b) => b[1] * (W[b[0]] || 1) - a[1] * (W[a[0]] || 1))[0][0];
+    const items = mem.map((j) => it[j]).sort((a, b) => new Date(b.d) - new Date(a.d));
+    out.push({ id: "s" + out.length, head: it[head].t, n: mem.length, srcN, main, items, l: lvl(mem.length) });
+  }
+  out.sort((a, b) => b.n - a.n);
+  const byUrl = new Map(); out.forEach((s) => s.items.forEach((x) => byUrl.set(x.u, s)));
+  const sec = Object.entries(SEC).map(([c, m]) => {
+    const n = (D.cats[c] || []).filter((x) => x.d && now - new Date(x.d) < SEC_H * 3600e3).length;
+    return { c, m, n, l: c === "okul" && n ? Math.max(lvl(n), 0.5) : lvl(n) };
+  }).filter((x) => x.l);
+  const chip = {};
+  sec.forEach((x) => { if (x.l >= 1) chip[x.c] = { l: x.l, n: x.n }; });
+  out.forEach((s) => { if (!s.l) return; const o = chip[s.main] || { l: 0, n: 0 }; chip[s.main] = { l: Math.max(o.l, s.l), n: o.n || s.n }; });
+  TR = { stories: out, byUrl, sec, chip };
+}
+function trendCards() {
+  if (story) { const s = TR.stories.find((x) => x.id === story); return `<div class="sbar">🔥 <span class="st"><b>${esc(s.head)}</b><small>${s.n} haber · ${s.srcN} kaynak · aynı konu</small></span><button id="xStory">Kapat ✕</button></div>`; }
+  const cards = [];
+  for (const x of TR.sec) {
+    if (x.c === cat) continue;
+    const [ic, nm, w] = x.m, L = Math.floor(x.l);
+    cards.push({ L, n: x.n, h: `<div class="tr ${L === 2 ? "l2" : ""}" data-go="${x.c}"><span class="ic">${ic}</span><span class="tx"><span class="lb">${L === 2 ? '<i class="dot"></i>Yoğun gündem' : nm}<em>· son saatler</em></span><span class="hd">${L ? "" : "Son saatlerde "}<b>${x.n}</b> ${w} var. Görmek için dokun.</span></span>${L ? `<span class="ct">${x.n}<small>HABER</small></span>` : ""}</div>` });
+  }
+  for (const s of TR.stories) {
+    if (!s.l) continue;
+    if (TR.sec.some((x) => x.c === s.main && x.c !== cat)) continue; // aynı konu zaten bölüm kartında
+    cards.push({ L: s.l, n: s.n, h: `<div class="tr ${s.l === 2 ? "l2" : ""}" data-story="${s.id}"><span class="ic">${s.l === 2 ? "🔥" : "📣"}</span><span class="tx"><span class="lb">${s.l === 2 ? '<i class="dot"></i>Çok konuşulan' : "Gündemde"}<em>· ${s.srcN} kaynak</em></span><span class="hd">${esc(s.head)}</span></span><span class="ct">${s.n}<small>HABER</small></span></div>` });
+  }
+  if (!cards.length) return "";
+  cards.sort((a, b) => b.L - a.L || b.n - a.n);
+  const vis = showAll ? cards : cards.slice(0, 3);
+  return `<div class="trends">${vis.map((c) => c.h).join("")}${cards.length > 3 ? `<span class="more" id="more">${showAll ? "Daha az göster" : `+${cards.length - 3} konu daha`}</span>` : ""}</div>`;
+}
 function render() {
-  $("cats").innerHTML = CATS.map(([k, n]) => `<span class="chip ${k === "isbank" ? "isb" : ""} ${k === cat ? "on" : ""}" data-k="${k}">${n}</span>`).join("");
-  const okulToday = (D.cats.okul || []).filter((x) => x.d && Date.now() - new Date(x.d) < 18 * 3600e3);
-  $("alert").innerHTML = cat !== "okul" && okulToday.length
-    ? `<div class="alert" id="goOkul">🏫 <span>Son saatlerde <b>${okulToday.length}</b> okul tatili haberi var. Görmek için dokun.</span></div>` : "";
-  if ($("goOkul")) $("goOkul").onclick = () => { cat = "okul"; $("src").value = ""; render(); window.scrollTo(0, 0); };
-  const items = (D.cats[cat] || []);
+  $("cats").innerHTML = CATS.map(([k, n]) => { const h = TR.chip[k]; return `<span class="chip ${k === "isbank" ? "isb" : ""} ${k === cat && !story ? "on" : ""} ${h ? "h" + h.l : ""}" data-k="${k}">${n}${h ? `<span class="bd">${h.n}</span>` : ""}</span>`; }).join("");
+  $("alert").innerHTML = trendCards();
+  const st = story && TR.stories.find((x) => x.id === story);
+  const items = st ? st.items : (D.cats[cat] || []);
   const srcs = [...new Set(items.map((x) => x.s))].sort((a, b) => a.localeCompare(b, "tr"));
   const cur = $("src").value;
   $("src").innerHTML = `<option value="">Tüm kaynaklar</option>` + srcs.map((s) => `<option ${s === cur ? "selected" : ""}>${esc(s)}</option>`).join("");
@@ -100,16 +207,24 @@ function render() {
   for (const x of list) {
     const dl = x.d ? dayLabel(x.d) : "";
     if (dl && dl !== last) { h += `<div class="sep">${dl}</div>`; last = dl; }
-    h += `<a class="n" href="${esc(x.u)}" target="_blank" rel="noopener"><b>${esc(x.t)}</b><span><i>${esc(x.s)}</i> · ${ago(x.d)}</span></a>`;
+    const s = !st && TR.byUrl.get(x.u), f = s && s.l ? `<span class="fire ${s.l === 2 ? "l2" : ""}">${s.l === 2 ? "🔥" : "📣"} ${s.n} haber</span>` : "";
+    h += `<a class="n ${s && s.l === 2 ? "hot" : ""}" href="${esc(x.u)}" target="_blank" rel="noopener"><b>${esc(x.t)}</b><span><i>${esc(x.s)}</i> · ${ago(x.d)}${f}</span></a>`;
   }
   $("list").innerHTML = h;
 }
-$("cats").onclick = (e) => { const c = e.target.closest(".chip"); if (!c) return; cat = c.dataset.k; $("src").value = ""; try { localStorage.setItem("haber_cat", cat); } catch (er) {} render(); window.scrollTo(0, 0); };
+$("alert").onclick = (e) => {
+  if (e.target.closest("#xStory")) { story = null; $("src").value = ""; render(); return; }
+  if (e.target.closest("#more")) { showAll = !showAll; render(); return; }
+  const c = e.target.closest(".tr"); if (!c) return;
+  if (c.dataset.go) { cat = c.dataset.go; story = null; } else story = c.dataset.story;
+  $("src").value = ""; render(); window.scrollTo(0, 0);
+};
+$("cats").onclick = (e) => { const c = e.target.closest(".chip"); if (!c) return; cat = c.dataset.k; story = null; $("src").value = ""; try { localStorage.setItem("haber_cat", cat); } catch (er) {} render(); window.scrollTo(0, 0); };
 $("src").onchange = render;
 $("q").addEventListener("input", render);
 fetch("data/haberler.json?t=" + Date.now(), { cache: "no-store" })
   .then((r) => r.json())
-  .then((j) => { D = j; $("upd").textContent = "Son güncelleme: " + new Date(j.updated).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }); render(); })
+  .then((j) => { D = j; $("upd").textContent = "Son güncelleme: " + new Date(j.updated).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }); analyze(); render(); })
   .catch(() => { $("list").innerHTML = '<div class="empty">Haberler yüklenemedi. Biraz sonra tekrar dene.</div>'; $("upd").textContent = ""; });
 setInterval(() => D && render(), 60000);
 </script>
