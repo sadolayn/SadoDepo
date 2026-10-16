@@ -78,7 +78,7 @@
 <div class="ctrls">
   <button id="undoBtn" disabled>↶ Geri al</button>
 </div>
-<div class="footer">Zar: zarların yerine dokun (ya da boşluk tuşu) · Pulu sürükle ya da dokun · Çift dokun: büyük zarla ileri · Yeşil: gidebileceği yerler · Mars 2 puan</div>
+<div class="footer">Zar: zarların yerine dokun ya da çift tıkla (boşluk tuşu da olur) · Pulu sürükle ya da dokun · Yeşil yerlere tek dokunuşla gider (çift zarda birkaç adım) · Pula çift dokun: büyük zarla ileri · Mars 2 puan</div>
 
 <div class="ov" id="optOv"><div class="modal">
   <h2>Tavla</h2>
@@ -366,8 +366,7 @@ let rollingFaces = null, rollWho = "h", aiLast = [], openShow = null, diceOffs =
 function render() {
   const g = $("dyn"); g.innerHTML = "";
   const hc = OPT.col, ac = aiColor();
-  const targets = sel !== null ? legalNext().filter((s) => s.f === sel) : [];
-  const tset = new Set(targets.map((s) => s.t));
+  const tset = new Set(sel !== null && phase === "human" ? chainsFrom(sel).keys() : []);
   const movable = new Set(phase === "human" ? legalNext().map((s) => s.f) : []);
   // hedef vurguları
   const landings = [];
@@ -500,7 +499,7 @@ $("sndBtn").onclick = () => { SND = !SND; try { localStorage.setItem("tavlaSnd",
 updSndBtn();
 // Otomatik zar
 let autoT = null;
-function autoRoll(ms = 650) { clearTimeout(autoT); autoT = setTimeout(() => { if (phase === "roll" || phase === "opening") humanRoll(); }, ms); }
+function autoRoll(ms = 1700) { clearTimeout(autoT); autoT = setTimeout(() => { if (phase === "roll" || phase === "opening") humanRoll(); }, ms); }
 
 // ---------- İnsan hamlesi ----------
 function legalNext() {
@@ -512,17 +511,45 @@ function legalNext() {
   }
   return out;
 }
+// Bir pulun art arda zarlarla gidebileceği tüm yerler (ör. 2-2'de 2, 4, 6, 8 ileri). hedef → adımlar (en kısa)
+function chainsFrom(f) {
+  const k = played.length, out = new Map();
+  for (const L of legal) {
+    if (L.seq.length <= k) continue;
+    let ok = true; for (let i = 0; i < k; i++) { const a = L.seq[i], q = played[i]; if (a.f !== q.f || a.t !== q.t || a.d !== q.d) { ok = false; break; } }
+    if (!ok) continue;
+    let cur = f; const st = [];
+    for (let i = k; i < L.seq.length; i++) {
+      const x = L.seq[i]; if (x.f !== cur) break;
+      st.push(x); const pr = out.get(x.t);
+      if (!pr || pr.length > st.length) out.set(x.t, st.slice());
+      if (x.t === 0) break; cur = x.t;
+    }
+  }
+  return out;
+}
+let busy = false;
+function playChain(steps) {
+  busy = true; let i = 0;
+  const go = () => {
+    const x = steps[i++];
+    if (phase !== "human" || !legalNext().some((y) => y.f === x.f && y.t === x.t && y.d === x.d)) { busy = false; render(); return; }
+    doHumanStep(x);
+    if (i < steps.length && phase === "human") setTimeout(go, 260); else busy = false;
+  };
+  go();
+}
 let lastTap = { p: null, t: 0 };
 function onTap(p) {
-  if (phase !== "human") return;
+  if (phase !== "human" || busy) return;
   const now = Date.now();
   const nx = legalNext(), isSrc = nx.some((s) => s.f === p);
   // Çift tık: kendi pulunun üstüne iki kez → büyük zarla ileri
   if (isSrc && lastTap.p === p && now - lastTap.t < 450) { lastTap = { p: null, t: 0 }; return onDouble(p); }
   lastTap = { p, t: now };
   if (sel !== null && sel !== p) {
-    const st = nx.filter((s) => s.f === sel && s.t === p);
-    if (st.length) { lastTap = { p: null, t: 0 }; const s = st.sort((a, b) => b.d - a.d)[0]; doHumanStep(s); return; }
+    const ch = chainsFrom(sel).get(p);
+    if (ch) { lastTap = { p: null, t: 0 }; playChain(ch); return; }
   }
   // Kendi oynanabilir puluna dokunuldu: seç (zaten seçiliyse seçili kalsın, çift tık için bekle).
   // Böylece o nokta başka bir pulun hedefi olsa bile başka pul yürümez.
@@ -571,9 +598,9 @@ function animateDice(final, cb, who) {
   // dışarı çıkan zarın gideceği yer: kendi alanının dışı, okların arası
   const T = { x: (k === 0 ? -1 : 1) * (HW / 2 - 34 - Math.random() * 20) - (k === 0 ? -23 : 23) * (who !== "o"), y: sg() * (105 + Math.random() * 30), r: sg() * (28 + Math.random() * 14) };
   if (who === "o") T.x = sg() * (HW / 2 - 40);
-  const N = 15; let n = 0;
+  const N = 22; let n = 0; rollSkip = false;
   const t = setInterval(() => {
-    n++; const u = n / N, e = Math.pow(1 - u, 1.7);
+    n++; if (rollSkip) n = N; const u = n / N, e = Math.pow(1 - u, 1.7);
     rollingFaces = n < N ? [rnd(), rnd()] : final.slice();
     diceOffs = P.map((p, i) => i === k
       ? { x: T.x * Math.pow(u, 0.7) + p.ax * e * 0.4 * Math.cos(p.w * u + p.ph), y: T.y * Math.pow(u, 0.9) + p.ay * e * 0.4 * Math.sin(p.w * u + p.ph), r: p.r0 * e + T.r * u }
@@ -584,8 +611,9 @@ function animateDice(final, cb, who) {
       if (k >= 0) { cock = { who, k, faces: final, offs: diceOffs }; diceOffs = null; onCock(who); return; }
       diceOffs = null; cb(final);
     }
-  }, 55);
+  }, 62);
 }
+let rollSkip = false;
 function onCock(who) {
   if (who === "h") { phase = "roll"; render(); status("🎲 <b>Kırık zar!</b> Bir zar dışarı çıktı — yeniden at"); return; }
   if (who === "o") { phase = "opening"; render(); status("🎲 <b>Kırık zar!</b> Başlangıç zarı yeniden atılıyor…"); autoRoll(1500); return; }
@@ -638,12 +666,12 @@ function aiTurn() {
     setTimeout(() => {
       const c = flip(S);
       const m = bestMove(c, a, b);
-      if (!m || !m.seq.length) { status(`Sadolayn: <b>${a} · ${b}</b> — oynayamadı`); setTimeout(() => { aiLast = dice.slice(); dice = []; rem = []; phase = "roll"; render(); status(`Sadolayn <b>${aiLast.join(" · ")}</b> oynadı — sıra sende`); autoRoll(1300); }, 1300); return; }
+      if (!m || !m.seq.length) { status(`Sadolayn: <b>${a} · ${b}</b> — oynayamadı`); setTimeout(() => { aiLast = dice.slice(); dice = []; rem = []; phase = "roll"; render(); status(`Sadolayn <b>${aiLast.join(" · ")}</b> oynadı — sıra sende`); autoRoll(2200); }, 1300); return; }
       const steps = m.seq.slice(); status(`Sadolayn: <b>${a} · ${b}</b> — oynuyor…`);
       const next = () => {
         if (!steps.length) {
           if (S.off[1] === 15) return gameOver(1);
-          setTimeout(() => { aiLast = dice.slice(); dice = []; rem = []; phase = "roll"; render(); status(`Sadolayn <b>${aiLast.join(" · ")}</b> oynadı — sıra sende`); autoRoll(1300); }, 500); return;
+          setTimeout(() => { aiLast = dice.slice(); dice = []; rem = []; phase = "roll"; render(); status(`Sadolayn <b>${aiLast.join(" · ")}</b> oynadı — sıra sende`); autoRoll(2200); }, 500); return;
         }
         const s = steps.shift();
         const fc = flip(S); const aiHit = s.t >= 1 && fc.b[s.t] === -1; const nc = applyStep(fc, s.f, s.t); S = flip(nc); stepSound(aiHit, s.t);
@@ -706,6 +734,8 @@ let drag = null;
 SVG.addEventListener("pointerdown", (e) => {
   const q = svgPt(e);
   if ((phase === "roll" || phase === "opening") && Math.abs(q.y - H / 2) < 95 && (q.x > xR || (phase === "opening" && q.x > xL))) { ac(); humanRoll(); return; }
+  if (phase === "rolling" && (rollWho === "h" || rollWho === "o")) { rollSkip = true; return; }
+  if (busy) return;
   const p = pointAt(q.x, q.y);
   if (p === null) return;
   drag = { p, x0: q.x, y0: q.y, moved: false, id: e.pointerId };
@@ -721,10 +751,12 @@ function endDrag(e) {
   if (!drag) return; const d = drag; drag = null; $("drag").innerHTML = "";
   if (!d.moved) { onTap(d.p); return; }
   const q = svgPt(e), t = pointAt(q.x, q.y);
-  const st = legalNext().filter((s) => s.f === d.p && s.t === t);
-  if (st.length) doHumanStep(st.sort((a, b) => b.d - a.d)[0]); else render();
+  const ch = t === null ? null : chainsFrom(d.p).get(t);
+  if (ch) playChain(ch); else render();
 }
 SVG.addEventListener("pointerup", endDrag);
+// Çift tık: sıra sendeyse zarı hemen at
+SVG.addEventListener("dblclick", (e) => { e.preventDefault(); if (phase === "roll" || phase === "opening") { ac(); humanRoll(); } else if (phase === "rolling" && rollWho !== "a") rollSkip = true; });
 SVG.addEventListener("pointercancel", () => { drag = null; $("drag").innerHTML = ""; render(); });
 
 drawStatic();
