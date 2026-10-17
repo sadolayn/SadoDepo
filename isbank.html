@@ -123,6 +123,37 @@
   a.live b { display: block; font-size: 15px; font-weight: 600; line-height: 1.35; }
   a.live span { font-size: 12px; color: var(--muted); }
   a.live span i { font-style: normal; color: #8fb0ff; font-weight: 600; }
+  /* ===== Günün kartı, takvim, grafikler, kampanya aciliyeti ===== */
+  .nextev { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: linear-gradient(90deg, rgba(224,162,79,.14), rgba(224,162,79,.03)); border: 1px solid #4a3a22; border-radius: 14px; padding: 10px 12px; color: var(--ink, #f2f2f2); font: inherit; cursor: pointer; margin-bottom: 8px; }
+  .nextev .n { font-size: 26px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1; text-align: center; min-width: 46px; }
+  .nextev .n small { display: block; font-size: 10px; font-weight: 600; color: var(--muted); margin-top: 2px; }
+  .nextev b { display: block; font-size: 14.5px; } .nextev span { font-size: 12px; color: var(--muted); } .nextev i { margin-left: auto; font-style: normal; color: var(--accent); font-size: 20px; }
+  .daycard { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
+  .daycard h4 { margin: 0 0 6px; font-size: 12px; color: var(--accent); letter-spacing: .5px; text-transform: uppercase; }
+  .daycard .yr { display: inline-block; font-weight: 800; color: #000; background: var(--accent); border-radius: 6px; padding: 0 6px; margin-right: 6px; font-size: 13px; }
+  .daycard p { margin: 0; font-size: 14.5px; line-height: 1.5; color: #e6e6e6; }
+  .daycard hr { border: none; border-top: 1px dashed #333; margin: 12px 0; }
+  .dq .q { font-size: 15px; font-weight: 600; margin: 0 0 8px; line-height: 1.4; }
+  .dq .os { display: grid; gap: 6px; }
+  .dq .os button { text-align: left; padding: 9px 11px; border-radius: 10px; border: 1px solid #333; background: #161616; color: #f2f2f2; font: inherit; font-size: 14px; cursor: pointer; }
+  .dq .os button.ok { background: #1f5f35; border-color: #2f9a55; } .dq .os button.no { background: #6a1f1a; border-color: #c0392b; }
+  .dq .m { font-size: 13px; color: var(--muted); margin-top: 8px; min-height: 18px; }
+  .tk { display: grid; grid-template-columns: 54px minmax(0,1fr) auto; gap: 10px; align-items: center; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; }
+  .tk .dt { text-align: center; line-height: 1.1; } .tk .dt b { display: block; font-size: 22px; } .tk .dt span { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+  .tk .tt b { display: block; font-size: 14.5px; } .tk .tt span { font-size: 12px; color: var(--muted); }
+  .tk .kl { text-align: right; font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; } .tk .kl small { display: block; font-size: 10.5px; color: var(--muted); font-weight: 500; }
+  .tk.est { opacity: .8; } .tk.est .tt b::after { content: " · tahmini"; font-weight: 500; font-size: 11px; color: var(--muted); }
+  .chart { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 12px 6px; margin-bottom: 8px; }
+  .chart h5 { margin: 0 0 2px; font-size: 13.5px; } .chart small { font-size: 11.5px; color: var(--muted); }
+  .chart svg { display: block; width: 100%; height: auto; margin-top: 6px; }
+  .tfil { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 10px; }
+  .tfil button { border: 1px solid var(--line); background: #161616; color: #ddd; border-radius: 999px; padding: 6px 11px; font: inherit; font-size: 12.5px; cursor: pointer; }
+  .tfil button.on { background: var(--accent); color: #000; border-color: var(--accent); }
+  .tfil button b { margin-left: 5px; opacity: .7; }
+  .camp .left.urgent { background: #c0392b; color: #fff; animation: pz 1.4s ease-in-out infinite; }
+  @keyframes pz { 50% { box-shadow: 0 0 0 4px rgba(192,57,43,.25); } }
+  .camp.urgent { border-color: #5a2a20; background: linear-gradient(180deg, rgba(192,57,43,.08), var(--card) 60%); }
+  .alarm { background: rgba(192,57,43,.12); border: 1px solid #5a2a20; color: #ffb7a6; border-radius: 12px; padding: 9px 12px; font-size: 13.5px; margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -136,12 +167,14 @@
   </div>
   <div class="upd" id="upd"></div>
   <div style="text-align:center;margin:-4px 0 10px"><button id="subeBtn" type="button" class="subebtn">🏦 Şubeler · 📊 Yatırımcı Sunumu</button></div>
+  <div id="today"></div>
   <div class="chipbar" id="chipbar"><div class="chips" id="chips"></div></div>
   <div id="list"><div class="empty">Yükleniyor…</div></div>
 
   <p class="note">Seçilmiş haberler ve Maximum kampanyaları kamuya açık kaynaklardan günde iki kez, "Güncel" sekmesi her saat otomatik derlenir. Kampanya koşulları için maximum.com.tr'ye bakın.</p>
 </div>
 
+<script src="isq.js"></script>
 <script>
 const $ = (x) => document.getElementById(x);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -154,6 +187,7 @@ const CATS = [
   ["İşCep", "var(--dijital)"],
   ["Maximum", "var(--accent)"],
   ["📰 Güncel", "#5d8fe0"],
+  ["📅 Takvim", "#e0a24f"],
 ];
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
@@ -163,7 +197,7 @@ try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 
 function renderChips() {
   $("chips").innerHTML = CATS.map(([k]) => {
-    const n = k === "Tümü" ? all.length : k === "Maximum" ? camps.length : k === "İşCep" ? (iscep ? iscep.surumler.length : 0) : k === "Şubeler" ? (subeler ? subeler.yurtici + subeler.yurtdisi : 0) : k === "📰 Güncel" ? live.length : all.filter((h) => h.kategori === k).length;
+    const n = k === "Tümü" ? all.length : k === "Maximum" ? camps.length : k === "İşCep" ? (iscep ? iscep.surumler.length : 0) : k === "Şubeler" ? (subeler ? subeler.yurtici + subeler.yurtdisi : 0) : k === "📰 Güncel" ? live.length : k === "📅 Takvim" ? takvim().length : all.filter((h) => h.kategori === k).length;
     return `<button data-k="${k}" class="${k === cat ? "active" : ""}">${k}<b>${n}</b></button>`;
   }).join("");
   $("chips").querySelectorAll("button").forEach((b) => (b.onclick = () => {
@@ -178,21 +212,29 @@ function daysLeft(d) {
   const end = new Date(d + "T23:59:59"), now = new Date();
   return Math.ceil((end - now) / 86400000);
 }
+let campTur = "Tümü";
 function renderCamps() {
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
   if (!camps.length) { $("list").innerHTML = '<div class="empty">Şu an listelenen kampanya yok.</div>'; return; }
-  let html = "";
-  for (const k of camps) {
-    const n = daysLeft(k.bitis);
-    const left = n <= 1 ? "Son gün" : `Son ${n} gün`;
-    html += `<div class="camp" style="--c:${TUR[k.tur] || "var(--muted)"}">
-      <div class="top"><span class="tag">${esc(k.tur)}</span><span class="left ${n <= 7 ? "soon" : ""}">${left}</span></div>
+  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))];
+  if (!turs.includes(campTur)) campTur = "Tümü";
+  const urg = camps.filter((k) => daysLeft(k.bitis) <= 3);
+  let html = `<div class="tfil" id="tfil">${turs.map((t) => `<button data-t="${esc(t)}" class="${t === campTur ? "on" : ""}">${esc(t)}<b>${t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length}</b></button>`).join("")}</div>`;
+  if (urg.length) html += `<div class="alarm">⏰ <b>${urg.length} kampanya</b> 3 gün içinde bitiyor — kaçırmayın!</div>`;
+  for (const k of camps.filter((k) => campTur === "Tümü" || k.tur === campTur)) {
+    const n = daysLeft(k.bitis), u = n <= 3;
+    const left = n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
+    const bit = new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+    html += `<div class="camp${u ? " urgent" : ""}" style="--c:${TUR[k.tur] || "var(--muted)"}">
+      <div class="top"><span class="tag">${esc(k.tur)}</span><span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}" title="Bitiş: ${bit}">${left}</span></div>
       <b>${esc(k.baslik)}</b>
       <p>${esc(k.ozet)}</p>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px">Bitiş: ${bit}</div>
     </div>`;
   }
   html += `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm kampanyalar ve katılım koşulları ↗</a>`;
   $("list").innerHTML = html;
+  $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); };
 }
 
 function renderSubeler() {
@@ -301,6 +343,7 @@ function yatHtml() {
         ${card("Sermaye yeterliliği", "syr", "pct", "up", "")}
         ${card("Takipteki krediler", "npl", "pct", "down", "")}
       </div>
+      ${chartsHtml()}
       <div class="day" style="margin-top:18px">📈 Bir yıl önceyle karşılaştırma</div>
       <div class="yt-chips" id="ytChips">${opts.map((o) => `<button data-i="${o.i}" class="${o.i === ytSel ? "on" : ""}">${pLabel(o.p)}</button>`).join("")}</div>
       <div id="ytTable">${ytTable(ytSel)}</div>`;
@@ -359,8 +402,117 @@ function renderLive() {
     + `<p class="note" style="margin-top:8px">Bu liste haber sitelerinden ve Google Haberler'den her saat otomatik toplanır; habere dokununca yayıncının sitesinde açılır.</p>`;
 }
 
+// ===== Bilanço grafikleri (bankanın çeyreklik resmi verisinden) =====
+function chartSvg(vals, labels, o) {
+  const W = 340, H = 150, L = 6, R = 6, T = 18, B = 22, n = vals.length;
+  const ok = vals.filter((v) => v != null), mx = Math.max(...ok) * 1.08, mn = o.line ? Math.min(...ok) * 0.9 : 0;
+  const x = (i) => L + (W - L - R) * (o.line ? i / (n - 1) : (i + 0.5) / n), y = (v) => T + (H - T - B) * (1 - (v - mn) / (mx - mn || 1));
+  let g = `<line x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}" stroke="#333"/>`;
+  if (o.line) {
+    const pts = vals.map((v, i) => v == null ? null : `${x(i).toFixed(1)},${y(v).toFixed(1)}`).filter(Boolean);
+    g += `<polygon points="${x(0)},${H - B} ${pts.join(" ")} ${x(n - 1)},${H - B}" fill="${o.c}" opacity=".12"/><polyline points="${pts.join(" ")}" fill="none" stroke="${o.c}" stroke-width="2.4" stroke-linejoin="round"/>`;
+    vals.forEach((v, i) => { if (v != null) g += `<circle cx="${x(i)}" cy="${y(v)}" r="${i === n - 1 ? 4 : 2.4}" fill="${i === n - 1 ? o.c : "#0d0d0d"}" stroke="${o.c}" stroke-width="1.6"><title>${labels[i]}: ${o.f(v)}</title></circle>`; });
+  } else {
+    const bw = (W - L - R) / n * 0.62;
+    vals.forEach((v, i) => { if (v == null) return; const yy = y(v); g += `<rect x="${(x(i) - bw / 2).toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${(H - B - yy).toFixed(1)}" rx="3" fill="${o.c}" opacity="${i === n - 1 ? 1 : 0.55}"><title>${labels[i]}: ${o.f(v)}</title></rect>`; });
+  }
+  // son değer etiketi
+  const li = n - 1; g += `<text x="${Math.min(x(li), W - R - 2)}" y="${y(vals[li]) - 7}" text-anchor="end" font-size="12" font-weight="800" fill="#f2f2f2">${o.f(vals[li])}</text>`;
+  // yıl etiketleri: her yılın ilk noktası
+  let prev = ""; labels.forEach((lb, i) => { const yr = lb.split("/")[0]; if (yr !== prev) { g += `<text x="${x(i)}" y="${H - 6}" text-anchor="${i === 0 ? "start" : "middle"}" font-size="10.5" fill="#8a8a8a">${yr}</text>`; prev = yr; } });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+}
+function chartsHtml() {
+  if (!fin) return "";
+  const P = fin.periods, S = fin.s;
+  const qNet = P.map((p, i) => { const m = +p.split("/")[1]; if (S.netkar[i] == null) return null; if (m === 3) return S.netkar[i]; return S.netkar[i - 1] == null ? null : +(S.netkar[i] - S.netkar[i - 1]).toFixed(3); });
+  const mlr = (v) => v.toLocaleString("tr-TR", { maximumFractionDigits: 1 }) + " mlr", trn = (v) => (v / 1000).toLocaleString("tr-TR", { maximumFractionDigits: 2 }) + " trn", pc = (v) => "%" + v.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
+  const C = (t, sub, svg) => `<div class="chart"><h5>${t}</h5><small>${sub}</small>${svg}</div>`;
+  return `<div class="day" style="margin-top:18px">📉 Çeyrek çeyrek seyir</div>` +
+    C("Net kâr (her çeyrek ayrı)", "milyar TL · son çubuk en güncel çeyrek", chartSvg(qNet, P, { c: "#e0a24f", f: mlr })) +
+    C("Toplam aktif", "trilyon TL", chartSvg(S.aktif, P, { c: "#5aa9f0", f: trn, line: true })) +
+    C("Özkaynak kârlılığı", "yıllıklandırılmış, %", chartSvg(S.roe, P, { c: "#3fc283", f: pc, line: true })) +
+    C("Takipteki krediler oranı", "% · düşük olması iyidir", chartSvg(S.npl, P, { c: "#ef6a4c", f: pc, line: true }));
+}
+
+// ===== Banka takvimi =====
+// Kesin tarihler KAP/TCMB duyurularından; "tahmini" olanlar geçen yılın takvimine göre
+const PPK = ["2026-10-22", "2026-12-10", "2027-01-21", "2027-03-18", "2027-04-22", "2027-06-10"];
+const TK_FIX = [
+  { d: "2026-11-05", t: "3. çeyrek finansalları açıklanıyor", a: "Ocak–Eylül 2026 bilançosu · KAP duyurusu", c: "#e0a24f" },
+  { d: "2027-02-26", t: "2026 yılı finansalları", a: "Geçen yıl şubat sonu açıklandı", c: "#e0a24f", est: 1, ay: 1 },
+  { d: "2027-03-31", t: "Olağan genel kurul", a: "2026'da 31 Mart'ta İstanbul'da yapıldı", c: "#b48cff", est: 1, ay: 1 },
+  { d: "2027-04-01", t: "Kâr payı (temettü) dağıtımı", a: "2026'da 1 Nisan'da başladı; tutarı genel kurul belirler", c: "#3fc283", est: 1, ay: 1 },
+];
+const dLeft = (d) => Math.round((new Date(d + "T12:00:00") - new Date(new Date().toDateString() + " 12:00")) / 864e5);
+const ymdS = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
+function takvim() {
+  const now = new Date(), L = [...TK_FIX];
+  PPK.forEach((d) => L.push({ d, t: "TCMB faiz kararı (PPK)", a: "Saat 14:00'te açıklanır · kredi ve mevduat faizlerini etkiler", c: "#5aa9f0" }));
+  for (let y = now.getFullYear(); y <= now.getFullYear() + 1; y++) {
+    [["03-31", "1. çeyrek"], ["06-30", "2. çeyrek (yarıyıl)"], ["09-30", "3. çeyrek"], ["12-31", "Yıl sonu"]].forEach(([md, n]) => L.push({ d: `${y}-${md}`, t: `${n} bilanço dönemi kapanışı`, a: "Çeyrek sonu · hedef ve bütçe dönemi", c: "#8a8a8a" }));
+    L.push({ d: `${y}-08-26`, t: `İş Bankası ${y - 1924}. kuruluş yıldönümü 🎂`, a: "26 Ağustos 1924, Ankara", c: "#ef6a4c" });
+  }
+  return L.filter((x) => dLeft(x.d) >= 0).sort((a, b) => a.d.localeCompare(b.d)).slice(0, 14);
+}
+function renderTakvim() {
+  $("upd").textContent = "Kalan günler her gün kendiliğinden güncellenir";
+  $("list").innerHTML = takvim().map((x) => {
+    const dt = new Date(x.d + "T12:00:00"), n = dLeft(x.d);
+    return `<div class="tk${x.est ? " est" : ""}" style="--c:${x.c}">
+      <div class="dt">${x.ay ? `<b style="font-size:15px">${dt.toLocaleDateString("tr-TR", { month: "short" })}</b>` : `<b>${dt.getDate()}</b>`}<span>${x.ay ? dt.getFullYear() : dt.toLocaleDateString("tr-TR", { month: "short" })}</span></div>
+      <div class="tt"><b>${esc(x.t)}</b><span>${x.ay ? "" : dt.toLocaleDateString("tr-TR", { weekday: "long", year: "numeric" }) + " · "}${esc(x.a)}</span></div>
+      <div class="kl">${n === 0 ? "Bugün" : x.ay ? "~" + n : n}${n ? "<small>gün</small>" : ""}</div></div>`;
+  }).join("") + `<p class="note">Tahmini olanlar banka açıkladığında kesinleşir. PPK tarihleri TCMB'nin yayımladığı takvimdendir.</p>`;
+}
+
+// ===== Günün kartı: banka tarihinden bir bilgi + günün sorusu =====
+const TARIH = [
+  ["26 Ağustos 1924", "İş Bankası, Atatürk'ün direktifiyle Ankara'da kuruldu. Yola 2 şube, 37 çalışan ve 1 milyon TL sermayeyle çıktı.", "08-26"],
+  ["9 Eylül 1924", "Banka, Ankara İstasyon Caddesi'ndeki ilk binasında yaklaşık 150 davetlinin katıldığı törenle açıldı.", "09-09"],
+  ["1924", "Bankanın ilk genel müdürü, sonradan Cumhurbaşkanı olacak olan Celal Bayar'dı."],
+  ["1924", "Kuruluş sermayesi olan 1 milyon TL'nin 250 bin TL'lik kısmını Atatürk karşıladı."],
+  ["12 Temmuz 1925", "İzmir Şubesi hizmete açıldı.", "07-12"],
+  ["1927", "Sermaye 2 milyon TL artırıldı ve banka Milli İtibar Bankası ile birleşti."],
+  ["1928", "Türkiye'ye ilk kumbaraları İş Bankası getirdi; tasarruf alışkanlığının simgesi oldu."],
+  ["1932", "Hamburg ve İskenderiye şubeleriyle yurt dışında şube açan ilk Türk bankası oldu."],
+  ["1933", "Atatürk, Akşam gazetesine verdiği demeçte bankayı özellikle bankacı yetiştirmesi yönüyle övdü."],
+  ["1982", "Türkiye'nin ilk ATM'lerini kurdu; \"Bankamatik\" adı da bankanın tescilli markasıdır."],
+  ["1991", "Telefon bankacılığı \"Mavi Hat\" hizmete girdi."],
+  ["1997", "Bankanın ilk internet şubesi açıldı."],
+  ["Mayıs 1998", "Hazine'nin elindeki %12,3'lük pay halka arz edildi."],
+  ["2000", "Genel müdürlük Ankara'dan İstanbul'a, İş Kuleleri'ne taşındı."],
+  ["Atatürk'ün vasiyeti", "Atatürk'ün bankadaki hisselerinin temsil hakkı vasiyetiyle Cumhuriyet Halk Partisi'ne bırakıldı."],
+  ["2024", "İş Bankası 100. yaşını kutladı."],
+];
+function dayIdx() { const t = new Date(); return Math.floor((Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) - Date.UTC(2024, 0, 1)) / 864e5); }
+function renderToday() {
+  const t = new Date(), md = `${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+  const exact = TARIH.find((x) => x[2] === md), f = exact || TARIH[dayIdx() % TARIH.length];
+  const nx = takvim().find((x) => !/bilanço dönemi/.test(x.t)) || takvim()[0];
+  let h = "";
+  if (nx) { const n = dLeft(nx.d), dt = new Date(nx.d + "T12:00:00"); h += `<button type="button" class="nextev" id="toTk"><div class="n">${n === 0 ? "🎯" : (nx.ay ? "~" : "") + n}<small>${n === 0 ? "bugün" : "gün"}</small></div><div><b>${esc(nx.t)}</b><span>${nx.ay ? dt.toLocaleDateString("tr-TR", { month: "long", year: "numeric" }) + " (tahmini)" : dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })} · banka takvimi</span></div><i>›</i></button>`; }
+  h += `<div class="daycard"><h4>🏛️ ${exact ? "Bugün banka tarihinde" : "Banka tarihinden"}</h4><p><span class="yr">${esc(f[0])}</span>${esc(f[1])}</p>`;
+  const pool = typeof ISQ !== "undefined" ? ISQ : [];
+  if (pool.length) {
+    const q = pool[(dayIdx() * 7) % pool.length];
+    h += `<hr><div class="dq"><h4>❓ Günün sorusu</h4><div class="q">${esc(q[0])}</div><div class="os" id="dqOs">${q[1].map((o, i) => `<button type="button" data-i="${i}">${esc(o)}</button>`).join("")}</div><div class="m" id="dqM">Cevabını seç; yarın yeni soru gelir.</div></div>`;
+    setTimeout(() => {
+      const os = $("dqOs"); if (!os) return;
+      os.onclick = (e) => { const b = e.target.closest("button[data-i]"); if (!b || os.dataset.done) return; os.dataset.done = 1; const i = +b.dataset.i;
+        os.querySelectorAll("button").forEach((x) => { if (+x.dataset.i === q[2]) x.classList.add("ok"); });
+        if (i !== q[2]) b.classList.add("no");
+        $("dqM").textContent = i === q[2] ? "✅ Bravo, doğru!" : "Doğrusu yeşil olan 👆 Yarın yeni soru!"; };
+    });
+  }
+  h += `</div>`;
+  $("today").innerHTML = h;
+  const tb = $("toTk"); if (tb) tb.onclick = () => { cat = "📅 Takvim"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); $("chipbar").scrollIntoView({ behavior: "smooth" }); };
+}
+
 function renderList() {
   if (cat === "📰 Güncel") return renderLive();
+  if (cat === "📅 Takvim") return renderTakvim();
   if (cat === "İşCep") return renderIscep();
   if (cat === "Maximum") return renderCamps();
   if (cat === "Şubeler") return renderSubeler();
@@ -410,7 +562,7 @@ function renderList() {
     try { yat = await (await fetch("isbank/yatirimci.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { kontrol = (await (await fetch("isbank/kontrol.json?t=" + Date.now(), { cache: "no-store" })).json()).son_kontrol; } catch (e) {}
     $("subeBtn").onclick = () => { cat = cat === "Şubeler" ? "Tümü" : "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); };
-    renderChips(); renderList();
+    renderChips(); renderList(); renderToday();
   } catch (e) {
     $("list").innerHTML = '<div class="empty">Haberler yüklenemedi.</div>';
   }
