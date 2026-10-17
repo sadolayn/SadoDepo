@@ -72,6 +72,7 @@
   .rolling { animation: shake .12s linear infinite; transform-box: fill-box; transform-origin: center; }
   .footer { text-align: center; font-size: 11px; color: #555; margin-top: 12px; }
 </style>
+<script src="rapor.js"></script>
 </head>
 <body>
 <header>
@@ -705,6 +706,7 @@ function gameOver(w) {
   const pts = mars ? 2 : 1;
   score[w] += pts; render(); (w === 0 ? sfx.win : sfx.lose)();
   const matchOver = score[w] >= OPT.n;
+  window.Rapor && Rapor.oyun("tavla", w === 0);
   $("endIco").textContent = w === 0 ? (mars ? "🔥" : "🏆") : (mars ? "😵" : "🎲");
   $("endTitle").textContent = matchOver ? (w === 0 ? "Maçı kazandın!" : "Maçı Sadolayn aldı") : (w === 0 ? (mars ? "Mars ettin!" : "Oyunu kazandın") : (mars ? "Sadolayn mars etti" : "Sadolayn kazandı"));
   $("endText").innerHTML = `${mars ? "Mars: <b>2 puan</b>" : "<b>1 puan</b>"} · Skor ${score[0]} – ${score[1]} (${OPT.n} puanlık maç)`;
@@ -780,5 +782,6 @@ tick(); setInterval(tick, 1000);
 openOptions();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawStatic(); render(); tick(); });
 </script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

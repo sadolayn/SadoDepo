@@ -221,6 +221,7 @@
 </style>
 <script src="cardsound.js"></script>
 <script src="isq.js"></script>
+<script src="rapor.js"></script>
 </head>
 <body>
 <header>
@@ -278,6 +279,7 @@ const FEE = 0.01; // %1 masa ücreti: her oyunda ortadaki toplam Token'ın %1'i 
 const KASA_FORM = { action: "https://docs.google.com/forms/d/e/1FAIpQLSfeuDkVXo1nk6IZ_9f7uEjXkCUF3M--PUv7cYcBwXPWe6F6gA/formResponse", mesaj: "entry.1123079006", kimden: "entry.1229018588" };
 let KASA = { oyun: 0, ucret: 0 }; try { Object.assign(KASA, JSON.parse(localStorage.getItem("batakKasa") || "{}")); } catch (e) {}
 function kasaBildir(o) {
+  window.Rapor && Rapor.oyun("batak", o.sonuc === "Kazandı");
   KASA.oyun++; KASA.ucret += o.ucret; try { localStorage.setItem("batakKasa", JSON.stringify(KASA)); } catch (e) {}
   try {
     const f = new FormData();

@@ -314,6 +314,7 @@
   .camp.urgent { border-color: #5a2a20; background: linear-gradient(180deg, rgba(192,57,43,.08), var(--card) 60%); }
   .alarm { background: rgba(192,57,43,.12); border: 1px solid #5a2a20; color: #ffb7a6; border-radius: 12px; padding: 9px 12px; font-size: 13.5px; margin-bottom: 10px; }
 </style>
+<script src="rapor.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -1065,6 +1066,7 @@ function bindFact() {
 }
 
 function renderList() {
+  window.Rapor && Rapor.bolum(cat.replace(/<[^>]+>/g, ""));
   markSeen(cat);
   $("tfil").hidden = cat !== "Maximum";
   renderSoon();

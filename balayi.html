@@ -94,6 +94,7 @@
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
 </style>
 <script src="cardsound.js"></script>
+<script src="rapor.js"></script>
 </head>
 <body>
 <header>
@@ -418,6 +419,7 @@ function gameOver() {
   phase = "idle";
   const [a, b] = G.scores;
   const w = a === b ? -1 : a > b ? 0 : 1;
+  window.Rapor && Rapor.oyun("balayi", w === 0);
   $("modal").innerHTML = `<h2>${w === 0 ? "🎉 Kazandın!" : w === 1 ? `${NAMES[1]} kazandı` : "Berabere!"}</h2><p>${DEALS} el tamamlandı</p>
     <table>${[0, 1].map((p) => `<tr><td style="text-align:left">${p === w ? "🥇 " : ""}${NAMES[p]}</td><td><b>${G.scores[p]}</b></td></tr>`).join("")}</table>
     <button class="btn" id="again">Yeni oyun</button>`;
