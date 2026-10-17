@@ -340,6 +340,14 @@
   .paylas .yeniB { position: absolute; top: -9px; right: 6px; }
   .kurYardim { max-width: 420px; margin: 10px auto 0; padding: 12px 14px; border-radius: 14px; background: #121212; border: 1px solid #2a2a2a; color: #cfcfcf; font-size: 13.5px; line-height: 1.6; }
   .kurYardim b { color: #fff; }
+  .kurYardim { border-color: rgba(63,194,131,.45); background: linear-gradient(180deg, rgba(63,194,131,.10), #121212 70%); }
+  .kyB { display: flex; align-items: center; justify-content: space-between; font-size: 15px; }
+  .kyX { background: none; border: 0; color: #888; font-size: 16px; cursor: pointer; padding: 2px 4px; }
+  .kyN { font-size: 12.5px; color: #9fdcbf; margin: 4px 0 8px; }
+  .kyS { margin: 0; padding: 0; list-style: none; counter-reset: k; }
+  .kyS li { counter-increment: k; position: relative; padding: 7px 0 7px 36px; border-top: 1px solid #222; }
+  .kyS li::before { content: counter(k); position: absolute; left: 0; top: 7px; width: 25px; height: 25px; border-radius: 50%; background: #3fc283; color: #062615; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+  .kyS small { color: #8a8a8a; font-size: 12px; }
   .oneri-btn { background: transparent; color: var(--accent); border: 1px solid #5a4320; border-radius: 999px; padding: 10px 18px; font: inherit; font-size: 13.5px; line-height: 1.35; max-width: 340px; cursor: pointer; }
   .oneri-ov { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.7); display: flex; align-items: flex-end; justify-content: center; padding: 16px; }
   .oneri-ov[hidden] { display: none; }
@@ -401,14 +409,26 @@
     const p = window.__kurPrompt;
     if (p) { p.prompt(); try { const r = await p.userChoice; if (r.outcome === "accepted") $("kur").hidden = true; } catch (e) {} window.__kurPrompt = null; return; }
     const t = window.__tarayici, y = $("kurYardim"); y.hidden = false;
-    const not = "<br><span style='color:#8a8a8a;font-size:12px'>Uygulama yüklenmez; kolay ulaşman için sitenin bağlantısı ana ekrana eklenir.</span>";
-    y.innerHTML = (t === "ios"
-      ? "<b>iPhone:</b> Safari'de <b>Paylaş ⬆️</b> → <b>Ana Ekrana Ekle</b>"
-      : t === "chrome"
-      ? "<b>Chrome:</b> sağ üstte <b>⋮</b> → <b>Ana ekrana ekle</b>"
-      : t === "samsung"
-      ? "<b>Samsung İnternet:</b> altta <b>≡</b> → <b>Sayfa ekle</b> → <b>Ana ekran</b> → <b>Ekle</b>"
-      : "Tarayıcı menüsünden <b>Ana ekrana ekle</b> ya da <b>Sayfa ekle → Ana ekran</b>") + not;
+    const S = t === "ios" ? [
+        "Ekranın altındaki <b>Paylaş</b> simgesine dokun <span class='ik'>⬆️</span><br><small>Görmüyorsan önce <b>•••</b> düğmesine dokun.</small>",
+        "Açılan listede aşağı kaydır, <b>Ana Ekrana Ekle</b>'yi seç <span class='ik'>➕</span>",
+        "Sağ üstteki <b>Ekle</b>'ye dokun. Hepsi bu! 🎉"]
+      : t === "chrome" ? [
+        "Sağ üstteki <b>⋮</b> (üç nokta) menüsüne dokun",
+        "<b>Ana ekrana ekle</b>'yi seç",
+        "<b>Ekle</b>'ye dokun. Hepsi bu! 🎉"]
+      : t === "samsung" ? [
+        "Alttaki <b>≡</b> (üç çizgi) menüsüne dokun",
+        "<b>Sayfa ekle</b> → <b>Ana ekran</b>'ı seç",
+        "<b>Ekle</b>'ye dokun. Hepsi bu! 🎉"]
+      : [
+        "Tarayıcının menüsünü aç (<b>⋮</b> ya da <b>≡</b>)",
+        "<b>Ana ekrana ekle</b> ya da <b>Sayfa ekle → Ana ekran</b>'ı seç",
+        "<b>Ekle</b>'ye dokun. Hepsi bu! 🎉"];
+    y.innerHTML = `<div class="kyB"><b>📲 Sadolayn'ı ana ekrana ekle</b><button class="kyX" aria-label="Kapat">✕</button></div>
+      <div class="kyN">Bu bir uyarı değil, küçük bir yol tarifi 😊 Telefonuna uygulama yüklenmez; sitenin kısayolu ana ekrana gelir, tek dokunuşla açarsın.</div>
+      <ol class="kyS">${S.map((x) => `<li>${x}</li>`).join("")}</ol>`;
+    y.querySelector(".kyX").onclick = () => (y.hidden = true);
   };
   window.addEventListener("appinstalled", () => ($("kur").hidden = true));
 })();
