@@ -126,6 +126,11 @@
   .tier em { font-style: normal; font-size: 10.5px; letter-spacing: 2px; color: #b79a74; } .tier b { display: block; font-size: 20px; color: #fff; margin: 4px 0 2px; } .tier.plus b { color: #f3dca8; } .tier span { font-size: 11.5px; color: #9a9a9a; }
   .blk ul { margin: 6px 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13.5px; } .blk p { font-size: 12.5px; color: #a9a39a; margin: 8px 0; line-height: 1.5; }
   .blk a { color: #f0c674; font-size: 13px; text-decoration: none; font-weight: 600; }
+  .bt { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 13px; }
+  .bt th { font-size: 10.5px; letter-spacing: 1.5px; color: #b79a74; text-align: center; padding: 4px; font-weight: 700; } .bt th.p { color: #f3dca8; }
+  .bt td { padding: 8px 4px; border-top: 1px solid #2c2a25; text-align: center; color: #ddd; } .bt td:first-child { text-align: left; color: #cfcfcf; } .bt td.p { color: #f3dca8; font-weight: 700; }
+  .bcom { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px; } .bcom b { width: 100%; font-size: 12px; letter-spacing: 1px; color: #b79a74; text-transform: uppercase; }
+  .bcom span { font-size: 12.5px; padding: 5px 9px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid #2f2b22; color: #e6e0d4; }
   .lounge { margin-top: 10px; border-top: 1px solid #2c2a25; padding-top: 10px; font-size: 13px; } .lounge > b { display: block; color: #f3dca8; margin-bottom: 6px; }
   .lounge div { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; } .lounge span { color: #9a9a9a; } .lounge em { font-style: normal; color: #eee; text-align: right; }
   [hidden] { display: none !important; }
@@ -138,13 +143,16 @@
   .tl div { position: relative; margin-bottom: 12px; font-size: 14px; line-height: 1.45; color: #ddd; } .tl div::before { content: ""; position: absolute; left: -23px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px #000; }
   .tl b { display: block; color: var(--accent); font-size: 12.5px; }
   .chipbar { margin: 6px 0 0; position: relative; }
-  .menu { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; }
+  .menu { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+  .menu button span small { display: block; font-size: 8.5px; font-weight: 600; opacity: .8; margin-top: -1px; }
+  .menu button[data-k="Black"] { background: linear-gradient(160deg, #2b2418, #0a0a0a); border-color: #6b5222; color: #f3dca8; }
+  .menu button[data-k="Black"].active { background: linear-gradient(160deg, #f3dca8, #c9a050); color: #000; }
   .longbar { position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-bottom: 6px; padding: 9px 10px; border-radius: 12px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
   .longbar i { font-style: normal; opacity: .55; } .longbar.active { outline: 2px solid var(--accent); outline-offset: 1px; }
   .longbar em { position: absolute; top: -6px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #e5383b; color: #fff; font-style: normal; font-size: 10.5px; font-weight: 800; line-height: 18px; box-shadow: 0 0 0 2px #000; }
   .menu button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; height: 48px; padding: 3px 1px; border-radius: 11px; border: 1px solid var(--line); background: var(--card); color: #cfcfcf; font: inherit; font-size: 10px; font-weight: 600; cursor: pointer; line-height: 1.1; }
   .menu button i { font-style: normal; font-size: 18px; line-height: 1.1; }
-  .menu button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .menu button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
   .menu button.active { background: var(--accent); border-color: var(--accent); color: #000; }
   .menu button.hasnew { border-color: #c0392b; box-shadow: 0 0 0 1px rgba(192,57,43,.35) inset; }
   .menu button em { position: absolute; top: -5px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #e5383b; color: #fff; font-style: normal; font-size: 10.5px; font-weight: 800; line-height: 18px; text-align: center; box-shadow: 0 0 0 2px #000; animation: nb 1.6s ease-in-out infinite; }
@@ -160,9 +168,9 @@
   .dq .src { font-size: 11px; color: #8fb0ff; margin-bottom: 4px; }
   .congrats { animation: cg .6s ease; } @keyframes cg { 0% { transform: scale(.9); opacity: 0; } 60% { transform: scale(1.05); } 100% { transform: none; opacity: 1; } }
   .fact { transition: opacity .25s; } .fact.fade { opacity: 0; }
-  .chipbar .tfil { margin: 6px -16px 0; padding: 0 16px 2px; scroll-padding: 0 16px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .chipbar .tfil { margin: 6px 0 0; padding: 0 0 2px; flex-wrap: wrap; gap: 5px; overflow: visible; }
   .chipbar .tfil::-webkit-scrollbar { display: none; }
-  .chipbar .tfil button { flex: 0 0 auto; padding: 5px 10px; font-size: 12px; }
+  .chipbar .tfil button { flex: 0 0 auto; padding: 5px 9px; font-size: 11.5px; }
   .subebtn { padding: 9px 16px; border-radius: 20px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
   .subebtn.on { outline: 2px solid var(--accent); }
   .sum { background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%); border: 1px solid #3a50f0; border-radius: 18px; padding: 14px 12px 10px; margin-bottom: 12px; text-align: center; }
@@ -254,8 +262,9 @@ const CATS = [
   ["Dijital", "var(--dijital)", "💡"],
   ["KAP", "var(--kap)", "📢"],
   ["Haber", "var(--haber)", "🗞️"],
-  ["İşCep", "var(--dijital)", "📲"],
   ["Maximum", "var(--accent)", "💳"],
+  ["Black", "#f0c674", "🖤"],
+  ["İşCep", "var(--dijital)", "📲"],
   ["📰 Güncel", "#5d8fe0", "📰"],
   ["📅 Takvim", "#e0a24f", "📅"],
   ["Şubeler", "#3a50f0", "🏦"],
@@ -263,7 +272,7 @@ const CATS = [
   ["Tarihçe", "#e0a24f", "🏛️"],
   ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "Maximum": "Max·Miles", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe" };
+const LBL = { "Maximum": "Maxi<small>(mum+mil)</small>", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe" };
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
@@ -280,7 +289,7 @@ const idsFor = (k) => {
   if (k === "İşCep") return iscep ? iscep.surumler.map((v) => "v:" + v.surum) : [];
   if (k === "📰 Güncel") return live.map((x) => "g:" + (x.u || x.t));
   if (k === "Finans") return fin ? ["f:" + fin.periods[fin.periods.length - 1]] : [];
-  if (k === "Şubeler" || k === "Soru" || k === "Tarihçe") return [];
+  if (k === "Şubeler" || k === "Soru" || k === "Tarihçe" || k === "Black") return [];
   if (k === "📅 Takvim") return [];
   return all.filter((h) => h.kategori === k).map((h) => "n:" + (h.url || h.baslik));
 };
@@ -373,12 +382,19 @@ function blackHtml() {
         <div class="tier"><em>BLACK</em><b>1 milyon TL</b><span>ve üzeri aylık ortalama varlık</span></div>
         <div class="tier plus"><em>BLACK PLUS</em><b>4 milyon TL</b><span>ve üzeri aylık ortalama varlık</span></div>
       </div>
-      <ul>
-        <li>👤 Kişiye özel temsilci</li><li>📈 İş Portföy uzman desteği</li><li>💰 Maksimum Vadeli Hesap'ta ek faiz</li>
-        <li>☎️ Çözüm Merkezi'nde öncelik</li><li>💱 İş'te FX uygulamasına erişim</li><li>🎭 Kültür-sanat, restoran, giyim-kozmetikte indirimler</li>
-      </ul>
+      <table class="bt"><thead><tr><th></th><th>Black</th><th class="p">Black Plus</th></tr></thead><tbody>
+        <tr><td>💰 Maksimum Vadeli Hesap'ta ek faiz</td><td>+%1</td><td class="p">+%3</td></tr>
+        <tr><td>➕ Ek Hesap faiz oranı</td><td>%4,15</td><td class="p">%4,10</td></tr>
+        <tr><td>🌍 Yurt dışı para transferi</td><td>–</td><td class="p">ayda 2 ücretsiz</td></tr>
+        <tr><td>🔐 Kiralık kasa depozitosu</td><td>–</td><td class="p">alınmaz</td></tr>
+        <tr><td>📈 İş Portföy uzman görüşmesi</td><td>–</td><td class="p">3 ayda bir</td></tr>
+      </tbody></table>
+      <div class="bcom"><b>Diğer ayrıcalıklardan</b>
+        <span>💸 Sınırsız ücretsiz havale/EFT/FAST</span><span>🏧 Yurt içi ATM'lerden ücretsiz para çekme</span><span>👤 Kişiye özel temsilci</span><span>☎️ Çözüm Merkezi'nde öncelik</span>
+        <span>💱 İŞ'te FX ile döviz-altın-gümüş</span><span>📰 Günlük piyasa ve aylık fon bülteni</span><span>✈️ Bilet.com'da uçuş ve transfer indirimi</span><span>🎭 Kültür-sanatta %20 indirim</span>
+        <span>🛡️ Anadolu Sigorta'da İşCep'e özel indirimler</span><span>🏖️ Girişte ücret alınmayan İş Black BES planı</span></div>
       <p>Ayrıcalıklar <b>İşCep › İş Black</b> menüsünden görülür ve kullanılır. Kademe, İş Bankası'ndaki aylık ortalama varlığa göre belirlenir.</p>
-      <a href="https://www.isbank.com.tr/bankamizi-taniyin/is-bankasindan-yeni-bir-bankacilik-deneyimi-is-black" target="_blank" rel="noopener">İş Black duyurusu ↗</a>
+      <a href="https://www.isbank.com.tr/is-black" target="_blank" rel="noopener">İş Black ayrıcalıklarının tamamı ↗</a>
     </div>
     <div class="blk card">
       <div class="bh"><span>EN PRESTİJLİ KART</span><b>Maximiles Black</b><small>Seyahat edenler için MaxiMil kazandıran kart · 1 MaxiMil = 1 TL</small></div>
@@ -404,9 +420,9 @@ function milesHtml() {
       <p>Harcamaların <b>MaxiMil</b> olarak birikir; 1 MaxiMil = 1 TL değerinde uçak bileti ve seyahat harcamalarında kullanılır. Maximiles kartlar Maximum'un tüm kampanyalarından da yararlanır; ek olarak mil kampanyaları vardır.</p>
       ${L.length ? L.map((c) => `<div class="omini"><span>${esc(c.baslik)}</span><small>${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></div>`).join("") : '<p style="color:var(--muted)">Listede şu an mil kampanyası yok.</p>'}
       <a class="olink" href="https://www.maximiles.com.tr/kampanyalar" target="_blank" rel="noopener">Maximiles kampanyaları ↗</a></div>
-    <button type="button" class="ocard tolink" data-go="🖤 Black"><div class="oh"><i>🖤</i><b>Maximiles Black</b><em>›</em></div><p>En prestijli kart: lounge, Fast Track ve artan MaxiMil kazanımı.</p></button>`;
+    <button type="button" class="ocard tolink" data-cat="Black"><div class="oh"><i>🖤</i><b>Maximiles Black</b><em>›</em></div><p>En prestijli kart: lounge, Fast Track ve artan MaxiMil kazanımı.</p></button>`;
 }
-function bindSpecial() { $("list").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { campTur = b.dataset.go; renderCamps(); window.scrollTo({ top: 0 }); })); }
+function bindSpecial() { $("list").querySelectorAll("[data-cat]").forEach((b) => (b.onclick = () => { cat = b.dataset.cat; renderList(); renderChips(); window.scrollTo({ top: 0 }); })); }
 function campCard(k) {
   const n = daysLeft(k.bitis), u = n <= 3, j = joined(k), fr = isFresh(k);
   const left = n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
@@ -422,12 +438,12 @@ function renderCamps() {
   jnTouch();
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
   if (!camps.length) { $("list").innerHTML = '<div class="empty">Şu an listelenen kampanya yok.</div>'; return; }
-  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "🖤 Black", "✈️ Maximiles"];
+  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "✈️ Maximiles"];
   if (!turs.includes(campTur) && !SP.includes(campTur)) campTur = "Tümü";
   $("tfil").innerHTML = SP.map((t) => `<button data-t="${t}" class="sp${t === campTur ? " on" : ""}">${t}</button>`).join("") + turs.map((t) => `<button data-t="${esc(t)}" class="${t === campTur ? "on" : ""}">${t === "Tümü" ? "Tüm kampanyalar" : esc(t)}<b>${t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length}</b></button>`).join("");
   $("tfil").hidden = false;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  if (SP.includes(campTur)) { $("list").innerHTML = campTur === "🖤 Black" ? blackHtml() : campTur === "✈️ Maximiles" ? milesHtml() : oneHtml(); bindSpecial(); return; }
+  if (SP.includes(campTur)) { $("list").innerHTML = campTur === "✈️ Maximiles" ? milesHtml() : oneHtml(); bindSpecial(); return; }
   const vis = camps.filter((k) => campTur === "Tümü" || k.tur === campTur);
   const nj = camps.filter((c) => !joined(c)), fresh = vis.filter(isFresh), rest = vis.filter((c) => !joined(c) && !isFresh(c)), done = vis.filter(joined);
   const pct = Math.round((camps.length - nj.length) / camps.length * 100);
@@ -716,6 +732,7 @@ function renderTakvim() {
 
 // ===== 1 hafta içindeki önemli gün (PPK, bilanço, genel kurul…) en üstte =====
 function renderSoon() {
+  if (cat !== "KAP") { $("soon").innerHTML = ""; return; }
   const L = takvim().filter((x) => !x.est && !/bilanço dönemi/.test(x.t)).map((x) => ({ ...x, n: dLeft(x.d) })).filter((x) => x.n >= 0 && x.n <= 7);
   $("soon").innerHTML = L.map((x) => {
     const dt = new Date(x.d + "T12:00:00"), ppk = /PPK/.test(x.t);
@@ -852,6 +869,7 @@ function renderList() {
   if (cat === "📰 Güncel") return renderLive();
   if (cat === "📅 Takvim") return renderTakvim();
   if (cat === "Finans") return renderFinans();
+  if (cat === "Black") { $("upd").textContent = "Kaynak: isbank.com.tr İş Black ve Maximiles Black sayfaları · ayrıcalıklar 31.12.2026'ya kadar"; $("list").innerHTML = blackHtml(); return; }
   if (cat === "Soru") return renderSoru();
   if (cat === "Tarihçe") return renderTarihce();
   if (cat === "İşCep") return renderIscep();
