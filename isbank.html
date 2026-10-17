@@ -94,7 +94,11 @@
   .stick > :last-child { margin-bottom: 0; }
   [hidden] { display: none !important; }
   .chipbar { margin: 6px 0 0; position: relative; }
-  .menu { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+  .menu { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 5px; }
+  .menu button { grid-column: span 4; } .menu button:nth-child(n+6) { grid-column: span 5; }
+  .longbar { position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-bottom: 6px; padding: 9px 10px; border-radius: 12px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .longbar i { font-style: normal; opacity: .55; } .longbar.active { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .longbar em { position: absolute; top: -6px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #e5383b; color: #fff; font-style: normal; font-size: 10.5px; font-weight: 800; line-height: 18px; box-shadow: 0 0 0 2px #000; }
   .menu button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; height: 50px; padding: 3px 2px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: #cfcfcf; font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; line-height: 1.1; }
   .menu button i { font-style: normal; font-size: 18px; line-height: 1.1; }
   .menu button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -188,7 +192,7 @@
     <h1>🏛️ İş Bankası Gündemi</h1>
     <span style="width:52px"></span>
   </header>
-  <div class="chipbar" id="chipbar"><div class="menu" id="chips"></div><div class="tfil" id="tfil" hidden></div></div>
+  <div class="chipbar" id="chipbar"><button type="button" class="longbar" id="subeBar"><span>🏦 Şubeler</span><i>·</i><span>📊 Finansal bilgiler</span><i>·</i><span>📄 Yatırımcı sunumu</span><em id="subeNew" hidden></em></button><div class="menu" id="chips"></div><div class="tfil" id="tfil" hidden></div></div>
   </div>
   <div id="soon"></div>
   <div class="upd" id="upd"></div>
@@ -223,7 +227,7 @@ try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 
 // ===== "Yeni" takibi: okunmamış içerik düğmede kırmızı sayı olarak görünür, bakınca düşer =====
 let SEEN = null, NEWNOW = new Set();
-try { SEEN = JSON.parse(localStorage.getItem("isbSeen") || "null"); } catch (e) {}
+try { SEEN = JSON.parse(localStorage.getItem("isbSeen2") || "null"); } catch (e) {}
 const idsFor = (k) => {
   if (k === "Tümü") return all.map((h) => "n:" + (h.url || h.baslik));
   if (k === "Maximum") return camps.map((c) => "c:" + c.baslik);
@@ -235,16 +239,28 @@ const idsFor = (k) => {
 };
 function seenInit() {
   if (SEEN) return;
-  SEEN = {}; CATS.forEach(([k]) => idsFor(k).forEach((id) => (SEEN[id] = 1))); // ilk ziyarette hepsi okunmuş sayılır
+  // İlk ziyarette: son 3 günün haberleri, son 1 haftanın İşCep sürümü, son 12 saatin güncel haberleri ve
+  // 3 günden yeni eklenmiş (bitişi uzak) kampanyalar "yeni" sayılır; gerisi okunmuş kabul edilir
+  SEEN = {};
+  const ago = (d) => (Date.now() - new Date(d.length === 10 ? d + "T12:00:00" : d)) / 864e5;
+  all.forEach((h) => { if (ago(h.tarih) > 3) SEEN["n:" + (h.url || h.baslik)] = 1; });
+  if (iscep) iscep.surumler.forEach((v) => { if (ago(v.tarih) > 7) SEEN["v:" + v.surum] = 1; });
+  live.forEach((x) => { if (!x.d || ago(x.d) > 0.5) SEEN["g:" + (x.u || x.t)] = 1; });
+  camps.forEach((c) => { if (!campUpd || ago(campUpd) > 3) SEEN["c:" + c.baslik] = 1; });
+  if (fin) SEEN["f:" + fin.periods[fin.periods.length - 1]] = 1;
   seenSave();
 }
-function seenSave() { try { const k = Object.keys(SEEN); if (k.length > 600) k.slice(0, k.length - 600).forEach((x) => delete SEEN[x]); localStorage.setItem("isbSeen", JSON.stringify(SEEN)); } catch (e) {} }
+function seenSave() { try { const k = Object.keys(SEEN); if (k.length > 600) k.slice(0, k.length - 600).forEach((x) => delete SEEN[x]); localStorage.setItem("isbSeen2", JSON.stringify(SEEN)); } catch (e) {} }
 const unseen = (k) => idsFor(k).filter((id) => !SEEN[id]);
 function markSeen(k) { NEWNOW = new Set(unseen(k)); NEWNOW.forEach((id) => (SEEN[id] = 1)); seenSave(); }
 const isNew = (id) => NEWNOW.has(id);
 
 function renderChips() {
-  $("chips").innerHTML = CATS.map(([k, , ic]) => {
+  const su = unseen("Şubeler").length;
+  $("subeBar").classList.toggle("active", cat === "Şubeler");
+  $("subeNew").hidden = !(su && cat !== "Şubeler"); $("subeNew").textContent = su;
+  $("subeBar").onclick = () => { cat = cat === "Şubeler" ? "Tümü" : "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  $("chips").innerHTML = CATS.filter((c) => c[0] !== "Şubeler").map(([k, , ic]) => {
     const u = unseen(k).length;
     return `<button data-k="${k}" class="${k === cat ? "active" : ""}${u && k !== cat ? " hasnew" : ""}"><i>${ic}</i><span>${LBL[k] || k}</span>${u && k !== cat ? `<em>${u > 9 ? "9+" : u}</em>` : ""}</button>`;
   }).join("");
