@@ -93,13 +93,20 @@
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .stick > :last-child { margin-bottom: 0; }
   [hidden] { display: none !important; }
+  .mapcard { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-bottom: 8px; }
+  .mapcard iframe { display: block; width: 100%; height: 340px; border: 0; }
+  .mapph { padding: 20px 16px; text-align: center; color: #cfcfcf; font-size: 14px; line-height: 1.5; }
+  .mapgo { margin-top: 12px; padding: 11px 18px; border-radius: 12px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+  .mapbar { display: flex; justify-content: space-between; gap: 8px; padding: 10px 12px; font-size: 13px; } .mapbar a { color: var(--accent); text-decoration: none; font-weight: 600; } .mapbar a + a { color: var(--muted); }
+  .tl { position: relative; margin: 8px 0 0 6px; padding-left: 16px; border-left: 2px solid #3a2c14; }
+  .tl div { position: relative; margin-bottom: 12px; font-size: 14px; line-height: 1.45; color: #ddd; } .tl div::before { content: ""; position: absolute; left: -23px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px #000; }
+  .tl b { display: block; color: var(--accent); font-size: 12.5px; }
   .chipbar { margin: 6px 0 0; position: relative; }
-  .menu { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 5px; }
-  .menu button { grid-column: span 4; } .menu button:nth-child(n+6) { grid-column: span 5; }
+  .menu { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; }
   .longbar { position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-bottom: 6px; padding: 9px 10px; border-radius: 12px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
   .longbar i { font-style: normal; opacity: .55; } .longbar.active { outline: 2px solid var(--accent); outline-offset: 1px; }
   .longbar em { position: absolute; top: -6px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #e5383b; color: #fff; font-style: normal; font-size: 10.5px; font-weight: 800; line-height: 18px; box-shadow: 0 0 0 2px #000; }
-  .menu button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; height: 50px; padding: 3px 2px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: #cfcfcf; font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; line-height: 1.1; }
+  .menu button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; height: 48px; padding: 3px 1px; border-radius: 11px; border: 1px solid var(--line); background: var(--card); color: #cfcfcf; font: inherit; font-size: 10px; font-weight: 600; cursor: pointer; line-height: 1.1; }
   .menu button i { font-style: normal; font-size: 18px; line-height: 1.1; }
   .menu button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .menu button.active { background: var(--accent); border-color: var(--accent); color: #000; }
@@ -192,12 +199,11 @@
     <h1>🏛️ İş Bankası Gündemi</h1>
     <span style="width:52px"></span>
   </header>
-  <div class="chipbar" id="chipbar"><button type="button" class="longbar" id="subeBar"><span>🏦 Şubeler</span><i>·</i><span>📊 Finansal bilgiler</span><i>·</i><span>📄 Yatırımcı sunumu</span><em id="subeNew" hidden></em></button><div class="menu" id="chips"></div><div class="tfil" id="tfil" hidden></div></div>
+  <div class="chipbar" id="chipbar"><button type="button" class="longbar" id="subeBar"><span>📊 Finansal bilgiler</span><i>·</i><span>📄 Yatırımcı sunumu</span><em id="subeNew" hidden></em></button><div class="menu" id="chips"></div><div class="tfil" id="tfil" hidden></div></div>
   </div>
   <div id="soon"></div>
   <div class="upd" id="upd"></div>
   <div id="list"><div class="empty">Yükleniyor…</div></div>
-  <div id="today"></div>
 
   <p class="note">Seçilmiş haberler ve Maximum kampanyaları kamuya açık kaynaklardan günde iki kez, "Güncel" sekmesi her saat otomatik derlenir. Kampanya koşulları için maximum.com.tr'ye bakın.</p>
 </div>
@@ -217,8 +223,11 @@ const CATS = [
   ["📰 Güncel", "#5d8fe0", "📰"],
   ["📅 Takvim", "#e0a24f", "📅"],
   ["Şubeler", "#3a50f0", "🏦"],
+  ["Soru", "#e0a24f", "❓"],
+  ["Tarihçe", "#e0a24f", "🏛️"],
+  ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Şubeler": "Şubeler" };
+const LBL = { "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe" };
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
@@ -233,7 +242,8 @@ const idsFor = (k) => {
   if (k === "Maximum") return camps.map((c) => "c:" + c.baslik);
   if (k === "İşCep") return iscep ? iscep.surumler.map((v) => "v:" + v.surum) : [];
   if (k === "📰 Güncel") return live.map((x) => "g:" + (x.u || x.t));
-  if (k === "Şubeler") return fin ? ["f:" + fin.periods[fin.periods.length - 1]] : [];
+  if (k === "Finans") return fin ? ["f:" + fin.periods[fin.periods.length - 1]] : [];
+  if (k === "Şubeler" || k === "Soru" || k === "Tarihçe") return [];
   if (k === "📅 Takvim") return [];
   return all.filter((h) => h.kategori === k).map((h) => "n:" + (h.url || h.baslik));
 };
@@ -256,11 +266,11 @@ function markSeen(k) { NEWNOW = new Set(unseen(k)); NEWNOW.forEach((id) => (SEEN
 const isNew = (id) => NEWNOW.has(id);
 
 function renderChips() {
-  const su = unseen("Şubeler").length;
-  $("subeBar").classList.toggle("active", cat === "Şubeler");
-  $("subeNew").hidden = !(su && cat !== "Şubeler"); $("subeNew").textContent = su;
-  $("subeBar").onclick = () => { cat = cat === "Şubeler" ? "Tümü" : "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  $("chips").innerHTML = CATS.filter((c) => c[0] !== "Şubeler").map(([k, , ic]) => {
+  const su = unseen("Finans").length;
+  $("subeBar").classList.toggle("active", cat === "Finans");
+  $("subeNew").hidden = !(su && cat !== "Finans"); $("subeNew").textContent = su;
+  $("subeBar").onclick = () => { cat = cat === "Finans" ? "Tümü" : "Finans"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  $("chips").innerHTML = CATS.filter((c) => c[0] !== "Finans").map(([k, , ic]) => {
     const u = unseen(k).length;
     return `<button data-k="${k}" class="${k === cat ? "active" : ""}${u && k !== cat ? " hasnew" : ""}"><i>${ic}</i><span>${LBL[k] || k}</span>${u && k !== cat ? `<em>${u > 9 ? "9+" : u}</em>` : ""}</button>`;
   }).join("");
@@ -323,12 +333,42 @@ function renderSubeler() {
       <div class="stat"><span>ATM</span><b>${f(d.atm)}</b><small>Türkiye'nin en geniş ağı</small></div>
       <div class="stat"><span>İşCep müşterisi</span><b>${esc(d.iscep)}</b><small>${esc(d.iscepDonem)}</small></div>
     </div>
+    <div class="day" style="margin-top:18px">📍 Yakınımdaki şubeler</div>
+    <div class="mapcard" id="mapCard"><div class="mapph" id="mapPh"><div style="font-size:34px">🗺️</div><div>En yakın İş Bankası şubelerini ve ATM'leri haritada görmek için konumuna izin ver.</div><button type="button" class="mapgo" id="mapGo">📍 Konumumu kullan</button></div></div>
+    <div class="day" style="margin-top:18px">🏛️ İlk şubeler</div>
+    ${ILK.map((x) => `<div class="tk" style="--c:${x.c}"><div class="dt"><b>${x.g}</b><span>${x.ay}</span></div><div class="tt"><b>${x.ad}</b><span>${x.a}</span></div><div class="kl" style="font-size:16px">${x.y}<small>${new Date().getFullYear() - x.y} yıl</small></div></div>`).join("")}
+    <p class="note" style="text-align:left;margin:0 4px 10px">Banka 26 Ağustos 1924'te 2 şube ve 37 çalışanla kuruldu. 1930'da 28 olan şube sayısı 1953'te 130'a ulaştı.</p>
     <div class="facts"><ul>${(d.notlar || []).map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
-    <a class="maxlink" id="nearIsb" href="yakin.html#isbank">📍 Yakınımdaki şubeleri haritada göster ↗</a>
-    ${yatHtml()}
-    <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(d.kaynak)} ↗</a>
-    ${(d.ekKaynaklar || []).map((k) => `<a class="maxlink" style="border-color:var(--line);color:var(--muted);font-weight:400;font-size:13px" href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.ad)} ↗</a>`).join("")}`;
+    <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(d.kaynak)} ↗</a>`;
+  bindMap();
+}
+// İlk şubeler — kaynak: isbank.com.tr (müze sayfası), Wikipedia (Ankara müzesi)
+const ILK = [
+  { ad: "Ankara · Genel Müdürlük", g: "26", ay: "Ağu", y: 1924, c: "#e0a24f", a: "Kuruluş. 9 Eylül 1924'te İstasyon Caddesi'ndeki ilk binada törenle açıldı. 1929'da Ulus'ta Giulio Mongeri'nin tasarladığı binaya geçildi; bina bugün müze." },
+  { ad: "İzmir Şubesi", g: "12", ay: "Tem", y: 1925, c: "#5aa9f0", a: "Ege'deki ilk şube; kuruluşun ilk yılında açıldı." },
+  { ad: "İstanbul Şubesi (Yenicami)", g: "20", ay: "Şub", y: 1928, c: "#3fc283", a: "1892 yapımı eski Postane binasında açıldı. 1950'lerde Yenicami Şubesi oldu; 14 Kasım 2007'den beri İş Bankası Müzesi." },
+];
+function renderFinans() {
+  $("upd").textContent = fin ? "Veri dönemi: " + pLabel(fin.periods[fin.periods.length - 1]) + " · banka 3 ayda bir açıklar" : "";
+  $("list").innerHTML = yatHtml() + (subeler ? `<a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(subeler.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(subeler.kaynak)} ↗</a>` + (subeler.ekKaynaklar || []).map((k) => `<a class="maxlink" style="border-color:var(--line);color:var(--muted);font-weight:400;font-size:13px" href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.ad)} ↗</a>`).join("") : "");
   bindYt();
+}
+// Harita: konum alınınca sayfanın içinde gömülü Google Haritalar açılır
+function bindMap() {
+  const btn = $("mapGo"); if (!btn) return;
+  const show = (lat, lon) => {
+    const q = encodeURIComponent(`Türkiye İş Bankası near ${lat.toFixed(5)},${lon.toFixed(5)}`);
+    $("mapCard").innerHTML = `<iframe title="Yakındaki İş Bankası şubeleri" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=${q}&z=14&hl=tr&output=embed"></iframe>
+      <div class="mapbar"><a href="https://www.google.com/maps/search/T%C3%BCrkiye+%C4%B0%C5%9F+Bankas%C4%B1/@${lat},${lon},15z" target="_blank" rel="noopener">🧭 Haritalar'da aç · yol tarifi ↗</a><a href="yakin.html#isbank">Diğer yerler ›</a></div>`;
+  };
+  const saved = () => { try { const p = (JSON.parse(localStorage.getItem("yakin_v1") || "{}") || {}).place; return p && p.lat ? p : null; } catch (e) { return null; } };
+  btn.onclick = () => {
+    btn.textContent = "📍 Konum alınıyor…";
+    const fb = () => { const p = saved(); if (p) show(p.lat, p.lon); else { btn.textContent = "📍 Konum alınamadı — tekrar dene"; } };
+    if (!navigator.geolocation) return fb();
+    navigator.geolocation.getCurrentPosition((pos) => { try { localStorage.setItem("isbLoc", JSON.stringify([pos.coords.latitude, pos.coords.longitude])); } catch (e) {} show(pos.coords.latitude, pos.coords.longitude); }, fb, { enableHighAccuracy: true, timeout: 8000, maximumAge: 300000 });
+  };
+  try { const L = JSON.parse(localStorage.getItem("isbLoc") || "null"); if (L) show(L[0], L[1]); } catch (e) {}
 }
 
 const AY_TR = { "3": "Mart", "6": "Haziran", "9": "Eylül", "12": "Aralık" };
@@ -639,6 +679,17 @@ function bindQ() {
   };
   $("dqNext").onclick = () => { qI++; $("dqBox").innerHTML = qHtml(); bindQ(); };
 }
+function renderSoru() {
+  $("upd").textContent = "Güncel kampanya soruları her gün kendiliğinden yenilenir";
+  $("list").innerHTML = `<div class="daycard dq" id="dqBox">${qHtml()}</div>`;
+  bindQ();
+}
+function renderTarihce() {
+  $("upd").textContent = `${TARIH.length} bilgi · bankanın kendi tarihçesinden ve 100. yıl kaynaklarından`;
+  $("list").innerHTML = `<div class="daycard" id="factBox">${factHtml()}<div style="text-align:right;margin-top:10px"><button type="button" class="more" id="factNext">Başka bir bilgi ›</button></div></div>
+    <div class="day" style="margin-top:16px">📜 Kronoloji</div><div class="tl">${TARIH.map((x) => `<div><b>${esc(x[0])}</b>${esc(x[1])}</div>`).join("")}</div>`;
+  bindFact();
+}
 function renderToday() {
   $("today").innerHTML = `<div class="daycard dq" id="dqBox" style="margin-top:18px">${qHtml()}</div>
     <div class="daycard" id="factBox">${factHtml()}<div style="text-align:right;margin-top:10px"><button type="button" class="more" id="factNext">Başka bir bilgi ›</button></div></div>`;
@@ -658,6 +709,9 @@ function renderList() {
   renderSoon();
   if (cat === "📰 Güncel") return renderLive();
   if (cat === "📅 Takvim") return renderTakvim();
+  if (cat === "Finans") return renderFinans();
+  if (cat === "Soru") return renderSoru();
+  if (cat === "Tarihçe") return renderTarihce();
   if (cat === "İşCep") return renderIscep();
   if (cat === "Maximum") return renderCamps();
   if (cat === "Şubeler") return renderSubeler();
@@ -706,7 +760,7 @@ function renderList() {
     try { fin = await (await fetch("isbank/finans.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { yat = await (await fetch("isbank/yatirimci.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { kontrol = (await (await fetch("isbank/kontrol.json?t=" + Date.now(), { cache: "no-store" })).json()).son_kontrol; } catch (e) {}
-    seenInit(); renderList(); renderChips(); renderToday();
+    seenInit(); renderList(); renderChips();
   } catch (e) {
     $("list").innerHTML = '<div class="empty">Haberler yüklenemedi.</div>';
   }
