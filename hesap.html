@@ -133,6 +133,8 @@
   .camstep { position: absolute; left: 10px; right: 10px; bottom: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .camstep button { padding: 12px 6px; border-radius: 12px; border: 1px solid rgba(255,210,122,.6); background: rgba(0,0,0,.65); color: #ffd27a; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
   .camstep button.on { background: #e0a24f; color: #000; }
+  .guide { position: absolute; left: 10px; right: 10px; top: 74px; text-align: center; background: rgba(0,0,0,.62); color: #fff; border-radius: 12px; padding: 8px 10px; font-size: 14px; font-weight: 700; line-height: 1.35; pointer-events: none; }
+  .guide small { display: block; font-weight: 500; font-size: 12px; color: #ffd27a; margin-top: 2px; }
   .lvl { position: absolute; left: 50%; top: calc(50% + 44px); transform: translateX(-50%); font-size: 11.5px; color: #fff; background: rgba(0,0,0,.55); border-radius: 8px; padding: 3px 8px; pointer-events: none; white-space: nowrap; }
   /* ===== Cetvel ===== */
   .ruler-wrap { position: relative; height: calc(100vh - 200px); min-height: 420px; margin: 0 -14px; overflow: hidden; }
@@ -183,11 +185,11 @@
     <div class="tabs" id="tabs">
       <button data-t="calc" class="on"><b>🧮</b>Makine</button>
       <button data-t="cetvel"><b>📏</b>Cetvel</button>
-      <button data-t="mesafe"><b>📐</b>Mesafe</button>
-      <button data-t="faiz"><b>💵</b>Faiz</button>
-      <button data-t="tarih"><b>📆</b>Tarih</button>
-      <button data-t="yuzde"><b>％</b>Yüzde</button>
-      <button data-t="bulmaca"><b>🔢</b>Bulmaca</button>
+      <button data-t="mesafe" data-yeni="t-mesafe|2026-10-17|•"><b>📐</b>Mesafe</button>
+      <button data-t="faiz" data-yeni="t-faiz|2026-10-17|•"><b>💵</b>Faiz</button>
+      <button data-t="tarih" data-yeni="t-tarih|2026-10-17|•"><b>📆</b>Tarih</button>
+      <button data-t="yuzde" data-yeni="t-yuzde|2026-10-17|•"><b>％</b>Yüzde</button>
+      <button data-t="bulmaca" data-yeni="t-bulmaca|2026-10-17|•"><b>🔢</b>Bulmaca</button>
     </div>
   </div>
 
@@ -212,24 +214,39 @@
 
   <!-- ===== Mesafe ölçer ===== -->
   <section class="panel" id="mesafe">
+    <div class="card" style="padding:12px 14px">
+      <div class="two"><div><label style="margin-top:0">Boyun</label><div class="field"><input id="mBoy" inputmode="decimal" placeholder="ör. 182"><span>cm</span></div></div>
+      <div><label style="margin-top:0">Göz hizan (otomatik)</label><div class="field"><input id="mEye" inputmode="decimal" value="160"><span>cm</span></div></div></div>
+      <p class="hint" style="margin-top:6px">Boyunu bir kez yaz, yeter. Telefon göz hizasında tutulacağı için hesap <b>boy − 12 cm</b> ile yapılır.</p>
+    </div>
     <div class="cam" id="cam">
       <video id="vid" playsinline muted autoplay></video>
-      <div class="ph" id="camPh"><div style="font-size:40px">📐</div><div>Kamerayla uzaklık ve yükseklik ölç.<br>Telefonu <b>dik</b> tut, artıyı hedefe getir.</div><button type="button" class="btn-go" id="camGo" style="width:auto;padding:12px 22px">📷 Kamerayı aç</button></div>
+      <div class="ph" id="camPh"><div style="font-size:40px">📐</div><div>Telefonu <b>dik</b> ve <b>göz hizanda</b> tut.<br>Artıyı ölçeceğin şeyin <b>dibine</b> getir.</div><button type="button" class="btn-go" id="camGo" style="width:auto;padding:12px 22px">📷 Kamerayı aç</button></div>
+      <div class="guide" id="guide" hidden></div>
       <div class="cross" id="cross" hidden><i></i></div>
       <div class="lvl" id="lvl" hidden></div>
       <div class="hud" id="hud" hidden><div><span>Uzaklık</span><b id="mD">–</b></div><div style="text-align:right"><span>Yükseklik</span><b id="mH">–</b></div></div>
-      <div class="camstep" id="camStep" hidden><button type="button" id="mLock">① Dibine nişan al · <u>Kilitle</u></button><button type="button" id="mTop">② Tepesine nişan al</button></div>
+      <div class="camstep" id="camStep" hidden><button type="button" id="mLock">🔒 Uzaklığı kilitle</button><button type="button" id="mTop">↺ Baştan</button></div>
     </div>
     <div class="card">
-      <h2>Nasıl ölçülür?</h2>
-      <ol class="hint" style="margin:0;padding-left:18px">
-        <li>Telefonu <b>göz hizanda, dik</b> tut (ekran sana baksın).</li>
-        <li>Artıyı ölçeceğin şeyin <b>yere değdiği noktaya</b> getir: uzaklık canlı görünür. <b>Kilitle</b>'ye bas.</li>
-        <li>Yükseklik için artıyı aynı şeyin <b>tepesine</b> kaldır (ağaç, bina, direk…).</li>
+      <h2>Nasıl ölçülür? (3 adım)</h2>
+      <svg viewBox="0 0 320 120" style="width:100%;height:auto;display:block;margin:4px 0 8px" aria-hidden="true">
+        <line x1="10" y1="104" x2="310" y2="104" stroke="#555" stroke-width="2"/>
+        <circle cx="40" cy="30" r="9" fill="none" stroke="#bbb" stroke-width="2"/><line x1="40" y1="39" x2="40" y2="78" stroke="#bbb" stroke-width="2"/><line x1="40" y1="78" x2="30" y2="104" stroke="#bbb" stroke-width="2"/><line x1="40" y1="78" x2="50" y2="104" stroke="#bbb" stroke-width="2"/><line x1="40" y1="52" x2="54" y2="34" stroke="#bbb" stroke-width="2"/>
+        <rect x="52" y="24" width="7" height="13" rx="1.5" fill="#e0a24f"/>
+        <line x1="58" y1="30" x2="262" y2="103" stroke="#e0a24f" stroke-width="2" stroke-dasharray="5 4"/>
+        <line x1="58" y1="30" x2="262" y2="18" stroke="#3fc283" stroke-width="2" stroke-dasharray="5 4"/>
+        <rect x="256" y="18" width="12" height="86" fill="#3a3a3a" stroke="#888"/>
+        <text x="150" y="98" font-size="11" fill="#e0a24f" text-anchor="middle">① dibine nişan → uzaklık</text>
+        <text x="160" y="16" font-size="11" fill="#3fc283" text-anchor="middle">② tepesine nişan → yükseklik</text>
+        <line x1="22" y1="30" x2="22" y2="104" stroke="#8a8a8a"/><text x="16" y="67" font-size="10" fill="#8a8a8a" text-anchor="middle" transform="rotate(-90 16 67)">göz hizası</text>
+      </svg>
+      <ol class="hint" style="margin:0;padding-left:18px;font-size:13px">
+        <li><b>Boyunu yaz</b>, sonra <b>Kamerayı aç</b>. Telefonu dik ve göz hizanda tut.</li>
+        <li>Ekrandaki <b>artıyı</b> ölçeceğin şeyin <b>yere değdiği noktaya</b> getir (ağacın dibi, duvarın zemine değdiği yer…). Üstte <b>uzaklık</b> canlı yazar. <b>🔒 Uzaklığı kilitle</b>'ye bas.</li>
+        <li>Yüksekliği de merak ediyorsan telefonu yavaşça kaldır, artıyı aynı şeyin <b>tepesine</b> getir: <b>yükseklik</b> yazar.</li>
       </ol>
-      <label>Telefonun yerden yüksekliği (göz hizası)</label>
-      <div class="two"><div class="field"><input id="mEye" inputmode="decimal" value="160"><span>cm</span></div><div class="field"><input id="mBoy" inputmode="decimal" placeholder="Boyun"><span>cm</span></div></div>
-      <p class="hint">Boyunu yazarsan göz hizası otomatik hesaplanır (boy − 12 cm). Ölçüm telefonun eğim sensörüyle yapılır: <b>uzaklık = yükseklik × tan(eğim)</b>. Düz zeminde 1–30 m arası en doğru sonucu verir; uzaklaştıkça hata büyür (yaklaşık ±%5–10).</p>
+      <p class="hint">İpucu: Olduğun yerde dur, sadece telefonu eğ. Düz zeminde 1–30 m arasında en iyi sonucu verir (yaklaşık ±%5–10). Ölçüm, telefonun eğim sensörüyle trigonometri kullanılarak yapılır.</p>
       <div class="tapebar"><button type="button" id="camStop">⏹ Kamerayı kapat</button></div>
     </div>
   </section>
@@ -837,7 +854,8 @@ let mStream = null, mBeta = null, mLockD = null, mTopOn = false;
 try { const e = localStorage.getItem("mesafeGoz"); if (e) $("mEye").value = e; } catch (e) {}
 const mEye = () => Math.max(20, num($("mEye").value)) / 100;
 const mFmt = (m) => (!isFinite(m) || m < 0 ? "–" : m < 10 ? nf(m, 2) + " m" : nf(m, 1) + " m");
-$("mBoy").addEventListener("input", () => { const b = num($("mBoy").value); if (b > 100) { $("mEye").value = Math.round(b - 12); mSave(); } });
+try { const bb = localStorage.getItem("mesafeBoy"); if (bb) $("mBoy").value = bb; } catch (e) {}
+$("mBoy").addEventListener("input", () => { const b = num($("mBoy").value); if (b > 100 && b < 230) { $("mEye").value = Math.round(b - 12); try { localStorage.setItem("mesafeBoy", $("mBoy").value); } catch (e) {} mSave(); } });
 $("mEye").addEventListener("input", mSave);
 function mSave() { try { localStorage.setItem("mesafeGoz", $("mEye").value); } catch (e) {} mRender(); }
 function onOri(e) {
@@ -849,7 +867,14 @@ function onOri(e) {
   mBeta = mBeta == null ? b : mBeta * 0.8 + b * 0.2; // titremeyi yumuşat
   mRender();
 }
+function mGuide() {
+  const g = $("guide"); if (!g) return;
+  g.innerHTML = mLockD == null
+    ? `① Artıyı ölçeceğin şeyin <u>yere değdiği</u> noktaya getir<small>Uzaklık üstte yazıyor → sonra 🔒 Kilitle</small>`
+    : `② Şimdi telefonu kaldır, artıyı <u>tepesine</u> getir<small>Uzaklık kilitli: ${mFmt(mLockD)} · yükseklik sağ üstte</small>`;
+}
 function mRender() {
+  mGuide();
   if (mBeta == null) return;
   const h = mEye(), b = mBeta;
   const down = 90 - b; // ufkun kaç derece altına bakıyor
@@ -871,21 +896,24 @@ async function camStart() {
     window.addEventListener("deviceorientation", onOri);
     mStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
     $("vid").srcObject = mStream; await $("vid").play().catch(() => {});
-    $("camPh").hidden = true; ["cross", "hud", "camStep", "lvl"].forEach((id) => ($(id).hidden = false));
+    $("camPh").hidden = true; ["cross", "hud", "camStep", "lvl", "guide"].forEach((id) => ($(id).hidden = false)); mGuide();
     setTimeout(() => { if (mBeta == null) { $("lvl").hidden = false; $("lvl").textContent = "Eğim sensörü bulunamadı (telefonda aç)"; } }, 1500);
   } catch (err) {
     $("camPh").hidden = false;
     $("camPh").querySelector("div:nth-child(2)").innerHTML = `<b style="color:var(--red)">Kamera açılamadı.</b><br>${err && err.name === "NotAllowedError" ? "Tarayıcıda kamera iznine \"İzin ver\" demelisin." : "Bu cihazda kamera ya da eğim sensörü yok."}`;
   }
 }
-function camStop() { if (mStream) mStream.getTracks().forEach((t) => t.stop()); mStream = null; window.removeEventListener("deviceorientation", onOri); mBeta = null; $("camPh").hidden = false; ["cross", "hud", "camStep", "lvl"].forEach((id) => ($(id).hidden = true)); }
+function camStop() { if (mStream) mStream.getTracks().forEach((t) => t.stop()); mStream = null; window.removeEventListener("deviceorientation", onOri); mBeta = null; $("camPh").hidden = false; ["cross", "hud", "camStep", "lvl", "guide"].forEach((id) => ($(id).hidden = true)); }
 $("camGo").onclick = camStart; $("camStop").onclick = camStop;
 $("mLock").onclick = () => {
-  if (mLockD == null) { if (mBeta == null || mBeta >= 89) return; mLockD = mEye() * Math.tan(mBeta * Math.PI / 180); $("mLock").innerHTML = "🔓 Kilidi aç (yeniden ölç)"; $("mLock").classList.add("on"); mTopOn = true; $("mTop").classList.add("on"); }
-  else { mLockD = null; mTopOn = false; $("mLock").innerHTML = "① Dibine nişan al · <u>Kilitle</u>"; $("mLock").classList.remove("on"); $("mTop").classList.remove("on"); }
-  tik(false); mRender();
+  if (mLockD != null) return;
+  if (mBeta == null) { $("lvl").textContent = "Eğim sensörü yok"; return; }
+  if (mBeta >= 89) { $("lvl").textContent = "Artıyı daha aşağıya, yere değdiği yere indir"; return; }
+  mLockD = mEye() * Math.tan(mBeta * Math.PI / 180); mTopOn = true;
+  $("mLock").innerHTML = `✅ Kilitli: ${mFmt(mLockD)}`; $("mLock").classList.add("on");
+  tik(false); if (navigator.vibrate) navigator.vibrate(30); mRender();
 };
-$("mTop").onclick = () => { if (mLockD == null) { $("lvl").textContent = "Önce dibine nişan alıp kilitle"; return; } mTopOn = true; mRender(); };
+$("mTop").onclick = () => { mLockD = null; mTopOn = false; $("mLock").innerHTML = "🔒 Uzaklığı kilitle"; $("mLock").classList.remove("on"); mRender(); };
 
 // ===== Sayı Bulmaca =====
 const BM = { n: 4, mine: "", ai: "", cand: [], me: [], aiL: [], over: false, tur: 1 };
@@ -974,5 +1002,6 @@ try { const h = location.hash.slice(1), t = (h && document.querySelector(`#tabs 
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
+<script src="yeni.js"></script>
 </body>
 </html>
