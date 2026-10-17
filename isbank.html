@@ -108,6 +108,26 @@
   .jbtn { border: 1px solid #444; background: #161616; color: #ddd; border-radius: 999px; padding: 6px 11px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
   .jbtn.on { border-color: #2f9a55; background: rgba(63,194,131,.15); color: #7ee2a8; }
   .camp.done { opacity: .62; }
+  .tfil button.sp { border-color: #6b5222; color: #f0c674; }
+  .tfil button.sp.on { background: #f0c674; color: #000; }
+  .ohead { font-size: 15px; font-weight: 800; margin: 2px 4px 10px; } .ohead span { display: block; font-size: 12px; color: var(--muted); font-weight: 500; }
+  .ocard { display: block; width: 100%; text-align: left; font: inherit; color: inherit; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; }
+  .ocard.hot { border-color: #6b4a1e; background: linear-gradient(180deg, rgba(240,198,116,.1), var(--card) 60%); }
+  .ocard .oh { display: flex; align-items: center; gap: 8px; } .ocard .oh i { font-style: normal; font-size: 22px; } .ocard .oh b { font-size: 15.5px; } .ocard .oh em { margin-left: auto; font-style: normal; font-size: 12px; color: var(--accent); font-weight: 700; }
+  .ocard p { margin: 8px 0 4px; font-size: 13.5px; color: #cfcfcf; line-height: 1.5; }
+  .omini { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed #2c2c2c; font-size: 13.5px; } .omini small { color: var(--muted); white-space: nowrap; }
+  .olink { display: inline-block; margin-top: 6px; color: var(--accent); font-size: 13px; text-decoration: none; font-weight: 600; }
+  .tolink { cursor: pointer; }
+  .blk { position: relative; overflow: hidden; border-radius: 18px; padding: 16px; margin-bottom: 10px; color: #eee; background: radial-gradient(120% 90% at 100% 0%, #3a3123 0%, #121212 45%, #050505 100%); border: 1px solid #3a3326; box-shadow: inset 0 1px 0 rgba(255,230,180,.08); }
+  .blk::after { content: ""; position: absolute; right: -40px; top: -40px; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, rgba(240,198,116,.18), transparent 70%); pointer-events: none; }
+  .blk .bh span { font-size: 10.5px; letter-spacing: 3px; color: #b79a74; } .blk .bh b { display: block; font-family: Georgia, serif; font-size: 26px; color: #f3dca8; letter-spacing: .5px; margin: 2px 0; } .blk .bh small { color: #a9a39a; font-size: 12.5px; }
+  .tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+  .tier { border-radius: 14px; padding: 12px; background: linear-gradient(160deg, #1d1d1d, #0a0a0a); border: 1px solid #3a3a3a; } .tier.plus { background: linear-gradient(160deg, #3b301c, #120e07); border-color: #8a6a2e; }
+  .tier em { font-style: normal; font-size: 10.5px; letter-spacing: 2px; color: #b79a74; } .tier b { display: block; font-size: 20px; color: #fff; margin: 4px 0 2px; } .tier.plus b { color: #f3dca8; } .tier span { font-size: 11.5px; color: #9a9a9a; }
+  .blk ul { margin: 6px 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13.5px; } .blk p { font-size: 12.5px; color: #a9a39a; margin: 8px 0; line-height: 1.5; }
+  .blk a { color: #f0c674; font-size: 13px; text-decoration: none; font-weight: 600; }
+  .lounge { margin-top: 10px; border-top: 1px solid #2c2a25; padding-top: 10px; font-size: 13px; } .lounge > b { display: block; color: #f3dca8; margin-bottom: 6px; }
+  .lounge div { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; } .lounge span { color: #9a9a9a; } .lounge em { font-style: normal; color: #eee; text-align: right; }
   [hidden] { display: none !important; }
   .mapcard { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-bottom: 8px; }
   .mapcard iframe { display: block; width: 100%; height: 340px; border: 0; }
@@ -243,7 +263,7 @@ const CATS = [
   ["Tarihçe", "#e0a24f", "🏛️"],
   ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe" };
+const LBL = { "Maximum": "Max·Miles", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe" };
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
@@ -322,6 +342,71 @@ function icsReminder() {
     "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Kampanyalara katıl", "TRIGGER:PT0M", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = "kampanya-hatirlatici.ics"; document.body.appendChild(a); a.click(); a.remove();
 }
+// ===== Öne çıkanlar: çoğu kişinin işine yarayan başlıklar (güncel kampanyalar otomatik eşleşir) =====
+const ONE = [
+  { ic: "📶", ad: "Temassız ödeme", re: /temassız|temassiz|nfc|kartını yaklaştır/i, rehber: "Maximum kartlar temassızdır: kartı ya da telefonu POS'a yaklaştırman yeter; belirli tutara kadar şifre sorulmaz. Temassız özelliğini İşCep'te kartının ayarlarından açıp kapatabilirsin." },
+  { ic: "🛒", ad: "Market alışverişi", re: /market|migros|carrefour|a101|şok|bim|getir/i, rehber: "Market kampanyaları genellikle ay başında yenilenir; katılmadan yapılan harcamalar puan kazandırmaz." },
+  { ic: "📱", ad: "Elektronik & teknoloji", re: /mediamarkt|samsung|apple|teknosa|vatan|elektronik|telefon|bilgisayar/i, rehber: "Telefon, bilgisayar ve beyaz eşyada MaxiPuan ve taksit fırsatları sık gelir; büyük alışverişten önce buraya bak." },
+  { ic: "🎓", ad: "Eğitim · özel okul & dershane", re: /eğitim|egitim|okul|dershane|kurs|üniversite/i, sezon: [7, 8, 9, 0, 1],
+    rehber: "Özel okul ödemelerinde taksit fırsatı: İş Bankası'nın Ekim 2026 kampanyasında seçili okullarda 50.000–2.200.000 TL arası peşin harcamalar <b>3 aya varan faizsiz taksite</b> bölünebiliyor (1–31 Ekim 2026). Taksit talimatı yalnızca <b>İşCep</b> ya da <b>Maximum Mobil</b>'den, kartın hesap kesim tarihinden önce verilmeli. Dershane, kurs, kırtasiye ve servis ödemeleri bu kampanyaya dahil değil.", link: "https://www.isbank.com.tr/kampanyalar/egitim-odemelerinizde-secili-okullarda-faizsiz-taksit-firsati", bitis: "2026-10-31" },
+  { ic: "⛽", ad: "Akaryakıt & yol", re: /shell|opet|bp|akaryakıt|hgs|ogs|otopark/i, rehber: "Akaryakıt ve HGS kampanyaları her ay çıkar; HGS talimatını kartına bağlayınca ödeme unutulmaz." },
+  { ic: "✈️", ad: "Seyahat & tatil", re: /ets|tatil|otel|uçak|bilet|tur|pazarama tatil/i, rehber: "Uçak bileti ve otelde peşin fiyatına taksit ve MaxiPuan fırsatları yaz ve bayram dönemlerinden önce artar." },
+];
+function oneHtml() {
+  const m = new Date().getMonth();
+  const order = ONE.slice().sort((a, b) => ((b.sezon || []).includes(m) ? 1 : 0) - ((a.sezon || []).includes(m) ? 1 : 0));
+  return `<div class="ohead">⭐ Kaçırılmayacak fırsatlar<span>Güncel kampanyalar başlıklara göre otomatik eşleşir</span></div>` + order.map((g) => {
+    const L = camps.filter((c) => g.re.test(c.baslik + " " + c.ozet));
+    const hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) >= 0);
+    return `<div class="ocard${hot ? " hot" : ""}"><div class="oh"><i>${g.ic}</i><b>${g.ad}</b>${hot ? '<span class="newtag">DÖNEMİ</span>' : ""}<em>${L.length ? L.length + " kampanya" : ""}</em></div>
+      <p>${g.rehber}${g.bitis && daysLeft(g.bitis) >= 0 ? ` <b style="color:#ffb27a">Son ${daysLeft(g.bitis)} gün.</b>` : ""}</p>
+      ${L.map((c) => `<div class="omini"><span>${esc(c.baslik)}</span><small>${daysLeft(c.bitis) <= 3 ? "🔥 " : ""}${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></div>`).join("")}
+      ${g.link ? `<a class="olink" href="${g.link}" target="_blank" rel="noopener">Kampanya koşulları ↗</a>` : ""}</div>`;
+  }).join("") + `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm Maximum kampanyaları ↗</a>`;
+}
+// ===== Black: İş Black programı (2 kademe) + Maximiles Black kart =====
+// Kaynak: isbank.com.tr duyurusu (23.01.2026), maximiles.com.tr Maximiles Black sayfası, İş Bankası lounge kampanya sayfası
+function blackHtml() {
+  return `<div class="blk">
+      <div class="bh"><span>İŞ BANKASI</span><b>İş Black</b><small>Varlığına göre kendiliğinden tanımlanan ayrıcalık programı · başvuru gerekmez</small></div>
+      <div class="tiers">
+        <div class="tier"><em>BLACK</em><b>1 milyon TL</b><span>ve üzeri aylık ortalama varlık</span></div>
+        <div class="tier plus"><em>BLACK PLUS</em><b>4 milyon TL</b><span>ve üzeri aylık ortalama varlık</span></div>
+      </div>
+      <ul>
+        <li>👤 Kişiye özel temsilci</li><li>📈 İş Portföy uzman desteği</li><li>💰 Maksimum Vadeli Hesap'ta ek faiz</li>
+        <li>☎️ Çözüm Merkezi'nde öncelik</li><li>💱 İş'te FX uygulamasına erişim</li><li>🎭 Kültür-sanat, restoran, giyim-kozmetikte indirimler</li>
+      </ul>
+      <p>Ayrıcalıklar <b>İşCep › İş Black</b> menüsünden görülür ve kullanılır. Kademe, İş Bankası'ndaki aylık ortalama varlığa göre belirlenir.</p>
+      <a href="https://www.isbank.com.tr/bankamizi-taniyin/is-bankasindan-yeni-bir-bankacilik-deneyimi-is-black" target="_blank" rel="noopener">İş Black duyurusu ↗</a>
+    </div>
+    <div class="blk card">
+      <div class="bh"><span>EN PRESTİJLİ KART</span><b>Maximiles Black</b><small>Seyahat edenler için MaxiMil kazandıran kart · 1 MaxiMil = 1 TL</small></div>
+      <ul>
+        <li>✈️ MaxiMil kazanımı varlığa göre artar (market, akaryakıt, seyahat, restoran, e-ticaret)</li>
+        <li>🛋️ Havalimanı lounge ayrıcalığı ve <b>Fast Track</b> ile hızlı geçiş</li>
+        <li>🅿️ Otoparklarda indirim (havalimanları dahil)</li>
+        <li>🛡️ Satın alma koruması (olay başı 3.000 TL'ye kadar)</li>
+        <li>🌍 Bilet ve konaklama kartla ödenirse 30.000 € limitli yurt dışı seyahat sigortası</li>
+        <li>🧭 Seyahat, restoran ve etkinlik için bilgi-organizasyon servisi</li>
+      </ul>
+      <div class="lounge"><b>Lounge indirimi (İş Bankası'ndaki varlığa göre)</b>
+        <div><span>4–8 milyon TL</span><em>İGA & Sabiha Gökçen %50</em></div>
+        <div><span>8 milyon TL+</span><em>%100'e varan + 1 misafir</em></div>
+        <div><span>Tüm Maximiles</span><em>Esenboğa, İzmir, Bodrum TAV %50</em></div></div>
+      <p>Başvuru İşCep, Maximum Mobil, internet şubesi ya da şubeden yapılır; asgari kart limiti 300.000 TL. Yıllık kart ücreti ve güncel koşullar için bankanın sayfasına bak.</p>
+      <a href="https://www.isbank.com.tr/maximiles-black" target="_blank" rel="noopener">Maximiles Black sayfası ↗</a>
+    </div>`;
+}
+function milesHtml() {
+  const L = camps.filter((c) => /maximiles|maximil|mil\b|uçuş|uçak|havayolu|thy|pegasus/i.test(c.baslik + " " + c.ozet));
+  return `<div class="ocard"><div class="oh"><i>✈️</i><b>Maximiles</b></div>
+      <p>Harcamaların <b>MaxiMil</b> olarak birikir; 1 MaxiMil = 1 TL değerinde uçak bileti ve seyahat harcamalarında kullanılır. Maximiles kartlar Maximum'un tüm kampanyalarından da yararlanır; ek olarak mil kampanyaları vardır.</p>
+      ${L.length ? L.map((c) => `<div class="omini"><span>${esc(c.baslik)}</span><small>${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></div>`).join("") : '<p style="color:var(--muted)">Listede şu an mil kampanyası yok.</p>'}
+      <a class="olink" href="https://www.maximiles.com.tr/kampanyalar" target="_blank" rel="noopener">Maximiles kampanyaları ↗</a></div>
+    <button type="button" class="ocard tolink" data-go="🖤 Black"><div class="oh"><i>🖤</i><b>Maximiles Black</b><em>›</em></div><p>En prestijli kart: lounge, Fast Track ve artan MaxiMil kazanımı.</p></button>`;
+}
+function bindSpecial() { $("list").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { campTur = b.dataset.go; renderCamps(); window.scrollTo({ top: 0 }); })); }
 function campCard(k) {
   const n = daysLeft(k.bitis), u = n <= 3, j = joined(k), fr = isFresh(k);
   const left = n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
@@ -337,10 +422,12 @@ function renderCamps() {
   jnTouch();
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
   if (!camps.length) { $("list").innerHTML = '<div class="empty">Şu an listelenen kampanya yok.</div>'; return; }
-  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))];
-  if (!turs.includes(campTur)) campTur = "Tümü";
-  $("tfil").innerHTML = turs.map((t) => `<button data-t="${esc(t)}" class="${t === campTur ? "on" : ""}">${t === "Tümü" ? "Tüm türler" : esc(t)}<b>${t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length}</b></button>`).join("");
+  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "🖤 Black", "✈️ Maximiles"];
+  if (!turs.includes(campTur) && !SP.includes(campTur)) campTur = "Tümü";
+  $("tfil").innerHTML = SP.map((t) => `<button data-t="${t}" class="sp${t === campTur ? " on" : ""}">${t}</button>`).join("") + turs.map((t) => `<button data-t="${esc(t)}" class="${t === campTur ? "on" : ""}">${t === "Tümü" ? "Tüm kampanyalar" : esc(t)}<b>${t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length}</b></button>`).join("");
   $("tfil").hidden = false;
+  $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  if (SP.includes(campTur)) { $("list").innerHTML = campTur === "🖤 Black" ? blackHtml() : campTur === "✈️ Maximiles" ? milesHtml() : oneHtml(); bindSpecial(); return; }
   const vis = camps.filter((k) => campTur === "Tümü" || k.tur === campTur);
   const nj = camps.filter((c) => !joined(c)), fresh = vis.filter(isFresh), rest = vis.filter((c) => !joined(c) && !isFresh(c)), done = vis.filter(joined);
   const pct = Math.round((camps.length - nj.length) / camps.length * 100);
