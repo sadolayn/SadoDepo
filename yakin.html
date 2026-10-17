@@ -93,6 +93,8 @@
   .fsbot .e { background: rgba(224,71,58,.12); border: 1px solid #7a2e28; color: #ffc9c2; flex: .8; }
   .fsbot .g { background: rgba(224,162,79,.12); border: 1px solid #6b5326; color: #f3d19a; }
   .fsbot .b { background: #1a2a4a; border: 1px solid #2f4f8f; color: #b9cdff; }
+  .fssearch { margin: 0; padding: 8px 12px 6px; } .fssearch input { padding: 9px 12px; font-size: 15px; } .fssearch button { width: 44px; }
+  .fsres { position: relative; z-index: 5; margin: 0 12px 6px; }
   .fsopen { width: 100%; margin: -2px 0 10px; padding: 9px; border-radius: 10px; border: 1px dashed var(--accent); background: transparent; color: var(--accent); font: inherit; font-size: 13px; cursor: pointer; }
   .mtog { display: flex; gap: 6px; margin-bottom: 8px; }
   .mtog button { flex: 1; padding: 7px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--muted); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
@@ -135,6 +137,8 @@
   </div>
 
   <div id="fs"><div class="fsbar"><b id="fstitle"></b><button type="button" id="fsclose">✕ Kapat</button></div>
+    <form class="search fssearch" onsubmit="return false"><input id="fsq" type="search" placeholder="Başka yer ara (ör. Aydın, Efeler)" autocomplete="off"><button type="button" id="fsloc" aria-label="Konumumu kullan">📍</button></form>
+    <div class="results fsres" id="fsres"></div>
     <div class="fsrad rad" data-rad><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div>
     <div class="mw fsmw"><iframe id="fsmap" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe><div class="mload" id="fsload"></div></div>
     <div class="fsbot"><a class="b" id="fsgm" href="#" target="_blank" rel="noopener">🗺️ Google Haritalar'da aç</a></div></div>
@@ -279,31 +283,34 @@ function setPlace(p) {
   S.place = p; save();
   { const el = $("nobetG"); if (el) { const n = p ? (p.name || "").replace(/^📡\s*/, "").replace(/\s*merkez$/i, "").trim() : ""; const q = "nöbetçi eczane" + (n && n !== "Bulunduğun yer" ? " " + n : ""); el.href = p ? `https://www.google.com/maps/search/${encodeURIComponent(q)}/@${p.lat},${p.lon},14z` : "https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane"; } }
   $("plabel").innerHTML = p ? `📍 <b>${p.name}</b>` : "Konum seçilmedi";
-  if (S.cat) openCat(S.cat);
+  const fsOpen = $("fs").classList.contains("show");
+  if (S.cat) { NOSCROLL = fsOpen || NOSCROLL; openCat(S.cat); NOSCROLL = false; }
+  if (p && S.cat && $("fs").classList.contains("show") && fsSrc) { const c = CAT[S.cat]; mapLoad("fs", fsSrc, titleOf(c), gUrlOf(c)); $("fsgm").href = gUrlOf(c); }
 }
 
 // Konum arama (Nominatim)
+function bindSearch(QI, RI) {
 let qt;
-$("q").addEventListener("input", () => {
+$(QI).addEventListener("input", () => {
   clearTimeout(qt);
-  const q = $("q").value.trim();
-  if (q.length < 2) { $("results").classList.remove("show"); return; }
+  const q = $(QI).value.trim();
+  if (q.length < 2) { $(RI).classList.remove("show"); return; }
   qt = setTimeout(async () => {
     try {
       const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&addressdetails=1&limit=6&countrycodes=tr&accept-language=tr`);
       const j = await r.json();
-      $("results").innerHTML = j.length ? j.map((x, i) => {
+      $(RI).innerHTML = j.length ? j.map((x, i) => {
         const a = x.address || {};
         const main = a.suburb || a.neighbourhood || a.quarter || a.town || a.village || a.city_district || a.county || a.city || x.name;
         const sub = [a.town || a.county || a.city_district, a.province || a.city || a.state].filter((v, k, arr) => v && v !== main && arr.indexOf(v) === k).join(", ");
         return `<div data-i="${i}">${main}<small>${sub || x.display_name}</small></div>`;
       }).join("") : '<div style="color:var(--muted);cursor:default">Sonuç yok</div>';
-      $("results").classList.add("show");
-      $("results").onclick = (e) => {
+      $(RI).classList.add("show");
+      $(RI).onclick = (e) => {
         const d = e.target.closest("[data-i]"); if (!d) return; const x = j[+d.dataset.i], a = x.address || {};
         const main = a.suburb || a.neighbourhood || a.quarter || a.town || a.village || a.city_district || a.county || a.city || x.name;
         const prov = a.province || a.city || a.state || "";
-        $("results").classList.remove("show"); $("q").value = ""; $("q").blur();
+        $(RI).classList.remove("show"); $(QI).value = ""; $(QI).blur();
         (async () => {
           let lat = +x.lat, lon = +x.lon, nm = prov && prov !== main ? `${main}, ${prov}` : main;
           // İl ya da ilçe sınırı seçildiyse sınırın coğrafi ortası (kırsal) yerine şehir/ilçe merkezini kullan
@@ -320,11 +327,16 @@ $("q").addEventListener("input", () => {
           setPlace({ lat, lon, name: nm });
         })();
       };
-    } catch (e) { $("results").innerHTML = '<div style="color:var(--muted)">Arama yapılamadı</div>'; $("results").classList.add("show"); }
+    } catch (e) { $(RI).innerHTML = '<div style="color:var(--muted)">Arama yapılamadı</div>'; $(RI).classList.add("show"); }
   }, 350);
 });
+}
+bindSearch("q", "results");
+bindSearch("fsq", "fsres");
+
 $("form").addEventListener("submit", (e) => e.preventDefault());
 $("loc").onclick = () => locate(false);
+$("fsloc").onclick = () => locate(false);
 function locate(silent) {
   if (!navigator.geolocation) { if (!silent) alert("Tarayıcın konum desteklemiyor."); return; }
   $("plabel").textContent = "Konum alınıyor…";
