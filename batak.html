@@ -158,36 +158,37 @@
   .seg button { flex: 1; padding: 8px 4px; border: none; border-radius: 9px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
   .seg button.on { background: var(--accent); color: #000; }
   .modal { max-height: 92vh; overflow-y: auto; }
-  /* Yeni oyun ayarları — yeşil masa teması */
-  .modal.ayar { max-width: 560px; padding: 0 0 16px; background: #165546; border: 1px solid #2bc4a0; border-top: 3px solid #39d8b3; border-radius: 16px; color: #fff; text-align: left; overflow-x: hidden; }
-  .ayar .ah { position: relative; background: #0f3d33; padding: 12px 48px 10px; text-align: center; }
-  .ayar .ah h2 { margin: 0; font-size: 21px; font-weight: 900; letter-spacing: .5px; }
-  .ayar .aw { font-size: 12.5px; margin-top: 3px; }
-  .ayar .ax { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border-radius: 50%; border: 2px solid #fff; background: #e5484d; color: #fff; font-size: 16px; font-weight: 900; cursor: pointer; }
-  .ayar .abal { margin: 10px 12px 0; font-size: 13px; color: #d9fff4; }
-  .ayar .asec { display: flex; justify-content: space-between; align-items: center; margin: 10px 12px 4px; padding: 8px 12px; background: #0e3f34; border-radius: 6px; font-size: 16px; }
-  .ayar .asec i { font-style: normal; font-size: 18px; }
-  .ayar .agrid { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 8px 14px 4px; }
+  /* Masa kur — Sadolayn teması (koyu mürdüm, altın vurgu, serif başlık) */
+  .modal.ayar { max-width: 560px; padding: 0 0 16px; background: radial-gradient(120% 80% at 50% 0%, #2a1b33, #160f1d 70%); border: 1px solid #5b3f22; border-radius: 22px; color: #f3e9d8; text-align: left; overflow-x: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,220,160,.12); }
+  .ayar .ah { position: relative; padding: 16px 52px 12px; text-align: center; border-bottom: 1px solid rgba(224,162,79,.25); }
+  .ayar .ah h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 700; font-size: 26px; color: #f0c674; letter-spacing: .5px; }
+  .ayar .aw { display: inline-block; margin-top: 6px; font-size: 12px; color: #d9c7ad; background: rgba(224,162,79,.12); border: 1px solid rgba(224,162,79,.3); border-radius: 999px; padding: 3px 10px; }
+  .ayar .ax { position: absolute; right: 12px; top: 14px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(240,198,116,.5); background: transparent; color: #f0c674; font-size: 15px; cursor: pointer; }
+  .ayar .abal { display: flex; justify-content: space-between; align-items: center; margin: 12px 14px 0; padding: 10px 14px; border-radius: 14px; background: linear-gradient(90deg, rgba(240,198,116,.16), rgba(240,198,116,.04)); font-size: 13px; color: #d9c7ad; }
+  .ayar .abal b { font-size: 17px; color: #ffe2a6; }
+  .ayar .asec { margin: 14px 16px 2px; font-size: 11.5px; letter-spacing: 2px; text-transform: uppercase; color: #b79a74; }
+  .ayar .agrid { display: grid; grid-template-columns: 1fr; gap: 10px; padding: 8px 16px 4px; }
   @media (min-width: 520px) { .ayar .agrid { grid-template-columns: 1fr 1fr; column-gap: 22px; } }
-  .ayar .arow { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 16px; }
-  .ayar .arow > span { white-space: nowrap; }
-  .ayar .step { display: flex; align-items: center; gap: 4px; }
-  .ayar .step button { width: 38px; height: 34px; border: none; border-radius: 6px; background: #1fa489; color: #fff; font-size: 22px; font-weight: 900; line-height: 1; cursor: pointer; box-shadow: 0 2px 0 #0b5e4d; }
-  .ayar .step button:active { transform: translateY(2px); box-shadow: none; }
-  .ayar .step b { min-width: 84px; height: 34px; display: flex; align-items: center; justify-content: center; background: #1b6a58; border-radius: 6px; font-size: 17px; }
-  .ayar .chk { display: flex; align-items: center; gap: 10px; font-size: 16px; cursor: pointer; margin: 0; color: #fff; }
+  .ayar .arow { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 15px; }
+  .ayar .arow > span { white-space: nowrap; color: #eadcc6; }
+  .ayar .step { display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,.28); border: 1px solid rgba(240,198,116,.2); border-radius: 999px; padding: 3px; }
+  .ayar .step button { width: 32px; height: 32px; border-radius: 50%; border: none; background: linear-gradient(180deg, #f3cf86, #d9a54a); color: #2a1a05; font-size: 18px; font-weight: 800; line-height: 1; cursor: pointer; }
+  .ayar .step button:active { transform: scale(.92); }
+  .ayar .step b { min-width: 74px; text-align: center; font-size: 16px; color: #fff3dc; font-variant-numeric: tabular-nums; }
+  .ayar .chk { display: flex; align-items: center; gap: 10px; font-size: 15px; cursor: pointer; margin: 0; color: #eadcc6; }
   .ayar .chk input { display: none; }
-  .ayar .chk i { width: 26px; height: 26px; border-radius: 6px; background: #e9eceb; flex: none; position: relative; }
-  .ayar .chk input:checked + i { background: #1fa489; }
-  .ayar .chk input:checked + i::after { content: "✓"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 17px; }
-  .ayar .chk small { opacity: .7; font-size: 12px; }
-  .ayar .chk.off { opacity: .45; cursor: default; }
-  .ayar .chk.off i { background: #7aa69b; }
-  .ayar .ahint { margin: 8px 14px 0; font-size: 12.5px; color: #c9f3e7; background: rgba(0,0,0,.15); border-radius: 8px; padding: 7px 10px; }
-  .ayar .adet { margin: 8px 14px 0; background: rgba(0,0,0,.15); border-radius: 8px; padding: 6px 10px; }
-  .ayar .adet summary { cursor: pointer; font-size: 14px; font-weight: 700; padding: 4px 0; }
-  .ayar .rules { color: #e3fff7; }
-  .ayar .abtn { display: block; box-sizing: border-box; width: calc(100% - 28px) !important; margin: 14px 14px 0; background: #f2b636; color: #1a1200; border: none; box-shadow: 0 3px 0 #a87a14; font-weight: 900; }
+  .ayar .chk i { width: 42px; height: 24px; border-radius: 999px; background: #3b2f45; flex: none; position: relative; transition: background .2s; }
+  .ayar .chk i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #cbbba6; transition: transform .2s, background .2s; }
+  .ayar .chk input:checked + i { background: #d9a54a; }
+  .ayar .chk input:checked + i::after { transform: translateX(18px); background: #fff7e6; }
+  .ayar .chk small { opacity: .65; font-size: 12px; }
+  .ayar .chk.off { opacity: .4; cursor: default; }
+  .ayar .ahint { margin: 10px 16px 0; font-size: 12.5px; color: #e3d3bb; background: rgba(0,0,0,.22); border-radius: 12px; padding: 8px 12px; }
+  .ayar .adet { margin: 8px 16px 0; background: rgba(0,0,0,.22); border-radius: 12px; padding: 6px 12px; }
+  .ayar .adet summary { cursor: pointer; font-size: 14px; font-weight: 600; padding: 4px 0; color: #f0c674; }
+  .ayar .rules { color: #e8dccb; }
+  .ayar .abtn { display: block; box-sizing: border-box; width: calc(100% - 32px) !important; margin: 16px 16px 0; border-radius: 999px; background: linear-gradient(180deg, #f3cf86, #d9a54a); color: #2a1a05; border: none; font-family: Georgia, serif; font-style: italic; font-size: 18px; font-weight: 700; padding: 13px; box-shadow: 0 6px 18px rgba(217,165,74,.25); }
+  .ayar .kasa { margin: 10px 16px 0; font-size: 12px; color: #b79a74; text-align: center; }
   .mpbox { background: linear-gradient(135deg, #1a2a4a, #0f1a30); border: 1px solid #2f4f8f; color: #cfdcff; border-radius: 12px; padding: 9px 12px; font-size: 14px; margin: 4px 0 8px; }
   .mpbox b { color: #fff; }
   .qopts { display: grid; gap: 8px; }
@@ -257,10 +258,23 @@ let dealer = 3;
 // Oyun ayarları
 let OPT = { eller: 7, arti3: false, yuk: true, esli: false, bahis: 100, dagilim: "dengeli", kozBas: false };
 try { Object.assign(OPT, JSON.parse(localStorage.getItem("batakOpt") || "{}")); } catch (e) {}
-if (!(OPT.eller >= 7 && OPT.eller <= 21)) OPT.eller = 7;
+if (!(OPT.eller >= 1 && OPT.eller <= 20)) OPT.eller = 7;
 OPT.arti3 = false; // +3 kuralı yeni ayarlarda yok
-const FEE = 0.0125; // %1,25 masa ücreti birinciden (kazanandan) alınır
-// ---------- SadoToken ----------
+const FEE = 0.01; // %1 masa ücreti: her oyunda ortadaki toplam Token'ın %1'i kazanandan alınır (kasaya)
+// Masa kasası: site sahibi kaç oyun oynandığını ve toplam masa ücretini görebilsin diye oyun özeti Google Form'a gider
+const KASA_FORM = { action: "https://docs.google.com/forms/d/e/1FAIpQLSfeuDkVXo1nk6IZ_9f7uEjXkCUF3M--PUv7cYcBwXPWe6F6gA/formResponse", mesaj: "entry.1123079006", kimden: "entry.1229018588" };
+let KASA = { oyun: 0, ucret: 0 }; try { Object.assign(KASA, JSON.parse(localStorage.getItem("batakKasa") || "{}")); } catch (e) {}
+function kasaBildir(o) {
+  KASA.oyun++; KASA.ucret += o.ucret; try { localStorage.setItem("batakKasa", JSON.stringify(KASA)); } catch (e) {}
+  try {
+    const f = new FormData();
+    f.append(KASA_FORM.mesaj, `🎲 BATAK MASA | Oyuncu: ${o.isim} | Token: ${o.token} | Masa: ${o.masa} | Masa ücreti: ${o.ucret} | Sonuç: ${o.sonuc} | El: ${o.el} | ${o.esli ? "Eşli" : "Tekli"} | ${o.dag}`);
+    f.append(KASA_FORM.kimden, "Batak masa kasası");
+    fetch(KASA_FORM.action, { method: "POST", mode: "no-cors", body: f }).catch(() => {});
+  } catch (e) {}
+  try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: "batak-masa-ucreti-" + o.ucret, title: "Batak masa ücreti", event: true }); } catch (e) {}
+}
+// ---------- Token ----------
 const MP_KEY = "batakMP";
 let MP = { bal: 1000, empty: 0, lastQ: -1 };
 try { Object.assign(MP, JSON.parse(localStorage.getItem(MP_KEY) || "{}")); } catch (e) {}
@@ -667,8 +681,8 @@ function showLock() {
   const left = MP.empty + 864e5 - Date.now();
   if (left > 0) {
     const h = Math.floor(left / 36e5), m = Math.floor((left % 36e5) / 6e4);
-    $("modal").innerHTML = `<h2>🪙 SadoToken bitti</h2>
-      <p>Yeni SadoToken için <b>${h} saat ${m} dakika</b> sonra gel. Seni İş Bankası tarihçesi ve ürünleriyle ilgili bir soru bekliyor; bilirsen <b>1.000 SadoToken</b> kazanırsın.</p>
+    $("modal").classList.remove("ayar"); $("modal").innerHTML = `<h2>🪙 Token bitti</h2>
+      <p>Yeni Token için <b>${h} saat ${m} dakika</b> sonra gel. Seni İş Bankası tarihçesi ve ürünleriyle ilgili bir soru bekliyor; bilirsen <b>1.000 Token</b> kazanırsın.</p>
       <a class="btn" href="oyunlar.html" style="display:block;text-decoration:none;padding:12px">Oyunlara dön</a>`;
     $("overlay").classList.add("show");
     return;
@@ -678,7 +692,7 @@ function showLock() {
   // Şıkları karıştır
   const ord = opts0.map((_, i) => i).sort(() => Math.random() - 0.5);
   const opts = ord.map((i) => opts0[i]), ok = ord.indexOf(ok0);
-  $("modal").innerHTML = `<h2>🏦 İş Bankası Bilgi Yarışması</h2><p>Doğru cevap: <b>1.000 SadoToken</b></p>
+  $("modal").classList.remove("ayar"); $("modal").innerHTML = `<h2>🏦 İş Bankası Bilgi Yarışması</h2><p>Doğru cevap: <b>1.000 Token</b></p>
     <div style="font-weight:700;font-size:16px;margin:4px 0 12px">${q}</div>
     <div class="qopts">${opts.map((o, i) => `<button type="button" data-i="${i}">${o}</button>`).join("")}</div><div id="qres" style="margin-top:12px;font-size:14px"></div>`;
   $("overlay").classList.add("show");
@@ -688,7 +702,7 @@ function showLock() {
     MP.lastQ = qi;
     if (+b.dataset.i === ok) {
       MP.bal += 1000; MP.empty = 0; mpSave();
-      $("qres").innerHTML = `✅ Doğru! <b>1.000 SadoToken</b> hesabına yüklendi.<button class="btn" id="qgo" style="margin-top:10px">Oyuna devam</button>`;
+      $("qres").innerHTML = `✅ Doğru! <b>1.000 Token</b> hesabına yüklendi.<button class="btn" id="qgo" style="margin-top:10px">Oyuna devam</button>`;
       $("qgo").onclick = () => showRules();
     } else {
       b.classList.add("bad"); MP.empty = Date.now(); mpSave();
@@ -708,16 +722,19 @@ function gameOver() {
     win = order[0] === 0 ? "🎉 Kazandın!" : `${NAMES[order[0]]} kazandı`;
     rows = order.map((p, i) => `<tr><td style="text-align:left">${["🥇", "🥈", "🥉", "4."][i]} ${NAMES[p]}</td><td><b>${scores[p]}</b></td></tr>`).join("");
   }
-  // SadoToken ödemesi
+  // Token ödemesi
   let pay = 0, payTxt = "";
   if (OPT.esli) { const a = scores[0], b = scores[1]; pay = a > b ? gameStake * 2 : a === b ? gameStake : 0; }
   else { const top = Math.max(...scores), tops = scores.filter((x) => x === top).length; pay = scores[0] === top ? (tops === 1 ? gameStake * 3 : gameStake) : 0; }
-  let fee = 0; if (pay > gameStake) { fee = Math.round(pay * FEE); pay -= fee; }
+  const masa = gameStake * 4, fee = Math.max(1, Math.round(masa * FEE)); // ortadaki toplam Token ve %1 masa ücreti
+  const kazandi = pay > gameStake;
+  if (kazandi) pay -= fee;
   MP.bal += pay; mpSave();
-  payTxt = pay > gameStake ? `🎉 <b>+${mpFmt(pay)}</b> SadoToken kazandın!<br><small style="opacity:.75">Masa ücreti (%1,25): −${mpFmt(fee)}</small>` : pay === gameStake && pay ? `Berabere: ${mpFmt(pay)} SadoToken iade edildi.` : `Bu oyunda ${mpFmt(gameStake)} SadoToken kaybettin.`;
+  kasaBildir({ isim: NAMES[0], token: gameStake, masa, ucret: fee, el: OPT.eller, esli: OPT.esli, dag: OPT.dagilim === "dengeli" ? "Dengeli" : "Rastgele", sonuc: kazandi ? "Kazandı" : pay === gameStake ? "Berabere" : "Kaybetti" });
+  payTxt = kazandi ? `🎉 <b>+${mpFmt(pay)}</b> Token kazandın!<br><small style="opacity:.75">Masa ücreti (%1): −${mpFmt(fee)} Token</small>` : pay === gameStake && pay ? `Berabere: ${mpFmt(pay)} Token iade edildi.` : `Bu oyunda ${mpFmt(gameStake)} Token kaybettin.`;
   gameStake = 0;
-  $("modal").innerHTML = `<h2>${win}</h2><p>${OPT.eller} el tamamlandı</p><table>${rows}</table>
-    <div class="mpbox" style="margin-bottom:12px">${payTxt}<br>🪙 Bakiye: <b>${mpFmt(MP.bal)}</b> SadoToken</div>
+  $("modal").classList.remove("ayar"); $("modal").innerHTML = `<h2>${win}</h2><p>${OPT.eller} el tamamlandı</p><table>${rows}</table>
+    <div class="mpbox" style="margin-bottom:12px">${payTxt}<br>🪙 Bakiye: <b>${mpFmt(MP.bal)}</b> Token</div>
     <button class="btn" id="again">${MP.bal < BAHIS[0] ? "Devam" : "Yeni oyun"}</button>`;
   $("overlay").classList.add("show");
   $("again").onclick = () => showRules();
@@ -730,11 +747,11 @@ function showRules() {
   const seg = (k, opts) => `<div class="seg" data-k="${k}">${opts.map(([v, t]) => `<button type="button" data-v="${v}" class="${String(OPT[k]) === String(v) ? "on" : ""}">${t}</button>`).join("")}</div>`;
   $("modal").classList.add("ayar");
   $("modal").innerHTML = `
-    <div class="ah"><h2>YENİ OYUN AYARLARI</h2><div class="aw">⚠️ %1,25 masa ücreti birinciden tahsil edilir.</div><button type="button" class="ax" id="ayarX" aria-label="Kapat">✕</button></div>
-    <div class="abal">🪙 Bakiyen: <b>${mpFmt(MP.bal)}</b> SadoToken</div>
-    <div class="asec"><span>İhale Ayarları</span><i>⚙️</i></div>
+    <div class="ah"><h2>♠ Masa Kur</h2><div class="aw">🏦 Masa ücreti %1 · kazanan öder</div><button type="button" class="ax" id="ayarX" aria-label="Kapat">✕</button></div>
+    <div class="abal"><span>🪙 Bakiyen</span><b>${mpFmt(MP.bal)} Token</b></div>
+    <div class="asec"><span>Oyun ayarları</span></div>
     <div class="agrid">
-      <div class="arow"><span>Fıstık</span><div class="step"><button type="button" data-st="bahis" data-d="-1">‹</button><b id="vBahis"></b><button type="button" data-st="bahis" data-d="1">›</button></div></div>
+      <div class="arow"><span>Token</span><div class="step"><button type="button" data-st="bahis" data-d="-1">‹</button><b id="vBahis"></b><button type="button" data-st="bahis" data-d="1">›</button></div></div>
       <div class="arow"><span>El dağılımı</span><div class="step"><button type="button" data-st="dagilim" data-d="-1">‹</button><b id="vDag"></b><button type="button" data-st="dagilim" data-d="1">›</button></div></div>
       <div class="arow"><span>El sayısı</span><div class="step"><button type="button" data-st="eller" data-d="-1">−</button><b id="vEl"></b><button type="button" data-st="eller" data-d="1">+</button></div></div>
       <label class="chk"><input type="checkbox" id="cEsli"><i></i><span>Eşli <small>(Sadolayn eşin)</small></span></label>
@@ -750,9 +767,12 @@ function showRules() {
       <li><b>El dağılımı:</b> Dengeli'de her oyuncuya her renkten 2–5 kart düşer, kozlar herkese benzer sayıda gelir. Rastgele'de kartlar tamamen şansa dağılır; bir oyuncuya çok koz gelebilir.</li>
       <li><b>Puan:</b> ihaleyi tutan, söz verdiği her el için 15, fazla her el için 10 puan alır; tutamayan ihale × 10 eksi yazar. Diğerleri aldıkları her el için 10 puan alır; <b>hiç el alamayan −50</b> yazar.</li>
       <li><b>Eşli:</b> karşındaki oyuncu eşindir, ellerin toplamı sayılır. İhaleyi alan eşinin kartlarını açık görür ve iki eli de o oynar.</li>
-      <li><b>SadoToken:</b> 1.000 SadoToken ile başlarsın. Tekli oyunda birinci olursan fıstığın <b>3 katını</b>, eşlide tarafın kazanırsa <b>2 katını</b> alırsın; kazançtan %1,25 masa ücreti düşülür. Berabere biterse fıstık iade edilir. Biterse 1 gün sonra İş Bankası sorusu gelir; doğru cevap 1.000 SadoToken kazandırır.</li>
+      <li><b>Token:</b> 1.000 Token ile başlarsın. Tekli oyunda birinci olursan koyduğun Token'ın <b>3 katını</b>, eşlide tarafın kazanırsa <b>2 katını</b> alırsın. Berabere biterse Token'ın iade edilir.</li>
+      <li><b>Masa ücreti:</b> masadaki toplam Token'ın <b>%1'i</b> kazanandan alınır ve masa kasasına gider. Kasa istatistiği için oyun özeti (adın, Token, sonuç) site yöneticisine iletilir.</li>
+      <li> Token biterse 1 gün sonra İş Bankası sorusu gelir; doğru cevap 1.000 Token kazandırır.</li>
     </ul></details>
-    <button class="btn abtn" id="start">Başla</button>`;
+    <button class="btn abtn" id="start">Başla</button>
+    <div class="kasa">🏦 Bu cihazda: ${KASA.oyun} oyun · masa kasasına ${mpFmt(KASA.ucret)} Token</div>`;
   $("overlay").classList.add("show");
   ISIM.bind($("modal"), () => { setNames(); if (typeof render === "function") try { render(); } catch (e) {} });
   const DAG = [["dengeli", "Dengeli"], ["rastgele", "Rastgele"]];
@@ -764,12 +784,12 @@ function showRules() {
     $("cEsli").checked = OPT.esli; $("cYuk").checked = OPT.yuk; $("cKoz").checked = OPT.kozBas && OPT.esli; $("cKoz").disabled = !OPT.esli;
     $("kbWrap").classList.toggle("off", !OPT.esli);
     $("dagNote").innerHTML = OPT.dagilim === "dengeli" ? "⚖️ <b>Dengeli:</b> herkese her renkten 2–5 kart; kozlar dengeli dağılır." : "🎲 <b>Rastgele:</b> tam şans; bir oyuncuya 6–7 koz bile gelebilir.";
-    $("start").textContent = `Başla · ${mpFmt(OPT.bahis)} SadoToken`;
+    $("start").textContent = `Başla · ${mpFmt(OPT.bahis)} Token`;
   };
   $("modal").querySelectorAll("[data-st]").forEach((b) => (b.onclick = () => {
     const k = b.dataset.st, d = +b.dataset.d;
     if (k === "bahis") { const L = okB(), i = L.indexOf(OPT.bahis); OPT.bahis = L[Math.max(0, Math.min(L.length - 1, (i < 0 ? 0 : i) + d))]; }
-    if (k === "eller") OPT.eller = Math.max(7, Math.min(21, OPT.eller + d));
+    if (k === "eller") OPT.eller = Math.max(1, Math.min(20, OPT.eller + d));
     if (k === "dagilim") { const i = DAG.findIndex((x) => x[0] === OPT.dagilim); OPT.dagilim = DAG[(i + d + DAG.length) % DAG.length][0]; }
     syncOpt();
   }));
