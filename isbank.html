@@ -363,20 +363,46 @@
   /* ===== Yükleme: dolan kumbara ===== */
   .kb { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 34px 10px 30px; }
   .kb svg { overflow: visible; filter: drop-shadow(0 6px 16px rgba(224,162,79,.25)); }
-  .kb .kc { fill: #f3d38a; stroke: #a8741c; stroke-width: 1.5; opacity: 0; animation: kbDrop 1.5s cubic-bezier(.5,0,.8,.4) infinite; }
+  .kb .kc { fill: #f3d38a; stroke: #a8741c; stroke-width: 1.5; opacity: 0; animation: kbDrop 1.1s cubic-bezier(.4,0,.6,1) infinite; }
   .kb .c2 { animation-delay: .5s; } .kb .c3 { animation-delay: 1s; }
-  @keyframes kbDrop { 0% { transform: translateY(-26px); opacity: 0; } 15% { opacity: 1; } 70% { transform: translateY(38px); opacity: 1; } 80%, 100% { transform: translateY(46px); opacity: 0; } }
-  .kb .kbFill { transform-origin: 50% 100%; transform: scaleY(.05); animation: kbFill 3.2s ease-in-out infinite alternate; }
-  @keyframes kbFill { to { transform: scaleY(.92); } }
+  @keyframes kbDrop { 0% { transform: translate(-22px,-40px); opacity: 0; } 20% { opacity: 1; } 75% { transform: translate(6px,0); opacity: 1; } 85%, 100% { transform: translate(14px,0); opacity: 0; } }
+  .kb .kbFill { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0); animation: kbFill 2.4s cubic-bezier(.3,.6,.3,1) forwards; }
+  @keyframes kbFill { to { transform: scaleY(1); } }
   .kb b { margin-top: 16px; font-size: 16px; color: #f3dca8; } .kb span { margin-top: 6px; max-width: 320px; font-size: 13.5px; line-height: 1.5; color: var(--muted); min-height: 40px; transition: opacity .3s; }
   .kbBar { display: block; width: 180px; height: 4px; margin-top: 12px; border-radius: 2px; background: #1f1f1f; overflow: hidden; } .kbBar u { display: block; width: 40%; height: 100%; background: linear-gradient(90deg, transparent, #e0a24f, transparent); animation: kbRun 1.2s linear infinite; }
   @keyframes kbRun { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
   @media (prefers-reduced-motion: reduce) { .kb .kc, .kb .kbFill, .kbBar u { animation: none; } .kb .kbFill { transform: scaleY(.6); } }
+  /* ===== Açılış: karanlıktan beliren Atatürk ===== */
+  .ataIntro { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 22px; cursor: pointer; transition: opacity .9s ease, transform .9s ease; }
+  .ataIntro.out { opacity: 0; transform: scale(1.04); pointer-events: none; }
+  .aiImg { position: relative; width: min(62vw, 300px); aspect-ratio: 500 / 674; -webkit-mask: radial-gradient(ellipse 52% 50% at 50% 42%, #000 45%, transparent 100%); mask: radial-gradient(ellipse 52% 50% at 50% 42%, #000 45%, transparent 100%); }
+  .aiImg img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) sepia(.55) brightness(0) contrast(1.3); animation: aiRise 4.8s .3s ease-in-out forwards; }
+  @keyframes aiRise { 0%, 22% { filter: grayscale(1) sepia(.55) brightness(0) contrast(1.6); transform: scale(1.06); } 60% { filter: grayscale(1) sepia(.55) brightness(.45) contrast(1.5); } 100% { filter: grayscale(1) sepia(.5) brightness(.95) contrast(1.15); transform: scale(1); } }
+  .aiQ { max-width: 460px; margin: 18px 0 0; text-align: center; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: clamp(14px, 3.9vw, 17px); line-height: 1.6; color: #e9d3a4; opacity: 0; animation: aiFade 1.6s 3.4s ease forwards; }
+  .aiQ cite { display: block; margin-top: 10px; font-style: normal; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #a8874c; }
+  @keyframes aiFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .aiSkip { position: absolute; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); padding: 7px 14px; border-radius: 99px; border: 1px solid #3a2f1c; background: transparent; color: #8a7a5a; font: inherit; font-size: 13px; cursor: pointer; }
 </style>
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
 </head>
 <body>
+<div id="ataIntro" class="ataIntro" hidden>
+  <div class="aiImg"><img src="img/ataturk.jpg" alt="Mustafa Kemal Atatürk" decoding="async"></div>
+  <blockquote class="aiQ">Sermayenin azlığına bakarak cesaretiniz kırılmasın! Böyle kurumlar için en kuvvetli sermaye; zekâ, dikkat, iffettir; teknik ve metodik çalışmasını bilmektir. Bu inançla işe sarılınız, mutlaka başarırsınız!<cite>Mustafa Kemal Atatürk</cite></blockquote>
+  <button type="button" class="aiSkip" id="aiSkip">Geç ›</button>
+</div>
+<script>
+// Oturumda bir kez: karanlıktan beliren Atatürk ve sözü, sonra sayfa açılır (dokununca geçilir)
+(function () {
+  var el = document.getElementById("ataIntro"), seen = false;
+  try { seen = sessionStorage.getItem("ataIntro") === "1"; sessionStorage.setItem("ataIntro", "1"); } catch (e) {}
+  if (seen || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.remove(); return; }
+  el.hidden = false; document.documentElement.style.overflow = "hidden";
+  var bitti = false, kapat = function () { if (bitti) return; bitti = true; el.classList.add("out"); document.documentElement.style.overflow = ""; setTimeout(function () { el.remove(); }, 900); };
+  el.addEventListener("click", kapat); setTimeout(kapat, 8600);
+})();
+</script>
 <div class="wrap">
   <div class="stick">
   <header>
@@ -389,14 +415,20 @@
   <div id="soon"></div>
   <div class="upd" id="upd"></div>
   <div id="list"><div class="kb" aria-hidden="true">
-    <svg viewBox="0 0 120 130" width="110" height="120">
-      <defs><clipPath id="kbIc"><path d="M22 52 Q22 38 36 36 L84 36 Q98 38 98 52 L98 104 Q98 118 84 118 L36 118 Q22 118 22 104 Z"/></clipPath>
-        <linearGradient id="kbG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f6dc9a"/><stop offset="1" stop-color="#c9953c"/></linearGradient></defs>
-      <g class="kbCoins"><circle class="kc c1" cx="60" cy="0" r="7"/><circle class="kc c2" cx="52" cy="0" r="6"/><circle class="kc c3" cx="68" cy="0" r="6.5"/></g>
-      <g clip-path="url(#kbIc)"><rect x="20" y="36" width="80" height="84" fill="#141414"/><rect class="kbFill" x="20" y="36" width="80" height="84" fill="url(#kbG)"/></g>
-      <path d="M22 52 Q22 38 36 36 L84 36 Q98 38 98 52 L98 104 Q98 118 84 118 L36 118 Q22 118 22 104 Z" fill="none" stroke="#e0a24f" stroke-width="3"/>
-      <rect x="44" y="31" width="32" height="6" rx="3" fill="#000" stroke="#e0a24f" stroke-width="2"/>
-      <text x="60" y="84" text-anchor="middle" font-size="15" font-weight="800" fill="#fff" font-family="system-ui,sans-serif" style="mix-blend-mode:difference">1924</text>
+    <svg viewBox="0 0 140 140" width="124" height="124">
+      <defs>
+        <clipPath id="kbIc"><rect x="18" y="52" width="104" height="74" rx="20"/></clipPath>
+        <linearGradient id="kbM" x1="0" x2="1"><stop offset="0" stop-color="#8d9399"/><stop offset=".22" stop-color="#eef1f3"/><stop offset=".5" stop-color="#b9bfc4"/><stop offset=".8" stop-color="#f4f6f7"/><stop offset="1" stop-color="#7d838a"/></linearGradient>
+        <linearGradient id="kbG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffe6a6"/><stop offset=".5" stop-color="#e9b85a"/><stop offset="1" stop-color="#b8862e"/></linearGradient>
+      </defs>
+      <path d="M40 46 V30 Q40 14 70 14 Q100 14 100 30 V46" fill="none" stroke="url(#kbM)" stroke-width="6" stroke-linecap="round"/>
+      <rect x="34" y="40" width="12" height="16" rx="4" fill="url(#kbM)"/><rect x="94" y="40" width="12" height="16" rx="4" fill="url(#kbM)"/>
+      <g class="kbCoins"><circle class="kc c1" cx="12" cy="76" r="6"/><circle class="kc c2" cx="12" cy="76" r="5.5"/><circle class="kc c3" cx="12" cy="76" r="6"/></g>
+      <rect x="18" y="52" width="104" height="74" rx="20" fill="url(#kbM)"/>
+      <g clip-path="url(#kbIc)"><rect class="kbFill" x="18" y="52" width="104" height="74" fill="url(#kbG)" opacity=".92"/></g>
+      <rect x="18" y="52" width="104" height="74" rx="20" fill="none" stroke="#5d6369" stroke-width="1.5"/>
+      <path d="M30 58 Q70 54 110 58" stroke="#fff" stroke-opacity=".7" stroke-width="2" fill="none"/>
+      <rect x="14" y="70" width="8" height="14" rx="2" fill="#1a1a1a"/>
     </svg>
     <b>İş Bankası Gündemi hazırlanıyor</b>
     <span id="kbFact">Türkiye'ye ilk kumbaraları 1928'de İş Bankası getirdi.</span>
