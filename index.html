@@ -147,7 +147,6 @@
   .quote span::before, .quote span::after { content: ""; width: 28px; height: 1px; background: linear-gradient(90deg, transparent, #5a4320); }
   .quote span::after { background: linear-gradient(90deg, #5a4320, transparent); }
 </style>
-<link rel="manifest" href="manifest.webmanifest">
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
 </head>
@@ -401,11 +400,15 @@
     window.Rapor && Rapor.bolum("ana-ekrana-ekle");
     const p = window.__kurPrompt;
     if (p) { p.prompt(); try { const r = await p.userChoice; if (r.outcome === "accepted") $("kur").hidden = true; } catch (e) {} window.__kurPrompt = null; return; }
-    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    const y = $("kurYardim"); y.hidden = false;
-    y.innerHTML = ios
-      ? "<b>iPhone'da:</b> Safari'de alttaki <b>Paylaş</b> (⬆️) simgesine dokun → <b>Ana Ekrana Ekle</b>. Sadolayn simgesiyle uygulama gibi açılır."
-      : "<b>Android'de:</b> Chrome'da sağ üstteki <b>⋮</b> menüsüne dokun → <b>Ana ekrana ekle</b> ya da <b>Uygulamayı yükle</b>. Sadolayn simgesiyle uygulama gibi açılır.";
+    const t = window.__tarayici, y = $("kurYardim"); y.hidden = false;
+    const not = "<br><span style='color:#8a8a8a;font-size:12px'>Bu bir uygulama kurulumu değildir; telefonuna sadece siteye giden bir kısayol eklenir. Dosya indirilmez, izin istenmez.</span>";
+    y.innerHTML = (t === "ios"
+      ? "<b>iPhone'da:</b> Safari'de alttaki <b>Paylaş</b> (⬆️) simgesine dokun → <b>Ana Ekrana Ekle</b>."
+      : t === "chrome"
+      ? "<b>Chrome'da:</b> sağ üstteki <b>⋮</b> menüsüne dokun → <b>Ana ekrana ekle</b>."
+      : t === "samsung"
+      ? "<b>Samsung İnternet'te:</b> alttaki <b>≡</b> menüsüne dokun → <b>Sayfayı ekle</b> → <b>Ana ekran</b>.<br>Karşına <b>“Uygulama yükle”</b> ya da Play Protect uyarısı çıkarsa <b>yükleme</b>, “Anladım” de; o paket tarayıcının kendi ürettiği eski tip bir dosyadır. Sorunsuz kurulum için siteyi <b>Chrome</b>'da açıp oradan ekleyebilirsin."
+      : "<b>Tarayıcı menüsünden</b> (⋮ ya da ≡) <b>Ana ekrana ekle / Sayfayı ekle</b>'yi seç. “Uygulama yükle” ya da güvenlik uyarısı çıkarsa yükleme; en sorunsuzu siteyi <b>Chrome</b>'da açıp oradan eklemek.") + not;
   };
   window.addEventListener("appinstalled", () => ($("kur").hidden = true));
 })();
