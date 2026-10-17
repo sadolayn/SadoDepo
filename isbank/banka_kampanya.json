@@ -1,0 +1,69 @@
+{
+ "kontrol": "2026-10-17",
+ "kategoriler": [
+  {
+   "slug": "iste-maasa-ozel",
+   "ic": "💼",
+   "ad": "Maaşını İş'e taşıyanlara",
+   "adet": 2,
+   "url": "https://www.isbank.com.tr/kampanyalar/iste-maasa-ozel",
+   "kampanyalar": []
+  },
+  {
+   "slug": "emeklilere-ozel",
+   "ic": "👴",
+   "ad": "Emeklilere özel",
+   "adet": 7,
+   "url": "https://www.isbank.com.tr/kampanyalar/emeklilere-ozel",
+   "kampanyalar": []
+  },
+  {
+   "slug": "bireysel-kredi-kampanyalari",
+   "ic": "🏦",
+   "ad": "Bireysel kredi",
+   "adet": 3,
+   "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
+   "kampanyalar": []
+  },
+  {
+   "slug": "bireysel-emeklilik",
+   "ic": "🛡️",
+   "ad": "BES ve sigorta",
+   "adet": 3,
+   "url": "https://www.isbank.com.tr/kampanyalar/bireysel-emeklilik",
+   "kampanyalar": []
+  },
+  {
+   "slug": "fatura-kampanyalari",
+   "ic": "🧾",
+   "ad": "Fatura talimatı",
+   "adet": 1,
+   "url": "https://www.isbank.com.tr/kampanyalar/fatura-kampanyalari",
+   "kampanyalar": []
+  },
+  {
+   "slug": "iscep-kampanyalari",
+   "ic": "📲",
+   "ad": "İşCep'e özel",
+   "adet": 9,
+   "url": "https://www.isbank.com.tr/kampanyalar/iscep-kampanyalari",
+   "kampanyalar": []
+  },
+  {
+   "slug": "bankamatik-karti-kampanyalari",
+   "ic": "🏧",
+   "ad": "Bankamatik kartı",
+   "adet": 2,
+   "url": "https://www.isbank.com.tr/kampanyalar/bankamatik-karti-kampanyalari",
+   "kampanyalar": []
+  },
+  {
+   "slug": "diger-kampanyalar",
+   "ic": "✨",
+   "ad": "Diğer kampanyalar",
+   "adet": 9,
+   "url": "https://www.isbank.com.tr/kampanyalar/diger-kampanyalar",
+   "kampanyalar": []
+  }
+ ]
+}
