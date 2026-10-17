@@ -361,14 +361,14 @@
   .camp.urgent { border-color: #5a2a20; background: linear-gradient(180deg, rgba(192,57,43,.08), var(--card) 60%); }
   .alarm { background: rgba(192,57,43,.12); border: 1px solid #5a2a20; color: #ffb7a6; border-radius: 12px; padding: 9px 12px; font-size: 13.5px; margin-bottom: 10px; }
   /* ===== Yükleme: dolan kumbara ===== */
-  .kb { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 34px 10px 30px; }
+  .kb { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; padding: 26px 10px; }
   .kb svg { overflow: visible; filter: drop-shadow(0 6px 16px rgba(224,162,79,.25)); }
   .kb .kc { fill: #f3d38a; stroke: #a8741c; stroke-width: 1.5; opacity: 0; animation: kbDrop 1.1s cubic-bezier(.4,0,.6,1) infinite; }
   .kb .c2 { animation-delay: .5s; } .kb .c3 { animation-delay: 1s; }
   @keyframes kbDrop { 0% { transform: translate(-22px,-40px); opacity: 0; } 20% { opacity: 1; } 75% { transform: translate(6px,0); opacity: 1; } 85%, 100% { transform: translate(14px,0); opacity: 0; } }
   .kb .kbFill { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0); animation: kbFill 2.4s cubic-bezier(.3,.6,.3,1) forwards; }
   @keyframes kbFill { to { transform: scaleY(1); } }
-  .kb b { margin-top: 16px; font-size: 16px; color: #f3dca8; } .kb span { margin-top: 6px; max-width: 320px; font-size: 13.5px; line-height: 1.5; color: var(--muted); min-height: 40px; transition: opacity .3s; }
+  .kb b { font-size: 14px; font-weight: 600; color: #c9b48a; } .kb span { margin-top: 6px; max-width: 320px; font-size: 13.5px; line-height: 1.5; color: var(--muted); min-height: 40px; transition: opacity .3s; }
   .kbBar { display: block; width: 180px; height: 4px; margin-top: 12px; border-radius: 2px; background: #1f1f1f; overflow: hidden; } .kbBar u { display: block; width: 40%; height: 100%; background: linear-gradient(90deg, transparent, #e0a24f, transparent); animation: kbRun 1.2s linear infinite; }
   @keyframes kbRun { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
   @media (prefers-reduced-motion: reduce) { .kb .kc, .kb .kbFill, .kbBar u { animation: none; } .kb .kbFill { transform: scaleY(.6); } }
@@ -393,10 +393,11 @@
   <button type="button" class="aiSkip" id="aiSkip">Geç ›</button>
 </div>
 <script>
-// Her girişte: karanlıktan beliren Atatürk ve sözü, sonra sayfa açılır (dokununca geçilir)
+// Yalnızca ilk ziyarette: karanlıktan beliren Atatürk ve sözü, sonra sayfa açılır (dokununca geçilir)
 (function () {
-  var el = document.getElementById("ataIntro");
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { el.remove(); return; }
+  var el = document.getElementById("ataIntro"), seen = false;
+  try { seen = localStorage.getItem("ataIntro") === "1"; localStorage.setItem("ataIntro", "1"); } catch (e) {}
+  if (seen || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.remove(); return; }
   el.hidden = false; document.documentElement.style.overflow = "hidden";
   var bitti = false, kapat = function () { if (bitti) return; bitti = true; el.classList.add("out"); document.documentElement.style.overflow = ""; setTimeout(function () { el.remove(); }, 900); };
   el.addEventListener("click", kapat); setTimeout(kapat, 8600);
@@ -414,7 +415,7 @@
   <div id="soon"></div>
   <div class="upd" id="upd"></div>
   <div id="list"><div class="kb" aria-hidden="true">
-    <svg viewBox="0 0 140 140" width="124" height="124">
+    <svg viewBox="0 0 140 140" width="54" height="54">
       <defs>
         <clipPath id="kbIc"><rect x="18" y="52" width="104" height="74" rx="20"/></clipPath>
         <linearGradient id="kbM" x1="0" x2="1"><stop offset="0" stop-color="#8d9399"/><stop offset=".22" stop-color="#eef1f3"/><stop offset=".5" stop-color="#b9bfc4"/><stop offset=".8" stop-color="#f4f6f7"/><stop offset="1" stop-color="#7d838a"/></linearGradient>
@@ -429,9 +430,8 @@
       <path d="M30 58 Q70 54 110 58" stroke="#fff" stroke-opacity=".7" stroke-width="2" fill="none"/>
       <rect x="14" y="70" width="8" height="14" rx="2" fill="#1a1a1a"/>
     </svg>
-    <b>İş Bankası Gündemi hazırlanıyor</b>
-    <span id="kbFact">Türkiye'ye ilk kumbaraları 1928'de İş Bankası getirdi.</span>
-    <i class="kbBar"><u></u></i>
+    <b>Yükleniyor…</b>
+
   </div></div>
 
   <div class="disc">
@@ -1125,7 +1125,6 @@ function renderSoon() {
 
 // ===== Sayfa sonu: Günün sorusu + Banka tarihinden (dokundukça yenisi) =====
 // Kaynaklar: isbank.com.tr "O Günlerden Bugünlere", Patronlar Dünyası (100. yıl dosyası), Sözcü, Wikipedia, Küre Ansiklopedi
-(function () { const F = ["Türkiye'ye ilk kumbaraları 1928'de İş Bankası getirdi.", "\"Bankamatik\" adı, İş Bankası'nın 1982'de sunduğu ilk ATM'lerden gelir.", "İş Bankası 26 Ağustos 1924'te 2 şube ve 37 çalışanla kuruldu.", "1932'de yurt dışında şube açan ilk Türk bankası oldu.", "İşCep 2007'den beri cebinde."]; let i = 0; const t = setInterval(() => { const el = document.getElementById("kbFact"); if (!el) return clearInterval(t); el.style.opacity = 0; setTimeout(() => { el.textContent = F[++i % F.length]; el.style.opacity = 1; }, 300); }, 2200); })();
 const TARIH = [
   ["26 Ağustos 1924", "İş Bankası, Atatürk'ün direktifiyle Ankara'da kuruldu. Yola 2 şube, 37 çalışan ve 1 milyon lira sermayeyle çıktı.", "08-26"],
   ["9 Eylül 1924", "Banka, Ankara İstasyon Caddesi'ndeki ilk binasında yaklaşık 150 davetlinin katıldığı bir törenle açıldı.", "09-09"],
