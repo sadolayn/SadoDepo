@@ -1,0 +1,36 @@
+name: Görsel aday (geçici)
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  ara:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Commons'tan aday çek
+        run: |
+          mkdir -p tmp_ata
+          python3 - <<'PY'
+          import json, urllib.request, urllib.parse
+          UA={"User-Agent":"sadolayn-site/1.0 (github.com/sadolayn/SadoDepo)"}
+          def get(u):
+              return json.load(urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=60))
+          out=[]
+          for q in ["Atatürk profile","Mustafa Kemal Atatürk portrait 1930s","Atatürk silhouette","Ataturk1930s"]:
+              u="https://commons.wikimedia.org/w/api.php?"+urllib.parse.urlencode({"action":"query","generator":"search","gsrsearch":q,"gsrnamespace":6,"gsrlimit":8,"prop":"imageinfo","iiprop":"url|size|extmetadata","iiurlwidth":500,"format":"json"})
+              for p in (get(u).get("query",{}).get("pages",{}) or {}).values():
+                  ii=p["imageinfo"][0]; m=ii.get("extmetadata",{})
+                  out.append({"t":p["title"],"thumb":ii.get("thumburl"),"url":ii["url"],"w":ii["width"],"h":ii["height"],"lic":m.get("LicenseShortName",{}).get("value"),"artist":m.get("Artist",{}).get("value","")[:80],"date":m.get("DateTimeOriginal",{}).get("value","")[:40]})
+          seen=set(); res=[]
+          for o in out:
+              if o["t"] in seen or not o["thumb"]: continue
+              seen.add(o["t"]); res.append(o)
+          for i,o in enumerate(res[:24]):
+              try:
+                  data=urllib.request.urlopen(urllib.request.Request(o["thumb"],headers=UA),timeout=60).read()
+                  open(f"tmp_ata/{i:02d}.jpg","wb").write(data); o["file"]=f"{i:02d}.jpg"
+              except Exception as e: o["err"]=str(e)
+          json.dump(res[:24],open("tmp_ata/liste.json","w"),ensure_ascii=False,indent=1)
+          PY
+          git config user.name "sadolayn-bot"; git config user.email "actions@users.noreply.github.com"
+          git checkout -b gorsel-aday && git add tmp_ata && git commit -qm "aday görseller" && git push -qf origin gorsel-aday
