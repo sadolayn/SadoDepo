@@ -44,6 +44,7 @@
   .btn { padding: 13px 28px; border-radius: 12px; background: var(--accent); border: none; color: #000; font-size: 17px; font-weight: 800; cursor: pointer; }
   .tip { text-align: center; font-size: 12px; color: var(--muted); margin-top: 6px; }
 </style>
+<script src="rapor.js"></script>
 </head>
 <body>
 <header>
@@ -416,6 +417,7 @@ function start() {
 function gameOver() {
   st.over = true;
   setEngine(false);
+  window.Rapor && Rapor.oyun("pilot", false);
   if (st.score > best) { best = st.score; try { localStorage.setItem("pilotBest", best); } catch (e) {} }
   showBox(`<h2>Oyun bitti</h2><p>Puan: <b>${st.score}</b><br>En iyi: <b>${best}</b></p><button class="btn" id="go">Tekrar uç</button>`);
 }

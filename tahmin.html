@@ -143,6 +143,7 @@
     75% { transform: translateX(6px); }
   }
 </style>
+<script src="rapor.js"></script>
 </head>
 <body>
 <main class="card">
@@ -255,6 +256,7 @@
       if (!best || used < best) best = used;
       save();
       setMsg(`🎉 Bildin! ${used}. denemede`, "win");
+      window.Rapor && Rapor.oyun("tahmin", true);
       end();
     } else if (n < secret) {
       addChip(n, "up", "↑");
@@ -268,6 +270,7 @@
 
     if (!over && left === 0) {
       setMsg(`😢 Hakkın bitti! Sayı ${secret} idi`, "lose");
+      window.Rapor && Rapor.oyun("tahmin", false);
       end();
     }
 

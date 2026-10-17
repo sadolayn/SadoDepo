@@ -186,6 +186,7 @@
   .gr span { font-size: 13px; font-weight: 700; white-space: nowrap; } .gr .p { color: var(--ok); } .gr .m { color: var(--red); } .gr .z { color: var(--muted); }
   .gr.win b { color: var(--accent); }
 </style>
+<script src="rapor.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -406,6 +407,7 @@ $("tabs").addEventListener("click", (e) => {
   document.querySelectorAll("#tabs button").forEach((x) => x.classList.toggle("on", x === b));
   document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("on", p.id === b.dataset.t));
   try { localStorage.setItem("hesapTab", b.dataset.t); } catch (e) {}
+  window.Rapor && Rapor.bolum(b.dataset.t);
   if (b.dataset.t === "cetvel") drawRuler();
   if (b.dataset.t === "calc") setTimeout(setSH, 0);
   if (b.dataset.t !== "mesafe" && typeof camStop === "function" && mStream) camStop();
@@ -975,7 +977,7 @@ document.addEventListener("keydown", (e) => {
   else if (e.key === "Backspace") { $("bmDel").click(); e.preventDefault(); }
   else if (e.key === "Enter") { bmSend(); e.preventDefault(); }
 });
-function bmEnd(t, s) { BM.over = true; $("bmEnd").hidden = false; $("bmEndT").textContent = t; $("bmEndS").innerHTML = s; $("bmPad").hidden = true; bmPadRender(); }
+function bmEnd(t, s) { BM.over = true; window.Rapor && Rapor.oyun("bulmaca", /Kazandın/.test(t)); $("bmEnd").hidden = false; $("bmEndT").textContent = t; $("bmEndS").innerHTML = s; $("bmPad").hidden = true; bmPadRender(); }
 $("bmLen").addEventListener("click", (e) => { const b = e.target.closest("button[data-n]"); if (!b) return; BM.n = +b.dataset.n; $("bmLen").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); $("bmMine").maxLength = BM.n; $("bmMine").placeholder = BM.n === 4 ? "ör. 4271" : "ör. 42715"; });
 $("bmEye").onclick = () => { const i = $("bmMine"); i.style.webkitTextSecurity = i.style.webkitTextSecurity === "none" ? "disc" : "none"; };
 $("bmRand").onclick = () => { $("bmMine").value = randNum(BM.n); $("bmErr").textContent = ""; };

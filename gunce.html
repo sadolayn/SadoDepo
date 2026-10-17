@@ -22,41 +22,102 @@
 <meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
 <style>
   :root {
-    --bg: #000000;
-    --card: #0d0d0d;
-    --field: #161616;
-    --ink: #f2f2f2;
-    --muted: #8a8a8a;
+    --bg: #07080b;
+    --card: #111318;
+    --card2: #171a21;
+    --field: #1c2029;
+    --ink: #f2f3f6;
+    --muted: #8b91a0;
     --accent: #e0a24f;
-    --line: #262626;
+    --accent2: #f3c27c;
+    --line: #252a34;
     --ok: #3fc283;
     --mid: #e8b52b;
     --low: #ef6a4c;
-    --blue: #2a3fe0;
+    --plan: #8ea2ff;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 12px 14px 24px; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 0 14px 24px; }
   .wrap { max-width: 480px; margin: 0 auto; }
-  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
-  header h1 { margin: 0; font-size: 20px; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 12px; }
-  .mhead { display: flex; align-items: center; justify-content: space-between; }
-  .mhead button { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 20px; cursor: pointer; }
-  .mhead b { font-size: 18px; }
-  .hero { background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%); border-color: #3a50f0; }
+  .stick { position: sticky; top: 0; z-index: 30; background: var(--bg); margin: 0 -14px 12px; padding: 10px 14px 8px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
+  .stick.stuck { border-bottom-color: #1d2028; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  header h1 { margin: 0; font-size: 19px; flex: 1; text-align: center; }
+  .home { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: 0 0 44px; border-radius: 14px; background: var(--field); border: 1px solid var(--accent); font-size: 21px; text-decoration: none; }
+  .tbtn { flex: none; height: 44px; padding: 0 12px; border-radius: 14px; border: 0; background: var(--accent); color: #1a1205; font-weight: 800; font-size: 14px; cursor: pointer; }
+  .qnav { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+  .qnav button { width: 36px; height: 36px; border-radius: 11px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 19px; cursor: pointer; }
+  .qnav b { font-size: 15px; }
+  .qnav small { display: block; font-size: 11.5px; color: var(--muted); text-align: center; }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px; margin-bottom: 12px; }
+  h3 { margin: 0 0 10px; font-size: 15px; display: flex; align-items: center; gap: 6px; }
+  h3 .r { margin-left: auto; font-size: 12px; font-weight: 500; color: var(--muted); }
+  .note { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ---------- Rapor (hero) ---------- */
+  .hero { background: radial-gradient(120% 90% at 0% 0%, #2a2f6b 0%, #161a3d 45%, #0f1126 100%); border-color: #333a7a; }
   .hero .row { display: flex; align-items: center; gap: 14px; }
-  .ring { width: 86px; height: 86px; flex: none; }
-  .hero .txt { font-size: 14px; color: #c9d0ea; line-height: 1.6; }
-  .hero .txt b { color: #fff; font-size: 16px; }
+  .ring { width: 104px; height: 104px; flex: none; }
+  .hero .big { font-size: 13px; color: #c3c8e8; line-height: 1.55; }
+  .hero .big b { color: #fff; }
+  .hero .st { display: inline-block; margin-bottom: 4px; padding: 3px 9px; border-radius: 99px; font-size: 12px; font-weight: 800; }
+  .st.ok { background: rgba(63,194,131,.18); color: #6ee0a6; }
+  .st.mid { background: rgba(232,181,43,.18); color: #f2cd61; }
+  .st.low { background: rgba(239,106,76,.2); color: #ff9479; }
+  .tp { margin: 12px 0 2px; }
+  .tp .l { display: flex; justify-content: space-between; font-size: 11.5px; color: #aab0d6; margin-bottom: 3px; }
+  .tp .l b { color: #fff; }
+  .tp .b { height: 9px; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; margin-bottom: 7px; }
+  .tp .b i { display: block; height: 100%; border-radius: 99px; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .tile { background: rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.07); border-radius: 13px; padding: 9px 10px 8px; cursor: pointer; }
+  .tile .n { font-size: 12px; color: #c3c8e8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tile .v { font-size: 18px; font-weight: 800; margin: 2px 0 5px; }
+  .tile .v small { font-size: 12px; font-weight: 600; color: #9aa0c8; }
+  .tile .v em { float: right; font-style: normal; font-size: 12px; font-weight: 800; padding-top: 4px; }
+  .mini { position: relative; height: 6px; border-radius: 99px; background: rgba(255,255,255,.1); }
+  .mini i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 99px; }
+  .mini u { position: absolute; top: -3px; width: 2px; height: 12px; background: var(--plan); border-radius: 1px; }
+  .tile .s { font-size: 11px; color: #9aa0c8; margin-top: 5px; }
+  .legend { font-size: 11px; color: #9aa0c8; margin-top: 8px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
+
+  /* Onboarding */
+  .steps { display: grid; gap: 8px; margin: 12px 0; }
+  .step { display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,.25); border-radius: 12px; padding: 10px; font-size: 13.5px; color: #d5d9f0; }
+  .step b.n { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #1a1205; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+  .cta { display: block; width: 100%; padding: 14px; border-radius: 14px; border: 0; background: linear-gradient(180deg, #f3c27c, #e0a24f); color: #1a1205; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 6px 18px rgba(224,162,79,.25); }
+
+  /* ---------- Rehber / motivasyon ---------- */
+  .coach { background: linear-gradient(160deg, #1d1710 0%, #111318 60%); border-color: #4a3a20; }
+  .msg { font-size: 15px; line-height: 1.5; margin: 0 0 12px; }
+  .msg b { color: var(--accent2); }
+  .wk { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+  .wk div { background: rgba(0,0,0,.3); border-radius: 12px; padding: 8px 4px; text-align: center; }
+  .wk b { display: block; font-size: 20px; }
+  .wk span { font-size: 11px; color: var(--muted); }
+  .todo { list-style: none; margin: 0; padding: 0; }
+  .todo li { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid rgba(255,255,255,.06); font-size: 14px; }
+  .todo li:first-child { border-top: 0; }
+  .todo .ic { width: 26px; text-align: center; font-size: 19px; }
+  .todo .tx { flex: 1; min-width: 0; }
+  .todo .tx small { display: block; font-size: 11.5px; color: var(--muted); }
+  .todo .pill { flex: none; padding: 5px 10px; border-radius: 99px; font-weight: 800; font-size: 13px; background: var(--field); }
+  .todo .pill.ok { background: rgba(63,194,131,.16); color: var(--ok); }
+  .todo .pill.go { background: rgba(224,162,79,.16); color: var(--accent2); }
+  .ics { display: block; width: 100%; margin-top: 10px; padding: 10px; border-radius: 12px; border: 1px dashed #5a4a2c; background: none; color: var(--accent2); font-size: 13px; font-weight: 600; cursor: pointer; }
+
+  /* ---------- Günlük işaretleme ---------- */
   .mchips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
-  .mchips button { padding: 8px 4px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 13px; font-weight: 600; cursor: pointer; }
+  .mchips button { padding: 7px 4px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 13px; font-weight: 600; cursor: pointer; }
   .mchips button small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
   .mchips button.sel { background: var(--accent); border-color: var(--accent); color: #000; }
   .mchips button.sel small { color: #000; }
   .days { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 6px; scrollbar-width: none; }
   .days::-webkit-scrollbar { display: none; }
-  .days button { flex: none; width: 46px; padding: 6px 0; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); cursor: pointer; text-align: center; }
+  .days button { flex: none; width: 44px; padding: 6px 0; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); cursor: pointer; text-align: center; }
   .days button small { display: block; font-size: 10px; color: var(--muted); }
   .days button b { font-size: 16px; }
   .days button.off { opacity: .45; }
@@ -64,94 +125,107 @@
   .days button.sel small { color: #000; }
   .days button.has::after { content: ""; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--ok); margin: 2px auto 0; }
   .days button.sel.has::after { background: #000; }
-  .dayinfo { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .dayinfo { font-size: 13px; color: var(--muted); margin: 4px 0 2px; }
   .dayinfo b { color: var(--accent); }
-
-  .prod { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; }
-  .prod .top { display: flex; align-items: center; gap: 10px; }
-  .prod .ic { font-size: 24px; width: 30px; text-align: center; }
+  .prod { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid var(--line); }
+  .prod:first-child { border-top: 0; }
+  .prod .ic { font-size: 23px; width: 30px; text-align: center; }
   .prod .nm { flex: 1; min-width: 0; }
   .prod .nm b { display: block; font-size: 15px; }
   .prod .nm span { font-size: 12px; color: var(--muted); }
+  .prod .nm span i { font-style: normal; color: var(--accent2); }
   .cnt { display: flex; align-items: center; gap: 6px; }
   .cnt button { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 22px; font-weight: 700; cursor: pointer; }
   .cnt button.plus { background: var(--accent); border-color: var(--accent); color: #000; }
   .cnt button:active { transform: scale(.94); }
-  .cnt .v { min-width: 30px; text-align: center; font-size: 20px; font-weight: 800; }
-  .bar { height: 8px; border-radius: 99px; background: #222; margin: 10px 0 6px; overflow: hidden; }
-  .bar i { display: block; height: 100%; border-radius: 99px; transition: width .25s; }
-  .meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
-  .meta b { color: var(--ink); }
-  .amt { white-space: nowrap; padding: 11px 12px; border-radius: 12px; background: var(--accent); color: #000; border: none; font-weight: 800; font-size: 14px; cursor: pointer; }
-  .amt:active { transform: scale(.95); }
-  .cnt button.amt { width: auto; height: auto; min-width: 84px; font-size: 14px; background: var(--accent); border: none; color: #000; padding: 11px 12px; }
-  .tgt { background: none; border: 1px dashed #444; color: var(--accent); border-radius: 8px; padding: 2px 8px; font-size: 12px; cursor: pointer; }
+  .cnt .v { min-width: 28px; text-align: center; font-size: 20px; font-weight: 800; }
 
   .heat { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .heat .h { font-size: 10px; color: var(--muted); text-align: center; }
   .heat .d { aspect-ratio: 1; border-radius: 8px; background: var(--field); display: flex; align-items: center; justify-content: center; font-size: 12px; position: relative; cursor: pointer; }
-  .heat .d.off { background: #0a0a0a; color: #555; }
+  .heat .d.off { background: #0c0d11; color: #555; }
   .heat .d.td { outline: 2px solid var(--accent); }
   .heat .d small { position: absolute; bottom: 2px; right: 4px; font-size: 9px; font-weight: 700; }
 
-  h3 { margin: 0 0 10px; font-size: 15px; }
+  /* ---------- Olasılık raporu ---------- */
+  .prob .sum { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+  .gauge { width: 120px; flex: none; }
+  .prob .sum .t { font-size: 13px; color: var(--muted); line-height: 1.55; }
+  .prob .sum .t b { color: var(--ink); }
+  .pr { padding: 10px 0; border-top: 1px solid var(--line); }
+  .pr .h { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+  .pr .h b { flex: 1; min-width: 0; }
+  .pr .h em { font-style: normal; font-weight: 800; font-size: 13px; padding: 3px 9px; border-radius: 99px; }
+  .pf { position: relative; height: 10px; border-radius: 99px; background: var(--field); margin: 8px 0 5px; overflow: hidden; }
+  .pf i { position: absolute; left: 0; top: 0; bottom: 0; }
+  .pf i.done { border-radius: 99px 0 0 99px; }
+  .pf i.fc { opacity: .35; }
+  .pf u { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; }
+  .pr .d { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .pr .d b { color: var(--ink); }
+  .tip { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--card2); font-size: 13px; line-height: 1.5; }
+  .tip b { color: var(--accent2); }
+
   .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .btn { padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; }
   .btn.pri { background: var(--accent); border-color: var(--accent); color: #000; }
   .btn.danger { color: var(--low); border-color: rgba(239,106,76,.4); }
-  .note { font-size: 12px; color: var(--muted); line-height: 1.5; }
   .warn { border-left: 3px solid var(--low); padding-left: 10px; }
-  .edit li { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); list-style: none; }
-  .edit li:first-child { border-top: none; }
-  .edit ul { margin: 0 0 10px; padding: 0; }
-  .edit input { flex: 1; min-width: 0; padding: 10px; font-size: 15px; background: var(--field); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; }
-  .edit .x { width: 38px; height: 38px; border-radius: 10px; border: 1px solid rgba(239,106,76,.4); background: none; color: var(--low); font-size: 18px; cursor: pointer; }
-  .addrow { display: flex; gap: 8px; }
-  .addrow input { flex: 1; }
-  .hide { display: none; }
-  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #222; color: #fff; padding: 10px 16px; border-radius: 99px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 20; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #222; color: #fff; padding: 10px 16px; border-radius: 99px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 60; max-width: 90vw; text-align: center; }
   .toast.show { opacity: 1; }
-  .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
-  .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
-  .stick > :last-child { margin-bottom: 0; }
+
+  /* ---------- Hedef sayfası (alt pencere) ---------- */
+  .sheet { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; }
+  .sheet .in { width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-bottom: 0; border-radius: 22px 22px 0 0; padding: 16px 16px 20px; animation: up .22s ease-out; }
+  @keyframes up { from { transform: translateY(40px); opacity: 0; } }
+  .sheet h2 { margin: 0 0 2px; font-size: 19px; }
+  .sheet .sub { font-size: 12.5px; color: var(--muted); margin: 0 0 12px; }
+  .tr { display: grid; grid-template-columns: 28px 1fr 110px 30px; gap: 8px; align-items: center; padding: 9px 0; border-top: 1px solid var(--line); }
+  .tr .ic { font-size: 21px; text-align: center; }
+  .tr input { width: 100%; min-width: 0; padding: 10px; font-size: 15px; background: var(--field); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; }
+  .tr input.num { text-align: center; font-weight: 800; font-size: 17px; border-color: #5a4a2c; }
+  .tr input.num:focus { outline: 2px solid var(--accent); }
+  .tr input.num::-webkit-inner-spin-button, .tr input.num::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  .tr input.num { -moz-appearance: textfield; }
+  .tr .x { width: 30px; height: 30px; border-radius: 9px; border: 1px solid rgba(239,106,76,.35); background: none; color: var(--low); font-size: 14px; cursor: pointer; }
+  .tr .hint { grid-column: 2 / 4; font-size: 11.5px; color: var(--muted); margin-top: -4px; }
+  .thead { display: grid; grid-template-columns: 28px 1fr 110px 30px; gap: 8px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .thead span:nth-child(3) { text-align: center; color: var(--accent2); }
+  .addrow { display: flex; gap: 8px; margin: 10px 0 14px; }
+  .addrow input { flex: 1; min-width: 0; padding: 10px; font-size: 15px; background: var(--field); color: var(--ink); border: 1px dashed var(--line); border-radius: 10px; }
+  .sheet .foot { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; position: sticky; bottom: -20px; background: var(--card); padding: 10px 0 0; }
 </style>
+<script src="rapor.js"></script>
 </head>
 <body>
 <div class="wrap">
   <div class="stick">
-  <header>
-    <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Anasayfa" aria-label="Anasayfa">🏠</a>
-    <h1>📒 Günce Tutma</h1>
-    <span style="width:52px"></span>
-  </header>
-
-  <div class="card">
-    <div class="mhead">
+    <header>
+      <a class="home" href="index.html" title="Anasayfa" aria-label="Anasayfa">🏠</a>
+      <h1>📒 Günce</h1>
+      <button class="tbtn" id="openT">🎯 Hedefler</button>
+    </header>
+    <div class="qnav">
       <button id="prevM" aria-label="Önceki çeyrek">‹</button>
-      <div style="text-align:center"><b id="mTitle"></b><div id="mSub" style="font-size:12px;color:var(--muted)"></div></div>
+      <div><b id="mTitle"></b><small id="mSub"></small></div>
       <button id="nextM" aria-label="Sonraki çeyrek">›</button>
     </div>
   </div>
-  </div>
 
-  <div class="card hero">
-    <div class="row">
-      <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
-        <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="10"/>
-        <circle id="ringArc" cx="50" cy="50" r="42" fill="none" stroke="#e0a24f" stroke-width="10" stroke-linecap="round" transform="rotate(-90 50 50)" stroke-dasharray="0 264"/>
-        <text id="ringTxt" x="50" y="56" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">0%</text>
-      </svg>
-      <div class="txt" id="heroTxt"></div>
-    </div>
-  </div>
+  <!-- 1. Sonuç raporu -->
+  <div class="card hero" id="hero"></div>
 
-  <div class="card">
+  <!-- 2. Rehber: bu hafta / bugün ne yapmalıyım -->
+  <div class="card coach" id="coach"></div>
+
+  <!-- 3. Günlük işaretleme -->
+  <div class="card" id="mark">
+    <h3>✍️ Günlük işaretleme <span class="r">her satış için +</span></h3>
     <div class="mchips" id="mchips"></div>
     <div class="days" id="days"></div>
     <div class="dayinfo" id="dayInfo"></div>
+    <div id="prods"></div>
   </div>
-
-  <div id="prods"></div>
 
   <div class="card">
     <h3 id="heatTitle">Ayın takvimi</h3>
@@ -159,25 +233,34 @@
     <p class="note" style="margin:8px 0 0">Kutudaki küçük sayı o gün işlenen toplam adet. Bir güne dokununca o günü düzenlersin.</p>
   </div>
 
-  <div class="card edit">
-    <h3>Ürünleri düzenle</h3>
-    <ul id="editList"></ul>
-    <div class="addrow"><input id="newName" placeholder="Yeni kalem (ör. BES, POS)" maxlength="30"><button class="btn pri" id="addBtn" style="padding:10px 14px">Ekle</button></div>
-  </div>
+  <!-- 4. Olasılık raporu -->
+  <div class="card prob" id="prob"></div>
 
   <div class="card">
-    <h3>Yedek ve dışa aktarma</h3>
+    <h3>💾 Yedek ve Excel</h3>
     <div class="btns">
+      <button class="btn pri" id="expCsv" style="grid-column:1/3">📊 Çeyreği Excel'e aktar</button>
       <button class="btn" id="expJson">⬇️ Yedeği indir</button>
       <button class="btn" id="impJson">⬆️ Yedekten yükle</button>
-      <button class="btn" id="expCsv">📊 Çeyreği Excel'e aktar</button>
-      <button class="btn danger" id="resetM">Çeyreği sıfırla</button>
+      <button class="btn danger" id="resetM" style="grid-column:1/3">Bu çeyreğin günlük kayıtlarını sıfırla</button>
     </div>
-    <input type="file" id="fileIn" accept="application/json,.json" class="hide">
-    <p class="note" style="margin:10px 0 0">Veriler yalnızca bu telefonda, bu tarayıcıda saklanır; kimse göremez. Tarayıcı verilerini silersen ya da başka cihaza geçersen kaybolmaması için ara ara yedek indir.</p>
+    <input type="file" id="fileIn" accept="application/json,.json" hidden>
+    <p class="note" style="margin:10px 0 0">Veriler yalnızca bu telefonda, bu tarayıcıda saklanır; kimse göremez, hiçbir sisteme gönderilmez. Tarayıcı verilerini silersen ya da cihaz değiştirirsen kaybolmaması için ara ara yedek indir.</p>
   </div>
 
-  <p class="note warn">🔒 Buraya <b>müşteri bilgisi</b> (ad, TCKN, hesap no vb.) girme; yalnızca adetleri işle.</p>
+  <p class="note warn">🔒 Buraya <b>müşteri bilgisi</b> (ad, TCKN, hesap no vb.) girme; yalnızca adetleri işle. Hesaplar senin girdiğin hedef ve adetlere göre yapılan tahminlerdir.</p>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="in">
+    <h2>🎯 Çeyrek hedeflerim</h2>
+    <p class="sub" id="shSub"></p>
+    <div class="thead"><span></span><span>Ürün / kalem</span><span>Çeyrek hedefi</span><span></span></div>
+    <div id="tRows"></div>
+    <div class="addrow"><input id="newName" placeholder="+ Yeni kalem ekle (ör. BES, POS)" maxlength="30"><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
+    <p class="note" style="margin:0 0 6px">İpucu: Hedefin aylık verildiyse 3 ile çarpıp yaz. Hedefi olmayan kalemi boş bırak; yine işaretleyebilirsin ama rapora girmez.</p>
+    <div class="foot"><button class="btn" id="tCancel">Vazgeç</button><button class="btn pri" id="tSave">Kaydet</button></div>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -198,30 +281,22 @@ const DEFAULT_PRODUCTS = [
   { id: "skk", name: "Şirket kredi kartı", icon: "🏢", type: "adet" },
   { id: "cek", name: "Çek karnesi", icon: "📘", type: "adet" },
 ];
-const TYPE_AD = { adet: "Adet", tutar: "Tutar (toplanan)", bakiye: "Ortalama bakiye" };
 const ICONS = ["📌", "📈", "🛡️", "💼", "📱", "🏠", "🚗", "💰", "🧩", "⭐"];
 let D;
 function load() {
   try { D = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { D = null; }
   if (!D || !Array.isArray(D.products)) {
     D = { products: DEFAULT_PRODUCTS.slice(), targets: {}, days: {} };
-    // Eski aylık sürümden günlük kayıtları taşı
     try {
       const old = JSON.parse(localStorage.getItem("gunce_v1") || "null");
-      if (old && old.months) {
-        D.products = old.products || D.products;
-        for (const m of Object.values(old.months)) Object.assign(D.days, m.days || {});
-      }
+      if (old && old.months) { D.products = old.products || D.products; for (const m of Object.values(old.months)) Object.assign(D.days, m.days || {}); }
     } catch (e) {}
   }
 }
 function migrate() {
-  D.bal ||= {};
-  D.targets ||= {};
-  D.days ||= {};
+  D.bal ||= {}; D.targets ||= {}; D.days ||= {};
   for (const p of D.products) p.type ||= "adet";
   D.v3 = true;
-  // Yalnızca adet bazlı kalemler: tutar/bakiye (SFO, KFO, karlılık) kalemlerini ve verilerini kaldır
   const drop = D.products.filter((p) => p.type !== "adet").map((p) => p.id);
   if (drop.length) {
     D.products = D.products.filter((p) => p.type === "adet");
@@ -238,270 +313,358 @@ const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDat
 const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 const DOW = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
 const today = new Date(); today.setHours(12, 0, 0, 0);
-// Çeyrek: yıl + q (0..3)
+const TK = keyOf(today);
 let qy = today.getFullYear(), qn = Math.floor(today.getMonth() / 3);
-let viewMonth = today.getMonth();             // çeyrek içinde gösterilen ay
+let viewMonth = today.getMonth();
 let selDay = new Date(today);
 const qKey = () => `${qy}-Q${qn + 1}`;
 const qMonths = () => [qn * 3, qn * 3 + 1, qn * 3 + 2];
-const inQuarter = (d) => d.getFullYear() === qy && Math.floor(d.getMonth() / 3) === qn;
-
+const qName = () => `${qy} · ${qn + 1}. çeyrek`;
+const qRange = () => `${MONTHS[qn * 3]} – ${MONTHS[qn * 3 + 2]}`;
+const qEnd = () => new Date(qy, qn * 3 + 3, 0, 12);
 const isWork = (d) => d.getDay() !== 0 && d.getDay() !== 6 && !HOLIDAYS.has(keyOf(d));
 const workVal = (d) => (isWork(d) ? (HALF.has(keyOf(d)) ? 0.5 : 1) : 0);
+const fmt = (n) => (Math.round(n * 10) / 10).toLocaleString("tr-TR");
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 function targets() {
   if (!D.targets[qKey()]) {
-    // Hedefleri bir önceki çeyrekten taşı
     const py = qn === 0 ? qy - 1 : qy, pq = qn === 0 ? 4 : qn;
     const prev = D.targets[`${py}-Q${pq}`];
-    if (prev) D.targets[qKey()] = { ...prev };
+    if (prev && Object.keys(prev).length) D.targets[qKey()] = { ...prev, _kopya: 1 };
   }
   return D.targets[qKey()] || {};
 }
+const tgtOf = (pid) => Number(targets()[pid]) || 0;
 const dayData = (d) => (D.days[keyOf(d)] ||= {});
-function eachQuarterDay(fn) {
-  for (const m of qMonths()) {
-    const n = new Date(qy, m + 1, 0).getDate();
-    for (let d = 1; d <= n; d++) fn(new Date(qy, m, d, 12));
-  }
-}
+function eachQuarterDay(fn) { for (const m of qMonths()) { const n = new Date(qy, m + 1, 0).getDate(); for (let d = 1; d <= n; d++) fn(new Date(qy, m, d, 12)); } }
 function quarterTotal(pid) { let s = 0; eachQuarterDay((d) => { const v = D.days[keyOf(d)]; if (v) s += v[pid] || 0; }); return s; }
 function monthTotal(pid, m) { let s = 0; const n = new Date(qy, m + 1, 0).getDate(); for (let d = 1; d <= n; d++) { const v = D.days[keyOf(new Date(qy, m, d, 12))]; if (v) s += v[pid] || 0; } return s; }
-function workDaysLeft() { let n = 0; eachQuarterDay((d) => { if (d >= today) n += workVal(d); }); return n; }
-function workDaysTotal() { let n = 0; eachQuarterDay((d) => (n += workVal(d))); return n; }
-const fmt = (n) => (Math.round(n * 10) / 10).toLocaleString("tr-TR");
-const fmtMn = (n) => `${(Math.round(n * 100) / 100).toLocaleString("tr-TR")} mn`;
-const ptype = (pid) => (D.products.find((x) => x.id === pid) || {}).type || "adet";
-const qStart = () => new Date(qy, qn * 3, 1, 12);
-const qEnd = () => new Date(qy, qn * 3 + 3, 0, 12);
-function parseMn(v) {
-  // "48,5" → 48.5 (milyon TL); "1.250,75" → 1250.75
-  let t = String(v).trim().toLowerCase().replace(/milyon|mn|tl/g, "").trim();
-  if (t.includes(",")) t = t.replace(/\./g, "").replace(",", ".");
-  const n = Number(t);
-  return isFinite(n) ? n : NaN;
+const dayTotal = (k, pid) => (D.days[k] && D.days[k][pid]) || 0;
+
+// ================= Hesap motoru =================
+// Faz: "gecmis" (çeyrek bitti), "gelecek" (başlamadı), "simdi"
+function phase() { if (qEnd() < today) return "gecmis"; if (new Date(qy, qn * 3, 1, 12) > today) return "gelecek"; return "simdi"; }
+// Zaman: tamamlanan iş günü (bugün hariç), bugünün değeri, kalan (bugün dahil)
+function timeInfo() {
+  let total = 0, past = 0, left = 0;
+  eachQuarterDay((d) => { const w = workVal(d); total += w; if (keyOf(d) < TK) past += w; else left += w; });
+  // Hafta: bugünün haftası (Pzt–Paz), çeyrek içinde
+  const mon = new Date(today); mon.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+  let wkLeft = 0, wkDays = [];
+  for (let i = 0; i < 7; i++) { const d = new Date(mon); d.setDate(mon.getDate() + i); if (Math.floor(d.getMonth() / 3) === qn && d.getFullYear() === qy) { wkDays.push(d); if (keyOf(d) >= TK) wkLeft += workVal(d); } }
+  // Sonraki iş günü (bugün iş günü değilse)
+  let next = new Date(today); while (!isWork(next) && next <= qEnd()) next.setDate(next.getDate() + 1);
+  return { total, past, left, wkLeft, wkDays, todayWork: workVal(today), next };
 }
-// Bakiye: belli bir günde geçerli bakiye (o güne kadarki son girilen değer)
-function balanceOn(pid, d) {
-  const h = D.bal[pid];
-  if (!h) return null;
-  const k = keyOf(d);
-  let bestK = null;
-  for (const kk of Object.keys(h)) if (kk <= k && (!bestK || kk > bestK)) bestK = kk;
-  return bestK ? h[bestK] : null;
-}
-// Çeyrek ortalaması (takvim günü), bugüne kadar
-function balanceStats(pid) {
-  const end = today < qEnd() ? today : qEnd();
-  let sum = 0, cnt = 0, missing = 0;
-  const totalDays = Math.round((qEnd() - qStart()) / 86400000) + 1;
-  if (today < qStart()) return { avg: null, sum: 0, cnt: 0, totalDays, remaining: totalDays, missing: 0, cur: balanceOn(pid, today) };
-  for (let d = new Date(qStart()); d <= end; d.setDate(d.getDate() + 1)) {
-    const b = balanceOn(pid, d);
-    if (b == null) { missing++; continue; }
-    sum += b; cnt++;
+// Normal dağılım kümülatifi
+function Phi(z) { const t = 1 / (1 + 0.2316419 * Math.abs(z)); const d = 0.3989423 * Math.exp(-z * z / 2); const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; }
+function stats(p) {
+  const T = timeInfo(), ph = phase();
+  const tgt = tgtOf(p.id), done = quarterTotal(p.id);
+  const todayDone = ph === "simdi" ? dayTotal(TK, p.id) : 0;
+  const before = done - todayDone;
+  // Plan çizgisi: geçen zamana göre bugüne kadar olması gereken
+  const elapsed = ph === "gecmis" ? T.total : ph === "gelecek" ? 0 : T.past + (todayDone ? T.todayWork : 0);
+  const timeFrac = T.total ? elapsed / T.total : 0;
+  const planNow = tgt * timeFrac;
+  const pct = tgt ? (done / tgt) * 100 : 0;
+  // Gereken tempo: kalan hedef / kalan iş günü (bugün dahil)
+  const rest = Math.max(0, tgt - before);
+  const perDay = ph === "simdi" && T.left > 0 ? rest / T.left : 0;
+  const todayNeed = ph === "simdi" && T.todayWork ? Math.max(0, Math.ceil(perDay * T.todayWork - 1e-9) - todayDone) : 0;
+  const weekNeed = ph === "simdi" ? Math.max(0, Math.min(tgt - done, Math.ceil(perDay * T.wkLeft - 1e-9) - todayDone)) : 0;
+  let weekDone = 0; T.wkDays.forEach((d) => (weekDone += dayTotal(keyOf(d), p.id)));
+  // Mevcut tempo ve tahmin
+  const series = [];
+  eachQuarterDay((d) => { const k = keyOf(d); if (workVal(d) && (k < TK || (k === TK && todayDone))) series.push(dayTotal(k, p.id) / workVal(d)); });
+  const mu = elapsed ? done / elapsed : 0;
+  const remDays = ph === "simdi" ? T.total - elapsed : 0;
+  const forecast = ph === "gelecek" ? 0 : done + mu * remDays;
+  let prob = null;
+  if (tgt) {
+    if (done >= tgt) prob = 1;
+    else if (ph === "gecmis" || remDays <= 0) prob = 0;
+    else if (ph === "simdi" && series.length) {
+      const m = series.reduce((a, b) => a + b, 0) / series.length;
+      const v = series.reduce((a, b) => a + (b - m) ** 2, 0) / Math.max(1, series.length - 1);
+      const sd = Math.max(Math.sqrt(v), Math.sqrt(Math.max(mu, 0.25)));
+      // Az veri varken tahmin belirsizliği büyür (√(1 + n/k))
+      const unc = Math.sqrt(1 + remDays / Math.max(1, series.length));
+      const z = (tgt - done - mu * remDays) / (sd * Math.sqrt(remDays) * unc);
+      prob = Math.min(0.99, Math.max(0.01, 1 - Phi(z)));
+    }
   }
-  const elapsed = Math.round((end - qStart()) / 86400000) + 1;
-  const remaining = totalDays - elapsed;
-  return { avg: cnt ? sum / cnt : null, sum, cnt, totalDays, remaining, missing, cur: balanceOn(pid, end) };
+  return { tgt, done, todayDone, weekDone, before, rest, perDay, todayNeed, weekNeed, planNow, gap: done - planNow, pct, mu, forecast, prob, few: series.length < 3, T, ph };
 }
-function progressOf(p) {
-  const tgt = Number(targets()[p.id]) || 0;
-  if (!tgt) return null;
-  if (p.type === "bakiye") { const st = balanceStats(p.id); return st.avg == null ? 0 : (st.avg / tgt) * 100; }
-  return (quarterTotal(p.id) / tgt) * 100;
+const col = (pct) => (pct >= 100 ? "var(--ok)" : pct >= 75 ? "var(--mid)" : "var(--low)");
+const probCol = (p) => (p >= 0.7 ? "var(--ok)" : p >= 0.4 ? "var(--mid)" : "var(--low)");
+const probTxt = (p) => (p >= 0.9 ? "Çok yüksek" : p >= 0.7 ? "Yüksek" : p >= 0.4 ? "Orta" : p >= 0.15 ? "Düşük" : "Çok düşük");
+const withTargets = () => D.products.filter((p) => tgtOf(p.id) > 0);
+function overall() {
+  const L = withTargets().map((p) => ({ p, s: stats(p) }));
+  const pct = L.length ? L.reduce((a, x) => a + Math.min(100, x.s.pct), 0) / L.length : 0;
+  const plan = L.length ? L.reduce((a, x) => a + Math.min(100, x.s.tgt ? (x.s.planNow / x.s.tgt) * 100 : 0), 0) / L.length : 0;
+  return { L, pct, plan };
 }
-function color(p) { return p >= 100 ? "var(--ok)" : p >= 60 ? "var(--mid)" : "var(--low)"; }
-const qName = () => `${qy} · ${qn + 1}. çeyrek`;
-const qRange = () => `${MONTHS[qn * 3]} – ${MONTHS[qn * 3 + 2]}`;
+// Gün bazlı değişen ama gün içinde sabit kalan seçim
+const pick = (arr) => arr[[...TK].reduce((a, c) => a + c.charCodeAt(0), 0) % arr.length];
 
 // ================= Çizim =================
 function render() {
   $("mTitle").textContent = qName();
   $("mSub").textContent = qRange();
-  renderHero(); renderChips(); renderDays(); renderProds(); renderHeat(); renderEdit();
+  renderHero(); renderCoach(); renderChips(); renderDays(); renderProds(); renderHeat(); renderProb();
 }
 function renderHero() {
-  const withT = D.products.filter((p) => Number(targets()[p.id]) > 0);
-  const pcts = withT.map((p) => Math.min(150, progressOf(p) || 0));
-  const pct = pcts.length ? Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length) : 0;
-  const hit = withT.filter((p) => (progressOf(p) || 0) >= 100).length;
-  const L = 2 * Math.PI * 42;
-  $("ringArc").setAttribute("stroke-dasharray", `${Math.min(1, pct / 100) * L} ${L}`);
-  $("ringArc").setAttribute("stroke", pct >= 100 ? "#3fc283" : "#e0a24f");
-  $("ringTxt").textContent = `%${pct}`;
-  const left = workDaysLeft(), tot = workDaysTotal();
-  $("heroTxt").innerHTML = withT.length
-    ? `Ortalama başarı <b>%${pct}</b><br>Hedefi tutan: <b>${hit}</b> / ${withT.length} kalem<br>İş günü: <b>${fmt(tot)}</b> · Kalan: <b>${fmt(left)}</b>`
-    : `İş günü: <b>${fmt(tot)}</b> · Kalan: <b>${fmt(left)}</b><br>Ürünlerin çeyrek hedeflerini gir 👇`;
+  const O = overall(), T = timeInfo(), ph = phase();
+  if (!O.L.length) {
+    $("hero").innerHTML = `
+      <span class="st mid">Başlayalım</span>
+      <div style="font-size:19px;font-weight:800;margin:4px 0 2px">${qName()} hedeflerin henüz yok</div>
+      <div class="big">Hedefini bir kez gir; her gün yaptığını işaretle. Gerisini biz hesaplarız.</div>
+      <div class="steps">
+        <div class="step"><b class="n">1</b><div><b>Hedeflerini gir</b> — her ürün için çeyrek hedefi (adet)</div></div>
+        <div class="step"><b class="n">2</b><div><b>Her gün işaretle</b> — sattıkça + tuşuna bas</div></div>
+        <div class="step"><b class="n">3</b><div><b>Rehberi izle</b> — bugün ve bu hafta kaç adet gerektiğini, hedefi tutma ihtimalini gör</div></div>
+      </div>
+      <button class="cta" id="heroT">🎯 Hedeflerimi gir</button>
+      <div class="note" style="color:#aab0d6;margin-top:8px">Çeyrekte <b style="color:#fff">${fmt(T.total)}</b> iş günü var${ph === "simdi" ? `, <b style="color:#fff">${fmt(T.left)}</b> tanesi kaldı` : ""}.</div>`;
+    $("heroT").onclick = openTargets;
+    return;
+  }
+  const pct = Math.round(O.pct), plan = Math.round(O.plan);
+  const diff = pct - plan;
+  const st = ph === "gelecek" ? ["mid", "Çeyrek başlamadı"] : pct >= 100 ? ["ok", "🏆 Tüm hedefler tamam"] : ph === "gecmis" ? [pct >= 90 ? "mid" : "low", "Çeyrek kapandı"] : diff >= 0 ? ["ok", "✓ Planın önündesin"] : diff >= -10 ? ["mid", "≈ Plana yakın"] : ["low", "↓ Planın gerisindesin"];
+  const R = 2 * Math.PI * 42;
+  const hit = O.L.filter((x) => x.s.pct >= 100).length;
+  const ahead = O.L.reduce((a, x) => a + x.s.gap, 0);
+  const tiles = O.L.map(({ p, s }) => {
+    const tp = Math.min(100, s.tgt ? (s.planNow / s.tgt) * 100 : 0);
+    const g = Math.round(s.gap);
+    const line = s.pct >= 100 ? "✓ Tamam" : ph !== "simdi" ? `${s.tgt - s.done} eksik` : g >= 0 ? `Planın ${g ? g + " önünde" : "üzerinde"}` : `Plana ${-g} adet geride`;
+    return `<div class="tile" data-go="${p.id}"><div class="n">${p.icon} ${esc(p.name)}</div>
+      <div class="v">${s.done}<small> / ${s.tgt}</small><em style="color:${col(s.pct)}">%${Math.round(s.pct)}</em></div>
+      <div class="mini"><i style="width:${Math.min(100, s.pct)}%;background:${col(s.pct)}"></i>${ph === "simdi" ? `<u style="left:calc(${tp}% - 1px)"></u>` : ""}</div>
+      <div class="s">${line}</div></div>`;
+  }).join("");
+  $("hero").innerHTML = `
+    <div class="row">
+      <svg class="ring" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="10"/>
+        ${ph === "simdi" ? `<circle cx="50" cy="50" r="42" fill="none" stroke="var(--plan)" stroke-opacity=".45" stroke-width="3" transform="rotate(-90 50 50)" stroke-dasharray="${(Math.min(100, plan) / 100) * R} ${R}"/>` : ""}
+        <circle cx="50" cy="50" r="42" fill="none" stroke="${pct >= 100 ? "#3fc283" : "#e0a24f"}" stroke-width="10" stroke-linecap="round" transform="rotate(-90 50 50)" stroke-dasharray="${(Math.min(100, pct) / 100) * R} ${R}"/>
+        <text x="50" y="52" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">%${pct}</text>
+        <text x="50" y="67" text-anchor="middle" font-size="9" fill="#aab0d6">gerçekleşme</text>
+      </svg>
+      <div class="big">
+        <span class="st ${st[0]}">${st[1]}</span><br>
+        Hedefi tutan: <b>${hit} / ${O.L.length}</b> kalem<br>
+        ${ph === "simdi" ? `Kalan: <b>${fmt(T.left)} iş günü</b><br>${Math.round(ahead) >= 0 ? `Plana göre <b>+${Math.round(ahead)}</b> adet` : `Plana yetişmek için <b>${-Math.round(ahead)}</b> adet`}` : ph === "gecmis" ? `Çeyrek <b>${fmt(T.total)}</b> iş günüydü` : `Çeyrekte <b>${fmt(T.total)}</b> iş günü var`}
+      </div>
+    </div>
+    ${ph === "simdi" ? `<div class="tp">
+      <div class="l"><span>⏳ Zaman</span><b>%${plan} geçti</b></div><div class="b"><i style="width:${plan}%;background:var(--plan)"></i></div>
+      <div class="l"><span>📈 Satış</span><b>%${pct} gerçekleşti</b></div><div class="b"><i style="width:${Math.min(100, pct)}%;background:${col(pct >= plan ? 100 : pct + 100 - plan)}"></i></div>
+    </div>` : ""}
+    <div class="tiles">${tiles}</div>
+    ${ph === "simdi" ? `<div class="legend"><span><i style="background:var(--accent)"></i>Gerçekleşen</span><span><i style="background:var(--plan)"></i>Bugün olman gereken yer</span></div>` : ""}
+    ${targets()._kopya ? `<div class="note" style="color:#f2cd61;margin-top:8px">Hedefler geçen çeyrekten aktarıldı. <u id="kopyaFix" style="cursor:pointer">Kontrol et</u></div>` : ""}`;
+  $("hero").querySelectorAll("[data-go]").forEach((t) => (t.onclick = () => { const el = document.querySelector(`#prods [data-p="${t.dataset.go}"]`); if (el) { el.scrollIntoView({ behavior: "smooth", block: "center" }); el.animate([{ background: "rgba(224,162,79,.25)" }, { background: "transparent" }], 1200); } }));
+  if ($("kopyaFix")) $("kopyaFix").onclick = openTargets;
+}
+function renderCoach() {
+  const O = overall(), T = timeInfo(), ph = phase();
+  const el = $("coach");
+  if (!O.L.length || ph !== "simdi") {
+    el.hidden = ph === "simdi" || !O.L.length;
+    if (!el.hidden) el.innerHTML = ph === "gecmis"
+      ? `<h3>📜 Çeyrek özeti</h3><p class="msg">${O.pct >= 100 ? "Bu çeyreği <b>tüm hedeflerle</b> kapattın. Tebrikler! 🎉" : `Bu çeyreği <b>%${Math.round(O.pct)}</b> ortalama gerçekleşmeyle kapattın. Yeni çeyrekte aynı tempoyu sürdürmek için hedefleri şimdiden gir.`}</p>`
+      : `<h3>🗓️ Çeyrek planı</h3><p class="msg">Bu çeyrekte <b>${fmt(T.total)}</b> iş günü var. Hedeflerine ulaşmak için ortalama: ${O.L.map(({ p, s }) => `${p.icon} <b>${fmt(s.tgt / T.total * 5)}</b>/hafta`).join(" · ")}</p>`;
+    return;
+  }
+  el.hidden = false;
+  const open = O.L.filter((x) => x.s.pct < 100);
+  const behind = open.filter((x) => x.s.gap < -0.5).sort((a, b) => a.s.gap / a.s.tgt - b.s.gap / b.s.tgt);
+  const wkTot = open.reduce((a, x) => a + x.s.weekNeed, 0), tdTot = open.reduce((a, x) => a + x.s.todayNeed, 0);
+  const wkDone = O.L.reduce((a, x) => a + x.s.weekDone, 0);
+  const left = fmt(T.left), lastWeek = T.left <= 5;
+  const list = (arr, k) => arr.filter((x) => x.s[k] > 0).slice(0, 3).map(({ p, s }) => `<b>${s[k]} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(", ").replace(/, ([^,]*)$/, " ve $1");
+  let msg;
+  if (!open.length) msg = pick(["Tüm hedeflerin tamam! 🏆 Kalan günler artık prim için çalışıyor.", "Çeyreği şimdiden kapattın 🎉 Fazlası, bir sonraki çeyreğe güzel bir başlangıç demek."]);
+  else if (lastWeek) msg = `🏁 <b>Son düzlük!</b> Çeyreğe ${left} iş günü kaldı. ${list(open, "weekNeed") ? `${list(open, "weekNeed")} ile bitiş çizgisini geçersin.` : ""} Her müşteri görüşmesi şimdi çok değerli.`;
+  else if (!behind.length) msg = pick([`Harika gidiyorsun! 💪 Çeyreğe <b>${left} iş günü</b> kaldı ve planın önündesin. Bu hafta ${list(open, "weekNeed") || "biraz daha"} yaparsan farkı koruyorsun.`, `Tempo çok iyi 👏 ${left} iş günü kaldı. Bu haftaki ${list(open, "weekNeed") || "küçük adımlar"} seni rahat bitirir.`]);
+  else if (O.pct >= O.plan - 15) msg = pick([`Çeyreğe <b>${left} iş günü</b> kaldı, başarabilirsin! Bu hafta ${list(open, "weekNeed")} yaparsan tekrar plana oturursun.`, `Az kaldı, yakındasın! ${left} iş günü var. Bu hafta ${list(open, "weekNeed")} — hepsi bu.`]);
+  else msg = pick([`Fark açılmış ama ${left} iş günü az değil. 🎯 Önceliğin <b>${esc(behind[0].p.name.toLocaleLowerCase("tr"))}</b>: bu hafta ${list(open, "weekNeed")} hedefle; her gün küçük bir adım.`, `Zor ama imkânsız değil 💡 Kalan ${left} iş gününde günde ${behind.slice(0, 2).map(({ p, s }) => `<b>${fmt(s.perDay)} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(" ve ")} yetiyor. Bugünden başla.`]);
+  const isToday = T.todayWork > 0;
+  const rows = O.L.map(({ p, s }) => {
+    if (s.pct >= 100) return `<li><span class="ic">${p.icon}</span><div class="tx">${esc(p.name)}<small>Hedef tamam (${s.done}/${s.tgt})</small></div><span class="pill ok">✓</span></li>`;
+    const t = isToday ? (s.todayNeed > 0 ? `Bugün ${s.todayNeed} daha` : `Bugünkü yeter ✓`) : `Sonraki iş günü ${Math.ceil(s.perDay - 1e-9)}`;
+    return `<li><span class="ic">${p.icon}</span><div class="tx">${esc(p.name)}<small>Bu hafta ${s.weekNeed} daha · günde ${fmt(s.perDay)} · kalan ${s.tgt - s.done}</small></div><span class="pill ${isToday && !s.todayNeed ? "ok" : "go"}">${t}</span></li>`;
+  }).join("");
+  el.innerHTML = `
+    <h3>🧭 Rehberin <span class="r">${today.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })}</span></h3>
+    <p class="msg">${msg}</p>
+    <div class="wk">
+      <div><b>${isToday ? tdTot : "–"}</b><span>${isToday ? "bugün gereken" : "bugün tatil"}</span></div>
+      <div><b>${wkTot}</b><span>bu hafta gereken</span></div>
+      <div><b>${wkDone}</b><span>bu hafta yaptığın</span></div>
+    </div>
+    <ul class="todo">${rows}</ul>
+    <button class="ics" id="ics">📅 Her pazartesi 09:00'da hatırlat (takvime ekle)</button>`;
+  $("ics").onclick = icsWeekly;
 }
 function renderChips() {
   $("mchips").innerHTML = qMonths().map((m) => {
-    const tot = D.products.filter((p) => p.type === "adet").reduce((a, p) => a + monthTotal(p.id, m), 0);
+    const tot = D.products.reduce((a, p) => a + monthTotal(p.id, m), 0);
     return `<button data-m="${m}" class="${m === viewMonth ? "sel" : ""}">${MONTHS[m]}<small>${tot} adet</small></button>`;
   }).join("");
   $("mchips").querySelectorAll("button").forEach((b) => (b.onclick = () => {
     viewMonth = Number(b.dataset.m);
     selDay = viewMonth === today.getMonth() && qy === today.getFullYear() ? new Date(today) : new Date(qy, viewMonth, 1, 12);
-    render();
+    renderChips(); renderDays(); renderProds(); renderHeat();
   }));
 }
 function renderDays() {
-  const y = qy, m = viewMonth;
-  const n = new Date(y, m + 1, 0).getDate();
+  const y = qy, m = viewMonth, n = new Date(y, m + 1, 0).getDate();
   let html = "";
   for (let d = 1; d <= n; d++) {
-    const dt = new Date(y, m, d, 12);
-    const k = keyOf(dt);
-    const has = (D.days[k] && Object.values(D.days[k]).some((v) => v > 0)) || D.products.some((p) => D.bal[p.id] && D.bal[p.id][k] != null);
+    const dt = new Date(y, m, d, 12), k = keyOf(dt);
+    const has = D.days[k] && Object.values(D.days[k]).some((v) => v > 0);
     html += `<button data-d="${d}" class="${isWork(dt) ? "" : "off"} ${keyOf(selDay) === k ? "sel" : ""} ${has ? "has" : ""}"><small>${DOW[dt.getDay()]}</small><b>${d}</b></button>`;
   }
   $("days").innerHTML = html;
-  $("days").querySelectorAll("button").forEach((b) => (b.onclick = () => { selDay = new Date(y, m, Number(b.dataset.d), 12); render(); }));
+  $("days").querySelectorAll("button").forEach((b) => (b.onclick = () => { selDay = new Date(y, m, Number(b.dataset.d), 12); renderDays(); renderProds(); }));
   const sel = $("days").querySelector(".sel");
-  if (sel) sel.scrollIntoView({ inline: "center", block: "nearest" });
+  if (sel) $("days").scrollLeft = sel.offsetLeft - $("days").clientWidth / 2 + 22;
   const k = keyOf(selDay);
-  const tag = k === keyOf(today) ? "Bugün" : selDay.toLocaleDateString("tr-TR", { weekday: "long" });
-  $("dayInfo").innerHTML = `Düzenlenen gün: <b>${selDay.getDate()} ${MONTHS[selDay.getMonth()]} · ${tag}</b>${!isWork(selDay) ? " (tatil/hafta sonu)" : HALF.has(k) ? " (yarım gün)" : ""}`;
+  const tag = k === TK ? "Bugün" : selDay.toLocaleDateString("tr-TR", { weekday: "long" });
+  $("dayInfo").innerHTML = `İşaretlenen gün: <b>${selDay.getDate()} ${MONTHS[selDay.getMonth()]} · ${tag}</b>${!isWork(selDay) ? " (tatil/hafta sonu)" : HALF.has(k) ? " (yarım gün)" : ""}`;
 }
 function renderProds() {
-  const left = workDaysLeft();
-  const T = targets();
-  const dd = dayData(selDay);
+  const dd = D.days[keyOf(selDay)] || {}, isT = keyOf(selDay) === TK;
   $("prods").innerHTML = D.products.map((p) => {
-    const tgt = Number(T[p.id]) || 0;
-    const pct = tgt ? Math.round(progressOf(p)) : 0;
-    let mid = "", meta = "", sub = "", ctrl = "";
-    if (p.type === "bakiye") {
-      const st = balanceStats(p.id);
-      const setVal = D.bal[p.id] && D.bal[p.id][keyOf(selDay)];
-      mid = `Ort: ${st.avg == null ? "–" : fmtMn(st.avg)} / <button class="tgt" data-t="${p.id}">Hedef: ${tgt ? fmtMn(tgt) : "gir"}</button>`;
-      const need = tgt && st.remaining > 0 ? (tgt * st.totalDays - st.sum - (st.missing ? 0 : 0)) / st.remaining : null;
-      meta = tgt
-        ? (st.avg != null && st.avg >= tgt && st.remaining === 0 ? `<span style="color:var(--ok)">✓ Hedef tamam</span>`
-          : need != null ? `Kalan ${st.remaining} günde ort. <b>${fmtMn(Math.max(0, need))}</b> gerekli` : (st.avg >= tgt ? `<span style="color:var(--ok)">✓ Hedef tamam</span>` : "Çeyrek bitti"))
-        : `<span>Hedef girilmedi</span>`;
-      sub = `Güncel bakiye: <b style="color:var(--ink)">${st.cur == null ? "–" : fmtMn(st.cur)}</b>${st.missing ? ` · <span style="color:var(--mid)">çeyrek başı bakiyesini gir</span>` : ""}`;
-      ctrl = `<button class="amt" data-b="${p.id}">${setVal != null ? fmtMn(setVal) : "Bakiye gir"}</button>`;
-    } else if (p.type === "tutar") {
-      const done = quarterTotal(p.id);
-      const need = tgt > done && left > 0 ? (tgt - done) / left : 0;
-      mid = `Çeyrek: ${fmtMn(done)} / <button class="tgt" data-t="${p.id}">Hedef: ${tgt ? fmtMn(tgt) : "gir"}</button>`;
-      meta = tgt ? (done >= tgt ? `<span style="color:var(--ok)">✓ Hedef tamam</span>` : `Kalan <b>${fmtMn(tgt - done)}</b> · günde <b>${fmtMn(need)}</b>`) : `<span>Hedef girilmedi</span>`;
-      sub = qMonths().map((m) => `${MONTHS[m].slice(0, 3)} ${fmtMn(monthTotal(p.id, m))}`).join(" · ");
-      ctrl = `<button class="amt" data-u="${p.id}">${dd[p.id] ? fmtMn(dd[p.id]) : "Tutar gir"}</button>`;
-    } else {
-      const done = quarterTotal(p.id);
-      const need = tgt > done && left > 0 ? (tgt - done) / left : 0;
-      mid = `Çeyrek: ${done} / <button class="tgt" data-t="${p.id}">Hedef: ${tgt || "gir"}</button>`;
-      meta = tgt ? (done >= tgt ? `<span style="color:var(--ok)">✓ Hedef tamam</span>` : `Kalan <b>${tgt - done}</b> · günde <b>${fmt(need)}</b>`) : `<span>Hedef girilmedi</span>`;
-      sub = qMonths().map((m) => `${MONTHS[m].slice(0, 3)} ${monthTotal(p.id, m)}`).join(" · ");
-      ctrl = `<button data-m="${p.id}" aria-label="Azalt">−</button><span class="v">${dd[p.id] || 0}</span><button class="plus" data-a="${p.id}" aria-label="Artır">+</button>`;
-    }
-    return `<div class="prod" data-p="${p.id}">
-      <div class="top">
-        <div class="ic">${p.icon}</div>
-        <div class="nm"><b>${escapeHtml(p.name)}</b><span>${mid}</span></div>
-        <div class="cnt">${ctrl}</div>
-      </div>
-      <div class="bar"><i style="width:${Math.min(100, pct)}%;background:${color(pct)}"></i></div>
-      <div class="meta"><span>%${pct}</span><span>${meta}</span></div>
-      <div class="meta" style="margin-top:4px"><span>${sub}</span></div>
-    </div>`;
-  }).join("");
+    const s = stats(p);
+    const info = s.tgt ? `Çeyrek ${s.done}/${s.tgt}${isT && s.ph === "simdi" && s.pct < 100 ? (s.todayNeed ? ` · <i>bugün ${s.todayNeed} daha</i>` : " · <i>bugünkü tamam ✓</i>") : s.pct >= 100 ? " · ✓" : ""}` : `Çeyrek ${s.done} · <i>hedef yok</i>`;
+    return `<div class="prod" data-p="${p.id}"><div class="ic">${p.icon}</div><div class="nm"><b>${esc(p.name)}</b><span>${info}</span></div>
+      <div class="cnt"><button data-m="${p.id}" aria-label="Azalt">−</button><span class="v">${dd[p.id] || 0}</span><button class="plus" data-a="${p.id}" aria-label="Artır">+</button></div></div>`;
+  }).join("") || `<p class="note">Kalem yok. 🎯 Hedefler'den ekle.</p>`;
   $("prods").querySelectorAll("[data-a]").forEach((b) => (b.onclick = () => bump(b.dataset.a, 1)));
   $("prods").querySelectorAll("[data-m]").forEach((b) => (b.onclick = () => bump(b.dataset.m, -1)));
-  $("prods").querySelectorAll("[data-t]").forEach((b) => (b.onclick = () => setTarget(b.dataset.t)));
-  $("prods").querySelectorAll("[data-b]").forEach((b) => (b.onclick = () => setBalance(b.dataset.b)));
-  $("prods").querySelectorAll("[data-u]").forEach((b) => (b.onclick = () => setAmount(b.dataset.u)));
-}
-function setBalance(pid) {
-  const p = D.products.find((x) => x.id === pid);
-  const k = keyOf(selDay);
-  const cur = D.bal[pid] && D.bal[pid][k] != null ? String(D.bal[pid][k]).replace(".", ",") : "";
-  const v = prompt(`${p.name} bakiyesi — ${selDay.getDate()} ${MONTHS[selDay.getMonth()]} itibarıyla (milyon TL, ör. 48,5).\nBoş bırakırsan bu günün kaydı silinir.`, cur);
-  if (v === null) return;
-  D.bal[pid] ||= {};
-  if (String(v).trim() === "") delete D.bal[pid][k];
-  else { const n = parseMn(v); if (isNaN(n)) return toast("Geçersiz tutar"); D.bal[pid][k] = n; }
-  save(); render();
-}
-function setAmount(pid) {
-  const p = D.products.find((x) => x.id === pid);
-  const dd = dayData(selDay);
-  const cur = dd[pid] ? String(dd[pid]).replace(".", ",") : "";
-  const v = prompt(`${p.name} — ${selDay.getDate()} ${MONTHS[selDay.getMonth()]} günü tutarı (milyon TL, ör. 0,25).\nBoş bırakırsan silinir.`, cur);
-  if (v === null) return;
-  if (String(v).trim() === "") delete dd[pid];
-  else { const n = parseMn(v); if (isNaN(n)) return toast("Geçersiz tutar"); if (n) dd[pid] = n; else delete dd[pid]; }
-  save(); render();
-  const tgt = Number(targets()[pid]) || 0;
-  if (tgt && quarterTotal(pid) >= tgt) toast(`🎉 ${p.name} çeyrek hedefi tamam!`);
 }
 function renderHeat() {
   const y = qy, m = viewMonth;
-  $("heatTitle").textContent = `${MONTHS[m]} takvimi`;
-  const first = new Date(y, m, 1, 12);
-  const off = (first.getDay() + 6) % 7;
-  const n = new Date(y, m + 1, 0).getDate();
-  let max = 1;
-  const tot = {};
-  for (let d = 1; d <= n; d++) { const k = keyOf(new Date(y, m, d, 12)); const dv = D.days[k] || {}; const s = D.products.filter((p) => p.type === "adet").reduce((a, p) => a + (dv[p.id] || 0), 0); tot[d] = s; max = Math.max(max, s); }
+  $("heatTitle").textContent = `🗓️ ${MONTHS[m]} takvimi`;
+  const first = new Date(y, m, 1, 12), off = (first.getDay() + 6) % 7, n = new Date(y, m + 1, 0).getDate();
+  let max = 1; const tot = {};
+  for (let d = 1; d <= n; d++) { const dv = D.days[keyOf(new Date(y, m, d, 12))] || {}; const s = D.products.reduce((a, p) => a + (dv[p.id] || 0), 0); tot[d] = s; max = Math.max(max, s); }
   let html = ["P", "S", "Ç", "P", "C", "C", "P"].map((x) => `<div class="h">${x}</div>`).join("");
   for (let i = 0; i < off; i++) html += "<div></div>";
   for (let d = 1; d <= n; d++) {
-    const dt = new Date(y, m, d, 12);
-    const s = tot[d];
-    const a = s ? 0.2 + 0.8 * (s / max) : 0;
+    const dt = new Date(y, m, d, 12), s = tot[d], a = s ? 0.2 + 0.8 * (s / max) : 0;
     const bg = s ? `background:rgba(224,162,79,${a.toFixed(2)});color:${a > 0.6 ? "#000" : "#fff"}` : "";
-    html += `<div class="d ${isWork(dt) ? "" : "off"} ${keyOf(dt) === keyOf(today) ? "td" : ""}" data-d="${d}" style="${bg}">${d}${s ? `<small>${s}</small>` : ""}</div>`;
+    html += `<div class="d ${isWork(dt) ? "" : "off"} ${keyOf(dt) === TK ? "td" : ""}" data-d="${d}" style="${bg}">${d}${s ? `<small>${s}</small>` : ""}</div>`;
   }
   $("heat").innerHTML = html;
-  $("heat").querySelectorAll("[data-d]").forEach((el) => (el.onclick = () => { selDay = new Date(y, m, Number(el.dataset.d), 12); render(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
+  $("heat").querySelectorAll("[data-d]").forEach((el) => (el.onclick = () => { selDay = new Date(y, m, Number(el.dataset.d), 12); renderDays(); renderProds(); $("mark").scrollIntoView({ behavior: "smooth" }); }));
 }
-function renderEdit() {
-  $("editList").innerHTML = D.products.map((p) => `<li><span style="font-size:20px">${p.icon}</span><div style="flex:1;min-width:0"><input value="${escapeHtml(p.name)}" data-r="${p.id}" maxlength="30" style="width:100%"></div><button class="x" data-x="${p.id}" aria-label="Sil">✕</button></li>`).join("");
-  $("editList").querySelectorAll("[data-r]").forEach((i) => (i.onchange = () => { const p = D.products.find((x) => x.id === i.dataset.r); if (p && i.value.trim()) { p.name = i.value.trim(); save(); renderProds(); } }));
-  $("editList").querySelectorAll("[data-x]").forEach((b) => (b.onclick = () => {
-    const p = D.products.find((x) => x.id === b.dataset.x);
+function renderProb() {
+  const O = overall(), ph = phase(), T = timeInfo();
+  const el = $("prob");
+  if (!O.L.length || ph === "gelecek") { el.hidden = true; return; }
+  el.hidden = false;
+  const rows = O.L.map(({ p, s }) => ({ p, s })).sort((a, b) => (a.s.prob ?? 1) - (b.s.prob ?? 1));
+  const known = rows.filter((x) => x.s.prob != null);
+  const all = known.length ? known.reduce((a, x) => a * x.s.prob, 1) : null;
+  const fcAvg = rows.reduce((a, x) => a + Math.min(150, x.s.tgt ? (x.s.forecast / x.s.tgt) * 100 : 0), 0) / rows.length;
+  const avgP = known.length ? known.reduce((a, x) => a + x.s.prob, 0) / known.length : null;
+  const few = rows.some((x) => x.s.few) && ph === "simdi";
+  // Yarım daire gösterge
+  const g = avgP == null ? 0 : avgP, A = Math.PI * 50;
+  const gauge = `<svg class="gauge" viewBox="0 0 120 72"><path d="M10 64 A50 50 0 0 1 110 64" fill="none" stroke="#252a34" stroke-width="11" stroke-linecap="round"/>
+    <path d="M10 64 A50 50 0 0 1 110 64" fill="none" stroke="${probCol(g)}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${g * A} ${A}"/>
+    <text x="60" y="56" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">%${Math.round(g * 100)}</text><text x="60" y="70" text-anchor="middle" font-size="9" fill="#8b91a0">ortalama ihtimal</text></svg>`;
+  const list = rows.map(({ p, s }) => {
+    const pr = s.prob ?? 0, mx = Math.max(s.tgt, s.forecast, s.done) * 1.08 || 1;
+    const fcR = Math.round(s.forecast);
+    const d = s.pct >= 100 ? `Hedef tamam: <b>${s.done}</b> / ${s.tgt}`
+      : ph === "gecmis" ? `Gerçekleşen <b>${s.done}</b> / ${s.tgt} · ${s.tgt - s.done} eksik kaldı`
+      : `Şu anki tempo: günde <b>${fmt(s.mu)}</b> → çeyrek sonu tahmini <b>${fcR}</b> (%${Math.round((s.forecast / s.tgt) * 100)}). Hedef için günde <b>${fmt(s.perDay)}</b> gerekli${s.perDay > s.mu + 0.05 ? ` (<span style="color:var(--low)">+${fmt(s.perDay - s.mu)}</span>)` : ` <span style="color:var(--ok)">✓</span>`}.`;
+    return `<div class="pr"><div class="h"><span>${p.icon}</span><b>${esc(p.name)}</b><em style="background:color-mix(in srgb, ${probCol(pr)} 18%, transparent);color:${probCol(pr)}">${s.prob == null ? "veri yok" : `%${Math.round(pr * 100)} · ${probTxt(pr)}`}</em></div>
+      <div class="pf"><i class="fc" style="width:${Math.min(100, (s.forecast / mx) * 100)}%;background:${probCol(pr)}"></i><i class="done" style="width:${Math.min(100, (s.done / mx) * 100)}%;background:${probCol(pr)}"></i><u style="left:${(s.tgt / mx) * 100}%"></u></div>
+      <div class="d">${d}</div></div>`;
+  }).join("");
+  const risk = rows.find((x) => x.s.pct < 100 && x.s.prob != null && x.s.prob < 0.7);
+  const tip = ph !== "simdi" ? "" : risk
+    ? `<div class="tip">🎯 <b>Odak önerisi:</b> En riskli kalem <b>${esc(risk.p.name)}</b> (%${Math.round(risk.s.prob * 100)}). Günlük tempoyu <b>${fmt(risk.s.mu)}</b>'den <b>${fmt(risk.s.perDay)}</b>'e çıkarırsan hedef tutar; bu da kalan ${fmt(T.left)} iş gününde haftada yaklaşık <b>${Math.ceil(risk.s.perDay * 5 - 1e-9)}</b> adet demek.</div>`
+    : `<div class="tip">✨ Bu tempoyla <b>tüm hedeflerin tutuyor</b> görünüyor. Temponu koru, fazlası senin artın.</div>`;
+  el.innerHTML = `
+    <h3>🔮 Hedef tutma ihtimali <span class="r">${ph === "gecmis" ? "kapanış" : "tempona göre"}</span></h3>
+    <div class="sum">${gauge}<div class="t">Tümünü tutturma: <b>%${all == null ? "–" : Math.round(all * 100)}</b><br>Tahmini ort. gerçekleşme: <b>%${Math.round(fcAvg)}</b><br>Kalan: <b>${fmt(ph === "simdi" ? T.left : 0)}</b> iş günü</div></div>
+    ${list}
+    ${tip}
+    <p class="note" style="margin:10px 0 0">Nasıl hesaplanıyor? Çeyrek başından bu yana her iş günü yaptığın adetlerin ortalaması ve dalgalanması alınır; aynı tempo sürerse kalan günlerde hedefe ulaşma ihtimali hesaplanır. ${few ? "<b style='color:var(--mid)'>Henüz 3 iş gününden az kayıt var; tahmin kaba.</b> " : ""}Çubukta koyu kısım gerçekleşen, açık kısım tahmin, beyaz çizgi hedef.</p>`;
+}
+
+// ================= Hedef penceresi =================
+let draft = null;
+function openTargets() {
+  draft = { products: D.products.map((p) => ({ ...p })), t: { ...targets() } };
+  delete draft.t._kopya;
+  const T = timeInfo();
+  $("shSub").textContent = `${qName()} · ${qRange()} · ${fmt(T.total)} iş günü`;
+  drawRows(); $("sheet").hidden = false; document.body.style.overflow = "hidden";
+  setTimeout(() => { const f = $("tRows").querySelector("input.num"); if (f && !f.value) f.focus(); }, 250);
+}
+function drawRows() {
+  const T = timeInfo();
+  $("tRows").innerHTML = draft.products.map((p) => {
+    const v = draft.t[p.id] || "";
+    return `<div class="tr" data-r="${p.id}"><span class="ic">${p.icon}</span><input value="${esc(p.name)}" data-n="${p.id}" maxlength="30" aria-label="Kalem adı"><input class="num" type="number" inputmode="numeric" min="0" placeholder="adet" value="${v}" data-t="${p.id}" aria-label="${esc(p.name)} çeyrek hedefi"><button class="x" data-x="${p.id}" aria-label="Kaldır">✕</button>
+      <div class="hint" data-h="${p.id}">${hint(v, T)}</div></div>`;
+  }).join("");
+  $("tRows").querySelectorAll("[data-n]").forEach((i) => (i.oninput = () => { const p = draft.products.find((x) => x.id === i.dataset.n); if (p) p.name = i.value; }));
+  $("tRows").querySelectorAll("[data-t]").forEach((i) => (i.oninput = () => { const n = Math.max(0, Math.round(Number(i.value) || 0)); if (n) draft.t[i.dataset.t] = n; else delete draft.t[i.dataset.t]; $("tRows").querySelector(`[data-h="${i.dataset.t}"]`).textContent = hint(n, T); }));
+  $("tRows").querySelectorAll("[data-x]").forEach((b) => (b.onclick = () => {
+    const p = draft.products.find((x) => x.id === b.dataset.x);
     if (!p || !confirm(`"${p.name}" listeden kaldırılsın mı? Geçmiş kayıtları yedekte kalır.`)) return;
-    D.products = D.products.filter((x) => x.id !== p.id); save(); render();
+    draft.products = draft.products.filter((x) => x.id !== p.id); delete draft.t[p.id]; drawRows();
   }));
 }
-function escapeHtml(s) { return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function hint(v, T) { const n = Number(v) || 0; return n ? `≈ ayda ${fmt(n / 3)} · haftada ${fmt((n / T.total) * 5)} · günde ${fmt(n / T.total)}` : "Hedef yoksa boş bırak"; }
+function closeTargets() { $("sheet").hidden = true; document.body.style.overflow = ""; draft = null; }
+function saveTargets() {
+  draft.products.forEach((p) => (p.name = p.name.trim() || "Kalem"));
+  D.products = draft.products;
+  D.targets[qKey()] = draft.t;
+  save(); closeTargets(); render();
+  const n = Object.keys(draft.t || {}).length;
+  toast(n ? `🎯 ${n} hedef kaydedildi. Rehberin hazır!` : "Kaydedildi");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function addProduct() {
+  const name = $("newName").value.trim(); if (!name) return;
+  const id = "u" + Date.now().toString(36);
+  draft.products.push({ id, name, icon: ICONS[draft.products.length % ICONS.length], type: "adet" });
+  $("newName").value = ""; drawRows();
+  const f = $("tRows").querySelector(`[data-t="${id}"]`); if (f) f.focus();
+}
 
 // ================= İşlemler =================
 function bump(pid, delta) {
   const dd = dayData(selDay);
   dd[pid] = Math.max(0, (dd[pid] || 0) + delta);
   if (!dd[pid]) delete dd[pid];
+  if (!Object.keys(dd).length) delete D.days[keyOf(selDay)];
   save();
   if (navigator.vibrate) try { navigator.vibrate(12); } catch (e) {}
-  const p = D.products.find((x) => x.id === pid);
-  const tgt = Number(targets()[pid]) || 0;
-  if (delta > 0 && tgt && quarterTotal(pid) === tgt) toast(`🎉 ${p.name} çeyrek hedefi tamamlandı!`);
-  renderHero(); renderChips(); renderProds(); renderHeat(); renderDays();
+  const p = D.products.find((x) => x.id === pid), s = stats(p);
+  if (delta > 0 && s.tgt) {
+    if (s.done === s.tgt) toast(`🎉 ${p.name} çeyrek hedefi tamamlandı!`);
+    else if (keyOf(selDay) === TK && s.todayNeed === 0 && s.ph === "simdi" && s.done < s.tgt && s.todayDone === Math.ceil(s.perDay * s.T.todayWork - 1e-9)) toast(`✅ ${p.name}: bugünkü hedef tamam!`);
+  }
+  renderHero(); renderCoach(); renderChips(); renderDays(); renderProds(); renderHeat(); renderProb();
 }
-function setTarget(pid) {
-  const p = D.products.find((x) => x.id === pid);
-  const cur = targets()[pid] ? String(targets()[pid]).replace(".", ",") : "";
-  const unit = p.type === "adet" ? "adet" : p.type === "bakiye" ? "ortalama, milyon TL" : "toplam, milyon TL";
-  const v = prompt(`${p.name} için ${qName()} (${qRange()}) hedefi (${unit}):`, cur);
-  if (v === null) return;
-  let n = p.type === "adet" ? Math.max(0, Math.round(Number(String(v).replace(",", ".")) || 0)) : Math.max(0, parseMn(v) || 0);
-  if (!D.targets[qKey()]) D.targets[qKey()] = {};
-  if (n) D.targets[qKey()][pid] = n; else delete D.targets[qKey()][pid];
-  save(); render();
-}
-function addProduct() {
-  const name = $("newName").value.trim();
-  if (!name) return;
-  const type = "adet";
-  const id = "u" + Date.now().toString(36);
-  D.products.push({ id, name, icon: ICONS[D.products.length % ICONS.length], type });
-  $("newName").value = "";
-  save(); render(); toast(`${name} eklendi (${TYPE_AD[type]})`);
-}
-function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 1800); }
+function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 2200); }
 function download(name, text, type) {
   const blob = new Blob([text], { type });
   const a = document.createElement("a");
@@ -509,7 +672,18 @@ function download(name, text, type) {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
-function exportJson() { download(`gunce-yedek-${keyOf(today)}.json`, JSON.stringify(D, null, 1), "application/json"); toast("Yedek indirildi"); }
+function icsWeekly() {
+  const d = new Date(today); d.setDate(d.getDate() + ((8 - d.getDay()) % 7 || 7));
+  const ds = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+  const url = location.href.split("#")[0];
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sadolayn//Gunce//TR", "BEGIN:VEVENT", `UID:gunce-haftalik-${ds}@sadolayn`, `DTSTAMP:${ds}T060000Z`,
+    `DTSTART:${ds}T090000`, `DTEND:${ds}T091500`, "RRULE:FREQ=WEEKLY;BYDAY=MO", "SUMMARY:📒 Günce: bu haftanın hedeflerine bak",
+    `DESCRIPTION:Bu hafta kaç adet gerektiğini gör ve geçen haftayı işaretle: ${url}`, `URL:${url}`,
+    "BEGIN:VALARM", "TRIGGER:PT0M", "ACTION:DISPLAY", "DESCRIPTION:Günce haftalık hedef", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+  download("gunce-haftalik-hatirlatma.ics", ics, "text/calendar");
+  toast("Takvim dosyası indi; açınca her pazartesi 09:00 hatırlatır");
+}
+function exportJson() { download(`gunce-yedek-${TK}.json`, JSON.stringify(D, null, 1), "application/json"); toast("Yedek indirildi"); }
 function importJson(file) {
   const r = new FileReader();
   r.onload = () => {
@@ -523,26 +697,24 @@ function importJson(file) {
   r.readAsText(file);
 }
 function exportCsv() {
-  const lbl = (p) => p.type === "adet" ? p.name : `${p.name} (mn TL${p.type === "bakiye" ? ", bakiye" : ""})`;
-  const head = ["Tarih", ...D.products.map(lbl)];
-  const lines = [head];
-  const num = (n) => String(Math.round(n * 100) / 100).replace(".", ",");
-  eachQuarterDay((dt) => {
-    const v = D.days[keyOf(dt)] || {};
-    lines.push([`${pad(dt.getDate())}.${pad(dt.getMonth() + 1)}.${dt.getFullYear()}`, ...D.products.map((p) => {
-      if (p.type === "bakiye") { const b = dt <= today ? balanceOn(p.id, dt) : null; return b == null ? "" : num(b); }
-      return p.type === "tutar" ? num(v[p.id] || 0) : (v[p.id] || 0);
-    })]);
-  });
-  const T = targets();
-  lines.push(["Çeyrek gerçekleşen", ...D.products.map((p) => p.type === "bakiye" ? (balanceStats(p.id).avg == null ? "" : num(balanceStats(p.id).avg) + " (ort.)") : p.type === "tutar" ? num(quarterTotal(p.id)) : quarterTotal(p.id))]);
-  lines.push(["Çeyrek hedef", ...D.products.map((p) => p.type === "adet" ? (T[p.id] || 0) : num(T[p.id] || 0))]);
-  lines.push(["Başarı %", ...D.products.map((p) => { const x = progressOf(p); return x == null ? "" : Math.round(x); })]);
-  const csv = "\ufeff" + lines.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+  const lines = [["Tarih", "Gün", ...D.products.map((p) => p.name)]];
+  eachQuarterDay((dt) => { const v = D.days[keyOf(dt)] || {}; lines.push([`${pad(dt.getDate())}.${pad(dt.getMonth() + 1)}.${dt.getFullYear()}`, DOW[dt.getDay()], ...D.products.map((p) => v[p.id] || 0)]); });
+  const S = D.products.map(stats), pc = (x) => String(Math.round(x * 10) / 10).replace(".", ",");
+  lines.push([]);
+  lines.push(["Çeyrek gerçekleşen", "", ...S.map((s) => s.done)]);
+  lines.push(["Çeyrek hedef", "", ...S.map((s) => s.tgt || "")]);
+  lines.push(["Başarı %", "", ...S.map((s) => (s.tgt ? Math.round(s.pct) : ""))]);
+  if (phase() === "simdi") {
+    lines.push(["Kalan adet", "", ...S.map((s) => (s.tgt ? Math.max(0, s.tgt - s.done) : ""))]);
+    lines.push(["Günde gereken", "", ...S.map((s) => (s.tgt ? pc(s.perDay) : ""))]);
+    lines.push(["Mevcut günlük tempo", "", ...S.map((s) => pc(s.mu))]);
+    lines.push(["Çeyrek sonu tahmini", "", ...S.map((s) => Math.round(s.forecast))]);
+    lines.push(["Hedef tutma ihtimali %", "", ...S.map((s) => (s.prob == null ? "" : Math.round(s.prob * 100)))]);
+  }
+  const csv = "﻿" + lines.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\r\n");
   download(`gunce-${qy}-Q${qn + 1}.csv`, csv, "text/csv;charset=utf-8");
   toast("Excel dosyası indirildi");
 }
-
 function shiftQuarter(dir) {
   qn += dir;
   if (qn < 0) { qn = 3; qy--; } if (qn > 3) { qn = 0; qy++; }
@@ -553,18 +725,20 @@ function shiftQuarter(dir) {
 }
 $("prevM").onclick = () => shiftQuarter(-1);
 $("nextM").onclick = () => shiftQuarter(1);
+$("openT").onclick = openTargets;
+$("tCancel").onclick = closeTargets;
+$("tSave").onclick = saveTargets;
+$("sheet").onclick = (e) => { if (e.target === $("sheet")) closeTargets(); };
 $("addBtn").onclick = addProduct;
 $("newName").addEventListener("keydown", (e) => { if (e.key === "Enter") addProduct(); });
 $("expJson").onclick = exportJson;
 $("impJson").onclick = () => $("fileIn").click();
 $("fileIn").onchange = (e) => { if (e.target.files[0]) importJson(e.target.files[0]); e.target.value = ""; };
 $("expCsv").onclick = exportCsv;
-$("resetM").onclick = () => { if (confirm(`${qName()} (${qRange()}) günlük kayıtları silinsin mi? (Hedefler kalır)`)) { eachQuarterDay((d) => { delete D.days[keyOf(d)]; for (const h of Object.values(D.bal)) delete h[keyOf(d)]; }); save(); render(); } };
+$("resetM").onclick = () => { if (confirm(`${qName()} (${qRange()}) günlük kayıtları silinsin mi? (Hedefler kalır)`)) { eachQuarterDay((d) => delete D.days[keyOf(d)]); save(); render(); } };
 
-load();
-migrate();
-save();
-render();
+load(); migrate(); save(); render();
+if (!withTargets().length && phase() === "simdi") setTimeout(() => { try { if (!sessionStorage.getItem("gunceT")) { sessionStorage.setItem("gunceT", 1); openTargets(); } } catch (e) {} }, 600);
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
