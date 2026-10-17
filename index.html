@@ -431,11 +431,41 @@
   };
   const kurulu = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
   if (kurulu) $("kur").hidden = true;
+  const pc = window.__masaustu, mac = /Macintosh|Mac OS X/.test(navigator.userAgent);
+  if (pc) {
+    $("kur").querySelector(".pyIc2").textContent = "💻";
+    $("kur").querySelector(".pyTx").innerHTML = "<b>Bilgisayarına ekle</b><small>Kendi penceresinde aç, tek tıkla ulaş</small>";
+  }
   $("kur").onclick = async () => {
     window.Rapor && Rapor.bolum("ana-ekrana-ekle");
     const p = window.__kurPrompt;
     if (p) { p.prompt(); try { const r = await p.userChoice; if (r.outcome === "accepted") $("kur").hidden = true; } catch (e) {} window.__kurPrompt = null; return; }
     const t = window.__tarayici, y = $("kurYardim"); y.hidden = false;
+    if (pc) {
+      const kisa = mac ? "⌘ + D" : "Ctrl + D";
+      const P = pc === "edge" ? [
+          "Sağ üstteki <b>⋯</b> menüsüne tıkla",
+          "<b>Uygulamalar</b> → <b>Bu siteyi uygulama olarak yükle</b>'yi seç",
+          "<b>Yükle</b>'ye tıkla. Görev çubuğuna sabitleyebilirsin 🎉"]
+        : pc === "chrome" ? [
+          "Adres çubuğunun sağındaki <b>⊕ yükle</b> simgesine ya da <b>⋮</b> menüsüne tıkla",
+          "<b>Yayınla, kaydet ve paylaş</b> → <b>Sayfayı uygulama olarak yükle</b>'yi seç",
+          `<b>Yükle</b>'ye tıkla. ${mac ? "Dock'ta" : "Görev çubuğunda"} durur 🎉`]
+        : pc === "safari" ? [
+          "Üstteki menü çubuğunda <b>Dosya</b>'ya tıkla",
+          "<b>Dock'a Ekle</b>'yi seç",
+          "<b>Ekle</b>'ye tıkla. Sadolayn Dock'ta durur 🎉"]
+        : [
+          `<b>${kisa}</b> tuşlarına bas`,
+          "Yer imi çubuğunu seç",
+          "<b>Kaydet</b>'e tıkla. Bir tıkla açarsın 🎉"];
+      y.innerHTML = `<div class="kyB"><b>💻 Sadolayn'ı bilgisayarına ekle</b><button class="kyX" aria-label="Kapat">✕</button></div>
+        <div class="kyN">Bilgisayarına program kurulmaz; Sadolayn kendi penceresinde açılır, ${mac ? "Dock'tan" : "görev çubuğundan"} tek tıkla ulaşırsın.</div>
+        <ol class="kyS">${P.map((x) => `<li>${x}</li>`).join("")}</ol>
+        ${pc !== "firefox" && pc !== "diger" ? `<div class="kyN" style="margin-top:6px">Daha kısası: <b>${kisa}</b> ile yer imlerine ekleyebilirsin.</div>` : ""}`;
+      y.querySelector(".kyX").onclick = () => (y.hidden = true);
+      return;
+    }
     const S = t === "ios" ? [
         "Ekranın altındaki <b>Paylaş</b> simgesine dokun <span class='ik'>⬆️</span><br><small>Görmüyorsan önce <b>•••</b> düğmesine dokun.</small>",
         "Açılan listede aşağı kaydır, <b>Ana Ekrana Ekle</b>'yi seç <span class='ik'>➕</span>",
