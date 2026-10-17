@@ -250,11 +250,6 @@
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .stick > :last-child { margin-bottom: 0; }
-  .emp { display: none; }
-  body.calisan .emp { display: block; }
-  .empbar { display: none; align-items: center; justify-content: space-between; gap: 8px; background: #1a1608; border: 1px solid #4a3a14; color: #f0d9a8; border-radius: 12px; padding: 8px 12px; font-size: 13px; margin-bottom: 12px; }
-  body.calisan .empbar { display: flex; }
-  .empbar button { background: none; border: 1px solid #4a3a14; color: #f0d9a8; border-radius: 8px; padding: 5px 10px; font-size: 12px; cursor: pointer; }
 </style>
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
@@ -312,8 +307,7 @@
   <!-- Mevduat -->
   <section class="panel" id="mev">
     <div class="card">
-      <div class="empbar">🔓 Çalışan modu açık <button type="button" id="empOff">Gizle</button></div>
-      <h2 id="mevTitle" style="display:flex;align-items:center;justify-content:space-between;gap:8px">Vadeli Mevduat Getirisi<button type="button" id="empLock" aria-label="Çalışan modu" style="flex:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:16px;cursor:pointer;touch-action:manipulation">🔒</button></h2>
+      <h2 id="mevTitle" style="display:flex;align-items:center;justify-content:space-between;gap:8px">Vadeli Mevduat Getirisi</h2>
       <p class="hint">Faiz yıllık oran üzerinden gün/365 ile hesaplanır, stopaj kesildikten sonraki net getiri gösterilir.</p>
       <label>Anapara</label>
       <div class="field"><input id="m_tutar" type="text" inputmode="decimal" value="500.000"><span class="unit">TL</span></div>
@@ -2073,37 +2067,6 @@ try {
 document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventListener("input", calcBCH));
 (function () { const t = new Date(); $("t_bas").value = ymd(t); })();
 (function () { const t = new Date(); $("m_bas").value = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`; })();
-// Çalışan modu: ?calisan ile açılır, ?musteri ile kapanır; başlığa 5 kez hızlı dokunmak da açıp kapatır
-(function () {
-  const KEY = "sado_calisan";
-  const q = new URLSearchParams(location.search);
-  let on = false;
-  try { on = localStorage.getItem(KEY) === "1"; } catch (e) {}
-  if (q.has("calisan")) on = true;
-  if (q.has("musteri")) on = false;
-  const apply = () => { document.body.classList.toggle("calisan", on); const lk = $("empLock"); if (lk) lk.textContent = on ? "🔓" : "🔒"; try { on ? localStorage.setItem(KEY, "1") : localStorage.removeItem(KEY); } catch (e) {} };
-  apply();
-  if (q.has("calisan") || q.has("musteri")) history.replaceState(null, "", location.pathname + location.hash);
-  if (on && q.size !== undefined) { const b = document.querySelector('button[data-tab="mev"]'); if (b && (q.has("calisan"))) b.click(); }
-  $("empOff").onclick = () => { on = false; apply(); };
-  // Kilit düğmesi: tek dokunuşla çalışan modunu açar ya da gizler
-  $("empLock").addEventListener("click", (e) => {
-    e.stopPropagation();
-    on = !on; apply();
-  });
-  // Telefonda hızlı dokunuşlar çift dokunma/yakınlaştırma sanılmasın diye pointerdown kullanılır
-  let taps = [];
-  const title = $("mevTitle");
-  title.style.touchAction = "manipulation";
-  title.style.userSelect = "none";
-  title.style.webkitUserSelect = "none";
-  title.addEventListener("pointerdown", (e) => {
-    if (e.target.closest("#empLock")) return;
-    e.preventDefault();
-    const t = Date.now(); taps = taps.filter((x) => t - x < 3000); taps.push(t);
-    if (taps.length >= 5) { taps = []; on = !on; apply(); if (navigator.vibrate) navigator.vibrate(40); }
-  });
-})();
 document.querySelectorAll("#mev input, #mev select").forEach((e) => e.addEventListener("input", calcMev));
 document.querySelectorAll("#tk input, #tk select").forEach((e) => e.addEventListener("input", calcTK));
 document.querySelectorAll("#kk input").forEach((e) => e.addEventListener("input", calcKK));
