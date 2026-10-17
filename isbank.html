@@ -218,6 +218,24 @@
   .mapph { padding: 20px 16px; text-align: center; color: #cfcfcf; font-size: 14px; line-height: 1.5; }
   .mapgo { margin-top: 12px; padding: 11px 18px; border-radius: 12px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
   .mapbar { display: flex; justify-content: space-between; gap: 8px; padding: 10px 12px; font-size: 13px; } .mapbar a { color: var(--accent); text-decoration: none; font-weight: 600; } .mapbar a + a { color: var(--muted); }
+  .odul { margin: 0 0 12px; padding: 14px; border-radius: 16px; border: 1px solid #6b5222; background: radial-gradient(120% 130% at 0% 0%, rgba(240,198,116,.22), rgba(10,10,10,0) 60%), radial-gradient(120% 120% at 100% 100%, rgba(90,169,240,.16), rgba(10,10,10,0) 55%), #0c0b08; box-shadow: 0 8px 24px rgba(224,162,79,.12); }
+  .odTop { display: flex; gap: 12px; align-items: center; } .odKupa { font-size: 40px; line-height: 1; filter: drop-shadow(0 3px 8px rgba(240,198,116,.5)); }
+  .odTop small { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .8px; color: #c9a050; } .odTop b { display: block; margin-top: 3px; font-size: 17px; line-height: 1.25; color: #fff; }
+  .odYil { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 12px 0 8px; }
+  .odYil span { padding: 8px 4px; border-radius: 10px; border: 1px solid #4a3a22; background: rgba(240,198,116,.08); text-align: center; font-size: 11px; color: #cdb48a; }
+  .odYil b { display: block; font-size: 18px; color: #f3dca8; } .odYil .son { background: linear-gradient(160deg, #f3dca8, #c9a050); border-color: #f3dca8; color: #3a2a10; } .odYil .son b { color: #000; }
+  .odAlt { display: flex; flex-wrap: wrap; gap: 6px; } .odAlt span { padding: 5px 9px; border-radius: 99px; background: #161616; border: 1px solid #262626; font-size: 12px; color: #cfcfcf; } .odAlt b { color: #fff; }
+  .odul a { display: inline-block; margin-top: 10px; font-size: 12px; color: #f0c674; text-decoration: none; }
+  .bmatik { margin: 0 0 12px; padding: 14px; border-radius: 16px; border: 1px solid #3a50f0; background: radial-gradient(130% 120% at 100% 0%, rgba(42,63,224,.38), rgba(10,10,10,0) 60%), radial-gradient(120% 120% at 0% 100%, rgba(224,162,79,.14), rgba(10,10,10,0) 55%), #0a0a12; box-shadow: 0 8px 26px rgba(42,63,224,.18); }
+  .bmTop { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .bmQ { display: block; font-family: Georgia, serif; font-style: italic; font-size: 18px; color: #f3dca8; }
+  .bmH { display: block; margin-top: 6px; font-size: 20px; line-height: 1.25; color: #fff; } .bmH em { font-style: normal; color: #9fb0ff; }
+  .bmAtm { flex: none; width: 64px; height: 84px; filter: drop-shadow(0 4px 10px rgba(58,80,240,.45)); }
+  .bmatik p { margin: 12px 0 10px; font-size: 14px; line-height: 1.55; color: #d4d8ee; } .bmatik p b { color: #f3dca8; }
+  .bmYil { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .bmYil span { padding: 8px 6px; border-radius: 10px; background: rgba(42,63,224,.18); border: 1px solid #2c3a8f; font-size: 11px; line-height: 1.3; color: #b9c0d6; text-align: center; }
+  .bmYil b { display: block; font-size: 16px; color: #f3dca8; }
+  .bmatik a { display: inline-block; margin-top: 10px; font-size: 12px; color: #9fb0ff; text-decoration: none; }
   .tl { position: relative; margin: 8px 0 0 6px; padding-left: 16px; border-left: 2px solid #3a2c14; }
   .tl div { position: relative; margin-bottom: 12px; font-size: 14px; line-height: 1.45; color: #ddd; } .tl div::before { content: ""; position: absolute; left: -23px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px #000; }
   .tl b { display: block; color: var(--accent); font-size: 12.5px; }
@@ -837,7 +855,12 @@ function renderIscep() {
   if (!d) { $("list").innerHTML = '<div class="empty">İşCep sürüm bilgisi yüklenemedi.</div>'; return; }
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "En son sürüm: " + new Date(d.surumler[0].tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
   const fmt = (t) => new Date(t + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
-  let html = "";
+  let html = `<div class="odul">
+      <div class="odTop"><span class="odKupa">🏆</span><div><small>GLOBAL FINANCE · EN İYİ DİJİTAL BANKA ÖDÜLLERİ</small><b>Dünyanın En İyi Mobil Bankacılık Uygulaması</b></div></div>
+      <div class="odYil"><span><b>2023</b>1. kez</span><span><b>2024</b>2. kez</span><span class="son"><b>2025</b>3. kez üst üste</span></div>
+      <div class="odAlt"><span>📲 <b>2007</b>'den beri</span><span>👥 <b>15,5 milyon</b> kullanıcı</span><span>⚙️ <b>800+</b> işlem</span></div>
+      <a href="https://www.isbank.com.tr/bankamizi-taniyin/iscep-ucuncu-kez-dunyanin-en-iyi-mobil-bankacilik-uygulamasi-secildi" target="_blank" rel="noopener">Ödül haberi · İş Bankası ↗</a>
+    </div>`;
   d.surumler.forEach((v, i) => {
     html += `<div class="ver ${i === 0 ? "new" : ""}">
       <div class="top"><span class="vn">Sürüm ${esc(v.surum)}${isNew("v:" + v.surum) ? '<span class="newtag">YENİ</span>' : ""}${i === 0 ? '<span class="badge">GÜNCEL</span>' : ""}</span><span class="vd">${fmt(v.tarih)}</span></div>
@@ -977,7 +1000,8 @@ const TARIH = [
   ["1956", "İş Bankası Kültür Yayınları o yıldan beri kesintisiz kitap yayımlıyor."],
   ["1979", "Banka 865 şube ve 19.074 çalışana ulaştı. Türkiye'deki mevduatın %22'si İş Bankası'ndaydı."],
   ["1983", "Merkezi bilgisayar sistemi ilk olarak Ankara'daki 6 şubede çalışmaya başladı. 1993'te bütün şubeler ağa bağlandı."],
-  ["Bankamatik", "Türkiye'nin ilk ATM'lerini İş Bankası kurdu. Herkesin kullandığı \"Bankamatik\" adı aslında bankanın tescilli markasıdır."],
+  ["1982", "Türkiye'nin ilk ATM'sini ve onunla çalışan kartı İş Bankası sundu. Makinelere verdiği \"Bankamatik\" adı zamanla bütün ATM'lerin genel adı gibi kullanılır oldu."],
+  ["1987", "Çevrim içi çalışan modern Bankamatik'ler ve banka kartları hizmete girdi."],
   ["1990", "Anadolu Hayat Emeklilik kuruldu. Banka aynı yıl kredi kartı başvurusu almaya başladı."],
   ["1991", "Telefon bankacılığı \"Mavi Hat\" hizmete girdi."],
   ["1997", "Türkiye'nin ilk internet şubesini açtı. ATM sayısı da aynı yıl 1.000'i geçti."],
@@ -985,9 +1009,13 @@ const TARIH = [
   ["2000", "Genel müdürlük Ankara'dan İstanbul Levent'teki İş Kuleleri'ne taşındı."],
   ["Ulus, Ankara", "Bankanın Ulus'taki tarihi genel müdürlük binası bugün İktisadi Bağımsızlık Müzesi olarak ziyaret edilebiliyor."],
   ["2007", "Biyometrik kimlik tanıma sistemini kullanmaya başladı."],
+  ["2007", "Mobil bankacılık uygulaması İşCep yayına girdi."],
+  ["2012", "Yurt dışındaki ilk Bankamatik, Irak'taki Erbil Şubesi'nde kuruldu."],
   ["2012", "QR kodla ödeme sistemi Parakod'u hayata geçirdi."],
+  ["2015", "İşCep ile Bankamatik'i birleştiren İşCepmatik hizmete girdi."],
   ["2017", "Yapay zekâ destekli dijital asistan Maxi devreye girdi."],
   ["Atatürk'ün vasiyeti", "Atatürk'ün bankadaki hisselerinin temsil hakkı vasiyetiyle Cumhuriyet Halk Partisi'ne bırakıldı."],
+  ["2023 – 2025", "İşCep, Global Finance'ın En İyi Dijital Banka Ödülleri'nde üç yıl üst üste \"Dünyanın En İyi Mobil Bankacılık Uygulaması\" seçildi."],
   ["2024", "İş Bankası 100. yaşını kutladı. \"Türkiye'nin Bankası\" olarak ikinci yüzyılına girdi."],
 ];
 function dayIdx() { const t = new Date(); return Math.floor((Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) - Date.UTC(2024, 0, 1)) / 864e5); }
@@ -1058,7 +1086,14 @@ function renderSoru() {
 }
 function renderTarihce() {
   $("upd").textContent = `${TARIH.length} bilgi · bankanın kendi tarihçesinden ve 100. yıl kaynaklarından`;
-  $("list").innerHTML = `<div class="daycard" id="factBox">${factHtml()}<div style="text-align:right;margin-top:10px"><button type="button" class="more" id="factNext">Başka bir bilgi ›</button></div></div>
+  $("list").innerHTML = `<div class="bmatik">
+      <div class="bmTop"><div><span class="bmQ">💡 Biliyor muydunuz?</span><b class="bmH">"Bankamatik" bir marka,<br>sahibi <em>İş Bankası</em></b></div>
+        <svg class="bmAtm" viewBox="0 0 64 84" aria-label="Bankamatik çizimi"><rect x="4" y="2" width="56" height="80" rx="8" fill="#1a2bb8" stroke="#6f84ff"/><rect x="11" y="10" width="42" height="26" rx="3" fill="#0b1140" stroke="#3a50f0"/><text x="32" y="26" text-anchor="middle" font-size="6.4" font-weight="800" fill="#f3dca8" font-family="system-ui,sans-serif">BANKAMATİK</text><rect x="14" y="42" width="22" height="20" rx="2" fill="#2a3fe0"/><g fill="#9fb0ff"><circle cx="19" cy="47" r="1.6"/><circle cx="25" cy="47" r="1.6"/><circle cx="31" cy="47" r="1.6"/><circle cx="19" cy="52" r="1.6"/><circle cx="25" cy="52" r="1.6"/><circle cx="31" cy="52" r="1.6"/><circle cx="19" cy="57" r="1.6"/><circle cx="25" cy="57" r="1.6"/><circle cx="31" cy="57" r="1.6"/></g><rect x="40" y="44" width="14" height="3" rx="1.5" fill="#e0a24f"/><rect x="40" y="52" width="14" height="10" rx="2" fill="#0b1140" stroke="#3a50f0"/><rect x="14" y="68" width="36" height="4" rx="2" fill="#0b1140"/></svg></div>
+      <p>Para çekilen makinelere hepimiz "bankamatik" deriz ama bu genel bir kelime değil. İş Bankası <b>1982</b>'de Türkiye'nin ilk ATM'sini ve onunla çalışan kartı sundu, makinelerine de <b>Bankamatik</b> adını verdi. Ad o kadar sevildi ki bütün ATM'lerin genel adı gibi kullanılır oldu.</p>
+      <div class="bmYil"><span><b>1982</b>İlk Bankamatik</span><span><b>1987</b>Çevrim içi ATM ve banka kartı</span><span><b>2012</b>Yurt dışındaki ilk Bankamatik, Erbil</span></div>
+      <a href="https://www.isbank.com.tr/bankamizi-taniyin/irak-ve-gurcistandaki-is-bankasi-musterileri-de-bankamatik-kullaniyor" target="_blank" rel="noopener">Kaynak: İş Bankası ↗</a>
+    </div>
+    <div class="daycard" id="factBox">${factHtml()}<div style="text-align:right;margin-top:10px"><button type="button" class="more" id="factNext">Başka bir bilgi ›</button></div></div>
     <div class="day" style="margin-top:16px">📜 Kronoloji</div><div class="tl">${TARIH.map((x) => `<div><b>${esc(x[0])}</b>${esc(x[1])}</div>`).join("")}</div>`;
   bindFact();
 }
