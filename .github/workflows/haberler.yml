@@ -26,6 +26,9 @@ jobs:
       - name: İş Bankası resmi finansal veriler
         run: pip install -q openpyxl && python scripts/isbank_finans.py
         continue-on-error: true
+      - name: İş Black ayrıcalıkları (günlük kontrol)
+        run: python scripts/isbank_black.py
+        continue-on-error: true
       - name: Piyasa (kur ve maden)
         run: python scripts/piyasa.py
         continue-on-error: true
@@ -33,7 +36,7 @@ jobs:
         run: |
           git config user.name "sadolayn-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/haberler.json data/piyasa.json isbank/finans.json
+          git add data/haberler.json data/piyasa.json isbank/finans.json isbank/black.json
           git diff --cached --quiet || (git commit -q -m "Haberler ve piyasa güncellendi" && git pull --rebase -q && git push -q)
       - name: Bir saat sonra yeniden başlat
         if: always()

@@ -96,6 +96,7 @@
   .jtop { display: flex; justify-content: space-between; align-items: center; gap: 10px; } .jtop b { display: block; font-size: 15px; } .jtop span { font-size: 12px; color: var(--muted); }
   .jtop em { font-style: normal; font-size: 24px; font-weight: 800; color: var(--accent); }
   .jbar { height: 7px; border-radius: 6px; background: #222; overflow: hidden; margin: 8px 0 10px; } .jbar i { display: block; height: 100%; background: linear-gradient(90deg, #e0a24f, #3fc283); }
+  .jnote { font-size: 11.5px; color: var(--muted); margin: -2px 0 10px; line-height: 1.45; }
   .jbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .jbtns button { padding: 10px 6px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
   .jbtns button + button { background: transparent; color: var(--accent); }
@@ -131,6 +132,10 @@
   .bt td { padding: 8px 4px; border-top: 1px solid #2c2a25; text-align: center; color: #ddd; } .bt td:first-child { text-align: left; color: #cfcfcf; } .bt td.p { color: #f3dca8; font-weight: 700; }
   .bcom { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px; } .bcom b { width: 100%; font-size: 12px; letter-spacing: 1px; color: #b79a74; text-transform: uppercase; }
   .bcom span { font-size: 12.5px; padding: 5px 9px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid #2f2b22; color: #e6e0d4; }
+  .bring { margin: 10px 0; padding: 12px; border-radius: 14px; background: linear-gradient(135deg, rgba(63,194,131,.12), rgba(63,194,131,.03)); border: 1px solid #23573f; font-size: 13px; line-height: 1.5; color: #d6efe2; }
+  .bring > b { display: block; color: #9ff0c8; font-size: 14px; margin-bottom: 4px; } .bring a { display: inline-block; margin-top: 6px; color: #7ee2a8 !important; }
+  .blive { margin: 10px 0; border-top: 1px solid #2c2a25; padding-top: 10px; } .blive > b { display: block; color: #f3dca8; font-size: 13.5px; margin-bottom: 4px; } .blive small { color: #9a9a9a; font-weight: 500; }
+  .blive a { display: block; padding: 6px 0; border-bottom: 1px dashed #2c2a25; color: #e6e0d4 !important; font-weight: 500 !important; font-size: 13px !important; }
   .lounge { margin-top: 10px; border-top: 1px solid #2c2a25; padding-top: 10px; font-size: 13px; } .lounge > b { display: block; color: #f3dca8; margin-bottom: 6px; }
   .lounge div { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; } .lounge span { color: #9a9a9a; } .lounge em { font-style: normal; color: #eee; text-align: right; }
   [hidden] { display: none !important; }
@@ -276,7 +281,7 @@ const LBL = { "Maximum": "Maxi<small>(mum+mil)</small>", "📰 Güncel": "Günce
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
-let fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
+let blk = null, fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 if (location.hash === "#maximum") cat = "Maximum"; // ana sayfadaki kampanya hatırlatıcısından gelince
 
@@ -394,6 +399,10 @@ function blackHtml() {
         <span>💱 İŞ'te FX ile döviz-altın-gümüş</span><span>📰 Günlük piyasa ve aylık fon bülteni</span><span>✈️ Bilet.com'da uçuş ve transfer indirimi</span><span>🎭 Kültür-sanatta %20 indirim</span>
         <span>🛡️ Anadolu Sigorta'da İşCep'e özel indirimler</span><span>🏖️ Girişte ücret alınmayan İş Black BES planı</span></div>
       <p>Ayrıcalıklar <b>İşCep › İş Black</b> menüsünden görülür ve kullanılır. Kademe, İş Bankası'ndaki aylık ortalama varlığa göre belirlenir.</p>
+      ${blkLive()}
+      <div class="bring"><b>💸 Kademeye ulaşmak için birikimini getir</b>
+        <span>Diğer bankalardaki vadesiz TL hesabındaki parayı, o bankaya gitmeden İşCep'ten İş Bankası'na aktarabilirsin: <b>Para Aktar › İş Bankası Hesabıma Para Getir</b>. Hesapları bir kez <b>Hesaplarım › Diğer Banka Hesabı/Kartı Ekle</b> ile eklersen bakiyelerini de İşCep'te görürsün (Açık Bankacılık, ücretsiz).</span>
+        <a href="https://www.isbank.com.tr/acik-bankacilik" target="_blank" rel="noopener">Açık Bankacılık nasıl çalışır ↗</a></div>
       <a href="https://www.isbank.com.tr/is-black" target="_blank" rel="noopener">İş Black ayrıcalıklarının tamamı ↗</a>
     </div>
     <div class="blk card">
@@ -414,6 +423,12 @@ function blackHtml() {
       <a href="https://www.isbank.com.tr/maximiles-black" target="_blank" rel="noopener">Maximiles Black sayfası ↗</a>
     </div>`;
 }
+// İş Black sayfasındaki güncel kampanya başlıkları (her gün otomatik kontrol, isbank/black.json)
+function blkLive() {
+  if (!blk || !blk.kampanyalar || !blk.kampanyalar.length) return "";
+  const yeni = (d) => (Date.now() - new Date(d + "T12:00:00")) / 864e5 <= 7;
+  return `<div class="blive"><b>🆕 Güncel İş Black kampanyaları <small>${blk.kampanyalar.length}</small></b>${blk.kampanyalar.map((k) => `<a href="${esc(k.url)}" target="_blank" rel="noopener">${yeni(k.ilk) ? '<span class="newtag">YENİ</span> ' : ""}${esc(k.baslik)} ↗</a>`).join("")}</div>`;
+}
 function milesHtml() {
   const L = camps.filter((c) => /maximiles|maximil|mil\b|uçuş|uçak|havayolu|thy|pegasus/i.test(c.baslik + " " + c.ozet));
   return `<div class="ocard"><div class="oh"><i>✈️</i><b>Maximiles</b></div>
@@ -431,7 +446,7 @@ function campCard(k) {
       <div class="top"><span class="tag">${esc(k.tur)}${fr ? '<span class="newtag">YENİ EKLENDİ</span>' : isNew("c:" + k.baslik) ? '<span class="newtag">YENİ</span>' : ""}</span><span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}" title="Bitiş: ${bit}">${left}</span></div>
       <b>${esc(k.baslik)}</b>
       <p>${esc(k.ozet)}</p>
-      <div class="cfoot"><span>Bitiş: ${bit}</span><button type="button" class="jbtn${j ? " on" : ""}" data-j="${esc(k.baslik)}">${j ? "✅ Katıldım" : "☐ Katıldım olarak işaretle"}</button></div>
+      <div class="cfoot"><span>Bitiş: ${bit}</span><button type="button" class="jbtn${j ? " on" : ""}" data-j="${esc(k.baslik)}">${j ? "📌 İşaretli" : "☐ Katılacağım / katıldım"}</button></div>
     </div>`;
 }
 function renderCamps() {
@@ -449,20 +464,21 @@ function renderCamps() {
   const pct = Math.round((camps.length - nj.length) / camps.length * 100);
   const urg = nj.filter((k) => daysLeft(k.bitis) <= 3);
   let html = `<div class="jpanel">
-      <div class="jtop"><div><b>🎯 Kampanya katılımın</b><span>${camps.length - nj.length}/${camps.length} kampanyaya katıldın${JN.bulk ? ` · son toplu katılım ${new Date(JN.bulk).toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}` : ""}</span></div><em>%${pct}</em></div>
+      <div class="jtop"><div><b>📌 Kampanya takip listem</b><span>${camps.length - nj.length}/${camps.length} kampanyayı işaretledin${JN.bulk ? ` · son toplu işaretleme ${new Date(JN.bulk).toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}` : ""}</span></div><em>%${pct}</em></div>
       <div class="jbar"><i style="width:${pct}%"></i></div>
-      <div class="jbtns"><button type="button" id="jAll">✅ Hepsine katıldım</button><button type="button" id="jIcs">📅 Ay başı hatırlatıcısı</button></div>
+      <div class="jnote">ℹ️ Bu liste senin hatırlatma notundur, banka sistemine bağlı değildir. Kampanyaya katılım İşCep, Maximum Mobil ya da Maxi'den yapılır.</div>
+      <div class="jbtns"><button type="button" id="jAll">📌 Hepsini işaretle</button><button type="button" id="jIcs">📅 Ay başı hatırlatıcısı</button></div>
       <details class="jhow"><summary>📲 Kampanyalara nasıl katılırım?</summary>
         <div class="jway"><i>📱</i><div><b>İşCep</b>Uygulamada <b>Kampanyalar</b> bölümünü aç, kampanyayı seç ve <b>Katıl</b>'a dokun.</div></div>
         <div class="jway"><i>💳</i><div><b>Maximum Mobil</b>Kampanyalar listesinde istediğin kampanyada <b>Katıl</b>'a dokun; katıldıkların ayrı listelenir.</div></div>
         <div class="jway"><i>🤖</i><div><b>Dijital asistan Maxi</b>İşCep ya da Maximum Mobil'de Maxi'ye <b>"kampanyalara katılmak istiyorum"</b> yaz veya söyle; uygun kampanyaları listeler.</div></div>
-        <p>İpucu: Ay başında hepsine katıl, burada <b>Hepsine katıldım</b>'a bas. Ay içinde yeni kampanya eklenince <b>"Yeni eklendi"</b> diye ayrı listelenir ve ana sayfada hatırlatılır. Bazı taksit ve indirim kampanyaları katılım istemeyebilir; koşullar maximum.com.tr'de.</p>
+        <p>İpucu: Katılacağın ya da katıldığın kampanyaları burada işaretle; ay başında hepsine katıldıysan <b>Hepsini işaretle</b>'ye bas. Ay içinde yeni kampanya eklenince <b>"Yeni eklendi"</b> diye ayrı listelenir ve ana sayfada hatırlatılır. Bazı taksit ve indirim kampanyaları katılım istemeyebilir; koşullar maximum.com.tr'de.</p>
       </details>
     </div>`;
-  if (urg.length) html += `<div class="alarm">⏰ Katılmadığın <b>${urg.length} kampanya</b> 3 gün içinde bitiyor!</div>`;
-  if (fresh.length) html += `<div class="csec new">🆕 Yeni eklenenler · henüz katılmadın <b>${fresh.length}</b></div>` + fresh.map(campCard).join("");
-  if (rest.length) html += `<div class="csec">⏳ Katılmadıkların <b>${rest.length}</b></div>` + rest.map(campCard).join("");
-  if (done.length) html += `<div class="csec ok">✅ Katıldıkların <b>${done.length}</b></div>` + done.map(campCard).join("");
+  if (urg.length) html += `<div class="alarm">⏰ İşaretlemediğin <b>${urg.length} kampanya</b> 3 gün içinde bitiyor!</div>`;
+  if (fresh.length) html += `<div class="csec new">🆕 Yeni eklenenler · henüz işaretlemedin <b>${fresh.length}</b></div>` + fresh.map(campCard).join("");
+  if (rest.length) html += `<div class="csec">⏳ İşaretlemediklerin <b>${rest.length}</b></div>` + rest.map(campCard).join("");
+  if (done.length) html += `<div class="csec ok">📌 İşaretlediklerin <b>${done.length}</b></div>` + done.map(campCard).join("");
   html += `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm kampanyalar ve katılım koşulları ↗</a>`;
   $("list").innerHTML = html;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
@@ -869,7 +885,11 @@ function renderList() {
   if (cat === "📰 Güncel") return renderLive();
   if (cat === "📅 Takvim") return renderTakvim();
   if (cat === "Finans") return renderFinans();
-  if (cat === "Black") { $("upd").textContent = "Kaynak: isbank.com.tr İş Black ve Maximiles Black sayfaları · ayrıcalıklar 31.12.2026'ya kadar"; $("list").innerHTML = blackHtml(); return; }
+  if (cat === "Black") {
+    const fd = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+    $("upd").innerHTML = blk ? `🔄 Her gün kontrol edilir · son kontrol <b>${fd(blk.kontrol)}</b> · son değişiklik ${fd(blk.degisim)}` : "🔄 Ayrıcalıklar her gün kontrol edilir";
+    $("list").innerHTML = blackHtml(); return;
+  }
   if (cat === "Soru") return renderSoru();
   if (cat === "Tarihçe") return renderTarihce();
   if (cat === "İşCep") return renderIscep();
@@ -919,6 +939,7 @@ function renderList() {
     if (!CATS.some((c) => c[0] === cat)) cat = "Tümü";
     try { fin = await (await fetch("isbank/finans.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { yat = await (await fetch("isbank/yatirimci.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
+    try { blk = await (await fetch("isbank/black.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { kontrol = (await (await fetch("isbank/kontrol.json?t=" + Date.now(), { cache: "no-store" })).json()).son_kontrol; } catch (e) {}
     seenInit(); renderList(); renderChips();
   } catch (e) {
