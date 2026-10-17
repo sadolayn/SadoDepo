@@ -147,6 +147,8 @@
   .quote span::before, .quote span::after { content: ""; width: 28px; height: 1px; background: linear-gradient(90deg, transparent, #5a4320); }
   .quote span::after { background: linear-gradient(90deg, #5a4320, transparent); }
 </style>
+<link rel="manifest" href="manifest.webmanifest">
+<script src="pwa.js"></script>
 <script src="rapor.js"></script>
 </head>
 <body>
@@ -315,6 +317,11 @@
     window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
   })();
 </script>
+<div class="paylas" data-yeni="paylas|2026-10-17|YENİ">
+  <button type="button" id="oner" class="pb pri">💌 Arkadaşına öner</button>
+  <button type="button" id="kur" class="pb">📲 Ana ekrana ekle</button>
+</div>
+<div class="kurYardim" id="kurYardim" hidden></div>
 <div class="oneri-wrap"><button type="button" class="oneri-btn" id="oneriBtn">✉️ Önerileriniz ve görüşleriniz benim için değerli</button></div>
 <div class="oneri-ov" id="oneriOv" hidden>
   <form class="oneri-box" id="oneriForm">
@@ -328,6 +335,12 @@
 </div>
 <style>
   .oneri-wrap { display: flex; justify-content: center; margin: 26px 0 0; }
+  .paylas { display: flex; gap: 8px; justify-content: center; margin: 22px auto 0; max-width: 420px; position: relative; flex-wrap: wrap; }
+  .paylas .pb { flex: 1 1 150px; padding: 13px 10px; border-radius: 14px; font: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; border: 1px solid #3a3a3a; background: #141414; color: #eee; }
+  .paylas .pb.pri { background: linear-gradient(180deg, #f3c27c, #e0a24f); border-color: #e0a24f; color: #1a1205; }
+  .paylas .yeniB { position: absolute; top: -9px; right: 6px; }
+  .kurYardim { max-width: 420px; margin: 10px auto 0; padding: 12px 14px; border-radius: 14px; background: #121212; border: 1px solid #2a2a2a; color: #cfcfcf; font-size: 13.5px; line-height: 1.6; }
+  .kurYardim b { color: #fff; }
   .oneri-btn { background: transparent; color: var(--accent); border: 1px solid #5a4320; border-radius: 999px; padding: 10px 18px; font: inherit; font-size: 13.5px; line-height: 1.35; max-width: 340px; cursor: pointer; }
   .oneri-ov { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.7); display: flex; align-items: flex-end; justify-content: center; padding: 16px; }
   .oneri-ov[hidden] { display: none; }
@@ -370,6 +383,33 @@
   })();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.<br><span style="letter-spacing:0;color:#555">Kimlik bilgisi toplanmaz; yalnızca anonim sayfa ve oyun sayıları tutulur.</span></footer>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const URL_ = "https://sadolayn.github.io/SadoDepo/";
+  const METIN = "Bankacılık hesaplamaları, İş Bankası gündemi, günce ve oyunlar tek yerde. Bir bak, beğeneceksin 👇";
+  $("oner").onclick = async () => {
+    window.Rapor && Rapor.bolum("arkadasina-oner");
+    if (navigator.share) { try { await navigator.share({ title: "SADOLAYN", text: METIN, url: URL_ }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+    const y = $("kurYardim"); y.hidden = false;
+    y.innerHTML = `<b>Paylaş:</b><br><a href="https://wa.me/?text=${encodeURIComponent(METIN + " " + URL_)}" target="_blank" rel="noopener" style="color:#3fc283">WhatsApp ile gönder</a> · <a href="#" id="kopya" style="color:#e0a24f">Bağlantıyı kopyala</a>`;
+    $("kopya").onclick = (e) => { e.preventDefault(); navigator.clipboard && navigator.clipboard.writeText(URL_).then(() => ($("kopya").textContent = "Kopyalandı ✓")); };
+  };
+  const kurulu = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+  if (kurulu) $("kur").hidden = true;
+  $("kur").onclick = async () => {
+    window.Rapor && Rapor.bolum("ana-ekrana-ekle");
+    const p = window.__kurPrompt;
+    if (p) { p.prompt(); try { const r = await p.userChoice; if (r.outcome === "accepted") $("kur").hidden = true; } catch (e) {} window.__kurPrompt = null; return; }
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const y = $("kurYardim"); y.hidden = false;
+    y.innerHTML = ios
+      ? "<b>iPhone'da:</b> Safari'de alttaki <b>Paylaş</b> (⬆️) simgesine dokun → <b>Ana Ekrana Ekle</b>. Sadolayn simgesiyle uygulama gibi açılır."
+      : "<b>Android'de:</b> Chrome'da sağ üstteki <b>⋮</b> menüsüne dokun → <b>Ana ekrana ekle</b> ya da <b>Uygulamayı yükle</b>. Sadolayn simgesiyle uygulama gibi açılır.";
+  };
+  window.addEventListener("appinstalled", () => ($("kur").hidden = true));
+})();
+</script>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script src="yeni.js"></script>
