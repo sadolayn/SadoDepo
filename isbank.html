@@ -740,6 +740,13 @@ async function sfOverpass(q) {
     return j;
   } catch (e) { throw new Error("overpass"); }
 }
+// Önce sitenin kendi şube dosyası (günde bir güncellenir); yoksa harita sunucularına sorulur
+let SFDB = null;
+async function sfLocal(lat, lon, R, atm) {
+  if (!SFDB) SFDB = await (await fetch("isbank/sube_konum.json", { cache: "no-cache" })).json();
+  if (!SFDB || !Array.isArray(SFDB.e) || !SFDB.e.length) throw new Error("bos");
+  return { elements: SFDB.e.filter((x) => (atm || !x.a) && sfDist(lat, lon, x.la, x.lo) <= R).map((x) => ({ lat: x.la, lon: x.lo, tags: { amenity: x.a ? "atm" : "bank", name: x.n || "", branch: x.b || "", "addr:street": x.adr || "", phone: x.tel || "", opening_hours: x.s || "" } })) };
+}
 function sfHtml() {
   return `<div class="sf">
     <div class="sfh"><b>📍 En yakın İş Bankası şubeleri</b><a href="https://www.isbank.com.tr/sube-ve-bankamatikler" target="_blank" rel="noopener">isbank.com.tr şube bul ↗</a></div>
@@ -795,7 +802,9 @@ async function sfLoad() {
   const R = SF.r, re = "İş Bankası|Is Bankasi|İşbank|Isbank|İŞ BANKASI|Iş Bankası";
   const q = `[out:json][timeout:25];(nwr["amenity"="bank"]["name"~"${re}",i](around:${R},${lat},${lon});nwr["amenity"="bank"]["brand"~"${re}",i](around:${R},${lat},${lon});${SF.atm ? `nwr["amenity"="atm"]["operator"~"${re}",i](around:${R},${lat},${lon});nwr["amenity"="atm"]["brand"~"${re}",i](around:${R},${lat},${lon});nwr["amenity"="atm"]["name"~"${re}",i](around:${R},${lat},${lon});` : ""});out center tags;`;
   try {
-    const j = await sfOverpass(q), seen = new Set();
+    let j = null; try { j = await sfLocal(lat, lon, R, SF.atm); } catch (e) {}
+    if (!j) j = await sfOverpass(q);
+    const seen = new Set();
     let L = (j.elements || []).map((e) => { const t = e.tags || {}, la = e.lat ?? (e.center && e.center.lat), lo = e.lon ?? (e.center && e.center.lon); return { la, lo, atm: t.amenity === "atm", name: t.name || (t.amenity === "atm" ? "İş Bankası Bankamatik" : "İş Bankası"), br: t.branch || "", adr: [t["addr:street"], t["addr:housenumber"], t["addr:district"] || t["addr:suburb"]].filter(Boolean).join(" "), tel: t.phone || t["contact:phone"] || "", saat: t.opening_hours || "", d: sfDist(lat, lon, la, lo) }; })
       .filter((x) => x.la && !seen.has(x.la.toFixed(5) + x.lo.toFixed(5)) && seen.add(x.la.toFixed(5) + x.lo.toFixed(5))).sort((a, b) => a.d - b.d);
     const br = L.filter((x) => !x.atm);
