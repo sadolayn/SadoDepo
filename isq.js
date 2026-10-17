@@ -93,7 +93,7 @@ const ISQ_ALL = [
   ["İşCep, Global Finance'ın 'Dünyanın En İyi Mobil Bankacılık Uygulaması' ödülünü 2025'te kaçıncı kez kazandı?", ["1. kez", "2. kez", "3. kez", "5. kez"], 2],
   ["İşCep'in üst üste 'Dünyanın En İyi Mobil Bankacılık Uygulaması' seçildiği yıllar hangileridir?", ["2019–2020–2021", "2021–2022–2023", "2023–2024–2025", "2024–2025–2026"], 2],
   ["Global Finance'ın İşCep'e verdiği ödülün töreni hangi şehirde yapıldı?", ["New York", "Londra", "Dubai", "Frankfurt"], 1],
-  ["2025 itibarıyla İşCep'in yaklaşık kaç kullanıcısı vardı?", ["5,5 milyon", "10,5 milyon", "15,5 milyon", "25,5 milyon"], 2],
+  ["Haziran 2026 yatırımcı sunumuna göre İşCep'in yaklaşık kaç müşterisi var?", ["6 milyon", "11 milyon", "16 milyon", "26 milyon"], 2],
   ["İşCep üzerinden yaklaşık kaç farklı işlem yapılabiliyor?", ["100'den fazla", "300'den fazla", "800'den fazla", "2.000'den fazla"], 2],
   ["İş Black programına dahil olmak için İş Bankası'ndaki aylık ortalama varlık en az ne kadar olmalı?", ["250 bin TL", "500 bin TL", "1 milyon TL", "4 milyon TL"], 2],
   ["İş Black Plus kademesi için aylık ortalama varlık en az ne kadar olmalı?", ["1 milyon TL", "2 milyon TL", "4 milyon TL", "10 milyon TL"], 2],

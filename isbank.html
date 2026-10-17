@@ -223,7 +223,7 @@
   .odTop small { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .8px; color: #c9a050; } .odTop b { display: block; margin-top: 3px; font-size: 17px; line-height: 1.25; color: #fff; }
   .odYil { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 12px 0 8px; }
   .odYil span { padding: 8px 4px; border-radius: 10px; border: 1px solid #4a3a22; background: rgba(240,198,116,.08); text-align: center; font-size: 11px; color: #cdb48a; }
-  .odYil b { display: block; font-size: 18px; color: #f3dca8; } .odYil .son { background: linear-gradient(160deg, #f3dca8, #c9a050); border-color: #f3dca8; color: #3a2a10; } .odYil .son b { color: #000; }
+  .odYil i { display: block; font-style: normal; font-size: 20px; line-height: 1.2; } .odYil b { display: block; font-size: 18px; color: #f3dca8; } .odYil .son { background: linear-gradient(160deg, #f3dca8, #c9a050); border-color: #f3dca8; color: #3a2a10; } .odYil .son b { color: #000; }
   .odAlt { display: flex; flex-wrap: wrap; gap: 6px; } .odAlt span { padding: 5px 9px; border-radius: 99px; background: #161616; border: 1px solid #262626; font-size: 12px; color: #cfcfcf; } .odAlt b { color: #fff; }
   .odul a { display: inline-block; margin-top: 10px; font-size: 12px; color: #f0c674; text-decoration: none; }
   .bmatik { margin: 0 0 12px; padding: 14px; border-radius: 16px; border: 1px solid #3a50f0; background: radial-gradient(130% 120% at 100% 0%, rgba(42,63,224,.38), rgba(10,10,10,0) 60%), radial-gradient(120% 120% at 0% 100%, rgba(224,162,79,.14), rgba(10,10,10,0) 55%), #0a0a12; box-shadow: 0 8px 26px rgba(42,63,224,.18); }
@@ -857,9 +857,9 @@ function renderIscep() {
   const fmt = (t) => new Date(t + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
   let html = `<div class="odul">
       <div class="odTop"><span class="odKupa">🏆</span><div><small>GLOBAL FINANCE · EN İYİ DİJİTAL BANKA ÖDÜLLERİ</small><b>Dünyanın En İyi Mobil Bankacılık Uygulaması</b></div></div>
-      <div class="odYil"><span><b>2023</b>1. kez</span><span><b>2024</b>2. kez</span><span class="son"><b>2025</b>3. kez üst üste</span></div>
-      <div class="odAlt"><span>📲 <b>2007</b>'den beri</span><span>👥 <b>15,5 milyon</b> kullanıcı</span><span>⚙️ <b>800+</b> işlem</span></div>
-      <a href="https://www.isbank.com.tr/bankamizi-taniyin/iscep-ucuncu-kez-dunyanin-en-iyi-mobil-bankacilik-uygulamasi-secildi" target="_blank" rel="noopener">Ödül haberi · İş Bankası ↗</a>
+      <div class="odYil"><span><i>🥇</i><b>2023</b>Birinci</span><span><i>🥇</i><b>2024</b>Birinci</span><span class="son"><i>🥇</i><b>2025</b>3 yıl üst üste</span></div>
+      <div class="odAlt"><span>📲 <b>2007</b>'den beri</span><span>👥 <b>~16 milyon</b> müşteri (Haz. 2026)</span><span>⚙️ <b>800+</b> işlem</span></div>
+      <a href="https://www.isbank.com.tr/bankamizi-taniyin/iscep-ucuncu-kez-dunyanin-en-iyi-mobil-bankacilik-uygulamasi-secildi" target="_blank" rel="noopener">Ödül haberi, 23 Ekim 2025 ↗</a> · <a href="https://www.isbank.com.tr/contentmanagement/IsbankInvestorDocuments/pdf/YatirimciSunumu.pdf" target="_blank" rel="noopener">Müşteri sayısı: yatırımcı sunumu ↗</a>
     </div>`;
   d.surumler.forEach((v, i) => {
     html += `<div class="ver ${i === 0 ? "new" : ""}">
