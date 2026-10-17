@@ -328,13 +328,27 @@
   .chart { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 12px 6px; margin-bottom: 8px; }
   .chart h5 { margin: 0 0 2px; font-size: 13.5px; } .chart small { font-size: 11.5px; color: var(--muted); }
   .chart svg { display: block; width: 100%; height: auto; margin-top: 6px; }
+  .pz .pzHero { padding: 14px; border-radius: 16px; border: 1px solid #a8541f; background: radial-gradient(120% 130% at 100% 0%, rgba(255,138,61,.35), rgba(10,10,10,0) 60%), #120a05; margin-bottom: 10px; }
+  .pzTag { font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #ffb37a; } .pzHero > b { display: block; font-size: 19px; color: #fff; margin: 4px 0; } .pzHero > span { font-size: 13.5px; color: #f2d4bf; line-height: 1.5; } .pzHero > span b { color: #ffd2a8; }
+  .pzDuo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .pzC { padding: 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); } .pzC i { font-style: normal; font-size: 22px; } .pzC b { display: block; font-size: 15px; margin-top: 2px; }
+  .pzC em { display: inline-block; margin: 4px 0 6px; padding: 2px 8px; border-radius: 99px; font-style: normal; font-size: 11px; font-weight: 800; } .pzC span { display: block; font-size: 12.5px; color: #c9c9c9; line-height: 1.45; } .pzC u { text-decoration: none; color: #ffb37a; font-weight: 700; }
+  .pzC.pu { border-color: #6b5222; background: linear-gradient(160deg, rgba(224,162,79,.16), var(--card)); } .pzC.pu em { background: #e0a24f; color: #000; }
+  .pzC.mi { border-color: #23466e; background: linear-gradient(160deg, rgba(90,169,240,.16), var(--card)); } .pzC.mi em { background: #5aa9f0; color: #000; }
+  .pzCalc, .pzSteps { padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); margin-bottom: 10px; } .pzCalc > b, .pzSteps > b { display: block; font-size: 14.5px; margin-bottom: 8px; }
+  .pzIn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .pzIn label { font-size: 12px; color: var(--muted); } .pzIn input { width: 100%; margin-top: 4px; padding: 10px; border-radius: 10px; border: 1px solid #333; background: #161616; color: #fff; font: inherit; font-size: 16px; }
+  .pzR { margin-top: 10px; padding: 10px 12px; border-radius: 12px; font-size: 13.5px; } .pzR.no { background: rgba(239,106,76,.12); border: 1px solid #6b2e20; color: #ffd0c2; } .pzR.no small { color: var(--muted); }
+  .pzR.ok { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: rgba(63,194,131,.10); border: 1px solid #23573f; } .pzR.ok span { display: block; font-size: 11.5px; color: #9fd8bb; } .pzR.ok b { font-size: 20px; color: #fff; font-variant-numeric: tabular-nums; }
+  .pzNote { display: block; margin-top: 6px; font-size: 12px; color: var(--muted); }
+  .pzSteps ol { margin: 0; padding-left: 20px; } .pzSteps li { font-size: 13.5px; color: #ddd; margin-bottom: 6px; line-height: 1.45; } .pzSteps small { display: block; margin-top: 6px; font-size: 12px; color: var(--muted); line-height: 1.45; }
+  .pzSrc { margin-top: 10px; text-align: center; font-size: 12px; } .pzSrc a { color: #ffb37a; text-decoration: none; }
   /* Maximum alt menüsü: renkli kutucuklar */
-  .chipbar .tfil.mtiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 8px; padding: 8px; border-radius: 14px; border: 1px solid #5a1f3e; background: linear-gradient(135deg, rgba(255,45,149,.12), rgba(255,45,149,.02)); }
-  .tfil.mtiles button.mt { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; min-height: 52px; padding: 5px 2px; border-radius: 11px;
-    border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 36%, #000), color-mix(in srgb, var(--c) 10%, #050505)); color: color-mix(in srgb, var(--c) 35%, #fff); font-size: 10.5px; font-weight: 700; line-height: 1.15; }
-  .tfil.mtiles button.mt i { font-style: normal; font-size: 18px; line-height: 1.1; }
+  .chipbar .tfil.mtiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-top: 6px; padding: 5px; border-radius: 14px; border: 1px solid #5a1f3e; background: linear-gradient(135deg, rgba(255,45,149,.12), rgba(255,45,149,.02)); }
+  .tfil.mtiles button.mt { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; min-width: 0; min-height: 36px; padding: 3px 2px; border-radius: 9px;
+    border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 36%, #000), color-mix(in srgb, var(--c) 10%, #050505)); color: color-mix(in srgb, var(--c) 35%, #fff); font-size: 9.5px; font-weight: 700; line-height: 1.1; flex-direction: row; gap: 4px; }
+  .tfil.mtiles button.mt i { font-style: normal; font-size: 13px; line-height: 1; }
   .tfil.mtiles button.mt span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .tfil.mtiles button.mt em { position: absolute; top: -6px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--c); color: #000; font-style: normal; font-size: 10.5px; font-weight: 800; line-height: 18px; text-align: center; box-shadow: 0 0 0 2px #000; }
+  .tfil.mtiles button.mt em { position: absolute; top: -6px; right: -4px; min-width: 15px; height: 15px; padding: 0 4px; border-radius: 8px; background: var(--c); color: #000; font-style: normal; font-size: 9px; font-weight: 800; line-height: 15px; text-align: center; box-shadow: 0 0 0 2px #000; }
   .tfil.mtiles button.mt.on { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
   .tfil.mtiles button.mt.on em { background: #000; color: #fff; }
   .tfil { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 10px; }
@@ -551,6 +565,40 @@ function renderBankaKamp() {
       ${c.kampanyalar.map((x) => `<a class="bkit" href="${esc(x.url)}" target="_blank" rel="noopener">${isNew("b:" + x.url) ? '<span class="newtag">YENİ</span> ' : ""}<b>${esc(x.baslik)}</b>${x.ozet ? `<span>${esc(x.ozet)}</span>` : ""}${x.bitis ? `<small>Bitiş: ${fd(x.bitis)}</small>` : ""}</a>`).join("")}
     </div>`).join("") + `<a class="maxlink" href="https://www.isbank.com.tr/kampanyalar" target="_blank" rel="noopener">İş Bankası'nın tüm kampanyaları ↗</a>`;
 }
+// ===== Pazarama: MaxiPuan ve MaxiMil kullanımı (maximum.com.tr ve maximiles.com.tr, Ekim 2026'da doğrulandı) =====
+const PAZ = { milMin: 5000, milMax: 1000, milBitis: "2026-10-31", milKaynak: "https://www.maximum.com.tr/kampanyalar/maximillerinizi-maximum-mobildeki-pazarama-online-alisveris-menusunde-kullanabilirsiniz", puanKaynak: "https://www.maximum.com.tr/maxipuan" };
+function pazHtml() {
+  const milAktif = new Date() <= new Date(PAZ.milBitis + "T23:59:59");
+  const ilgili = camps.filter((c) => /pazarama/i.test(c.baslik + " " + c.ozet));
+  return `<div class="pz">
+    <div class="pzHero"><span class="pzTag">🛒 PAZARAMA</span><b>Puanların Pazarama'da nakit gibi</b><span>İş Bankası'nın alışveriş platformu Pazarama'da MaxiPuan ve MaxiMil'lerini doğrudan harcayabilirsin. İkisinde de <b>1 puan = 1 TL</b>.</span></div>
+    <div class="pzDuo">
+      <div class="pzC pu"><i>🪙</i><b>MaxiPuan</b><em>1 MaxiPuan = 1 TL</em><span>Pazarama ve Pazarama Tatil'de ödeme yaparken kullanılır. Tüm Maximum kartlarda geçerli.</span></div>
+      <div class="pzC mi"><i>✈️</i><b>MaxiMil</b><em>${tlFmt(PAZ.milMin)} sepette ${tlFmt(PAZ.milMax).replace(" TL", "")} Mil'e kadar</em><span>Sepetin ${tlFmt(PAZ.milMin)} ve üzeriyse işlem başına en fazla ${PAZ.milMax.toLocaleString("tr-TR")} MaxiMil kullanırsın. ${milAktif ? `<u>31 Ekim 2026'ya kadar</u>` : `<u>Ekim 2026 uygulamasıydı; güncel koşula bak</u>`}</span></div>
+    </div>
+    <div class="pzCalc"><b>🧮 Bu alışverişte ne kadar Mil kullanırım?</b>
+      <div class="pzIn"><label>Sepet tutarı<input id="pzSepet" type="text" inputmode="numeric" value="6.500"></label><label>MaxiMil bakiyen<input id="pzMil" type="text" inputmode="numeric" value="2.000"></label></div>
+      <div id="pzOut" class="pzOut"></div></div>
+    <div class="pzSteps"><b>📲 Nasıl kullanılır?</b>
+      <ol><li><b>Maximum Mobil › Online Alışveriş</b>'e gir ya da Pazarama uygulamasını aç</li><li>Ödemede Maximum / Maximiles kartını seç (internet alışverişi yetkisi açık olmalı)</li><li><b>MaxiPuan / MaxiMil kullan</b> düğmesini aç</li><li>Peşin ya da taksitli öde: taksitte önce puan düşülür, kalan tutar taksitlenir</li></ol>
+      <small>MaxiMil için geçerli kartlar: Maximiles, Maximiles Select, MercedesCard, Maximiles Black ve ek kartları. Kuyum ve işlenmemiş altın alımlarında puan kullanılamaz.</small></div>
+    ${ilgili.length ? `<div class="day" style="margin-top:14px">🎁 Şu an Pazarama'da</div>` + ilgili.map(campCard).join("") : ""}
+    <div class="pzSrc"><a href="${PAZ.milKaynak}" target="_blank" rel="noopener">MaxiMil koşulları ↗</a> · <a href="${PAZ.puanKaynak}" target="_blank" rel="noopener">MaxiPuan nerede geçer ↗</a></div>
+  </div>`;
+}
+function bindPaz() {
+  const n = (id) => +String($(id).value).replace(/\./g, "").replace(/[^\d]/g, "") || 0;
+  const fmtIn = (el) => { const v = +el.value.replace(/[^\d]/g, ""); el.value = v ? v.toLocaleString("tr-TR") : ""; };
+  const calc = () => {
+    const sp = n("pzSepet"), mil = n("pzMil"), o = $("pzOut");
+    if (!sp) { o.innerHTML = ""; return; }
+    if (sp < PAZ.milMin) { o.innerHTML = `<div class="pzR no">Mil kullanmak için sepete <b>${tlFmt(PAZ.milMin - sp)}</b> daha ekle.<br><small>MaxiPuan'ı ise bu tutarda da kullanabilirsin.</small></div>`; return; }
+    const kul = Math.min(PAZ.milMax, mil, sp), kal = sp - kul;
+    o.innerHTML = `<div class="pzR ok"><div><span>Kullanılacak Mil</span><b>${kul.toLocaleString("tr-TR")}</b></div><div><span>Kartından çekilecek</span><b>${tlFmt(kal)}</b></div></div>${mil > PAZ.milMax ? `<small class="pzNote">Kalan ${(mil - kul).toLocaleString("tr-TR")} Mil sonraki alışverişlerine kalır.</small>` : ""}`;
+  };
+  ["pzSepet", "pzMil"].forEach((id) => $(id).addEventListener("input", (e) => { fmtIn(e.target); calc(); }));
+  calc();
+}
 function milesHtml() {
   const L = camps.filter((c) => /maximiles|maximil|mil\b|uçuş|uçak|havayolu|thy|pegasus/i.test(c.baslik + " " + c.ozet));
   const MX = blk && blk.ayricaliklar ? blk.ayricaliklar.filter((a) => /maximiles/i.test(a.baslik)) : [];
@@ -614,15 +662,15 @@ function campCard(k) {
 function renderCamps() {
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
   if (!camps.length) { $("list").innerHTML = '<div class="empty">Şu an listelenen kampanya yok.</div>'; return; }
-  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "✈️ Maximiles"];
+  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "✈️ Maximiles", "🛒 Pazarama"];
   if (!turs.includes(campTur) && !SP.includes(campTur)) campTur = "Tümü";
-  const TI = { "⭐ Öne çıkan": ["⭐", "Öne çıkan", "#f0c64a"], "✈️ Maximiles": ["✈️", "Maximiles", "#5aa9f0"], "Tümü": ["💳", "Tümü", "#ff4fa3"], MaxiPuan: ["🪙", "MaxiPuan", "#e0a24f"], "İndirim": ["🏷️", "İndirim", "#3fc283"], Puan: ["🎯", "Puan", "#b48cf0"], Taksit: ["📆", "Taksit", "#3fbfd6"] };
+  const TI = { "⭐ Öne çıkan": ["⭐", "Öne çıkan", "#f0c64a"], "✈️ Maximiles": ["✈️", "Maximiles", "#5aa9f0"], "🛒 Pazarama": ["🛒", "Pazarama", "#ff8a3d"], "Tümü": ["💳", "Tümü", "#ff4fa3"], MaxiPuan: ["🪙", "MaxiPuan", "#e0a24f"], "İndirim": ["🏷️", "İndirim", "#3fc283"], Puan: ["🎯", "Puan", "#b48cf0"], Taksit: ["📆", "Taksit", "#3fbfd6"] };
   const tile = (t, cnt) => { const [ic, ad, c] = TI[t] || ["🎁", t, "#9aa0a6"]; return `<button data-t="${esc(t)}" class="mt${t === campTur ? " on" : ""}" style="--c:${c}"><i>${ic}</i><span>${esc(ad)}</span>${cnt != null ? `<em>${cnt}</em>` : ""}</button>`; };
   $("tfil").innerHTML = SP.map((t) => tile(t, null)).join("") + turs.map((t) => tile(t, t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length)).join("");
   $("tfil").classList.add("mtiles");
   $("tfil").hidden = false;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  if (SP.includes(campTur)) { $("list").innerHTML = campTur === "✈️ Maximiles" ? milesHtml() : oneHtml(); bindSpecial(); return; }
+  if (SP.includes(campTur)) { if (campTur === "🛒 Pazarama") { $("list").innerHTML = pazHtml(); bindPaz(); return; } $("list").innerHTML = campTur === "✈️ Maximiles" ? milesHtml() : oneHtml(); bindSpecial(); return; }
   const vis = camps.filter((k) => campTur === "Tümü" || k.tur === campTur);
   const urg = vis.filter((k) => daysLeft(k.bitis) <= 3);
   let html = campCal();
