@@ -47,6 +47,7 @@
   .leap { margin-top: 10px; padding: 8px 10px; border-radius: 10px; background: rgba(224,162,79,.08); border: 1px dashed #5a4422; font-size: 12.5px; color: #e9c98f; line-height: 1.45; }
   .chips button.on { background: var(--accent); color: #000; border-color: var(--accent); }
   .ev h3 { margin: 0 0 6px; font-size: 13px; color: var(--accent); }
+  .evr { cursor: pointer; } .evr:active { background: rgba(224,162,79,.08); }
   .evr { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 2px 10px; align-items: center; padding: 7px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
   .evr:first-of-type { border-top: none; }
   .evr small { grid-column: 1; color: var(--muted); font-size: 11.5px; }
@@ -60,6 +61,17 @@
   .vbar { display: flex; height: 10px; border-radius: 6px; overflow: hidden; margin: 10px 0 4px; background: var(--field); }
   .vbar i { display: block; height: 100%; } .vbar .va { background: #6f6a62; } .vbar .vo { background: #ef6a4c; } .vbar .vk { background: #e0a24f; }
   .vleg { display: flex; gap: 10px; font-size: 11px; color: var(--muted); flex-wrap: wrap; } .vleg i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; }
+  .ftop { position: sticky; top: var(--sh, 120px); z-index: 15; background: var(--card); margin: -14px -14px 4px; padding: 12px 14px 10px; border-radius: 16px 16px 0 0; border-bottom: 1px solid var(--line); box-shadow: 0 8px 14px -10px rgba(0,0,0,.9); }
+  .ftop .leap { margin-top: 8px; padding: 6px 9px; font-size: 11.5px; }
+  .ftiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .ftiles > div { background: var(--field); border: 1px solid var(--line); border-radius: 12px; padding: 7px 10px; min-width: 0; }
+  .ftiles .gun { border-color: var(--accent); background: rgba(224,162,79,.1); }
+  .ftiles small { display: block; font-size: 11px; color: var(--muted); }
+  .ftiles b { display: block; font-size: 20px; font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ftiles .gun b { color: var(--accent); font-size: 22px; }
+  .ftiles i { display: block; font-style: normal; font-size: 11px; color: var(--muted); min-height: 14px; }
+  .warn { margin-top: 10px; padding: 9px 11px; border-radius: 10px; background: rgba(239,106,76,.1); border: 1px solid #5a2a20; color: #ffb7a6; font-size: 13px; line-height: 1.45; }
+  .warn.ok { background: rgba(63,194,131,.08); border-color: #1f4d36; color: #9ff0c8; }
   /* ===== Eski tip masa hesap makinesi ===== */
   .calcbox { position: sticky; top: var(--sh, 120px); z-index: 20; background: #000; padding-bottom: 8px; }
   .calc { margin: 0 auto; max-width: 290px; border-radius: 20px; padding: 11px 11px 13px;
@@ -223,9 +235,11 @@
   <!-- ===== Faiz ===== -->
   <section class="panel" id="faiz">
     <div class="card">
-      <h2>Basit faiz hesabı</h2>
-      <div class="seg" id="fMod"><button data-m="kredi" class="on">Kredi (yıl 360 gün)</button><button data-m="mevduat">Vadeli mevduat (365/366)</button></div>
-      <div class="leap" id="fLeap"></div>
+      <div class="ftop">
+        <div class="seg" id="fMod"><button data-m="kredi" class="on">Kredi (yıl 360 gün)</button><button data-m="mevduat">Vadeli mevduat (365/366)</button></div>
+        <div class="leap" id="fLeap"></div>
+        <div class="ftiles"><div class="gun"><small>☀️ Günlük faiz</small><b id="fDay">–</b><i id="fDay2"></i></div><div><small id="fTotL">Toplam faiz</small><b id="fTot">–</b><i id="fTot2"></i></div></div>
+      </div>
       <label>Tutar</label><div class="field"><input id="fP" inputmode="decimal" value="100.000"><span>TL</span></div>
       <div class="two">
         <div><label>Yıllık faiz</label><div class="field"><input id="fR" inputmode="decimal" value="45"><span>%</span></div></div>
@@ -242,6 +256,7 @@
       </div>
       <div id="fStBox" hidden><label id="fTaxL">Stopaj</label><div class="field"><input id="fTax" inputmode="decimal" value=""><span>%</span></div><p class="hint" id="fStNote" style="margin-top:6px"></p></div>
       <div class="res"><div class="big"><small id="fBigL">Faiz</small><span id="fOut">–</span></div><div class="rows" id="fRows" style="margin-top:6px"></div></div>
+      <div class="warn" id="fWarn" hidden></div>
       <p class="hint" id="fNote"></p>
     </div>
   </section>
@@ -249,16 +264,17 @@
   <!-- ===== Tarih ===== -->
   <section class="panel" id="tarih">
     <div class="card">
+      <h2>İki tarih arası</h2>
+      <div class="two"><div><label>Başlangıç</label><input type="date" id="tA"></div><div><label>Bitiş</label><input type="date" id="tB"></div></div>
+      <div class="chips" id="tQ"><button data-q="0">Bugün</button><button data-q="m">Ay sonu</button><button data-q="y">Yıl sonu</button><button data-q="30">+30 gün</button><button data-q="90">+90 gün</button><button data-q="365">+1 yıl</button><button data-q="bil">📊 Bilanço günü</button><button data-q="ppk">🏦 PPK günü</button></div>
+      <div class="res"><div class="big"><small>Aradaki gün</small><span id="tOut">–</span></div><div class="rows" id="tRows" style="margin-top:6px"></div></div>
+      <div class="warn" id="tWarn" hidden></div>
+    </div>
+    <div class="card">
       <h2>📌 Yaklaşan önemli günler</h2>
       <div class="ev" id="evBil"></div>
       <div class="ev" id="evPpk" style="margin-top:10px"></div>
-      <p class="hint">Bilanço dönemleri: 31 Mart · 30 Haziran · 30 Eylül · 31 Aralık. PPK faiz kararı karar günü <b>saat 14:00</b>'te açıklanır (TCMB takvimi).</p>
-    </div>
-    <div class="card">
-      <h2>İki tarih arası</h2>
-      <div class="two"><div><label>Başlangıç</label><input type="date" id="tA"></div><div><label>Bitiş</label><input type="date" id="tB"></div></div>
-      <div class="chips" id="tQ"><button data-q="0">Bugün</button><button data-q="m">Ay sonu</button><button data-q="y">Yıl sonu</button><button data-q="30">+30 gün</button><button data-q="90">+90 gün</button><button data-q="365">+1 yıl</button></div>
-      <div class="res"><div class="big"><small>Aradaki gün</small><span id="tOut">–</span></div><div class="rows" id="tRows" style="margin-top:6px"></div></div>
+      <p class="hint">Bir satıra dokun: bugünden o güne kaç gün olduğunu yukarıda hesaplar. Bilanço dönemleri: 31 Mart · 30 Haziran · 30 Eylül · 31 Aralık. PPK faiz kararı karar günü <b>saat 14:00</b>'te açıklanır (TCMB takvimi).</p>
     </div>
     <div class="card">
       <h2>Tarihe gün ekle / çıkar</h2>
@@ -283,6 +299,16 @@
       </div>
       <div class="res"><div class="big"><small id="vBigL">Vergiler toplamı</small><span id="vOut">–</span></div><div class="vbar" id="vBar"></div><div class="rows" id="vRows" style="margin-top:6px"></div></div>
       <p class="hint" id="vNote"></p>
+    </div>
+    <div class="card">
+      <h2>🏠 Tapu harcı (ev alım-satım)</h2>
+      <label>Satış bedeli (tapuda beyan edilecek)</label><div class="field"><input id="tpP" inputmode="decimal" value="3.000.000"><span>TL</span></div>
+      <div class="two">
+        <div><label>Emlak vergi değeri (isteğe bağlı)</label><div class="field"><input id="tpE" inputmode="decimal" placeholder="0"><span>TL</span></div></div>
+        <div><label>Döner sermaye ücreti</label><div class="field"><input id="tpD" inputmode="decimal" placeholder="0"><span>TL</span></div></div>
+      </div>
+      <div class="res"><div class="big"><small>Toplam tapu harcı (%4)</small><span id="tpOut">–</span></div><div class="rows" id="tpRows" style="margin-top:6px"></div></div>
+      <p class="hint">Tapu harcı satış bedelinin <b>binde 20'si alıcıdan, binde 20'si satıcıdan</b> alınır (toplam %4). Beyan edilen bedel <b>emlak vergi değerinin altında olamaz</b>; düşük beyan edilirse harç vergi değeri üzerinden hesaplanır ve ceza çıkabilir. Döner sermaye ücretini tapu müdürlüğü belirler (2026'da il ve ilçeye göre yaklaşık 3.400–6.700 TL). Taraflar anlaşırsa harcın tamamını biri ödeyebilir.</p>
     </div>
     <div class="card">
       <h2>％ Yüzde</h2>
@@ -474,8 +500,8 @@ const today = new Date(); today.setHours(12, 0, 0, 0);
 // ===== Faiz =====
 // TL mevduat stopajı (GVK geçici 67; CK 11444 ile 31.12.2026'ya kadar): 6 aya kadar %17,5 · 1 yıla kadar %15 · 1 yıldan uzun %10
 const STOPAJ = [[6, 17.5, "6 aya kadar (vadesiz dahil)"], [12, 15, "1 yıla kadar"], [Infinity, 10, "1 yıldan uzun"]];
-const VADE = { kredi: [["Aylık", 30], ["3 aylık", 90], ["6 aylık", 180], ["Yıllık", 360], ["2 yıl", 720], ["3 yıl", 1080]],
-  mevduat: [["32 gün", 32], ["45 gün", 45], ["60 gün", 60], ["90 gün", 90], ["180 gün", 180], ["1 yıl", "1y"]] };
+const VADE = { kredi: [["Aylık", 30], ["3 aylık", 90], ["6 aylık", 180], ["Yıllık", 360], ["2 yıl", 720], ["3 yıl", 1080], ["5 yıl", 1800], ["10 yıl", 3600]],
+  mevduat: [["32 gün", 32], ["45 gün", 45], ["60 gün", 60], ["90 gün", 90], ["180 gün", 180], ["1 yıl", "1y"], ["540 gün", 540]] };
 let fMod = "kredi", fTaxAuto = true;
 const addM = (d, m) => { const x = new Date(d.getFullYear(), d.getMonth() + m, 1, 12), last = new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate(); x.setDate(Math.min(d.getDate(), last)); return x; };
 function fChips() { $("fVade").innerHTML = VADE[fMod].map(([t, v]) => `<button type="button" data-v="${v}">${t}</button>`).join(""); fMarkChip(); }
@@ -510,26 +536,38 @@ function calcF() {
   let st = null;
   if (!kr && g) { st = fStopaj(g); if (fTaxAuto) $("fTax").value = String(st[1]).replace(".", ","); $("fTaxL").textContent = `Stopaj — güncel oran %${nf(st[1], 1)} (${st[2]})`; }
   $("fStNote").innerHTML = `Güncel TL mevduat stopajı: 6 aya kadar <b>%17,5</b> · 1 yıla kadar <b>%15</b> · 1 yıldan uzun <b>%10</b> (31.12.2026'ya kadar geçerli karar). Vadeye göre kendiliğinden gelir, istersen değiştirebilirsin.`;
-  if (!P || !r || !g) { $("fOut").textContent = "–"; rows("fRows", []); $("fNote").textContent = ""; return; }
+  if (!P || !r || !g) { $("fOut").textContent = "–"; rows("fRows", []); $("fNote").textContent = ""; ["fDay", "fTot"].forEach((id) => ($(id).textContent = "–")); $("fDay2").textContent = $("fTot2").textContent = ""; $("fWarn").hidden = true; return; }
   const gun = (P * r) / base, faiz = gun * g;
+  // Vade bitişi tatile denk geliyor mu?
+  let iw = new Date(end); while (isWE(iw) || isHol(iw)) iw = addD(iw, 1);
+  const endTxt = end.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
+  $("fWarn").hidden = false; $("fWarn").className = ymd(iw) !== ymd(end) ? "warn" : "warn ok";
+  $("fWarn").innerHTML = ymd(iw) !== ymd(end)
+    ? `⚠️ Vade bitişi <b>${endTxt}</b> — ${isWE(end) ? "hafta sonu" : "resmî tatil"}. İlk iş günü <b>${longD(iw)}</b> (${dd(end, iw)} gün sonra)${kr ? "; ödeme o güne kayar." : "; faiz o güne kadar işleyebilir, bankaya göre değişir."}`
+    : `✅ Vade bitişi <b>${endTxt}</b> — iş günü.${$("fA").value ? "" : " (Başlangıç bugün sayıldı.)"}`;
   $("fBigL").textContent = `${g} günlük ${kr ? "faiz" : "brüt faiz"}`;
+  const tR = kr ? 0 : num($("fTax").value) / 100;
+  $("fDay").textContent = tl(gun) + " TL"; $("fDay2").textContent = kr ? `1 günlük · ${tl(gun * 30)} TL / 30 gün` : `brüt · net ${tl(gun * (1 - tR))} TL`;
+  $("fTotL").textContent = `${g} günlük ${kr ? "faiz" : "net faiz"}`; $("fTot").textContent = tl(kr ? faiz : faiz * (1 - tR)) + " TL"; $("fTot2").textContent = kr ? `geri ödeme ${tl(P + faiz, 0)} TL*` : `stopaj %${nf(tR * 100, 1)} düşüldü`;
   $("fOut").textContent = tl(faiz) + " TL";
   if (kr) {
     const bs = faiz * num($("fBsmv").value) / 100, kk = faiz * num($("fKkdf").value) / 100;
     rows("fRows", [
       ["Formül", `${tl(P, 0)} × %${nf(r)} × ${g} ÷ 36.000`],
       ["Günlük faiz", tl(gun) + " TL"],
+      ["Aylık (30 gün) faiz", tl(gun * 30) + " TL"],
       ["BSMV" + (bs ? ` (%${nf(num($("fBsmv").value))})` : ""), tl(bs) + " TL"],
       ["KKDF" + (kk ? ` (%${nf(num($("fKkdf").value))})` : ""), tl(kk) + " TL"],
       ["Faiz + vergiler", tl(faiz + bs + kk) + " TL"],
       ["Toplam geri ödeme", tl(P + faiz + bs + kk) + " TL"],
     ]);
-    $("fNote").textContent = "BSMV ve KKDF boşsa 0 sayılır; kredi türüne göre kendin gir (ör. BSMV %5, KKDF %15).";
+    $("fNote").textContent = "* Vergiler hariç. BSMV ve KKDF boşsa 0 sayılır; kredi türüne göre kendin gir (ör. BSMV %5, KKDF %15).";
   } else {
     const tax = faiz * num($("fTax").value) / 100;
     rows("fRows", [
       ["Formül", `${tl(P, 0)} × %${nf(r)} × ${g} ÷ ${base.toLocaleString("tr-TR")}`],
       ["Günlük brüt faiz", tl(gun) + " TL"],
+      ["Günlük net faiz", tl(gun * (1 - num($("fTax").value) / 100)) + " TL"],
       [`Stopaj (%${nf(num($("fTax").value), 1)})`, tl(tax) + " TL"],
       ["Net faiz", tl(faiz - tax) + " TL"],
       ["Vade sonu toplam (net)", tl(P + faiz - tax) + " TL"],
@@ -559,10 +597,15 @@ function calcT() {
     ["Başlangıç dahil sayılırsa", `${g + 1} gün`],
     ["Saat / dakika", `${(g * 24).toLocaleString("tr-TR")} sa · ${(g * 1440).toLocaleString("tr-TR")} dk`],
   ]);
+  let iw = new Date(b); while (isWE(iw) || isHol(iw)) iw = addD(iw, 1);
+  const bT = b.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
+  $("tWarn").hidden = false; $("tWarn").className = ymd(iw) !== ymd(b) ? "warn" : "warn ok";
+  $("tWarn").innerHTML = ymd(iw) !== ymd(b) ? `⚠️ Bitiş <b>${bT}</b> — ${isWE(b) ? "hafta sonu" : "resmî tatil"}. İlk iş günü <b>${longD(iw)}</b>.` : `✅ Bitiş <b>${bT}</b> — iş günü${isHalf(b) ? " (yarım gün)" : ""}.`;
 }
 ["tA", "tB"].forEach((id) => $(id).addEventListener("input", calcT));
 $("tQ").addEventListener("click", (e) => {
   const b = e.target.closest("button[data-q]"); if (!b) return; const a = pD($("tA").value) || today, q = b.dataset.q;
+  if (q === "bil" || q === "ppk") { const d = q === "bil" ? nextQEnd() : nextPPK(); if (d) { $("tA").value = ymd(today); $("tB").value = ymd(d); calcT(); } return; }
   const r = q === "0" ? today : q === "m" ? new Date(a.getFullYear(), a.getMonth() + 1, 0, 12) : q === "y" ? new Date(a.getFullYear(), 11, 31, 12) : addD(a, +q);
   $("tB").value = ymd(r); calcT();
 });
@@ -584,8 +627,10 @@ const PPK = ["2026-01-22", "2026-03-12", "2026-04-22", "2026-06-11", "2026-07-23
 function isGunSay(a, b) { let n = 0; for (let d = addD(a, 1); d <= b; d = addD(d, 1)) if (!isWE(d) && !isHol(d)) n++; return n; }
 const kalan = (g) => (g === 0 ? "Bugün" : g === 1 ? "Yarın" : `${g}`);
 function evRow(d, title, g, extra, next) {
-  return `<div class="evr${next ? " next" : ""}"><span>${title}</span><b>${kalan(g)}${g > 1 ? "<em>gün kaldı</em>" : ""}</b><small>${d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" })}${extra ? " · " + extra : ""}</small></div>`;
+  return `<div class="evr${next ? " next" : ""}" data-go="${ymd(d)}"><span>${title}</span><b>${kalan(g)}${g > 1 ? "<em>gün kaldı</em>" : ""}</b><small>${d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" })}${extra ? " · " + extra : ""}</small></div>`;
 }
+const nextQEnd = () => { for (let y = today.getFullYear(); ; y++) for (const [m, d] of [[2, 31], [5, 30], [8, 30], [11, 31]]) { const x = new Date(y, m, d, 12); if (dd(today, x) >= 0) return x; } };
+const nextPPK = () => PPK.map(pD).find((d) => dd(today, d) >= 0);
 function calcEv() {
   // Bilanço: içinde bulunulan çeyreğin sonu + sonraki 3 dönem
   const qEnds = []; for (let y = today.getFullYear(); y <= today.getFullYear() + 1; y++) [[2, 31], [5, 30], [8, 30], [11, 31]].forEach(([m, d], i) => qEnds.push({ d: new Date(y, m, d, 12), q: i + 1, y }));
@@ -599,6 +644,7 @@ function calcEv() {
   $("evPpk").innerHTML = `<h3>🏦 TCMB faiz kararı (PPK)</h3>` + (pp.length ? pp.map((d, i) => evRow(d, `${d.toLocaleDateString("tr-TR", { month: "long" })} PPK kararı`, dd(today, d), i === 0 ? "14:00" : "", i === 0)).join("") : '<p class="hint">Yeni takvim henüz açıklanmadı.</p>');
 }
 calcEv();
+["evBil", "evPpk"].forEach((id) => $(id).addEventListener("click", (e) => { const r = e.target.closest("[data-go]"); if (!r) return; $("tA").value = ymd(today); $("tB").value = r.dataset.go; calcT(); $("tA").closest(".card").scrollIntoView({ behavior: "smooth", block: "start" }); }));
 
 // ===== KDV & ÖTV =====
 // Oranlar Ekim 2026 itibarıyla. ÖTV dilimleri "vergisiz fiyat" (ÖTV matrahı) üzerinden: [üst sınır TL, oran %]
@@ -615,6 +661,11 @@ const VCAT = [
   ["Beyaz eşya & ev", [["beyaz", "Buzdolabı · çamaşır · bulaşık makinesi", 6.7, 20], ["firin", "Fırın · ocak · mikrodalga", 6.7, 20], ["klima", "Klima", 6.7, 20], ["supurge", "Elektrikli süpürge · küçük ev aleti", 6.7, 20], ["tv", "Televizyon · monitör", 6.7, 20]]],
   ["Elektronik", [["tel", "Cep telefonu (dilimli ÖTV)", "tel", 20], ["konsol", "Oyun konsolu", 20, 20], ["kamera", "Fotoğraf makinesi · kamera", 20, 20], ["pc", "Bilgisayar · tablet", 0, 20]]],
   ["Kişisel", [["parfum", "Parfüm · kozmetik · makyaj", 20, 20], ["giyim", "Giyim · ayakkabı", 0, 10], ["gida", "Temel gıda (ekmek, süt, sebze…)", 0, 1], ["restoran", "Lokanta · kafe", 0, 10]]],
+  ["Faturalar", [["elek", "Elektrik faturası (konut)", 5, 10, { lbl: "BTV", n: "Elektrikte önce tüketim bedeline <b>%5 BTV</b> (belediye tüketim vergisi) eklenir, KDV bunun üzerinden alınır: konutta <b>%10</b>. Enerji fonu (%1) birim fiyatın içindedir; TRT payı 2021'de kaldırıldı." }],
+    ["elekis", "Elektrik faturası (işyeri)", 5, 20, { lbl: "BTV", n: "İşyeri elektriğinde BTV %5, KDV %20 (sanayide BTV %1)." }],
+    ["gaz", "Doğalgaz faturası", 0, 20, { n: "Doğalgazda KDV %20 tüketim bedeli üzerinden alınır." }],
+    ["su", "Su faturası (şebeke suyu)", 0, 1, { n: "Şebeke suyunda KDV %1'dir. Faturadaki atıksu bedelinde KDV %10'dur ve ÇTV (çevre temizlik vergisi) m³ başına ayrıca eklenir." }],
+    ["gsm", "Cep telefonu faturası", 10, 20, { lbl: "ÖİV", par: true, n: "Hat faturasında <b>%10 ÖİV</b> (özel iletişim vergisi) ve <b>%20 KDV</b> ikisi de vergisiz tutar üzerinden alınır: 100 TL'lik hizmete 30 TL vergi." }]]],
   ["Otomobil (sıfır)", [["oto", "Benzinli / dizel / hibrit (motor hacmine göre)", "oto", 20], ["ev", "Elektrikli otomobil (motor gücüne göre)", "ev", 20]]],
 ];
 const VC = {}; VCAT.forEach(([, l]) => l.forEach((x) => (VC[x[0]] = x)));
@@ -628,7 +679,7 @@ function vSubUI() {
   $("vSub").innerHTML = `<label>${c === "oto" ? "Motor hacmi" : "Motor gücü"}</label><div class="chips">${Object.entries(list).map(([k, v]) => `<button type="button" data-s="${k}" class="${k === vSub ? "on" : ""}">${v.ad}</button>`).join("")}</div>`;
 }
 $("vSub").addEventListener("click", (e) => { const b = e.target.closest("button[data-s]"); if (!b) return; vSub = b.dataset.s; vSubUI(); calcV(); });
-$("vCat").addEventListener("change", () => { try { localStorage.setItem("vergiCat", $("vCat").value); } catch (e) {} const c = $("vCat").value; if (c === "oto" || c === "ev") $("vP").value = "2.000.000"; else if (c === "tel") $("vP").value = "45.000"; vSubUI(); calcV(); });
+$("vCat").addEventListener("change", () => { try { localStorage.setItem("vergiCat", $("vCat").value); } catch (e) {} const c = $("vCat").value; if (c === "oto" || c === "ev") $("vP").value = "2.000.000"; else if (c === "tel") $("vP").value = "45.000"; else if (VC[c][4]) $("vP").value = "1.500"; vSubUI(); calcV(); });
 $("vDir").addEventListener("click", (e) => { const b = e.target.closest("button[data-d]"); if (!b) return; vDir = b.dataset.d; $("vDir").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); calcV(); });
 $("kO").addEventListener("click", (e) => { const b = e.target.closest("button[data-o]"); if (!b) return; kO = +b.dataset.o; $("kO").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); calcV(); });
 ["vP", "vO"].forEach((id) => $(id).addEventListener("input", calcV));
@@ -655,30 +706,48 @@ function calcV() {
   const c = $("vCat").value, x = VC[c], P = num($("vP").value);
   const manual = c === "kdv" || c === "elle";
   $("vManual").hidden = !manual; $("vOtvBox").hidden = c !== "elle";
-  let spec, k;
+  let spec, k; const opt = (!manual && x[4]) || {}, L = opt.lbl || "ÖTV";
   if (manual) { k = kO; spec = c === "elle" ? num($("vO").value) : 0; }
   else { k = x[3]; spec = x[2] === "tel" ? { d: [[4500, 25], [9000, 40], [Infinity, 50]], min: 456 } : x[2] === "oto" ? CARS[vSub] : x[2] === "ev" ? EVS[vSub] : x[2]; }
-  const rateTxt = typeof spec === "number" ? `ÖTV <b>%${nf(spec, 1)}</b>` : `ÖTV <b>${spec.d.map(([l, o]) => `%${o}${isFinite(l) ? ` (≤${tl(l, 0)})` : ""}`).join(" · ")}</b>`;
+  const rateTxt = typeof spec === "number" ? (spec ? `${L} <b>%${nf(spec, 1)}</b>` : "ÖTV <b>yok</b>") : `ÖTV <b>${spec.d.map(([l, o]) => `%${o}${isFinite(l) ? ` (≤${tl(l, 0)})` : ""}`).join(" · ")}</b>`;
   $("vRate").innerHTML = manual ? "" : `<span>${rateTxt}</span><span>KDV <b>%${k}</b></span>`;
   if (!P) { $("vOut").textContent = "–"; rows("vRows", []); $("vBar").innerHTML = ""; return; }
-  const m = vDir === "in" ? fromGross(P, spec, k) : P;
-  const ot = otvOf(m, spec), kdvM = m + ot.t, kdv = kdvM * k / 100, G = kdvM + kdv, top = ot.t + kdv;
+  const m = vDir === "in" ? (opt.par ? P / (1 + k / 100 + spec / 100) : fromGross(P, spec, k)) : P;
+  const ot = otvOf(m, spec), kdvM = opt.par ? m : m + ot.t, kdv = kdvM * k / 100, G = kdvM + kdv + (opt.par ? ot.t : 0), top = ot.t + kdv;
+  $("vDir").firstElementChild.textContent = opt.n ? "Fatura tutarı (vergiler dahil)" : "Vergiler dahil fiyat"; $("vDir").lastElementChild.textContent = opt.n ? "Vergisiz tüketim bedeli" : "Vergisiz fiyat";
   $("vBigL").textContent = vDir === "in" ? `${tl(P, 0)} TL'nin içindeki vergiler` : "Vergiler dahil fiyat";
   $("vOut").textContent = tl(vDir === "in" ? top : G) + " TL";
   $("vBar").innerHTML = `<i class="va" style="width:${m / G * 100}%"></i><i class="vo" style="width:${ot.t / G * 100}%"></i><i class="vk" style="width:${kdv / G * 100}%"></i>`;
   rows("vRows", [
     ["Vergisiz fiyat", tl(m) + " TL"],
-    ...(ot.t || spec ? [[`ÖTV (%${nf(ot.o, 1)}${ot.min ? ", asgari 456 TL" : ""})`, tl(ot.t) + " TL"]] : []),
-    ...(ot.t ? [["KDV matrahı (fiyat + ÖTV)", tl(kdvM) + " TL"]] : []),
+    ...(ot.t || spec ? [[`${L} (%${nf(ot.o, 1)}${ot.min ? ", asgari 456 TL" : ""})`, tl(ot.t) + " TL"]] : []),
+    ...(ot.t && !opt.par ? [[`KDV matrahı (fiyat + ${L})`, tl(kdvM) + " TL"]] : []),
     [`KDV (%${k})`, tl(kdv) + " TL"],
     ["Vergiler toplamı", tl(top) + " TL"],
     ["Vergiler dahil fiyat", tl(G) + " TL"],
     ["Fiyatın vergi payı", "%" + nf(top / G * 100, 1)],
   ]);
-  $("vNote").innerHTML = `<span class="vleg"><span><i style="background:#6f6a62"></i>Ürün</span><span><i style="background:#ef6a4c"></i>ÖTV</span><span><i style="background:#e0a24f"></i>KDV</span></span>` +
-    (manual ? "" : `KDV, ÖTV eklenmiş fiyat üzerinden alınır. ${typeof spec === "number" ? "" : "ÖTV dilimi vergisiz fiyata (matraha) göre belirlenir. "}Oranlar Ekim 2026 itibarıyla güncel; Cumhurbaşkanı kararıyla değişebilir.${c === "oto" || c === "ev" ? " Engelli, ticari ve özel indirimler dahil değildir." : ""}`);
+  $("vNote").innerHTML = `<span class="vleg"><span><i style="background:#6f6a62"></i>Ürün</span><span><i style="background:#ef6a4c"></i>${L}</span><span><i style="background:#e0a24f"></i>KDV</span></span>` +
+    (opt.n ? opt.n + " Oranlar Ekim 2026 itibarıyla." : manual ? "" : `KDV, ÖTV eklenmiş fiyat üzerinden alınır. ${typeof spec === "number" ? "" : "ÖTV dilimi vergisiz fiyata (matraha) göre belirlenir. "}Oranlar Ekim 2026 itibarıyla güncel; Cumhurbaşkanı kararıyla değişebilir.${c === "oto" || c === "ev" ? " Engelli, ticari ve özel indirimler dahil değildir." : ""}`);
 }
 vSubUI(); calcV();
+
+// ===== Tapu harcı =====
+function calcTp() {
+  const P = num($("tpP").value), E = num($("tpE").value), D = num($("tpD").value), M = Math.max(P, E);
+  if (!M) { $("tpOut").textContent = "–"; rows("tpRows", []); return; }
+  const h = M * 0.02;
+  $("tpOut").textContent = tl(h * 2) + " TL";
+  rows("tpRows", [
+    ...(E > P ? [["⚠️ Harç esası (vergi değeri, beyandan yüksek)", tl(M) + " TL"]] : [["Harç esası", tl(M) + " TL"]]),
+    ["Alıcının harcı (binde 20)", tl(h) + " TL"],
+    ["Satıcının harcı (binde 20)", tl(h) + " TL"],
+    ...(D ? [["Döner sermaye (alıcı)", tl(D) + " TL"]] : []),
+    ["Alıcının toplam ödemesi", tl(h + D) + " TL"],
+    ["Tek kişi öderse (harç + döner sermaye)", tl(h * 2 + D) + " TL"],
+  ]);
+}
+["tpP", "tpE", "tpD"].forEach((id) => $(id).addEventListener("input", calcTp)); calcTp();
 
 // ===== Yüzde =====
 function calcY() {
