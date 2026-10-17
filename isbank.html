@@ -328,6 +328,15 @@
   .chart { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 12px 6px; margin-bottom: 8px; }
   .chart h5 { margin: 0 0 2px; font-size: 13.5px; } .chart small { font-size: 11.5px; color: var(--muted); }
   .chart svg { display: block; width: 100%; height: auto; margin-top: 6px; }
+  /* Maximum alt menüsü: renkli kutucuklar */
+  .chipbar .tfil.mtiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 8px; padding: 8px; border-radius: 14px; border: 1px solid #5a1f3e; background: linear-gradient(135deg, rgba(255,45,149,.12), rgba(255,45,149,.02)); }
+  .tfil.mtiles button.mt { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; min-height: 52px; padding: 5px 2px; border-radius: 11px;
+    border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 36%, #000), color-mix(in srgb, var(--c) 10%, #050505)); color: color-mix(in srgb, var(--c) 35%, #fff); font-size: 10.5px; font-weight: 700; line-height: 1.15; }
+  .tfil.mtiles button.mt i { font-style: normal; font-size: 18px; line-height: 1.1; }
+  .tfil.mtiles button.mt span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tfil.mtiles button.mt em { position: absolute; top: -6px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--c); color: #000; font-style: normal; font-size: 10.5px; font-weight: 800; line-height: 18px; text-align: center; box-shadow: 0 0 0 2px #000; }
+  .tfil.mtiles button.mt.on { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
+  .tfil.mtiles button.mt.on em { background: #000; color: #fff; }
   .tfil { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 10px; }
   .tfil button { border: 1px solid var(--line); background: #161616; color: #ddd; border-radius: 999px; padding: 6px 11px; font: inherit; font-size: 12.5px; cursor: pointer; }
   .tfil button.on { background: var(--accent); color: #000; border-color: var(--accent); }
@@ -607,7 +616,10 @@ function renderCamps() {
   if (!camps.length) { $("list").innerHTML = '<div class="empty">Şu an listelenen kampanya yok.</div>'; return; }
   const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "✈️ Maximiles"];
   if (!turs.includes(campTur) && !SP.includes(campTur)) campTur = "Tümü";
-  $("tfil").innerHTML = SP.map((t) => `<button data-t="${t}" class="sp${t === campTur ? " on" : ""}">${t}</button>`).join("") + turs.map((t) => `<button data-t="${esc(t)}" class="${t === campTur ? "on" : ""}">${t === "Tümü" ? "Tüm kampanyalar" : esc(t)}<b>${t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length}</b></button>`).join("");
+  const TI = { "⭐ Öne çıkan": ["⭐", "Öne çıkan", "#f0c64a"], "✈️ Maximiles": ["✈️", "Maximiles", "#5aa9f0"], "Tümü": ["💳", "Tümü", "#ff4fa3"], MaxiPuan: ["🪙", "MaxiPuan", "#e0a24f"], "İndirim": ["🏷️", "İndirim", "#3fc283"], Puan: ["🎯", "Puan", "#b48cf0"], Taksit: ["📆", "Taksit", "#3fbfd6"] };
+  const tile = (t, cnt) => { const [ic, ad, c] = TI[t] || ["🎁", t, "#9aa0a6"]; return `<button data-t="${esc(t)}" class="mt${t === campTur ? " on" : ""}" style="--c:${c}"><i>${ic}</i><span>${esc(ad)}</span>${cnt != null ? `<em>${cnt}</em>` : ""}</button>`; };
+  $("tfil").innerHTML = SP.map((t) => tile(t, null)).join("") + turs.map((t) => tile(t, t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length)).join("");
+  $("tfil").classList.add("mtiles");
   $("tfil").hidden = false;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
   if (SP.includes(campTur)) { $("list").innerHTML = campTur === "✈️ Maximiles" ? milesHtml() : oneHtml(); bindSpecial(); return; }

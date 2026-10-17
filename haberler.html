@@ -85,6 +85,26 @@
   .sbar small { display:block; font-size:11.5px; color:#d39a80; margin-top:2px; }
   .sbar button { flex:0 0 auto; background:#2b0f06; color:#ff8a4c; border:1px solid #7a2e14; border-radius:10px; padding:5px 10px; font:inherit; font-weight:700; cursor:pointer; }
   @media (prefers-reduced-motion: reduce) { .dot, .tr.l2 .ct, .chip.h2 .bd { animation:none; } }
+  /* Renkli kategori kutucukları (Bankacılık menüsüyle aynı dil) */
+  #cats { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px; margin-bottom:10px; }
+  #cats .chip { --c:#e0a24f; --d:#2a2010; --t:#f3dca8; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; min-width:0; min-height:56px; padding:5px 2px; border-radius:12px;
+    border:1px solid color-mix(in srgb, var(--c) 55%, #000); background:linear-gradient(160deg, color-mix(in srgb, var(--c) 38%, #000), var(--d)); color:var(--t); font-size:10.5px; font-weight:700; line-height:1.15; text-align:center; transition:transform .12s; }
+  #cats .chip i { font-style:normal; font-size:19px; line-height:1.1; }
+  #cats .chip .cn { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #cats .chip:active { transform:scale(.96); }
+  #cats .chip.on { background:linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color:#fff; color:#000; box-shadow:0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
+  #cats .chip.h2:not(.on) { border-color:#ff6a3d; box-shadow:0 0 10px rgba(255,90,40,.4); }
+  #cats .chip.h1:not(.on) { border-color:color-mix(in srgb, var(--c) 80%, #fff); }
+  #cats .chip[data-k="gundem"] { --c:#ef8a4c; --d:#2e1508; --t:#ffd9c2; }
+  #cats .chip[data-k="isbank"] { --c:#4a63ff; --d:#0c1240; --t:#c9d2ff; }
+  #cats .chip[data-k="tarim"] { --c:#a8c94a; --d:#1c2408; --t:#e8f5c4; }
+  #cats .chip[data-k="yz"] { --c:#b48cf0; --d:#1f1235; --t:#e6d8ff; }
+  #cats .chip[data-k="okul"] { --c:#f0c64a; --d:#2a2208; --t:#fbecc0; }
+  #cats .chip[data-k="ekonomi"] { --c:#3fc283; --d:#0b2a1d; --t:#c9f5de; }
+  #cats .chip[data-k="dunya"] { --c:#3fbfd6; --d:#06232a; --t:#c6f0f7; }
+  #cats .chip[data-k="teknoloji"] { --c:#5aa9f0; --d:#0a1d33; --t:#cfe6ff; }
+  #cats .chip[data-k="spor"] { --c:#ef5a5a; --d:#2e0a0a; --t:#ffcfcf; }
+  #cats .chip[data-k="yazarlar"] { --c:#ff4fa3; --d:#33061c; --t:#ffd1e8; }
   .chips.yz { margin-bottom:12px; }
   .chips.yz .chip { font-size:13px; }
   .empty { text-align:center; color:var(--muted); padding:40px 0; }
@@ -116,7 +136,8 @@
   <p class="note">Başlıklar haber sitelerinin herkese açık RSS akışlarından gün içinde her saat otomatik derlenir. Habere dokununca yayıncının sitesinde açılır.</p>
 </div>
 <script>
-const CATS = [["gundem", "Gündem"], ["isbank", "İş Bankası"], ["tarim", "🌾 Tarım"], ["yz", "🤖 Yapay Zeka"], ["okul", "🏫 Okul Tatili"], ["ekonomi", "Ekonomi"], ["dunya", "Dünya"], ["teknoloji", "Teknoloji"], ["spor", "Spor"], ["yazarlar", "✍️ Yazarlar"]];
+const CATS = [["gundem", "Gündem"], ["isbank", "İş Bankası"], ["tarim", "Tarım"], ["yz", "Yapay Zekâ"], ["okul", "Okul Tatili"], ["ekonomi", "Ekonomi"], ["dunya", "Dünya"], ["teknoloji", "Teknoloji"], ["spor", "Spor"], ["yazarlar", "Yazarlar"]];
+const CIC = { gundem: "🔥", isbank: "🏦", tarim: "🌾", yz: "🤖", okul: "🏫", ekonomi: "📈", dunya: "🌍", teknoloji: "💻", spor: "⚽", yazarlar: "✍️" };
 const $ = (x) => document.getElementById(x);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 let D = null, cat = "gundem", yaz = "";
@@ -210,7 +231,7 @@ function trendCards() {
   return `<div class="trends">${vis.map((c) => c.h).join("")}${cards.length > 3 ? `<span class="more" id="more">${showAll ? "Daha az göster" : `+${cards.length - 3} konu daha`}</span>` : ""}</div>`;
 }
 function render() {
-  $("cats").innerHTML = CATS.map(([k, n]) => { const h = TR.chip[k]; return `<span class="chip ${k === "isbank" ? "isb" : ""} ${k === cat && !story ? "on" : ""} ${h ? "h" + h.l : ""}" data-k="${k}">${n}${h ? `<span class="bd">${h.n}</span>` : ""}</span>`; }).join("");
+  $("cats").innerHTML = CATS.map(([k, n]) => { const h = TR.chip[k]; return `<span class="chip ${k === cat && !story ? "on" : ""} ${h ? "h" + h.l : ""}" data-k="${k}"><i>${CIC[k] || "📰"}</i><span class="cn">${n}</span>${h ? `<span class="bd">${h.n}</span>` : ""}</span>`; }).join("");
   const YZ = D.yazarlar || [], isY = cat === "yazarlar" && !story;
   if (isY && yaz && !YZ.some((y) => y.k === yaz)) yaz = "";
   $("alert").innerHTML = isY ? `<div class="chips yz">${[["", "Hepsi"], ...YZ.map((y) => [y.k, y.n])].map(([k, n]) => `<span class="chip ${k === yaz ? "on" : ""}" data-y="${k}">${esc(n)}</span>`).join("")}</div>` : trendCards();
