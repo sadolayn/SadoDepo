@@ -271,7 +271,7 @@
       const L = ["Hoş geldiniz", "Keyifli gezinmeler", ...(wd ? ["İyi çalışmalar"] : []), ONR];
       el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); else if (/kampanya/i.test(el.textContent)) location.href = "isbank.html#maximum"; });
       // Kampanya hatırlatıcısı: her ayın ilk 5 günü
-      if (new Date().getDate() <= 5) L.splice(1, 0, "📣 Ay başı! Kampanyalarımıza katılmayı unutmayın ›");
+      if (new Date().getDate() <= 7) L.splice(1, 0, "📣 Ayın ilk haftası! Kampanyalara bakmayı unutmayın ›");
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       let k = 0;
       setInterval(() => { el.classList.add("fade"); setTimeout(() => { k = (k + 1) % L.length; el.textContent = L[k]; el.style.cursor = L[k] === ONR || /kampanya/i.test(L[k]) ? "pointer" : ""; el.style.color = /kampanya/i.test(L[k]) ? "#e0a24f" : ""; el.classList.remove("fade"); }, 600); }, 4500);
