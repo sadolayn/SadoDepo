@@ -93,12 +93,15 @@
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .stick > :last-child { margin-bottom: 0; }
   .jpanel { background: linear-gradient(135deg, rgba(224,162,79,.13), rgba(224,162,79,.03)); border: 1px solid #4a3a22; border-radius: 14px; padding: 12px; margin-bottom: 10px; }
-  .jtop { display: flex; justify-content: space-between; align-items: center; gap: 10px; } .jtop b { display: block; font-size: 15px; } .jtop span { font-size: 12px; color: var(--muted); }
+  .jtop { display: flex; justify-content: space-between; align-items: center; gap: 10px; } .jtop > div > b { display: block; font-size: 15px; } .jtop span { font-size: 12px; color: var(--muted); }
   .jtop em { font-style: normal; font-size: 24px; font-weight: 800; color: var(--accent); }
   .jbar { height: 7px; border-radius: 6px; background: #222; overflow: hidden; margin: 8px 0 10px; } .jbar i { display: block; height: 100%; background: linear-gradient(90deg, #e0a24f, #3fc283); }
   .jnote { font-size: 11.5px; color: var(--muted); margin: -2px 0 10px; line-height: 1.45; }
   .jbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .jbtns button { padding: 10px 6px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .jbtns.one { grid-template-columns: 1fr; margin-top: 10px; }
+  .aybasi { margin-bottom: 10px; padding: 12px 14px; border-radius: 14px; background: linear-gradient(135deg, #ff2d95, #9b0050); color: #fff; box-shadow: 0 6px 20px rgba(255,45,149,.25); animation: cg .6s ease; }
+  .aybasi b { display: block; font-size: 15px; } .aybasi span { font-size: 13px; opacity: .95; }
   .jbtns button + button { background: transparent; color: var(--accent); }
   .jhow { margin-top: 10px; } .jhow summary { cursor: pointer; font-size: 13.5px; font-weight: 700; color: #ddd; }
   .jway { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; font-size: 13px; color: #ccc; line-height: 1.45; } .jway i { font-style: normal; font-size: 22px; } .jway div > b:first-child { display: block; color: #fff; font-size: 14px; }
@@ -150,6 +153,9 @@
   .chipbar { margin: 6px 0 0; position: relative; }
   .menu { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
   .menu button span small { display: block; font-size: 8.5px; font-weight: 600; opacity: .8; margin-top: -1px; }
+  .menu button[data-k="Maximum"] { background: linear-gradient(160deg, #ff2d95, #b0005c); border-color: #ff5aab; color: #fff; }
+  .menu button[data-k="Maximum"] span { font-size: 9px; font-weight: 800; letter-spacing: -.3px; overflow: visible; } .menu button[data-k="Maximum"] span small { font-size: 8.5px; font-weight: 700; opacity: .9; }
+  .menu button[data-k="Maximum"].active { background: linear-gradient(160deg, #ffd1e8, #ff6fb5); color: #5a0030; border-color: #fff; }
   .menu button[data-k="Black"] { background: linear-gradient(160deg, #2b2418, #0a0a0a); border-color: #6b5222; color: #f3dca8; }
   .menu button[data-k="Black"].active { background: linear-gradient(160deg, #f3dca8, #c9a050); color: #000; }
   .longbar { position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-bottom: 6px; padding: 9px 10px; border-radius: 12px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
@@ -277,7 +283,7 @@ const CATS = [
   ["Tarihçe", "#e0a24f", "🏛️"],
   ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "Maximum": "Maxi<small>(mum+mil)</small>", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe" };
+const LBL = { "Maximum": "Maximum<small>Maximiles</small>", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe" };
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
@@ -338,21 +344,13 @@ function daysLeft(d) {
   return Math.ceil((end - now) / 86400000);
 }
 let campTur = "Tümü";
-// ===== Kampanya katılım takibi =====
-// JN.j: katıldığın kampanyalar {başlık: zaman}, JN.bulk: son "hepsine katıldım" zamanı, JN.f: kampanyayı ilk gördüğün zaman
-// (ana sayfadaki hatırlatıcı da aynı kaydı okur)
-let JN = { j: {}, bulk: 0, f: {} };
-try { JN = Object.assign(JN, JSON.parse(localStorage.getItem("isbJoin") || "{}")); } catch (e) {}
-const jnSave = () => { try { localStorage.setItem("isbJoin", JSON.stringify(JN)); } catch (e) {} };
-function jnTouch() { const now = Date.now(); let ch = false; camps.forEach((c) => { if (!JN.f[c.baslik]) { JN.f[c.baslik] = now; ch = true; } }); const live = new Set(camps.map((c) => c.baslik)); Object.keys(JN.j).forEach((t) => { if (!live.has(t)) { delete JN.j[t]; ch = true; } }); if (ch) jnSave(); }
-const joined = (c) => !!JN.j[c.baslik];
-const isFresh = (c) => !joined(c) && JN.bulk && JN.f[c.baslik] > JN.bulk; // son toplu katılımdan sonra eklenen
+// ===== Ay başı kampanya hatırlatıcısı (takvime eklenir) =====
 function icsReminder() {
   const p = (n) => String(n).padStart(2, "0"), d = new Date(), y = d.getMonth() === 11 ? d.getFullYear() + 1 : d.getFullYear(), m = (d.getMonth() + 1) % 12 + 1;
   const st = `${y}${p(m)}01T100000`, stamp = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
   const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sadolayn//Kampanya//TR", "BEGIN:VEVENT", "UID:sado-kampanya-" + stamp + "@sadolayn", "DTSTAMP:" + stamp,
     "DTSTART;TZID=Europe/Istanbul:" + st, "DURATION:PT15M", "RRULE:FREQ=MONTHLY;BYMONTHDAY=1",
-    "SUMMARY:🎯 Maximum kampanyalarına katıl", "DESCRIPTION:Yeni ay! İşCep, Maximum Mobil ya da Maxi ile kampanyalara katılmayı unutma. Liste: https://sadolayn.github.io/SadoDepo/isbank.html#maximum",
+    "SUMMARY:🎯 Maximum kampanyalarına katıl", "DESCRIPTION:Yeni ay! Ayın ilk 5 günü İşCep, Maximum Mobil ya da Maxi ile kampanyalara katılmayı unutma. Liste: https://sadolayn.github.io/SadoDepo/isbank.html#maximum",
     "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Kampanyalara katıl", "TRIGGER:PT0M", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = "kampanya-hatirlatici.ics"; document.body.appendChild(a); a.click(); a.remove();
 }
@@ -362,7 +360,11 @@ const ONE = [
   { ic: "🛒", ad: "Market alışverişi", re: /market|migros|carrefour|a101|şok|bim|getir/i, rehber: "Market kampanyaları genellikle ay başında yenilenir; katılmadan yapılan harcamalar puan kazandırmaz." },
   { ic: "📱", ad: "Elektronik & teknoloji", re: /mediamarkt|samsung|apple|teknosa|vatan|elektronik|telefon|bilgisayar/i, rehber: "Telefon, bilgisayar ve beyaz eşyada MaxiPuan ve taksit fırsatları sık gelir; büyük alışverişten önce buraya bak." },
   { ic: "🎓", ad: "Eğitim · özel okul & dershane", re: /eğitim|egitim|okul|dershane|kurs|üniversite/i, sezon: [7, 8, 9, 0, 1],
+    sonra: "Özel okul ödemelerinde İş Bankası dönem dönem seçili okullarda faizsiz taksit kampanyası yapıyor; taksit talimatı İşCep ya da Maximum Mobil'den, kartın hesap kesim tarihinden önce verilir. Dershane ve kurs ödemeleri genellikle kapsam dışıdır.",
     rehber: "Özel okul ödemelerinde taksit fırsatı: İş Bankası'nın Ekim 2026 kampanyasında seçili okullarda 50.000–2.200.000 TL arası peşin harcamalar <b>3 aya varan faizsiz taksite</b> bölünebiliyor (1–31 Ekim 2026). Taksit talimatı yalnızca <b>İşCep</b> ya da <b>Maximum Mobil</b>'den, kartın hesap kesim tarihinden önce verilmeli. Dershane, kurs, kırtasiye ve servis ödemeleri bu kampanyaya dahil değil.", link: "https://www.isbank.com.tr/kampanyalar/egitim-odemelerinizde-secili-okullarda-faizsiz-taksit-firsati", bitis: "2026-10-31" },
+  { ic: "🇹🇷", ad: "TROY özellikli kartlar", re: /troy/i, sonra: "TROY, Türkiye'nin yerli kart ödeme sistemi. TROY logolu İş Bankası kredi kartı, Bankamatik ve MaxiPara kartlarına özel indirimler düzenli olarak çıkıyor; güncel olanlar aşağıda listelenir.", rehber: "TROY, Türkiye'nin yerli kart ödeme sistemi. TROY logolu İş Bankası kredi kartı, Bankamatik ve MaxiPara kartlarına özel indirimler var: örneğin Pazarama'da tek seferde 1.250 TL ve üzeri alışverişe <b>250 TL indirim</b> (12 Ekim – 22 Kasım 2026, sepette TROY kupon kodu seçilir).", link: "https://www.isbank.com.tr/kampanyalar/is-bankasi-troy-sahiplerine-pazaramada-indirim-firsati", bitis: "2026-11-22" },
+  { ic: "🎂", ad: "Maximum 25. yıla özel", re: /25\.?\s?yıl/i, rehber: "Maximum 2026'da 25. yaşını kutluyor. Yıl boyunca \"25. yıla özel\" MaxiPuan, indirim ve taksit kampanyaları çıkıyor; yenileri listeye eklendikçe burada görünür." },
+  { ic: "🖤", ad: "Black'e özel", re: /black/i, rehber: "İş Black ve Maximiles Black sahiplerine özel ayrıcalıklar: ücretsiz para transferi, vadeli hesapta ek faiz, otopark, otel ve lounge indirimleri.", black: true },
   { ic: "⛽", ad: "Akaryakıt & yol", re: /shell|opet|bp|akaryakıt|hgs|ogs|otopark/i, rehber: "Akaryakıt ve HGS kampanyaları her ay çıkar; HGS talimatını kartına bağlayınca ödeme unutulmaz." },
   { ic: "✈️", ad: "Seyahat & tatil", re: /ets|tatil|otel|uçak|bilet|tur|pazarama tatil/i, rehber: "Uçak bileti ve otelde peşin fiyatına taksit ve MaxiPuan fırsatları yaz ve bayram dönemlerinden önce artar." },
 ];
@@ -370,12 +372,12 @@ function oneHtml() {
   const m = new Date().getMonth();
   const order = ONE.slice().sort((a, b) => ((b.sezon || []).includes(m) ? 1 : 0) - ((a.sezon || []).includes(m) ? 1 : 0));
   return `<div class="ohead">⭐ Kaçırılmayacak fırsatlar<span>Güncel kampanyalar başlıklara göre otomatik eşleşir</span></div>` + order.map((g) => {
-    const L = camps.filter((c) => g.re.test(c.baslik + " " + c.ozet));
+    const L = camps.filter((c) => g.re.test(c.baslik + " " + c.ozet)).concat(g.black && blk && blk.kampanyalar ? blk.kampanyalar.map((k) => ({ baslik: k.baslik, bitis: "2026-12-31" })) : []);
     const hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) >= 0);
     return `<div class="ocard${hot ? " hot" : ""}"><div class="oh"><i>${g.ic}</i><b>${g.ad}</b>${hot ? '<span class="newtag">DÖNEMİ</span>' : ""}<em>${L.length ? L.length + " kampanya" : ""}</em></div>
-      <p>${g.rehber}${g.bitis && daysLeft(g.bitis) >= 0 ? ` <b style="color:#ffb27a">Son ${daysLeft(g.bitis)} gün.</b>` : ""}</p>
+      <p>${g.bitis && daysLeft(g.bitis) < 0 ? g.sonra : g.rehber}${g.bitis && daysLeft(g.bitis) >= 0 ? ` <b style="color:#ffb27a">Son ${daysLeft(g.bitis)} gün.</b>` : ""}</p>
       ${L.map((c) => `<div class="omini"><span>${esc(c.baslik)}</span><small>${daysLeft(c.bitis) <= 3 ? "🔥 " : ""}${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></div>`).join("")}
-      ${g.link ? `<a class="olink" href="${g.link}" target="_blank" rel="noopener">Kampanya koşulları ↗</a>` : ""}</div>`;
+      ${g.link && !(g.bitis && daysLeft(g.bitis) < 0) ? `<a class="olink" href="${g.link}" target="_blank" rel="noopener">Kampanya koşulları ↗</a>` : ""}${g.black ? `<button type="button" class="olink tolink" data-cat="Black" style="background:none;border:none;padding:0">🖤 Black sayfasına git ›</button>` : ""}</div>`;
   }).join("") + `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm Maximum kampanyaları ↗</a>`;
 }
 // ===== Black: İş Black programı (2 kademe) + Maximiles Black kart =====
@@ -439,18 +441,17 @@ function milesHtml() {
 }
 function bindSpecial() { $("list").querySelectorAll("[data-cat]").forEach((b) => (b.onclick = () => { cat = b.dataset.cat; renderList(); renderChips(); window.scrollTo({ top: 0 }); })); }
 function campCard(k) {
-  const n = daysLeft(k.bitis), u = n <= 3, j = joined(k), fr = isFresh(k);
+  const n = daysLeft(k.bitis), u = n <= 3;
   const left = n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
   const bit = new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
-  return `<div class="camp${u && !j ? " urgent" : ""}${j ? " done" : ""}" style="--c:${TUR[k.tur] || "var(--muted)"}">
-      <div class="top"><span class="tag">${esc(k.tur)}${fr ? '<span class="newtag">YENİ EKLENDİ</span>' : isNew("c:" + k.baslik) ? '<span class="newtag">YENİ</span>' : ""}</span><span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}" title="Bitiş: ${bit}">${left}</span></div>
+  return `<div class="camp${u ? " urgent" : ""}" style="--c:${TUR[k.tur] || "var(--muted)"}">
+      <div class="top"><span class="tag">${esc(k.tur)}${isNew("c:" + k.baslik) ? '<span class="newtag">YENİ</span>' : ""}</span><span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}" title="Bitiş: ${bit}">${left}</span></div>
       <b>${esc(k.baslik)}</b>
       <p>${esc(k.ozet)}</p>
-      <div class="cfoot"><span>Bitiş: ${bit}</span><button type="button" class="jbtn${j ? " on" : ""}" data-j="${esc(k.baslik)}">${j ? "📌 İşaretli" : "☐ Katılacağım / katıldım"}</button></div>
+      <div class="cfoot"><span>Bitiş: ${bit}</span></div>
     </div>`;
 }
 function renderCamps() {
-  jnTouch();
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
   if (!camps.length) { $("list").innerHTML = '<div class="empty">Şu an listelenen kampanya yok.</div>'; return; }
   const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "✈️ Maximiles"];
@@ -460,30 +461,24 @@ function renderCamps() {
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
   if (SP.includes(campTur)) { $("list").innerHTML = campTur === "✈️ Maximiles" ? milesHtml() : oneHtml(); bindSpecial(); return; }
   const vis = camps.filter((k) => campTur === "Tümü" || k.tur === campTur);
-  const nj = camps.filter((c) => !joined(c)), fresh = vis.filter(isFresh), rest = vis.filter((c) => !joined(c) && !isFresh(c)), done = vis.filter(joined);
-  const pct = Math.round((camps.length - nj.length) / camps.length * 100);
-  const urg = nj.filter((k) => daysLeft(k.bitis) <= 3);
-  let html = `<div class="jpanel">
-      <div class="jtop"><div><b>📌 Kampanya takip listem</b><span>${camps.length - nj.length}/${camps.length} kampanyayı işaretledin${JN.bulk ? ` · son toplu işaretleme ${new Date(JN.bulk).toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}` : ""}</span></div><em>%${pct}</em></div>
-      <div class="jbar"><i style="width:${pct}%"></i></div>
-      <div class="jnote">ℹ️ Bu liste senin hatırlatma notundur, banka sistemine bağlı değildir. Kampanyaya katılım İşCep, Maximum Mobil ya da Maxi'den yapılır.</div>
-      <div class="jbtns"><button type="button" id="jAll">📌 Hepsini işaretle</button><button type="button" id="jIcs">📅 Ay başı hatırlatıcısı</button></div>
+  const day = new Date().getDate(), ayBasi = day <= 5;
+  const urg = vis.filter((k) => daysLeft(k.bitis) <= 3);
+  let html = `${ayBasi ? `<div class="aybasi"><b>📣 Ay başı hatırlatması</b><span>Yeni ayın kampanyaları başladı. Ayın ilk 5 günü (${5 - day + 1} gün kaldı) kampanyalarımıza katılmayı unutmayın!</span></div>` : ""}
+    <div class="jpanel">
+      <div class="jtop"><div><b>🎯 Kampanyalara katılmayı unutma</b><span>Çoğu kampanyada harcamadan önce <b>Katıl</b> demek gerekir.</span></div></div>
+      <div class="jbtns one"><button type="button" id="jIcs">📅 Ay başı hatırlatıcısını takvimime ekle</button></div>
       <details class="jhow"><summary>📲 Kampanyalara nasıl katılırım?</summary>
         <div class="jway"><i>📱</i><div><b>İşCep</b>Uygulamada <b>Kampanyalar</b> bölümünü aç, kampanyayı seç ve <b>Katıl</b>'a dokun.</div></div>
-        <div class="jway"><i>💳</i><div><b>Maximum Mobil</b>Kampanyalar listesinde istediğin kampanyada <b>Katıl</b>'a dokun; katıldıkların ayrı listelenir.</div></div>
-        <div class="jway"><i>🤖</i><div><b>Dijital asistan Maxi</b>İşCep ya da Maximum Mobil'de Maxi'ye <b>"kampanyalara katılmak istiyorum"</b> yaz veya söyle; uygun kampanyaları listeler.</div></div>
-        <p>İpucu: Katılacağın ya da katıldığın kampanyaları burada işaretle; ay başında hepsine katıldıysan <b>Hepsini işaretle</b>'ye bas. Ay içinde yeni kampanya eklenince <b>"Yeni eklendi"</b> diye ayrı listelenir ve ana sayfada hatırlatılır. Bazı taksit ve indirim kampanyaları katılım istemeyebilir; koşullar maximum.com.tr'de.</p>
+        <div class="jway"><i>💳</i><div><b>Maximum Mobil</b>Kampanyalar listesinde istediğin kampanyada <b>Katıl</b>'a dokun.</div></div>
+        <div class="jway"><i>🤖</i><div><b>Dijital asistan Maxi</b>İşCep ya da Maximum Mobil'de Maxi'ye <b>"kampanyalara katılmak istiyorum"</b> yaz veya söyle.</div></div>
+        <p>Bazı taksit ve indirim kampanyaları ayrıca katılım istemeyebilir; koşullar kampanya sayfasında yazar.</p>
       </details>
     </div>`;
-  if (urg.length) html += `<div class="alarm">⏰ İşaretlemediğin <b>${urg.length} kampanya</b> 3 gün içinde bitiyor!</div>`;
-  if (fresh.length) html += `<div class="csec new">🆕 Yeni eklenenler · henüz işaretlemedin <b>${fresh.length}</b></div>` + fresh.map(campCard).join("");
-  if (rest.length) html += `<div class="csec">⏳ İşaretlemediklerin <b>${rest.length}</b></div>` + rest.map(campCard).join("");
-  if (done.length) html += `<div class="csec ok">📌 İşaretlediklerin <b>${done.length}</b></div>` + done.map(campCard).join("");
+  if (urg.length) html += `<div class="alarm">⏰ <b>${urg.length} kampanya</b> 3 gün içinde bitiyor!</div>`;
+  html += vis.map(campCard).join("");
   html += `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm kampanyalar ve katılım koşulları ↗</a>`;
   $("list").innerHTML = html;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  $("list").querySelectorAll("[data-j]").forEach((b) => (b.onclick = () => { const t = b.dataset.j; if (JN.j[t]) delete JN.j[t]; else JN.j[t] = Date.now(); jnSave(); renderCamps(); }));
-  $("jAll").onclick = () => { const now = Date.now(); camps.forEach((c) => (JN.j[c.baslik] = JN.j[c.baslik] || now)); JN.bulk = now; jnSave(); renderCamps(); };
   $("jIcs").onclick = icsReminder;
 }
 
@@ -887,7 +882,7 @@ function renderList() {
   if (cat === "Finans") return renderFinans();
   if (cat === "Black") {
     const fd = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
-    $("upd").innerHTML = blk ? `🔄 Her gün kontrol edilir · son kontrol <b>${fd(blk.kontrol)}</b> · son değişiklik ${fd(blk.degisim)}` : "🔄 Ayrıcalıklar her gün kontrol edilir";
+    $("upd").innerHTML = `🔄 Ayrıcalıklar her gün kontrol edilir, değişiklik olursa burada güncellenir${blk ? ` · son kontrol <b>${fd(blk.kontrol)}</b>` : ""}<br>Ayrıcalıklar <b>31.12.2026</b>'ya kadar geçerli`;
     $("list").innerHTML = blackHtml(); return;
   }
   if (cat === "Soru") return renderSoru();

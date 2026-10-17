@@ -257,21 +257,8 @@
       const ONR = "Öneri ve isteklerinizi en alttan iletebilirsiniz ✉️";
       const L = ["Hoş geldiniz", "Keyifli gezinmeler", ...(wd ? ["İyi çalışmalar"] : []), ONR];
       el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); else if (/kampanya/i.test(el.textContent)) location.href = "isbank.html#maximum"; });
-      // Kampanya hatırlatıcısı: İş Bankası Gündemi'ndeki "Katıldım" kayıtlarını okur
-      fetch("isbank/kampanyalar.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json()).then((d) => {
-        let J = { j: {}, bulk: 0, f: {} }; try { J = Object.assign(J, JSON.parse(localStorage.getItem("isbJoin") || "{}")); } catch (e) {}
-        const live = (d.kampanyalar || []).filter((k) => new Date(k.bitis + "T23:59:59") >= new Date());
-        const nj = live.filter((k) => !J.j[k.baslik]), fresh = nj.filter((k) => J.bulk && (!J.f[k.baslik] || J.f[k.baslik] > J.bulk));
-        const day = new Date().getDate(), used = J.bulk || Object.keys(J.j).length;
-        let msg = "";
-        if (fresh.length) msg = `🎯 ${fresh.length} yeni kampanya eklendi, katılmayı unutma ›`;
-        else if (used && nj.length) msg = `🎯 İşaretlemediğin ${nj.length} kampanya var ›`;
-        else if (!used && day <= 5) msg = "📣 Yeni ay! Maximum kampanyalarına katılmayı unutma ›";
-        if (!msg) return;
-        L.splice(1, 0, msg);
-        const card = document.querySelector('a[href="isbank.html"] .t');
-        if (card && (fresh.length || (used && nj.length))) card.insertAdjacentHTML("beforeend", `<span style="display:inline-block;margin-left:7px;padding:1px 7px;border-radius:6px;background:#e0a24f;color:#000;font-size:10.5px;font-weight:800;vertical-align:2px">🎯 ${fresh.length || nj.length}</span>`);
-      }).catch(() => {});
+      // Kampanya hatırlatıcısı: her ayın ilk 5 günü
+      if (new Date().getDate() <= 5) L.splice(1, 0, "📣 Ay başı! Kampanyalarımıza katılmayı unutmayın ›");
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       let k = 0;
       setInterval(() => { el.classList.add("fade"); setTimeout(() => { k = (k + 1) % L.length; el.textContent = L[k]; el.style.cursor = L[k] === ONR || /kampanya/i.test(L[k]) ? "pointer" : ""; el.style.color = /kampanya/i.test(L[k]) ? "#e0a24f" : ""; el.classList.remove("fade"); }, 600); }, 4500);
