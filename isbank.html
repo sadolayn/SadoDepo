@@ -38,7 +38,8 @@
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header h1 { margin: 0; font-size: 20px; }
   .upd { text-align: center; font-size: 12px; color: var(--muted); margin-bottom: 12px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 6px; margin-bottom: 8px; }
+  .chips { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding: 2px 16px 4px; margin: 0 -16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; scroll-padding: 0 16px; }
+  .chips button { flex: 0 0 auto; scroll-snap-align: start; white-space: nowrap; }
   .chips::-webkit-scrollbar { display: none; }
   .chips button {
     flex: none; padding: 8px 14px; border-radius: 99px;
@@ -91,7 +92,11 @@
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .stick > :last-child { margin-bottom: 0; }
-  .chipbar { position: sticky; z-index: 29; background: #000; margin: 0 -16px 10px; padding: 6px 16px 4px; }
+  .chipbar { margin: 8px 0 0; position: relative; }
+  .chipbar::after { content: ""; position: absolute; right: -16px; top: 0; bottom: 4px; width: 28px; background: linear-gradient(90deg, transparent, #000); pointer-events: none; }
+  .chipbar .tfil { margin: 6px -16px 0; padding: 0 16px 2px; scroll-padding: 0 16px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .chipbar .tfil::-webkit-scrollbar { display: none; }
+  .chipbar .tfil button { flex: 0 0 auto; padding: 5px 10px; font-size: 12px; }
   .subebtn { padding: 9px 16px; border-radius: 20px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
   .subebtn.on { outline: 2px solid var(--accent); }
   .sum { background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%); border: 1px solid #3a50f0; border-radius: 18px; padding: 14px 12px 10px; margin-bottom: 12px; text-align: center; }
@@ -164,11 +169,11 @@
     <h1>🏛️ İş Bankası Gündemi</h1>
     <span style="width:52px"></span>
   </header>
+  <div class="chipbar" id="chipbar"><div class="chips" id="chips"></div><div class="tfil" id="tfil" hidden></div></div>
   </div>
   <div class="upd" id="upd"></div>
   <div style="text-align:center;margin:-4px 0 10px"><button id="subeBtn" type="button" class="subebtn">🏦 Şubeler · 📊 Yatırımcı Sunumu</button></div>
   <div id="today"></div>
-  <div class="chipbar" id="chipbar"><div class="chips" id="chips"></div></div>
   <div id="list"><div class="empty">Yükleniyor…</div></div>
 
   <p class="note">Seçilmiş haberler ve Maximum kampanyaları kamuya açık kaynaklardan günde iki kez, "Güncel" sekmesi her saat otomatik derlenir. Kampanya koşulları için maximum.com.tr'ye bakın.</p>
@@ -204,7 +209,9 @@ function renderChips() {
     cat = b.dataset.k;
     try { localStorage.setItem("isbankCat", cat); } catch (e) {}
     renderChips(); renderList();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }));
+  const act = $("chips").querySelector(".active"); if (act) act.scrollIntoView({ inline: "center", block: "nearest" });
   $("subeBtn").classList.toggle("on", cat === "Şubeler");
 }
 
@@ -219,8 +226,10 @@ function renderCamps() {
   const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))];
   if (!turs.includes(campTur)) campTur = "Tümü";
   const urg = camps.filter((k) => daysLeft(k.bitis) <= 3);
-  let html = `<div class="tfil" id="tfil">${turs.map((t) => `<button data-t="${esc(t)}" class="${t === campTur ? "on" : ""}">${esc(t)}<b>${t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length}</b></button>`).join("")}</div>`;
-  if (urg.length) html += `<div class="alarm">⏰ <b>${urg.length} kampanya</b> 3 gün içinde bitiyor — kaçırmayın!</div>`;
+  $("tfil").innerHTML = turs.map((t) => `<button data-t="${esc(t)}" class="${t === campTur ? "on" : ""}">${t === "Tümü" ? "Tüm türler" : esc(t)}<b>${t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length}</b></button>`).join("");
+  $("tfil").hidden = false;
+  let html = "";
+  if (urg.length) html += `<div class="alarm">⏰ <b>${urg.length} kampanya</b> 3 gün içinde bitiyor!</div>`;
   for (const k of camps.filter((k) => campTur === "Tümü" || k.tur === campTur)) {
     const n = daysLeft(k.bitis), u = n <= 3;
     const left = n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
@@ -234,7 +243,7 @@ function renderCamps() {
   }
   html += `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm kampanyalar ve katılım koşulları ↗</a>`;
   $("list").innerHTML = html;
-  $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); };
+  $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
 }
 
 function renderSubeler() {
@@ -386,7 +395,7 @@ function renderSum() {
     </div>
     <div class="foot">${esc(d.donem)} · ${f(d.ulke)} ülkede yurt dışı şube<a href="#" id="toSube">Şube ve kasa ›</a></div>
   </div>`;
-  $("toSube").onclick = (e) => { e.preventDefault(); cat = "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (er) {} renderChips(); renderList(); $("chipbar").scrollIntoView({ behavior: "smooth" }); };
+  $("toSube").onclick = (e) => { e.preventDefault(); cat = "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (er) {} renderChips(); renderList(); window.scrollTo({ top: 0, behavior: "smooth" }); };
 }
 function agoTxt(iso) {
   const m = Math.max(0, Math.round((Date.now() - new Date(iso)) / 60000));
@@ -507,10 +516,12 @@ function renderToday() {
   }
   h += `</div>`;
   $("today").innerHTML = h;
-  const tb = $("toTk"); if (tb) tb.onclick = () => { cat = "📅 Takvim"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); $("chipbar").scrollIntoView({ behavior: "smooth" }); };
+  const tb = $("toTk"); if (tb) tb.onclick = () => { cat = "📅 Takvim"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); window.scrollTo({ top: 0, behavior: "smooth" }); };
 }
 
 function renderList() {
+  $("tfil").hidden = cat !== "Maximum";
+  $("today").hidden = cat !== "Tümü";
   if (cat === "📰 Güncel") return renderLive();
   if (cat === "📅 Takvim") return renderTakvim();
   if (cat === "İşCep") return renderIscep();
@@ -571,7 +582,6 @@ function renderList() {
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script>(function(){var s=document.querySelector(".stick"),c=document.getElementById("chipbar");var t=function(){c.style.top=s.offsetHeight+"px"};t();window.addEventListener("resize",t);})();</script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 <script>
 // Yakınımdaki şubeler: konumu cihazdan al (kurum ağı İstanbul'dan çıktığı için Google tek başına Ataşehir gösteriyordu)
