@@ -265,7 +265,7 @@
         const day = new Date().getDate(), used = J.bulk || Object.keys(J.j).length;
         let msg = "";
         if (fresh.length) msg = `🎯 ${fresh.length} yeni kampanya eklendi, katılmayı unutma ›`;
-        else if (used && nj.length) msg = `🎯 Katılmadığın ${nj.length} kampanya var ›`;
+        else if (used && nj.length) msg = `🎯 İşaretlemediğin ${nj.length} kampanya var ›`;
         else if (!used && day <= 5) msg = "📣 Yeni ay! Maximum kampanyalarına katılmayı unutma ›";
         if (!msg) return;
         L.splice(1, 0, msg);
