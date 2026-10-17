@@ -381,7 +381,7 @@
     });
   })();
 </script>
-<footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.<br><span style="letter-spacing:0;color:#555">Kimlik bilgisi toplanmaz; yalnızca anonim sayfa ve oyun sayıları tutulur.</span></footer>
+<footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>
 (function () {
   const $ = (id) => document.getElementById(id);
@@ -401,14 +401,14 @@
     const p = window.__kurPrompt;
     if (p) { p.prompt(); try { const r = await p.userChoice; if (r.outcome === "accepted") $("kur").hidden = true; } catch (e) {} window.__kurPrompt = null; return; }
     const t = window.__tarayici, y = $("kurYardim"); y.hidden = false;
-    const not = "<br><span style='color:#8a8a8a;font-size:12px'>Bu bir uygulama kurulumu değildir; telefonuna sadece siteye giden bir kısayol eklenir. Dosya indirilmez, izin istenmez.</span>";
+    const not = "<br><span style='color:#8a8a8a;font-size:12px'>Uygulama yüklenmez; kolay ulaşman için sitenin bağlantısı ana ekrana eklenir.</span>";
     y.innerHTML = (t === "ios"
-      ? "<b>iPhone'da:</b> Safari'de alttaki <b>Paylaş</b> (⬆️) simgesine dokun → <b>Ana Ekrana Ekle</b>."
+      ? "<b>iPhone:</b> Safari'de <b>Paylaş ⬆️</b> → <b>Ana Ekrana Ekle</b>"
       : t === "chrome"
-      ? "<b>Chrome'da:</b> sağ üstteki <b>⋮</b> menüsüne dokun → <b>Ana ekrana ekle</b>."
+      ? "<b>Chrome:</b> sağ üstte <b>⋮</b> → <b>Ana ekrana ekle</b>"
       : t === "samsung"
-      ? "<b>Samsung İnternet'te:</b> alttaki <b>≡</b> menüsüne dokun → <b>Sayfayı ekle</b> → <b>Ana ekran</b>.<br>Karşına <b>“Uygulama yükle”</b> ya da Play Protect uyarısı çıkarsa <b>yükleme</b>, “Anladım” de; o paket tarayıcının kendi ürettiği eski tip bir dosyadır. Sorunsuz kurulum için siteyi <b>Chrome</b>'da açıp oradan ekleyebilirsin."
-      : "<b>Tarayıcı menüsünden</b> (⋮ ya da ≡) <b>Ana ekrana ekle / Sayfayı ekle</b>'yi seç. “Uygulama yükle” ya da güvenlik uyarısı çıkarsa yükleme; en sorunsuzu siteyi <b>Chrome</b>'da açıp oradan eklemek.") + not;
+      ? "<b>Samsung İnternet:</b> altta <b>≡</b> → <b>Sayfa ekle</b> → <b>Ana ekran</b> → <b>Ekle</b>"
+      : "Tarayıcı menüsünden <b>Ana ekrana ekle</b> ya da <b>Sayfa ekle → Ana ekran</b>") + not;
   };
   window.addEventListener("appinstalled", () => ($("kur").hidden = true));
 })();
