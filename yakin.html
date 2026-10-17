@@ -46,10 +46,10 @@
   .rad button { white-space: nowrap; padding: 5px 9px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--muted); font-size: 12px; cursor: pointer; }
   .rad button.on { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
   h2 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 16px 2px 8px; font-weight: 600; }
-  .grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
-  .tile { min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 7px 2px 6px; text-align: center; cursor: pointer; color: var(--ink); font: inherit; }
-  .tile .e { font-size: 19px; line-height: 1.1; }
-  .tile .n { font-size: 10px; margin-top: 3px; line-height: 1.15; overflow-wrap: anywhere; }
+  .grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+  .tile { min-width: 0; background: linear-gradient(160deg, color-mix(in srgb, var(--c, #444) 22%, #0d0d0d), #0d0d0d); border: 1px solid color-mix(in srgb, var(--c, #444) 40%, #1a1a1a); border-radius: 11px; padding: 6px 1px 5px; text-align: center; cursor: pointer; color: var(--ink); font: inherit; }
+  .tile .e { font-size: 17px; line-height: 1.1; }
+  .tile .n { font-size: 9px; margin-top: 3px; line-height: 1.15; overflow-wrap: anywhere; hyphens: auto; color: color-mix(in srgb, var(--c, #fff) 25%, #fff); }
   .tile.on { border-color: var(--accent); background: #1a1408; }
   .sos { display: flex; gap: 8px; margin: 4px 0 2px; }
   .sos a { flex: 1; text-align: center; text-decoration: none; padding: 10px; border-radius: 12px; font-weight: 700; font-size: 14px; }
@@ -117,6 +117,8 @@
   .note a { color: var(--muted); }
   .leaflet-container { font: inherit; }
   .leaflet-popup-content { font-size: 13px; }
+  .grp h2 { display: inline-flex; align-items: center; gap: 4px; margin: 14px 0 7px; padding: 4px 11px; border-radius: 99px; background: linear-gradient(135deg, color-mix(in srgb, var(--c) 45%, #000), color-mix(in srgb, var(--c) 18%, #000)); border: 1px solid color-mix(in srgb, var(--c) 60%, #000); color: color-mix(in srgb, var(--c) 30%, #fff); font-size: 11px; font-weight: 800; letter-spacing: 1px; }
+  .grp .tile.on { border-color: var(--c); background: color-mix(in srgb, var(--c) 30%, #0d0d0d); }
 </style>
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
@@ -272,7 +274,8 @@ const STALE = S.place && !S.place.gps && S.place.v !== 2;
 const save = () => { try { localStorage.setItem("yakin_v1", JSON.stringify({ place: S.place, r: S.r })); } catch (e) {} };
 
 // Kategori ızgarası
-$("cats").innerHTML = GROUPS.map(([g, l]) => `<h2>${g}</h2>${g.startsWith("🚨") ? `<div class="sos"><a class="g" id="nobetG" href="#" target="_blank" rel="noopener">💊 Nöbetçi eczane · Google</a><a class="e" href="https://www.turkiye.gov.tr/arama?aranan=n%C3%B6bet%C3%A7i+eczane" target="_blank" rel="noopener">🏛️ Nöbetçi eczane · e-Devlet</a></div>` : ""}<div class="grid">${l.map(([k, e, n]) => `<button class="tile" data-k="${k}"><div class="e">${e}</div><div class="n">${n}</div></button>`).join("")}</div>`).join("");
+const GCOL = ["#ef5a5a", "#5aa9f0", "#e0a24f", "#b48cf0", "#ef8a4c", "#3fbfd6", "#3fc283", "#ff4fa3", "#a8c94a"];
+$("cats").innerHTML = GROUPS.map(([g, l], gi) => `<section class="grp" style="--c:${GCOL[gi % GCOL.length]}"><h2>${g}</h2>${g.startsWith("🚨") ? `<div class="sos"><a class="g" id="nobetG" href="#" target="_blank" rel="noopener">💊 Nöbetçi eczane · Google</a><a class="e" href="https://www.turkiye.gov.tr/arama?aranan=n%C3%B6bet%C3%A7i+eczane" target="_blank" rel="noopener">🏛️ Nöbetçi eczane · e-Devlet</a></div>` : ""}<div class="grid">${l.map(([k, e, n]) => `<button class="tile" data-k="${k}"><div class="e">${e}</div><div class="n">${n}</div></button>`).join("")}</div></section>`).join("");
 $("cats").addEventListener("click", (e) => { const t = e.target.closest(".tile"); if (!t) return; NOSCROLL = !!S.place; openCat(t.dataset.k); NOSCROLL = false; if (S.place) openFs(); });
 
 function renderRad() { document.querySelectorAll("[data-rad] button").forEach((b) => b.classList.toggle("on", +b.dataset.r === S.r)); }
