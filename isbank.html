@@ -155,6 +155,14 @@
   .ocard .oh { display: flex; align-items: center; gap: 8px; } .ocard .oh i { font-style: normal; font-size: 22px; } .ocard .oh b { font-size: 15.5px; } .ocard .oh em { margin-left: auto; font-style: normal; font-size: 12px; color: var(--accent); font-weight: 700; }
   .ocard p { margin: 8px 0 4px; font-size: 13.5px; color: #cfcfcf; line-height: 1.5; }
   .omini { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px dashed #2c2c2c; font-size: 13.5px; } .omini small { color: var(--muted); white-space: nowrap; }
+  .omini.olnk { color: inherit; text-decoration: none; }
+  .bkhero { padding: 14px; border-radius: 16px; margin-bottom: 8px; background: linear-gradient(135deg, rgba(63,194,131,.2), rgba(63,194,131,.03)); border: 1px solid #23573f; }
+  .bkhero b { display: block; font-size: 16px; color: #c9f5de; } .bkhero span { font-size: 13px; color: #a9d8c0; }
+  .bkgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .bkc { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 11px; } .bkc i { font-style: normal; font-size: 22px; } .bkc b { display: block; font-size: 14px; margin: 2px 0; } .bkc span { font-size: 12px; color: #bdbdbd; line-height: 1.45; }
+  .bkcat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; margin-bottom: 8px; overflow: hidden; }
+  .bkh { display: flex; align-items: center; gap: 8px; padding: 12px 14px; text-decoration: none; color: inherit; } .bkh i { font-style: normal; font-size: 22px; } .bkh b { font-size: 15px; } .bkh em { margin-left: auto; font-style: normal; font-size: 12px; color: #7ee2a8; font-weight: 700; } .bkh small { color: var(--muted); }
+  .bkit { display: block; padding: 9px 14px; border-top: 1px dashed #2c2c2c; text-decoration: none; color: inherit; } .bkit b { display: inline; font-size: 13.5px; } .bkit span { display: block; font-size: 12px; color: #aaa; margin-top: 2px; } .bkit small { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
   .olink { display: inline-block; margin-top: 6px; color: var(--accent); font-size: 13px; text-decoration: none; font-weight: 600; }
   .tolink { cursor: pointer; }
   .blk { position: relative; overflow: hidden; border-radius: 18px; padding: 16px; margin-bottom: 10px; color: #eee; background: radial-gradient(120% 90% at 100% 0%, #3a3123 0%, #121212 45%, #050505 100%); border: 1px solid #3a3326; box-shadow: inset 0 1px 0 rgba(255,230,180,.08); }
@@ -170,6 +178,11 @@
   .bt td { padding: 8px 4px; border-top: 1px solid #2c2a25; text-align: center; color: #ddd; } .bt td:first-child { text-align: left; color: #cfcfcf; } .bt td.p { color: #f3dca8; font-weight: 700; }
   .bcom { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px; } .bcom b { width: 100%; font-size: 12px; letter-spacing: 1px; color: #b79a74; text-transform: uppercase; }
   .bcom span { font-size: 12.5px; padding: 5px 9px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid #2f2b22; color: #e6e0d4; }
+  .bilmek { margin: 0 0 10px; border-radius: 16px; border: 1px dashed #6b5222; background: radial-gradient(120% 120% at 0% 0%, #2b2418, #0a0a0a); padding: 12px 14px; }
+  .bilmek summary { list-style: none; cursor: pointer; } .bilmek summary::-webkit-details-marker { display: none; }
+  .bilmek summary span { display: block; font-family: Georgia, serif; font-style: italic; font-size: 19px; color: #f3dca8; }
+  .bilmek summary em { font-style: normal; font-size: 13px; color: #b79a74; } .bilmek summary u { color: #f0c674; }
+  .bilmek[open] summary em { display: none; }
   .bring { margin: 10px 0; padding: 12px; border-radius: 14px; background: linear-gradient(135deg, rgba(63,194,131,.12), rgba(63,194,131,.03)); border: 1px solid #23573f; font-size: 13px; line-height: 1.5; color: #d6efe2; }
   .bring > b { display: block; color: #9ff0c8; font-size: 14px; margin-bottom: 4px; } .bring a { display: inline-block; margin-top: 6px; color: #7ee2a8 !important; }
   .blive { margin: 10px 0; border-top: 1px solid #2c2a25; padding-top: 10px; } .blive > b { display: block; color: #f3dca8; font-size: 13.5px; margin-bottom: 4px; } .blive small { color: #9a9a9a; font-weight: 500; }
@@ -191,6 +204,9 @@
   .menu button[data-k="Maximum"] { background: linear-gradient(160deg, #ff2d95, #b0005c); border-color: #ff5aab; color: #fff; }
   .menu button[data-k="Maximum"] span { font-size: 9px; font-weight: 800; letter-spacing: -.3px; overflow: visible; } .menu button[data-k="Maximum"] span small { font-size: 8.5px; font-weight: 700; opacity: .9; }
   .menu button[data-k="Maximum"].active { background: linear-gradient(160deg, #ffd1e8, #ff6fb5); color: #5a0030; border-color: #fff; }
+  .menu button[data-k="Kampanya"] span { font-size: 9.5px; font-weight: 800; overflow: visible; } .menu button[data-k="Kampanya"] span small { font-size: 8.5px; }
+  .menu button[data-k="Kampanya"] { background: linear-gradient(160deg, #1f5f43, #0b2a1d); border-color: #2f9a6a; color: #c9f5de; }
+  .menu button[data-k="Kampanya"].active { background: linear-gradient(160deg, #9ff0c8, #3fc283); color: #062616; }
   .menu button[data-k="Black"] { background: linear-gradient(160deg, #2b2418, #0a0a0a); border-color: #6b5222; color: #f3dca8; }
   .menu button[data-k="Black"].active { background: linear-gradient(160deg, #f3dca8, #c9a050); color: #000; }
   .longbar { position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-bottom: 6px; padding: 9px 10px; border-radius: 12px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
@@ -305,11 +321,12 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 const CATS = [
   ["Tümü", null, "📋"],
   ["Ürün", "var(--urun)", "🧾"],
-  ["Dijital", "var(--dijital)", "💡"],
   ["KAP", "var(--kap)", "📢"],
   ["Haber", "var(--haber)", "🗞️"],
   ["Maximum", "var(--accent)", "💳"],
   ["Black", "#f0c674", "🖤"],
+  ["Kampanya", "#3fc283", "🎁"],
+  ["Dijital", "var(--dijital)", "💡"],
   ["İşCep", "var(--dijital)", "📲"],
   ["📰 Güncel", "#5d8fe0", "📰"],
   ["📅 Takvim", "#e0a24f", "📅"],
@@ -318,11 +335,11 @@ const CATS = [
   ["Tarihçe", "#e0a24f", "🏛️"],
   ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "Maximum": "Maximum<small>Maximiles</small>", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe" };
+const LBL = { "Maximum": "Maximum<small>Maximiles</small>", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>" };
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
-let blk = null, fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
+let bkamp = null, blk = null, fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 if (location.hash === "#maximum") cat = "Maximum"; // ana sayfadaki kampanya hatırlatıcısından gelince
 
@@ -336,6 +353,7 @@ const idsFor = (k) => {
   if (k === "📰 Güncel") return live.map((x) => "g:" + (x.u || x.t));
   if (k === "Finans") return fin ? ["f:" + fin.periods[fin.periods.length - 1]] : [];
   if (k === "Şubeler" || k === "Soru" || k === "Tarihçe" || k === "Black") return [];
+  if (k === "Kampanya") return bkamp ? bkamp.kategoriler.flatMap((c) => c.kampanyalar.map((x) => "b:" + x.url)) : [];
   if (k === "📅 Takvim") return [];
   return all.filter((h) => h.kategori === k).map((h) => "n:" + (h.url || h.baslik));
 };
@@ -408,7 +426,7 @@ function oneHtml() {
   const m = new Date().getMonth();
   const order = ONE.slice().sort((a, b) => ((b.sezon || []).includes(m) ? 1 : 0) - ((a.sezon || []).includes(m) ? 1 : 0));
   return `<div class="ohead">⭐ Kaçırılmayacak fırsatlar<span>Güncel kampanyalar başlıklara göre otomatik eşleşir</span></div>` + order.map((g) => {
-    const L = camps.filter((c) => g.re.test(c.baslik + " " + c.ozet)).concat(g.black && blk && blk.kampanyalar ? blk.kampanyalar.map((k) => ({ baslik: k.baslik, bitis: "2026-12-31" })) : []);
+    const L = camps.filter((c) => g.re.test(c.baslik + " " + c.ozet)).concat(g.black && blk && blk.ayricaliklar ? blk.ayricaliklar.slice(0, 6).map((k) => ({ baslik: k.baslik, bitis: k.bitis || "2026-12-31" })) : []);
     const hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) >= 0);
     return `<div class="ocard${hot ? " hot" : ""}"><div class="oh"><i>${g.ic}</i><b>${g.ad}</b>${hot ? '<span class="newtag">DÖNEMİ</span>' : ""}<em>${L.length ? L.length + " kampanya" : ""}</em></div>
       <p>${g.bitis && daysLeft(g.bitis) < 0 ? g.sonra : g.rehber}${g.bitis && daysLeft(g.bitis) >= 0 ? ` <b style="color:#ffb27a">Son ${daysLeft(g.bitis)} gün.</b>` : ""}</p>
@@ -437,10 +455,6 @@ function blackHtml() {
         <span>💱 İŞ'te FX ile döviz-altın-gümüş</span><span>📰 Günlük piyasa ve aylık fon bülteni</span><span>✈️ Bilet.com'da uçuş ve transfer indirimi</span><span>🎭 Kültür-sanatta %20 indirim</span>
         <span>🛡️ Anadolu Sigorta'da İşCep'e özel indirimler</span><span>🏖️ Girişte ücret alınmayan İş Black BES planı</span></div>
       <p>Ayrıcalıklar <b>İşCep › İş Black</b> menüsünden görülür ve kullanılır. Kademe, İş Bankası'ndaki aylık ortalama varlığa göre belirlenir.</p>
-      ${blkLive()}
-      <div class="bring"><b>💸 Kademeye ulaşmak için birikimini getir</b>
-        <span>Diğer bankalardaki vadesiz TL hesabındaki parayı, o bankaya gitmeden İşCep'ten İş Bankası'na aktarabilirsin: <b>Para Aktar › İş Bankası Hesabıma Para Getir</b>. Hesapları bir kez <b>Hesaplarım › Diğer Banka Hesabı/Kartı Ekle</b> ile eklersen bakiyelerini de İşCep'te görürsün (Açık Bankacılık, ücretsiz).</span>
-        <a href="https://www.isbank.com.tr/acik-bankacilik" target="_blank" rel="noopener">Açık Bankacılık nasıl çalışır ↗</a></div>
       <a href="https://www.isbank.com.tr/is-black" target="_blank" rel="noopener">İş Black ayrıcalıklarının tamamı ↗</a>
     </div>
     <div class="blk card">
@@ -459,20 +473,36 @@ function blackHtml() {
         <div><span>Tüm Maximiles</span><em>Esenboğa, İzmir, Bodrum TAV %50</em></div></div>
       <p>Başvuru İşCep, Maximum Mobil, internet şubesi ya da şubeden yapılır; asgari kart limiti 300.000 TL. Yıllık kart ücreti ve güncel koşullar için bankanın sayfasına bak.</p>
       <a href="https://www.isbank.com.tr/maximiles-black" target="_blank" rel="noopener">Maximiles Black sayfası ↗</a>
-    </div>`;
+    </div>
+    <details class="bilmek"><summary><span>💡 Biliyor muydunuz?</span><em>Black'e bir adım daha yakın olabilirsiniz… <u>dokun</u></em></summary>
+      <div class="bring"><b>💸 Birikimini tek dokunuşla İş Bankası'na getir</b>
+        <span>Diğer bankalardaki vadesiz TL hesabındaki parayı, o bankaya gitmeden İşCep'ten İş Bankası'na aktarabilirsin: <b>Para Aktar › İş Bankası Hesabıma Para Getir</b>. Hesapları bir kez <b>Hesaplarım › Diğer Banka Hesabı/Kartı Ekle</b> ile eklersen bakiyelerini de İşCep'te görürsün. Bu hizmet Açık Bankacılık ile ücretsizdir; birikimin İş Bankası'nda toplandıkça Black (1 milyon TL) ve Black Plus (4 milyon TL) kademelerine yaklaşırsın.</span>
+        <a href="https://www.isbank.com.tr/acik-bankacilik" target="_blank" rel="noopener">Açık Bankacılık nasıl çalışır ↗</a></div>
+    </details>`;
 }
-// İş Black sayfasındaki güncel kampanya başlıkları (her gün otomatik kontrol, isbank/black.json)
-function blkLive() {
-  if (!blk || !blk.kampanyalar || !blk.kampanyalar.length) return "";
-  const yeni = (d) => (Date.now() - new Date(d + "T12:00:00")) / 864e5 <= 7;
-  return `<div class="blive"><b>🆕 Güncel İş Black kampanyaları <small>${blk.kampanyalar.length}</small></b>${blk.kampanyalar.map((k) => `<a href="${esc(k.url)}" target="_blank" rel="noopener">${yeni(k.ilk) ? '<span class="newtag">YENİ</span> ' : ""}${esc(k.baslik)} ↗</a>`).join("")}</div>`;
+// ===== Kampanyalar: kredi kartı dışındaki banka kampanyaları (isbank.com.tr, her gün kontrol) =====
+function renderBankaKamp() {
+  const fd = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+  $("upd").innerHTML = `🔄 İş Bankası kampanyaları her gün kontrol edilir${bkamp ? ` · son kontrol <b>${fd(bkamp.kontrol)}</b>` : ""}`;
+  const K = (bkamp && bkamp.kategoriler) || [];
+  const sabit = `<div class="bkhero"><b>🎁 Bankacılık kampanyaları</b><span>Kartla harcama dışındaki fırsatlar: maaş, emeklilik, kredi, sigorta, para transferi ve fatura.</span></div>
+    <div class="bkgrid">
+      <div class="bkc"><i>💸</i><b>Havale · EFT · FAST</b><span>İşCep ve İnternet Şubesi'nden 7/24 FAST ile anında para gönder. İş Black müşterilerine havale, EFT ve FAST ücretsiz.</span></div>
+      <div class="bkc"><i>💰</i><b>Maksimum Vadeli Hesap</b><span>Birikimine vadeli faiz; İş Black'te +%1, Black Plus'ta +%3 ek faiz.</span></div>
+    </div>`;
+  $("list").innerHTML = sabit + K.map((c) => `<div class="bkcat">
+      <a class="bkh" href="${esc(c.url)}" target="_blank" rel="noopener"><i>${c.ic}</i><b>${esc(c.ad)}</b>${c.adet != null ? `<em>${c.adet} kampanya</em>` : ""}<small>↗</small></a>
+      ${c.kampanyalar.map((x) => `<a class="bkit" href="${esc(x.url)}" target="_blank" rel="noopener">${isNew("b:" + x.url) ? '<span class="newtag">YENİ</span> ' : ""}<b>${esc(x.baslik)}</b>${x.ozet ? `<span>${esc(x.ozet)}</span>` : ""}${x.bitis ? `<small>Bitiş: ${fd(x.bitis)}</small>` : ""}</a>`).join("")}
+    </div>`).join("") + `<a class="maxlink" href="https://www.isbank.com.tr/kampanyalar" target="_blank" rel="noopener">İş Bankası'nın tüm kampanyaları ↗</a>`;
 }
 function milesHtml() {
   const L = camps.filter((c) => /maximiles|maximil|mil\b|uçuş|uçak|havayolu|thy|pegasus/i.test(c.baslik + " " + c.ozet));
+  const MX = blk && blk.ayricaliklar ? blk.ayricaliklar.filter((a) => /maximiles/i.test(a.baslik)) : [];
   return `<div class="ocard"><div class="oh"><i>✈️</i><b>Maximiles</b></div>
       <p>Harcamaların <b>MaxiMil</b> olarak birikir; 1 MaxiMil = 1 TL değerinde uçak bileti ve seyahat harcamalarında kullanılır. Maximiles kartlar Maximum'un tüm kampanyalarından da yararlanır; ek olarak mil kampanyaları vardır.</p>
       ${L.length ? L.map((c) => `<div class="omini"><span>${esc(c.baslik)}</span><small>${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></div>`).join("") : '<p style="color:var(--muted)">Listede şu an mil kampanyası yok.</p>'}
       <a class="olink" href="https://www.maximiles.com.tr/kampanyalar" target="_blank" rel="noopener">Maximiles kampanyaları ↗</a></div>
+    ${MX.length ? `<div class="ocard"><div class="oh"><i>🖤</i><b>Maximiles ayrıcalıkları</b><em>isbank.com.tr</em></div>${MX.map((a) => `<a class="omini olnk" href="${esc(a.url)}" target="_blank" rel="noopener"><span>${esc(a.baslik)}</span><small>↗</small></a>`).join("")}</div>` : ""}
     <button type="button" class="ocard tolink" data-cat="Black"><div class="oh"><i>🖤</i><b>Maximiles Black</b><em>›</em></div><p>En prestijli kart: lounge, Fast Track ve artan MaxiMil kazanımı.</p></button>`;
 }
 function bindSpecial() { $("list").querySelectorAll("[data-cat]").forEach((b) => (b.onclick = () => { cat = b.dataset.cat; renderList(); renderChips(); window.scrollTo({ top: 0 }); })); }
@@ -943,6 +973,7 @@ function renderList() {
   if (cat === "📰 Güncel") return renderLive();
   if (cat === "📅 Takvim") return renderTakvim();
   if (cat === "Finans") return renderFinans();
+  if (cat === "Kampanya") return renderBankaKamp();
   if (cat === "Black") {
     const fd = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
     $("upd").innerHTML = `🔄 Ayrıcalıklar her gün kontrol edilir, değişiklik olursa burada güncellenir${blk ? ` · son kontrol <b>${fd(blk.kontrol)}</b>` : ""}<br>Ayrıcalıklar <b>31.12.2026</b>'ya kadar geçerli`;
@@ -997,6 +1028,7 @@ function renderList() {
     if (!CATS.some((c) => c[0] === cat)) cat = "Tümü";
     try { fin = await (await fetch("isbank/finans.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { yat = await (await fetch("isbank/yatirimci.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
+    try { bkamp = await (await fetch("isbank/banka_kampanya.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { blk = await (await fetch("isbank/black.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { kontrol = (await (await fetch("isbank/kontrol.json?t=" + Date.now(), { cache: "no-store" })).json()).son_kontrol; } catch (e) {}
     seenInit(); renderList(); renderChips();
