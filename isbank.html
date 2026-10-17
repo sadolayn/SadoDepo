@@ -36,7 +36,7 @@
   .wrap { max-width: 560px; margin: 0 auto; }
   header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
-  header h1 { margin: 0; font-size: 20px; }
+  header h1 { margin: 0; font-size: 19px; }
   .upd { text-align: center; font-size: 12px; color: var(--muted); margin-bottom: 12px; }
   .chips { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding: 2px 16px 4px; margin: 0 -16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; scroll-padding: 0 16px; }
   .chips button { flex: 0 0 auto; scroll-snap-align: start; white-space: nowrap; }
@@ -92,8 +92,27 @@
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .stick > :last-child { margin-bottom: 0; }
-  .chipbar { margin: 8px 0 0; position: relative; }
-  .chipbar::after { content: ""; position: absolute; right: -16px; top: 0; bottom: 4px; width: 28px; background: linear-gradient(90deg, transparent, #000); pointer-events: none; }
+  [hidden] { display: none !important; }
+  .chipbar { margin: 6px 0 0; position: relative; }
+  .menu { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+  .menu button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; height: 50px; padding: 3px 2px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: #cfcfcf; font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; line-height: 1.1; }
+  .menu button i { font-style: normal; font-size: 18px; line-height: 1.1; }
+  .menu button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .menu button.active { background: var(--accent); border-color: var(--accent); color: #000; }
+  .menu button.hasnew { border-color: #c0392b; box-shadow: 0 0 0 1px rgba(192,57,43,.35) inset; }
+  .menu button em { position: absolute; top: -5px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #e5383b; color: #fff; font-style: normal; font-size: 10.5px; font-weight: 800; line-height: 18px; text-align: center; box-shadow: 0 0 0 2px #000; animation: nb 1.6s ease-in-out infinite; }
+  @keyframes nb { 50% { transform: scale(1.12); } }
+  .newtag { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .5px; color: #fff; background: #e5383b; border-radius: 5px; padding: 1px 5px; margin-left: 6px; vertical-align: 2px; }
+  .soonbar { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border-radius: 14px; padding: 10px 12px; margin: 2px 0 10px; font: inherit; cursor: pointer; border: 1px solid #2e4f86; background: linear-gradient(90deg, rgba(90,169,240,.18), rgba(90,169,240,.04)); color: #eaf3ff; }
+  .soonbar .n { font-size: 26px; font-weight: 800; color: #8fc4ff; min-width: 44px; text-align: center; line-height: 1; } .soonbar .n small { display: block; font-size: 10px; color: #9fb3cc; font-weight: 600; margin-top: 2px; }
+  .soonbar b { display: block; font-size: 14.5px; } .soonbar span { font-size: 12px; color: #9fb3cc; }
+  .soonbar.hot { border-color: #7a2a20; background: linear-gradient(90deg, rgba(229,56,59,.2), rgba(229,56,59,.04)); } .soonbar.hot .n { color: #ff8a80; }
+  .dq .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; gap: 8px; }
+  .dq .nav button, .daycard .more { border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 999px; padding: 7px 14px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .dq .score { font-size: 12px; color: var(--muted); }
+  .dq .src { font-size: 11px; color: #8fb0ff; margin-bottom: 4px; }
+  .congrats { animation: cg .6s ease; } @keyframes cg { 0% { transform: scale(.9); opacity: 0; } 60% { transform: scale(1.05); } 100% { transform: none; opacity: 1; } }
+  .fact { transition: opacity .25s; } .fact.fade { opacity: 0; }
   .chipbar .tfil { margin: 6px -16px 0; padding: 0 16px 2px; scroll-padding: 0 16px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .chipbar .tfil::-webkit-scrollbar { display: none; }
   .chipbar .tfil button { flex: 0 0 auto; padding: 5px 10px; font-size: 12px; }
@@ -169,12 +188,12 @@
     <h1>🏛️ İş Bankası Gündemi</h1>
     <span style="width:52px"></span>
   </header>
-  <div class="chipbar" id="chipbar"><div class="chips" id="chips"></div><div class="tfil" id="tfil" hidden></div></div>
+  <div class="chipbar" id="chipbar"><div class="menu" id="chips"></div><div class="tfil" id="tfil" hidden></div></div>
   </div>
+  <div id="soon"></div>
   <div class="upd" id="upd"></div>
-  <div style="text-align:center;margin:-4px 0 10px"><button id="subeBtn" type="button" class="subebtn">🏦 Şubeler · 📊 Yatırımcı Sunumu</button></div>
-  <div id="today"></div>
   <div id="list"><div class="empty">Yükleniyor…</div></div>
+  <div id="today"></div>
 
   <p class="note">Seçilmiş haberler ve Maximum kampanyaları kamuya açık kaynaklardan günde iki kez, "Güncel" sekmesi her saat otomatik derlenir. Kampanya koşulları için maximum.com.tr'ye bakın.</p>
 </div>
@@ -184,35 +203,57 @@
 const $ = (x) => document.getElementById(x);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const CATS = [
-  ["Tümü", null],
-  ["Ürün", "var(--urun)"],
-  ["Dijital", "var(--dijital)"],
-  ["KAP", "var(--kap)"],
-  ["Haber", "var(--haber)"],
-  ["İşCep", "var(--dijital)"],
-  ["Maximum", "var(--accent)"],
-  ["📰 Güncel", "#5d8fe0"],
-  ["📅 Takvim", "#e0a24f"],
+  ["Tümü", null, "📋"],
+  ["Ürün", "var(--urun)", "🧾"],
+  ["Dijital", "var(--dijital)", "💡"],
+  ["KAP", "var(--kap)", "📢"],
+  ["Haber", "var(--haber)", "🗞️"],
+  ["İşCep", "var(--dijital)", "📲"],
+  ["Maximum", "var(--accent)", "💳"],
+  ["📰 Güncel", "#5d8fe0", "📰"],
+  ["📅 Takvim", "#e0a24f", "📅"],
+  ["Şubeler", "#3a50f0", "🏦"],
 ];
+const LBL = { "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Şubeler": "Şubeler" };
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
 let fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 
+// ===== "Yeni" takibi: okunmamış içerik düğmede kırmızı sayı olarak görünür, bakınca düşer =====
+let SEEN = null, NEWNOW = new Set();
+try { SEEN = JSON.parse(localStorage.getItem("isbSeen") || "null"); } catch (e) {}
+const idsFor = (k) => {
+  if (k === "Tümü") return all.map((h) => "n:" + (h.url || h.baslik));
+  if (k === "Maximum") return camps.map((c) => "c:" + c.baslik);
+  if (k === "İşCep") return iscep ? iscep.surumler.map((v) => "v:" + v.surum) : [];
+  if (k === "📰 Güncel") return live.map((x) => "g:" + (x.u || x.t));
+  if (k === "Şubeler") return fin ? ["f:" + fin.periods[fin.periods.length - 1]] : [];
+  if (k === "📅 Takvim") return [];
+  return all.filter((h) => h.kategori === k).map((h) => "n:" + (h.url || h.baslik));
+};
+function seenInit() {
+  if (SEEN) return;
+  SEEN = {}; CATS.forEach(([k]) => idsFor(k).forEach((id) => (SEEN[id] = 1))); // ilk ziyarette hepsi okunmuş sayılır
+  seenSave();
+}
+function seenSave() { try { const k = Object.keys(SEEN); if (k.length > 600) k.slice(0, k.length - 600).forEach((x) => delete SEEN[x]); localStorage.setItem("isbSeen", JSON.stringify(SEEN)); } catch (e) {} }
+const unseen = (k) => idsFor(k).filter((id) => !SEEN[id]);
+function markSeen(k) { NEWNOW = new Set(unseen(k)); NEWNOW.forEach((id) => (SEEN[id] = 1)); seenSave(); }
+const isNew = (id) => NEWNOW.has(id);
+
 function renderChips() {
-  $("chips").innerHTML = CATS.map(([k]) => {
-    const n = k === "Tümü" ? all.length : k === "Maximum" ? camps.length : k === "İşCep" ? (iscep ? iscep.surumler.length : 0) : k === "Şubeler" ? (subeler ? subeler.yurtici + subeler.yurtdisi : 0) : k === "📰 Güncel" ? live.length : k === "📅 Takvim" ? takvim().length : all.filter((h) => h.kategori === k).length;
-    return `<button data-k="${k}" class="${k === cat ? "active" : ""}">${k}<b>${n}</b></button>`;
+  $("chips").innerHTML = CATS.map(([k, , ic]) => {
+    const u = unseen(k).length;
+    return `<button data-k="${k}" class="${k === cat ? "active" : ""}${u && k !== cat ? " hasnew" : ""}"><i>${ic}</i><span>${LBL[k] || k}</span>${u && k !== cat ? `<em>${u > 9 ? "9+" : u}</em>` : ""}</button>`;
   }).join("");
   $("chips").querySelectorAll("button").forEach((b) => (b.onclick = () => {
     cat = b.dataset.k;
     try { localStorage.setItem("isbankCat", cat); } catch (e) {}
-    renderChips(); renderList();
+    renderList(); renderChips();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }));
-  const act = $("chips").querySelector(".active"); if (act) act.scrollIntoView({ inline: "center", block: "nearest" });
-  $("subeBtn").classList.toggle("on", cat === "Şubeler");
 }
 
 function daysLeft(d) {
@@ -235,7 +276,7 @@ function renderCamps() {
     const left = n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
     const bit = new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
     html += `<div class="camp${u ? " urgent" : ""}" style="--c:${TUR[k.tur] || "var(--muted)"}">
-      <div class="top"><span class="tag">${esc(k.tur)}</span><span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}" title="Bitiş: ${bit}">${left}</span></div>
+      <div class="top"><span class="tag">${esc(k.tur)}${isNew("c:" + k.baslik) ? '<span class="newtag">YENİ</span>' : ""}</span><span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}" title="Bitiş: ${bit}">${left}</span></div>
       <b>${esc(k.baslik)}</b>
       <p>${esc(k.ozet)}</p>
       <div style="font-size:12px;color:var(--muted);margin-top:6px">Bitiş: ${bit}</div>
@@ -372,7 +413,7 @@ function renderIscep() {
   let html = "";
   d.surumler.forEach((v, i) => {
     html += `<div class="ver ${i === 0 ? "new" : ""}">
-      <div class="top"><span class="vn">Sürüm ${esc(v.surum)}${i === 0 ? '<span class="badge">GÜNCEL</span>' : ""}</span><span class="vd">${fmt(v.tarih)}</span></div>
+      <div class="top"><span class="vn">Sürüm ${esc(v.surum)}${isNew("v:" + v.surum) ? '<span class="newtag">YENİ</span>' : ""}${i === 0 ? '<span class="badge">GÜNCEL</span>' : ""}</span><span class="vd">${fmt(v.tarih)}</span></div>
       <ul>${v.yenilikler.map((y) => `<li>${esc(y)}</li>`).join("")}</ul>
     </div>`;
   });
@@ -407,7 +448,7 @@ function agoTxt(iso) {
 function renderLive() {
   if (liveUpd) $("upd").textContent = "Her saat otomatik · son: " + new Date(liveUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   if (!live.length) { $("list").innerHTML = '<div class="empty">Son 2 günde İş Bankası haberi yok.</div>'; return; }
-  $("list").innerHTML = live.map((x) => `<a class="live" href="${esc(x.u)}" target="_blank" rel="noopener"><b>${esc(x.t)}</b><span><i>${esc(x.s)}</i>${x.d ? " · " + agoTxt(x.d) : ""}</span></a>`).join("")
+  $("list").innerHTML = live.map((x) => `<a class="live" href="${esc(x.u)}" target="_blank" rel="noopener"><b>${isNew("g:" + (x.u || x.t)) ? '<span class="newtag" style="margin:0 6px 0 0">YENİ</span>' : ""}${esc(x.t)}</b><span><i>${esc(x.s)}</i>${x.d ? " · " + agoTxt(x.d) : ""}</span></a>`).join("")
     + `<p class="note" style="margin-top:8px">Bu liste haber sitelerinden ve Google Haberler'den her saat otomatik toplanır; habere dokununca yayıncının sitesinde açılır.</p>`;
 }
 
@@ -475,53 +516,130 @@ function renderTakvim() {
   }).join("") + `<p class="note">Tahmini olanlar banka açıkladığında kesinleşir. PPK tarihleri TCMB'nin yayımladığı takvimdendir.</p>`;
 }
 
-// ===== Günün kartı: banka tarihinden bir bilgi + günün sorusu =====
+// ===== 1 hafta içindeki önemli gün (PPK, bilanço, genel kurul…) en üstte =====
+function renderSoon() {
+  const L = takvim().filter((x) => !x.est && !/bilanço dönemi/.test(x.t)).map((x) => ({ ...x, n: dLeft(x.d) })).filter((x) => x.n >= 0 && x.n <= 7);
+  $("soon").innerHTML = L.map((x) => {
+    const dt = new Date(x.d + "T12:00:00"), ppk = /PPK/.test(x.t);
+    return `<button type="button" class="soonbar${x.n <= 1 ? " hot" : ""}" data-go="tk"><div class="n">${x.n === 0 ? "🎯" : x.n}<small>${x.n === 0 ? "bugün" : x.n === 1 ? "yarın" : "gün"}</small></div><div><b>${ppk ? "🏦 " : "📊 "}${esc(x.t)}${x.n <= 1 ? (ppk ? " · saat 14:00" : "") : ""}</b><span>${dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })} · ${esc(x.a)}</span></div></button>`;
+  }).join("");
+  $("soon").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { cat = "📅 Takvim"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
+}
+
+// ===== Sayfa sonu: Günün sorusu + Banka tarihinden (dokundukça yenisi) =====
+// Kaynaklar: isbank.com.tr "O Günlerden Bugünlere", Patronlar Dünyası (100. yıl dosyası), Sözcü, Wikipedia, Küre Ansiklopedi
 const TARIH = [
-  ["26 Ağustos 1924", "İş Bankası, Atatürk'ün direktifiyle Ankara'da kuruldu. Yola 2 şube, 37 çalışan ve 1 milyon TL sermayeyle çıktı.", "08-26"],
-  ["9 Eylül 1924", "Banka, Ankara İstasyon Caddesi'ndeki ilk binasında yaklaşık 150 davetlinin katıldığı törenle açıldı.", "09-09"],
-  ["1924", "Bankanın ilk genel müdürü, sonradan Cumhurbaşkanı olacak olan Celal Bayar'dı."],
-  ["1924", "Kuruluş sermayesi olan 1 milyon TL'nin 250 bin TL'lik kısmını Atatürk karşıladı."],
-  ["12 Temmuz 1925", "İzmir Şubesi hizmete açıldı.", "07-12"],
-  ["1927", "Sermaye 2 milyon TL artırıldı ve banka Milli İtibar Bankası ile birleşti."],
-  ["1928", "Türkiye'ye ilk kumbaraları İş Bankası getirdi; tasarruf alışkanlığının simgesi oldu."],
+  ["26 Ağustos 1924", "İş Bankası, Atatürk'ün direktifiyle Ankara'da kuruldu. Yola 2 şube, 37 çalışan ve 1 milyon lira sermayeyle çıktı.", "08-26"],
+  ["9 Eylül 1924", "Banka, Ankara İstasyon Caddesi'ndeki ilk binasında yaklaşık 150 davetlinin katıldığı bir törenle açıldı.", "09-09"],
+  ["1924", "Kuruluş sermayesinin 250 bin liralık kısmını, yani dörtte birini Atatürk karşıladı."],
+  ["1924", "Bankanın ilk genel müdürü Celal Bayar'dı. Bayar, 1950'de Cumhurbaşkanı oldu."],
+  ["1924 yıl sonu", "Kuruluşunun üzerinden 4 ay geçmeden mevduatı 2,47 milyon liraya ulaştı. Aynı dönemde diğer 16 yerli bankanın toplamı 700 bin lira civarındaydı. Banka yılı 433 müşteriyle kapattı."],
+  ["12 Temmuz 1925", "İzmir Şubesi açıldı.", "07-12"],
+  ["1925", "İlk sanayi yatırımı Bursa'daki İpekiş oldu (250 bin lira sermaye)."],
+  ["1925", "Bugünkü Anadolu Sigorta, Anadolu Anonim Sigorta adıyla 500 bin lira sermayeyle kuruldu."],
+  ["1926", "Maden kömürü işletmelerine ve İstanbul Şeker Fabrikaları'na ortak olarak sanayileşmeye öncülük etti."],
+  ["1927", "Sermaye 2 milyon lira artırıldı, banka Milli İtibar Bankası ile birleşti."],
+  ["1928", "Türkiye'ye ilk kumbaraları İş Bankası getirdi. Kumbara, tasarruf alışkanlığının simgesi oldu."],
+  ["1929", "Milli Reasürans kuruldu ve o günden beri faaliyetini sürdürüyor."],
+  ["1929–1934", "Büyük Buhran yıllarında bile mevduat 5 yılda 9 katına çıktı. Bankanın sektördeki payı %4'ten %21'e yükseldi."],
   ["1932", "Hamburg ve İskenderiye şubeleriyle yurt dışında şube açan ilk Türk bankası oldu."],
   ["1933", "Atatürk, Akşam gazetesine verdiği demeçte bankayı özellikle bankacı yetiştirmesi yönüyle övdü."],
-  ["1982", "Türkiye'nin ilk ATM'lerini kurdu; \"Bankamatik\" adı da bankanın tescilli markasıdır."],
+  ["1935", "Şişecam kuruldu ve Paşabahçe fabrikası Kasım 1935'te üretime başladı. 1934'te camın tamamı ithal edilirken 1946'da ihtiyacın %96'sı yurt içinden karşılanır oldu."],
+  ["1930 → 1953", "Şube sayısı 28'den 130'a çıktı. 1960'a gelindiğinde 240'ı aşmıştı."],
+  ["1956", "İş Bankası Kültür Yayınları o yıldan beri kesintisiz kitap yayımlıyor."],
+  ["1979", "Banka 865 şube ve 19.074 çalışana ulaştı. Türkiye'deki mevduatın %22'si İş Bankası'ndaydı."],
+  ["1983", "Merkezi bilgisayar sistemi ilk olarak Ankara'daki 6 şubede çalışmaya başladı. 1993'te bütün şubeler ağa bağlandı."],
+  ["Bankamatik", "Türkiye'nin ilk ATM'lerini İş Bankası kurdu. Herkesin kullandığı \"Bankamatik\" adı aslında bankanın tescilli markasıdır."],
+  ["1990", "Anadolu Hayat Emeklilik kuruldu. Banka aynı yıl kredi kartı başvurusu almaya başladı."],
   ["1991", "Telefon bankacılığı \"Mavi Hat\" hizmete girdi."],
-  ["1997", "Bankanın ilk internet şubesi açıldı."],
+  ["1997", "Türkiye'nin ilk internet şubesini açtı. ATM sayısı da aynı yıl 1.000'i geçti."],
   ["Mayıs 1998", "Hazine'nin elindeki %12,3'lük pay halka arz edildi."],
-  ["2000", "Genel müdürlük Ankara'dan İstanbul'a, İş Kuleleri'ne taşındı."],
+  ["2000", "Genel müdürlük Ankara'dan İstanbul Levent'teki İş Kuleleri'ne taşındı."],
+  ["Ulus, Ankara", "Bankanın Ulus'taki tarihi genel müdürlük binası bugün İktisadi Bağımsızlık Müzesi olarak ziyaret edilebiliyor."],
+  ["2007", "Biyometrik kimlik tanıma sistemini kullanmaya başladı."],
+  ["2012", "QR kodla ödeme sistemi Parakod'u hayata geçirdi."],
+  ["2017", "Yapay zekâ destekli dijital asistan Maxi devreye girdi."],
   ["Atatürk'ün vasiyeti", "Atatürk'ün bankadaki hisselerinin temsil hakkı vasiyetiyle Cumhuriyet Halk Partisi'ne bırakıldı."],
-  ["2024", "İş Bankası 100. yaşını kutladı."],
+  ["2024", "İş Bankası 100. yaşını kutladı. \"Türkiye'nin Bankası\" olarak ikinci yüzyılına girdi."],
 ];
 function dayIdx() { const t = new Date(); return Math.floor((Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) - Date.UTC(2024, 0, 1)) / 864e5); }
-function renderToday() {
+let factI = null;
+function factHtml() {
   const t = new Date(), md = `${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
-  const exact = TARIH.find((x) => x[2] === md), f = exact || TARIH[dayIdx() % TARIH.length];
-  const nx = takvim().find((x) => !/bilanço dönemi/.test(x.t)) || takvim()[0];
-  let h = "";
-  if (nx) { const n = dLeft(nx.d), dt = new Date(nx.d + "T12:00:00"); h += `<button type="button" class="nextev" id="toTk"><div class="n">${n === 0 ? "🎯" : (nx.ay ? "~" : "") + n}<small>${n === 0 ? "bugün" : "gün"}</small></div><div><b>${esc(nx.t)}</b><span>${nx.ay ? dt.toLocaleDateString("tr-TR", { month: "long", year: "numeric" }) + " (tahmini)" : dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })} · banka takvimi</span></div><i>›</i></button>`; }
-  h += `<div class="daycard"><h4>🏛️ ${exact ? "Bugün banka tarihinde" : "Banka tarihinden"}</h4><p><span class="yr">${esc(f[0])}</span>${esc(f[1])}</p>`;
-  const pool = typeof ISQ !== "undefined" ? ISQ : [];
-  if (pool.length) {
-    const q = pool[(dayIdx() * 7) % pool.length];
-    h += `<hr><div class="dq"><h4>❓ Günün sorusu</h4><div class="q">${esc(q[0])}</div><div class="os" id="dqOs">${q[1].map((o, i) => `<button type="button" data-i="${i}">${esc(o)}</button>`).join("")}</div><div class="m" id="dqM">Cevabını seç; yarın yeni soru gelir.</div></div>`;
-    setTimeout(() => {
-      const os = $("dqOs"); if (!os) return;
-      os.onclick = (e) => { const b = e.target.closest("button[data-i]"); if (!b || os.dataset.done) return; os.dataset.done = 1; const i = +b.dataset.i;
-        os.querySelectorAll("button").forEach((x) => { if (+x.dataset.i === q[2]) x.classList.add("ok"); });
-        if (i !== q[2]) b.classList.add("no");
-        $("dqM").textContent = i === q[2] ? "✅ Bravo, doğru!" : "Doğrusu yeşil olan 👆 Yarın yeni soru!"; };
-    });
+  if (factI == null) { const ex = TARIH.findIndex((x) => x[2] === md); factI = ex >= 0 ? ex : dayIdx() % TARIH.length; }
+  const f = TARIH[factI], exact = f[2] === md;
+  return `<h4>🏛️ ${exact ? "Bugün banka tarihinde" : "Banka tarihinden"} <span style="float:right;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">${factI + 1}/${TARIH.length}</span></h4><p class="fact"><span class="yr">${esc(f[0])}</span>${esc(f[1])}</p>`;
+}
+// --- Sorular: önce güncel kampanyalardan otomatik üretilen sorular, sonra soru havuzu
+const tlFmt = (n) => n.toLocaleString("tr-TR") + " TL";
+function campQs() {
+  const Q = [];
+  camps.forEach((c) => {
+    const m = c.baslik.match(/(\d{1,3}(?:\.\d{3})+|\d+)\s?TL/);
+    if (m) {
+      const v = +m[1].replace(/\./g, ""); if (!v) return;
+      const opts = [v, Math.round(v / 2 / 50) * 50 || v / 2, Math.round(v * 2), Math.round(v * 1.5 / 50) * 50].filter((x, i, a) => x > 0 && a.indexOf(x) === i);
+      if (opts.length < 3) return;
+      const sh = opts.slice().sort(() => Math.random() - 0.5);
+      Q.push({ q: `Güncel Maximum kampanyası: "${c.baslik.replace(m[0], "…")}" — boşluğa hangi tutar gelir?`, o: sh.map(tlFmt), c: sh.indexOf(v), src: "🆕 Güncel kampanyadan" });
+    }
+  });
+  const d = camps.slice().sort((a, b) => a.bitis.localeCompare(b.bitis))[0];
+  if (d) {
+    const fm = (x) => new Date(x + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+    const alt = [...new Set(camps.map((k) => k.bitis).filter((x) => x !== d.bitis))].slice(0, 3);
+    if (alt.length >= 2) { const o = [d.bitis, ...alt].sort(() => Math.random() - 0.5); Q.push({ q: `"${d.baslik}" kampanyası hangi gün sona eriyor?`, o: o.map(fm), c: o.indexOf(d.bitis), src: "🆕 Güncel kampanyadan" }); }
   }
-  h += `</div>`;
-  $("today").innerHTML = h;
-  const tb = $("toTk"); if (tb) tb.onclick = () => { cat = "📅 Takvim"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  return Q.sort(() => Math.random() - 0.5).slice(0, 4);
+}
+let QD = null, qI = 0, qDone = false;
+function deck() {
+  if (QD) return QD;
+  const pool = (typeof ISQ !== "undefined" ? ISQ : []).map((x) => ({ q: x[0], o: x[1], c: x[2], src: "" }));
+  const off = (dayIdx() * 7) % (pool.length || 1); // her gün farklı yerden başla
+  const rest = [...pool.slice(off), ...pool.slice(0, off)], cq = campQs();
+  QD = []; rest.forEach((x, i) => { if (i % 3 === 0 && cq.length) QD.push(cq.shift()); QD.push(x); }); QD.push(...cq); // güncel sorular araya serpiştirilir
+  return QD;
+}
+let SC = { d: 0, t: 0, s: 0 }; try { SC = Object.assign(SC, JSON.parse(localStorage.getItem("isbQuiz") || "{}")); } catch (e) {}
+const PRAISE = ["🎉 Tebrikler, doğru!", "👏 Harikasın!", "🌟 Bravo, tam isabet!", "🏆 Bankacı dediğin böyle olur!", "✅ Süper, bildin!", "💯 Mükemmel!"];
+function qHtml() {
+  const D = deck(); if (!D.length) return "";
+  const q = D[qI % D.length];
+  return `<h4>❓ Günün sorusu</h4>${q.src ? `<div class="src">${q.src}</div>` : ""}<div class="q">${esc(q.q)}</div><div class="os" id="dqOs">${q.o.map((o, i) => `<button type="button" data-i="${i}">${esc(o)}</button>`).join("")}</div><div class="m" id="dqM">Cevabını seç 👇</div>
+    <div class="nav"><span class="score" id="dqSc">${SC.t ? `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""}` : "İlk sorun!"}</span><button type="button" id="dqNext">Sonraki soru ›</button></div>`;
+}
+function bindQ() {
+  const D = deck(), q = D[qI % D.length], os = $("dqOs"); if (!os) return; qDone = false;
+  os.onclick = (e) => {
+    const b = e.target.closest("button[data-i]"); if (!b || qDone) return; qDone = true; const i = +b.dataset.i, ok = i === q.c;
+    os.querySelectorAll("button").forEach((x) => { x.disabled = true; if (+x.dataset.i === q.c) x.classList.add("ok"); });
+    if (!ok) b.classList.add("no");
+    SC.t++; if (ok) { SC.d++; SC.s++; } else SC.s = 0;
+    try { localStorage.setItem("isbQuiz", JSON.stringify(SC)); } catch (er) {}
+    const m = $("dqM"); m.className = "m congrats";
+    m.innerHTML = ok ? `<b style="color:#7ee2a8;font-size:15px">${PRAISE[SC.d % PRAISE.length]}</b>${SC.s >= 3 ? ` <span>Üst üste ${SC.s} doğru! 🔥</span>` : ""}` : `Olmadı 🙂 Doğrusu yeşil olan. Sonrakinde bilirsin!`;
+    $("dqSc").innerHTML = `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""}`;
+  };
+  $("dqNext").onclick = () => { qI++; $("dqBox").innerHTML = qHtml(); bindQ(); };
+}
+function renderToday() {
+  $("today").innerHTML = `<div class="daycard dq" id="dqBox" style="margin-top:18px">${qHtml()}</div>
+    <div class="daycard" id="factBox">${factHtml()}<div style="text-align:right;margin-top:10px"><button type="button" class="more" id="factNext">Başka bir bilgi ›</button></div></div>`;
+  bindQ();
+  bindFact();
+}
+function bindFact() {
+  $("factNext").onclick = () => {
+    const p = $("factBox").querySelector(".fact"); if (p) p.classList.add("fade");
+    setTimeout(() => { factI = (factI + 1) % TARIH.length; $("factBox").innerHTML = factHtml() + `<div style="text-align:right;margin-top:10px"><button type="button" class="more" id="factNext">Başka bir bilgi ›</button></div>`; bindFact(); }, 200);
+  };
 }
 
 function renderList() {
+  markSeen(cat);
   $("tfil").hidden = cat !== "Maximum";
-  $("today").hidden = cat !== "Tümü";
+  renderSoon();
   if (cat === "📰 Güncel") return renderLive();
   if (cat === "📅 Takvim") return renderTakvim();
   if (cat === "İşCep") return renderIscep();
@@ -534,7 +652,7 @@ function renderList() {
   for (const h of items) {
     if (h.tarih !== last) { html += `<div class="day">${esc(fmtDay(h.tarih))}</div>`; last = h.tarih; }
     html += `<a class="item" href="${esc(h.url)}" target="_blank" rel="noopener" style="--c:${color(h.kategori)}">
-      <span class="tag">${esc(h.kategori)}</span>
+      <span class="tag">${esc(h.kategori)}</span>${isNew("n:" + (h.url || h.baslik)) ? '<span class="newtag">YENİ</span>' : ""}
       <b>${esc(h.baslik)}</b>
       <p>${esc(h.ozet)}</p>
       <div class="src">${esc(h.kaynak)}</div>
@@ -572,8 +690,7 @@ function renderList() {
     try { fin = await (await fetch("isbank/finans.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { yat = await (await fetch("isbank/yatirimci.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
     try { kontrol = (await (await fetch("isbank/kontrol.json?t=" + Date.now(), { cache: "no-store" })).json()).son_kontrol; } catch (e) {}
-    $("subeBtn").onclick = () => { cat = cat === "Şubeler" ? "Tümü" : "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); };
-    renderChips(); renderList(); renderToday();
+    seenInit(); renderList(); renderChips(); renderToday();
   } catch (e) {
     $("list").innerHTML = '<div class="empty">Haberler yüklenemedi.</div>';
   }
