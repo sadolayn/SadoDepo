@@ -58,6 +58,18 @@
   .hero .date { font-size: 22px; font-weight: 700; }
   .hero .meta { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
   .hero p { margin: 0; font-size: 15px; }
+  /* Günün özeti: belirgin, okunması kolay panel */
+  .hero { background: linear-gradient(160deg, rgba(224,162,79,.16), rgba(224,162,79,.02) 55%), var(--card); border-color: #5a4320; box-shadow: 0 6px 22px rgba(224,162,79,.08); }
+  .hero .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .hero .no { flex: none; font-size: 12px; font-weight: 700; color: var(--accent); border: 1px solid #5a4320; border-radius: 99px; padding: 3px 10px; margin-top: 4px; }
+  .sum { margin-top: 12px; }
+  .sum .lbl { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #000; background: var(--accent); border-radius: 99px; padding: 3px 10px; }
+  .sum .lead { margin: 10px 0 0; font-size: 17px; line-height: 1.5; font-weight: 600; color: #fff; padding-left: 12px; border-left: 3px solid var(--accent); }
+  .sum ul { list-style: none; margin: 12px 0 0; padding: 0; }
+  .sum li { position: relative; padding: 9px 0 9px 20px; border-top: 1px solid rgba(224,162,79,.16); font-size: 15px; line-height: 1.5; color: #dcdcdc; }
+  .sum li::before { content: ""; position: absolute; left: 3px; top: 17px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .sum li.mute { color: var(--muted); font-size: 13.5px; }
+  .sum li.mute::before { background: #444; }
   .sec { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 6px 16px; margin-bottom: 12px; }
   .sec h2 { margin: 10px 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); }
   .status { display: flex; flex-wrap: wrap; gap: 2px 12px; align-items: center; justify-content: center; font-size: 12px; color: var(--muted); background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 6px 12px; margin-bottom: 8px; }
@@ -227,11 +239,16 @@ async function show(date) {
     const g = await getJSON(`gazete/${date}.json`);
     const [y, m, d] = date.split("-");
     const resmi = `https://www.resmigazete.gov.tr/eskiler/${y}/${m}/${y}${m}${d}.htm`;
+    // Özeti cümlelere böl: ilk cümle öne çıkar, diğerleri madde madde
+    const cum = String(g.ozet || "").replace(/([.!?])\s+(?=[A-ZÇĞİÖŞÜ"“'0-9])/g, "$1\n").split("\n").map((s) => s.trim()).filter(Boolean);
+    const sakin = /yer almad|bulunmuyor|yayımlanmad/i;
+    const sum = cum.length ? `<div class="sum"><span class="lbl">📌 Günün özeti</span>
+        <p class="lead">${esc(cum[0])}</p>
+        ${cum.length > 1 ? `<ul>${cum.slice(1).map((s) => `<li${sakin.test(s) ? ' class="mute"' : ""}>${esc(s)}</li>`).join("")}</ul>` : ""}</div>` : "";
     let html = `
       <div class="hero">
-        <div class="date">${esc(fmtDate(date))}</div>
-        <div class="meta">${g.sayi ? "Sayı: " + esc(g.sayi) : ""}</div>
-        <p>${esc(g.ozet)}</p>
+        <div class="top"><div class="date">${esc(fmtDate(date))}</div>${g.sayi ? `<span class="no">Sayı ${esc(g.sayi)}</span>` : ""}</div>
+        ${sum}
         ${g.guncelleme ? `<div class="meta" style="margin:10px 0 0">🕐 Bu özet en son ${esc(fmtTime(g.guncelleme))} güncellendi</div>` : ""}
       </div>`;
     // Başlık bağlantısı: maddenin kendi Resmi Gazete adresi varsa o, yoksa günün fihristi
