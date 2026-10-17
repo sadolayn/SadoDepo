@@ -393,11 +393,10 @@
   <button type="button" class="aiSkip" id="aiSkip">Geç ›</button>
 </div>
 <script>
-// Oturumda bir kez: karanlıktan beliren Atatürk ve sözü, sonra sayfa açılır (dokununca geçilir)
+// Her girişte: karanlıktan beliren Atatürk ve sözü, sonra sayfa açılır (dokununca geçilir)
 (function () {
-  var el = document.getElementById("ataIntro"), seen = false;
-  try { seen = sessionStorage.getItem("ataIntro") === "1"; sessionStorage.setItem("ataIntro", "1"); } catch (e) {}
-  if (seen || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.remove(); return; }
+  var el = document.getElementById("ataIntro");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { el.remove(); return; }
   el.hidden = false; document.documentElement.style.overflow = "hidden";
   var bitti = false, kapat = function () { if (bitti) return; bitti = true; el.classList.add("out"); document.documentElement.style.overflow = ""; setTimeout(function () { el.remove(); }, 900); };
   el.addEventListener("click", kapat); setTimeout(kapat, 8600);
