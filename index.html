@@ -176,7 +176,7 @@
     <div class="datec"><div class="m" id="dm2"></div><div class="d" id="dd2"></div><div class="w" id="dw2"></div></div>
   </div>
   <div class="list">
-    <a class="game isb" href="isbank.html" data-yeni="isbank|2026-10-17|YENİLENDİ">
+    <a class="game isb" href="isbank.html" data-yeni="isbank2|2026-10-17|YENİLENDİ">
       <div class="icon isb-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg></div>
       <div><div class="t">İş Bankası Gündemi</div><div class="d">Haberler, kampanyalar, takvim, günün sorusu</div></div>
       <div class="arrow">›</div>
@@ -256,10 +256,25 @@
       const el = document.getElementById("welcome"), n = new Date(), wd = n.getDay() > 0 && n.getDay() < 6 && n.getHours() >= 8 && n.getHours() < 18;
       const ONR = "Öneri ve isteklerinizi en alttan iletebilirsiniz ✉️";
       const L = ["Hoş geldiniz", "Keyifli gezinmeler", ...(wd ? ["İyi çalışmalar"] : []), ONR];
-      el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); });
+      el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); else if (/kampanya/i.test(el.textContent)) location.href = "isbank.html#maximum"; });
+      // Kampanya hatırlatıcısı: İş Bankası Gündemi'ndeki "Katıldım" kayıtlarını okur
+      fetch("isbank/kampanyalar.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json()).then((d) => {
+        let J = { j: {}, bulk: 0, f: {} }; try { J = Object.assign(J, JSON.parse(localStorage.getItem("isbJoin") || "{}")); } catch (e) {}
+        const live = (d.kampanyalar || []).filter((k) => new Date(k.bitis + "T23:59:59") >= new Date());
+        const nj = live.filter((k) => !J.j[k.baslik]), fresh = nj.filter((k) => J.bulk && (!J.f[k.baslik] || J.f[k.baslik] > J.bulk));
+        const day = new Date().getDate(), used = J.bulk || Object.keys(J.j).length;
+        let msg = "";
+        if (fresh.length) msg = `🎯 ${fresh.length} yeni kampanya eklendi, katılmayı unutma ›`;
+        else if (used && nj.length) msg = `🎯 Katılmadığın ${nj.length} kampanya var ›`;
+        else if (!used && day <= 5) msg = "📣 Yeni ay! Maximum kampanyalarına katılmayı unutma ›";
+        if (!msg) return;
+        L.splice(1, 0, msg);
+        const card = document.querySelector('a[href="isbank.html"] .t');
+        if (card && (fresh.length || (used && nj.length))) card.insertAdjacentHTML("beforeend", `<span style="display:inline-block;margin-left:7px;padding:1px 7px;border-radius:6px;background:#e0a24f;color:#000;font-size:10.5px;font-weight:800;vertical-align:2px">🎯 ${fresh.length || nj.length}</span>`);
+      }).catch(() => {});
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       let k = 0;
-      setInterval(() => { el.classList.add("fade"); setTimeout(() => { k = (k + 1) % L.length; el.textContent = L[k]; el.style.cursor = L[k] === ONR ? "pointer" : ""; el.classList.remove("fade"); }, 600); }, 4500);
+      setInterval(() => { el.classList.add("fade"); setTimeout(() => { k = (k + 1) % L.length; el.textContent = L[k]; el.style.cursor = L[k] === ONR || /kampanya/i.test(L[k]) ? "pointer" : ""; el.style.color = /kampanya/i.test(L[k]) ? "#e0a24f" : ""; el.classList.remove("fade"); }, 600); }, 4500);
     })();
     // Saat ve tarih
     const AY = ["OCAK", "ŞUBAT", "MART", "NİSAN", "MAYIS", "HAZİRAN", "TEMMUZ", "AĞUSTOS", "EYLÜL", "EKİM", "KASIM", "ARALIK"];
