@@ -112,20 +112,28 @@
   .jnote { font-size: 11.5px; color: var(--muted); margin: -2px 0 10px; line-height: 1.45; }
   .jbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .jbtns button { padding: 10px 6px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
-  .ccal { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 12px; align-items: start; background: linear-gradient(135deg, rgba(255,45,149,.10), rgba(255,45,149,.02)); border: 1px solid #5a1f3e; border-radius: 16px; padding: 12px; margin-bottom: 10px; }
-  .ccal.hot { background: linear-gradient(135deg, rgba(255,45,149,.28), rgba(255,45,149,.06)); border-color: #ff5aab; box-shadow: 0 6px 22px rgba(255,45,149,.18); }
-  .ccal .cl > b { display: block; font-size: 15px; color: #fff; } .ccal .cl > span { display: block; font-size: 13px; color: #f1d6e4; line-height: 1.45; margin-top: 4px; }
-  .cadd { margin-top: 10px; padding: 7px 12px; border-radius: 999px; border: 1px solid #ff5aab; background: transparent; color: #ff8cc6; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .ccal { background: linear-gradient(135deg, rgba(255,45,149,.10), rgba(255,45,149,.02)); border: 1px solid #5a1f3e; border-radius: 16px; padding: 12px; margin-bottom: 10px; }
+  .ccal.hot { background: linear-gradient(135deg, rgba(255,45,149,.26), rgba(255,45,149,.05)); border-color: #ff5aab; box-shadow: 0 6px 22px rgba(255,45,149,.18); }
+  .ctop { display: flex; gap: 10px; align-items: flex-start; }
+  .ctop .cl { flex: 1; min-width: 0; } .ctop .cl > b { display: block; font-size: 14.5px; color: #fff; } .ctop .cl > span { display: block; font-size: 12.5px; color: #f1d6e4; line-height: 1.45; margin-top: 3px; }
+  .cadd { flex: none; padding: 6px 9px; border-radius: 10px; border: 1px solid #ff5aab; background: rgba(255,45,149,.08); color: #ff9fd0; font: inherit; font-size: 10.5px; font-weight: 700; line-height: 1.25; cursor: pointer; text-align: center; }
+  .appr { margin: 12px 0 10px; } .appr .lbl { display: flex; justify-content: space-between; font-size: 12px; color: #f1d6e4; } .appr .lbl b { color: #fff; }
+  .appr .track { position: relative; height: 10px; border-radius: 6px; background: #2a1520; margin: 6px 0 4px; overflow: visible; }
+  .appr .track i { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, #7a2a52, #ff2d95); }
+  .appr .track em { position: absolute; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px #ff2d95, 0 0 12px rgba(255,45,149,.8); }
+  .appr .ends { display: flex; justify-content: space-between; font-size: 10.5px; color: #c9a8b8; }
+  .appr.hot .track i { background: linear-gradient(90deg, #ff2d95, #ff9fd0); }
+  .cals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mc .cm { text-align: center; font-size: 11.5px; font-weight: 800; color: #ffb3d9; text-transform: capitalize; margin-bottom: 3px; }
+  .mc .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .mc .grid i { font-style: normal; font-size: 10px; text-align: center; line-height: 18px; border-radius: 5px; color: #c8c8c8; }
+  .mc .grid i.h { color: #8a6f7d; font-size: 8.5px; font-weight: 700; }
+  .mc .grid i.p { color: #5a4d53; }
+  .mc .grid i.k { background: rgba(255,45,149,.75); color: #fff; font-weight: 800; } .mc .grid i.k.p { background: rgba(255,45,149,.25); color: #d9a3bf; }
+  .mc .grid i.now { outline: 2px solid #fff; outline-offset: -1px; color: #fff; font-weight: 800; background: #3a1a2c; } .mc .grid i.k.now { background: #ff2d95; }
+  .ccal .leg { display: flex; gap: 14px; justify-content: center; margin-top: 6px; font-size: 10.5px; color: #c9a8b8; }
+  .ccal .leg i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; } .ccal .leg i.k { background: #ff2d95; } .ccal .leg i.nw { border: 2px solid #fff; width: 7px; height: 7px; }
   .ccal .jhow { margin-top: 8px; } .ccal .jhow summary { font-size: 12.5px; }
-  .cr .cm { text-align: center; font-size: 12px; font-weight: 800; color: #ffb3d9; text-transform: capitalize; margin-bottom: 4px; }
-  .cr .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-  .cr .grid i { font-style: normal; font-size: 10.5px; text-align: center; line-height: 19px; border-radius: 6px; color: #bbb; }
-  .cr .grid i.h { color: #8a6f7d; font-size: 9px; font-weight: 700; }
-  .cr .grid i.k { background: #ff2d95; color: #fff; font-weight: 800; }
-  .cr .grid i.s:not(.k) { color: #ffb3d9; }
-  .cr .grid i.now { outline: 2px solid #fff; outline-offset: -1px; font-weight: 800; color: #fff; }
-  .cr .leg { margin-top: 5px; font-size: 10px; color: #c9a8b8; text-align: center; } .cr .leg i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; background: #ff2d95; margin-right: 4px; vertical-align: -1px; }
-  @media (max-width: 360px) { .ccal { grid-template-columns: 1fr; } }
   .jbtns.one { grid-template-columns: 1fr; margin-top: 10px; }
   .aybasi { margin-bottom: 10px; padding: 12px 14px; border-radius: 14px; background: linear-gradient(135deg, #ff2d95, #9b0050); color: #fff; box-shadow: 0 6px 20px rgba(255,45,149,.25); animation: cg .6s ease; }
   .aybasi b { display: block; font-size: 15px; } .aybasi span { font-size: 13px; opacity: .95; }
@@ -373,13 +381,14 @@ function daysLeft(d) {
 let campTur = "Tümü";
 // ===== Ay başı kampanya hatırlatıcısı (takvime eklenir) =====
 function icsReminder() {
-  const p = (n) => String(n).padStart(2, "0"), d = new Date(), y = d.getMonth() === 11 ? d.getFullYear() + 1 : d.getFullYear(), m = (d.getMonth() + 1) % 12 + 1;
-  const st = `${y}${p(m)}01T100000`, stamp = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
-  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sadolayn//Kampanya//TR", "BEGIN:VEVENT", "UID:sado-kampanya-" + stamp + "@sadolayn", "DTSTAMP:" + stamp,
-    "DTSTART;TZID=Europe/Istanbul:" + st, "DURATION:PT15M", "RRULE:FREQ=MONTHLY;BYMONTHDAY=1",
-    "SUMMARY:🎯 Maximum kampanyalarına katıl", "DESCRIPTION:Yeni ay! Ayın ilk 5 günü İşCep, Maximum Mobil ya da Maxi ile kampanyalara katılmayı unutma. Liste: https://sadolayn.github.io/SadoDepo/isbank.html#maximum",
-    "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Kampanyalara katıl", "TRIGGER:PT0M", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
-  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = "kampanya-hatirlatici.ics"; document.body.appendChild(a); a.click(); a.remove();
+  const p = (n) => String(n).padStart(2, "0"), d = new Date();
+  const y = d.getMonth() === 11 ? d.getFullYear() + 1 : d.getFullYear(), m = (d.getMonth() + 1) % 12 + 1;
+  const st = `${y}${p(m)}01`, en = `${y}${p(m)}02`, stamp = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sadolayn//Kampanya//TR", "BEGIN:VEVENT", "UID:sado-aybasi-" + stamp + "@sadolayn", "DTSTAMP:" + stamp,
+    "DTSTART;VALUE=DATE:" + st, "DTEND;VALUE=DATE:" + en, "RRULE:FREQ=MONTHLY;BYMONTHDAY=1", "TRANSP:TRANSPARENT",
+    "SUMMARY:🎯 Ay başı: kampanyalara bak", "DESCRIPTION:Yeni ayın ilk haftası! İşCep, Maximum Mobil ya da Maxi ile kampanyalara göz atıp katılmayı unutma. https://sadolayn.github.io/SadoDepo/isbank.html#maximum",
+    "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Ay başı: kampanyalara bak", "TRIGGER:PT9H", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = "ay-basi-kampanya.ics"; document.body.appendChild(a); a.click(); a.remove();
 }
 // ===== Öne çıkanlar: çoğu kişinin işine yarayan başlıklar (güncel kampanyalar otomatik eşleşir) =====
 const ONE = [
@@ -467,31 +476,42 @@ function milesHtml() {
     <button type="button" class="ocard tolink" data-cat="Black"><div class="oh"><i>🖤</i><b>Maximiles Black</b><em>›</em></div><p>En prestijli kart: lounge, Fast Track ve artan MaxiMil kazanımı.</p></button>`;
 }
 function bindSpecial() { $("list").querySelectorAll("[data-cat]").forEach((b) => (b.onclick = () => { cat = b.dataset.cat; renderList(); renderChips(); window.scrollTo({ top: 0 }); })); }
-// Aylık kampanya takvimi: ayın ilk 5 günü öne çıkar, mesaj ayın gününe göre değişir
+// Kampanya takvimi: bu ay + gelecek ay; her ayın ilk haftası renkli, bugün işaretli, ay başına geri sayım
+function miniCal(y, m, today) {
+  const last = new Date(y, m + 1, 0).getDate(), first = (new Date(y, m, 1).getDay() + 6) % 7;
+  const ad = new Date(y, m, 1).toLocaleDateString("tr-TR", { month: "long", year: "numeric" });
+  let c = ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"].map((x) => `<i class="h">${x}</i>`).join("");
+  for (let i = 0; i < first; i++) c += "<i></i>";
+  for (let k = 1; k <= last; k++) {
+    const dt = new Date(y, m, k), past = dt < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const now = dt.toDateString() === today.toDateString();
+    c += `<i class="${k <= 7 ? "k" : ""}${now ? " now" : ""}${past && !now ? " p" : ""}">${k}</i>`;
+  }
+  return `<div class="mc"><div class="cm">${ad}</div><div class="grid">${c}</div></div>`;
+}
 function campCal() {
   const t = new Date(), y = t.getFullYear(), m = t.getMonth(), d = t.getDate(), last = new Date(y, m + 1, 0).getDate();
   const ayAd = t.toLocaleDateString("tr-TR", { month: "long" }), nextAy = new Date(y, m + 1, 1).toLocaleDateString("tr-TR", { month: "long" });
-  const ilk = d <= 5, sonu = last - d < 5, kalan = last - d + 1;
-  const msg = ilk
-    ? `<b>🎯 Kampanya günleri başladı!</b><span>Bugün ${d} ${ayAd}. Ayın ilk 5 günü yeni kampanyalara mutlaka bak ve <b>Katıl</b>${d < 5 ? ` · ${5 - d + 1} gün kaldı` : " · bugün son gün"}.</span>`
-    : sonu
-    ? `<b>⏳ Ay sonu yaklaşıyor, hazır mısın?</b><span>Yeni kampanyalar ${kalan} gün sonra geliyor. 1–5 ${nextAy} arasında kampanyalara bakıp katılmayı unutma.</span>`
-    : `<b>📅 Her ay başında yeni kampanyalar</b><span>Ayın ilk 5 günü kampanyalara bak ve katıl. Sonraki kampanya günleri: 1–5 ${nextAy} (${kalan} gün sonra).</span>`;
-  const first = (new Date(y, m, 1).getDay() + 6) % 7; // pazartesi başlangıçlı
-  let cells = ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"].map((x) => `<i class="h">${x}</i>`).join("");
-  for (let i = 0; i < first; i++) cells += "<i></i>";
-  for (let k = 1; k <= last; k++) cells += `<i class="${k <= 5 ? "k" : ""}${k === d ? " now" : ""}${k > last - 5 ? " s" : ""}">${k}</i>`;
-  return `<div class="ccal${ilk ? " hot" : ""}">
-      <div class="cl">${msg}
-        <button type="button" id="jIcs" class="cadd">📅 Takvimime ekle</button>
-        <details class="jhow"><summary>📲 Nasıl katılırım?</summary>
-          <div class="jway"><i>📱</i><div><b>İşCep</b>Kampanyalar bölümünden kampanyayı seç, <b>Katıl</b>'a dokun.</div></div>
-          <div class="jway"><i>💳</i><div><b>Maximum Mobil</b>Kampanyalar listesinde <b>Katıl</b>'a dokun.</div></div>
-          <div class="jway"><i>🤖</i><div><b>Maxi</b>"Kampanyalara katılmak istiyorum" yaz veya söyle.</div></div>
-          <p>Bazı taksit ve indirim kampanyaları ayrıca katılım istemeyebilir.</p>
-        </details>
-      </div>
-      <div class="cr"><div class="cm">${ayAd} ${y}</div><div class="grid">${cells}</div><div class="leg"><span><i class="k"></i>Kampanya günleri</span></div></div>
+  const ilkHafta = d <= 7, kalan = last - d + 1;
+  const msg = ilkHafta
+    ? `<b>🎯 Ayın ilk haftası: kampanyalara bakma zamanı!</b><span>Bugün ${d} ${ayAd}. Yeni ayın kampanyalarına göz at, beğendiklerine <b>Katıl</b>${d < 7 ? ` · ilk haftanın bitmesine ${7 - d + 1} gün` : " · ilk haftanın son günü"}.</span>`
+    : `<b>📅 Her ayın ilk haftası kampanyalara bakmayı unutma</b><span>Ay içinde de yeni kampanyalar eklenebilir; ara ara listeye göz atmak da iyi olur.</span>`;
+  // ay başına yaklaşma çubuğu: ilk hafta bittiyse bir sonraki 1'ine kadar ilerler
+  const pct = ilkHafta ? 100 : Math.round(((d - 7) / (last - 7)) * 100);
+  const bar = ilkHafta
+    ? `<div class="appr hot"><div class="lbl"><span>🎯 İlk hafta</span><b>${7 - d + 1} gün kaldı</b></div><div class="track"><i style="width:${Math.round(d / 7 * 100)}%"></i><em style="left:${Math.round(d / 7 * 100)}%"></em></div><div class="ends"><span>1 ${ayAd}</span><span>7 ${ayAd}</span></div></div>`
+    : `<div class="appr"><div class="lbl"><span>⏳ ${nextAy} başına yaklaşıyor</span><b>${kalan} gün</b></div><div class="track"><i style="width:${pct}%"></i><em style="left:${pct}%"></em></div><div class="ends"><span>bugün ${d} ${ayAd}</span><span>1 ${nextAy} 🎯</span></div></div>`;
+  return `<div class="ccal${ilkHafta ? " hot" : ""}">
+      <div class="ctop"><div class="cl">${msg}</div><button type="button" id="jIcs" class="cadd" title="Her ayın 1'inde hatırlatma">📅 Ay başını<br>takvime ekle</button></div>
+      ${bar}
+      <div class="cals">${miniCal(y, m, t)}${miniCal(m === 11 ? y + 1 : y, (m + 1) % 12, t)}</div>
+      <div class="leg"><span><i class="k"></i>Ayın ilk haftası</span><span><i class="nw"></i>Bugün</span></div>
+      <details class="jhow"><summary>📲 Kampanyalara nasıl katılırım?</summary>
+        <div class="jway"><i>📱</i><div><b>İşCep</b>Kampanyalar bölümünden kampanyayı seç, <b>Katıl</b>'a dokun.</div></div>
+        <div class="jway"><i>💳</i><div><b>Maximum Mobil</b>Kampanyalar listesinde <b>Katıl</b>'a dokun.</div></div>
+        <div class="jway"><i>🤖</i><div><b>Maxi</b>"Kampanyalara katılmak istiyorum" yaz veya söyle.</div></div>
+        <p>Bazı taksit ve indirim kampanyaları ayrıca katılım istemeyebilir.</p>
+      </details>
     </div>`;
 }
 function campCard(k) {
