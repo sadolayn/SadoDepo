@@ -74,46 +74,48 @@
   .warn.ok { background: rgba(63,194,131,.08); border-color: #1f4d36; color: #9ff0c8; }
   /* ===== Eski tip masa hesap makinesi ===== */
   .calcbox { position: sticky; top: var(--sh, 120px); z-index: 20; background: #000; padding-bottom: 8px; }
-  .calc { margin: 0 auto; max-width: 290px; border-radius: 20px; padding: 11px 11px 13px;
+  .calc { margin: 0 auto; max-width: 244px; border-radius: 18px; padding: 8px 9px 10px;
     background: linear-gradient(160deg, #3a3631, #26231f 55%, #1c1a17); border: 1px solid #4a4540;
     box-shadow: 0 10px 30px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08); }
-  .brand { display: flex; justify-content: space-between; align-items: center; margin: 0 2px 7px; }
+  .brand { display: flex; justify-content: space-between; align-items: center; margin: 0 2px 5px; }
   .brand button { background: none; border: none; font-size: 15px; cursor: pointer; padding: 0 2px; opacity: .85; }
   .brand b { font-family: Georgia, serif; font-style: italic; color: #e0c48f; font-size: 15px; letter-spacing: 1px; }
   .brand i { font-style: normal; font-size: 9.5px; letter-spacing: 2px; color: #9b9184; }
   .solar { width: 64px; height: 14px; border-radius: 3px; background: repeating-linear-gradient(90deg, #2b1f15 0 15px, #3d2c1e 15px 16px); border: 1px solid #111; }
-  .lcd { position: relative; border-radius: 9px; padding: 6px 10px 5px; margin-bottom: 10px; background: linear-gradient(180deg, #a9b49a, #96a288); border: 3px solid #141414; box-shadow: inset 0 3px 8px rgba(0,0,0,.35); color: #1d2418; }
+  .lcd { position: relative; border-radius: 8px; padding: 3px 9px 3px; margin-bottom: 7px; background: linear-gradient(180deg, #a9b49a, #96a288); border: 3px solid #141414; box-shadow: inset 0 3px 8px rgba(0,0,0,.35); color: #1d2418; }
   .lcd .ind { display: flex; gap: 10px; font-size: 10px; font-weight: 800; letter-spacing: 1px; min-height: 12px; opacity: .85; }
   .lcd .ind span { opacity: .12; } .lcd .ind span.on { opacity: 1; }
   .lcd .op { position: absolute; left: 12px; bottom: 10px; font-size: 18px; font-weight: 800; opacity: .8; }
-  .lcd .num { text-align: right; font-family: "Courier New", ui-monospace, monospace; font-weight: 700; font-size: 27px; letter-spacing: 1px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+  .lcd .num { text-align: right; font-family: "Courier New", ui-monospace, monospace; font-weight: 700; font-size: 21px; letter-spacing: 1px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-shadow: 1px 1px 0 rgba(0,0,0,.12); }
   /* Tuş yatağı ve 3 boyutlu, oyuk yüzeyli eski tip tuşlar */
-  .bed { background: #221d19; border-radius: 12px; padding: 8px 7px 11px; box-shadow: inset 0 3px 8px rgba(0,0,0,.7), inset 0 -1px 0 rgba(255,255,255,.05); }
-  .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px 6px; }
+  .bed { background: #221d19; border-radius: 11px; padding: 6px 6px 9px; box-shadow: inset 0 3px 8px rgba(0,0,0,.7), inset 0 -1px 0 rgba(255,255,255,.05); }
+  .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px 4px; }
   .k { --c1: #f3ead6; --c2: #d9c9a6; --sk: #b9a47c; --sh: #6f5f42; --tx: #3a2e1e;
-    position: relative; isolation: isolate; height: 40px; border: none; border-radius: 8px; font: inherit; font-size: 17px; font-weight: 800; cursor: pointer; user-select: none; touch-action: manipulation;
+    position: relative; isolation: isolate; height: 29px; border: none; border-radius: 7px; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; user-select: none; touch-action: manipulation;
     color: var(--tx); background: linear-gradient(180deg, var(--c2), var(--sk));
-    box-shadow: 0 5px 0 var(--sh), 0 7px 9px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.18);
+    box-shadow: 0 4px 0 var(--sh), 0 6px 8px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.18);
     text-shadow: 0 1px 0 rgba(255,255,255,.35); transition: transform .05s, box-shadow .05s; }
   /* üst yüzey: hafif çukur (parmak yuvası) */
-  .k::before { content: ""; position: absolute; z-index: -1; inset: 2px 3px 6px; border-radius: 6px;
+  .k::before { content: ""; position: absolute; z-index: -1; inset: 2px 3px 5px; border-radius: 5px;
     background: radial-gradient(120% 90% at 50% 20%, var(--c1), var(--c2) 70%); box-shadow: inset 0 -2px 3px rgba(0,0,0,.12), inset 0 2px 2px rgba(255,255,255,.45); }
-  .k:active, .k.down { transform: translateY(4px); box-shadow: 0 1px 0 var(--sh), 0 2px 3px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.4), inset 0 -2px 0 rgba(0,0,0,.18); }
+  .k:active, .k.down { transform: translateY(3px); box-shadow: 0 1px 0 var(--sh), 0 2px 3px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.4), inset 0 -2px 0 rgba(0,0,0,.18); }
   .k.op { --c1: #f3a066; --c2: #e07a3c; --sk: #bd5d26; --sh: #6a2e0e; --tx: #fff7ec; text-shadow: 0 -1px 0 rgba(0,0,0,.3); }
   .k.o  { --c1: #b5503d; --c2: #96392a; --sk: #7a2a1e; --sh: #3e130b; --tx: #ffe6d6; text-shadow: 0 -1px 0 rgba(0,0,0,.4); }
   .k.r  { --c1: #e2603f; --c2: #c4432a; --sk: #9e321c; --sh: #50170a; --tx: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4); }
-  .k.eq { --c1: #e2603f; --c2: #c4432a; --sk: #9e321c; --sh: #50170a; --tx: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4); font-size: 22px; }
-  .k.sm { font-size: 12px; letter-spacing: .3px; }
+  .k.eq { --c1: #e2603f; --c2: #c4432a; --sk: #9e321c; --sh: #50170a; --tx: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4); font-size: 19px; }
+  .k.sm { font-size: 11px; letter-spacing: .3px; }
   .k.z { grid-column: span 2; }
   /* kâğıt rulo */
-  .tape { position: relative; margin: 6px auto 0; max-width: 270px; background: #f4efe3; color: #2b2620; border-radius: 4px 4px 0 0; padding: 12px 14px 22px; font-family: "Courier New", ui-monospace, monospace; font-size: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.5); min-height: 120px; max-height: 60vh; overflow-y: auto;
-    -webkit-mask-image: linear-gradient(#000 85%, transparent); mask-image: linear-gradient(#000 85%, transparent); }
+  .tape { position: relative; margin: 4px auto 0; max-width: 270px; background: #f4efe3; color: #2b2620; border-radius: 4px 4px 0 0; padding: 14px 14px 10px; font-family: "Courier New", ui-monospace, monospace; font-size: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.5); min-height: 110px; max-height: max(150px, calc(100vh - var(--sh, 120px) - var(--ch, 330px) - 64px)); overflow-y: auto;
+    -webkit-mask-image: linear-gradient(transparent, #000 14%); mask-image: linear-gradient(transparent, #000 14%); }
   .tape div { display: flex; justify-content: space-between; gap: 10px; line-height: 1.55; font-variant-numeric: tabular-nums; }
   .tape div span:first-child { color: #8a7f6c; min-width: 22px; }
   .tape div.t { border-top: 1px dashed #b5ab98; margin-top: 3px; padding-top: 3px; font-weight: 700; }
   .tape div.c { color: #a33; }
   .tape .e { color: #9b9184; text-align: center; display: block; }
   .tapebar { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+  .smart { margin: 12px auto 0; max-width: 300px; text-align: center; font-size: 12.5px; line-height: 1.55; color: #d9c9a6; background: rgba(224,162,79,.06); border: 1px dashed #4a3a22; border-radius: 12px; padding: 9px 10px; }
+  .smart s { color: #ef8a6c; text-decoration-thickness: 2px; }
   .tapebar button { background: transparent; border: 1px solid var(--line); color: var(--accent); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer; }
 
 
@@ -201,11 +203,11 @@
         <button class="k o sm" data-k="CE">CE</button><button class="k n" data-k="1">1</button><button class="k n" data-k="2">2</button><button class="k n" data-k="3">3</button><button class="k op" data-k="-">−</button>
         <button class="k o" data-k="⌫">⌫</button><button class="k n z" data-k="0">0</button><button class="k n" data-k=",">,</button><button class="k op" data-k="+">+</button>
       </div>
-      <div class="keys" style="margin-top:7px"><button class="k n sm" data-k="00" style="grid-column:span 2">00</button><button class="k o sm" data-k="√">√</button><button class="k eq" data-k="=" style="grid-column:span 2">=</button></div></div>
+      <div class="keys" style="margin-top:6px"><button class="k n sm" data-k="00" style="grid-column:span 2">00</button><button class="k o sm" data-k="√">√</button><button class="k eq" data-k="=" style="grid-column:span 2">=</button></div></div>
     </div></div>
     <div class="tape" id="tape"><span class="e">— rulo boş —</span></div>
-    <div class="tapebar"><button id="tCopy">📋 Ruloyu kopyala</button><button id="tClear">🧻 Ruloyu kopar</button></div>
-    <p class="hint" style="text-align:center">Kesirli sayılarla tam hesap yapar: 10 ÷ 3 × 3 = <b>10</b>. Klavyeden de çalışır.</p>
+    <div class="tapebar"><button id="tPdf">📄 PDF indir</button><button id="tCopy">📋 Kopyala</button><button id="tClear">🧻 Kopar</button></div>
+    <div class="smart">🧠 <b>Bu hesap makinesi akıllıdır!</b><br>10'u 3'e bölüp 3 ile çarparsanız tertemiz <b>10</b> bulursunuz.<br><s>9,9999999</s> diyen makinelere itibar etmeyiniz 😁</div>
   </section>
 
   <!-- ===== Mesafe ölçer ===== -->
@@ -375,11 +377,12 @@ $("tabs").addEventListener("click", (e) => {
   document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("on", p.id === b.dataset.t));
   try { localStorage.setItem("hesapTab", b.dataset.t); } catch (e) {}
   if (b.dataset.t === "cetvel") drawRuler();
+  if (b.dataset.t === "calc") setTimeout(setSH, 0);
   if (b.dataset.t !== "mesafe" && typeof camStop === "function" && mStream) camStop();
   window.scrollTo({ top: 0 });
 });
 // Yapışkan üst bölüm yüksekliği (makine onun altında sabit kalır)
-const setSH = () => document.documentElement.style.setProperty("--sh", document.querySelector(".stick").offsetHeight + "px");
+const setSH = () => { const R = document.documentElement.style; R.setProperty("--sh", document.querySelector(".stick").offsetHeight + "px"); const c = document.querySelector(".calcbox"); if (c && c.offsetHeight) R.setProperty("--ch", c.offsetHeight + "px"); };
 setSH(); window.addEventListener("resize", setSH);
 // Eski hesap makinesi tuş sesi (plastik "tık")
 let SND = true; try { SND = localStorage.getItem("hesapSes") !== "0"; } catch (e) {}
@@ -461,7 +464,7 @@ function press(k) {
     entry = qFmt(r).replace(/\./g, ""); fresh = true;
   } else if (k === "√") {
     const v = Number(curQ().n) / Number(curQ().d); if (v < 0) { err = true; disp(); return; }
-    const s = Math.sqrt(v); entry = String(+s.toPrecision(12)).replace(".", ","); fresh = true; tape("√", entry);
+    const s = Math.sqrt(v); entry = String(+s.toPrecision(12)).replace(".", ","); fresh = true; tape(entry, "√");
   } else if (k === "M+" || k === "M-") { const v = curQ(); mem = mem ? (k === "M+" ? qAdd(mem, v) : qSub(mem, v)) : (k === "M+" ? v : Q(-v.n, v.d)); fresh = true; if (entry === null && acc) entry = null; tape(qFmt(v), k === "M+" ? "M+" : "M−"); }
   else if (k === "MR") { if (mem) { entry = qFmt(mem).replace(/\./g, ""); fresh = true; } }
   else if (k === "MC") { mem = null; }
@@ -478,6 +481,42 @@ document.addEventListener("keydown", (e) => {
   const b = document.querySelector(`.calc [data-k="${CSS.escape(k)}"]`); if (b) { b.classList.add("down"); setTimeout(() => b.classList.remove("down"), 90); }
 });
 $("tClear").onclick = () => { tapeL.length = 0; $("tape").innerHTML = '<span class="e">— rulo boş —</span>'; };
+// Ruloyu gerçek fiş gibi dar bir PDF olarak indir (kitaplık sitenin içinde, ilk tıklamada yüklenir)
+const loadJs = (src) => new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
+let pdfP = null;
+const loadPdf = () => pdfP || (pdfP = loadJs("lib/jspdf.umd.min.js").then(() => loadJs("lib/pdffont.js")).catch((e) => { pdfP = null; throw e; }));
+$("tPdf").onclick = async () => {
+  if (!tapeL.length) { $("tPdf").textContent = "Rulo boş 🙂"; setTimeout(() => ($("tPdf").textContent = "📄 PDF indir"), 1300); return; }
+  $("tPdf").textContent = "⏳ Hazırlanıyor…";
+  try {
+    await loadPdf();
+    const W = 80, lh = 5.2, H = Math.max(110, 52 + tapeL.length * lh + tapeL.filter((x) => x[2] === "t").length * 2.5 + 26);
+    const doc = new window.jspdf.jsPDF({ unit: "mm", format: [W, H] });
+    doc.addFileToVFS("FS.ttf", PDF_FONTS.regular); doc.addFont("FS.ttf", "FS", "normal");
+    doc.addFileToVFS("FSB.ttf", PDF_FONTS.bold); doc.addFont("FSB.ttf", "FS", "bold");
+    doc.setFillColor(250, 247, 238); doc.rect(0, 0, W, H, "F");
+    const L = 7, R = W - 7, now = new Date(), clean = (t) => String(t || "").replace(/−/g, "-").replace(/√/g, "kök ");
+    const dash = (y) => { doc.setLineDashPattern([1, 1], 0); doc.setDrawColor(150); doc.line(L, y, R, y); doc.setLineDashPattern([], 0); };
+    let y = 12;
+    doc.setFont("FS", "bold"); doc.setFontSize(14); doc.text("SADOLAYN", W / 2, y, { align: "center" }); y += 5;
+    doc.setFont("FS", "normal"); doc.setFontSize(8.5); doc.setTextColor(110);
+    doc.text("SL-12 · Hesap rulosu", W / 2, y, { align: "center" }); y += 4.5;
+    doc.text(now.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" }) + "  " + now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }), W / 2, y, { align: "center" }); y += 4;
+    dash(y); y += 6;
+    doc.setFontSize(11);
+    tapeL.forEach(([num, op, c]) => {
+      if (c === "t") { dash(y - 4); y += 1; }
+      doc.setFont("FS", c === "t" ? "bold" : "normal"); doc.setTextColor(c === "c" ? 170 : 40, c === "c" ? 50 : 35, c === "c" ? 50 : 30);
+      doc.text(clean(op), L, y); doc.text(clean(num), R, y, { align: "right" }); y += lh + (c === "t" ? 1.5 : 0);
+    });
+    y += 2; dash(y); y += 6;
+    doc.setFont("FS", "normal"); doc.setFontSize(8); doc.setTextColor(110);
+    doc.text("Akıllı makine: 10 ÷ 3 × 3 = 10 :)", W / 2, y, { align: "center" });
+    doc.save(`hesap-rulosu-${ymd(now)}.pdf`);
+    $("tPdf").textContent = "✅ İndirildi";
+  } catch (e) { $("tPdf").textContent = "⚠️ Olmadı, tekrar dene"; }
+  setTimeout(() => ($("tPdf").textContent = "📄 PDF indir"), 1600);
+};
 $("tCopy").onclick = () => { const t = tapeL.map(([a, b]) => `${b ? b + " " : ""}${a}`.trim()).join("\n"); if (!t) return; (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { $("tCopy").textContent = "✅ Kopyalandı"; setTimeout(() => ($("tCopy").textContent = "📋 Ruloyu kopyala"), 1400); }, () => prompt("Kopyala:", t)); };
 disp();
 
@@ -929,7 +968,7 @@ $("bmSend").onclick = bmSend;
 $("bmMine").addEventListener("input", () => { $("bmMine").value = $("bmMine").value.replace(/\D/g, "").slice(0, BM.n); });
 $("bmAgain").onclick = () => { $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; };
 $("bmQuit").onclick = () => { if (BM.over || confirm("Oyun bırakılsın mı?")) { if (!BM.over) bmEnd("🏳️ Oyunu bıraktın", `Sadolayn'ın sayısı <b>${BM.ai}</b> idi.`); $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; } };
-try { const t = localStorage.getItem("hesapTab"); if (t && $(t)) document.querySelector(`#tabs [data-t="${t}"]`).click(); } catch (e) {}
+try { const h = location.hash.slice(1), t = (h && document.querySelector(`#tabs [data-t="${h}"]`)) ? h : localStorage.getItem("hesapTab"); if (t && $(t)) document.querySelector(`#tabs [data-t="${t}"]`).click(); } catch (e) {}
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">© <span class="cy">2026</span> Sadolayn. All rights reserved.</footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
