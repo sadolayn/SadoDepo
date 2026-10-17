@@ -10,14 +10,15 @@
 <style>
   :root { --bg: #000; --card: #0d0d0d; --field: #161616; --ink: #f2f2f2; --muted: #8a8a8a; --accent: #e0a24f; --line: #262626; --ok: #3fc283; --red: #ef6a4c; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  [hidden] { display: none !important; }
   body { margin: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 12px 14px 28px; }
   .wrap { max-width: 480px; margin: 0 auto; }
   header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   header h1 { margin: 0; font-size: 20px; }
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -14px 12px; padding: 10px 14px 8px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
-  .tabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
-  .tabs button { border: none; background: transparent; color: var(--muted); padding: 7px 1px; border-radius: 10px; font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; line-height: 1.2; }
+  .tabs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
+  .tabs button { border: none; background: transparent; color: var(--muted); padding: 7px 1px; border-radius: 10px; font: inherit; font-size: 10px; font-weight: 600; cursor: pointer; line-height: 1.2; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .tabs button b { display: block; font-size: 18px; margin-bottom: 2px; }
   .tabs button.on { background: var(--accent); color: #000; }
   .panel { display: none; } .panel.on { display: block; }
@@ -43,6 +44,22 @@
   .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
   .chips button { border: 1px solid var(--line); background: var(--field); color: var(--ink); border-radius: 999px; padding: 6px 11px; font: inherit; font-size: 12.5px; cursor: pointer; }
 
+  .leap { margin-top: 10px; padding: 8px 10px; border-radius: 10px; background: rgba(224,162,79,.08); border: 1px dashed #5a4422; font-size: 12.5px; color: #e9c98f; line-height: 1.45; }
+  .chips button.on { background: var(--accent); color: #000; border-color: var(--accent); }
+  .ev h3 { margin: 0 0 6px; font-size: 13px; color: var(--accent); }
+  .evr { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 2px 10px; align-items: center; padding: 7px 0; border-top: 1px solid var(--line); font-size: 13.5px; }
+  .evr:first-of-type { border-top: none; }
+  .evr small { grid-column: 1; color: var(--muted); font-size: 11.5px; }
+  .evr b { grid-row: span 2; text-align: right; font-size: 20px; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .evr b em { display: block; font-style: normal; font-size: 10.5px; color: var(--muted); font-weight: 500; }
+  .evr.next b { color: var(--accent); }
+  .bar { grid-column: 1 / -1; height: 4px; border-radius: 4px; background: var(--field); overflow: hidden; margin-top: 4px; } .bar i { display: block; height: 100%; background: var(--accent); }
+  .rate { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .rate span { font-size: 12px; padding: 4px 9px; border-radius: 999px; background: var(--field); border: 1px solid var(--line); color: var(--ink); }
+  .rate span b { color: var(--accent); }
+  .vbar { display: flex; height: 10px; border-radius: 6px; overflow: hidden; margin: 10px 0 4px; background: var(--field); }
+  .vbar i { display: block; height: 100%; } .vbar .va { background: #6f6a62; } .vbar .vo { background: #ef6a4c; } .vbar .vk { background: #e0a24f; }
+  .vleg { display: flex; gap: 10px; font-size: 11px; color: var(--muted); flex-wrap: wrap; } .vleg i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 4px; }
   /* ===== Eski tip masa hesap makinesi ===== */
   .calcbox { position: sticky; top: var(--sh, 120px); z-index: 20; background: #000; padding-bottom: 8px; }
   .calc { margin: 0 auto; max-width: 290px; border-radius: 20px; padding: 11px 11px 13px;
@@ -58,16 +75,23 @@
   .lcd .ind span { opacity: .12; } .lcd .ind span.on { opacity: 1; }
   .lcd .op { position: absolute; left: 12px; bottom: 10px; font-size: 18px; font-weight: 800; opacity: .8; }
   .lcd .num { text-align: right; font-family: "Courier New", ui-monospace, monospace; font-weight: 700; font-size: 27px; letter-spacing: 1px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-shadow: 1px 1px 0 rgba(0,0,0,.12); }
-  .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
-  .k { height: 38px; border: none; border-radius: 8px; font: inherit; font-size: 17px; font-weight: 700; cursor: pointer; user-select: none;
-    background: linear-gradient(180deg, #4a4540, #34302b); color: #f1eadf; box-shadow: 0 4px 0 #15130f, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.12); transition: transform .05s, box-shadow .05s; }
-  .k:active, .k.down { transform: translateY(3px); box-shadow: 0 1px 0 #15130f, inset 0 1px 0 rgba(255,255,255,.08); }
-  .k.n { background: linear-gradient(180deg, #ece4d4, #d4cab6); color: #2a241c; box-shadow: 0 4px 0 #8b8270, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 #fff; }
-  .k.n:active, .k.n.down { box-shadow: 0 1px 0 #8b8270; }
-  .k.o { background: linear-gradient(180deg, #6b625a, #4c453f); color: #ffe2b3; }
-  .k.r { background: linear-gradient(180deg, #e0763f, #b9542a); color: #fff; box-shadow: 0 4px 0 #6d2e13, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.25); }
-  .k.eq { background: linear-gradient(180deg, #e8b05d, #c98a35); color: #1a1205; box-shadow: 0 4px 0 #7a5420, 0 5px 8px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.3); grid-row: span 2; height: auto; }
-  .k.sm { font-size: 11.5px; letter-spacing: .3px; }
+  /* Tuş yatağı ve 3 boyutlu, oyuk yüzeyli eski tip tuşlar */
+  .bed { background: #221d19; border-radius: 12px; padding: 8px 7px 11px; box-shadow: inset 0 3px 8px rgba(0,0,0,.7), inset 0 -1px 0 rgba(255,255,255,.05); }
+  .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px 6px; }
+  .k { --c1: #f3ead6; --c2: #d9c9a6; --sk: #b9a47c; --sh: #6f5f42; --tx: #3a2e1e;
+    position: relative; isolation: isolate; height: 40px; border: none; border-radius: 8px; font: inherit; font-size: 17px; font-weight: 800; cursor: pointer; user-select: none; touch-action: manipulation;
+    color: var(--tx); background: linear-gradient(180deg, var(--c2), var(--sk));
+    box-shadow: 0 5px 0 var(--sh), 0 7px 9px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.18);
+    text-shadow: 0 1px 0 rgba(255,255,255,.35); transition: transform .05s, box-shadow .05s; }
+  /* üst yüzey: hafif çukur (parmak yuvası) */
+  .k::before { content: ""; position: absolute; z-index: -1; inset: 2px 3px 6px; border-radius: 6px;
+    background: radial-gradient(120% 90% at 50% 20%, var(--c1), var(--c2) 70%); box-shadow: inset 0 -2px 3px rgba(0,0,0,.12), inset 0 2px 2px rgba(255,255,255,.45); }
+  .k:active, .k.down { transform: translateY(4px); box-shadow: 0 1px 0 var(--sh), 0 2px 3px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.4), inset 0 -2px 0 rgba(0,0,0,.18); }
+  .k.op { --c1: #f3a066; --c2: #e07a3c; --sk: #bd5d26; --sh: #6a2e0e; --tx: #fff7ec; text-shadow: 0 -1px 0 rgba(0,0,0,.3); }
+  .k.o  { --c1: #b5503d; --c2: #96392a; --sk: #7a2a1e; --sh: #3e130b; --tx: #ffe6d6; text-shadow: 0 -1px 0 rgba(0,0,0,.4); }
+  .k.r  { --c1: #e2603f; --c2: #c4432a; --sk: #9e321c; --sh: #50170a; --tx: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4); }
+  .k.eq { --c1: #e2603f; --c2: #c4432a; --sk: #9e321c; --sh: #50170a; --tx: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4); font-size: 22px; }
+  .k.sm { font-size: 12px; letter-spacing: .3px; }
   .k.z { grid-column: span 2; }
   /* kâğıt rulo */
   .tape { position: relative; margin: 6px auto 0; max-width: 270px; background: #f4efe3; color: #2b2620; border-radius: 4px 4px 0 0; padding: 12px 14px 22px; font-family: "Courier New", ui-monospace, monospace; font-size: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.5); min-height: 120px; max-height: 60vh; overflow-y: auto;
@@ -80,6 +104,22 @@
   .tapebar { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
   .tapebar button { background: transparent; border: 1px solid var(--line); color: var(--accent); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer; }
 
+
+  /* ===== Mesafe ölçer (kamera + eğim) ===== */
+  .cam { position: relative; margin: 0 -14px 12px; height: min(62vh, 520px); background: #050505; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .cam video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .cam .ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--muted); font-size: 13px; text-align: center; padding: 20px; }
+  .cross { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; transform: translate(-50%, -50%); pointer-events: none; }
+  .cross::before, .cross::after { content: ""; position: absolute; background: #ffd27a; box-shadow: 0 0 3px #000; }
+  .cross::before { left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; } .cross::after { top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; }
+  .cross i { position: absolute; inset: 22px; border: 2px solid #ffd27a; border-radius: 50%; box-shadow: 0 0 3px #000; }
+  .hud { position: absolute; left: 10px; right: 10px; top: 10px; display: flex; justify-content: space-between; gap: 8px; pointer-events: none; }
+  .hud div { background: rgba(0,0,0,.6); border-radius: 10px; padding: 6px 10px; font-size: 12px; color: #ddd; line-height: 1.35; }
+  .hud b { display: block; font-size: 22px; color: #ffd27a; font-variant-numeric: tabular-nums; }
+  .camstep { position: absolute; left: 10px; right: 10px; bottom: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .camstep button { padding: 12px 6px; border-radius: 12px; border: 1px solid rgba(255,210,122,.6); background: rgba(0,0,0,.65); color: #ffd27a; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .camstep button.on { background: #e0a24f; color: #000; }
+  .lvl { position: absolute; left: 50%; top: calc(50% + 44px); transform: translateX(-50%); font-size: 11.5px; color: #fff; background: rgba(0,0,0,.55); border-radius: 8px; padding: 3px 8px; pointer-events: none; white-space: nowrap; }
   /* ===== Cetvel ===== */
   .ruler-wrap { position: relative; height: calc(100vh - 200px); min-height: 420px; margin: 0 -14px; overflow: hidden; }
   #ruler { position: absolute; left: 0; top: 0; height: 100%; }
@@ -129,6 +169,7 @@
     <div class="tabs" id="tabs">
       <button data-t="calc" class="on"><b>🧮</b>Makine</button>
       <button data-t="cetvel"><b>📏</b>Cetvel</button>
+      <button data-t="mesafe"><b>📐</b>Mesafe</button>
       <button data-t="faiz"><b>💵</b>Faiz</button>
       <button data-t="tarih"><b>📆</b>Tarih</button>
       <button data-t="yuzde"><b>％</b>Yüzde</button>
@@ -141,35 +182,65 @@
     <div class="calcbox"><div class="calc">
       <div class="brand"><b>Sadolayn</b><div class="solar"></div><button type="button" id="snd" aria-label="Tuş sesi">🔊</button><i>SL-12</i></div>
       <div class="lcd"><div class="ind"><span id="iM">M</span><span id="iE">E</span><span id="iK">−</span></div><div class="op" id="lOp"></div><div class="num" id="lNum">0</div></div>
-      <div class="keys" id="keys">
+      <div class="bed"><div class="keys" id="keys">
         <button class="k o sm" data-k="MC">MC</button><button class="k o sm" data-k="MR">MR</button><button class="k o sm" data-k="M-">M−</button><button class="k o sm" data-k="M+">M+</button><button class="k r sm" data-k="C">C</button>
-        <button class="k o" data-k="%">%</button><button class="k n" data-k="7">7</button><button class="k n" data-k="8">8</button><button class="k n" data-k="9">9</button><button class="k o" data-k="/">÷</button>
-        <button class="k o sm" data-k="±">+/−</button><button class="k n" data-k="4">4</button><button class="k n" data-k="5">5</button><button class="k n" data-k="6">6</button><button class="k o" data-k="*">×</button>
-        <button class="k o sm" data-k="CE">CE</button><button class="k n" data-k="1">1</button><button class="k n" data-k="2">2</button><button class="k n" data-k="3">3</button><button class="k o" data-k="-">−</button>
-        <button class="k o" data-k="⌫">⌫</button><button class="k n z" data-k="0">0</button><button class="k n" data-k=",">,</button><button class="k o" data-k="+">+</button>
+        <button class="k o" data-k="%">%</button><button class="k n" data-k="7">7</button><button class="k n" data-k="8">8</button><button class="k n" data-k="9">9</button><button class="k op" data-k="/">÷</button>
+        <button class="k o sm" data-k="±">+/−</button><button class="k n" data-k="4">4</button><button class="k n" data-k="5">5</button><button class="k n" data-k="6">6</button><button class="k op" data-k="*">×</button>
+        <button class="k o sm" data-k="CE">CE</button><button class="k n" data-k="1">1</button><button class="k n" data-k="2">2</button><button class="k n" data-k="3">3</button><button class="k op" data-k="-">−</button>
+        <button class="k o" data-k="⌫">⌫</button><button class="k n z" data-k="0">0</button><button class="k n" data-k=",">,</button><button class="k op" data-k="+">+</button>
       </div>
-      <div class="keys" style="margin-top:7px;grid-template-columns:repeat(5,1fr)"><button class="k o sm" data-k="00" style="grid-column:span 2">00</button><button class="k o sm" data-k="√">√</button><button class="k eq" data-k="=" style="grid-row:auto;height:38px;grid-column:span 2">=</button></div>
+      <div class="keys" style="margin-top:7px"><button class="k n sm" data-k="00" style="grid-column:span 2">00</button><button class="k o sm" data-k="√">√</button><button class="k eq" data-k="=" style="grid-column:span 2">=</button></div></div>
     </div></div>
     <div class="tape" id="tape"><span class="e">— rulo boş —</span></div>
     <div class="tapebar"><button id="tCopy">📋 Ruloyu kopyala</button><button id="tClear">🧻 Ruloyu kopar</button></div>
     <p class="hint" style="text-align:center">Kesirli sayılarla tam hesap yapar: 10 ÷ 3 × 3 = <b>10</b>. Klavyeden de çalışır.</p>
   </section>
 
+  <!-- ===== Mesafe ölçer ===== -->
+  <section class="panel" id="mesafe">
+    <div class="cam" id="cam">
+      <video id="vid" playsinline muted autoplay></video>
+      <div class="ph" id="camPh"><div style="font-size:40px">📐</div><div>Kamerayla uzaklık ve yükseklik ölç.<br>Telefonu <b>dik</b> tut, artıyı hedefe getir.</div><button type="button" class="btn-go" id="camGo" style="width:auto;padding:12px 22px">📷 Kamerayı aç</button></div>
+      <div class="cross" id="cross" hidden><i></i></div>
+      <div class="lvl" id="lvl" hidden></div>
+      <div class="hud" id="hud" hidden><div><span>Uzaklık</span><b id="mD">–</b></div><div style="text-align:right"><span>Yükseklik</span><b id="mH">–</b></div></div>
+      <div class="camstep" id="camStep" hidden><button type="button" id="mLock">① Dibine nişan al · <u>Kilitle</u></button><button type="button" id="mTop">② Tepesine nişan al</button></div>
+    </div>
+    <div class="card">
+      <h2>Nasıl ölçülür?</h2>
+      <ol class="hint" style="margin:0;padding-left:18px">
+        <li>Telefonu <b>göz hizanda, dik</b> tut (ekran sana baksın).</li>
+        <li>Artıyı ölçeceğin şeyin <b>yere değdiği noktaya</b> getir: uzaklık canlı görünür. <b>Kilitle</b>'ye bas.</li>
+        <li>Yükseklik için artıyı aynı şeyin <b>tepesine</b> kaldır (ağaç, bina, direk…).</li>
+      </ol>
+      <label>Telefonun yerden yüksekliği (göz hizası)</label>
+      <div class="two"><div class="field"><input id="mEye" inputmode="decimal" value="160"><span>cm</span></div><div class="field"><input id="mBoy" inputmode="decimal" placeholder="Boyun"><span>cm</span></div></div>
+      <p class="hint">Boyunu yazarsan göz hizası otomatik hesaplanır (boy − 12 cm). Ölçüm telefonun eğim sensörüyle yapılır: <b>uzaklık = yükseklik × tan(eğim)</b>. Düz zeminde 1–30 m arası en doğru sonucu verir; uzaklaştıkça hata büyür (yaklaşık ±%5–10).</p>
+      <div class="tapebar"><button type="button" id="camStop">⏹ Kamerayı kapat</button></div>
+    </div>
+  </section>
+
   <!-- ===== Faiz ===== -->
   <section class="panel" id="faiz">
     <div class="card">
       <h2>Basit faiz hesabı</h2>
-      <div class="seg" id="fMod"><button data-m="kredi" class="on">Kredi (360)</button><button data-m="mevduat">Vadeli mevduat (365)</button></div>
+      <div class="seg" id="fMod"><button data-m="kredi" class="on">Kredi (yıl 360 gün)</button><button data-m="mevduat">Vadeli mevduat (365/366)</button></div>
+      <div class="leap" id="fLeap"></div>
       <label>Tutar</label><div class="field"><input id="fP" inputmode="decimal" value="100.000"><span>TL</span></div>
       <div class="two">
         <div><label>Yıllık faiz</label><div class="field"><input id="fR" inputmode="decimal" value="45"><span>%</span></div></div>
-        <div><label>Gün</label><div class="field"><input id="fG" inputmode="numeric" value="32"><span>gün</span></div></div>
+        <div><label>Gün</label><div class="field"><input id="fG" inputmode="numeric" value="30"><span>gün</span></div></div>
       </div>
+      <div class="chips" id="fVade"></div>
       <div class="two">
         <div><label>Başlangıç (isteğe bağlı)</label><input type="date" id="fA"></div>
         <div><label>Bitiş (isteğe bağlı)</label><input type="date" id="fB"></div>
       </div>
-      <div id="fTaxBox"><label id="fTaxL">Stopaj</label><div class="field"><input id="fTax" inputmode="decimal" value=""><span>%</span></div></div>
+      <div class="two" id="fKrBox">
+        <div><label>BSMV (faiz üzerinden)</label><div class="field"><input id="fBsmv" inputmode="decimal" placeholder="0"><span>%</span></div></div>
+        <div><label>KKDF (faiz üzerinden)</label><div class="field"><input id="fKkdf" inputmode="decimal" placeholder="0"><span>%</span></div></div>
+      </div>
+      <div id="fStBox" hidden><label id="fTaxL">Stopaj</label><div class="field"><input id="fTax" inputmode="decimal" value=""><span>%</span></div><p class="hint" id="fStNote" style="margin-top:6px"></p></div>
       <div class="res"><div class="big"><small id="fBigL">Faiz</small><span id="fOut">–</span></div><div class="rows" id="fRows" style="margin-top:6px"></div></div>
       <p class="hint" id="fNote"></p>
     </div>
@@ -177,6 +248,12 @@
 
   <!-- ===== Tarih ===== -->
   <section class="panel" id="tarih">
+    <div class="card">
+      <h2>📌 Yaklaşan önemli günler</h2>
+      <div class="ev" id="evBil"></div>
+      <div class="ev" id="evPpk" style="margin-top:10px"></div>
+      <p class="hint">Bilanço dönemleri: 31 Mart · 30 Haziran · 30 Eylül · 31 Aralık. PPK faiz kararı karar günü <b>saat 14:00</b>'te açıklanır (TCMB takvimi).</p>
+    </div>
     <div class="card">
       <h2>İki tarih arası</h2>
       <div class="two"><div><label>Başlangıç</label><input type="date" id="tA"></div><div><label>Bitiş</label><input type="date" id="tB"></div></div>
@@ -190,18 +267,27 @@
     </div>
   </section>
 
-  <!-- ===== Yüzde & KDV ===== -->
+  <!-- ===== KDV & ÖTV + Yüzde ===== -->
   <section class="panel" id="yuzde">
     <div class="card">
-      <h2>Yüzde</h2>
-      <div class="two"><div><label>Sayı (A)</label><div class="field"><input id="yA" inputmode="decimal" value="250"></div></div><div><label>Sayı (B)</label><div class="field"><input id="yB" inputmode="decimal" value="20"></div></div></div>
-      <div class="rows" id="yRows" style="margin-top:12px"></div>
+      <h2>🧾 KDV & ÖTV</h2>
+      <label>Ne hesaplıyorsun?</label>
+      <select id="vCat"></select>
+      <div id="vSub"></div>
+      <div class="rate" id="vRate"></div>
+      <label>Fiyat</label><div class="field"><input id="vP" inputmode="decimal" value="50.000"><span>TL</span></div>
+      <div class="seg" id="vDir" style="margin-top:8px"><button data-d="in" class="on">Vergiler dahil fiyat</button><button data-d="ex">Vergisiz fiyat</button></div>
+      <div id="vManual" hidden>
+        <label>KDV oranı</label><div class="seg" id="kO"><button data-o="0">%0</button><button data-o="1">%1</button><button data-o="10">%10</button><button data-o="20" class="on">%20</button></div>
+        <div id="vOtvBox"><label>ÖTV oranı</label><div class="field"><input id="vO" inputmode="decimal" value="0"><span>%</span></div></div>
+      </div>
+      <div class="res"><div class="big"><small id="vBigL">Vergiler toplamı</small><span id="vOut">–</span></div><div class="vbar" id="vBar"></div><div class="rows" id="vRows" style="margin-top:6px"></div></div>
+      <p class="hint" id="vNote"></p>
     </div>
     <div class="card">
-      <h2>KDV</h2>
-      <label>Tutar</label><div class="field"><input id="kT" inputmode="decimal" value="1.000"><span>TL</span></div>
-      <label>KDV oranı</label><div class="seg" id="kO"><button data-o="1">%1</button><button data-o="10">%10</button><button data-o="20" class="on">%20</button></div>
-      <div class="rows" id="kRows" style="margin-top:12px"></div>
+      <h2>％ Yüzde</h2>
+      <div class="two"><div><label>Sayı (A)</label><div class="field"><input id="yA" inputmode="decimal" value="250"></div></div><div><label>Sayı (B)</label><div class="field"><input id="yB" inputmode="decimal" value="20"></div></div></div>
+      <div class="rows" id="yRows" style="margin-top:12px"></div>
     </div>
   </section>
 
@@ -263,6 +349,7 @@ $("tabs").addEventListener("click", (e) => {
   document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("on", p.id === b.dataset.t));
   try { localStorage.setItem("hesapTab", b.dataset.t); } catch (e) {}
   if (b.dataset.t === "cetvel") drawRuler();
+  if (b.dataset.t !== "mesafe" && typeof camStop === "function" && mStream) camStop();
   window.scrollTo({ top: 0 });
 });
 // Yapışkan üst bölüm yüksekliği (makine onun altında sabit kalır)
@@ -385,30 +472,73 @@ const isLeap = (y) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
 const today = new Date(); today.setHours(12, 0, 0, 0);
 
 // ===== Faiz =====
-let fMod = "kredi";
-$("fMod").addEventListener("click", (e) => { const b = e.target.closest("button[data-m]"); if (!b) return; fMod = b.dataset.m; $("fMod").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); calcF(); });
-["fA", "fB"].forEach((id) => $(id).addEventListener("input", () => { const a = pD($("fA").value), b = pD($("fB").value); if (a && b && b > a) $("fG").value = dd(a, b); calcF(); }));
-["fP", "fR", "fG", "fTax"].forEach((id) => $(id).addEventListener("input", calcF));
+// TL mevduat stopajı (GVK geçici 67; CK 11444 ile 31.12.2026'ya kadar): 6 aya kadar %17,5 · 1 yıla kadar %15 · 1 yıldan uzun %10
+const STOPAJ = [[6, 17.5, "6 aya kadar (vadesiz dahil)"], [12, 15, "1 yıla kadar"], [Infinity, 10, "1 yıldan uzun"]];
+const VADE = { kredi: [["Aylık", 30], ["3 aylık", 90], ["6 aylık", 180], ["Yıllık", 360], ["2 yıl", 720], ["3 yıl", 1080]],
+  mevduat: [["32 gün", 32], ["45 gün", 45], ["60 gün", 60], ["90 gün", 90], ["180 gün", 180], ["1 yıl", "1y"]] };
+let fMod = "kredi", fTaxAuto = true;
+const addM = (d, m) => { const x = new Date(d.getFullYear(), d.getMonth() + m, 1, 12), last = new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate(); x.setDate(Math.min(d.getDate(), last)); return x; };
+function fChips() { $("fVade").innerHTML = VADE[fMod].map(([t, v]) => `<button type="button" data-v="${v}">${t}</button>`).join(""); fMarkChip(); }
+function fMarkChip() { const g = Math.round(num($("fG").value)), a = pD($("fA").value) || today; $("fVade").querySelectorAll("button").forEach((b) => b.classList.toggle("on", (b.dataset.v === "1y" ? dd(a, addM(a, 12)) : +b.dataset.v) === g)); }
+$("fMod").addEventListener("click", (e) => { const b = e.target.closest("button[data-m]"); if (!b) return; fMod = b.dataset.m; $("fMod").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); fTaxAuto = true; $("fG").value = fMod === "kredi" ? 30 : 32; fSyncB(); fChips(); calcF(); });
+$("fVade").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-v]"); if (!b) return; const a = pD($("fA").value) || today;
+  $("fG").value = b.dataset.v === "1y" ? dd(a, addM(a, 12)) : b.dataset.v; fSyncB(); calcF();
+});
+// Başlangıç girildiyse bitişi gün sayısına göre güncelle
+function fSyncB() { const a = pD($("fA").value); if (a) $("fB").value = ymd(addD(a, Math.round(num($("fG").value)))); }
+["fA", "fB"].forEach((id) => $(id).addEventListener("input", () => { const a = pD($("fA").value), b = pD($("fB").value); if (a && b && b > a) $("fG").value = dd(a, b); else if (a && id === "fA") fSyncB(); calcF(); }));
+$("fG").addEventListener("input", () => { fSyncB(); calcF(); });
+$("fTax").addEventListener("input", () => { fTaxAuto = !$("fTax").value.trim(); calcF(); });
+["fP", "fR", "fBsmv", "fKkdf"].forEach((id) => $(id).addEventListener("input", calcF));
+function fStopaj(g) {
+  const a = pD($("fA").value) || today, b = addD(a, g);
+  return STOPAJ.find(([m]) => m === Infinity || b <= addM(a, m));
+}
 function calcF() {
   const P = num($("fP").value), r = num($("fR").value), g = Math.round(num($("fG").value));
   const kr = fMod === "kredi";
-  // Mevduatta paydanın yılı: başlangıç tarihi girildiyse onun yılı, yoksa bugünün yılı
-  const yr = (pD($("fA").value) || today).getFullYear(), base = kr ? 36000 : isLeap(yr) ? 36600 : 36500;
-  $("fTaxL").textContent = kr ? "BSMV (faiz üzerinden, isteğe bağlı)" : "Stopaj (isteğe bağlı)";
+  const a = pD($("fA").value) || today, yr = a.getFullYear(), base = kr ? 36000 : isLeap(yr) ? 36600 : 36500;
+  let nx = yr + 1; while (!isLeap(nx)) nx++;
+  // Vade iki yıla yayılıyorsa (ör. 2027 → 2028) artık yılı da söyle
+  const end = addD(a, g || 0), span = []; for (let y = yr; y <= end.getFullYear(); y++) if (isLeap(y)) span.push(y);
+  $("fLeap").innerHTML = kr
+    ? `📅 <b>${yr}</b> ${isLeap(yr) ? "artık yıl (366 gün)" : "artık yıl değil (365 gün)"}. Kredide fark etmez: yıl her zaman <b>360 gün</b> sayılır, faiz ÷ <b>36.000</b>.`
+    : `📅 <b>${yr}</b> ${isLeap(yr) ? "<b>artık yıl</b> → yıl 366 gün, faiz ÷ <b>36.600</b>" : "artık yıl değil → yıl 365 gün, faiz ÷ <b>36.500</b>"}.${isLeap(yr) ? "" : ` Sonraki artık yıl: <b>${nx}</b> (÷ 36.600).`}${span.length && !isLeap(yr) ? ` <br>⚠️ Vade ${span.join(", ")} yılına sarkıyor.` : ""}`;
+  $("fKrBox").hidden = !kr; $("fStBox").hidden = kr;
+  fMarkChip();
+  let st = null;
+  if (!kr && g) { st = fStopaj(g); if (fTaxAuto) $("fTax").value = String(st[1]).replace(".", ","); $("fTaxL").textContent = `Stopaj — güncel oran %${nf(st[1], 1)} (${st[2]})`; }
+  $("fStNote").innerHTML = `Güncel TL mevduat stopajı: 6 aya kadar <b>%17,5</b> · 1 yıla kadar <b>%15</b> · 1 yıldan uzun <b>%10</b> (31.12.2026'ya kadar geçerli karar). Vadeye göre kendiliğinden gelir, istersen değiştirebilirsin.`;
   if (!P || !r || !g) { $("fOut").textContent = "–"; rows("fRows", []); $("fNote").textContent = ""; return; }
-  const gun = (P * r) / base, faiz = gun * g, tax = faiz * num($("fTax").value) / 100;
+  const gun = (P * r) / base, faiz = gun * g;
   $("fBigL").textContent = `${g} günlük ${kr ? "faiz" : "brüt faiz"}`;
   $("fOut").textContent = tl(faiz) + " TL";
-  rows("fRows", [
-    ["Formül", `${tl(P, 0)} × %${nf(r)} × ${g} ÷ ${base.toLocaleString("tr-TR")}`],
-    ["Günlük faiz", tl(gun) + " TL"],
-    ["Aylık (30 gün)", tl(gun * 30) + " TL"],
-    ...(tax ? [[kr ? "BSMV" : "Stopaj", tl(tax) + " TL"]] : []),
-    [kr ? "Toplam geri ödeme" : "Net faiz", tl(kr ? P + faiz + tax : faiz - tax) + " TL"],
-    ...(!kr ? [["Vade sonu toplam (net)", tl(P + faiz - tax) + " TL"]] : []),
-  ]);
-  $("fNote").textContent = kr ? "Kredide günlük faiz: tutar × yıllık oran ÷ 36.000 (yıl 360 gün sayılır)." : `Mevduatta günlük faiz: tutar × yıllık oran ÷ ${base === 36600 ? "36.600 (artık yıl, 366 gün)" : "36.500 (365 gün)"}.`;
+  if (kr) {
+    const bs = faiz * num($("fBsmv").value) / 100, kk = faiz * num($("fKkdf").value) / 100;
+    rows("fRows", [
+      ["Formül", `${tl(P, 0)} × %${nf(r)} × ${g} ÷ 36.000`],
+      ["Günlük faiz", tl(gun) + " TL"],
+      ["BSMV" + (bs ? ` (%${nf(num($("fBsmv").value))})` : ""), tl(bs) + " TL"],
+      ["KKDF" + (kk ? ` (%${nf(num($("fKkdf").value))})` : ""), tl(kk) + " TL"],
+      ["Faiz + vergiler", tl(faiz + bs + kk) + " TL"],
+      ["Toplam geri ödeme", tl(P + faiz + bs + kk) + " TL"],
+    ]);
+    $("fNote").textContent = "BSMV ve KKDF boşsa 0 sayılır; kredi türüne göre kendin gir (ör. BSMV %5, KKDF %15).";
+  } else {
+    const tax = faiz * num($("fTax").value) / 100;
+    rows("fRows", [
+      ["Formül", `${tl(P, 0)} × %${nf(r)} × ${g} ÷ ${base.toLocaleString("tr-TR")}`],
+      ["Günlük brüt faiz", tl(gun) + " TL"],
+      [`Stopaj (%${nf(num($("fTax").value), 1)})`, tl(tax) + " TL"],
+      ["Net faiz", tl(faiz - tax) + " TL"],
+      ["Vade sonu toplam (net)", tl(P + faiz - tax) + " TL"],
+      ["Net yıllık getiri", "%" + nf(r * (1 - num($("fTax").value) / 100), 2)],
+    ]);
+    $("fNote").textContent = "";
+  }
 }
+fChips();
 
 // ===== İki tarih arası =====
 function wdCount(a, b) { let w = 0, h = 0, hf = 0, we = 0; for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) { if (isWE(d)) we++; else if (isHol(d)) h++; else { w++; if (isHalf(d)) hf++; } } return { w, h, hf, we }; }
@@ -448,7 +578,109 @@ function calcA() {
 $("tA").value = ymd(today); $("tB").value = ymd(new Date(today.getFullYear(), 11, 31, 12)); $("aD").value = ymd(today);
 calcT(); calcA(); calcF();
 
-// ===== Yüzde & KDV =====
+// ===== Yaklaşan önemli günler: bilanço dönemleri ve TCMB PPK faiz kararları =====
+// PPK tarihleri TCMB'nin yayımladığı takvimden (2027'nin ikinci yarısı henüz açıklanmadı)
+const PPK = ["2026-01-22", "2026-03-12", "2026-04-22", "2026-06-11", "2026-07-23", "2026-09-10", "2026-10-22", "2026-12-10", "2027-01-21", "2027-03-18", "2027-04-22", "2027-06-10"];
+function isGunSay(a, b) { let n = 0; for (let d = addD(a, 1); d <= b; d = addD(d, 1)) if (!isWE(d) && !isHol(d)) n++; return n; }
+const kalan = (g) => (g === 0 ? "Bugün" : g === 1 ? "Yarın" : `${g}`);
+function evRow(d, title, g, extra, next) {
+  return `<div class="evr${next ? " next" : ""}"><span>${title}</span><b>${kalan(g)}${g > 1 ? "<em>gün kaldı</em>" : ""}</b><small>${d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" })}${extra ? " · " + extra : ""}</small></div>`;
+}
+function calcEv() {
+  // Bilanço: içinde bulunulan çeyreğin sonu + sonraki 3 dönem
+  const qEnds = []; for (let y = today.getFullYear(); y <= today.getFullYear() + 1; y++) [[2, 31], [5, 30], [8, 30], [11, 31]].forEach(([m, d], i) => qEnds.push({ d: new Date(y, m, d, 12), q: i + 1, y }));
+  const up = qEnds.filter((x) => dd(today, x.d) >= 0).slice(0, 4);
+  const cur = up[0], qStart = addD(new Date(cur.d.getFullYear(), cur.d.getMonth() - 2, 0, 12), 0), tot = dd(qStart, cur.d), done = dd(qStart, today);
+  $("evBil").innerHTML = `<h3>📊 Bilanço dönemleri</h3>` + up.map((x, i) => {
+    const g = dd(today, x.d);
+    return evRow(x.d, `${x.y} / ${x.q}. çeyrek sonu${x.q === 4 ? " (yıl sonu)" : ""}`, g, i === 0 ? `${isGunSay(today, x.d)} iş günü` : "", i === 0) + (i === 0 ? `<div class="bar" title="Dönemin %${Math.round(done / tot * 100)}'i geçti"><i style="width:${Math.min(100, done / tot * 100)}%"></i></div>` : "");
+  }).join("");
+  const pp = PPK.map(pD).filter((d) => dd(today, d) >= 0).slice(0, 4);
+  $("evPpk").innerHTML = `<h3>🏦 TCMB faiz kararı (PPK)</h3>` + (pp.length ? pp.map((d, i) => evRow(d, `${d.toLocaleDateString("tr-TR", { month: "long" })} PPK kararı`, dd(today, d), i === 0 ? "14:00" : "", i === 0)).join("") : '<p class="hint">Yeni takvim henüz açıklanmadı.</p>');
+}
+calcEv();
+
+// ===== KDV & ÖTV =====
+// Oranlar Ekim 2026 itibarıyla. ÖTV dilimleri "vergisiz fiyat" (ÖTV matrahı) üzerinden: [üst sınır TL, oran %]
+// Cep telefonu: CK 24.10.2025 (4.500 / 9.000 TL), asgari ÖTV 456 TL (2026). Otomobil: CK 10115 (24.07.2025).
+const CARS = {
+  "c1400": { ad: "1.400 cm³'e kadar", d: [[650000, 70], [900000, 75], [1100000, 80], [Infinity, 90]] },
+  "c1600": { ad: "1.401–1.600 cm³", d: [[850000, 75], [1100000, 80], [1650000, 90], [Infinity, 100]] },
+  "c2000": { ad: "1.601–2.000 cm³", d: [[1650000, 150], [Infinity, 170]] },
+  "c2001": { ad: "2.000 cm³ üstü", d: [[Infinity, 220]] },
+};
+const EVS = { "e160": { ad: "160 kW'a kadar", d: [[1650000, 25], [Infinity, 55]] }, "e161": { ad: "160 kW üstü", d: [[1650000, 65], [Infinity, 75]] } };
+const VCAT = [
+  ["Genel", [["kdv", "Yalnız KDV (oranı sen seç)"], ["elle", "KDV + ÖTV (oranları sen gir)"]]],
+  ["Beyaz eşya & ev", [["beyaz", "Buzdolabı · çamaşır · bulaşık makinesi", 6.7, 20], ["firin", "Fırın · ocak · mikrodalga", 6.7, 20], ["klima", "Klima", 6.7, 20], ["supurge", "Elektrikli süpürge · küçük ev aleti", 6.7, 20], ["tv", "Televizyon · monitör", 6.7, 20]]],
+  ["Elektronik", [["tel", "Cep telefonu (dilimli ÖTV)", "tel", 20], ["konsol", "Oyun konsolu", 20, 20], ["kamera", "Fotoğraf makinesi · kamera", 20, 20], ["pc", "Bilgisayar · tablet", 0, 20]]],
+  ["Kişisel", [["parfum", "Parfüm · kozmetik · makyaj", 20, 20], ["giyim", "Giyim · ayakkabı", 0, 10], ["gida", "Temel gıda (ekmek, süt, sebze…)", 0, 1], ["restoran", "Lokanta · kafe", 0, 10]]],
+  ["Otomobil (sıfır)", [["oto", "Benzinli / dizel / hibrit (motor hacmine göre)", "oto", 20], ["ev", "Elektrikli otomobil (motor gücüne göre)", "ev", 20]]],
+];
+const VC = {}; VCAT.forEach(([, l]) => l.forEach((x) => (VC[x[0]] = x)));
+$("vCat").innerHTML = VCAT.map(([g, l]) => `<optgroup label="${g}">${l.map(([id, ad]) => `<option value="${id}">${ad}</option>`).join("")}</optgroup>`).join("");
+let vDir = "in", kO = 20, vSub = "c1600";
+try { const c = localStorage.getItem("vergiCat"); if (c && VC[c]) $("vCat").value = c; } catch (e) {}
+function vSubUI() {
+  const c = $("vCat").value, list = c === "oto" ? CARS : c === "ev" ? EVS : null;
+  if (!list) { $("vSub").innerHTML = ""; return; }
+  if (!list[vSub]) vSub = Object.keys(list)[c === "oto" ? 1 : 0];
+  $("vSub").innerHTML = `<label>${c === "oto" ? "Motor hacmi" : "Motor gücü"}</label><div class="chips">${Object.entries(list).map(([k, v]) => `<button type="button" data-s="${k}" class="${k === vSub ? "on" : ""}">${v.ad}</button>`).join("")}</div>`;
+}
+$("vSub").addEventListener("click", (e) => { const b = e.target.closest("button[data-s]"); if (!b) return; vSub = b.dataset.s; vSubUI(); calcV(); });
+$("vCat").addEventListener("change", () => { try { localStorage.setItem("vergiCat", $("vCat").value); } catch (e) {} const c = $("vCat").value; if (c === "oto" || c === "ev") $("vP").value = "2.000.000"; else if (c === "tel") $("vP").value = "45.000"; vSubUI(); calcV(); });
+$("vDir").addEventListener("click", (e) => { const b = e.target.closest("button[data-d]"); if (!b) return; vDir = b.dataset.d; $("vDir").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); calcV(); });
+$("kO").addEventListener("click", (e) => { const b = e.target.closest("button[data-o]"); if (!b) return; kO = +b.dataset.o; $("kO").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); calcV(); });
+["vP", "vO"].forEach((id) => $(id).addEventListener("input", calcV));
+// Vergisiz fiyattan ÖTV (dilim + asgari tutar)
+function otvOf(m, spec) {
+  if (typeof spec === "number") return { o: spec, t: m * spec / 100 };
+  const d = spec.d.find(([lim]) => m <= lim), t = Math.max(m * d[1] / 100, spec.min || 0);
+  return { o: d[1], t, min: spec.min && m * d[1] / 100 < spec.min };
+}
+// Vergiler dahil fiyattan geriye: her dilimi dene, tutarlı olanı al
+function fromGross(G, spec, k) {
+  if (typeof spec === "number") { const m = G / (1 + k / 100) / (1 + spec / 100); return m; }
+  let lo = 0, prev = 0;
+  for (const [lim, o] of spec.d) {
+    let m = G / (1 + k / 100) / (1 + o / 100);
+    if (spec.min && m * o / 100 < spec.min) m = G / (1 + k / 100) - spec.min;
+    if (m > lo && m <= lim) return m;
+    if (m <= lo) return lo; // dilim sınırındaki boşluk: fiyat bir alt dilimin üst sınırına denk gelir
+    lo = lim; prev = o;
+  }
+  return G / (1 + k / 100) / (1 + prev / 100);
+}
+function calcV() {
+  const c = $("vCat").value, x = VC[c], P = num($("vP").value);
+  const manual = c === "kdv" || c === "elle";
+  $("vManual").hidden = !manual; $("vOtvBox").hidden = c !== "elle";
+  let spec, k;
+  if (manual) { k = kO; spec = c === "elle" ? num($("vO").value) : 0; }
+  else { k = x[3]; spec = x[2] === "tel" ? { d: [[4500, 25], [9000, 40], [Infinity, 50]], min: 456 } : x[2] === "oto" ? CARS[vSub] : x[2] === "ev" ? EVS[vSub] : x[2]; }
+  const rateTxt = typeof spec === "number" ? `ÖTV <b>%${nf(spec, 1)}</b>` : `ÖTV <b>${spec.d.map(([l, o]) => `%${o}${isFinite(l) ? ` (≤${tl(l, 0)})` : ""}`).join(" · ")}</b>`;
+  $("vRate").innerHTML = manual ? "" : `<span>${rateTxt}</span><span>KDV <b>%${k}</b></span>`;
+  if (!P) { $("vOut").textContent = "–"; rows("vRows", []); $("vBar").innerHTML = ""; return; }
+  const m = vDir === "in" ? fromGross(P, spec, k) : P;
+  const ot = otvOf(m, spec), kdvM = m + ot.t, kdv = kdvM * k / 100, G = kdvM + kdv, top = ot.t + kdv;
+  $("vBigL").textContent = vDir === "in" ? `${tl(P, 0)} TL'nin içindeki vergiler` : "Vergiler dahil fiyat";
+  $("vOut").textContent = tl(vDir === "in" ? top : G) + " TL";
+  $("vBar").innerHTML = `<i class="va" style="width:${m / G * 100}%"></i><i class="vo" style="width:${ot.t / G * 100}%"></i><i class="vk" style="width:${kdv / G * 100}%"></i>`;
+  rows("vRows", [
+    ["Vergisiz fiyat", tl(m) + " TL"],
+    ...(ot.t || spec ? [[`ÖTV (%${nf(ot.o, 1)}${ot.min ? ", asgari 456 TL" : ""})`, tl(ot.t) + " TL"]] : []),
+    ...(ot.t ? [["KDV matrahı (fiyat + ÖTV)", tl(kdvM) + " TL"]] : []),
+    [`KDV (%${k})`, tl(kdv) + " TL"],
+    ["Vergiler toplamı", tl(top) + " TL"],
+    ["Vergiler dahil fiyat", tl(G) + " TL"],
+    ["Fiyatın vergi payı", "%" + nf(top / G * 100, 1)],
+  ]);
+  $("vNote").innerHTML = `<span class="vleg"><span><i style="background:#6f6a62"></i>Ürün</span><span><i style="background:#ef6a4c"></i>ÖTV</span><span><i style="background:#e0a24f"></i>KDV</span></span>` +
+    (manual ? "" : `KDV, ÖTV eklenmiş fiyat üzerinden alınır. ${typeof spec === "number" ? "" : "ÖTV dilimi vergisiz fiyata (matraha) göre belirlenir. "}Oranlar Ekim 2026 itibarıyla güncel; Cumhurbaşkanı kararıyla değişebilir.${c === "oto" || c === "ev" ? " Engelli, ticari ve özel indirimler dahil değildir." : ""}`);
+}
+vSubUI(); calcV();
+
+// ===== Yüzde =====
 function calcY() {
   const A = num($("yA").value), B = num($("yB").value);
   rows("yRows", [
@@ -459,20 +691,8 @@ function calcY() {
     [`${nf(A)} → ${nf(B)} değişim`, A ? (B >= A ? "+" : "") + "%" + nf((B - A) / A * 100, 4) : "–"],
   ]);
 }
-let kO = 20;
-$("kO").addEventListener("click", (e) => { const b = e.target.closest("button[data-o]"); if (!b) return; kO = +b.dataset.o; $("kO").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); calcK(); });
-function calcK() {
-  const T = num($("kT").value), o = kO / 100;
-  rows("kRows", [
-    [`KDV hariç → dahil (%${kO})`, ""],
-    ["KDV tutarı", tl(T * o) + " TL"], ["KDV dahil", tl(T * (1 + o)) + " TL"],
-    [`KDV dahil → hariç (%${kO})`, ""],
-    ["KDV hariç", tl(T / (1 + o)) + " TL"], ["İçindeki KDV", tl(T - T / (1 + o)) + " TL"],
-  ]);
-  $("kRows").querySelectorAll("div").forEach((d, i) => { if (i === 0 || i === 3) d.style.cssText = "color:var(--accent);font-size:12.5px;font-weight:700;border-top:" + (i ? "1px solid var(--line)" : "none"); });
-}
-["yA", "yB"].forEach((id) => $(id).addEventListener("input", calcY)); $("kT").addEventListener("input", calcK);
-calcY(); calcK();
+["yA", "yB"].forEach((id) => $(id).addEventListener("input", calcY));
+calcY();
 
 // ===== Cetvel =====
 // Varsayılan: dokunmatik cihazlarda ~6,3 CSS px/mm, bilgisayarda 96 dpi (3,78 px/mm). Banka kartıyla ayarlanır.
@@ -503,6 +723,61 @@ $("rwrap").addEventListener("pointermove", (e) => { if (e.buttons) { const r = $
 $("cal").addEventListener("input", () => { ppm = +$("cal").value; try { localStorage.setItem("cetvelPPM", ppm); } catch (e) {} drawRuler(); });
 $("calReset").onclick = () => { ppm = DEF; try { localStorage.removeItem("cetvelPPM"); } catch (e) {} drawRuler(); };
 window.addEventListener("resize", () => { if ($("cetvel").classList.contains("on")) drawRuler(); });
+
+// ===== Mesafe ölçer: kamera + eğim sensörü (trigonometri) =====
+let mStream = null, mBeta = null, mLockD = null, mTopOn = false;
+try { const e = localStorage.getItem("mesafeGoz"); if (e) $("mEye").value = e; } catch (e) {}
+const mEye = () => Math.max(20, num($("mEye").value)) / 100;
+const mFmt = (m) => (!isFinite(m) || m < 0 ? "–" : m < 10 ? nf(m, 2) + " m" : nf(m, 1) + " m");
+$("mBoy").addEventListener("input", () => { const b = num($("mBoy").value); if (b > 100) { $("mEye").value = Math.round(b - 12); mSave(); } });
+$("mEye").addEventListener("input", mSave);
+function mSave() { try { localStorage.setItem("mesafeGoz", $("mEye").value); } catch (e) {} mRender(); }
+function onOri(e) {
+  if (e.beta == null) return;
+  // Dik tutulan telefonda beta ≈ 90° (kamera ufka bakar), yere doğru eğdikçe azalır.
+  const ang = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+  if (Math.abs(ang) === 90) { $("lvl").textContent = "Telefonu dik (portre) tut"; $("mD").textContent = "–"; return; }
+  const b = e.beta;
+  mBeta = mBeta == null ? b : mBeta * 0.8 + b * 0.2; // titremeyi yumuşat
+  mRender();
+}
+function mRender() {
+  if (mBeta == null) return;
+  const h = mEye(), b = mBeta;
+  const down = 90 - b; // ufkun kaç derece altına bakıyor
+  $("lvl").textContent = down > 0 ? `${nf(down, 1)}° aşağı` : `${nf(-down, 1)}° yukarı`;
+  if (mLockD == null) {
+    $("mD").textContent = b > 0 && b < 89 ? mFmt(h * Math.tan(b * Math.PI / 180)) : b >= 89 ? "∞" : "–";
+    $("mH").textContent = "–";
+  } else {
+    $("mD").textContent = mFmt(mLockD) + " 🔒";
+    const up = b - 90; // ufkun kaç derece üstüne bakıyor (eksi ise altına)
+    $("mH").textContent = mTopOn ? mFmt(h + mLockD * Math.tan(up * Math.PI / 180)) : "–";
+  }
+}
+async function camStart() {
+  try {
+    if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+      const r = await DeviceOrientationEvent.requestPermission(); if (r !== "granted") throw new Error("sensör izni verilmedi");
+    }
+    window.addEventListener("deviceorientation", onOri);
+    mStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
+    $("vid").srcObject = mStream; await $("vid").play().catch(() => {});
+    $("camPh").hidden = true; ["cross", "hud", "camStep", "lvl"].forEach((id) => ($(id).hidden = false));
+    setTimeout(() => { if (mBeta == null) { $("lvl").hidden = false; $("lvl").textContent = "Eğim sensörü bulunamadı (telefonda aç)"; } }, 1500);
+  } catch (err) {
+    $("camPh").hidden = false;
+    $("camPh").querySelector("div:nth-child(2)").innerHTML = `<b style="color:var(--red)">Kamera açılamadı.</b><br>${err && err.name === "NotAllowedError" ? "Tarayıcıda kamera iznine \"İzin ver\" demelisin." : "Bu cihazda kamera ya da eğim sensörü yok."}`;
+  }
+}
+function camStop() { if (mStream) mStream.getTracks().forEach((t) => t.stop()); mStream = null; window.removeEventListener("deviceorientation", onOri); mBeta = null; $("camPh").hidden = false; ["cross", "hud", "camStep", "lvl"].forEach((id) => ($(id).hidden = true)); }
+$("camGo").onclick = camStart; $("camStop").onclick = camStop;
+$("mLock").onclick = () => {
+  if (mLockD == null) { if (mBeta == null || mBeta >= 89) return; mLockD = mEye() * Math.tan(mBeta * Math.PI / 180); $("mLock").innerHTML = "🔓 Kilidi aç (yeniden ölç)"; $("mLock").classList.add("on"); mTopOn = true; $("mTop").classList.add("on"); }
+  else { mLockD = null; mTopOn = false; $("mLock").innerHTML = "① Dibine nişan al · <u>Kilitle</u>"; $("mLock").classList.remove("on"); $("mTop").classList.remove("on"); }
+  tik(false); mRender();
+};
+$("mTop").onclick = () => { if (mLockD == null) { $("lvl").textContent = "Önce dibine nişan alıp kilitle"; return; } mTopOn = true; mRender(); };
 
 // ===== Sayı Bulmaca =====
 const BM = { n: 4, mine: "", ai: "", cand: [], me: [], aiL: [], over: false, tur: 1 };
