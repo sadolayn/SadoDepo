@@ -194,6 +194,31 @@
   .addrow { display: flex; gap: 8px; margin: 10px 0 14px; }
   .addrow input { flex: 1; min-width: 0; padding: 10px; font-size: 15px; background: var(--field); color: var(--ink); border: 1px dashed var(--line); border-radius: 10px; }
   .sheet .foot { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; position: sticky; bottom: -20px; background: var(--card); padding: 10px 0 0; }
+  /* ===== Performans fişi ===== */
+  .posTop { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .posSlot { position: relative; margin-top: 12px; padding-top: 10px; }
+  .posSlot::before { content: ""; position: absolute; left: -4px; right: -4px; top: 0; height: 12px; border-radius: 6px; background: linear-gradient(#2a2a2a, #111); box-shadow: inset 0 -3px 4px rgba(0,0,0,.8); z-index: 2; }
+  .posPaper { position: relative; background: #fbf7ec; color: #262626; font-family: "Courier New", ui-monospace, monospace; padding: 18px 16px 20px; margin: -4px 8px 0; box-shadow: 0 10px 24px rgba(0,0,0,.5);
+    -webkit-mask: radial-gradient(circle 5px at 50% 100%, transparent 98%, #000) bottom/14px 51% repeat-x, linear-gradient(#000, #000) top/100% 51% no-repeat; mask: radial-gradient(circle 5px at 50% 100%, transparent 98%, #000) bottom/14px 51% repeat-x, linear-gradient(#000, #000) top/100% 51% no-repeat;
+    animation: posPrint 1.1s cubic-bezier(.2,.8,.2,1) both; transform-origin: top; }
+  @keyframes posPrint { from { clip-path: inset(0 0 100% 0); transform: translateY(-12px); } to { clip-path: inset(0 0 0 0); transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .posPaper { animation: none; } }
+  .pz-c { text-align: center; } .pz-logo { font-family: Georgia, serif; font-style: italic; font-weight: 700; font-size: 26px; letter-spacing: 2px; color: #a8741c; }
+  .pz-s { font-size: 12px; color: #555; line-height: 1.5; } .pz-hr { border: none; border-top: 1px dashed #bdb5a0; margin: 10px 0; }
+  .pz-h { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8a8270; margin-bottom: 4px; }
+  .pz-row { display: flex; justify-content: space-between; font-size: 14px; line-height: 1.6; } .pz-row b { font-weight: 700; }
+  .pz-p { margin: 8px 0 10px; } .pz-p .t { display: flex; justify-content: space-between; font-size: 14px; } .pz-p .t b { font-weight: 700; }
+  .pz-bar { position: relative; height: 12px; border-radius: 6px; background: #ebe4d0; overflow: hidden; margin-top: 4px; }
+  .pz-bar i { position: absolute; inset: 0 auto 0 0; border-radius: 6px; background: var(--c); animation: pzGrow 1.2s .5s cubic-bezier(.2,.8,.2,1) both; }
+  .pz-bar u { position: absolute; top: -2px; bottom: -2px; width: 2px; background: #555; opacity: .55; }
+  @keyframes pzGrow { from { width: 0 !important; } }
+  .pz-p small { display: block; font-size: 11.5px; color: #777; margin-top: 3px; } .pz-p small.ok { color: #16824f; font-weight: 700; }
+  .pz-tot { display: flex; align-items: center; gap: 14px; } .pz-tot svg { flex: none; }
+  .pz-tot div b { display: block; font-size: 13px; letter-spacing: 1px; color: #555; } .pz-tot div em { display: block; font-style: normal; font-size: 30px; font-weight: 700; color: #262626; } .pz-tot div span { font-size: 16px; letter-spacing: 2px; }
+  .pz-q { margin-top: 10px; padding: 10px; border: 1.5px dashed #c9a050; border-radius: 6px; background: #fff7e0; font-family: Georgia, serif; font-style: italic; font-size: 15px; line-height: 1.45; color: #6b4a12; text-align: center; }
+  .pz-stamp { position: absolute; top: 70px; right: 10px; transform: rotate(-14deg); border: 3px double #16824f; color: #16824f; border-radius: 8px; padding: 4px 8px; font: 800 14px system-ui, sans-serif; letter-spacing: 1px; opacity: .85; animation: pzStamp .5s 1.6s both; }
+  @keyframes pzStamp { from { transform: rotate(-14deg) scale(2.2); opacity: 0; } }
+  .pz-bc { height: 34px; margin: 12px auto 4px; width: 75%; background: repeating-linear-gradient(90deg, #262626 0 2px, transparent 2px 4px, #262626 4px 5px, transparent 5px 8px, #262626 8px 11px, transparent 11px 12px); }
 </style>
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
@@ -236,6 +261,13 @@
 
   <!-- 4. Olasılık raporu -->
   <div class="card prob" id="prob"></div>
+
+  <!-- 5. Performans fişi (POS rulosu) -->
+  <div class="card posc" id="posCard">
+    <div class="posTop"><h3 style="margin:0">🧾 Performans fişim</h3><span class="note" style="margin:0">Satış yaptıkça fişin uzar ✨</span></div>
+    <div class="posSlot"><div class="posPaper" id="posPaper"></div></div>
+    <div class="btns" style="margin-top:12px"><button class="btn pri" id="posPng">🧾 Fişi indir / paylaş</button><button class="btn" id="posPdf">📄 PDF indir</button></div>
+  </div>
 
   <div class="card">
     <h3>💾 Yedek ve Excel</h3>
@@ -414,7 +446,7 @@ const pick = (arr) => arr[[...TK].reduce((a, c) => a + c.charCodeAt(0), 0) % arr
 function render() {
   $("mTitle").textContent = qName();
   $("mSub").textContent = qRange();
-  renderHero(); renderCoach(); renderChips(); renderDays(); renderProds(); renderHeat(); renderProb();
+  renderHero(); renderCoach(); renderChips(); renderDays(); renderProds(); renderHeat(); renderProb(); renderPos();
 }
 function renderHero() {
   const O = overall(), T = timeInfo(), ph = phase();
@@ -716,6 +748,99 @@ function exportCsv() {
   download(`gunce-${qy}-Q${qn + 1}.csv`, csv, "text/csv;charset=utf-8");
   toast("Excel dosyası indirildi");
 }
+// ================= Performans fişi (POS rulosu) =================
+const POS_SOZ = {
+  tam: ["Hedef tamam! Bu fiş çerçevelik. 🏆", "Sen hedefi tutturmadın, çıtayı yükselttin. Tebrikler! 🥇", "Bu çeyreğin yıldızı belli oldu: sensin ⭐"],
+  yakin: ["Bitiş çizgisi göründü; son düzlükte hız kesme! 🏁", "Az kaldı! Bir iki güzel satış, fişin altına mühür basılır. ✅", "Bu tempoyla hedef cebinde. Devam! 💪"],
+  orta: ["Yarıyı geçtin; her müşteri seni hedefe bir adım daha yaklaştırıyor. 🚀", "İyi gidiyorsun. Bugünün bir satışı yarının rahatlığıdır. 🌱", "Fişin uzadıkça hikâyen güzelleşiyor. 📈"],
+  bas: ["Her büyük çeyrek tek bir satışla başlar. İlk satış seni bekliyor! ☀️", "Bugün atacağın küçük adım, çeyrek sonunun büyük farkı olur. 🌟", "Gülümse, sor, dinle; gerisi gelir. Sen yaparsın! 😊"],
+  yok: ["Hedeflerini gir, fişin dolmaya başlasın. 🎯"],
+};
+function posData() {
+  const O = overall(), now = new Date();
+  const items = O.L.map(({ p, s }) => ({ ic: p.icon || "📌", ad: p.name, done: s.done, tgt: s.tgt, pct: s.pct, plan: s.tgt ? Math.min(100, (s.planNow / s.tgt) * 100) : 0, today: s.todayDone, kalan: Math.max(0, s.tgt - s.done) }));
+  const todayL = D.products.map((p) => ({ ic: p.icon || "📌", ad: p.name, n: dayTotal(TK, p.id) })).filter((x) => x.n);
+  const tier = !items.length ? "yok" : O.pct >= 100 ? "tam" : O.pct >= 75 ? "yakin" : O.pct >= 45 ? "orta" : "bas";
+  const tam = items.filter((x) => x.done >= x.tgt).length;
+  return { items, todayL, pct: O.pct, tier, tam, soz: pick(POS_SOZ[tier]), when: `${now.toLocaleDateString("tr-TR")} ${pad(now.getHours())}:${pad(now.getMinutes())}`, fis: `${qy}${qn + 1}-${String(Object.keys(D.days).length).padStart(4, "0")}` };
+}
+const posCol = (pct) => (pct >= 100 ? "#16a065" : pct >= 75 ? "#e0a020" : pct >= 45 ? "#3f7fd6" : "#e0603c");
+const stars = (pct) => "★★★★★".slice(0, Math.round(Math.min(100, pct) / 20)) + "☆☆☆☆☆".slice(0, 5 - Math.round(Math.min(100, pct) / 20));
+function renderPos() {
+  const P = posData(), el = $("posPaper"); if (!el) return;
+  const ring = (pct) => { const r = 30, c = 2 * Math.PI * r, v = Math.min(100, pct) / 100; return `<svg width="76" height="76" viewBox="0 0 76 76" aria-label="Genel başarı"><circle cx="38" cy="38" r="${r}" fill="none" stroke="#ebe4d0" stroke-width="9"/><circle cx="38" cy="38" r="${r}" fill="none" stroke="${posCol(pct)}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c * v} ${c}" transform="rotate(-90 38 38)"/><text x="38" y="43" text-anchor="middle" font-size="15" font-weight="700" fill="#262626" font-family="Courier New, monospace">%${Math.round(pct)}</text></svg>`; };
+  el.innerHTML = `
+    <div class="pz-c"><div class="pz-logo">SADOLAYN</div><div class="pz-s">GÜNCE · PERFORMANS FİŞİ<br>${esc(qName())} · ${esc(qRange())}<br>${P.when} · Fiş no ${P.fis}</div></div>
+    ${P.tier === "tam" ? '<div class="pz-stamp">HEDEF TAMAM ✓</div>' : ""}
+    <hr class="pz-hr">
+    <div class="pz-h">BUGÜNÜN SATIŞLARI</div>
+    ${P.todayL.length ? P.todayL.map((x) => `<div class="pz-row"><span>${x.ic} ${esc(x.ad)}</span><b>x${x.n}</b></div>`).join("") : '<div class="pz-row" style="color:#999"><span>Bugün henüz kayıt yok</span><span>—</span></div>'}
+    <hr class="pz-hr">
+    <div class="pz-h">ÇEYREK HEDEFLERİ</div>
+    ${P.items.length ? P.items.map((x) => `<div class="pz-p" style="--c:${posCol(x.pct)}"><div class="t"><span>${x.ic} ${esc(x.ad)}</span><b>${x.done} / ${x.tgt}</b></div><div class="pz-bar"><i style="width:${Math.min(100, x.pct)}%"></i>${x.plan > 0 && x.plan < 100 ? `<u style="left:${x.plan}%" title="Plan"></u>` : ""}</div>${x.done >= x.tgt ? `<small class="ok">✅ Hedef tamam${x.done > x.tgt ? ` · +${x.done - x.tgt} fazla` : ""}</small>` : `<small>%${Math.round(x.pct)} · kalan ${x.kalan}</small>`}</div>`).join("") : '<div class="pz-row" style="color:#999"><span>Hedef girilmedi</span><span>—</span></div>'}
+    <hr class="pz-hr">
+    <div class="pz-tot">${ring(P.pct)}<div><b>GENEL BAŞARI</b><em>%${Math.round(P.pct)}</em><span style="color:#c9a050">${stars(P.pct)}</span><div class="pz-s">${P.tam}/${P.items.length} hedef tamamlandı</div></div></div>
+    <div class="pz-q">“${esc(P.soz)}”</div>
+    <div class="pz-bc"></div>
+    <div class="pz-c pz-s">Bilgi paylaştıkça büyür · sadolayn.github.io/SadoDepo</div>`;
+  el.style.animation = "none"; void el.offsetWidth; el.style.animation = "";
+}
+if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h) { this.rect(x, y, w, h); };
+// Fişi görsele çiz (indirme ve PDF için)
+function posCanvas() {
+  const P = posData(), W = 640, M = 40, rowH = 30, n = P.todayL.length || 1, k = P.items.length || 1;
+  const H = 210 + n * rowH + 60 + k * 74 + 60 + 130 + 120 + 120;
+  const c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d");
+  g.fillStyle = "#fbf7ec"; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#fff"; for (let x = 7; x < W; x += 14) { g.beginPath(); g.arc(x, H, 6, 0, 7); g.fill(); }
+  const T = (t, x, y, f, col, al) => { g.font = f; g.fillStyle = col || "#262626"; g.textAlign = al || "left"; g.fillText(t, x, y); };
+  const hr = (y) => { g.strokeStyle = "#bdb5a0"; g.setLineDash([6, 5]); g.beginPath(); g.moveTo(M, y); g.lineTo(W - M, y); g.stroke(); g.setLineDash([]); };
+  const mono = (sz, b) => `${b ? "bold " : ""}${sz}px 'Courier New', monospace`;
+  T("SADOLAYN", W / 2, 66, "italic bold 44px Georgia, serif", "#a8741c", "center");
+  T("GÜNCE · PERFORMANS FİŞİ", W / 2, 100, mono(18), "#555", "center");
+  T(`${qName()} · ${qRange()}`, W / 2, 126, mono(18), "#555", "center");
+  T(`${P.when} · Fiş no ${P.fis}`, W / 2, 152, mono(16), "#777", "center");
+  let y = 176; hr(y); y += 32; T("BUGÜNÜN SATIŞLARI", M, y, mono(15, 1), "#8a8270"); y += 30;
+  if (P.todayL.length) P.todayL.forEach((x) => { T(`${x.ic} ${x.ad}`, M, y, mono(20)); T("x" + x.n, W - M, y, mono(20, 1), "#262626", "right"); y += rowH; });
+  else { T("Bugün henüz kayıt yok", M, y, mono(20), "#999"); y += rowH; }
+  y += 6; hr(y); y += 32; T("ÇEYREK HEDEFLERİ", M, y, mono(15, 1), "#8a8270"); y += 30;
+  if (P.items.length) P.items.forEach((x) => {
+    T(`${x.ic} ${x.ad}`, M, y, mono(20)); T(`${x.done} / ${x.tgt}`, W - M, y, mono(20, 1), "#262626", "right"); y += 14;
+    const bw = W - M * 2; g.fillStyle = "#ebe4d0"; g.beginPath(); g.roundRect(M, y, bw, 16, 8); g.fill();
+    g.fillStyle = posCol(x.pct); g.beginPath(); g.roundRect(M, y, Math.max(16, bw * Math.min(100, x.pct) / 100), 16, 8); g.fill();
+    if (x.plan > 0 && x.plan < 100) { g.fillStyle = "rgba(60,60,60,.55)"; g.fillRect(M + bw * x.plan / 100 - 1, y - 3, 2, 22); }
+    y += 38; T(x.done >= x.tgt ? `✓ Hedef tamam${x.done > x.tgt ? ` · +${x.done - x.tgt} fazla` : ""}` : `%${Math.round(x.pct)} · kalan ${x.kalan}`, M, y - 6, mono(15, x.done >= x.tgt), x.done >= x.tgt ? "#16824f" : "#777"); y += 22;
+  }); else { T("Hedef girilmedi", M, y, mono(20), "#999"); y += 40; }
+  hr(y); y += 20;
+  const cx = M + 52, cy = y + 52; g.lineWidth = 14; g.strokeStyle = "#ebe4d0"; g.beginPath(); g.arc(cx, cy, 44, 0, 7); g.stroke();
+  g.strokeStyle = posCol(P.pct); g.lineCap = "round"; g.beginPath(); g.arc(cx, cy, 44, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(100, P.pct) / 100); g.stroke(); g.lineCap = "butt";
+  T("%" + Math.round(P.pct), cx, cy + 8, mono(22, 1), "#262626", "center");
+  T("GENEL BAŞARI", cx + 80, cy - 26, mono(16, 1), "#555"); T("%" + Math.round(P.pct), cx + 80, cy + 12, mono(38, 1)); T(stars(P.pct), cx + 80, cy + 40, "22px serif", "#c9a050");
+  T(`${P.tam}/${P.items.length} hedef tamamlandı`, cx + 80, cy + 64, mono(15), "#777");
+  y += 130;
+  g.strokeStyle = "#c9a050"; g.setLineDash([7, 5]); g.lineWidth = 2; g.fillStyle = "#fff7e0"; g.beginPath(); g.roundRect(M, y, W - M * 2, 90, 8); g.fill(); g.stroke(); g.setLineDash([]); g.lineWidth = 1;
+  const words = ("“" + P.soz + "”").split(" "), lines = [""]; g.font = "italic 20px Georgia, serif"; words.forEach((w) => { const t = (lines[lines.length - 1] + " " + w).trim(); if (g.measureText(t).width > W - M * 2 - 30) lines.push(w); else lines[lines.length - 1] = t; });
+  lines.slice(0, 3).forEach((l, i) => T(l, W / 2, y + 36 + i * 26 - (lines.length - 1) * 8, "italic 20px Georgia, serif", "#6b4a12", "center"));
+  y += 116; g.fillStyle = "#262626"; let bx = W * 0.15; let i = 0; while (bx < W * 0.85) { const w = [2, 1, 3, 1, 2][i++ % 5]; g.fillRect(bx, y, w, 40); bx += w + [2, 3, 1, 2][i % 4]; }
+  T("Bilgi paylaştıkça büyür · sadolayn.github.io/SadoDepo", W / 2, y + 72, mono(15), "#777", "center");
+  if (P.tier === "tam") { g.save(); g.translate(W - 130, 230); g.rotate(-0.25); g.strokeStyle = "#16824f"; g.lineWidth = 4; g.strokeRect(-90, -24, 180, 48); T("HEDEF TAMAM ✓", 0, 8, "800 22px system-ui, sans-serif", "#16824f", "center"); g.restore(); }
+  return c;
+}
+$("posPng").onclick = async () => {
+  const blob = await new Promise((r) => posCanvas().toBlob(r, "image/png")), ad = `gunce-fis-${qy}-Q${qn + 1}.png`, file = new File([blob], ad, { type: "image/png" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title: "Performans fişim" }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = ad; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast("Fiş indirildi");
+};
+const loadJs = (src) => new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
+$("posPdf").onclick = async () => {
+  try {
+    if (!window.jspdf) { toast("PDF hazırlanıyor…"); await loadJs("lib/jspdf.umd.min.js"); }
+    const c = posCanvas(), w = 80, h = (c.height / c.width) * w;
+    const doc = new window.jspdf.jsPDF({ unit: "mm", format: [w, h] });
+    doc.addImage(c.toDataURL("image/jpeg", 0.92), "JPEG", 0, 0, w, h);
+    doc.save(`gunce-fis-${qy}-Q${qn + 1}.pdf`); toast("PDF indirildi");
+  } catch (e) { toast("PDF oluşturulamadı, fişi görsel olarak indir"); }
+};
 function shiftQuarter(dir) {
   qn += dir;
   if (qn < 0) { qn = 3; qy--; } if (qn > 3) { qn = 0; qy++; }

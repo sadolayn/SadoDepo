@@ -360,6 +360,18 @@
   @keyframes pz { 50% { box-shadow: 0 0 0 4px rgba(192,57,43,.25); } }
   .camp.urgent { border-color: #5a2a20; background: linear-gradient(180deg, rgba(192,57,43,.08), var(--card) 60%); }
   .alarm { background: rgba(192,57,43,.12); border: 1px solid #5a2a20; color: #ffb7a6; border-radius: 12px; padding: 9px 12px; font-size: 13.5px; margin-bottom: 10px; }
+  /* ===== Yükleme: dolan kumbara ===== */
+  .kb { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 34px 10px 30px; }
+  .kb svg { overflow: visible; filter: drop-shadow(0 6px 16px rgba(224,162,79,.25)); }
+  .kb .kc { fill: #f3d38a; stroke: #a8741c; stroke-width: 1.5; opacity: 0; animation: kbDrop 1.5s cubic-bezier(.5,0,.8,.4) infinite; }
+  .kb .c2 { animation-delay: .5s; } .kb .c3 { animation-delay: 1s; }
+  @keyframes kbDrop { 0% { transform: translateY(-26px); opacity: 0; } 15% { opacity: 1; } 70% { transform: translateY(38px); opacity: 1; } 80%, 100% { transform: translateY(46px); opacity: 0; } }
+  .kb .kbFill { transform-origin: 50% 100%; transform: scaleY(.05); animation: kbFill 3.2s ease-in-out infinite alternate; }
+  @keyframes kbFill { to { transform: scaleY(.92); } }
+  .kb b { margin-top: 16px; font-size: 16px; color: #f3dca8; } .kb span { margin-top: 6px; max-width: 320px; font-size: 13.5px; line-height: 1.5; color: var(--muted); min-height: 40px; transition: opacity .3s; }
+  .kbBar { display: block; width: 180px; height: 4px; margin-top: 12px; border-radius: 2px; background: #1f1f1f; overflow: hidden; } .kbBar u { display: block; width: 40%; height: 100%; background: linear-gradient(90deg, transparent, #e0a24f, transparent); animation: kbRun 1.2s linear infinite; }
+  @keyframes kbRun { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+  @media (prefers-reduced-motion: reduce) { .kb .kc, .kb .kbFill, .kbBar u { animation: none; } .kb .kbFill { transform: scaleY(.6); } }
 </style>
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
@@ -376,7 +388,20 @@
   </div>
   <div id="soon"></div>
   <div class="upd" id="upd"></div>
-  <div id="list"><div class="empty">Yükleniyor…</div></div>
+  <div id="list"><div class="kb" aria-hidden="true">
+    <svg viewBox="0 0 120 130" width="110" height="120">
+      <defs><clipPath id="kbIc"><path d="M22 52 Q22 38 36 36 L84 36 Q98 38 98 52 L98 104 Q98 118 84 118 L36 118 Q22 118 22 104 Z"/></clipPath>
+        <linearGradient id="kbG" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f6dc9a"/><stop offset="1" stop-color="#c9953c"/></linearGradient></defs>
+      <g class="kbCoins"><circle class="kc c1" cx="60" cy="0" r="7"/><circle class="kc c2" cx="52" cy="0" r="6"/><circle class="kc c3" cx="68" cy="0" r="6.5"/></g>
+      <g clip-path="url(#kbIc)"><rect x="20" y="36" width="80" height="84" fill="#141414"/><rect class="kbFill" x="20" y="36" width="80" height="84" fill="url(#kbG)"/></g>
+      <path d="M22 52 Q22 38 36 36 L84 36 Q98 38 98 52 L98 104 Q98 118 84 118 L36 118 Q22 118 22 104 Z" fill="none" stroke="#e0a24f" stroke-width="3"/>
+      <rect x="44" y="31" width="32" height="6" rx="3" fill="#000" stroke="#e0a24f" stroke-width="2"/>
+      <text x="60" y="84" text-anchor="middle" font-size="15" font-weight="800" fill="#fff" font-family="system-ui,sans-serif" style="mix-blend-mode:difference">1924</text>
+    </svg>
+    <b>İş Bankası Gündemi hazırlanıyor</b>
+    <span id="kbFact">Türkiye'ye ilk kumbaraları 1928'de İş Bankası getirdi.</span>
+    <i class="kbBar"><u></u></i>
+  </div></div>
 
   <div class="disc">
     <b>ℹ️ Bu sayfa kişisel bir projedir.</b>
@@ -1069,6 +1094,7 @@ function renderSoon() {
 
 // ===== Sayfa sonu: Günün sorusu + Banka tarihinden (dokundukça yenisi) =====
 // Kaynaklar: isbank.com.tr "O Günlerden Bugünlere", Patronlar Dünyası (100. yıl dosyası), Sözcü, Wikipedia, Küre Ansiklopedi
+(function () { const F = ["Türkiye'ye ilk kumbaraları 1928'de İş Bankası getirdi.", "\"Bankamatik\" adı, İş Bankası'nın 1982'de sunduğu ilk ATM'lerden gelir.", "İş Bankası 26 Ağustos 1924'te 2 şube ve 37 çalışanla kuruldu.", "1932'de yurt dışında şube açan ilk Türk bankası oldu.", "İşCep 2007'den beri cebinde."]; let i = 0; const t = setInterval(() => { const el = document.getElementById("kbFact"); if (!el) return clearInterval(t); el.style.opacity = 0; setTimeout(() => { el.textContent = F[++i % F.length]; el.style.opacity = 1; }, 300); }, 2200); })();
 const TARIH = [
   ["26 Ağustos 1924", "İş Bankası, Atatürk'ün direktifiyle Ankara'da kuruldu. Yola 2 şube, 37 çalışan ve 1 milyon lira sermayeyle çıktı.", "08-26"],
   ["9 Eylül 1924", "Banka, Ankara İstasyon Caddesi'ndeki ilk binasında yaklaşık 150 davetlinin katıldığı bir törenle açıldı.", "09-09"],
