@@ -265,8 +265,8 @@ const aiColor = () => (COLORS[OPT.col].light ? (OPT.col === "agac" ? "maun" : "m
 let S, dice = [], rem = [], played = [], legal = [], turnStart = null, phase = "idle", sel = null, score = [0, 0], gameNo = 1, starter = 0;
 
 // ---------- Geometri ----------
-const W = 640, H = 700, FR = 22, FRR = 34, BAR = 46;
-const HW = (W - FR - FRR - BAR) / 2, PW = HW / 6, R = PW * 0.46, TRI = (H - 2 * FR) * 0.33;
+const W = 640, H = 700, FR = 18, FRR = 30, BAR = 42;
+const HW = (W - FR - FRR - BAR) / 2, PW = HW / 6, R = PW * 0.49, TRI = (H - 2 * FR) * 0.33;
 const xL = FR, xR = FR + HW + BAR;
 function ptCol(i) { // nokta → {x merkez, top}
   if (i >= 1 && i <= 6) return { x: xR + (6 - i) * PW + PW / 2, top: false };
@@ -284,15 +284,16 @@ function defs() {
   return `<defs>
     <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.42" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
     <filter id="grain2" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.25" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 .9  0 0 0 0 .7  0 0 0 .18 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
-    <linearGradient id="walnut" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4b3122"/><stop offset=".5" stop-color="#5a3a27"/><stop offset="1" stop-color="#47301f"/></linearGradient>
+    <linearGradient id="walnut" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a5636"/><stop offset=".5" stop-color="#8c6542"/><stop offset="1" stop-color="#775334"/></linearGradient>
     <linearGradient id="oak" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b98a4e"/><stop offset=".5" stop-color="#d4a865"/><stop offset="1" stop-color="#b3844a"/></linearGradient>
-    <linearGradient id="navy" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#10142a"/><stop offset=".5" stop-color="#1b2140"/><stop offset="1" stop-color="#0e1226"/></linearGradient>
+    <linearGradient id="navy" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1d2a55"/><stop offset=".5" stop-color="#2b3a70"/><stop offset="1" stop-color="#1b274f"/></linearGradient>
     <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3b26"/><stop offset=".5" stop-color="#3f281a"/><stop offset="1" stop-color="#5a3b26"/></linearGradient>
     <path id="ring" d="M 0,${(R * 0.72).toFixed(2)} a ${(R * 0.72).toFixed(2)},${(R * 0.72).toFixed(2)} 0 1,1 0.01,0"/>
     ${Object.entries(COLORS).map(([k, c]) => `
     <radialGradient id="g_${k}" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="${c.base}"/><stop offset=".75" stop-color="${c.edge}"/><stop offset="1" stop-color="${c.dark}"/></radialGradient>
     <g id="pul_${k}">
-      <circle r="${R}" fill="url(#g_${k})" stroke="${c.dark}" stroke-width="1.2"/>
+      <circle cx="1.6" cy="2.6" r="${R}" fill="#000" opacity=".5"/>
+      <circle r="${R}" fill="url(#g_${k})" stroke="${c.light ? "#2a1a10" : "#f3e3c4"}" stroke-width="1.8" stroke-opacity="${c.light ? ".85" : ".75"}"/>
       <circle r="${R * 0.86}" fill="none" stroke="${c.dark}" stroke-opacity=".45" stroke-width="0.8"/>
       <text font-size="${(R * 0.27).toFixed(2)}" font-weight="700" letter-spacing="${(R * 0.03).toFixed(2)}" fill="${c.txt}" font-family="system-ui,Segoe UI,sans-serif"><textPath href="#ring" startOffset="0">SADOLAYN • SADOLAYN •</textPath></text>
       <circle r="${R * 0.5}" fill="url(#g_${k})" stroke="${c.dark}" stroke-opacity=".55" stroke-width="1"/>
@@ -316,7 +317,7 @@ function drawStatic() {
   // iki yarı
   for (const x0 of [xL, xR]) {
     h += `<rect x="${x0}" y="${FR}" width="${HW}" height="${H - 2 * FR}" fill="url(#walnut)"/>`;
-    h += `<rect x="${x0}" y="${FR}" width="${HW}" height="${H - 2 * FR}" fill="#000" filter="url(#grain)"/>`;
+    h += `<rect x="${x0}" y="${FR}" width="${HW}" height="${H - 2 * FR}" fill="#000" filter="url(#grain)" opacity=".6"/>`;
   }
   // üçgenler
   for (let i = 1; i <= 24; i++) {
