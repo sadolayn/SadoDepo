@@ -8,8 +8,14 @@
   var brands = (navigator.userAgentData && navigator.userAgentData.brands) || [];
   var chrome = brands.length ? brands.some(function (b) { return b.brand === "Google Chrome"; })
     : /Chrome\/\d+/.test(ua) && !/SamsungBrowser|OPR|Opera|EdgA|Edg\/|YaBrowser|MiuiBrowser|HuaweiBrowser|UCBrowser|Vivaldi|DuckDuckGo|Brave|; wv\)/.test(ua);
+  // Yeni iPad'ler kendini Mac gibi tanıtır; dokunmatik ekranından ayırt edilir
+  if (!ios && /Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ios = true;
+  var masaustu = !ios && !android && !/Mobi/i.test(ua);
   window.__tarayici = ios ? "ios" : chrome ? "chrome" : android ? (/SamsungBrowser/.test(ua) ? "samsung" : "android-diger") : "masaustu";
-  if (ios || chrome) {
+  // Bilgisayarda hangi tarayıcı: kurulum yol tarifi buna göre gösterilir
+  window.__masaustu = masaustu ? (/Edg\//.test(ua) ? "edge" : /Firefox\//.test(ua) ? "firefox" : chrome ? "chrome" : /Safari\//.test(ua) && !/Chrome|Chromium/.test(ua) ? "safari" : "diger") : "";
+  // APK sorunu yalnızca Android'de var; bilgisayarda Chrome/Edge siteyi güvenle uygulama penceresi olarak kurar
+  if (ios || chrome || masaustu) {
     var l = document.createElement("link"); l.rel = "manifest"; l.href = "manifest.webmanifest"; document.head.appendChild(l);
   }
   if ("serviceWorker" in navigator) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
