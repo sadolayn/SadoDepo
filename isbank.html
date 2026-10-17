@@ -745,7 +745,10 @@ let SFDB = null;
 async function sfLocal(lat, lon, R, atm) {
   if (!SFDB) SFDB = await (await fetch("isbank/sube_konum.json", { cache: "no-cache" })).json();
   if (!SFDB || !Array.isArray(SFDB.e) || !SFDB.e.length) throw new Error("bos");
-  return { elements: SFDB.e.filter((x) => (atm || !x.a) && sfDist(lat, lon, x.la, x.lo) <= R).map((x) => ({ lat: x.la, lon: x.lo, tags: { amenity: x.a ? "atm" : "bank", name: x.n || "", branch: x.b || "", "addr:street": x.adr || "", phone: x.tel || "", opening_hours: x.s || "" } })) };
+  let E = SFDB.e.filter((x) => (atm || !x.a) && sfDist(lat, lon, x.la, x.lo) <= R);
+  SF.uzak = false;
+  if (!E.some((x) => !x.a)) { E = E.concat(SFDB.e.filter((x) => !x.a).map((x) => [sfDist(lat, lon, x.la, x.lo), x]).sort((a, b) => a[0] - b[0]).slice(0, 5).map((y) => y[1])); SF.uzak = true; }
+  return { elements: E.map((x) => ({ lat: x.la, lon: x.lo, tags: { amenity: x.a ? "atm" : "bank", name: x.n || "", branch: x.b || "", "addr:street": x.adr || "", phone: x.tel || "", opening_hours: x.s || "" } })) };
 }
 function sfHtml() {
   return `<div class="sf">
@@ -811,7 +814,7 @@ async function sfLoad() {
     L.forEach((x) => { if (x.atm) return; let best = null; br.forEach((y) => { if (y === x) return; const dd = sfDist(x.la, x.lo, y.la, y.lo); if (!best || dd < best.d) best = { d: dd, n: y.br || y.name }; }); x.yakin = best; });
     { let no = 0; L.forEach((x) => { if (!x.atm) x.no = ++no; }); }
     if (!L.length) { $("sfbody").innerHTML = `<div class="sfmsg">${R / 1000} km içinde kayıtlı İş Bankası ${SF.atm ? "şubesi/bankamatiği" : "şubesi"} bulunamadı. Mesafeyi büyütmeyi dene.</div>${links}`; return; }
-    $("sfbody").innerHTML = `<div class="sfcnt">${br.length} şube${SF.atm ? ` · ${L.length - br.length} bankamatik` : ""} · ${R / 1000} km içinde</div>` + L.slice(0, 30).map((x, i) => `<div class="sfi${x.atm ? " atm" : ""}">
+    $("sfbody").innerHTML = (SF.uzak ? `<div class="sfcnt">${R / 1000} km içinde kayıtlı şube yok · <b>en yakın şubeler</b></div>` : `<div class="sfcnt">${br.length} şube${SF.atm ? ` · ${L.length - br.length} bankamatik` : ""} · ${R / 1000} km içinde</div>`) + L.slice(0, 30).map((x, i) => `<div class="sfi${x.atm ? " atm" : ""}">
         <div class="sfn"><i>${x.atm ? "🏧" : x.no}</i><div><b>${esc(x.br ? (/şube/i.test(x.br) ? x.br : x.br + " Şubesi") : x.name)}</b>${x.adr ? `<small>${esc(x.adr)}</small>` : ""}${x.saat ? `<small>🕘 ${esc(x.saat)}</small>` : ""}</div><em>${sfFmt(x.d)}</em></div>
         ${x.yakin ? `<div class="sfy">↔️ En yakın diğer şube: <b>${esc(x.yakin.n)}</b> · ${sfFmt(x.yakin.d)}</div>` : ""}
         <div class="sfa"><a href="https://www.google.com/maps/dir/?api=1&destination=${x.la},${x.lo}" target="_blank" rel="noopener">🧭 Yol tarifi</a><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((x.br || x.name) + " ")}${x.la},${x.lo}" target="_blank" rel="noopener">🗺️ Haritada</a>${x.tel ? `<a href="tel:${esc(x.tel.replace(/\s/g, ""))}">📞 Ara</a>` : ""}</div>
