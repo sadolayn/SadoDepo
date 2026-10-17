@@ -189,6 +189,24 @@
   .blive a { display: block; padding: 6px 0; border-bottom: 1px dashed #2c2a25; color: #e6e0d4 !important; font-weight: 500 !important; font-size: 13px !important; }
   .lounge { margin-top: 10px; border-top: 1px solid #2c2a25; padding-top: 10px; font-size: 13px; } .lounge > b { display: block; color: #f3dca8; margin-bottom: 6px; }
   .lounge div { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; } .lounge span { color: #9a9a9a; } .lounge em { font-style: normal; color: #eee; text-align: right; }
+  .sf { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px; margin-bottom: 8px; }
+  .sfh { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; } .sfh b { font-size: 15px; } .sfh a { font-size: 12px; color: #8fb0ff; text-decoration: none; white-space: nowrap; }
+  .sfs { display: flex; gap: 8px; } .sfs input { flex: 1; min-width: 0; padding: 11px 12px; font-size: 16px; background: #161616; color: var(--ink); border: 1px solid var(--line); border-radius: 12px; outline: none; } .sfs input:focus { border-color: var(--accent); }
+  .sfs button { width: 46px; border-radius: 12px; border: 1px solid var(--line); background: #111; font-size: 19px; cursor: pointer; }
+  .sfres { display: none; background: #111; border: 1px solid var(--line); border-radius: 12px; margin-top: 6px; overflow: hidden; } .sfres.show { display: block; }
+  .sfres div { padding: 9px 12px; border-top: 1px solid #222; cursor: pointer; font-size: 14px; } .sfres div:first-child { border-top: none; } .sfres small { display: block; color: var(--muted); font-size: 11px; }
+  .sfp { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 10px 0 8px; font-size: 13px; flex-wrap: wrap; }
+  .sfr { display: flex; gap: 4px; } .sfr button { padding: 5px 9px; border-radius: 10px; border: 1px solid var(--line); background: #161616; color: var(--muted); font: inherit; font-size: 12px; cursor: pointer; } .sfr button.on { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+  .sft { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; } .sft button { flex: 1; padding: 7px; border-radius: 10px; border: 1px solid var(--line); background: #161616; color: var(--muted); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; } .sft button.on { border-color: var(--accent); color: var(--accent); }
+  .sft label { font-size: 12px; color: #ccc; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .sfmsg { padding: 16px 8px; text-align: center; color: #bbb; font-size: 13.5px; } .sfsp { display: inline-block; width: 14px; height: 14px; border: 2px solid #444; border-top-color: var(--accent); border-radius: 50%; animation: sfsp .8s linear infinite; vertical-align: -2px; } @keyframes sfsp { to { transform: rotate(360deg); } }
+  .sfcnt { font-size: 12px; color: var(--muted); margin: 2px 2px 6px; }
+  .sfi { border-top: 1px solid #222; padding: 9px 2px; } .sfi.atm { opacity: .85; }
+  .sfn { display: flex; gap: 10px; align-items: flex-start; } .sfn i { font-style: normal; flex: none; width: 24px; height: 24px; border-radius: 50%; background: #1d2f6b; color: #cfdcff; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .sfn div { flex: 1; min-width: 0; } .sfn b { display: block; font-size: 14px; } .sfn small { display: block; font-size: 11.5px; color: var(--muted); } .sfn em { font-style: normal; font-weight: 800; color: var(--accent); white-space: nowrap; font-size: 14px; }
+  .sfy { font-size: 11.5px; color: #9fb3cc; margin: 4px 0 0 34px; }
+  .sfa { display: flex; gap: 6px; margin: 7px 0 0 34px; flex-wrap: wrap; } .sfa a { font-size: 12px; padding: 5px 9px; border-radius: 9px; border: 1px solid var(--line); background: #161616; color: var(--ink); text-decoration: none; }
+  .sfl { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; } .sfl a { text-align: center; padding: 9px 4px; border-radius: 10px; border: 1px solid #3a50f0; color: #cfdcff; font-size: 12.5px; font-weight: 700; text-decoration: none; } .sfl a + a { border-color: var(--accent); color: var(--accent); }
   [hidden] { display: none !important; }
   .mapcard { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-bottom: 8px; }
   .mapcard iframe { display: block; width: 100%; height: 340px; border: 0; }
@@ -585,7 +603,8 @@ function renderSubeler() {
   if (!d) { $("list").innerHTML = '<div class="empty">Şube bilgisi yüklenemedi.</div>'; return; }
   const f = (n) => Number(n).toLocaleString("tr-TR");
   $("upd").textContent = "Veri dönemi: " + d.donem + " · banka bu verileri 3 ayda bir açıklar";
-  $("list").innerHTML = `
+  $("list").innerHTML = `${sfHtml()}
+    <div class="day" style="margin-top:18px">📊 Şube ağı</div>
     <div class="stats">
       <div class="stat hero"><span>Toplam müşteri</span><b>${esc(d.musteri)}</b><small style="color:#b9c0d6">${esc(d.musteriDonem)}</small></div>
       <div class="stat"><span>Toplam şube</span><b>${f(d.yurtici + d.yurtdisi)}</b><small>Türkiye + ${f(d.ulke)} ülke</small></div>
@@ -595,14 +614,93 @@ function renderSubeler() {
       <div class="stat"><span>ATM</span><b>${f(d.atm)}</b><small>Türkiye'nin en geniş ağı</small></div>
       <div class="stat"><span>İşCep müşterisi</span><b>${esc(d.iscep)}</b><small>${esc(d.iscepDonem)}</small></div>
     </div>
-    <div class="day" style="margin-top:18px">📍 Yakınımdaki şubeler</div>
-    <div class="mapcard" id="mapCard"><div class="mapph" id="mapPh"><div style="font-size:34px">🗺️</div><div>En yakın İş Bankası şubelerini ve ATM'leri haritada görmek için konumuna izin ver.</div><button type="button" class="mapgo" id="mapGo">📍 Konumumu kullan</button></div></div>
     <div class="day" style="margin-top:18px">🏛️ İlk şubeler</div>
     ${ILK.map((x) => `<div class="tk" style="--c:${x.c}"><div class="dt"><b>${x.g}</b><span>${x.ay}</span></div><div class="tt"><b>${x.ad}</b><span>${x.a}</span></div><div class="kl" style="font-size:16px">${x.y}<small>${new Date().getFullYear() - x.y} yıl</small></div></div>`).join("")}
     <p class="note" style="text-align:left;margin:0 4px 10px">Banka 26 Ağustos 1924'te 2 şube ve 37 çalışanla kuruldu. 1930'da 28 olan şube sayısı 1953'te 130'a ulaştı.</p>
     <div class="facts"><ul>${(d.notlar || []).map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
     <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(d.kaynak)} ↗</a>`;
-  bindMap();
+  sfBind();
+}
+// ===== Şube bulucu: konum / il-ilçe arama, 1-3-5-10 km, mesafeli liste (OpenStreetMap) + Google Haritalar + isbank.com.tr =====
+let SF = { place: null, r: 3000, atm: false, mode: "l" };
+try { const y = JSON.parse(localStorage.getItem("yakin_v1") || "{}"); if (y.place) SF.place = y.place; } catch (e) {}
+try { Object.assign(SF, JSON.parse(localStorage.getItem("isbSube") || "{}")); } catch (e) {}
+const sfSave = () => { try { localStorage.setItem("isbSube", JSON.stringify(SF)); } catch (e) {} };
+const sfDist = (a, b, c, d) => { const R = 6371e3, t = Math.PI / 180, x = (c - a) * t, y = (d - b) * t; const h = Math.sin(x / 2) ** 2 + Math.cos(a * t) * Math.cos(c * t) * Math.sin(y / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); };
+const sfFmt = (m) => (m < 1000 ? Math.round(m / 10) * 10 + " m" : (m / 1000).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) + " km");
+const sfPn = () => (SF.place && SF.place.name || "").replace(/^📡\s*/, "").replace(/\s*merkez$/i, "").trim();
+const OVP = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+async function sfOverpass(q) {
+  for (const u of OVP) { try { const r = await fetch(u, { method: "POST", body: "data=" + encodeURIComponent(q) }); if (r.ok) return await r.json(); } catch (e) {} }
+  throw new Error("overpass");
+}
+function sfHtml() {
+  return `<div class="sf">
+    <div class="sfh"><b>📍 En yakın İş Bankası şubeleri</b><a href="https://www.isbank.com.tr/sube-ve-bankamatikler" target="_blank" rel="noopener">isbank.com.tr şube bul ↗</a></div>
+    <div class="sfs"><input id="sfq" type="search" placeholder="İl, ilçe, mahalle ara (ör. Bornova, İzmir)" autocomplete="off"><button type="button" id="sfloc" title="Konumumu kullan">📍</button></div>
+    <div class="sfres" id="sfres"></div>
+    <div class="sfp"><span id="sfpl">Konum seçilmedi</span><div class="sfr" id="sfr">${[1000, 3000, 5000, 10000].map((r) => `<button data-r="${r}">${r / 1000} km</button>`).join("")}</div></div>
+    <div class="sft"><button type="button" data-m="l">📋 Mesafeli liste</button><button type="button" data-m="g">🗺️ Google Haritalar</button><label><input type="checkbox" id="sfatm"> Bankamatikler</label></div>
+    <div id="sfbody"><div class="sfmsg">Konumuna izin ver ya da yukarıdan il/ilçe ara.</div></div>
+  </div>`;
+}
+function sfBind() {
+  if (!$("sfq")) return;
+  const rr = () => { $("sfr").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.r === SF.r)); document.querySelectorAll(".sft button").forEach((b) => b.classList.toggle("on", b.dataset.m === SF.mode)); $("sfatm").checked = SF.atm; };
+  rr();
+  $("sfr").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; SF.r = +b.dataset.r; sfSave(); rr(); sfLoad(); };
+  document.querySelector(".sft").onclick = (e) => { const b = e.target.closest("button[data-m]"); if (!b) return; SF.mode = b.dataset.m; sfSave(); rr(); sfLoad(); };
+  $("sfatm").onchange = () => { SF.atm = $("sfatm").checked; sfSave(); sfLoad(); };
+  $("sfloc").onclick = () => {
+    if (!navigator.geolocation) return;
+    $("sfpl").textContent = "Konum alınıyor…";
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const lat = pos.coords.latitude, lon = pos.coords.longitude; let name = "Bulunduğun yer";
+      try { const a = (await (await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=tr&zoom=14`)).json()).address || {}; name = [a.suburb || a.neighbourhood || a.town || a.village || a.county, a.province || a.city || a.state].filter(Boolean).join(", ") || name; } catch (e) {}
+      SF.place = { lat, lon, name: "📡 " + name, gps: true }; sfSave(); sfLoad();
+    }, () => { $("sfpl").textContent = "Konum izni verilmedi — il/ilçe ara"; }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 120000 });
+  };
+  let qt;
+  $("sfq").oninput = () => {
+    clearTimeout(qt); const q = $("sfq").value.trim();
+    if (q.length < 2) { $("sfres").classList.remove("show"); return; }
+    qt = setTimeout(async () => {
+      try {
+        const j = await (await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&addressdetails=1&limit=6&countrycodes=tr&accept-language=tr`)).json();
+        const nm = (x) => { const a = x.address || {}; const main = a.suburb || a.neighbourhood || a.quarter || a.town || a.village || a.city_district || a.county || a.city || x.name; const prov = a.province || a.city || a.state || ""; return prov && prov !== main ? `${main}, ${prov}` : main; };
+        $("sfres").innerHTML = j.length ? j.map((x, i) => `<div data-i="${i}">${esc(nm(x))}<small>${esc(x.display_name)}</small></div>`).join("") : '<div>Sonuç yok</div>';
+        $("sfres").classList.add("show");
+        $("sfres").onclick = (e) => { const d = e.target.closest("[data-i]"); if (!d) return; const x = j[+d.dataset.i]; $("sfres").classList.remove("show"); $("sfq").value = ""; $("sfq").blur(); SF.place = { lat: +x.lat, lon: +x.lon, name: nm(x) }; sfSave(); sfLoad(); };
+      } catch (e) {}
+    }, 350);
+  };
+  if (SF.place) sfLoad(); else $("sfloc").click();
+}
+async function sfLoad() {
+  if (!SF.place || !$("sfbody")) return;
+  const { lat, lon } = SF.place, ll = `${(+lat).toFixed(5)},${(+lon).toFixed(5)}`, pn = sfPn();
+  $("sfpl").innerHTML = `📍 <b>${esc(SF.place.name)}</b>`;
+  const gq = "Türkiye İş Bankası" + (SF.atm ? " bankamatik" : "") + (pn && pn !== "Bulunduğun yer" ? " " + pn : "");
+  const z = SF.r <= 1000 ? 16 : SF.r <= 3000 ? 14 : SF.r <= 5000 ? 13 : 12;
+  const gUrl = `https://www.google.com/maps/search/${encodeURIComponent(gq)}/@${ll},${z}z`;
+  const links = `<div class="sfl"><a href="${gUrl}" target="_blank" rel="noopener">🗺️ Google Haritalar'da aç</a><a href="https://www.isbank.com.tr/sube-ve-bankamatikler" target="_blank" rel="noopener">🏦 isbank.com.tr'de ara</a></div>`;
+  if (SF.mode === "g") { $("sfbody").innerHTML = `<div class="mapcard"><iframe title="İş Bankası şubeleri" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=${encodeURIComponent(gq)}&ll=${ll}&sll=${ll}&z=${z}&hl=tr&output=embed"></iframe></div>${links}`; return; }
+  $("sfbody").innerHTML = '<div class="sfmsg"><span class="sfsp"></span> Şubeler aranıyor…</div>';
+  const R = SF.r, re = "İş Bankası|Is Bankasi|İşbank|Isbank|İŞ BANKASI|Iş Bankası";
+  const q = `[out:json][timeout:25];(nwr["amenity"="bank"]["name"~"${re}",i](around:${R},${lat},${lon});nwr["amenity"="bank"]["brand"~"${re}",i](around:${R},${lat},${lon});${SF.atm ? `nwr["amenity"="atm"]["operator"~"${re}",i](around:${R},${lat},${lon});nwr["amenity"="atm"]["brand"~"${re}",i](around:${R},${lat},${lon});nwr["amenity"="atm"]["name"~"${re}",i](around:${R},${lat},${lon});` : ""});out center tags;`;
+  try {
+    const j = await sfOverpass(q), seen = new Set();
+    let L = (j.elements || []).map((e) => { const t = e.tags || {}, la = e.lat ?? (e.center && e.center.lat), lo = e.lon ?? (e.center && e.center.lon); return { la, lo, atm: t.amenity === "atm", name: t.name || (t.amenity === "atm" ? "İş Bankası Bankamatik" : "İş Bankası"), br: t.branch || "", adr: [t["addr:street"], t["addr:housenumber"], t["addr:district"] || t["addr:suburb"]].filter(Boolean).join(" "), tel: t.phone || t["contact:phone"] || "", saat: t.opening_hours || "", d: sfDist(lat, lon, la, lo) }; })
+      .filter((x) => x.la && !seen.has(x.la.toFixed(5) + x.lo.toFixed(5)) && seen.add(x.la.toFixed(5) + x.lo.toFixed(5))).sort((a, b) => a.d - b.d);
+    const br = L.filter((x) => !x.atm);
+    L.forEach((x) => { if (x.atm) return; let best = null; br.forEach((y) => { if (y === x) return; const dd = sfDist(x.la, x.lo, y.la, y.lo); if (!best || dd < best.d) best = { d: dd, n: y.br || y.name }; }); x.yakin = best; });
+    if (!L.length) { $("sfbody").innerHTML = `<div class="sfmsg">${R / 1000} km içinde kayıtlı İş Bankası ${SF.atm ? "şubesi/bankamatiği" : "şubesi"} bulunamadı. Mesafeyi büyütmeyi dene.</div>${links}`; return; }
+    $("sfbody").innerHTML = `<div class="sfcnt">${br.length} şube${SF.atm ? ` · ${L.length - br.length} bankamatik` : ""} · ${R / 1000} km içinde</div>` + L.slice(0, 30).map((x, i) => `<div class="sfi${x.atm ? " atm" : ""}">
+        <div class="sfn"><i>${x.atm ? "🏧" : i + 1}</i><div><b>${esc(x.br ? (/şube/i.test(x.br) ? x.br : x.br + " Şubesi") : x.name)}</b>${x.adr ? `<small>${esc(x.adr)}</small>` : ""}${x.saat ? `<small>🕘 ${esc(x.saat)}</small>` : ""}</div><em>${sfFmt(x.d)}</em></div>
+        ${x.yakin ? `<div class="sfy">↔️ En yakın diğer şube: <b>${esc(x.yakin.n)}</b> · ${sfFmt(x.yakin.d)}</div>` : ""}
+        <div class="sfa"><a href="https://www.google.com/maps/dir/?api=1&destination=${x.la},${x.lo}" target="_blank" rel="noopener">🧭 Yol tarifi</a><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((x.br || x.name) + " ")}${x.la},${x.lo}" target="_blank" rel="noopener">🗺️ Haritada</a>${x.tel ? `<a href="tel:${esc(x.tel.replace(/\s/g, ""))}">📞 Ara</a>` : ""}</div>
+      </div>`).join("") + links + `<p class="note" style="text-align:left">Liste OpenStreetMap kayıtlarından mesafeye göre sıralanır; eksik şube olabilir. Güncel çalışma saatleri için isbank.com.tr'ye bakın.</p>`;
+  } catch (e) { $("sfbody").innerHTML = `<div class="sfmsg">Liste şu an yüklenemedi (harita sunucusu yoğun olabilir).</div>${links}`; }
 }
 // İlk şubeler — kaynak: isbank.com.tr (müze sayfası), Wikipedia (Ankara müzesi)
 const ILK = [
