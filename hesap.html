@@ -150,10 +150,20 @@
   .guide small { display: block; font-weight: 500; font-size: 12px; color: #ffd27a; margin-top: 2px; }
   .lvl { position: absolute; left: 50%; top: calc(50% + 44px); transform: translateX(-50%); font-size: 11.5px; color: #fff; background: rgba(0,0,0,.55); border-radius: 8px; padding: 3px 8px; pointer-events: none; white-space: nowrap; }
   /* ===== Cetvel ===== */
-  .ruler-wrap { position: relative; height: calc(100vh - 200px); min-height: 420px; margin: 0 -14px; overflow: hidden; }
-  #ruler { position: absolute; left: 0; top: 0; height: 100%; }
-  .rinfo { position: absolute; right: 14px; top: 10px; width: 52%; text-align: right; font-size: 13px; color: var(--muted); line-height: 1.5; }
-  .rinfo b { color: var(--accent); font-size: 22px; display: block; }
+  .ruler-wrap { position: relative; min-height: 420px; margin: 0 -14px; overflow: clip; display: flex; flex-direction: column; justify-content: flex-end; touch-action: pan-y; }
+  #ruler { position: absolute; left: 0; top: 0; }
+  #rulerR { position: absolute; right: 0; top: 0; }
+  .rbot { position: sticky; bottom: 0; z-index: 2; height: 58px; }
+  .rbot canvas { display: block; }
+  .rinfo { position: absolute; left: 86px; right: 86px; top: 10px; text-align: center; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+  .rinfo b { color: var(--accent); font-size: 21px; display: block; }
+  .rinfo b.h { color: #7fc8ff; font-size: 17px; }
+  .rtag { position: absolute; left: 50%; transform: translate(-50%, -50%); z-index: 1; padding: 5px 12px; border-radius: 99px; background: #ef4a3a; color: #fff; font-weight: 800; font-size: 15px; white-space: nowrap; pointer-events: none; box-shadow: 0 4px 14px rgba(0,0,0,.5); }
+  .rtag.h { top: -34px; transform: translateX(-50%); background: #1f7fd1; }
+  .rline { position: absolute; left: 84px; right: 84px; height: 0; border-top: 2px dashed rgba(239,74,58,.7); pointer-events: none; }
+  .rlock { display: flex; gap: 10px; align-items: center; padding: 12px; border-radius: 12px; background: rgba(63,194,131,.1); border: 1px solid rgba(63,194,131,.35); color: #bdf0d6; font-size: 13.5px; line-height: 1.5; }
+  .rlock b { color: #fff; }
+  .rnudge { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(224,162,79,.1); border: 1px dashed rgba(224,162,79,.5); color: #ffd9a0; font-size: 13px; line-height: 1.5; }
   .card-cal { position: relative; height: 54mm; border: 2px dashed var(--accent); border-radius: 10px; margin: 12px 0; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 13px; text-align: center; background: rgba(224,162,79,.05); }
   input[type=range] { width: 100%; accent-color: var(--accent); }
   .btn-go { display: block; width: 100%; margin-top: 12px; padding: 12px; border-radius: 12px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
@@ -198,7 +208,7 @@
     </header>
     <div class="tabs" id="tabs">
       <button data-t="calc" class="on"><b>🧮</b>Makine</button>
-      <button data-t="cetvel"><b>📏</b>Cetvel</button>
+      <button data-t="cetvel" data-yeni="cetvel2|2026-10-17|•"><b>📏</b>Cetvel</button>
       <button data-t="mesafe" data-yeni="t-mesafe|2026-10-17|•"><b>📐</b>Mesafe</button>
       <button data-t="faiz" data-yeni="t-faiz|2026-10-17|•"><b>💵</b>Faiz</button>
       <button data-t="tarih" data-yeni="t-tarih|2026-10-17|•"><b>📆</b>Tarih</button>
@@ -354,14 +364,24 @@
   <section class="panel" id="cetvel">
     <div class="ruler-wrap" id="rwrap">
       <canvas id="ruler"></canvas>
-      <div class="rinfo"><span id="rDev"></span><b id="rLen">–</b>Cetvelin üst ucu 0'dır. Ekrana dokununca o noktaya kadar ölçer; parmağını kaydırabilirsin.</div>
+      <canvas id="rulerR"></canvas>
+      <div class="rinfo"><span id="rDev"></span><b id="rLen">–</b><b class="h" id="rLenH"></b>Sağ ve sol cetvelin üst ucu 0, alttakinin sol ucu 0'dır. Ekrana dokununca o noktaya kadar ölçer; alttaki cetvelde yatay ölçer. 15 cm'nin devamı için aşağı kaydır.</div>
+      <div class="rline" id="rLine" hidden></div><div class="rtag" id="rTag" hidden></div>
+      <div class="rbot" id="rbot"><div class="rtag h" id="rTagH" hidden></div><canvas id="rulerB"></canvas></div>
     </div>
     <div class="card">
       <h2>Cetveli telefonuna ayarla</h2>
       <p class="hint" style="margin-top:0">Her telefonun ekran yoğunluğu farklıdır. Bir banka kartını aşağıdaki çerçevenin üstüne yatay koy ve kaydırıcıyla çerçeveyi kartın genişliğine eşitle (kart genişliği her yerde 85,6 mm). Ayar bu cihazda hatırlanır.</p>
-      <div class="card-cal" id="cardBox">💳 Kartı buraya yatır<br>çerçeve = kart genişliği</div>
-      <input type="range" id="cal" min="2" max="12" step="0.01">
-      <div class="tapebar"><button id="calReset">Varsayılana dön</button></div>
+      <div id="calOpen">
+        <div class="card-cal" id="cardBox">💳 Kartı buraya yatır<br>çerçeve = kart genişliği</div>
+        <input type="range" id="cal" min="2" max="12" step="0.01">
+        <div class="rnudge" id="calNudge" hidden>👌 Kart çerçeveye tam oturduysa ayarı <b>kilitle</b>; yanlışlıkla kaydırıp bozmazsın.</div>
+        <div class="tapebar"><button id="calLock" style="border-color:var(--ok);color:var(--ok)">🔒 Ayarı kilitle</button><button id="calReset">Varsayılana dön</button></div>
+      </div>
+      <div id="calLocked" hidden>
+        <div class="rlock"><span style="font-size:26px">🔒</span><div><b>Ayarın kilitli, için rahat olsun 😊</b><br>Cetvel artık bu telefona göre ölçüyor. Kaydırıcı kapalı olduğu için yanlışlıkla bozulmaz.</div></div>
+        <div class="tapebar"><button id="calUnlock">🔓 Kilidi aç</button></div>
+      </div>
     </div>
   </section>
 
@@ -838,30 +858,71 @@ calcY();
 // Varsayılan: dokunmatik cihazlarda ~6,3 CSS px/mm, bilgisayarda 96 dpi (3,78 px/mm). Banka kartıyla ayarlanır.
 const DEF = matchMedia("(pointer: coarse)").matches ? 6.3 : 96 / 25.4;
 let ppm = DEF; try { const s = +localStorage.getItem("cetvelPPM"); if (s > 1) ppm = s; } catch (e) {}
-let mark = null;
-function drawRuler() {
-  const c = $("ruler"), w = $("rwrap"), H = w.clientHeight, W = 120, dpr = window.devicePixelRatio || 1;
-  c.width = W * dpr; c.height = H * dpr; c.style.width = W + "px"; c.style.height = H + "px";
-  const g = c.getContext("2d"); g.scale(dpr, dpr);
-  const grd = g.createLinearGradient(0, 0, W, 0); grd.addColorStop(0, "#e8c27a"); grd.addColorStop(1, "#c9984a");
-  g.fillStyle = grd; g.fillRect(0, 0, W - 18, H);
-  g.fillStyle = "#2a1c08"; g.strokeStyle = "#2a1c08"; g.font = "bold 13px system-ui"; g.textBaseline = "middle";
-  for (let mm = 0; mm * ppm <= H; mm++) {
-    const y = mm * ppm, L = mm % 10 === 0 ? 34 : mm % 5 === 0 ? 22 : 12;
-    g.lineWidth = mm % 10 === 0 ? 1.4 : 1; g.beginPath(); g.moveTo(0, y + .5); g.lineTo(L, y + .5); g.stroke();
-    if (mm % 10 === 0 && mm) g.fillText(String(mm / 10), 40, y);
+let mark = null, markX = null, rLock = false;
+try { rLock = localStorage.getItem("cetvelKilit") === "1"; } catch (e) {}
+const RLEN = 150; // cetvel boyu: 15 cm
+function rCanvas(c, W, H) { const dpr = window.devicePixelRatio || 1; c.width = W * dpr; c.height = H * dpr; c.style.width = W + "px"; c.style.height = H + "px"; const g = c.getContext("2d"); g.scale(dpr, dpr); return g; }
+// Dikey cetvel; side: "L" (çizgiler soldan) ya da "R" (çizgiler sağdan)
+function drawVert(c, H, side) {
+  const W = 84, g = rCanvas(c, W, H), x0 = side === "L" ? 0 : W, d = side === "L" ? 1 : -1;
+  const grd = g.createLinearGradient(0, 0, W, 0); grd.addColorStop(side === "L" ? 0 : 1, "#e8c27a"); grd.addColorStop(side === "L" ? 1 : 0, "#c9984a");
+  g.fillStyle = grd; g.fillRect(side === "L" ? 0 : 14, 0, W - 14, RLEN * ppm + 12);
+  g.fillStyle = "#2a1c08"; g.strokeStyle = "#2a1c08"; g.font = "bold 13px system-ui"; g.textBaseline = "middle"; g.textAlign = "center";
+  for (let mm = 0; mm <= RLEN; mm++) {
+    const y = Math.round(mm * ppm) + .5, L = mm % 10 === 0 ? 30 : mm % 5 === 0 ? 20 : 11;
+    g.lineWidth = mm % 10 === 0 ? 1.4 : 1; g.beginPath(); g.moveTo(x0, y); g.lineTo(x0 + d * L, y); g.stroke();
+    if (mm % 10 === 0 && mm) g.fillText(String(mm / 10), x0 + d * 44, y);
   }
-  g.font = "10px system-ui"; g.fillText("cm", 66, 10);
-  if (mark !== null) { g.strokeStyle = "#ef4a3a"; g.lineWidth = 2; g.beginPath(); g.moveTo(0, mark); g.lineTo(W - 18, mark); g.stroke(); }
-  $("rDev").textContent = Math.abs(ppm - DEF) < .001 ? "Varsayılan ayar — kartla ayarla ↓" : "Bu cihaza ayarlı ✓";
-  $("rLen").textContent = mark !== null ? `${nf(mark / ppm / 10, 1)} cm · ${nf(mark / ppm, 0)} mm` : "Ölçmek için dokun";
+  g.font = "10px system-ui"; g.fillText("cm", x0 + d * 44, 10);
+  if (mark !== null) { g.strokeStyle = "#ef4a3a"; g.lineWidth = 2; g.beginPath(); g.moveTo(0, mark); g.lineTo(W, mark); g.stroke(); }
+}
+function drawHoriz(c, W) {
+  const H = 58, g = rCanvas(c, W, H), len = Math.min(W, RLEN * ppm);
+  const grd = g.createLinearGradient(0, 0, 0, H); grd.addColorStop(0, "#9fd3ff"); grd.addColorStop(1, "#6fb4ec");
+  g.fillStyle = grd; g.fillRect(0, 0, W, H);
+  g.fillStyle = "#08223a"; g.strokeStyle = "#08223a"; g.font = "bold 12px system-ui"; g.textBaseline = "middle"; g.textAlign = "center";
+  for (let mm = 0; mm * ppm <= len; mm++) {
+    const x = Math.round(mm * ppm) + .5, L = mm % 10 === 0 ? 26 : mm % 5 === 0 ? 17 : 9;
+    g.lineWidth = mm % 10 === 0 ? 1.4 : 1; g.beginPath(); g.moveTo(x, H); g.lineTo(x, H - L); g.stroke();
+    if (mm % 10 === 0 && mm) g.fillText(String(mm / 10), x, 13);
+  }
+  g.font = "10px system-ui"; g.textAlign = "left"; g.fillText("cm", 4, 13);
+  if (markX !== null) { g.strokeStyle = "#ef4a3a"; g.lineWidth = 2; g.beginPath(); g.moveTo(markX, 0); g.lineTo(markX, H); g.stroke(); }
+}
+function drawRuler() {
+  const w = $("rwrap"), H = Math.ceil(RLEN * ppm) + 70;
+  w.style.height = H + "px";
+  drawVert($("ruler"), H, "L"); drawVert($("rulerR"), H, "R"); drawHoriz($("rulerB"), w.clientWidth);
+  const ayarli = Math.abs(ppm - DEF) >= .001;
+  $("rDev").textContent = rLock ? "🔒 Ayar kilitli ✓" : ayarli ? "Bu cihaza ayarlı ✓" : "Varsayılan ayar — kartla ayarla ↓";
+  $("rLen").textContent = mark !== null ? `↕ ${nf(mark / ppm / 10, 1)} cm · ${nf(mark / ppm, 0)} mm` : "Ölçmek için dokun";
+  $("rLenH").textContent = markX !== null ? `↔ ${nf(markX / ppm / 10, 1)} cm · ${nf(markX / ppm, 0)} mm` : "";
+  // Okuma etiketi çizginin hemen yanında: sayfa kaydırılınca da görünür
+  $("rTag").hidden = $("rLine").hidden = mark === null;
+  if (mark !== null) { $("rTag").style.top = mark + "px"; $("rTag").textContent = `${nf(mark / ppm / 10, 1)} cm`; $("rLine").style.top = mark + "px"; }
+  $("rTagH").hidden = markX === null;
+  if (markX !== null) { $("rTagH").style.left = Math.min(w.clientWidth - 50, Math.max(50, markX)) + "px"; $("rTagH").textContent = `↔ ${nf(markX / ppm / 10, 1)} cm`; }
   $("cardBox").style.width = (85.6 * ppm) + "px"; $("cardBox").style.height = (53.98 * ppm) + "px"; $("cardBox").style.maxWidth = "none";
   $("cal").value = ppm;
+  $("calOpen").hidden = rLock; $("calLocked").hidden = !rLock;
+  $("cal").disabled = rLock; $("calReset").disabled = rLock;
 }
-$("rwrap").addEventListener("pointerdown", (e) => { const r = $("rwrap").getBoundingClientRect(); mark = e.clientY - r.top; drawRuler(); });
-$("rwrap").addEventListener("pointermove", (e) => { if (e.buttons) { const r = $("rwrap").getBoundingClientRect(); mark = e.clientY - r.top; drawRuler(); } });
-$("cal").addEventListener("input", () => { ppm = +$("cal").value; try { localStorage.setItem("cetvelPPM", ppm); } catch (e) {} drawRuler(); });
-$("calReset").onclick = () => { ppm = DEF; try { localStorage.removeItem("cetvelPPM"); } catch (e) {} drawRuler(); };
+$("rwrap").addEventListener("pointerdown", (e) => { if (e.target.closest("#rbot")) return; const r = $("rwrap").getBoundingClientRect(); mark = Math.min(RLEN * ppm, Math.max(0, e.clientY - r.top)); drawRuler(); });
+$("rwrap").addEventListener("pointermove", (e) => { if (e.buttons && !e.target.closest("#rbot")) { const r = $("rwrap").getBoundingClientRect(); mark = Math.min(RLEN * ppm, Math.max(0, e.clientY - r.top)); drawRuler(); } });
+const setX = (e) => { const r = $("rbot").getBoundingClientRect(); markX = Math.max(0, e.clientX - r.left); drawRuler(); };
+$("rbot").addEventListener("pointerdown", setX);
+$("rbot").addEventListener("pointermove", (e) => { if (e.buttons) setX(e); });
+$("cal").addEventListener("input", () => { if (rLock) return; ppm = +$("cal").value; try { localStorage.setItem("cetvelPPM", ppm); } catch (e) {} $("calNudge").hidden = false; drawRuler(); });
+$("calReset").onclick = () => { if (rLock) return; ppm = DEF; try { localStorage.removeItem("cetvelPPM"); } catch (e) {} drawRuler(); };
+$("calLock").onclick = () => {
+  if (Math.abs(ppm - DEF) < .001 && !confirm("Henüz kartla ayar yapmamışsın gibi görünüyor 🙂 Yine de varsayılan ayarla kilitleyelim mi?")) return;
+  rLock = true; try { localStorage.setItem("cetvelKilit", "1"); } catch (e) {} $("calNudge").hidden = true; drawRuler();
+  if (typeof toast === "function") toast("🔒 Kilitlendi — artık bozulmaz");
+};
+$("calUnlock").onclick = () => {
+  if (!confirm("Kilidi açarsan ayarı yeniden değiştirebilirsin; kaydırıcıya dokunursan ölçüler de değişir. Kartın yanındaysa sorun yok, açalım mı? 😊")) return;
+  rLock = false; try { localStorage.removeItem("cetvelKilit"); } catch (e) {} drawRuler();
+};
 window.addEventListener("resize", () => { if ($("cetvel").classList.contains("on")) drawRuler(); });
 
 // ===== Mesafe ölçer: kamera + eğim sensörü (trigonometri) =====
