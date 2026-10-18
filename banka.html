@@ -1440,7 +1440,7 @@ function shareText(txt) {
 
 // ---------- Ödeme planı PDF (üç kredide ortak) ----------
 let tkPdf = null, k2Pdf = null, tcPdf = null;
-const PDF_NOTE = "Bu belge Sadolayn sitesinde yapılmış tahmini bir hesaplamadır; bankanın resmi ödeme planı değildir. Kesin tutarlar ve tarihler işlem günü bankanızca belirlenir. Ücret, masraf, komisyon ve sigorta dahil edilmemiştir.";
+const PDF_NOTE = "Bu belge tahmini bir hesaplamadır; bankanın resmi ödeme planı değildir. Kesin tutarlar ve tarihler işlem günü bankanızca belirlenir. Ücret, masraf, komisyon ve sigorta dahil edilmemiştir.";
 // Özet kutuları: ilk satır kredi, ikinci satır ödeme bilgisi
 function planKutular(o) {
   const f = fmt2, pc = (x) => "%" + x.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
@@ -1456,7 +1456,7 @@ function planPdfHTML(o) {
   const kutu = (row, koyu) => `<div style="display:flex;gap:8px;margin-top:8px">${row.map(([k, v]) => `<div style="flex:1;padding:9px 11px;border-radius:9px;${koyu ? "background:#1c1a16;color:#f3dca8" : "background:#faf6ec;border:1px solid #e6dcc4;color:#222"}"><div style="font-size:10.5px;opacity:.75">${k}</div><div style="font-size:15px;font-weight:700;margin-top:2px">${v}</div></div>`).join("")}</div>`;
   return `<div style="width:760px;padding:26px 32px;background:#fff;color:#222;font-family:Georgia,'Times New Roman',serif;font-size:12px;line-height:1.4">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #c9953c;padding-bottom:8px">
-      <div><div style="font-style:italic;font-weight:700;font-size:22px;letter-spacing:2px;color:#a8741c">Sadolayn</div><div style="font-size:15px;font-weight:700">${o.tur} · Hesaplama Özeti</div></div>
+      <div><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#a8741c">KREDİ HESAPLAMA ÖZETİ</div><div style="font-size:19px;font-weight:700;margin-top:2px">${o.tur}</div></div>
       <div style="text-align:right;font-size:10.5px;color:#777">Hesaplama tarihi: ${d(new Date())}<br>İlk taksit: ${d(o.rows[0].d)}</div></div>
     <div style="margin-top:6px;font-size:10.5px;color:#a8741c;font-weight:700">BİLGİLENDİRME AMAÇLI · RESMİ ÖDEME PLANI DEĞİLDİR</div>
     ${kutu(K[0], false)}${kutu(K[1], true)}
@@ -1466,7 +1466,7 @@ function planPdfHTML(o) {
       <tbody>${o.rows.map((x, k) => `<tr style="page-break-inside:avoid"><td style="${cell};text-align:center;color:#999">${k + 1}</td><td style="${cell};text-align:center">${d(x.d)}</td><td style="${cell};font-weight:700">${f(x.t)}</td><td style="${cell}">${f(x.a)}</td><td style="${cell}">${f(x.f)}</td><td style="${cell}">${f(x.v)}</td><td style="${cell}">${f(x.fo)}</td><td style="${cell};color:#777">${f(x.b)}</td></tr>`).join("")}
       <tr style="background:#faf0d4;font-weight:700"><td style="${cell}"></td><td style="${cell};text-align:center">Toplam</td><td style="${cell}">${f(S("t"))}</td><td style="${cell}">${f(S("a"))}</td><td style="${cell}">${f(S("f"))}</td><td style="${cell}">${f(S("v"))}</td><td style="${cell}">${f(S("fo"))}</td><td style="${cell}"></td></tr></tbody>
     </table>
-    <p style="margin-top:14px;font-size:10.5px;color:#666;border-top:1px solid #e6dcc4;padding-top:8px">${PDF_NOTE}<br><span style="color:#a8741c">sadolayn.github.io/SadoDepo · Bilgi paylaştıkça büyür</span></p></div>`;
+    <p style="margin-top:14px;font-size:10.5px;color:#666;border-top:1px solid #e6dcc4;padding-top:8px">${PDF_NOTE}</p></div>`;
 }
 // PDF kitaplıkları sitenin kendi içinde (lib/), dış bağlantı gerekmez; ilk tıklamada yüklenir
 const loadJs = (src) => new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
@@ -1481,8 +1481,8 @@ function buildPlanPdf(o, name) {
   const L = 14, W = 182, GOLD = [201, 149, 60], DARK = [28, 26, 22], CREAM = [250, 246, 236];
   let y = 18;
   // Başlık
-  doc.setFont("FS", "bold"); doc.setFontSize(20); doc.setTextColor(168, 116, 28); doc.text("Sadolayn", L, y);
-  doc.setFontSize(13); doc.setTextColor(34, 34, 34); doc.text(`${o.tur} · Hesaplama Özeti`, L, y + 7);
+  doc.setFont("FS", "bold"); doc.setFontSize(9); doc.setTextColor(168, 116, 28); doc.text("KREDİ HESAPLAMA ÖZETİ", L, y - 1);
+  doc.setFontSize(17); doc.setTextColor(34, 34, 34); doc.text(o.tur, L, y + 6.5);
   doc.setFont("FS", "normal"); doc.setFontSize(9); doc.setTextColor(119, 119, 119);
   doc.text(`Hesaplama tarihi: ${d(new Date())}`, L + W, y, { align: "right" }); doc.text(`İlk taksit: ${d(o.rows[0].d)}`, L + W, y + 5, { align: "right" });
   doc.setDrawColor(...GOLD); doc.setLineWidth(0.9); doc.line(L, y + 10, L + W, y + 10);
@@ -1528,14 +1528,14 @@ function buildPlanPdf(o, name) {
     try { doc.restoreGraphicsState(); } catch (e) {}
     doc.setDrawColor(230, 220, 196); doc.setLineWidth(0.3); doc.line(L, 284, L + W, 284);
     doc.setFont("FS", "normal"); doc.setFontSize(8); doc.setTextColor(168, 116, 28);
-    doc.text("sadolayn.github.io/SadoDepo · Bilgilendirme amaçlı tahmini hesaplama", L, 289);
+    doc.text("Bilgilendirme amaçlı tahmini hesaplamadır · resmi ödeme planı değildir", L, 289);
     doc.setTextColor(140, 140, 140); doc.text(`${i} / ${n}`, L + W, 289, { align: "right" });
   }
   doc.save(name);
 }
 function planPdf(o, btn) {
   if (!o) return;
-  const name = `Sadolayn_Hesap_${o.tur.replace(/\s+/g, "")}_${Math.round(o.P)}TL.pdf`.replace(/İ/g, "I").replace(/ı/g, "i").replace(/Ş/g, "S").replace(/ş/g, "s").replace(/Ğ/g, "G").replace(/ğ/g, "g").replace(/Ü/g, "U").replace(/ü/g, "u").replace(/Ö/g, "O").replace(/ö/g, "o").replace(/Ç/g, "C").replace(/ç/g, "c");
+  const name = `KrediHesabi_${o.tur.replace(/\s+/g, "")}_${Math.round(o.P)}TL.pdf`.replace(/İ/g, "I").replace(/ı/g, "i").replace(/Ş/g, "S").replace(/ş/g, "s").replace(/Ğ/g, "G").replace(/ğ/g, "g").replace(/Ü/g, "U").replace(/ü/g, "u").replace(/Ö/g, "O").replace(/ö/g, "o").replace(/Ç/g, "C").replace(/ç/g, "c");
   const lbl = btn.textContent; btn.textContent = "⏳ PDF hazırlanıyor…"; btn.disabled = true;
   const done = () => { btn.textContent = lbl; btn.disabled = false; };
   loadPdfLib().then(() => { buildPlanPdf(o, name); done(); }).catch(() => {
