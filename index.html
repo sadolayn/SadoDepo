@@ -434,7 +434,7 @@
 (function () {
   const $ = (id) => document.getElementById(id);
   const URL_ = "https://sadolayn.github.io/SadoDepo/";
-  const METIN = "Selam! 👋 Sana güzel bir şey önereyim 😊\n🧮 Bankacılık hesaplamaları\n📈 İş Bankası gündemi\n📒 Günce ile hedef takibi\n🎲 Keyifli oyunlar\n✨ ve dahası…\nHepsi tek yerde, bir göz at, eminim seveceksin 🤗\nÖneri ve görüşlerini de bekliyorum 💬\nA❤️KLA  D💙V🤍M\n👇";
+  const METIN = "Selam! 👋 Sana güzel bir şey önereyim 😊\n🔔 Sadolayn Alerts: seçtiğin konuların haberleri her sabah 10:00'da telefonuna bildirim, e-postana özet olarak gelsin. Kontenjan sınırlı, yer dolmadan acele et ⏳\n🧮 Hesaplamalar · 📈 İş Bankası gündemi · 🎲 Oyunlar ve dahası\nA❤️KLA  D💙V🤍M 👇";
   $("oner").onclick = async () => {
     window.Rapor && Rapor.bolum("arkadasina-oner");
     if (navigator.share) { try { await navigator.share({ title: "SADOLAYN", text: METIN, url: URL_ }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
