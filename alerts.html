@@ -136,7 +136,7 @@
       <button id="add" class="main" style="padding:13px 18px">Ekle</button>
     </div>
     <div class="chips" id="chips"></div>
-    <div class="hint">En fazla 10 kelime. Tam ifade için tırnak kullan: <b>"yapay zeka"</b>. Hariç tutmak için eksi: <b>kredi -kart</b></div>
+    <div class="hint">En fazla 25 kelime. Tam ifade için tırnak kullan: <b>"yapay zeka"</b>. Hariç tutmak için eksi: <b>kredi -kart</b></div>
     <div class="sugg" id="sugg"></div>
   </div>
 
@@ -179,7 +179,7 @@ const ENDPOINT = "https://script.google.com/macros/s/AKfycbzXEzQSVz3T_a16_Uxnnte
 
 const $ = (x) => document.getElementById(x);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const MAX = 10;
+const MAX = 25;
 const SUGG = ["iş bankası", "yapay zeka", "TCMB faiz", "konut kredisi", "Maximum kampanya", "borsa istanbul", "altın fiyatları", "enflasyon", "KOBİ kredisi"];
 let kws = [];
 try { kws = JSON.parse(localStorage.getItem("alerts_kws") || "[]"); } catch (e) {}
@@ -206,7 +206,7 @@ function render() {
 function addKw(v) {
   v = String(v || "").replace(/\s+/g, " ").trim();
   if (v.length < 2) return;
-  if (kws.length >= MAX) return show("bad", "En fazla 10 kelime ekleyebilirsin.");
+  if (kws.length >= MAX) return show("bad", "En fazla 25 kelime ekleyebilirsin.");
   if (kws.some((k) => k.toLocaleLowerCase("tr") === v.toLocaleLowerCase("tr"))) return;
   kws.push(v.slice(0, 60));
   save(); render();
