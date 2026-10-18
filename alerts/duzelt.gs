@@ -35,7 +35,7 @@ function testPushSetup() {
   const m = k.replace(/\\n/g, '\n').match(/BEGIN PRIVATE KEY-*([\s\S]*?)-*END PRIVATE KEY/);
   const raw = m ? m[1] : '', body = raw.replace(/[^A-Za-z0-9+\/=]/g, ''), odd = raw.replace(/[A-Za-z0-9+\/=\n]/g, '');
   const e0 = String(sa.client_email || ''), e1 = em_(e0);
-  Logger.log('Hizmet hesabı: ' + e1 + ' · ' + e0.length + ' → ' + e1.length + ' karakter (beklenen 64)' + (e0 !== e1 ? ' · temizlendi: ' + JSON.stringify(e0.replace(/[A-Za-z0-9@.\-_]/g, '')) : ' · temiz') + ' · anahtar no: ' + String(sa.private_key_id || '').slice(0, 8));
+  Logger.log('Hizmet hesabı: ' + e1 + ' · ' + e0.length + ' → ' + e1.length + ' karakter (beklenen 63)' + (e0 !== e1 ? ' · temizlendi: ' + JSON.stringify(e0.replace(/[A-Za-z0-9@.\-_]/g, '')) : ' · temiz') + ' · anahtar no: ' + String(sa.private_key_id || '').slice(0, 8));
   Logger.log('Anahtar: ' + k.length + ' karakter · gövde ' + body.length + ' (beklenen ~1624) · fazlalık: ' + (odd.length ? JSON.stringify(odd) : 'yok'));
   fcmAccess_();
   Logger.log('✅ Firebase erişimi tamam. Bildirim tablosu: ' + pushSheet_().getParent().getUrl());
