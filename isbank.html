@@ -388,6 +388,33 @@
   .ataIntro.go .aiImg img { opacity: 1; animation: aiRise 8.5s .6s cubic-bezier(.45,.05,.35,1) both; }
   .ataIntro.go .aiQ { animation: aiFade 2s 6.2s ease forwards; }
   .ataIntro.go .aiOzel { animation-delay: .8s; }
+  /* Açılış: kapkara değil; üstte marka satırı ve portrenin yerinde altın bir ışıltı hemen görünür */
+  .aiTop { position: absolute; top: max(22px, env(safe-area-inset-top)); left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; animation: aiFade 1s .1s both; }
+  .aiTop span { font-family: Georgia, serif; font-style: italic; font-weight: 700; letter-spacing: 4px; font-size: 15px; color: #c9a050; }
+  .aiTop i { display: block; height: 1px; width: 0; background: linear-gradient(90deg, transparent, #e0a24f, transparent); animation: aiLine 1.6s .3s ease-out forwards; }
+  .aiTop b { font-size: 11px; font-weight: 600; letter-spacing: 2px; color: #7a6a4a; text-transform: uppercase; }
+  @keyframes aiLine { to { width: 180px; } }
+  .aiGlow { position: absolute; z-index: 2; pointer-events: none; mix-blend-mode: screen; inset: 8% 14% 20%; border-radius: 50%; background: radial-gradient(closest-side, rgba(224,162,79,.28), rgba(224,162,79,0)); animation: aiPulse 2.4s ease-in-out infinite; }
+  @keyframes aiPulse { 50% { opacity: .45; transform: scale(.94); } }
+  .ataIntro.go .aiGlow { animation: aiGlowOut 7s ease forwards; }
+  @keyframes aiGlowOut { 0% { opacity: 1; } 60% { opacity: .6; } 100% { opacity: 0; } }
+  .aiImg img { position: relative; z-index: 1; }
+  .ataIntro.go .aiImg img { animation-name: aiRise2 !important; }
+  @keyframes aiRise2 { 0% { opacity: 1; filter: grayscale(1) sepia(.55) brightness(.07) contrast(1.6); transform: scale(1.05); } 35% { filter: grayscale(1) sepia(.55) brightness(.2) contrast(1.55); } 68% { filter: grayscale(1) sepia(.55) brightness(.5) contrast(1.4); } 100% { opacity: 1; filter: grayscale(1) sepia(.5) brightness(.95) contrast(1.15); transform: scale(1); } }
+  /* Film */
+  .ataIntro.film { cursor: default; }
+  .ataIntro.film.sahnede .aiQ { animation: aiOut .8s forwards !important; }
+  @keyframes aiOut { to { opacity: 0; transform: translateY(-6px); height: 0; margin: 0; } }
+  .aiSahne { max-width: 420px; min-height: 96px; margin-top: 14px; text-align: center; opacity: 0; }
+  .aiSahne.on { animation: aiFade 1.2s ease forwards; }
+  .aiSahne b { display: block; font-family: Georgia, serif; font-size: 19px; color: #f3dca8; margin-bottom: 8px; }
+  .aiSahne span { display: block; font-size: 15px; line-height: 1.55; color: #d9c9a8; }
+  .aiSahne.son b { font-style: italic; font-size: 22px; }
+  .aiNok { display: flex; gap: 6px; margin-top: 12px; } .aiNok i { width: 7px; height: 7px; border-radius: 50%; background: #3a3022; transition: background .4s; } .aiNok i.on { background: #e0a24f; }
+  .filmKart { display: flex; align-items: center; gap: 12px; width: 100%; margin: 0 0 12px; padding: 12px 14px; border-radius: 16px; border: 1px solid #6b5222; background: radial-gradient(120% 140% at 0% 0%, rgba(224,162,79,.22), rgba(0,0,0,0) 60%), #0c0a07; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+  .filmKart img { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; object-position: 50% 18%; filter: grayscale(1) sepia(.5); border: 1px solid #6b5222; }
+  .filmKart div { flex: 1; } .filmKart b { display: block; font-size: 15px; color: #f3dca8; } .filmKart span { font-size: 12.5px; color: var(--muted); }
+  .filmKart em { flex: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #e0a24f; color: #000; font-style: normal; font-size: 16px; }
 </style>
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
@@ -395,34 +422,60 @@
 <link rel="stylesheet" href="theme.css">
 </head>
 <body>
-<div id="ataIntro" class="ataIntro" hidden>
-  <div class="aiImg"><img src="img/ataturk.jpg" alt="Mustafa Kemal Atatürk" decoding="async"></div>
-  <blockquote class="aiQ">Sermayenin azlığına bakarak cesaretiniz kırılmasın! Böyle kurumlar için en kuvvetli sermaye; zekâ, dikkat, iffettir; teknik ve metodik çalışmasını bilmektir. Bu inançla işe sarılınız, mutlaka başarırsınız!<cite>Mustafa Kemal Atatürk</cite></blockquote>
-  <button type="button" class="aiSkip" id="aiSkip">Geç ›</button>
-</div>
 <script>
-// Yalnızca ilk ziyarette: karanlıktan beliren Atatürk ve sözü, sonra sayfa açılır (dokununca geçilir)
+// Atatürk açılışı ve Tarihçe'deki kısa film. Açılış kuralı: ilk ziyaret · her haftanın ilk girişi · anlamlı günler · ?ata
+window.ataOyna = function (film, ozelNot, yas) {
+  if (document.getElementById("ataIntro")) return;
+  var el = document.createElement("div"); el.id = "ataIntro"; el.className = "ataIntro" + (film ? " film" : "");
+  var SAHNE = [
+    ["26 Ağustos 1924 · Ankara", "İş Bankası, Atatürk'ün direktifiyle 2 şube ve 37 çalışanla kuruldu."],
+    ["1 milyon liralık sermaye", "Kuruluş sermayesinin dörtte birini, 250 bin lirayı Atatürk karşıladı."],
+    ["İlk genel müdür", "Bankanın ilk genel müdürü Celâl Bayar'dı."],
+    ["1928 · Kumbara", "Türkiye'ye ilk kumbaraları İş Bankası getirdi; tasarruf alışkanlığının simgesi oldu."],
+    ["Vasiyet", "Atatürk'ün hisselerinin kâr payları, vasiyeti gereği Türk Dil Kurumu ve Türk Tarih Kurumu'na gider."],
+    ["Bir asırdır", "İş Bankası 2024'te 100 yaşını kutladı; ikinci yüzyılına \"Türkiye'nin Bankası\" olarak girdi."]
+  ];
+  el.innerHTML = '<div class="aiTop"><span>SADOLAYN</span><i></i><b>İş Bankası Gündemi</b></div>' +
+    (ozelNot ? '<div class="aiOzel' + (yas ? " yas" : "") + '">' + ozelNot + '</div>' : "") +
+    '<div class="aiImg"><span class="aiGlow"></span><img src="img/ataturk.jpg" alt="Mustafa Kemal Atatürk" decoding="async"></div>' +
+    '<blockquote class="aiQ">Sermayenin azlığına bakarak cesaretiniz kırılmasın! Böyle kurumlar için en kuvvetli sermaye; zekâ, dikkat, iffettir; teknik ve metodik çalışmasını bilmektir. Bu inançla işe sarılınız, mutlaka başarırsınız!<cite>Mustafa Kemal Atatürk</cite></blockquote>' +
+    (film ? '<div class="aiSahne" id="aiSahne"></div><div class="aiNok">' + SAHNE.map(function () { return "<i></i>"; }).join("") + "</div>" : "") +
+    '<button type="button" class="aiSkip">' + (film ? "Kapat ✕" : "Geç ›") + "</button>";
+  document.body.appendChild(el); document.documentElement.style.overflow = "hidden";
+  var bitti = false, zam = [], kapat = function () { if (bitti) return; bitti = true; zam.forEach(clearTimeout); el.classList.add("out"); document.documentElement.style.overflow = ""; setTimeout(function () { el.remove(); }, 900); };
+  if (film) el.querySelector(".aiSkip").onclick = kapat; else el.addEventListener("click", kapat);
+  var img = el.querySelector(".aiImg img"), basla = function () {
+    if (el.classList.contains("go")) return; el.classList.add("go");
+    if (!film) { zam.push(setTimeout(kapat, 12500)); return; }
+    // Film: söz okunduktan sonra sahneler sırayla gelir, sonunda kapanış
+    var box = el.querySelector("#aiSahne"), nok = el.querySelectorAll(".aiNok i");
+    SAHNE.forEach(function (sc, i) {
+      zam.push(setTimeout(function () {
+        el.classList.add("sahnede");
+        box.classList.remove("on"); void box.offsetWidth;
+        box.innerHTML = "<b>" + sc[0] + "</b><span>" + sc[1] + "</span>"; box.classList.add("on");
+        nok.forEach(function (n, k) { n.classList.toggle("on", k <= i); });
+      }, 13000 + i * 5200));
+    });
+    zam.push(setTimeout(function () { box.classList.remove("on"); void box.offsetWidth; box.innerHTML = "<b>Bilgi paylaştıkça büyür</b><span>Sadolayn · saygıyla</span>"; box.classList.add("on", "son"); }, 13000 + SAHNE.length * 5200));
+    zam.push(setTimeout(kapat, 13000 + SAHNE.length * 5200 + 6000));
+  };
+  if (img.complete && img.naturalWidth) basla(); else { img.addEventListener("load", basla); img.addEventListener("error", kapat); zam.push(setTimeout(basla, 4000)); }
+};
 (function () {
-  var el = document.getElementById("ataIntro");
-  // Gösterim kuralı: ilk ziyaret · her takvim haftasının ilk girişi · anlamlı günlerin ilk girişi · ?ata ile her zaman
   var t = new Date(), md = ("0" + (t.getMonth() + 1)).slice(-2) + "-" + ("0" + t.getDate()).slice(-2), gun = t.getFullYear() + "-" + md;
   var pzt = new Date(t.getFullYear(), t.getMonth(), t.getDate() - ((t.getDay() + 6) % 7)), hafta = pzt.getFullYear() + "-" + (pzt.getMonth() + 1) + "-" + pzt.getDate();
   var OZEL = { "10-28": "🇹🇷 Cumhuriyet Bayramı arifesi · 29 Ekim'e hazırlanıyoruz", "10-29": "🇹🇷 Cumhuriyet Bayramımız kutlu olsun", "11-10": "🖤 10 Kasım · Saygı ve özlemle anıyoruz", "05-19": "🇹🇷 19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı kutlu olsun", "04-23": "🇹🇷 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı kutlu olsun", "08-30": "🇹🇷 30 Ağustos Zafer Bayramı kutlu olsun", "08-26": "🏛️ İş Bankası " + (t.getFullYear() - 1924) + " yaşında · 26 Ağustos 1924" };
   var goster = false, A = {};
   try { A = JSON.parse(localStorage.getItem("ataIntro2") || "{}"); } catch (e) {}
-  if (!A.ilk) goster = true;                       // ilk ziyaret
-  if (A.hafta !== hafta) goster = true;            // bu hafta henüz görmedi (hangi gün girerse)
-  if (OZEL[md] && A.ozel !== gun) goster = true;   // anlamlı günün ilk girişi
+  if (!A.ilk) goster = true;
+  if (A.hafta !== hafta) goster = true;
+  if (OZEL[md] && A.ozel !== gun) goster = true;
   if (/[?&]ata\b/.test(location.search)) { goster = true; history.replaceState(null, "", location.pathname + location.hash); }
-  if (!goster || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.remove(); return; }
+  if (!goster || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   A.ilk = 1; A.hafta = hafta; if (OZEL[md]) A.ozel = gun;
   try { localStorage.setItem("ataIntro2", JSON.stringify(A)); } catch (e) {}
-  if (OZEL[md]) { var n = document.createElement("div"); n.className = "aiOzel" + (md === "11-10" ? " yas" : ""); n.textContent = OZEL[md]; el.insertBefore(n, el.firstChild); }
-  el.hidden = false; document.documentElement.style.overflow = "hidden";
-  var bitti = false, kapat = function () { if (bitti) return; bitti = true; el.classList.add("out"); document.documentElement.style.overflow = ""; setTimeout(function () { el.remove(); }, 900); };
-  el.addEventListener("click", kapat);
-  var img = el.querySelector(".aiImg img"), basla = function () { if (el.classList.contains("go")) return; el.classList.add("go"); setTimeout(kapat, 12500); };
-  if (img.complete && img.naturalWidth) basla(); else { img.addEventListener("load", basla); img.addEventListener("error", kapat); setTimeout(basla, 4000); }
+  ataOyna(false, OZEL[md], md === "11-10");
 })();
 </script>
 <div class="wrap">
@@ -1254,7 +1307,8 @@ function renderSoru() {
 }
 function renderTarihce() {
   $("upd").textContent = `${TARIH.length} bilgi · bankanın kendi tarihçesinden ve 100. yıl kaynaklarından`;
-  $("list").innerHTML = `<div class="bmatik">
+  $("list").innerHTML = `<button type="button" class="filmKart" onclick="ataOyna(true)"><img src="img/ataturk.jpg" alt=""><div><b>🎬 Atatürk ve İş Bankası</b><span>Kısa film · yaklaşık 1,5 dakika</span></div><em>▶</em></button>
+    <div class="bmatik">
       <div class="bmTop"><div><span class="bmQ">💡 Biliyor muydunuz?</span><b class="bmH">"Bankamatik" bir marka,<br>sahibi <em>İş Bankası</em></b></div>
         <svg class="bmAtm" viewBox="0 0 64 84" aria-label="Bankamatik çizimi"><rect x="4" y="2" width="56" height="80" rx="8" fill="#1a2bb8" stroke="#6f84ff"/><rect x="11" y="10" width="42" height="26" rx="3" fill="#0b1140" stroke="#3a50f0"/><text x="32" y="26" text-anchor="middle" font-size="6.4" font-weight="800" fill="#f3dca8" font-family="system-ui,sans-serif">BANKAMATİK</text><rect x="14" y="42" width="22" height="20" rx="2" fill="#2a3fe0"/><g fill="#9fb0ff"><circle cx="19" cy="47" r="1.6"/><circle cx="25" cy="47" r="1.6"/><circle cx="31" cy="47" r="1.6"/><circle cx="19" cy="52" r="1.6"/><circle cx="25" cy="52" r="1.6"/><circle cx="31" cy="52" r="1.6"/><circle cx="19" cy="57" r="1.6"/><circle cx="25" cy="57" r="1.6"/><circle cx="31" cy="57" r="1.6"/></g><rect x="40" y="44" width="14" height="3" rx="1.5" fill="#e0a24f"/><rect x="40" y="52" width="14" height="10" rx="2" fill="#0b1140" stroke="#3a50f0"/><rect x="14" y="68" width="36" height="4" rx="2" fill="#0b1140"/></svg></div>
       <p>Para çekilen makinelere hepimiz "bankamatik" deriz ama bu genel bir kelime değil. İş Bankası <b>1982</b>'de Türkiye'nin ilk ATM'sini ve onunla çalışan kartı sundu, makinelerine de <b>Bankamatik</b> adını verdi. Ad o kadar sevildi ki bütün ATM'lerin genel adı gibi kullanılır oldu.</p>
