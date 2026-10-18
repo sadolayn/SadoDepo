@@ -345,7 +345,7 @@
     <span class="pyTx"><b>Ana ekrana ekle</b><small>Kısayolu ekle, tek dokunuşla aç</small></span>
     <span class="pyGo">›</span>
   </button>
-  <div class="pySlogan">A❤️KLA &nbsp; D💙V🤍M</div>
+  <div class="pySlogan" aria-label="Aşkla devam · Bilgi paylaştıkça büyür"><div class="sl-r"><span class="u"><i class="gd">A</i><b class="hb">❤️</b><i class="gd">KLA</i>&nbsp;&nbsp;<i class="gd">D</i><b>💙</b><i class="gd">V</i><b>🤍</b><i class="gd">M</i><em>✦</em><i class="gd">Bilgi paylaştıkça büyür</i><em>✦</em></span><span class="u"><i class="gd">A</i><b class="hb">❤️</b><i class="gd">KLA</i>&nbsp;&nbsp;<i class="gd">D</i><b>💙</b><i class="gd">V</i><b>🤍</b><i class="gd">M</i><em>✦</em><i class="gd">Bilgi paylaştıkça büyür</i><em>✦</em></span><span class="u"><i class="gd">A</i><b class="hb">❤️</b><i class="gd">KLA</i>&nbsp;&nbsp;<i class="gd">D</i><b>💙</b><i class="gd">V</i><b>🤍</b><i class="gd">M</i><em>✦</em><i class="gd">Bilgi paylaştıkça büyür</i><em>✦</em></span><span class="u"><i class="gd">A</i><b class="hb">❤️</b><i class="gd">KLA</i>&nbsp;&nbsp;<i class="gd">D</i><b>💙</b><i class="gd">V</i><b>🤍</b><i class="gd">M</i><em>✦</em><i class="gd">Bilgi paylaştıkça büyür</i><em>✦</em></span></div></div>
 </section>
 <div class="kurYardim" id="kurYardim" hidden></div>
 <div class="oneri-wrap"><button type="button" class="oneri-btn" id="oneriBtn">✉️ Önerileriniz ve görüşleriniz benim için değerli</button></div>
@@ -377,7 +377,18 @@
   .pyTx b { display: block; font-size: 17px; }
   .pyTx small { display: block; font-size: 12.5px; opacity: .75; margin-top: 2px; }
   .pyGo { flex: none; font-size: 26px; opacity: .6; }
-  .paylas .pySlogan { margin-top: 14px; font-size: 14px; letter-spacing: 2px; color: #d9c29a; }
+  .paylas .pySlogan { margin: 14px -14px -14px; padding: 11px 0 12px; overflow: hidden; border-top: 1px solid rgba(224,162,79,.35); border-radius: 0 0 22px 22px; background: linear-gradient(180deg, rgba(224,162,79,.06), rgba(224,162,79,.12)); -webkit-mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+  .pySlogan .sl-r { display: inline-flex; white-space: nowrap; animation: slKay 34s linear infinite; }
+  .pySlogan .u { display: inline-flex; align-items: center; gap: 0; padding-right: 22px; font-size: 16px; font-weight: 800; letter-spacing: 3px; }
+  .pySlogan .gd { font-style: normal; background: linear-gradient(100deg, #8a5a14 0%, #f6dc9a 18%, #fff4cf 26%, #c9953c 40%, #8a5a14 55%, #f6dc9a 72%, #fff4cf 80%, #b07a28 100%); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: slYaldiz 4.5s linear infinite; filter: drop-shadow(0 1px 0 rgba(0,0,0,.6)); }
+  .pySlogan .u > .gd:nth-last-of-type(1) { letter-spacing: 1px; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 700; }
+  .pySlogan b { font-weight: 400; margin: 0 1px; letter-spacing: 0; }
+  .pySlogan .hb { display: inline-block; animation: slKalp 1.6s ease-in-out infinite; }
+  .pySlogan em { font-style: normal; margin: 0 14px; color: #c9953c; font-size: 12px; letter-spacing: 0; }
+  @keyframes slKay { to { transform: translateX(-50%); } }
+  @keyframes slYaldiz { to { background-position: -220% 0; } }
+  @keyframes slKalp { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.22); } 30% { transform: scale(1); } 45% { transform: scale(1.14); } }
+  @media (prefers-reduced-motion: reduce) { .pySlogan .sl-r, .pySlogan .gd, .pySlogan .hb { animation: none; } }
   .kurYardim { max-width: 420px; margin: 10px auto 0; padding: 12px 14px; border-radius: 14px; background: #121212; border: 1px solid #2a2a2a; color: #cfcfcf; font-size: 13.5px; line-height: 1.6; }
   .kurYardim b { color: #fff; }
   .kurYardim { border-color: rgba(63,194,131,.45); background: linear-gradient(180deg, rgba(63,194,131,.10), #121212 70%); }
