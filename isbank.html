@@ -382,6 +382,8 @@
   .aiQ cite { display: block; margin-top: 10px; font-style: normal; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #a8874c; }
   @keyframes aiFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   .aiSkip { position: absolute; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); padding: 7px 14px; border-radius: 99px; border: 1px solid #3a2f1c; background: transparent; color: #8a7a5a; font: inherit; font-size: 13px; cursor: pointer; }
+  .aiOzel { margin-bottom: 18px; padding: 7px 16px; border-radius: 99px; border: 1px solid #5a1f1f; background: rgba(200,30,40,.14); color: #f3c0c0; font-size: 13.5px; font-weight: 600; text-align: center; opacity: 0; animation: aiFade 1.2s .6s ease forwards; }
+  .aiOzel.yas { border-color: #3a3a3a; background: rgba(255,255,255,.05); color: #d8d8d8; }
 </style>
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
@@ -397,10 +399,21 @@
 <script>
 // Yalnızca ilk ziyarette: karanlıktan beliren Atatürk ve sözü, sonra sayfa açılır (dokununca geçilir)
 (function () {
-  var el = document.getElementById("ataIntro"), seen = false;
-  try { seen = localStorage.getItem("ataIntro") === "1"; localStorage.setItem("ataIntro", "1"); } catch (e) {}
-  if (/[?&]ata\b/.test(location.search)) { seen = false; history.replaceState(null, "", location.pathname + location.hash); } // isbank.html?ata ile tekrar izlenir
-  if (seen || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.remove(); return; }
+  var el = document.getElementById("ataIntro");
+  // Gösterim kuralı: ilk ziyaret · her takvim haftasının ilk girişi · anlamlı günlerin ilk girişi · ?ata ile her zaman
+  var t = new Date(), md = ("0" + (t.getMonth() + 1)).slice(-2) + "-" + ("0" + t.getDate()).slice(-2), gun = t.getFullYear() + "-" + md;
+  var pzt = new Date(t.getFullYear(), t.getMonth(), t.getDate() - ((t.getDay() + 6) % 7)), hafta = pzt.getFullYear() + "-" + (pzt.getMonth() + 1) + "-" + pzt.getDate();
+  var OZEL = { "10-28": "🇹🇷 Cumhuriyet Bayramı arifesi · 29 Ekim'e hazırlanıyoruz", "10-29": "🇹🇷 Cumhuriyet Bayramımız kutlu olsun", "11-10": "🖤 10 Kasım · Saygı ve özlemle anıyoruz", "05-19": "🇹🇷 19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı kutlu olsun", "04-23": "🇹🇷 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı kutlu olsun", "08-30": "🇹🇷 30 Ağustos Zafer Bayramı kutlu olsun", "08-26": "🏛️ İş Bankası " + (t.getFullYear() - 1924) + " yaşında · 26 Ağustos 1924" };
+  var goster = false, A = {};
+  try { A = JSON.parse(localStorage.getItem("ataIntro2") || "{}"); } catch (e) {}
+  if (!A.ilk) goster = true;                       // ilk ziyaret
+  if (A.hafta !== hafta) goster = true;            // bu hafta henüz görmedi (hangi gün girerse)
+  if (OZEL[md] && A.ozel !== gun) goster = true;   // anlamlı günün ilk girişi
+  if (/[?&]ata\b/.test(location.search)) { goster = true; history.replaceState(null, "", location.pathname + location.hash); }
+  if (!goster || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.remove(); return; }
+  A.ilk = 1; A.hafta = hafta; if (OZEL[md]) A.ozel = gun;
+  try { localStorage.setItem("ataIntro2", JSON.stringify(A)); } catch (e) {}
+  if (OZEL[md]) { var n = document.createElement("div"); n.className = "aiOzel" + (md === "11-10" ? " yas" : ""); n.textContent = OZEL[md]; el.insertBefore(n, el.firstChild); }
   el.hidden = false; document.documentElement.style.overflow = "hidden";
   var bitti = false, kapat = function () { if (bitti) return; bitti = true; el.classList.add("out"); document.documentElement.style.overflow = ""; setTimeout(function () { el.remove(); }, 900); };
   el.addEventListener("click", kapat); setTimeout(kapat, 8600);
