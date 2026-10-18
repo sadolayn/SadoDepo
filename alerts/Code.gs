@@ -374,6 +374,11 @@ function fcmSa_() {
   if (!raw) throw new Error('FCM_SA ayarı yok (Firebase hizmet hesabı JSON).');
   return JSON.parse(raw);
 }
+// Anahtarın satır sonlarını toparla (kopyalama sırasında \\n'ye dönüşmüş olabilir)
+function pk_(k) {
+  k = String(k || '').replace(/\\n/g, '\n').replace(/\r/g, '').trim();
+  return k + '\n';
+}
 function fcmUrl_() { return 'https://fcm.googleapis.com/v1/projects/' + fcmSa_().project_id + '/messages:send'; }
 
 // Hizmet hesabıyla imzalı JWT → 1 saatlik erişim anahtarı (önbellekte tutulur)
@@ -384,7 +389,7 @@ function fcmAccess_() {
   const b64 = (o) => Utilities.base64EncodeWebSafe(typeof o === 'string' ? o : JSON.stringify(o)).replace(/=+$/, '');
   const head = b64({ alg: 'RS256', typ: 'JWT' });
   const claim = b64({ iss: sa.client_email, scope: 'https://www.googleapis.com/auth/firebase.messaging', aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 });
-  const sig = Utilities.base64EncodeWebSafe(Utilities.computeRsaSha256Signature(head + '.' + claim, sa.private_key)).replace(/=+$/, '');
+  const sig = Utilities.base64EncodeWebSafe(Utilities.computeRsaSha256Signature(head + '.' + claim, pk_(sa.private_key))).replace(/=+$/, '');
   const res = UrlFetchApp.fetch('https://oauth2.googleapis.com/token', {
     method: 'post', muteHttpExceptions: true,
     payload: { grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: head + '.' + claim + '.' + sig }

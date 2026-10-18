@@ -32,8 +32,11 @@
     <div id="saMsg" style="margin-top:8px;font-size:14px;color:#a8ecc9"></div>
     <button id="saCp" style="display:none;margin-top:8px">📋 Anahtarı kopyala</button>
   </div>
-  <ol>
-    <li>Yukarıdaki düğmeye bas (kod panoya kopyalanır).</li>
+  <div style="margin:16px 0 4px;padding:12px;border:1px solid #6b5222;border-radius:14px;background:#120e07">
+    <p style="margin:0 0 8px"><b style="color:#e0a24f">🛠 Düzeltme dosyası</b><br>Apps Script'te <b>+ → Komut dosyası</b> ile <b>Duzelt</b> adında yeni dosya aç, içindeki 3 satırı sil, bunu yapıştır, 💾 kaydet.</p>
+    <button id="fx" disabled>Yükleniyor…</button>
+  </div>
+  <ol> (kod panoya kopyalanır).</li>
     <li>Apps Script'te Kod.gs'nin içine dokun, <b>uzun bas → Tümünü seç</b>, sil.</li>
     <li>Boş alana <b>uzun bas → Yapıştır</b>.</li>
     <li>Üstteki 💾 kaydet simgesine bas.</li>
@@ -61,6 +64,13 @@ fetch("Code.gs?v=" + Date.now()).then((r) => r.text()).then((t) => {
     };
   } else document.getElementById("parts").style.display = "none";
 }).catch(() => { document.getElementById("cp").textContent = "Yüklenemedi, sayfayı yenile"; });
+let fxTxt = "";
+fetch("duzelt.gs?v=" + Date.now()).then((r) => r.text()).then((t) => { fxTxt = t; const b = document.getElementById("fx"); b.disabled = false; b.textContent = "📋 Düzeltmeyi kopyala (" + t.split("\n").length + " satır)"; });
+document.getElementById("fx").onclick = async () => {
+  const b = document.getElementById("fx");
+  try { await navigator.clipboard.writeText(fxTxt); } catch (er) { const ta = document.createElement("textarea"); ta.value = fxTxt; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
+  b.className = "ok"; b.textContent = "✅ Kopyalandı! Duzelt dosyasına yapıştır";
+};
 let saTxt = "";
 document.getElementById("sa").onchange = async (e) => {
   const f = e.target.files[0], m = document.getElementById("saMsg"), b = document.getElementById("saCp");
