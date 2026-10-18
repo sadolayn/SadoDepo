@@ -15,9 +15,8 @@ const CFG = {
   NAME: 'Sadolayn Alerts',
   SITE: 'https://sadolayn.github.io/SadoDepo/',
   PAGE: 'https://sadolayn.github.io/SadoDepo/alerts.html',
-  MAX_KEYWORDS: 25,       // abone başına en fazla kelime
-  PER_KEYWORD: 5,         // e-postada kelime başına en fazla haber (10'dan fazla kelimede 3)
-  RUN_LIMIT_MS: 270000,   // tek çalışmada en fazla ~4,5 dk; kalanlar 1 dk sonra devam eder
+  MAX_KEYWORDS: 10,       // abone başına en fazla kelime
+  PER_KEYWORD: 5,         // e-postada kelime başına en fazla haber
   MAX_SUBS: 80,           // Gmail günlük gönderim kotası (100) için üst sınır
   DAILY_SIGNUP_LIMIT: 30, // günde en fazla yeni onay e-postası
   CONFIRM_COOLDOWN_MIN: 10,
@@ -248,42 +247,23 @@ function preview_(q) {
 
 /* ---------- Günlük özet ---------- */
 
-function dailyDigest() { digestRun_(true); }
-function digestContinue_() { digestRun_(false); }
-
-// Google tek çalışmayı ~6 dk ile sınırlar: süre dolmadan durur, kaldığı yeri saklar ve 1 dk sonra devam eder
-function digestRun_(fresh) {
-  const t0 = Date.now(), props = PropertiesService.getScriptProperties();
-  const today = Utilities.formatDate(new Date(), CFG.TZ, 'yyyyMMdd');
-  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'digestContinue_').forEach(t => ScriptApp.deleteTrigger(t));
-  let start = 1;
-  if (!fresh && props.getProperty('digestDay') === today) start = Number(props.getProperty('digestRow') || 1);
-  props.setProperty('digestDay', today);
-
+function dailyDigest() {
   const sh = sheet_();
   const data = sh.getDataRange().getValues();
   const dateStr = Utilities.formatDate(new Date(), CFG.TZ, 'd MMMM yyyy');
   const memo = {};
   const news = kw => (memo[kw] = memo[kw] || fetchNews_(kw));
 
-  for (let i = start; i < data.length; i++) {
-    if (Date.now() - t0 > CFG.RUN_LIMIT_MS) {
-      props.setProperty('digestRow', String(i));
-      ScriptApp.newTrigger('digestContinue_').timeBased().after(60 * 1000).create();
-      Logger.log('Süre doldu, ' + i + '. satırdan 1 dk sonra devam edilecek.');
-      return;
-    }
+  for (let i = 1; i < data.length; i++) {
     const r = data[i];
     if (r[C.status] !== 'active' || !r[C.keywords]) continue;
-    if (r[C.lastSent] && Utilities.formatDate(new Date(r[C.lastSent]), CFG.TZ, 'yyyyMMdd') === today) continue; // bugün zaten gitti
     if (MailApp.getRemainingDailyQuota() < 1) break;
 
     const kws = String(r[C.keywords]).split(' | ').filter(Boolean);
-    const per = kws.length > 10 ? 3 : CFG.PER_KEYWORD;
     const used = {};
     const sections = kws.map(kw => ({
       kw,
-      items: news(kw).filter(x => !used[x.link] && (used[x.link] = 1)).slice(0, per)
+      items: news(kw).filter(x => !used[x.link] && (used[x.link] = 1)).slice(0, CFG.PER_KEYWORD)
     }));
     const total = sections.reduce((s, x) => s + x.items.length, 0);
     if (!total) continue; // Google Alerts gibi: haber yoksa e-posta yok
@@ -301,7 +281,6 @@ function digestRun_(fresh) {
       Logger.log('Gönderilemedi: ' + r[C.email] + ' — ' + e);
     }
   }
-  props.deleteProperty('digestRow');
 }
 
 /* ---------- E-posta şablonları ---------- */

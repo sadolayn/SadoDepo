@@ -96,6 +96,44 @@
   .yer small { font-size: 12.5px; color: var(--muted); }
   .yer.az { border-color: #a8541f; } .yer.az small { color: #ffb37a; font-weight: 600; }
   .yer.dolu { border-color: #5a1f1f; } .yer.dolu small { color: #f3a0a0; }
+  /* ===== Gündem Radarı ===== */
+  .radar-hero { position: relative; overflow: hidden; margin: 0 0 12px; padding: 18px 16px 0; border-radius: 20px; border: 1px solid #3a2f1c;
+    background: radial-gradient(90% 70% at 85% 30%, rgba(224,162,79,.18), rgba(0,0,0,0) 60%), radial-gradient(70% 60% at 0% 100%, rgba(63,194,131,.10), rgba(0,0,0,0) 60%), #080706; }
+  .rh-txt { position: relative; z-index: 2; max-width: 54%; }
+  .rh-et { font-size: 10.5px; font-weight: 800; letter-spacing: 2.5px; color: #8a7450; }
+  .radar-hero h2 { margin: 4px 0 8px; font-size: 30px; line-height: 1.05; font-weight: 800; color: #fff; letter-spacing: -.5px; }
+  .radar-hero h2 em { font-style: normal; background: linear-gradient(90deg, #f6dc9a, #e0a24f 50%, #3fc283); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .radar-hero p { margin: 0; font-size: 14px; line-height: 1.5; color: #c9bfae; } .radar-hero p b { color: #f3dca8; }
+  .radar { position: absolute; right: -6px; top: 14px; width: 176px; height: 176px; border-radius: 50%; background: radial-gradient(circle, rgba(63,194,131,.10), rgba(0,0,0,0) 70%); }
+  .radar > i { position: absolute; inset: 0; margin: auto; border-radius: 50%; border: 1px solid rgba(63,194,131,.28); }
+  .radar .r2 { width: 66%; height: 66%; } .radar .r3 { width: 33%; height: 33%; } .radar .r1 { box-shadow: 0 0 0 1px rgba(63,194,131,.08) inset; }
+  .radar .sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, rgba(63,194,131,.45), rgba(63,194,131,0) 70deg, rgba(0,0,0,0) 360deg); animation: sweep 3.2s linear infinite; }
+  @keyframes sweep { to { transform: rotate(360deg); } }
+  .radar .core { position: absolute; left: 50%; top: 50%; width: 38px; height: 38px; margin: -19px 0 0 -19px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; background: #0e0c08; border: 1px solid #6b5222; box-shadow: 0 0 18px rgba(224,162,79,.35); }
+  .blip { position: absolute; transform: translate(-50%, -50%); padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 700; white-space: nowrap; color: #062616; background: #9ff0c8; box-shadow: 0 0 12px rgba(63,194,131,.7); animation: blip 3.2s ease-in-out infinite; }
+  .blip::before { content: ""; position: absolute; left: -9px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #3fc283; box-shadow: 0 0 8px #3fc283; }
+  @keyframes blip { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+  .ticker { position: relative; z-index: 2; display: flex; align-items: center; gap: 8px; margin: 18px -16px 0; padding: 9px 12px; border-top: 1px solid #2a2418; background: rgba(0,0,0,.55); }
+  .tk-et { flex: none; font-size: 10.5px; font-weight: 800; letter-spacing: 1px; color: #ef6a4c; animation: blip 1.6s infinite; }
+  .tk-win { flex: 1; overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .tk-run { display: inline-block; white-space: nowrap; font-size: 12.5px; color: #d9cdb6; padding-left: 100%; animation: tk 60s linear infinite; }
+  .tk-run b { color: #e0a24f; margin: 0 12px; }
+  @keyframes tk { to { transform: translateX(-100%); } }
+  .flow { display: flex; align-items: center; gap: 6px; margin: 0 0 12px; }
+  .flow > div { flex: 1; min-width: 0; display: flex; align-items: center; gap: 7px; padding: 9px 8px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); font-size: 11.5px; line-height: 1.3; color: #bdbdbd; }
+  .flow b { flex: none; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: linear-gradient(160deg, #f6dc9a, #c9953c); color: #000; font-size: 12px; }
+  .flow > i { flex: none; width: 10px; height: 2px; background: #3a2f1c; }
+  .chip { animation: pop .35s cubic-bezier(.3,1.6,.5,1); }
+  @keyframes pop { from { transform: scale(.6); opacity: 0; } }
+  .cumle { margin-top: 10px; padding: 11px 12px; border-radius: 12px; border: 1px dashed #5a4320; background: #120e07; font-size: 13px; color: #d9cdb6; }
+  .cumle b { color: #f3dca8; } .cumle .cw { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 6px; }
+  .cumle .cw button { padding: 5px 10px; border-radius: 99px; font-size: 12.5px; font-weight: 700; background: #2a2010; border: 1px solid #6b5222; color: #f3d3a0; }
+  .cumle small { display: block; color: var(--muted); font-size: 12px; line-height: 1.45; } .cumle a { color: #e0a24f; }
+  .bildirim { display: flex; gap: 10px; align-items: center; margin: -2px 0 12px; padding: 11px 13px; border-radius: 16px; background: rgba(30,30,30,.92); border: 1px solid #333; box-shadow: 0 10px 26px rgba(0,0,0,.5); animation: notif .5s cubic-bezier(.2,1.3,.4,1); }
+  @keyframes notif { from { transform: translateY(-14px); opacity: 0; } }
+  .bi-ic { flex: none; width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: linear-gradient(160deg, #f6dc9a, #c9953c); font-size: 17px; }
+  .bildirim b { display: block; font-size: 13px; color: #fff; } .bildirim b small { font-weight: 500; color: #8a8a8a; } .bildirim span { display: block; font-size: 12.5px; color: #c9c9c9; line-height: 1.4; }
+  @media (prefers-reduced-motion: reduce) { .radar .sweep, .tk-run, .blip, .tk-et { animation: none; } .tk-run { padding-left: 0; } }
 </style>
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
@@ -112,14 +150,23 @@
   </header>
   </div>
 
-  <div class="card hero">
-    <h2>Gündemi sen seç</h2>
-    <p>İlgilendiğin kelimeleri yaz; her sabah 10:00'da bu kelimelerle ilgili son 24 saatin haber bağlantıları e-postana gelsin.</p>
-    <div class="steps">
-      <div><b>✍️</b>Kelimeni yaz</div>
-      <div><b>📧</b>E-postanı onayla</div>
-      <div><b>☕</b>10:00'da oku</div>
+  <section class="radar-hero">
+    <div class="rh-txt">
+      <span class="rh-et">SADOLAYN ALERTS</span>
+      <h2>Gündem <em>Radarı</em></h2>
+      <p>Kelimeni radara koy. Her sabah <b>10:00</b>'da son 24 saatin haberleri kahvenle birlikte e-postanda.</p>
     </div>
+    <div class="radar" id="radar" aria-hidden="true">
+      <i class="r1"></i><i class="r2"></i><i class="r3"></i><span class="sweep"></span><span class="core">🔔</span>
+      <div id="blips"></div>
+    </div>
+    <div class="ticker" aria-label="Son dakika başlıkları"><span class="tk-et">● CANLI</span><div class="tk-win"><div class="tk-run" id="tk">Gündem yükleniyor…</div></div></div>
+  </section>
+
+  <div class="flow">
+    <div><b>1</b><span>Kelimeni yaz</span></div><i></i>
+    <div><b>2</b><span>E-postanı onayla</span></div><i></i>
+    <div><b>3</b><span>10:00'da oku ☕</span></div>
   </div>
 
   <div class="yer" id="yer" hidden>
@@ -130,14 +177,20 @@
   <div id="setupNote" class="msg info">Bülten sistemi kurulum aşamasında. Kelimelerini şimdiden hazırlayabilirsin; önizleme ve abonelik çok yakında açılacak.</div>
 
   <div class="card">
-    <label for="kw">Anahtar kelimeler</label>
+    <label for="kw">📡 Radardaki kelimelerin</label>
     <div class="row">
-      <input id="kw" placeholder="ör. iş bankası" maxlength="60" autocomplete="off" enterkeyhint="done">
+      <input id="kw" placeholder="kelime ya da cümle yaz…" maxlength="60" autocomplete="off" enterkeyhint="done">
       <button id="add" class="main" style="padding:13px 18px">Ekle</button>
     </div>
     <div class="chips" id="chips"></div>
-    <div class="hint">En fazla 25 kelime. Tam ifade için tırnak kullan: <b>"yapay zeka"</b>. Hariç tutmak için eksi: <b>kredi -kart</b></div>
+    <div class="hint">En fazla 10 kelime. Cümle de yazabilirsin; içinden aranacak kelimeleri ben çıkarırım. Tam ifade için tırnak: <b>"yapay zeka"</b> · hariç tutmak için eksi: <b>kredi -kart</b></div>
+    <div class="cumle" id="cumle" hidden></div>
     <div class="sugg" id="sugg"></div>
+  </div>
+
+  <div class="bildirim" id="bildirim" hidden>
+    <span class="bi-ic">🔔</span>
+    <div><b>Sadolayn Alerts <small>· yarın 10:00</small></b><span id="biTx"></span></div>
   </div>
 
   <div class="card">
@@ -179,7 +232,7 @@ const ENDPOINT = "https://script.google.com/macros/s/AKfycbzXEzQSVz3T_a16_Uxnnte
 
 const $ = (x) => document.getElementById(x);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const MAX = 25;
+const MAX = 10;
 const SUGG = ["iş bankası", "yapay zeka", "TCMB faiz", "konut kredisi", "Maximum kampanya", "borsa istanbul", "altın fiyatları", "enflasyon", "KOBİ kredisi"];
 let kws = [];
 try { kws = JSON.parse(localStorage.getItem("alerts_kws") || "[]"); } catch (e) {}
@@ -189,6 +242,42 @@ function save() {
   try { localStorage.setItem("alerts_kws", JSON.stringify(kws)); localStorage.setItem("alerts_email", $("email").value.trim()); } catch (e) {}
 }
 
+const STOP = new Set("bana beni bize sana bir bu şu o şunu bunu ve ile ya da veya de da ki mi mu mı mü için gibi kadar daha en çok az gönder gönderir gönderin yolla yollar at bildir göster söyle istiyorum isterim lütfen haber haberi haberleri hakkında ilgili olan olanlar saat saatteki saatindeki dünkü bugünkü bugün dün yarın sabah akşam her deki daki teki taki değeri değerini fiyatı fiyatını son şey şeyler nedir ne nasıl".split(" "));
+function cumleAyikla(t) {
+  const words = t.toLocaleLowerCase("tr").replace(/[^\p{L}\p{N}\s-]/gu, " ").split(/\s+/).filter(Boolean);
+  const kok = (w) => { const m = w.match(/^(.{3,}?)(daki|deki|taki|teki|ların|lerin|ları|leri|nın|nin|nun|nün|dan|den|tan|ten|da|de|ta|te)$/); return m ? m[1] : w; };
+  const K = []; words.forEach((w, i) => { if (w.length > 2 && !STOP.has(w) && !/^\d+([.:]\d+)?$/.test(w)) { const k = kok(w); if (!STOP.has(k)) K.push({ w: k, o: w, i }); } });
+  // "döviz sepeti", "konut kredisi" gibi tamlamaları birlikte tut
+  const tamlama = (a, b) => b.i === a.i + 1 && a.w === a.o && b.w === b.o && /[ıiuü]$/.test(b.o) && !/ki$/.test(b.o);
+  const out = []; for (let j = 0; j < K.length; j++) { const n = K[j + 1]; if (n && tamlama(K[j], n)) { out.push(K[j].w + " " + n.w); j++; } else out.push(K[j].w); }
+  return [...new Set(out)].slice(0, 5);
+}
+function cumleGoster(t) {
+  const k = cumleAyikla(t), el = $("cumle");
+  if (!k.length) { el.hidden = true; return; }
+  const fiyat = /döviz|dolar|euro|altın|kur|borsa|hisse|kağıt|bist|fiyat|değer/i.test(t);
+  el.innerHTML = `<b>🧠 Cümleni anladım.</b> Haberlerde şunları arayayım mı? Dokunarak ekle:<div class="cw">${k.map((w) => `<button type="button" data-c="${esc(w)}">+ ${esc(w)}</button>`).join("")}</div><small>Bülten haber bağlantısı gönderir; belirli bir saatteki kur ya da hisse değerini göndermez.${fiyat ? ' Anlık döviz, altın ve borsa için <a href="piyasa.html">📈 Piyasa</a> sayfasına bak.' : ""}</small>`;
+  el.hidden = false;
+}
+function blipsCiz() {
+  const B = $("blips"); if (!B) return;
+  const L = kws.length ? kws.slice(0, 6) : ["iş bankası", "faiz", "altın"];
+  B.innerHTML = L.map((k, i) => { const A = [-90, 90, -140, 140, -40, 40], a = A[i % 6] * Math.PI / 180, rr = 38; return `<span class="blip" style="left:${50 + Math.cos(a) * rr}%;top:${50 + Math.sin(a) * rr}%;animation-delay:${(i * 0.5) % 3.2}s">${esc(k.length > 14 ? k.slice(0, 13) + "…" : k)}</span>`; }).join("");
+}
+function bildirimGoster() {
+  const el = $("bildirim"); if (!kws.length) { el.hidden = true; return; }
+  const n = kws.length * 4;
+  $("biTx").innerHTML = `☀️ Günaydın! <b style="display:inline;color:#f3dca8;font-size:12.5px">${esc(kws[0])}</b>${kws.length > 1 ? ` ve ${kws.length - 1} kelimen daha` : ""} için ~${n} yeni haber seni bekliyor.`;
+  if (el.hidden) { el.hidden = false; } else { el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; }
+}
+(async function ticker() {
+  try {
+    const d = await (await fetch("data/haberler.json", { cache: "no-cache" })).json();
+    const L = [...(d.cats.gundem || []).slice(0, 6), ...(d.cats.ekonomi || []).slice(0, 4), ...(d.cats.isbank || []).slice(0, 3)];
+    if (L.length) { $("tk").innerHTML = L.map((x) => esc(x.t)).join("<b>◆</b>"); $("tk").style.animationDuration = Math.max(40, L.length * 7) + "s"; }
+  } catch (e) { $("tk").textContent = "Gündem birazdan burada akacak…"; }
+})();
+
 function render() {
   $("chips").innerHTML = kws.map((k, i) =>
     `<span class="chip">${esc(k)}<button data-i="${i}" aria-label="Kaldır">✕</button></span>`).join("");
@@ -197,6 +286,7 @@ function render() {
     SUGG.filter((s) => !low.includes(s.toLocaleLowerCase("tr")))
       .map((s) => `<button data-s="${esc(s)}">+ ${esc(s)}</button>`).join("");
   $("add").disabled = kws.length >= MAX;
+  blipsCiz(); bildirimGoster();
   const live = !!ENDPOINT;
   $("setupNote").style.display = live ? "none" : "block";
   $("preview").disabled = !live || !kws.length;
@@ -206,7 +296,7 @@ function render() {
 function addKw(v) {
   v = String(v || "").replace(/\s+/g, " ").trim();
   if (v.length < 2) return;
-  if (kws.length >= MAX) return show("bad", "En fazla 25 kelime ekleyebilirsin.");
+  if (kws.length >= MAX) return show("bad", "En fazla 10 kelime ekleyebilirsin.");
   if (kws.some((k) => k.toLocaleLowerCase("tr") === v.toLocaleLowerCase("tr"))) return;
   kws.push(v.slice(0, 60));
   save(); render();
@@ -218,7 +308,12 @@ function show(type, text) {
   m.textContent = text;
 }
 
-$("add").onclick = () => { addKw($("kw").value); $("kw").value = ""; $("kw").focus(); };
+$("add").onclick = () => {
+  const v = $("kw").value.trim();
+  if (v.split(/\s+/).length >= 4 && !/^".*"$/.test(v)) { cumleGoster(v); $("kw").value = ""; return; } // cümle: kelimeleri öner
+  $("cumle").hidden = true; addKw(v); $("kw").value = ""; $("kw").focus();
+};
+$("cumle").onclick = (e) => { const b = e.target.closest("button[data-c]"); if (!b) return; addKw(b.dataset.c); b.remove(); if (!$("cumle").querySelector("button[data-c]")) $("cumle").hidden = true; };
 $("kw").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); $("add").click(); } });
 $("chips").onclick = (e) => { const b = e.target.closest("button[data-i]"); if (b) { kws.splice(+b.dataset.i, 1); save(); render(); } };
 $("sugg").onclick = (e) => { const b = e.target.closest("button[data-s]"); if (b) addKw(b.dataset.s); };
