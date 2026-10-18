@@ -1,9 +1,12 @@
-// Düzeltme dosyası: Firebase anahtarının satır sonlarını toparlar.
+// Düzeltme 2: Firebase anahtarını ayıklayıp yeniden kurar (telefon kopyalamasında araya giren karakterler).
 // Kod.gs'deki aynı adlı fonksiyonların yerine bunlar çalışır.
 
 function pk_(k) {
-  k = String(k || '').replace(/\\n/g, '\n').replace(/\r/g, '').trim();
-  return k + '\n';
+  k = String(k || '').replace(/\\n/g, '\n');
+  const m = k.match(/BEGIN PRIVATE KEY-*([\s\S]*?)-*END PRIVATE KEY/);
+  if (!m) return k.replace(/\r/g, '').trim() + '\n';
+  const body = m[1].replace(/[^A-Za-z0-9+\/=]/g, '');
+  return '-----BEGIN PRIVATE KEY-----\n' + body.match(/.{1,64}/g).join('\n') + '\n-----END PRIVATE KEY-----\n';
 }
 
 function fcmAccess_() {
@@ -25,10 +28,11 @@ function fcmAccess_() {
 }
 
 function testPushSetup() {
-  const sa = fcmSa_(), k = String(sa.private_key || ''), t = pk_(k);
+  const sa = fcmSa_(), k = String(sa.private_key || '');
+  const m = k.replace(/\\n/g, '\n').match(/BEGIN PRIVATE KEY-*([\s\S]*?)-*END PRIVATE KEY/);
+  const raw = m ? m[1] : '', body = raw.replace(/[^A-Za-z0-9+\/=]/g, ''), odd = raw.replace(/[A-Za-z0-9+\/=\n]/g, '');
   Logger.log('Hizmet hesabı: ' + sa.client_email + ' · proje: ' + sa.project_id);
-  Logger.log('Anahtar: ' + k.length + ' karakter · başlık ' + (k.indexOf('BEGIN PRIVATE KEY') >= 0 ? 'var' : 'YOK') +
-    ' · kaçışlı \\n ' + (k.indexOf('\\n') >= 0 ? 'var' : 'yok') + ' · toparlanınca ' + t.split('\n').length + ' satır');
+  Logger.log('Anahtar: ' + k.length + ' karakter · gövde ' + body.length + ' (beklenen ~1624) · fazlalık: ' + (odd.length ? JSON.stringify(odd) : 'yok'));
   fcmAccess_();
   Logger.log('✅ Firebase erişimi tamam. Bildirim tablosu: ' + pushSheet_().getParent().getUrl());
 }

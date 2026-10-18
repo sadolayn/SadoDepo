@@ -376,9 +376,13 @@ function fcmSa_() {
 }
 // Anahtarın satır sonlarını toparla (kopyalama sırasında \\n'ye dönüşmüş olabilir)
 function pk_(k) {
-  k = String(k || '').replace(/\\n/g, '\n').replace(/\r/g, '').trim();
-  return k + '\n';
+  k = String(k || '').replace(/\\n/g, '\n');
+  const m = k.match(/BEGIN PRIVATE KEY-*([\s\S]*?)-*END PRIVATE KEY/);
+  if (!m) return k.replace(/\r/g, '').trim() + '\n';
+  const body = m[1].replace(/[^A-Za-z0-9+\/=]/g, '');
+  return '-----BEGIN PRIVATE KEY-----\n' + body.match(/.{1,64}/g).join('\n') + '\n-----END PRIVATE KEY-----\n';
 }
+
 function fcmUrl_() { return 'https://fcm.googleapis.com/v1/projects/' + fcmSa_().project_id + '/messages:send'; }
 
 // Hizmet hesabıyla imzalı JWT → 1 saatlik erişim anahtarı (önbellekte tutulur)
