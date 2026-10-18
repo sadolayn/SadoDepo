@@ -418,7 +418,7 @@ function start() {
 function gameOver() {
   st.over = true;
   setEngine(false);
-  window.Rapor && Rapor.oyun("pilot", false);
+  window.Rapor && Rapor.oyun("pilot", null, `Skor: ${st.score} | Mesafe: ${Math.round(st.dist)}`);
   if (st.score > best) { best = st.score; try { localStorage.setItem("pilotBest", best); } catch (e) {} }
   showBox(`<h2>Oyun bitti</h2><p>Puan: <b>${st.score}</b><br>En iyi: <b>${best}</b></p><button class="btn" id="go">Tekrar uç</button>`);
 }

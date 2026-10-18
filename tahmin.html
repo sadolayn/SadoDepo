@@ -257,7 +257,7 @@
       if (!best || used < best) best = used;
       save();
       setMsg(`🎉 Bildin! ${used}. denemede`, "win");
-      window.Rapor && Rapor.oyun("tahmin", true);
+      window.Rapor && Rapor.oyun("tahmin", true, `${used}. denemede bildi`);
       end();
     } else if (n < secret) {
       addChip(n, "up", "↑");
@@ -271,7 +271,7 @@
 
     if (!over && left === 0) {
       setMsg(`😢 Hakkın bitti! Sayı ${secret} idi`, "lose");
-      window.Rapor && Rapor.oyun("tahmin", false);
+      window.Rapor && Rapor.oyun("tahmin", false, `Hak bitti, sayı ${secret} idi`);
       end();
     }
 
