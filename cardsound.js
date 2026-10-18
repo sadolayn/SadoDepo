@@ -84,7 +84,11 @@
   document.addEventListener("visibilitychange", () => { if (!document.hidden && AC && AC.state !== "running") AC.resume(); });
 
   // Ses aç/kapa düğmesi (sol alt köşe)
+  // Sayfa kendi ses ayarını gösteriyorsa (<body data-ses-dugmesi="yok">) köşe düğmesi eklenmez
+  CardSfx.muted = () => muted;
+  CardSfx.setMuted = (m) => { muted = !!m; try { localStorage.setItem("cardMute", muted ? "1" : "0"); } catch (e) {} init(); if (out) out.gain.value = muted ? 0 : 1; };
   window.addEventListener("DOMContentLoaded", () => {
+    if (document.body.getAttribute("data-ses-dugmesi") === "yok") return;
     const b = document.createElement("button");
     b.setAttribute("aria-label", "Kart seslerini aç/kapat");
     b.style.cssText = "position:fixed;left:10px;bottom:10px;z-index:9;width:40px;height:40px;border-radius:50%;border:1px solid #333;background:rgba(13,13,13,.85);color:#f2f2f2;font-size:18px;cursor:pointer";

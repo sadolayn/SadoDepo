@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="img/icon.png">
 <link rel="apple-touch-icon" href="img/icon.png">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0f3d2a">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Solitaire</title>
 <meta name="description" content="Bilgi paylaştıkça büyür">
@@ -22,141 +22,238 @@
 <meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
 <style>
   :root {
-    --bg: #000000;
-    --felt: #0b2a1c;
-    --felt-line: #164a33;
-    --card: #0d0d0d;
+    --felt: #0f5a3a;
     --ink: #f2f2f2;
     --muted: #8a8a8a;
     --accent: #e0a24f;
-    --red: #d63a2c;
+    --red: #d3261f;
     --line: #262626;
+    --card: #0d0d0d;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; background: var(--bg); color: var(--ink); }
-  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 520px; margin: 0 auto; padding: 10px 8px 24px; user-select: none; }
-  header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  header a { color: var(--muted); text-decoration: none; font-size: 14px; }
-  header h1 { margin: 0; font-size: 20px; }
-  .stats { display: flex; justify-content: center; gap: 16px; font-size: 13px; color: var(--muted); margin: 8px 0; }
-  .stats b { color: var(--ink); }
-  .bar { display: flex; gap: 6px; justify-content: center; margin-bottom: 8px; }
-  .bar button { padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 14px; font-weight: 600; cursor: pointer; }
-  .bar button.pri { background: var(--accent); border-color: var(--accent); color: #000; }
-  .bar button:disabled { opacity: .35; }
-  .board {
-    position: relative; border-radius: 16px; padding: 8px;
-    background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%);
-    border: 1px solid #3a50f0; min-height: 70vh; overflow: hidden;
+  html, body { margin: 0; min-height: 100%; color: var(--ink); }
+  html { background: var(--felt); }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 560px; margin: 0 auto; user-select: none; -webkit-user-select: none;
+    padding: 0 3px calc(96px + env(safe-area-inset-bottom));
+    background: radial-gradient(130% 80% at 50% 35%, color-mix(in srgb, var(--felt) 88%, #fff) 0%, var(--felt) 55%, color-mix(in srgb, var(--felt) 70%, #000) 100%);
+    min-height: 100vh; transition: background .4s;
   }
-  /* Arka planda SADOLAYN gölgesi */
+  /* Üst şerit */
+  .top { position: sticky; top: 0; z-index: 50; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 6px; padding: 8px 2px 6px; }
+  .ib { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.28); color: #fff; font-size: 19px; display: flex; align-items: center; justify-content: center; text-decoration: none; cursor: pointer; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; }
+  .stats span { font-size: 10.5px; letter-spacing: 1.2px; color: rgba(255,255,255,.62); font-weight: 600; }
+  .stats b { display: block; font-size: 19px; color: #fff; font-variant-numeric: tabular-nums; letter-spacing: .5px; }
+
+  .board { position: relative; margin-top: 4px; min-height: calc(100vh - 175px); min-height: calc(100dvh - 175px); }
+  /* Masada Sadolayn logosu */
   .board::before {
-    content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
-    background: url("img/logo.png") center calc(100% - 18px) / 82% auto no-repeat;
-    opacity: .2; filter: grayscale(1) brightness(2.4);
+    content: ""; position: absolute; left: 6%; right: 6%; top: 46%; height: 30%; pointer-events: none; z-index: 0;
+    background: url("img/logo.png") center / contain no-repeat; opacity: .17; filter: grayscale(1) brightness(3);
   }
-  .slot { position: absolute; z-index: 0; border: 1.5px dashed rgba(255,255,255,.28); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.25); font-size: 22px; }
+  .slot { position: absolute; z-index: 0; border-radius: 7px; background: rgba(0,0,0,.16); border: 1.5px solid rgba(255,255,255,.16); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.3); font: 700 26px Georgia, "Times New Roman", serif; }
+  .slot.stk { font: 22px system-ui; color: rgba(255,255,255,.55); cursor: pointer; }
+  .slot.stk.done { color: rgba(255,255,255,.15); }
+
+  /* Kartlar */
   .card {
-    position: absolute; border-radius: 7px; background: #f7f4ee; color: #111; border: 1px solid #b9b2a5;
-    box-shadow: 0 1px 3px rgba(0,0,0,.45); font-weight: 800;
-    transition: left .18s ease, top .18s ease, transform .15s;
+    position: absolute; border-radius: 7px; background: linear-gradient(180deg, #ffffff 0%, #f7f5f0 100%); color: #15161a;
+    box-shadow: 0 1px 2px rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.18); border: 1px solid rgba(0,0,0,.18);
+    transition: left .2s cubic-bezier(.3,.7,.3,1), top .2s cubic-bezier(.3,.7,.3,1), transform .15s; will-change: left, top;
   }
   .card.red { color: var(--red); }
-  .card .r { position: absolute; top: 2px; left: 3px; line-height: 1; letter-spacing: -1px; }
-  .card .s1 { position: absolute; top: 2px; right: 2px; line-height: 1; }
-  .card .s2 { position: absolute; left: 0; right: 0; bottom: 6%; text-align: center; line-height: 1; }
-  .card.back {
-    background: repeating-linear-gradient(45deg, #c48a35 0 5px, #a8742a 5px 10px);
-    border-color: #f7f4ee; box-shadow: inset 0 0 0 2px rgba(0,0,0,.18), 0 1px 3px rgba(0,0,0,.45);
-  }
+  .card .r { position: absolute; top: 1px; left: 3px; line-height: 1; font-weight: 800; font-family: "Arial Narrow", system-ui, sans-serif; letter-spacing: -1px; }
+  .card .s1 { position: absolute; top: 2px; right: 3px; line-height: 1; }
+  .card .s2 { position: absolute; left: 0; right: 0; bottom: 5%; text-align: center; line-height: 1; }
+  /* J Q K: kendi tasarımımız — altın çerçeve içinde büyük harf */
+  .card .fc { position: absolute; left: 12%; right: 12%; top: 34%; bottom: 7%; border-radius: 4px; border: 1.5px solid #c9973f; background: linear-gradient(160deg, #fff8e8, #f3e2bb); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: .95; }
+  .card .fc b { font-family: Georgia, "Times New Roman", serif; font-weight: 700; }
+  .card .fc i { font-style: normal; }
   .card.back > * { display: none; }
-  .card.hint { box-shadow: 0 0 0 3px var(--accent); }
+  .card.back { border: 2px solid #fff; }
+  .card.back::after { content: ""; position: absolute; inset: 3px; border-radius: 4px; }
+  .back-altin .card.back { background: #b9802e; }
+  .back-altin .card.back::after { background: repeating-linear-gradient(45deg, rgba(255,255,255,.16) 0 4px, transparent 4px 8px), radial-gradient(circle at 50% 50%, #f1c57c 0 18%, transparent 19%), linear-gradient(160deg, #d39a45, #9c6522); }
+  .back-lacivert .card.back { background: #1b2a6b; }
+  .back-lacivert .card.back::after { background: repeating-linear-gradient(45deg, rgba(224,162,79,.35) 0 1px, transparent 1px 7px), repeating-linear-gradient(-45deg, rgba(224,162,79,.35) 0 1px, transparent 1px 7px), linear-gradient(160deg, #2a3fa8, #121c55); }
+  .back-bordo .card.back { background: #6d1426; }
+  .back-bordo .card.back::after { background: radial-gradient(circle, rgba(255,214,150,.35) 1.2px, transparent 1.6px) 0 0 / 7px 7px, linear-gradient(160deg, #9b2036, #4f0d1b); }
+  .card.hint { box-shadow: 0 0 0 3px var(--accent), 0 0 16px rgba(224,162,79,.8); }
+  .card.lift { transform: translateY(-3px); }
   .shake { animation: shake .3s; }
   @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  .card.target, .slot.target { box-shadow: 0 0 0 3px #7dffb8, 0 0 18px rgba(125,255,184,.7) !important; }
+  .card.ghost { pointer-events: none; box-shadow: 0 0 0 3px var(--accent), 0 10px 24px rgba(0,0,0,.6); transition: none; }
+  .card.pop { animation: pop .35s ease-out; }
+  @keyframes pop { 40% { transform: scale(1.08); } }
 
-  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.82); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 1000; }
+  /* Alt araç çubuğu */
+  .dock { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 560px; z-index: 60; padding: 6px 8px calc(4px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, transparent, rgba(0,0,0,.35) 30%, rgba(0,0,0,.55)); }
+  .tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 6px 4px 4px; border-radius: 16px; background: rgba(0,0,0,.42); border: 1px solid rgba(255,255,255,.1); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .tools button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0; border: 0; background: none; color: #fff; font: 600 11.5px system-ui, sans-serif; cursor: pointer; border-radius: 10px; }
+  .tools button i { font-style: normal; font-size: 24px; line-height: 1.15; filter: drop-shadow(0 2px 3px rgba(0,0,0,.4)); }
+  .tools button:active { background: rgba(255,255,255,.08); }
+  .tools button:disabled { opacity: .35; }
+  .brand { text-align: center; margin-top: 4px; font: 700 12px/1 Georgia, "Times New Roman", serif; letter-spacing: 6px; color: #e9c27f; text-shadow: 0 1px 0 rgba(0,0,0,.5); }
+  .brand::before, .brand::after { content: "✦"; font-size: 9px; letter-spacing: 0; margin: 0 8px; opacity: .7; vertical-align: 2px; }
+  .autoBtn { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 61; padding: 11px 20px; border-radius: 99px; border: 0; background: linear-gradient(180deg, #f6cf8e, #e0a24f); color: #1a1205; font: 800 15px system-ui; box-shadow: 0 8px 20px rgba(0,0,0,.45); cursor: pointer; animation: pop 1.6s ease-in-out infinite; }
+
+  /* Pencereler */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.72); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 1000; }
   .overlay.show { display: flex; }
-  .modal { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 26px 22px; width: 100%; max-width: 360px; text-align: center; }
+  .modal { background: #111; border: 1px solid #2a2a2a; border-radius: 20px; padding: 26px 22px; width: 100%; max-width: 360px; text-align: center; }
   .modal .moon { font-size: 56px; margin-bottom: 6px; animation: float 3s ease-in-out infinite; }
   @keyframes float { 50% { transform: translateY(-6px); } }
   .modal h2 { margin: 0 0 8px; font-size: 22px; font-family: Georgia, "Times New Roman", serif; font-style: italic; color: var(--accent); }
   .modal p { margin: 0 0 18px; color: #bbb; font-size: 15px; line-height: 1.5; }
   .btn { width: 100%; padding: 13px; border-radius: 12px; background: var(--accent); border: none; color: #000; font-size: 16px; font-weight: 700; cursor: pointer; }
-  .btn.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); margin-top: 8px; }
+  .btn.ghost { background: transparent; color: #aaa; border: 1px solid #333; margin-top: 8px; }
   .confetti { position: fixed; top: -40px; font-size: 22px; pointer-events: none; z-index: 1001; animation: fall linear forwards; }
   @keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
-  .card.target, .slot.target { box-shadow: 0 0 0 3px #3fc283, 0 0 18px rgba(63,194,131,.7) !important; }
-  .card.ghost { pointer-events: none; box-shadow: 0 0 0 3px var(--accent), 0 10px 24px rgba(0,0,0,.6); transition: none; }
-  .solToast { position: fixed; left: 50%; bottom: max(18px, env(safe-area-inset-bottom)); transform: translate(-50%, 20px); max-width: 92vw; padding: 11px 16px; border-radius: 14px; background: rgba(20,18,14,.96); border: 1px solid #6b5222; color: #f3dca8; font-size: 14.5px; line-height: 1.4; text-align: center; box-shadow: 0 10px 28px rgba(0,0,0,.6); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; z-index: 1500; }
+  .solToast { position: fixed; left: 50%; bottom: calc(100px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px); max-width: 92vw; padding: 11px 16px; border-radius: 14px; background: rgba(20,18,14,.96); border: 1px solid #6b5222; color: #f3dca8; font-size: 14.5px; line-height: 1.4; text-align: center; box-shadow: 0 10px 28px rgba(0,0,0,.6); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; z-index: 1500; }
   .solToast.show { opacity: 1; transform: translate(-50%, 0); }
   .solToast b { color: #fff; } .solToast small { color: #b8a27a; }
+
+  /* Ayarlar (alt pencere) */
+  .sheet { position: fixed; inset: 0; z-index: 1100; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; }
+  .sheet[hidden] { display: none; }
+  .sheet .in { width: 100%; max-width: 560px; max-height: 88vh; overflow-y: auto; background: #121212; border-radius: 22px 22px 0 0; border: 1px solid #2a2a2a; border-bottom: 0; padding: 14px 18px calc(18px + env(safe-area-inset-bottom)); animation: up .22s ease-out; color: #eee; }
+  @keyframes up { from { transform: translateY(40px); opacity: 0; } }
+  .sheet h2 { display: flex; align-items: center; justify-content: space-between; margin: 0 0 6px; font-size: 19px; }
+  .sheet h2 button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: #222; color: #bbb; font-size: 16px; cursor: pointer; }
+  .sheet h4 { margin: 16px 0 6px; font-size: 11.5px; letter-spacing: 1.4px; color: #8a8a8a; font-weight: 700; }
+  .opt { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #1f1f1f; font-size: 15.5px; }
+  .opt span { flex: 1; } .opt small { display: block; font-size: 12px; color: #8a8a8a; margin-top: 2px; }
+  .sw { position: relative; width: 50px; height: 30px; flex: none; }
+  .sw input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .sw i { position: absolute; inset: 0; border-radius: 99px; background: #3a3a3a; transition: background .2s; cursor: pointer; }
+  .sw i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
+  .sw input:checked + i { background: #3fc283; }
+  .sw input:checked + i::after { transform: translateX(20px); }
+  .colors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .colors button { aspect-ratio: 1.5; border-radius: 12px; border: 2px solid transparent; cursor: pointer; font: 600 11px system-ui; color: rgba(255,255,255,.85); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5px; text-shadow: 0 1px 2px rgba(0,0,0,.6); }
+  .colors button.on { border-color: #fff; box-shadow: 0 0 0 2px var(--accent); }
+  .backs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .backs button { border: 2px solid transparent; background: none; border-radius: 12px; padding: 6px; cursor: pointer; color: #bbb; font: 600 11.5px system-ui; }
+  .backs button.on { border-color: var(--accent); }
+  .backs .card { position: relative; display: block; width: 46px; height: 66px; margin: 0 auto 4px; }
+  .rec { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+  .rec div { background: #1a1a1a; border-radius: 12px; padding: 10px 4px; }
+  .rec b { display: block; font-size: 18px; } .rec span { font-size: 11px; color: #8a8a8a; }
 </style>
-<script src="cardsound.js?v=2"></script>
+<script src="cardsound.js?v=3"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
 </head>
-<body>
-<header>
-  <a href="oyunlar.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Oyunlar" aria-label="Oyunlar">🎮</a>
-  <h1>🃏 Solitaire</h1>
-  <span style="width:52px"></span>
-</header>
-<div class="stats"><span>Hamle <b id="moves">0</b></span><span>Süre <b id="time">0:00</b></span><span>Kazanılan <b id="wins">0</b></span></div>
-<div class="bar">
-  <button id="undo">↶ Geri al</button>
-  <button id="hint">💡 İpucu</button>
-  <button id="auto" class="pri" style="display:none">⚡ Otomatik bitir</button>
-  <button id="newg">Yeni oyun</button>
+<body data-ses-dugmesi="yok">
+<div class="top">
+  <a class="ib" href="oyunlar.html" title="Oyunlar" aria-label="Oyunlar">🎮</a>
+  <div class="stats">
+    <div><span>PUAN</span><b id="score">0</b></div>
+    <div><span>SÜRE</span><b id="time">00:00</b></div>
+    <div><span>HAMLE</span><b id="moves">0</b></div>
+  </div>
+  <button class="ib" id="paint" title="Masa rengi" aria-label="Masa rengi">🎨</button>
 </div>
 <div class="board" id="board"></div>
 
+<button class="autoBtn" id="auto" hidden>⚡ Otomatik bitir</button>
+<div class="dock">
+  <div class="tools">
+    <button id="setb"><i>⚙️</i>Ayarlar</button>
+    <button id="newg"><i>🌙</i>Yeni oyun</button>
+    <button id="hint"><i>💡</i>İpucu</button>
+    <button id="undo"><i>↩️</i>Geri al</button>
+  </div>
+  <div class="brand">SADOLAYN</div>
+</div>
+
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="in">
+    <h2>⚙️ Ayarlar <button id="shClose" aria-label="Kapat">✕</button></h2>
+    <h4>OYUN</h4>
+    <label class="opt"><span>🔊 Ses efektleri</span><span class="sw"><input type="checkbox" id="oSes"><i></i></span></label>
+    <label class="opt"><span>💡 Otomatik ipucu<small>Bir süre hamle yapmazsan yol gösterir</small></span><span class="sw"><input type="checkbox" id="oIp"><i></i></span></label>
+    <label class="opt"><span>⚡ Otomatik tamamlama<small>Bütün kartlar açılınca kendiliğinden bitirir</small></span><span class="sw"><input type="checkbox" id="oTam"><i></i></span></label>
+    <label class="opt"><span>🃏 3 kart modu<small>Desteden 3'er kart açılır (yeni oyunda geçerli)</small></span><span class="sw"><input type="checkbox" id="o3"><i></i></span></label>
+    <h4>MASA RENGİ</h4>
+    <div class="colors" id="colors"></div>
+    <h4>KART ARKASI</h4>
+    <div class="backs" id="backs"></div>
+    <h4>REKORLARIN</h4>
+    <div class="rec" id="rec"></div>
+  </div>
+</div>
 
 <script>
 const SUITS = ["♠", "♥", "♣", "♦"];
 const RANK = { 1: "A", 11: "J", 12: "Q", 13: "K" };
 const isRed = (s) => s === "♥" || s === "♦";
 const $ = (x) => document.getElementById(x);
+const MASA = [
+  ["yesil", "Çuha yeşili", "#0f5a3a"], ["zumrut", "Zümrüt", "#0b6b5c"], ["lacivert", "Gece mavisi", "#14306b"], ["mavi", "Okyanus", "#1f5f9a"],
+  ["bordo", "Bordo", "#6b1a2a"], ["mor", "Mürdüm", "#43215e"], ["kahve", "Ceviz", "#4a2f1d"], ["antrasit", "Antrasit", "#24272d"],
+];
+const ARKA = [["altin", "Altın"], ["lacivert", "Lacivert"], ["bordo", "Bordo"]];
+const OPT = { ses: true, ip: false, tam: true, uc: true, masa: "yesil", arka: "altin" };
+try { Object.assign(OPT, JSON.parse(localStorage.getItem("solOpt") || "{}")); } catch (e) {}
+if (window.CardSfx && CardSfx.muted) OPT.ses = !CardSfx.muted();
+const saveOpt = () => { try { localStorage.setItem("solOpt", JSON.stringify(OPT)); } catch (e) {} };
+const REC = { wins: 0, best: 0, bestT: 0 };
+try { REC.wins = Number(localStorage.getItem("solWins")) || 0; Object.assign(REC, JSON.parse(localStorage.getItem("solRec") || "{}"), { wins: REC.wins }); } catch (e) {}
 
 let S; // durum
 let history = [];
 let els = new Map();
 let timer = null, started = 0, elapsed = 0;
-let wins = 0;
-try { wins = Number(localStorage.getItem("solWins")) || 0; } catch (e) {}
+let DRAW = OPT.uc ? 3 : 1;
+let dealAnim = false;
+
+function applyLook() {
+  const m = MASA.find((x) => x[0] === OPT.masa) || MASA[0];
+  document.documentElement.style.setProperty("--felt", m[2]);
+  document.querySelector('meta[name="theme-color"]').setAttribute("content", m[2]);
+  document.body.classList.remove(...ARKA.map((a) => "back-" + a[0]));
+  document.body.classList.add("back-" + OPT.arka);
+}
 
 function deal() {
+  DRAW = OPT.uc ? 3 : 1;
   const deck = [];
   for (const s of SUITS) for (let r = 1; r <= 13; r++) deck.push({ id: s + r, s, r, up: false });
   for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }
   const tab = [];
-  for (let i = 0; i < 7; i++) {
-    tab.push(deck.splice(0, i + 1));
-    tab[i][i].up = true;
-  }
-  S = { stock: deck, waste: [], found: [[], [], [], []], tab, moves: 0 };
+  for (let i = 0; i < 7; i++) { tab.push(deck.splice(0, i + 1)); tab[i][i].up = true; }
+  S = { stock: deck, waste: [], found: [[], [], [], []], tab, moves: 0, score: 0 };
   history = [];
   elapsed = 0; started = 0;
   clearInterval(timer); timer = null;
   $("board").innerHTML = ""; els = new Map();
-  if (window.CardSfx) CardSfx.shuffle();
+  dealAnim = true;
+  if (window.CardSfx && !deal.sessiz) { CardSfx.shuffle(); setTimeout(() => CardSfx.deal(14), 650); }
   updateStats();
   render();
+  dealAnim = false;
+  idle();
 }
 const snapshot = () => JSON.stringify(S);
-function pushHistory() { history.push(snapshot()); if (history.length > 200) history.shift(); }
+function pushHistory() { history.push(snapshot()); if (history.length > 300) history.shift(); }
 function startTimer() {
   if (timer) return;
   started = Date.now() - elapsed * 1000;
   timer = setInterval(() => { elapsed = Math.floor((Date.now() - started) / 1000); updateStats(); }, 1000);
 }
+const fmtT = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 function updateStats() {
   $("moves").textContent = S ? S.moves : 0;
-  $("time").textContent = `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, "0")}`;
-  $("wins").textContent = wins;
+  $("score").textContent = S ? S.score : 0;
+  $("time").textContent = fmtT(elapsed);
   $("undo").disabled = !history.length;
 }
 
@@ -175,8 +272,6 @@ function canTab(c, ti) {
   const t = lastOf(col);
   return t.up && isRed(t.s) !== isRed(c.s) && t.r === c.r + 1;
 }
-
-// Kartın nerede olduğu
 function locate(id) {
   if (S.waste.length && lastOf(S.waste).id === id) return { from: "waste" };
   for (let i = 0; i < 4; i++) if (S.found[i].length && lastOf(S.found[i]).id === id) return { from: "found", i };
@@ -188,19 +283,14 @@ function takeFrom(loc) {
   if (loc.from === "found") return [S.found[loc.i].pop()];
   return S.tab[loc.i].splice(loc.k);
 }
-function flipTops() { for (const col of S.tab) if (col.length && !lastOf(col).up) { lastOf(col).up = true; } }
-
-// En iyi hedefi bul
+function flipTops() { let n = 0; for (const col of S.tab) if (col.length && !lastOf(col).up) { lastOf(col).up = true; n++; } return n; }
 function bestMove(id) {
   const loc = locate(id);
   if (!loc) return null;
   if (loc.from === "tab" && !S.tab[loc.i][loc.k].up) return null;
   const card = loc.from === "tab" ? S.tab[loc.i][loc.k] : loc.from === "waste" ? lastOf(S.waste) : lastOf(S.found[loc.i]);
   const single = loc.from !== "tab" || loc.k === S.tab[loc.i].length - 1;
-  if (single && loc.from !== "found") {
-    const fi = foundIndexFor(card);
-    if (fi >= 0) return { loc, to: "found", i: fi };
-  }
+  if (single && loc.from !== "found") { const fi = foundIndexFor(card); if (fi >= 0) return { loc, to: "found", i: fi }; }
   let empty = -1;
   for (let ti = 0; ti < 7; ti++) {
     if (loc.from === "tab" && ti === loc.i) continue;
@@ -208,17 +298,23 @@ function bestMove(id) {
     if (S.tab[ti].length) return { loc, to: "tab", i: ti };
     if (empty < 0) empty = ti;
   }
-  // Boş sütuna papaz: zaten sütunun en altındaysa anlamsız
   if (empty >= 0 && !(loc.from === "tab" && loc.k === 0)) return { loc, to: "tab", i: empty };
   return null;
 }
+// Puan: bitişe +10, desteden masaya +5, kart açma +5, bitişten geri −15
 function doMove(m) {
   if (window.CardSfx && !window.__silent) CardSfx.play();
   pushHistory();
   const cards = takeFrom(m.loc);
   if (m.to === "found") S.found[m.i].push(...cards); else S.tab[m.i].push(...cards);
-  flipTops();
+  let p = 0;
+  if (m.to === "found" && m.loc.from !== "found") p += 10;
+  if (m.loc.from === "waste" && m.to === "tab") p += 5;
+  if (m.loc.from === "found" && m.to === "tab") p -= 15;
+  p += 5 * flipTops();
+  S.score = Math.max(0, S.score + p);
   S.moves++;
+  S.last = cards[0].id;
   startTimer();
 }
 function drawStock() {
@@ -227,15 +323,16 @@ function drawStock() {
     if (!S.waste.length) { history.pop(); return; }
     S.stock = S.waste.reverse().map((c) => ({ ...c, up: false }));
     S.waste = [];
+    if (DRAW === 1) S.score = Math.max(0, S.score - 20);
     if (window.CardSfx) CardSfx.collect();
   } else {
-    for (let i = 0; i < 3 && S.stock.length; i++) { const c = S.stock.pop(); c.up = true; S.waste.push(c); }
+    for (let i = 0; i < DRAW && S.stock.length; i++) { const c = S.stock.pop(); c.up = true; S.waste.push(c); }
     if (window.CardSfx) CardSfx.flip();
   }
   S.moves++;
   startTimer();
   render();
-  checkStuck();
+  after();
 }
 
 // ---------- Etkileşim ----------
@@ -243,27 +340,27 @@ function onCardTap(id, el) {
   const loc = locate(id);
   if (!loc) { shake(el); return; }
   const m = bestMove(id);
-  if (!m) { shake(el); return; }
+  if (!m) { shake(el); if (window.CardSfx && !CardSfx.muted()) {} return; }
   doMove(m);
   render();
-  checkWin();
-  checkStuck();
+  const moved = els.get(S.last); if (moved && m.to === "found") { moved.classList.remove("pop"); void moved.offsetWidth; moved.classList.add("pop"); }
+  after();
 }
+function after() { checkWin(); checkStuck(); if (OPT.tam && canAutoFinish() && !autoRunning) setTimeout(autoFinish, 350); idle(); }
 function shake(el) { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
 function undo() {
   if (!history.length) return;
   S = JSON.parse(history.pop());
-  render();
+  if (window.CardSfx) CardSfx.flip();
+  render(); idle();
 }
 function allMoves() {
-  const out = [];
-  const ids = [];
+  const out = [], ids = [];
   if (S.waste.length) ids.push(lastOf(S.waste).id);
   for (const col of S.tab) col.forEach((c) => c.up && ids.push(c.id));
   for (const id of ids) {
     const m = bestMove(id);
     if (!m) continue;
-    // Anlamsız tablo hareketlerini ele (aynı türden başka karta taşıma, alttaki kart zaten açık)
     if (m.loc.from === "tab" && m.to === "tab" && m.loc.k > 0 && S.tab[m.loc.i][m.loc.k - 1].up) continue;
     out.push({ id, m });
   }
@@ -276,15 +373,14 @@ function cardTarget(card) {
   for (let ti = 0; ti < 7; ti++) if (canTab(card, ti) && (S.tab[ti].length || card.r === 13)) return { to: "tab", i: ti };
   return null;
 }
-// Hiç hamle yapmadan desteyi çevirmeye devam edilirse hangi kartlar en üste gelir (3'lü açılış)
 function stockReach() {
   let st = S.stock.slice(), wa = S.waste.slice();
   const total = st.length + wa.length, seen = new Map();
   if (!total) return [];
-  const limit = Math.ceil(total / 3) * 2 + 4;
+  const limit = Math.ceil(total / DRAW) * 2 + 4;
   for (let n = 1; n <= limit; n++) {
     if (!st.length) { st = wa.slice().reverse(); wa = []; }
-    else for (let i = 0; i < 3 && st.length; i++) wa.push(st.pop());
+    else for (let i = 0; i < DRAW && st.length; i++) wa.push(st.pop());
     if (wa.length) { const t = wa[wa.length - 1]; if (!seen.has(t.id)) seen.set(t.id, { c: t, n }); }
   }
   return [...seen.values()];
@@ -302,7 +398,6 @@ function toast(txt) {
   el.innerHTML = txt; el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
   clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 3200);
 }
-// Kaynaktan hedefe uçan hayalet kart
 function ghostFly(srcEl, dstEl, isTab) {
   if (!srcEl || !dstEl) return;
   const a = srcEl.getBoundingClientRect(), b = dstEl.getBoundingClientRect();
@@ -310,11 +405,11 @@ function ghostFly(srcEl, dstEl, isTab) {
   Object.assign(g.style, { position: "fixed", left: a.left + "px", top: a.top + "px", width: a.width + "px", height: a.height + "px", zIndex: 2000, margin: 0 });
   document.body.appendChild(g);
   dstEl.classList.add("target"); srcEl.classList.add("hint");
-  const dy = isTab && dstEl.classList.contains("card") ? b.height * 0.36 : 0;
+  const dy = isTab && dstEl.classList.contains("card") ? b.height * 0.3 : 0;
   const run = () => g.animate([{ transform: "translate(0,0) scale(1)", opacity: .95 }, { transform: `translate(${b.left - a.left}px,${b.top - a.top + dy}px) scale(1.04)`, opacity: .9, offset: .7 }, { transform: `translate(${b.left - a.left}px,${b.top - a.top + dy}px) scale(1)`, opacity: 0 }], { duration: 950, easing: "cubic-bezier(.4,.1,.3,1)" });
   const an = run(); an.onfinish = () => { const a2 = run(); a2.onfinish = () => { g.remove(); dstEl.classList.remove("target"); srcEl.classList.remove("hint"); }; };
 }
-function hint() {
+function hint(auto) {
   const mv = rankMoves();
   if (mv.length) {
     const { id, m } = mv[0], card = m.loc.from === "waste" ? lastOf(S.waste) : S.tab[m.loc.i][m.loc.k];
@@ -325,14 +420,16 @@ function hint() {
   }
   const r = stockReach().map((x) => ({ ...x, t: cardTarget(x.c) })).filter((x) => x.t).sort((a, b) => a.n - b.n)[0];
   if (r) {
-    flash(els.get("__stock")); const st = els.get("__stock"); st.classList.add("target"); setTimeout(() => st.classList.remove("target"), 1800);
+    const st = els.get("__stock"); flash(st); st.classList.add("target"); setTimeout(() => st.classList.remove("target"), 1800);
     const hedef = r.t.to === "found" ? "bitiş yığınına" : S.tab[r.t.i].length ? cName(lastOf(S.tab[r.t.i])) + " kartının üstüne" : "boş sütuna";
     toast(`🂠 Desteyi <b>${r.n} kez</b> aç: <b>${cName(r.c)}</b> gelecek → ${hedef}`);
     return;
   }
-  stuckModal(true);
+  if (!auto) stuckModal(true);
 }
-// Destedeki kartlar dahil hiçbir kart oynanamıyorsa oyunu sonlandırmayı öner
+// Otomatik ipucu: 25 sn hamle yoksa
+let idleT = null;
+function idle() { clearTimeout(idleT); if (!OPT.ip) return; idleT = setTimeout(() => { if (S && !isWon() && !$("overlay").classList.contains("show") && $("sheet").hidden) hint(true); idle(); }, 25000); }
 function isStuck() {
   if (isWon() || canAutoFinish()) return false;
   if (rankMoves().length) return false;
@@ -344,11 +441,11 @@ function stuckModal(force) {
   const t = $("solToast"); t && t.classList.remove("show");
   document.querySelectorAll(".card.ghost").forEach((g) => g.remove());
   const kalan = 52 - S.found.reduce((a, f) => a + f.length, 0);
-  window.Rapor && Rapor.oyun("solitaire", false, `Tıkandı · ${52 - kalan}/52 kart bitişte · ${S.moves} hamle`);
+  window.Rapor && Rapor.oyun("solitaire", false);
   $("modal").innerHTML = `<div class="moon">🧩</div><h2>Hamle kalmadı</h2>
     <p>Destedeki kartlar da dahil oynanabilecek bir kart yok; desteyi boşuna çevirmene gerek yok.${kalan < 52 ? `<br><b style="color:var(--accent)">${52 - kalan}</b> kartı bitişe taşıdın 👏` : ""}</p>
     <button class="btn" id="stNew">Yeni oyun</button>
-    <button class="btn ghost" id="stUndo">↶ Birkaç hamle geri al</button>
+    <button class="btn ghost" id="stUndo">↩️ Birkaç hamle geri al</button>
     <button class="btn ghost" id="stLook">Masaya bakayım</button>`;
   $("overlay").classList.add("show");
   $("stNew").onclick = () => { $("overlay").classList.remove("show"); wishScreen(); };
@@ -358,11 +455,10 @@ function stuckModal(force) {
 let stuckT = null;
 function checkStuck() { clearTimeout(stuckT); stuckT = setTimeout(() => { if (isStuck()) stuckModal(false); }, 450); }
 function flash(el) { if (!el) return; el.classList.add("hint"); setTimeout(() => el.classList.remove("hint"), 900); }
-function canAutoFinish() {
-  return !S.stock.length && !S.waste.length && S.tab.every((col) => col.every((c) => c.up)) && !isWon();
-}
+function canAutoFinish() { return !S.stock.length && !S.waste.length && S.tab.every((col) => col.every((c) => c.up)) && !isWon(); }
+let autoRunning = false;
 async function autoFinish() {
-  $("auto").disabled = true;
+  if (autoRunning) return; autoRunning = true; $("auto").hidden = true;
   while (!isWon()) {
     let moved = false;
     for (let ti = 0; ti < 7 && !moved; ti++) {
@@ -373,33 +469,46 @@ async function autoFinish() {
     }
     if (!moved) break;
     render();
-    await new Promise((r) => setTimeout(r, 70));
+    await new Promise((r) => setTimeout(r, 90));
   }
-  $("auto").disabled = false;
+  autoRunning = false;
   checkWin();
 }
 const isWon = () => S.found.every((f) => f.length === 13);
 function checkWin() {
   if (!isWon()) return;
-  clearInterval(timer); timer = null;
-  wins++;
+  clearInterval(timer); timer = null; clearTimeout(idleT);
+  REC.wins++;
+  const yeniRekor = S.score > (REC.best || 0);
+  REC.best = Math.max(REC.best || 0, S.score);
+  if (!REC.bestT || elapsed < REC.bestT) REC.bestT = elapsed;
   window.Rapor && Rapor.oyun("solitaire", true);
-  try { localStorage.setItem("solWins", wins); } catch (e) {}
+  try { localStorage.setItem("solWins", REC.wins); localStorage.setItem("solRec", JSON.stringify({ best: REC.best, bestT: REC.bestT })); } catch (e) {}
   updateStats();
+  cascade();
   confetti();
   setTimeout(() => {
     $("modal").innerHTML = `
       <div class="moon">✨</div>
       <h2>Dileğin kabul olsun!</h2>
-      <p>Oyunu <b>${S.moves}</b> hamlede, <b>${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, "0")}</b> sürede bitirdin.</p>
+      <p>Oyunu <b>${S.moves}</b> hamlede, <b>${fmtT(elapsed)}</b> sürede, <b>${S.score}</b> puanla bitirdin.${yeniRekor ? "<br>🏆 <b style='color:var(--accent)'>Yeni puan rekoru!</b>" : ""}</p>
       <button class="btn" id="again">Yeni dilek, yeni oyun</button>`;
     $("overlay").classList.add("show");
     $("again").onclick = () => { $("overlay").classList.remove("show"); wishScreen(); };
-  }, 900);
+  }, 1700);
+}
+// Kazanınca kartlar sırayla zıplar
+function cascade() {
+  let d = 0;
+  for (let r = 13; r >= 1; r--) for (let f = 0; f < 4; f++) {
+    const el = els.get(SUITS[f] + r); if (!el) continue;
+    el.animate([{ transform: "translateY(0)" }, { transform: "translateY(-18px) rotate(-6deg)" }, { transform: "translateY(0)" }], { duration: 420, delay: d, easing: "ease-out" });
+    d += 22;
+  }
 }
 function confetti() {
-  const em = ["✨", "⭐", "🌙", "💫", "🎉", "♥", "♠"];
-  for (let i = 0; i < 40; i++) {
+  const em = ["✨", "⭐", "🌙", "💫", "🎉", "♥", "♠", "♦", "♣"];
+  for (let i = 0; i < 44; i++) {
     const d = document.createElement("div");
     d.className = "confetti";
     d.textContent = em[i % em.length];
@@ -413,74 +522,85 @@ function confetti() {
 
 // ---------- Çizim ----------
 function cardHTML(c, cw) {
-  const fs = Math.max(14, Math.round(cw * 0.44));
-  const ten = c.r === 10 ? ";letter-spacing:-2px;transform:scaleX(.8);transform-origin:left top" : "";
-  return `<span class="r" style="font-size:${fs}px${ten}">${RANK[c.r] || c.r}</span><span class="s1" style="font-size:${Math.round(fs * 0.82)}px">${c.s}</span><span class="s2" style="font-size:${Math.round(cw * 0.72)}px">${c.s}</span>`;
+  const fs = Math.max(16, Math.round(cw * 0.5));
+  const ten = c.r === 10 ? ";letter-spacing:-2px;transform:scaleX(.82);transform-origin:left top" : "";
+  const head = `<span class="r" style="font-size:${fs}px${ten}">${RANK[c.r] || c.r}</span><span class="s1" style="font-size:${Math.round(cw * 0.34)}px">${c.s}</span>`;
+  if (c.r >= 11) return head + `<span class="fc"><b style="font-size:${Math.round(cw * 0.42)}px">${RANK[c.r]}</b><i style="font-size:${Math.round(cw * 0.3)}px">${c.s}</i></span>`;
+  return head + `<span class="s2" style="font-size:${Math.round(cw * 0.66)}px">${c.s}</span>`;
 }
 function render() {
   const board = $("board");
-  const W = board.clientWidth - 16;
-  const gap = 5;
+  const W = board.clientWidth;
+  const gap = Math.max(3, Math.round(W * 0.009));
   const cw = Math.floor((W - gap * 6) / 7);
-  const ch = Math.round(cw * 1.42);
-  const x = (i) => 8 + i * (cw + gap);
-  const tabY = 8 + ch + 14;
+  const ch = Math.round(cw * 1.5);
+  const x = (i) => i * (cw + gap);
+  const topY = 2, tabY = topY + ch + Math.round(ch * 0.2);
   const seen = new Set();
 
-  // Boş yuvalar (bir kez)
   if (!els.has("__slots")) {
     els.set("__slots", true);
-    const mk = (key, i, y, txt) => { const s = document.createElement("div"); s.className = "slot"; s.textContent = txt; board.appendChild(s); els.set(key, s); };
-    mk("__stock", 0, 8, "↻");
-    for (let i = 0; i < 4; i++) mk("__f" + i, 3 + i, 8, SUITS[i]);
-    for (let i = 0; i < 7; i++) mk("__t" + i, i, tabY, "");
+    const mk = (key, txt, cls) => { const s = document.createElement("div"); s.className = "slot" + (cls ? " " + cls : ""); s.textContent = txt; board.appendChild(s); els.set(key, s); };
+    mk("__stock", "↻", "stk");
+    for (let i = 0; i < 4; i++) mk("__f" + i, "A");
+    for (let i = 0; i < 7; i++) mk("__t" + i, "K");
     els.get("__stock").onclick = drawStock;
   }
-  const place = (key, left, topY) => { const s = els.get(key); Object.assign(s.style, { left: left + "px", top: topY + "px", width: cw + "px", height: ch + "px" }); };
-  place("__stock", x(0), 8);
-  for (let i = 0; i < 4; i++) place("__f" + i, x(3 + i), 8);
+  const place = (key, left, y) => { const s = els.get(key); Object.assign(s.style, { left: left + "px", top: y + "px", width: cw + "px", height: ch + "px", fontSize: Math.round(cw * 0.5) + "px" }); };
+  // Sıra: bitiş yığınları solda, deste sağda (sağ elle kolay)
+  place("__stock", x(6), topY);
+  for (let i = 0; i < 4; i++) place("__f" + i, x(i), topY);
   for (let i = 0; i < 7; i++) place("__t" + i, x(i), tabY);
-  els.get("__stock").textContent = S.waste.length || S.stock.length ? "↻" : "";
+  const stk = els.get("__stock");
+  stk.textContent = S.stock.length ? "" : S.waste.length ? "↻" : "";
+  stk.classList.toggle("done", !S.waste.length && !S.stock.length);
 
-  let z = 1;
-  const putCard = (c, left, topY, up, onTap) => {
-    let el = els.get(c.id);
-    if (!el) { el = document.createElement("div"); els.set(c.id, el); board.appendChild(el); }
+  let z = 1, dealN = 0;
+  const putCard = (c, left, y, up, onTap) => {
+    let el = els.get(c.id), fresh = false;
+    if (!el) { el = document.createElement("div"); els.set(c.id, el); board.appendChild(el); fresh = true; }
     el.className = "card" + (up ? (isRed(c.s) ? " red" : "") : " back");
     el.innerHTML = up ? cardHTML(c, cw) : "";
-    Object.assign(el.style, { left: left + "px", top: topY + "px", width: cw + "px", height: ch + "px", zIndex: z++ });
+    Object.assign(el.style, { width: cw + "px", height: ch + "px", zIndex: z++ });
+    if (fresh && dealAnim) {
+      // Dağıtma: kartlar desteden masaya uçar
+      Object.assign(el.style, { left: x(6) + "px", top: topY + "px", transition: "none" });
+      const d = dealN++ * 28;
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.style.transition = `left .32s ${d}ms cubic-bezier(.2,.8,.3,1), top .32s ${d}ms cubic-bezier(.2,.8,.3,1)`; el.style.left = left + "px"; el.style.top = y + "px"; setTimeout(() => (el.style.transition = ""), d + 400); }));
+    } else Object.assign(el.style, { left: left + "px", top: y + "px" });
     el.onclick = onTap;
     seen.add(c.id);
   };
-  // Deste
-  S.stock.forEach((c, i) => putCard(c, x(0), 8, false, drawStock));
-  // Açık kartlar (son 3 yelpaze)
-  const fan = Math.round(cw * 0.32);
-  const wl = S.waste.length;
+  // Deste (sağ üst) — kalınlık için birkaç kart hafif kaydırılır
+  S.stock.forEach((c, i) => putCard(c, x(6), topY - Math.floor(i / 8), false, drawStock));
+  // Açık kartlar: destenin solunda, sola doğru yelpaze
+  const fan = Math.round(cw * 0.3), wl = S.waste.length, show = Math.min(3, wl);
   S.waste.forEach((c, i) => {
-    const k = Math.max(0, i - (wl - 3));
-    const visIdx = wl <= 3 ? i : k;
-    const left = x(1) + (i >= wl - 3 ? visIdx * fan : 0);
+    const pos = i - (wl - show); // 0..show-1 görünenler
+    const left = x(5) - (show - 1) * fan + Math.max(0, pos) * fan - Math.round(cw * 0.15);
     const isTop = i === wl - 1;
-    putCard(c, left, 8, true, isTop ? (e) => onCardTap(c.id, e.currentTarget) : null);
+    putCard(c, pos < 0 ? x(5) - (show - 1) * fan - Math.round(cw * 0.15) : left, topY, true, isTop ? (e) => onCardTap(c.id, e.currentTarget) : null);
   });
   // Bitiş yığınları
-  S.found.forEach((f, fi) => f.forEach((c, i) => putCard(c, x(3 + fi), 8, true, i === f.length - 1 ? (e) => onCardTap(c.id, e.currentTarget) : null)));
-  // Tablo
+  S.found.forEach((f, fi) => f.forEach((c, i) => putCard(c, x(fi), topY, true, i === f.length - 1 ? (e) => onCardTap(c.id, e.currentTarget) : null)));
+  // Tablo: sütun çok uzarsa aralık daralır ki ekrana sığsın
+  const avail = Math.max(ch * 3, window.innerHeight - board.getBoundingClientRect().top - window.scrollY * 0 - 110 - tabY);
   let maxBottom = tabY + ch;
-  const downOff = Math.round(ch * 0.15), upOff = Math.round(ch * 0.36);
   S.tab.forEach((col, ti) => {
+    const nDown = col.filter((c) => !c.up).length, nUp = col.length - nDown;
+    let downOff = Math.round(ch * 0.14), upOff = Math.round(ch * 0.33);
+    const need = nDown * downOff + Math.max(0, nUp - 1) * upOff + ch;
+    if (need > avail && nUp > 1) upOff = Math.max(Math.round(ch * 0.2), Math.floor((avail - ch - nDown * downOff) / (nUp - 1)));
     let y = tabY;
     col.forEach((c, k) => {
-      putCard(c, x(ti), y, c.up, c.up ? (e) => onCardTap(c.id, e.currentTarget) : (k === col.length - 1 ? () => { c.up = true; render(); } : null));
+      putCard(c, x(ti), y, c.up, c.up ? (e) => onCardTap(c.id, e.currentTarget) : (k === col.length - 1 ? () => { pushHistory(); c.up = true; S.score += 5; render(); } : null));
       y += c.up ? upOff : downOff;
     });
     maxBottom = Math.max(maxBottom, y - (col.length ? (lastOf(col).up ? upOff : downOff) : 0) + ch);
   });
-  // Kaldırılmış kartlar
   for (const [k, el] of els) if (!k.startsWith("__") && !seen.has(k)) { el.remove(); els.delete(k); }
-  board.style.height = maxBottom + 16 + "px";
-  $("auto").style.display = canAutoFinish() ? "" : "none";
+  board.style.height = maxBottom + 12 + "px";
+  $("auto").hidden = !(canAutoFinish() && !OPT.tam && !autoRunning);
   updateStats();
 }
 
@@ -495,12 +615,33 @@ function wishScreen() {
   $("go").onclick = () => { $("overlay").classList.remove("show"); deal(); };
 }
 
+// ---------- Ayarlar ----------
+function openSettings() {
+  $("oSes").checked = OPT.ses; $("oIp").checked = OPT.ip; $("oTam").checked = OPT.tam; $("o3").checked = OPT.uc;
+  $("colors").innerHTML = MASA.map(([k, ad, c]) => `<button data-k="${k}" class="${OPT.masa === k ? "on" : ""}" style="background:radial-gradient(120% 90% at 50% 30%, color-mix(in srgb, ${c} 85%, #fff), ${c} 60%)">${ad}</button>`).join("");
+  $("backs").innerHTML = ARKA.map(([k, ad]) => `<button data-k="${k}" class="back-${k} ${OPT.arka === k ? "on" : ""}"><span class="card back"></span>${ad}</button>`).join("");
+  $("rec").innerHTML = `<div><b>${REC.wins}</b><span>Kazanılan</span></div><div><b>${REC.best || "–"}</b><span>En yüksek puan</span></div><div><b>${REC.bestT ? fmtT(REC.bestT) : "–"}</b><span>En hızlı</span></div>`;
+  $("colors").querySelectorAll("button").forEach((b) => (b.onclick = () => { OPT.masa = b.dataset.k; saveOpt(); applyLook(); openSettings(); }));
+  $("backs").querySelectorAll("button").forEach((b) => (b.onclick = () => { OPT.arka = b.dataset.k; saveOpt(); applyLook(); openSettings(); }));
+  $("sheet").hidden = false;
+}
+$("oSes").onchange = (e) => { OPT.ses = e.target.checked; saveOpt(); if (window.CardSfx && CardSfx.setMuted) { CardSfx.setMuted(!OPT.ses); if (OPT.ses) CardSfx.play(); } };
+if (window.CardSfx && CardSfx.muted && CardSfx.muted() === OPT.ses) { /* tek kaynak: kart sesi ayarı */ OPT.ses = !CardSfx.muted(); }
+$("oIp").onchange = (e) => { OPT.ip = e.target.checked; saveOpt(); idle(); };
+$("oTam").onchange = (e) => { OPT.tam = e.target.checked; saveOpt(); render(); if (OPT.tam && canAutoFinish()) autoFinish(); };
+$("o3").onchange = (e) => { OPT.uc = e.target.checked; saveOpt(); toast(`🃏 ${OPT.uc ? "3" : "1"} kart modu yeni oyunda başlayacak`); };
+$("shClose").onclick = () => ($("sheet").hidden = true);
+$("sheet").onclick = (e) => { if (e.target === $("sheet")) $("sheet").hidden = true; };
+
 $("undo").onclick = undo;
-$("hint").onclick = hint;
+$("hint").onclick = () => hint(false);
 $("auto").onclick = autoFinish;
 $("newg").onclick = wishScreen;
+$("setb").onclick = openSettings;
+$("paint").onclick = openSettings;
 window.addEventListener("resize", () => S && render());
-deal();
+applyLook();
+deal.sessiz = true; deal(); deal.sessiz = false;
 wishScreen();
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
