@@ -38,15 +38,18 @@
   html, body { margin: 0; background: var(--bg); color: var(--ink); }
   body {
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    min-height: 100vh;
+    min-height: 100vh; min-height: 100dvh;
     display: flex;
     flex-direction: column;
     max-width: 480px;
     margin: 0 auto;
-    padding: 10px 10px 14px;
-    user-select: none;
+    padding: 8px 10px 10px;
+    user-select: none; -webkit-user-select: none;
   }
-  header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 7px; }
+  header .home { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex: 0 0 40px; border-radius: 12px; background: #161616; border: 1px solid #e0a24f !important; font-size: 20px; line-height: 1; text-decoration: none; }
+  header h1 { white-space: nowrap; }
+  footer.copyright { margin-top: auto !important; padding-top: 10px !important; }
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header h1 { margin: 0; font-size: 20px; }
   .info { font-size: 13px; color: var(--muted); text-align: right; line-height: 1.3; }
@@ -59,10 +62,10 @@
   .scores b { display: block; font-size: 15px; }
 
   .table {
+    --cw: 54px;
     flex: 1;
-    min-height: 360px;
+    min-height: 300px;
     position: relative;
-    background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%);
     border-radius: 22px;
     border: 1px solid #3a50f0;
     overflow: hidden;
@@ -89,36 +92,23 @@
   .seat .bd { color: var(--muted); }
   .seat .mini { display: flex; align-items: center; justify-content: center; gap: 1px; margin-top: 2px; }
   .seat .mini i { width: 4px; }
+  .seat .kc { display: inline-flex; align-items: center; gap: 3px; color: var(--ink); }
+  .seat .kc .kb { width: 10px; height: 14px; border-radius: 2px; border-width: 1px; }
+  .seat .kc .kb::after { inset: 1px; }
   .seat.turn { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(224,162,79,.35); }
   .seat.bidder .nm::after { content: " 👑"; }
   .seat-n { top: 8px; left: 50%; transform: translateX(-50%); }
-  .seat-w { left: 6px; top: 50%; transform: translateY(-50%); }
-  .seat-e { right: 6px; top: 50%; transform: translateY(-50%); }
+  .seat-w { left: 6px; top: calc(50% - var(--cw) * .725 - 8px); transform: translateY(-100%); }
+  .seat-e { right: 6px; top: calc(50% - var(--cw) * .725 - 8px); transform: translateY(-100%); }
   .seat-s { bottom: 8px; left: 50%; transform: translateX(-50%); }
 
-  .slot { position: absolute; width: 56px; height: 84px; }
-  .slot-n { top: 76px; left: 50%; transform: translateX(-50%); }
-  .slot-s { bottom: 76px; left: 50%; transform: translateX(-50%); }
-  .slot-w { left: 90px; top: 50%; transform: translateY(-50%); }
-  .slot-e { right: 90px; top: 50%; transform: translateY(-50%); }
+  .slot { position: absolute; width: var(--cw); height: calc(var(--cw) * 1.45); }
+  .slot-n { top: calc(50% - var(--cw) * 1.45 - 6px); left: calc(50% - var(--cw) / 2); }
+  .slot-s { top: calc(50% + 6px); left: calc(50% - var(--cw) / 2); }
+  .slot-w { top: calc(50% - var(--cw) * .725); left: calc(50% - var(--cw) * 1.5 - 12px); }
+  .slot-e { top: calc(50% - var(--cw) * .725); left: calc(50% + var(--cw) * .5 + 12px); }
 
-  .card {
-    width: 56px; height: 84px;
-    background: #f7f4ee;
-    color: #111;
-    border-radius: 7px;
-    border: 1px solid #bbb;
-    position: relative;
-    font-weight: 700;
-    box-shadow: 0 2px 6px rgba(0,0,0,.5);
-    flex: none;
-  }
-  .card.red { color: var(--red); }
-  .card .r { position: absolute; top: 3px; left: 3px; font-size: 29px; line-height: 1; letter-spacing: -1px; transform-origin: left top; }
-  .card .r.ten { transform: scaleX(.72); letter-spacing: -2px; }
-  .card .s1 { position: absolute; top: 32px; left: 2px; font-size: 26px; line-height: 1; }
-  .card .s2 { position: absolute; bottom: 3px; right: 4px; font-size: 34px; line-height: 1; }
-  .card.win { outline: 3px solid var(--win); }
+  .card.win { box-shadow: 0 0 0 3px var(--win), 0 4px 12px rgba(0,0,0,.4); }
   .pop { animation: pop .18s ease-out; }
   @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
@@ -139,15 +129,13 @@
   .panel button.suit { font-size: 26px; padding: 6px 16px; }
   .panel button.suit.red { color: var(--red); }
 
-  .hand {
-    display: flex; justify-content: center;
-    padding: 14px 0 4px; min-height: 90px;
-  }
+  .hand { --cw: 58px; position: relative; height: calc(var(--cw) * 1.45 + 16px); }
   .hand .card:not(:last-child) .s2 { display: none; }
-  .hand .card { margin-left: -30px; transition: transform .12s, opacity .12s; cursor: pointer; }
-  .hand .card:first-child { margin-left: 0; }
-  .hand .card.ok { transform: translateY(-10px); }
-  .hand .card.no { opacity: .4; cursor: default; }
+  .hand .card .r { left: 4%; }
+  .hand .card .r.ten { transform: scaleX(.64); letter-spacing: -3px; }
+  .hand .card { position: absolute; top: 12px; transition: transform .12s, filter .12s, left .2s; cursor: pointer; }
+  .hand .card.ok { transform: translateY(-10px); box-shadow: 0 0 0 2px var(--accent), 0 6px 12px rgba(0,0,0,.45); }
+  .hand .card.no { filter: brightness(.5); cursor: default; }
   .hand .card.ok:active { transform: translateY(-16px); }
 
   .overlay {
@@ -231,18 +219,20 @@
   .hak .no { color: var(--muted); }
 </style>
 <script src="cardsound.js?v=3"></script>
+<script src="kartmasa.js?v=1"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
 </head>
-<body>
+<body data-ses-dugmesi="yok">
 <header>
-  <a href="oyunlar.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Oyunlar" aria-label="Oyunlar">🎮</a>
+  <a class="home" href="oyunlar.html" title="Oyunlar" aria-label="Oyunlar">🎮</a>
   <h1>👑 King</h1>
   <button class="cetbtn" id="cetBtn" type="button">📋 Cetvel</button>
   <div class="info" id="info">El: –<br>Oyun: –</div>
+  <button class="kmBtn" id="ayarBtn" title="Ayarlar" aria-label="Ayarlar">⚙️</button>
 </header>
 
 <div class="scores" id="scores"></div>
@@ -292,7 +282,7 @@ const isRed = (s) => s === "♥" || s === "♦";
 const rankText = (r) => RANKS[r] || String(r);
 const id = (c) => c.s + c.r;
 const $ = (x) => document.getElementById(x);
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const wait = (ms) => KartMasa.wait(ms);
 
 let G; // oyun durumu
 let takenBy = {}; // ceza kartı → alan oyuncu (bu el)
@@ -330,12 +320,7 @@ function newDeck() {
   return d;
 }
 function sortHand(h) { h.sort((a, b) => SUITS.indexOf(a.s) - SUITS.indexOf(b.s) || b.r - a.r); }
-function cardEl(c) {
-  const el = document.createElement("div");
-  el.className = "card" + (isRed(c.s) ? " red" : "");
-  el.innerHTML = `<span class="r${c.r === 10 ? " ten" : ""}">${rankText(c.r)}</span><span class="s1">${c.s}</span><span class="s2">${c.s}</span>`;
-  return el;
-}
+const cardEl = (c) => KartMasa.el(c);
 
 // ---------- Kontrat ----------
 function contractName(ct) {
@@ -776,7 +761,8 @@ function renderSeats() {
       else if (contract === "el" || contract === "son") bd = `${contract === "el" ? "El" : "Ceza"}: ${taken[p]}`;
       else bd = `${CEZALAR[contract].kisa}: ${taken[p]}`;
     }
-    el.innerHTML = `<div class="nm">${NAMES[p]}</div>${miniSyms(p)}${bd ? `<div class="bd">${bd}</div>` : ""}`;
+    const kc = p && hands && hands[p] && hands[p].length ? `<span class="kc"><i class="kb"></i>${hands[p].length}</span>` : "";
+    el.innerHTML = `<div class="nm">${NAMES[p]}</div>${miniSyms(p)}${bd || kc ? `<div class="bd">${kc}${bd && kc ? " · " : ""}${bd}</div>` : ""}`;
     el.classList.toggle("turn", turn === p && phase === "play");
     el.classList.toggle("bidder", p === chooser && phase !== "idle");
   }
@@ -795,15 +781,24 @@ function renderHand() {
   h.innerHTML = "";
   const myTurn = phase === "play" && turn === 0 && !busy;
   const ok = myTurn ? new Set(legal(hands[0]).map(id)) : null;
-  for (const c of hands[0]) {
+  const n = hands[0].length, W = h.clientWidth;
+  const cw = Math.max(46, Math.min(64, Math.floor(W * 0.17)));
+  h.style.setProperty("--cw", cw + "px");
+  const step = n > 1 ? Math.min(cw * 0.72, (W - cw) / (n - 1)) : 0;
+  const x0 = (W - (cw + step * (n - 1))) / 2;
+  hands[0].forEach((c, i) => {
     const el = cardEl(c);
+    el.style.left = Math.round(x0 + i * step) + "px";
     if (myTurn) {
       if (ok.has(id(c))) { el.classList.add("ok"); el.onclick = () => humanPlay(c); }
       else el.classList.add("no");
     }
     h.appendChild(el);
-  }
+  });
 }
+// Masadaki kart boyu masanın genişliğine göre
+function fitTable() { const t = $("table"); t.style.setProperty("--cw", Math.max(44, Math.min(62, Math.floor(t.clientWidth * 0.16))) + "px"); }
+let fitT; window.addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(() => { fitTable(); if (hands && hands[0]) renderHand(); }, 120); });
 function render() { renderInfo(); renderSeats(); renderHand(); }
 
 // ---------- El akışı ----------
@@ -825,7 +820,7 @@ function newRound() {
   else {
     setStatus(`${NAMES[chooser]} oyun seçiyor…`);
     const rid = ++roundId;
-    setTimeout(() => { if (rid !== roundId || phase !== "choose") return; const c = mcChoose(chooser); startPlay(c.ct, c.trump); }, 900);
+    setTimeout(() => { if (rid !== roundId || phase !== "choose") return; const c = mcChoose(chooser); startPlay(c.ct, c.trump); }, 900 * KartMasa.hiz());
   }
 }
 function showChoosePanel() {
@@ -1070,6 +1065,7 @@ function showRules(resume) {
 const saved = load();
 if (saved) G = saved; else newGame();
 renderInfo();
+fitTable();
 showRules(!!saved && saved.round > 0);
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>

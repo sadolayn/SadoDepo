@@ -25,60 +25,55 @@
   :root { --bg:#000; --card:#0d0d0d; --ink:#f2f2f2; --muted:#8a8a8a; --accent:#e0a24f; --red:#e0473a; --win:#3fc283; --line:#262626; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); }
-  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 100vh; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; padding: 10px 10px 14px; user-select: none; }
-  header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  header h1 { margin: 0; font-size: 20px; }
-  .info { font-size: 13px; color: var(--muted); text-align: right; line-height: 1.3; min-width: 46px; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; padding: 8px 10px 10px; user-select: none; -webkit-user-select: none; }
+  header { display: flex; align-items: center; gap: 8px; }
+  header .home { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex: 0 0 40px; border-radius: 12px; background: #161616; border: 1px solid #e0a24f; font-size: 20px; line-height: 1; text-decoration: none; }
+  header h1 { margin: 0; font-size: 19px; flex: 1; white-space: nowrap; }
+  .info { font-size: 12.5px; color: var(--muted); text-align: right; line-height: 1.3; min-width: 46px; }
   .info b { color: var(--accent); }
-  .scores { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; font-size: 12px; text-align: center; }
-  .scores div { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 4px 2px; }
-  .scores b { display: block; font-size: 16px; }
+  .scores { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 7px 0; font-size: 13px; }
+  .scores div { display: flex; align-items: center; justify-content: space-between; gap: 6px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 5px 10px; }
+  .scores b { font-size: 17px; font-variant-numeric: tabular-nums; }
 
-  .table { position: relative; background: linear-gradient(135deg, #2a3fe0 0%, #1a2bb8 55%, #13208f 100%); border-radius: 22px; border: 1px solid #3a50f0; overflow: hidden; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+  .table { --cw: 56px; --gap: 6px; position: relative; border-radius: 20px; border: 1px solid; overflow: hidden; padding: 6px 8px 7px; display: flex; flex-direction: column; gap: 5px; }
   .table::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0; background: url("img/logo.png") center 50% / 70% auto no-repeat; opacity: .2; filter: grayscale(1) brightness(2.4); }
   .table > * { position: relative; z-index: 1; }
-  .who { display: flex; align-items: center; justify-content: space-between; font-size: 13px; padding: 0 2px; }
+  .who { display: flex; align-items: center; justify-content: space-between; font-size: 13px; padding: 0 2px; min-height: 18px; }
   .who .nm { font-weight: 700; }
-  .who .bd { color: #cfd5ff; }
+  .who .bd { color: #dfe3ff; opacity: .85; }
   .who.turn .nm { color: var(--accent); }
   .who.turn .nm::after { content: " ●"; font-size: 10px; vertical-align: middle; }
   .oppHand { display: flex; gap: 3px; align-items: center; }
-  .mini { width: 14px; height: 20px; border-radius: 3px; background: linear-gradient(135deg, #e8b05d, #a8701f); border: 1px solid #f3d29a; }
-  .piles { display: grid; grid-template-columns: repeat(5, 54px); gap: 8px 10px; justify-content: center; }
-  .pile { position: relative; width: 54px; height: 82px; }
-  .pile.empty { border: 1px dashed rgba(255,255,255,.25); border-radius: 7px; height: 78px; }
+  .mini { width: 13px; height: 18px; border-radius: 3px; border-width: 1px !important; }
+  .mini::after { inset: 1px !important; }
+  .piles { display: grid; grid-template-columns: repeat(5, var(--cw)); gap: var(--gap); justify-content: space-between; }
+  .pile { position: relative; width: var(--cw); height: calc(var(--cw) * 1.45 + 4px); }
+  .pile.empty::before { content: ""; position: absolute; inset: 0 0 4px; border: 1px dashed rgba(255,255,255,.25); border-radius: 7px; }
   .pile .back { position: absolute; top: 4px; left: 0; }
   .pile .card.top { position: absolute; top: 0; left: 0; }
-  .mid { display: flex; justify-content: center; align-items: center; gap: 22px; min-height: 92px; }
-  .slot { width: 56px; height: 84px; border-radius: 7px; border: 1px dashed rgba(255,255,255,.18); }
-  .slot:empty { }
-  .slot .card { width: 56px; height: 84px; }
+  .mid { display: flex; justify-content: center; align-items: center; gap: 22px; height: calc(var(--cw) * 1.45 + 10px); }
+  .slot { width: var(--cw); height: calc(var(--cw) * 1.45); border-radius: 7px; border: 1px dashed rgba(255,255,255,.18); }
+  .mid.choosing .slot { display: none; }
 
-  .card { width: 54px; height: 78px; background: #f7f4ee; color: #111; border-radius: 7px; border: 1px solid #bbb; position: relative; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,.5); flex: none; }
-  .card.red { color: var(--red); }
-  .card .r { position: absolute; top: 3px; left: 3px; font-size: 26px; line-height: 1; letter-spacing: -1px; transform-origin: left top; }
-  .card .r.ten { transform: scaleX(.72); letter-spacing: -2px; }
-  .card .s1 { position: absolute; top: 29px; left: 3px; font-size: 22px; line-height: 1; }
-  .card .s2 { position: absolute; bottom: 3px; right: 4px; font-size: 28px; line-height: 1; }
-  .card.back { background: repeating-linear-gradient(45deg, #c98a35 0 6px, #e0a24f 6px 12px); border-color: #f3d29a; }
-  .card.win { outline: 3px solid var(--win); }
-  .card.ok { outline: 2px solid var(--accent); cursor: pointer; transform: translateY(-4px); transition: transform .12s; }
+  .card.win { box-shadow: 0 0 0 3px var(--win), 0 4px 12px rgba(0,0,0,.4); }
+  .card.ok { box-shadow: 0 0 0 2px var(--accent), 0 6px 12px rgba(0,0,0,.45); cursor: pointer; transform: translateY(-4px); transition: transform .12s; }
   .card.no { filter: brightness(.55); }
   .pop { animation: pop .18s ease-out; }
   @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-  .status { min-height: 40px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 15px; padding: 6px 4px; }
-  .panel { display: none; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 8px; }
-  .panel.show { display: flex; }
-  .panel button, .btn { min-width: 44px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 16px; font-weight: 600; cursor: pointer; }
-  .panel button small { font-weight: 400; opacity: .65; font-size: 12px; }
-  .panel button.red { color: var(--red); }
-  .hand { display: flex; justify-content: center; gap: 6px; padding: 10px 0 4px; min-height: 96px; flex-wrap: nowrap; }
-  .hand .card { width: 56px; height: 84px; }
-  .hand .card .r { font-size: 29px; }
-  .hand .card .s1 { top: 32px; font-size: 24px; }
-  .hand .card .s2 { font-size: 30px; }
+  .status { min-height: 34px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 15px; padding: 4px; }
+  .panel { display: none; grid-template-columns: repeat(5, 1fr); gap: 6px; width: 100%; }
+  .panel.show { display: grid; }
+  .panel button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 7px 2px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,.25); background: rgba(0,0,0,.45); color: #fff; font: 700 12px system-ui, sans-serif; cursor: pointer; backdrop-filter: blur(3px); }
+  .panel button b { font-size: 24px; line-height: 1.05; }
+  .panel button small { font-weight: 600; color: var(--accent); font-size: 12px; }
+  .panel button.red b { color: #ff6b5e; }
+  .panel button:disabled { opacity: .3; cursor: default; }
+  .panel button:not(:disabled):active { transform: scale(.96); }
+  .hand { --cw: 56px; position: relative; height: calc(var(--cw) * 1.45 + 12px); margin-top: 2px; }
+  .hand .card { position: absolute; top: 8px; transition: left .2s, transform .12s; }
   .lbl { text-align: center; font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .btn { min-width: 44px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 16px; font-weight: 600; cursor: pointer; }
 
   .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 10; }
   .overlay.show { display: flex; }
@@ -91,32 +86,34 @@
   .pos { color: var(--win); } .neg { color: var(--red); }
   .modal .btn { width: 100%; background: var(--accent); border-color: var(--accent); color: #000; }
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
+  footer.copyright { margin-top: auto !important; padding-top: 10px !important; }
 </style>
 <script src="cardsound.js?v=3"></script>
+<script src="kartmasa.js?v=1"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
 </head>
-<body>
+<body data-ses-dugmesi="yok">
 <header>
-  <a href="oyunlar.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Oyunlar" aria-label="Oyunlar">🎮</a>
+  <a class="home" href="oyunlar.html" title="Oyunlar" aria-label="Oyunlar">🎮</a>
   <h1>💞 Balayı King</h1>
   <div class="info" id="info">El: –</div>
+  <button class="kmBtn" id="ayarBtn" title="Ayarlar" aria-label="Ayarlar">⚙️</button>
 </header>
 <div class="scores" id="scores"></div>
 
 <div class="table" id="table">
   <div class="who" id="who1"></div>
   <div class="piles" id="piles1"></div>
-  <div class="mid"><div class="slot" id="slot0"></div><div class="slot" id="slot1"></div></div>
+  <div class="mid" id="mid"><div class="slot" id="slot0"></div><div class="slot" id="slot1"></div><div class="panel" id="ctPanel"></div></div>
   <div class="piles" id="piles0"></div>
   <div class="who" id="who0"></div>
 </div>
 
 <div class="status" id="status"></div>
-<div class="panel" id="ctPanel"></div>
 <div class="lbl">Elindeki kartlar</div>
 <div class="hand" id="hand"></div>
 
@@ -144,7 +141,7 @@ const isRed = (s) => s === "♥" || s === "♦";
 const rankText = (r) => RANKS[r] || String(r);
 const id = (c) => c.s + c.r;
 const $ = (x) => document.getElementById(x);
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const wait = (ms) => KartMasa.wait(ms);
 
 let G, hands, piles, trick, turn, tricksWon, played, game, trump, trumpBroken, chooser, phase = "idle", busy = false;
 let voids = [{}, {}];
@@ -164,13 +161,8 @@ function newDeck() {
   return d;
 }
 function sortHand(h) { h.sort((a, b) => SUITS.indexOf(a.s) - SUITS.indexOf(b.s) || b.r - a.r); }
-function cardEl(c) {
-  const el = document.createElement("div");
-  el.className = "card" + (isRed(c.s) ? " red" : "");
-  el.innerHTML = `<span class="r${c.r === 10 ? " ten" : ""}">${rankText(c.r)}</span><span class="s1">${c.s}</span><span class="s2">${c.s}</span>`;
-  return el;
-}
-const backEl = () => { const el = document.createElement("div"); el.className = "card back"; return el; };
+const cardEl = (c) => KartMasa.el(c);
+const backEl = () => KartMasa.back();
 
 // Oynanabilir kartlar: el + masadaki açık (üstteki) kartlar
 const tops = (p) => piles[p].filter((st) => st.length).map((st) => st[st.length - 1]);
@@ -266,7 +258,7 @@ function botPick(p) {
 }
 
 // ---------- Ekran ----------
-function setStatus(t) { $("status").innerHTML = t; }
+function setStatus(t) { $("status").innerHTML = t ? `<span>${t}</span>` : ""; }
 function gameName() { return game ? (GK[game].ad + (game !== "NT" ? " " + game : "") + ` ×${GK[game].x}`) : "–"; }
 function renderInfo() {
   $("info").innerHTML = `El: <b>${Math.min(G.round + 1, DEALS)}/${DEALS}</b><br>${phase === "play" || phase === "end" ? `<b>${game === "NT" ? "Kozsuz" : "Koz " + game}</b> ×${GK[game].x}` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
@@ -275,8 +267,8 @@ function renderInfo() {
 function renderWho() {
   for (const p of [0, 1]) {
     const el = $("who" + p);
-    const handInfo = p === 1 && hands ? `<span class="oppHand">${hands[1].map(() => '<i class="mini"></i>').join("")}</span>` : "";
-    const used = GAMES.map((g) => G.used[p].includes(g.k) ? `<s style="opacity:.45">${g.k === "NT" ? "KZ" : g.k}</s>` : (g.k === "NT" ? "KZ" : g.k)).join(" ");
+    const handInfo = p === 1 && hands ? `<span class="oppHand">${hands[1].map(() => '<i class="mini kb"></i>').join("")}</span>` : "";
+    const used = GAMES.map((g) => G.used[p].includes(g.k) ? `<s style="opacity:.45">${g.k === "NT" ? "KZ" : g.k}</s>` : (g.k === "NT" ? "KZ" : g.k + "\uFE0E")).join(" ");
     el.innerHTML = `<span><span class="nm">${NAMES[p]}${p === chooser && phase !== "idle" ? " 👑" : ""}</span> <span class="bd">· El: ${tricksWon ? tricksWon[p] : 0}</span></span>${handInfo || `<span class="bd" style="font-size:12px">${used}</span>`}`;
     el.classList.toggle("turn", turn === p && phase === "play");
   }
@@ -307,11 +299,25 @@ function renderHand() {
   const h = $("hand"); h.innerHTML = "";
   const myTurn = phase === "play" && turn === 0 && !busy;
   const ok = myTurn ? new Set(legal(0).map(id)) : null;
-  for (const c of hands[0]) {
+  const n = hands[0].length, W = h.clientWidth, cw = parseFloat(getComputedStyle(h).getPropertyValue("--cw")) || 56;
+  const step = n > 1 ? Math.min(cw + 6, (W - cw) / (n - 1)) : 0;
+  const x0 = (W - (cw + step * (n - 1))) / 2;
+  hands[0].forEach((c, i) => {
     const el = cardEl(c);
+    el.style.left = Math.round(x0 + i * step) + "px";
     if (myTurn) { if (ok.has(id(c))) { el.classList.add("ok"); el.onclick = () => humanPlay(c); } else el.classList.add("no"); }
     h.appendChild(el);
-  }
+  });
+}
+// Ekrana sığdır: kart boyu önce genişliğe, sonra ekran yüksekliğine göre ayarlanır
+function fit() {
+  const t = $("table"), h = $("hand");
+  const W = t.clientWidth - 16, gap = 6;
+  let cw = Math.min(66, Math.floor((W - gap * 4) / 5));
+  const set = (v) => { t.style.setProperty("--cw", v + "px"); h.style.setProperty("--cw", v + "px"); };
+  set(cw);
+  const over = () => h.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 8;
+  while (cw > 40 && over() > 0) set((cw -= 2));
 }
 function renderTrick(w) {
   for (const p of [0, 1]) $("slot" + p).innerHTML = "";
@@ -344,20 +350,21 @@ function newRound() {
   if (window.CardSfx) CardSfx.deal(13);
   renderTrick(); render();
   if (chooser === 0) showChoosePanel();
-  else { setStatus(`${NAMES[1]} oyun seçiyor…`); setTimeout(() => startPlay(botChoose(1)), 1000); }
+  else { setStatus(`${NAMES[1]} oyun seçiyor…`); setTimeout(() => startPlay(botChoose(1)), 1000 * KartMasa.hiz()); }
 }
+function hidePanel() { $("ctPanel").classList.remove("show"); $("mid").classList.remove("choosing"); }
 function showChoosePanel() {
   setStatus("Seçim sende. Açık kartlarına ve eline bakıp oyunu seç:");
   const panel = $("ctPanel"); panel.innerHTML = "";
   for (const g of GAMES) {
-    if (G.used[0].includes(g.k)) continue;
     const b = document.createElement("button");
     if (g.k === "♥" || g.k === "♦") b.className = "red";
-    b.innerHTML = `${g.k === "NT" ? "Kozsuz" : g.k + " " + SUIT_NAMES[g.k]} <small>×${g.x}</small>`;
-    b.onclick = () => { panel.classList.remove("show"); startPlay(g.k); };
+    b.innerHTML = `<b>${g.k === "NT" ? "KZ" : g.k + "\uFE0E"}</b>${g.k === "NT" ? "Kozsuz" : SUIT_NAMES[g.k]}<small>×${g.x}</small>`;
+    if (G.used[0].includes(g.k)) b.disabled = true;
+    else b.onclick = () => { hidePanel(); startPlay(g.k); };
     panel.appendChild(b);
   }
-  panel.classList.add("show");
+  panel.classList.add("show"); $("mid").classList.add("choosing");
 }
 async function startPlay(k) {
   game = k; trump = k === "NT" ? null : k;
@@ -450,7 +457,9 @@ function showRules(resume) {
 const saved = load();
 if (saved) G = saved; else newGame();
 hands = [[], []]; piles = [[], []];
-renderInfo(); renderWho();
+renderInfo(); renderWho(); fit();
+let fitT; window.addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(() => { fit(); if (hands[0].length) render(); }, 120); });
+KartMasa.onChange = () => {};
 showRules(!!saved && saved.round > 0);
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>

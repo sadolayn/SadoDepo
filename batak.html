@@ -456,7 +456,7 @@ function botPick(p) {
 }
 
 // ---------- Ekran ----------
-function setStatus(t) { $("status").innerHTML = t; }
+function setStatus(t) { $("status").innerHTML = t ? `<span>${t}</span>` : ""; }
 
 function renderInfo() {
   const k = trump ? `<b style="color:${isRed(trump) ? "var(--red)" : "var(--ink)"}">${trump} ${SUIT_NAMES[trump]}</b>` : "–";
