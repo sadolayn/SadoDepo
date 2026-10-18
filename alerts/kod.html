@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Alerts kodu</title>
+<style>
+  body { margin: 0; background: #000; color: #f2f2f2; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 16px; }
+  .w { max-width: 560px; margin: 0 auto; }
+  h1 { font-size: 20px; color: #e0a24f; margin: 4px 0 6px; }
+  p { color: #bdbdbd; font-size: 14.5px; line-height: 1.5; margin: 0 0 12px; }
+  button { width: 100%; padding: 18px; border: none; border-radius: 14px; background: #e0a24f; color: #000; font-size: 18px; font-weight: 800; cursor: pointer; }
+  button.ok { background: #2fae72; color: #fff; }
+  ol { color: #d6d6d6; font-size: 14.5px; line-height: 1.6; padding-left: 20px; }
+  pre { margin-top: 14px; max-height: 40vh; overflow: auto; background: #0d0d0d; border: 1px solid #262626; border-radius: 12px; padding: 12px; font-size: 11px; color: #9a9a9a; white-space: pre-wrap; word-break: break-all; }
+  small { color: #777; }
+</style>
+</head>
+<body>
+<div class="w">
+  <h1>🔔 Sadolayn Alerts · Apps Script kodu</h1>
+  <p>Tek dokunuşla kopyala, Apps Script'teki <b>Kod.gs</b>'ye yapıştır.</p>
+  <button id="cp" disabled>Yükleniyor…</button>
+  <ol>
+    <li>Yukarıdaki düğmeye bas (kod panoya kopyalanır).</li>
+    <li>Apps Script'te Kod.gs'nin içine dokun, <b>uzun bas → Tümünü seç</b>, sil.</li>
+    <li>Boş alana <b>uzun bas → Yapıştır</b>.</li>
+    <li>Üstteki 💾 kaydet simgesine bas.</li>
+  </ol>
+  <small id="info"></small>
+  <pre id="src"></pre>
+</div>
+<script>
+let code = "";
+fetch("Code.gs?v=" + Date.now()).then((r) => r.text()).then((t) => {
+  code = t;
+  document.getElementById("src").textContent = t;
+  document.getElementById("info").textContent = t.split("\n").length + " satır · son satır: " + t.trim().split("\n").pop().slice(0, 60);
+  const b = document.getElementById("cp"); b.disabled = false; b.textContent = "📋 Kodu kopyala";
+}).catch(() => { document.getElementById("cp").textContent = "Yüklenemedi, sayfayı yenile"; });
+document.getElementById("cp").onclick = async () => {
+  const b = document.getElementById("cp");
+  try { await navigator.clipboard.writeText(code); }
+  catch (e) { const ta = document.createElement("textarea"); ta.value = code; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
+  b.classList.add("ok"); b.textContent = "✅ Kopyalandı! Şimdi Apps Script'e yapıştır";
+};
+</script>
+</body>
+</html>
