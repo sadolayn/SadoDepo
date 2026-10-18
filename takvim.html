@@ -6,11 +6,11 @@
 <link rel="apple-touch-icon" href="img/icon.png">
 <meta name="theme-color" content="#000000">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Takvim</title>
+<title>Takvim & Ajanda</title>
 <meta name="description" content="Bilgi paylaştıkça büyür">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SADOLAYN">
-<meta property="og:title" content="Takvim · SADOLAYN">
+<meta property="og:title" content="Takvim & Ajanda · SADOLAYN">
 <meta property="og:description" content="“Bilgi paylaştıkça büyür”">
 <meta property="og:url" content="https://sadolayn.github.io/SadoDepo/takvim.html">
 <meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
@@ -33,6 +33,10 @@
     --half: #e8b52b;
     --dini: #3fc283;
     --work: #5aa9f0;
+    --izin: #a77bf3;
+    --dgr: #4fc9c3;
+    --not: #8f9bff;
+    --rdv: #f07ab8;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 12px 14px 24px; }
@@ -40,7 +44,7 @@
   header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header h1 { margin: 0; font-size: 20px; }
-  .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px; margin-bottom: 12px; }
+  .tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px; margin-bottom: 12px; }
   .tabs button { border: none; background: transparent; color: var(--muted); padding: 10px 2px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
   .tabs button.active { background: var(--accent); color: #000; }
   .panel { display: none; } .panel.active { display: block; }
@@ -146,6 +150,107 @@
   .list .it.nx { background: rgba(224,162,79,.08); border-radius: 10px; }
   .panel { scroll-margin-top: calc(var(--stickH, 200px) + 8px); }
   .list .it { scroll-margin-top: calc(var(--stickH, 200px) + 10px); }
+
+  /* ---------- Ajanda ---------- */
+  header h1 .amp { color: var(--accent); font-family: Georgia, serif; font-style: italic; font-weight: 400; }
+  .tabs button[data-tab="ajanda"]:not(.active) { color: #c9b4f7; }
+  .day.iz { box-shadow: inset 0 -5px 0 var(--izin); }
+  .day.iz0 { box-shadow: inset 0 -5px 0 rgba(167,123,243,.3); }
+  .day.dg { box-shadow: inset 0 -5px 0 var(--dgr); }
+  .day.dg0 { box-shadow: inset 0 -5px 0 rgba(79,201,195,.3); }
+  .day .pm { position: absolute; top: 4px; right: 4px; display: flex; gap: 2px; }
+  .day .pm u { width: 6px; height: 6px; border-radius: 2px; display: block; }
+  .day .pm u.n { background: var(--not); } .day .pm u.r { background: var(--rdv); border-radius: 50%; }
+  .day.sel .pm u { outline: 1px solid #000; }
+  .legend.pl { margin-top: 6px; padding-top: 8px; border-top: 1px dashed var(--line); }
+  .legend.pl b { color: var(--ink); font-weight: 600; }
+  .legend .p1::before { background: var(--izin); height: 4px; border-radius: 2px; vertical-align: 2px; }
+  .legend .p2::before { background: var(--dgr); height: 4px; border-radius: 2px; vertical-align: 2px; }
+  .legend .p3::before { background: var(--not); width: 7px; height: 7px; border-radius: 2px; }
+  .legend .p4::before { background: var(--rdv); width: 7px; height: 7px; border-radius: 50%; }
+  .mg .iz { box-shadow: inset 0 -3px 0 var(--izin); } .mg .dg { box-shadow: inset 0 -3px 0 var(--dgr); }
+  .mg .nt::before { content: ""; position: absolute; top: 1px; right: 1px; width: 3px; height: 3px; border-radius: 1px; background: var(--not); }
+  .addday { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: 10px; padding: 11px; border-radius: 12px; border: 1px dashed rgba(167,123,243,.6); background: rgba(167,123,243,.08); color: #d9c8ff; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .ai { display: flex; gap: 10px; align-items: center; padding: 9px 10px; margin-top: 6px; border-radius: 12px; background: var(--field); border-left: 4px solid var(--c); cursor: pointer; }
+  .ai .ic { font-size: 18px; width: 24px; text-align: center; flex: none; }
+  .ai .tx { flex: 1; min-width: 0; font-size: 14px; }
+  .ai .tx small { display: block; color: var(--muted); font-size: 12px; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ai .gn { font-size: 12px; font-weight: 700; color: var(--c); white-space: nowrap; }
+  .ai.past { opacity: .5; }
+  .fab { position: fixed; right: max(16px, calc(50vw - 230px)); bottom: max(20px, env(safe-area-inset-bottom)); width: 58px; height: 58px; border-radius: 50%; border: none; background: linear-gradient(145deg, #c19cff, #8a5ee8); color: #fff; font-size: 30px; line-height: 1; box-shadow: 0 10px 26px rgba(138,94,232,.5), 0 0 0 4px #000; cursor: pointer; z-index: 40; transition: transform .2s; }
+  .fab:active { transform: scale(.92); }
+  .fab[hidden] { display: none; }
+  .ihak { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .iring { display: flex; align-items: center; gap: 16px; margin: 14px 0 6px; }
+  .iring svg { flex: none; }
+  .iring .k { flex: 1; display: grid; gap: 6px; }
+  .iring .k div { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--muted); }
+  .iring .k b { color: var(--ink); } .iring .k .kl b { color: var(--izin); font-size: 18px; }
+  .sw { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 6px; }
+  .aempty { text-align: center; color: var(--muted); font-size: 13.5px; padding: 18px 8px; line-height: 1.6; }
+  .aempty b { display: block; font-size: 30px; margin-bottom: 4px; }
+  .mgrp { font-size: 11px; letter-spacing: 1.4px; color: var(--muted); font-weight: 700; margin: 14px 0 2px; text-transform: uppercase; }
+  .bk { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .bk button, .pbtn { padding: 11px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 13.5px; font-weight: 600; cursor: pointer; }
+  .pbtn.pri { background: var(--accent); color: #000; border-color: var(--accent); }
+  /* alt sayfa */
+  .sheet { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.65); display: flex; align-items: flex-end; justify-content: center; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+  .sheet[hidden] { display: none; }
+  .sbox { width: 100%; max-width: 480px; max-height: 92vh; overflow: auto; background: var(--card); border: 1px solid #2c2c2c; border-bottom: none; border-radius: 22px 22px 0 0; padding: 10px 16px 18px; animation: sUp .28s cubic-bezier(.2,.8,.2,1); }
+  @keyframes sUp { from { transform: translateY(40px); opacity: 0; } }
+  .sbox .grab { width: 42px; height: 5px; border-radius: 3px; background: #333; margin: 0 auto 10px; }
+  .sbox h3 { font-size: 17px; margin: 0 0 4px; }
+  .sbox .sday { font-size: 12.5px; color: var(--muted); margin-bottom: 10px; }
+  .types { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .types button { padding: 10px 2px 8px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--muted); font-size: 11.5px; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .types button span { font-size: 21px; }
+  .types button.on { color: #fff; border-color: var(--c); background: color-mix(in srgb, var(--c) 20%, #111); box-shadow: 0 0 0 1px var(--c) inset; }
+  .flds { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .flds > div[hidden] { display: none; }
+  .flds > div.full { grid-column: 1 / -1; }
+  textarea { width: 100%; min-height: 64px; padding: 11px 12px; font: 15px system-ui, sans-serif; background: var(--field); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; outline: none; resize: vertical; }
+  textarea:focus { border-color: var(--accent); }
+  .chk { display: flex !important; align-items: center; gap: 8px; color: var(--ink) !important; font-size: 14px !important; cursor: pointer; }
+  .chk input { width: 20px; height: 20px; padding: 0; -webkit-appearance: auto; appearance: auto; accent-color: var(--izin); }
+  .acalc { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(167,123,243,.1); border: 1px solid rgba(167,123,243,.35); font-size: 13.5px; line-height: 1.55; }
+  .acalc:empty { display: none; }
+  .acalc b { color: #d9c8ff; font-size: 16px; }
+  .acalc .sk { color: #ffb3a1; } .acalc .wn { color: var(--half); }
+  .sfoot { display: flex; gap: 8px; margin-top: 14px; }
+  .sfoot button { flex: 1; padding: 13px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 15px; font-weight: 700; cursor: pointer; }
+  .sfoot .sv { flex: 2; background: linear-gradient(145deg, #c19cff, #8a5ee8); border: none; color: #fff; }
+  .sfoot .dl { flex: none; width: 52px; color: #ff8f7a; }
+  .sfoot .dl[hidden] { display: none; }
+  .icsb { width: 100%; margin-top: 8px; padding: 10px; border-radius: 12px; border: 1px solid rgba(240,122,184,.5); background: rgba(240,122,184,.08); color: #ffc2e1; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+  .icsb[hidden] { display: none; }
+  .atoast { position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%); background: #222; color: #fff; padding: 10px 16px; border-radius: 99px; font-size: 14px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 70; max-width: 90vw; text-align: center; }
+  .atoast.show { opacity: 1; }
+  /* POS rulosu */
+  .posTop { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .posSlot { position: relative; margin-top: 12px; padding-top: 10px; }
+  .posSlot::before { content: ""; position: absolute; left: -4px; right: -4px; top: 0; height: 12px; border-radius: 6px; background: linear-gradient(#2a2a2a, #111); box-shadow: inset 0 -3px 4px rgba(0,0,0,.8); z-index: 2; }
+  .posPaper { position: relative; background: #fbf7ec; color: #262626; font-family: "Courier New", ui-monospace, monospace; padding: 18px 16px 22px; margin: -4px 8px 0; box-shadow: 0 10px 24px rgba(0,0,0,.5);
+    -webkit-mask: radial-gradient(circle 5px at 50% 100%, transparent 98%, #000) bottom/14px 51% repeat-x, linear-gradient(#000, #000) top/100% 51% no-repeat; mask: radial-gradient(circle 5px at 50% 100%, transparent 98%, #000) bottom/14px 51% repeat-x, linear-gradient(#000, #000) top/100% 51% no-repeat;
+    animation: posPrint 1.2s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes posPrint { from { clip-path: inset(0 0 100% 0); transform: translateY(-12px); } to { clip-path: inset(0 0 0 0); transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .posPaper { animation: none; } }
+  .pz-c { text-align: center; } .pz-logo { font-family: Georgia, serif; font-style: italic; font-weight: 700; font-size: 26px; letter-spacing: 2px; color: #a8741c; }
+  .pz-s { font-size: 12px; color: #555; line-height: 1.5; } .pz-hr { border: none; border-top: 1px dashed #bdb5a0; margin: 10px 0; }
+  .pz-h { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8a8270; margin-bottom: 4px; }
+  .pz-row { display: flex; justify-content: space-between; gap: 8px; font-size: 13.5px; line-height: 1.6; } .pz-row b { font-weight: 700; }
+  .pz-row.tot { font-size: 16px; border-top: 1px solid #262626; margin-top: 4px; padding-top: 4px; }
+  .pz-sub { font-size: 11.5px; color: #8a8270; margin: -2px 0 4px; line-height: 1.35; }
+  .pz-bar { position: relative; display: flex; height: 12px; border-radius: 6px; background: #ebe4d0; overflow: hidden; margin: 6px 0 2px; }
+  .pz-bar i { display: block; height: 100%; animation: pzGrow 1.2s .5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes pzGrow { from { width: 0 !important; } }
+  .pz-months { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; align-items: end; height: 64px; margin-top: 6px; }
+  .pz-months div { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; font-size: 9px; color: #8a8270; }
+  .pz-months i { display: block; width: 70%; border-radius: 3px 3px 0 0; background: #a77bf3; min-height: 2px; }
+  .pz-months em { font-style: normal; font-size: 9px; color: #262626; font-weight: 700; }
+  .pz-stamp { position: absolute; top: 117px; right: 10px; transform: rotate(-8deg); border: 3px double var(--sc); color: var(--sc); border-radius: 7px; padding: 2px 7px; font: 800 11px system-ui, sans-serif; letter-spacing: 1px; opacity: .85; animation: pzStamp .5s 1.6s both; background: rgba(251,247,236,.7); }
+  @keyframes pzStamp { from { transform: rotate(-8deg) scale(2.2); opacity: 0; } }
+  .pz-bc { height: 34px; margin: 12px auto 4px; width: 75%; background: repeating-linear-gradient(90deg, #262626 0 2px, transparent 2px 4px, #262626 4px 5px, transparent 5px 8px, #262626 8px 11px, transparent 11px 12px); }
+  .pz-warn { margin-top: 8px; font-size: 10.5px; color: #8a8270; text-align: center; letter-spacing: .3px; }
 </style>
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
@@ -157,13 +262,14 @@
   <div class="stick">
   <header>
     <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Anasayfa" aria-label="Anasayfa">🏠</a>
-    <h1>📅 Takvim</h1>
+    <h1>📅 Takvim <span class="amp">&amp;</span> Ajanda</h1>
     <span style="width:52px"></span>
   </header>
 
   <div class="tabs">
     <button data-tab="ay" class="active">Aylık</button>
     <button data-tab="yil">Yıllık</button>
+    <button data-tab="ajanda">Ajanda</button>
     <button data-tab="hesap">İş günü</button>
     <button data-tab="liste">Liste</button>
   </div>
@@ -181,6 +287,10 @@
     <div class="ozet" id="yTot"></div>
     <div class="ozet kalan" id="yKalan"></div>
   </div>
+  <div class="sh" data-sh="ajanda">
+    <div class="yearsel" id="yearsel3"></div>
+    <div class="mstat"><div><b id="iHak" style="color:var(--ink)">0</b>İzin hakkı</div><div><b id="iKul" style="color:var(--izin)">0</b>Kullanılan</div><div><b id="iPln" style="color:#d9c8ff">0</b>Planlanan</div><div><b id="iKal" style="color:var(--accent)">0</b>Kalan</div></div>
+  </div>
   <div class="sh" data-sh="hesap">
     <div class="hbar"><div><span id="hb1l">Tarihler arası</span><b id="hb1">–</b></div><div><span id="hb2l">İş günü sonrası</span><b id="hb2">–</b></div></div>
   </div>
@@ -196,8 +306,9 @@
     <div class="card">
       <div class="grid" id="grid"></div>
       <div class="legend"><span class="l1">Resmi tatil</span><span class="l2">Yarım gün</span><span class="l3">Dini gün</span><span class="l4">Hafta sonu</span></div>
+      <div class="legend pl"><b>Ajandam:</b><span class="p1">Yıllık izin</span><span class="p2">Diğer izin</span><span class="p3">Not</span><span class="p4">Randevu</span></div>
     </div>
-    <div class="card"><div class="detail" id="detail">Ayrıntı için bir güne dokun.</div></div>
+    <div class="card"><div class="detail" id="detail">Ayrıntı için bir güne dokun.</div><div id="dItems"></div><button class="addday" id="addDay" type="button">＋ Bu güne ekle</button></div>
     <div class="card">
       <h3 id="sumTitle">Bu ay</h3>
       <div class="stats">
@@ -216,7 +327,43 @@
   <section class="panel" id="yil">
     <div class="legend" style="margin:0 0 10px"><span class="l1">Resmi tatil</span><span class="l2">Yarım gün</span><span class="l3">Dini gün</span><span id="ySumTitle" style="margin-left:auto"></span></div>
     <div class="ygrid" id="ygrid"></div>
+    <div class="legend pl" style="margin-top:12px"><b>Ajandam:</b><span class="p1">Yıllık izin</span><span class="p2">Diğer izin</span><span class="p3">Not / randevu</span></div>
     <p class="note">Ayın sağ üstündeki mavi sayı o ayın iş günü sayısı. Bir aya dokununca aylık görünümde açılır.</p>
+  </section>
+
+
+  <!-- Ajanda -->
+  <section class="panel" id="ajanda">
+    <div class="card">
+      <h3>🏖️ Yıllık izin hakkım · <span id="ihY"></span></h3>
+      <div class="ihak">
+        <div><label>Bu yılın hakkı (gün)</label><input type="number" id="ihHak" inputmode="decimal" min="0" max="60" step="0.5" placeholder="Örn. 14"></div>
+        <div><label>Geçen yıldan devreden</label><input type="number" id="ihDev" inputmode="decimal" min="0" max="120" step="0.5" placeholder="0"></div>
+      </div>
+      <div class="chips" id="ihQ"><button data-v="14">14 gün</button><button data-v="20">20 gün</button><button data-v="26">26 gün</button></div>
+      <div class="iring" id="iRing"></div>
+      <p class="note">İş Kanunu md. 53'e göre asgari süreler: 1–5 yıl kıdemde 14, 5–15 yılda 20, 15 yıl ve üstünde 26 gün (18 yaş altı ve 50 yaş üstü en az 20). Kurumunuzun uygulaması farklı olabilir. Hafta sonları, resmi tatiller ve bayramlar izinden <b style="color:var(--ink)">düşülmez</b>; arifeler yarım gün sayılır.</p>
+    </div>
+    <div class="card">
+      <h3>⏭ Yaklaşanlar</h3>
+      <div id="aUp"></div>
+    </div>
+    <div class="card">
+      <h3 id="aAllT">Kayıtlarım</h3>
+      <div class="chips" id="aF"><button data-f="all" class="active">Tümü</button><button data-f="izin">Yıllık izin</button><button data-f="diger">Diğer izin</button><button data-f="randevu">Randevu</button><button data-f="not">Not</button></div>
+      <div id="aAll"></div>
+    </div>
+    <div class="card">
+      <div class="posTop"><h3 style="margin:0">🧾 Yıllık döküm</h3><span class="note" style="margin:0">İzinlerin ve notların tek rulo</span></div>
+      <div class="posSlot"><div class="posPaper" id="aPos"></div></div>
+      <div class="bk" style="margin-top:12px"><button class="pbtn pri" id="aPdf">📄 PDF indir</button><button class="pbtn" id="aPng">🧾 Görsel / paylaş</button></div>
+    </div>
+    <div class="card">
+      <h3>💾 Yedek</h3>
+      <p class="note" style="margin-top:0">Notların yalnızca bu telefonda, tarayıcının içinde saklanır; kimse göremez. Tarayıcı verilerini silersen ya da telefon değiştirirsen kaybolmaması için ara ara yedek al.</p>
+      <div class="bk"><button id="bkOut">⬇️ Yedek al</button><button id="bkIn">⬆️ Yedeği yükle</button></div>
+      <input type="file" id="bkFile" accept="application/json,.json" hidden>
+    </div>
   </section>
 
   <!-- İş günü hesaplama -->
@@ -259,6 +406,35 @@
   </section>
 </div>
 
+
+<button class="fab" id="fab" type="button" aria-label="Ajandaya ekle">＋</button>
+<div class="sheet" id="aSheet" hidden>
+  <div class="sbox" role="dialog" aria-modal="true" aria-labelledby="sT">
+    <div class="grab"></div>
+    <h3 id="sT">Ajandaya ekle</h3>
+    <div class="sday" id="sDay"></div>
+    <div class="types" id="sType">
+      <button data-t="not" style="--c:var(--not)"><span>📝</span>Not</button>
+      <button data-t="randevu" style="--c:var(--rdv)"><span>⏰</span>Randevu</button>
+      <button data-t="izin" style="--c:var(--izin)"><span>🏖️</span>Yıllık izin</button>
+      <button data-t="diger" style="--c:var(--dgr)"><span>🩺</span>Diğer izin</button>
+    </div>
+    <label id="sTitleL">Başlık</label>
+    <input id="sTitle" maxlength="80" autocomplete="off">
+    <div class="flds">
+      <div id="sDW"><label id="sDL">Tarih</label><input type="date" id="sD"></div>
+      <div id="sEW"><label>Bitiş</label><input type="date" id="sE"></div>
+      <div id="sTW"><label>Saat</label><input type="time" id="sTm"></div>
+    </div>
+    <label class="chk" id="sHalfW"><input type="checkbox" id="sHalf"> Yarım gün izin</label>
+    <div class="acalc" id="sCalc"></div>
+    <label>Açıklama <span style="opacity:.6">(isteğe bağlı)</span></label>
+    <textarea id="sNote" maxlength="300"></textarea>
+    <button class="icsb" id="sIcs" type="button">📲 Telefonun takvimine ekle (30 dk önce hatırlatır)</button>
+    <div class="sfoot"><button class="dl" id="sDel" type="button" aria-label="Sil">🗑</button><button id="sCancel" type="button">Vazgeç</button><button class="sv" id="sSave" type="button">Kaydet</button></div>
+  </div>
+</div>
+<div class="atoast" id="aToast"></div>
 <script>
 // ================= Veri =================
 const YEARS = [2026, 2027, 2028];
@@ -336,6 +512,7 @@ const $ = (x) => document.getElementById(x);
 const pad = (n) => String(n).padStart(2, "0");
 const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const parse = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d, 12); };
+const MI = "OŞMNMHTAEEKA";
 const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 const DOW = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
 const fmtLong = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
@@ -393,9 +570,11 @@ function renderMonth() {
     if (i.half) cls.push("half");
     if (keyOf(dt) === keyOf(today)) cls.push("today");
     if (selected && keyOf(dt) === keyOf(selected)) cls.push("sel");
+    const pm = dayMarks(dt, i);
+    cls.push(...pm.cls);
     const el = document.createElement("div");
     el.className = cls.join(" ");
-    el.innerHTML = `${d}${i.dini.length ? '<i class="d"></i>' : ""}`;
+    el.innerHTML = `${d}${i.dini.length ? '<i class="d"></i>' : ""}${pm.dots}`;
     el.onclick = () => { selected = dt; renderMonth(); showDetail(dt); };
     g.appendChild(el);
     const v = workValue(dt, 1);
@@ -414,6 +593,8 @@ function renderMonth() {
   $("sKalan").innerHTML = mEnd < today ? "" : `⏳ ${mStart > today ? "Ayın tamamı" : "Bugünden ay sonuna"} (${sayGun(mStart > today ? mStart : today, mEnd).total} gün): ${ozetHTML(sayGun(mStart > today ? mStart : today, mEnd))}`;
   $("sumTitle").textContent = `${MONTHS[m]} ${y} özeti`;
   $("mList").innerHTML = monthItems.length ? monthItems.map((x) => itemHTML(x)).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmi tatil ya da dini gün yok.</div>';
+  const mine = A.items.filter((x) => x.d <= keyOf(mEnd) && (x.e || x.d) >= keyOf(mStart)).sort(byDate);
+  if (mine.length) $("mList").innerHTML += `<div class="mgrp" style="color:#c9b4f7">Ajandam · ${MONTHS[m]}</div>` + mine.map((x) => aItemHTML(x)).join("");
 }
 function itemHTML(x, isNext) {
   const tag = x.type === "tam" ? '<span class="tag t1">Tatil</span>' : x.type === "yarim" ? '<span class="tag t2">Yarım gün</span>' : '<span class="tag t3">Dini gün</span>';
@@ -430,6 +611,8 @@ function showDetail(d) {
   txt += i.we ? "Hafta sonu" : i.full ? "Resmi tatil — iş günü değil" : i.half ? "Yarım iş günü" : "İş günü";
   if (!inRange(d)) txt += "<br><span style='color:var(--muted);font-size:12px'>Bu yıl için bayram tarihleri yüklenmedi.</span>";
   $("detail").innerHTML = txt;
+  const k = keyOf(d), mine = A.items.filter((x) => x.d <= k && (x.e || x.d) >= k).sort(byDate);
+  $("dItems").innerHTML = mine.map((x) => aItemHTML(x, k)).join("");
 }
 $("dows").innerHTML = DOW.map((d) => `<div class="dow">${d}</div>`).join("");
 $("mtBtn").onclick = () => { view = new Date(today.getFullYear(), today.getMonth(), 1, 12); selected = today; renderMonth(); showDetail(today); };
@@ -555,6 +738,7 @@ function renderYear() {
       if (i.half) c.push("half");
       if (i.dini.length) c.push("dn");
       if (keyOf(dt) === keyOf(today)) c.push("td");
+      const pm = dayMarks(dt, i); if (pm.cls.some((x) => x === "iz")) c.push("iz"); else if (pm.cls.some((x) => x === "dg")) c.push("dg"); if (pm.dots) c.push("nt");
       if (!i.we && !i.full) w++;
       if (!i.we && i.full) th++;
       if (!i.we && i.half) thf++;
@@ -581,6 +765,349 @@ function renderYear() {
   else { const st = yStart > today ? yStart : today, o = sayGun(st, yEnd); $("yKalan").innerHTML = `⏳ ${yStart > today ? "Yılın tamamı" : "Bugünden yıl sonuna"} (${o.total} gün): ${ozetHTML(o)}`; }
 }
 
+
+// ================= Ajanda (yalnızca bu cihazda) =================
+const AKEY = "sado_ajanda1";
+const TYPES = {
+  not: { ic: "📝", ad: "Not", c: "var(--not)", hex: "#6f7cf0", ph: "Örn. Müşteri X'i ara" },
+  randevu: { ic: "⏰", ad: "Randevu", c: "var(--rdv)", hex: "#d6589a", ph: "Örn. Diş hekimi" },
+  izin: { ic: "🏖️", ad: "Yıllık izin", c: "var(--izin)", hex: "#8a5ee8", ph: "Örn. Bayram tatili" },
+  diger: { ic: "🩺", ad: "Diğer izin", c: "var(--dgr)", hex: "#2fa69f", ph: "Rapor, mazeret, babalık…" },
+};
+let A = { items: [], hak: {}, dev: {} };
+try { const j = JSON.parse(localStorage.getItem(AKEY) || "null"); if (j && Array.isArray(j.items)) A = { items: j.items, hak: j.hak || {}, dev: j.dev || {} }; } catch (e) {}
+function saveA() { try { localStorage.setItem(AKEY, JSON.stringify(A)); } catch (e) { atoast("Kaydedilemedi: tarayıcı depolamaya izin vermiyor"); } }
+const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const byDate = (a, b) => (a.d + (a.tm || "")).localeCompare(b.d + (b.tm || ""));
+const isRange = (x) => x.t === "izin" || x.t === "diger";
+const shD = (k) => { const d = parse(k); return `${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}`; };
+const fmtG = (n) => n.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
+function atoast(t) { const el = $("aToast"); el.textContent = t; el.classList.add("show"); clearTimeout(atoast._t); atoast._t = setTimeout(() => el.classList.remove("show"), 2400); }
+
+// İzin hesabı: hafta sonu ve resmi tatiller düşülmez, arife yarım gün
+function izinCalc(x, year) {
+  const o = { gun: 0, past: 0, fut: 0, we: 0, hol: [], half: [], outside: false, days: 0 };
+  if (!x.d) return o;
+  const a = parse(x.d), b = parse(x.e && x.e >= x.d ? x.e : x.d), single = !x.e || x.e === x.d;
+  for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) {
+    if (year && d.getFullYear() !== year) continue;
+    o.days++;
+    if (!inRange(d)) o.outside = true;
+    const i = info(d);
+    let v = 0;
+    if (i.we) o.we++;
+    else if (i.full) o.hol.push(`${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)} ${i.recs.find((r) => r.type === "tam").name}`);
+    else if (i.half) { v = 0.5; o.half.push(`${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}`); }
+    else v = single && x.half ? 0.5 : 1;
+    o.gun += v;
+    if (d <= today) o.past += v; else o.fut += v;
+  }
+  return o;
+}
+function izinYil(y) {
+  const hak = Number(A.hak[y]) || 0, dev = Number(A.dev[y]) || 0;
+  let kul = 0, pln = 0, diger = 0;
+  const aylik = Array(12).fill(0);
+  for (const x of A.items) {
+    if (!isRange(x)) continue;
+    const c = izinCalc(x, y);
+    if (x.t === "izin") { kul += c.past; pln += c.fut; } else diger += c.gun;
+    if (x.t === "izin") { const a = parse(x.d), b = parse(x.e || x.d); for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) if (d.getFullYear() === y) { const i = info(d); aylik[d.getMonth()] += i.we || i.full ? 0 : i.half ? 0.5 : (!x.e || x.e === x.d) && x.half ? 0.5 : 1; } }
+  }
+  return { hak, dev, top: hak + dev, kul, pln, kal: hak + dev - kul - pln, diger, aylik };
+}
+// Takvim hücresi işaretleri — resmi tatil renklerinden ayrı: izin alt çizgi, not/randevu sağ üstte nokta
+function dayMarks(dt, i) {
+  const k = keyOf(dt), cls = [];
+  let n = false, rv = false;
+  for (const x of A.items) {
+    if (x.d > k || (x.e || x.d) < k) continue;
+    if (x.t === "izin") cls.push(i.we || i.full ? "iz0" : "iz");
+    else if (x.t === "diger") cls.push(i.we || i.full ? "dg0" : "dg");
+    else if (x.t === "randevu") rv = true; else n = true;
+  }
+  const iz = cls.includes("iz") ? ["iz"] : cls.includes("dg") ? ["dg"] : cls.includes("iz0") ? ["iz0"] : cls.includes("dg0") ? ["dg0"] : [];
+  return { cls: iz, dots: n || rv ? `<span class="pm">${n ? "<u class='n'></u>" : ""}${rv ? "<u class='r'></u>" : ""}</span>` : "" };
+}
+function aItemHTML(x, onDay) {
+  const T = TYPES[x.t] || TYPES.not, past = (x.e || x.d) < keyOf(today);
+  let sub = "", gn = "";
+  if (isRange(x)) {
+    const c = izinCalc(x);
+    sub = x.e && x.e !== x.d ? `${shD(x.d)} – ${shD(x.e)} · ${c.days} gün` : parse(x.d).toLocaleDateString("tr-TR", { day: "numeric", month: "short", weekday: "short" }) + (x.half ? " · yarım gün" : "");
+    if (c.hol.length) sub += ` · ${c.hol.length} resmi tatil hariç`;
+    gn = `${fmtG(c.gun)} iş günü`;
+  } else {
+    sub = parse(x.d).toLocaleDateString("tr-TR", { day: "numeric", month: "short", weekday: "short" }) + (x.tm ? " · " + x.tm : "");
+    if (x.n) sub += " · " + x.n;
+    if (x.tm) gn = x.tm;
+  }
+  return `<div class="ai${past && !onDay ? " past" : ""}" style="--c:${T.c}" data-aid="${x.id}"><span class="ic">${T.ic}</span><div class="tx">${esc(x.ti || T.ad)}<small>${esc(sub)}</small></div><span class="gn">${gn}</span></div>`;
+}
+document.addEventListener("click", (e) => { const el = e.target.closest("[data-aid]"); if (el) openSheet(null, A.items.find((x) => x.id === el.dataset.aid)); });
+
+// ---------- Ekle / düzenle ----------
+let sEdit = null, sT = "not";
+function setType(t) {
+  sT = t;
+  $("sType").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.t === t));
+  const T = TYPES[t], rng = isRange({ t });
+  $("sTitle").placeholder = T.ph;
+  $("sTitleL").textContent = t === "diger" ? "İzin türü" : "Başlık";
+  $("sDL").textContent = rng ? "Başlangıç" : "Tarih";
+  $("sEW").hidden = !rng; $("sTW").hidden = t !== "randevu";
+  $("sDW").classList.toggle("full", t === "not");
+  if (rng && !$("sE").value) $("sE").value = $("sD").value;
+  sCalc();
+}
+function sCalc() {
+  const rng = isRange({ t: sT });
+  const single = !$("sE").value || $("sE").value === $("sD").value;
+  $("sHalfW").style.display = rng && single ? "" : "none";
+  $("sIcs").hidden = sT !== "randevu";
+  if (!rng || !$("sD").value) { $("sCalc").innerHTML = ""; return; }
+  if ($("sE").value && $("sE").value < $("sD").value) { $("sCalc").innerHTML = '<span class="wn">⚠️ Bitiş tarihi başlangıçtan önce olamaz.</span>'; return; }
+  const c = izinCalc({ d: $("sD").value, e: $("sE").value, half: $("sHalf").checked });
+  let h = `<b>${fmtG(c.gun)} iş günü</b> ${sT === "izin" ? "yıllık izninden düşülecek" : "izin (yıllık izinden düşülmez)"} · ${c.days} takvim günü`;
+  if (c.we) h += `<br>🗓 ${c.we} gün hafta sonu — sayılmadı`;
+  if (c.hol.length) h += `<br><span class="sk">🇹🇷 Resmi tatil sayılmadı: ${esc(c.hol.join(", "))}</span>`;
+  if (c.half.length) h += `<br><span class="wn">◐ Arife yarım gün sayıldı: ${c.half.join(", ")}</span>`;
+  if (c.outside) h += `<br><span class="wn">2026–2028 dışındaki bayramlar hesaba katılmadı.</span>`;
+  const e0 = $("sE").value || $("sD").value, ov = A.items.find((x) => isRange(x) && (!sEdit || x.id !== sEdit.id) && x.d <= e0 && (x.e || x.d) >= $("sD").value);
+  if (ov) h += `<br><span class="wn">⚠️ Çakışma: “${esc(ov.ti || TYPES[ov.t].ad)}” (${rangeTxt(ov)}) ile aynı günleri kapsıyor; iki kez düşülür.</span>`;
+  if (sT === "izin") {
+    const y = parse($("sD").value).getFullYear(), Y = izinYil(y);
+    if (Y.top) { const old = sEdit && sEdit.t === "izin" ? izinCalc(sEdit, y).gun : 0, kal = Y.kal + old - izinCalc({ d: $("sD").value, e: $("sE").value, half: $("sHalf").checked }, y).gun; h += `<br>${kal < 0 ? `<span class="wn">⚠️ ${y} hakkını ${fmtG(-kal)} gün aşıyor</span>` : `Kaydedince ${y} için kalan: <b style="font-size:14px">${fmtG(kal)} gün</b>`}`; }
+  }
+  $("sCalc").innerHTML = h;
+}
+function openSheet(day, item) {
+  sEdit = item || null;
+  const d = item ? item.d : keyOf(day || selected || today);
+  $("sT").textContent = item ? "Kaydı düzenle" : "Ajandaya ekle";
+  $("sDay").textContent = item ? TYPES[item.t].ic + " " + TYPES[item.t].ad : fmtLong(parse(d));
+  $("sTitle").value = item ? item.ti || "" : "";
+  $("sD").value = d; $("sE").value = item && item.e ? item.e : "";
+  $("sTm").value = item && item.tm ? item.tm : "";
+  $("sHalf").checked = !!(item && item.half);
+  $("sNote").value = item && item.n ? item.n : "";
+  $("sDel").hidden = !item;
+  $("aSheet").hidden = false; document.body.style.overflow = "hidden";
+  setType(item ? item.t : sT === "izin" || sT === "diger" ? sT : "not");
+  if (!item) setTimeout(() => $("sTitle").focus(), 250);
+}
+function closeSheet() { $("aSheet").hidden = true; document.body.style.overflow = ""; }
+function saveSheet() {
+  const d = $("sD").value; if (!d) { atoast("Tarih seç"); return; }
+  const rng = isRange({ t: sT });
+  let e = rng ? $("sE").value || d : "";
+  if (rng && e < d) { atoast("Bitiş tarihi başlangıçtan önce olamaz"); return; }
+  if (rng && (parse(e) - parse(d)) / 864e5 > 366) { atoast("En fazla 1 yıllık aralık girilebilir"); return; }
+  const ti = $("sTitle").value.trim();
+  if (!ti && !rng) { atoast("Bir başlık yaz"); $("sTitle").focus(); return; }
+  const x = { id: sEdit ? sEdit.id : Date.now().toString(36) + Math.random().toString(36).slice(2, 6), t: sT, d, ti };
+  if (rng && e !== d) x.e = e;
+  if (rng && e === d && $("sHalf").checked) x.half = 1;
+  if (sT === "randevu" && $("sTm").value) x.tm = $("sTm").value;
+  const n = $("sNote").value.trim(); if (n) x.n = n;
+  if (sEdit) A.items[A.items.findIndex((y) => y.id === sEdit.id)] = x; else A.items.push(x);
+  saveA(); closeSheet(); renderAll();
+  atoast(sEdit ? "Güncellendi ✓" : rng ? `${TYPES[sT].ad} eklendi · ${fmtG(izinCalc(x).gun)} iş günü` : "Ajandaya eklendi ✓");
+}
+function delSheet() {
+  if (!sEdit) return;
+  if ($("sDel").dataset.ok !== "1") { $("sDel").dataset.ok = "1"; $("sDel").textContent = "Sil?"; $("sDel").style.width = "72px"; setTimeout(() => { $("sDel").dataset.ok = ""; $("sDel").textContent = "🗑"; $("sDel").style.width = ""; }, 2500); return; }
+  A.items = A.items.filter((x) => x.id !== sEdit.id); saveA(); closeSheet(); renderAll(); atoast("Silindi");
+  $("sDel").dataset.ok = ""; $("sDel").textContent = "🗑"; $("sDel").style.width = "";
+}
+function icsDown() {
+  const d = $("sD").value; if (!d) return;
+  const ti = $("sTitle").value.trim() || "Randevu", tm = $("sTm").value;
+  const ymd = d.replace(/-/g, ""), st = tm ? `DTSTART:${ymd}T${tm.replace(":", "")}00` : `DTSTART;VALUE=DATE:${ymd}`;
+  let en; if (tm) { const [h, m] = tm.split(":").map(Number), t2 = h * 60 + m + 60; en = t2 >= 1440 ? `DTEND:${ymd}T235900` : `DTEND:${ymd}T${pad(Math.floor(t2 / 60))}${pad(t2 % 60)}00`; } else { const n = parse(d); n.setDate(n.getDate() + 1); en = `DTEND;VALUE=DATE:${keyOf(n).replace(/-/g, "")}`; }
+  const clean = (t) => t.replace(/[\;,]/g, (c) => "\\" + c).replace(/\n/g, "\\n");
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sadolayn//Ajanda//TR", "BEGIN:VEVENT", "UID:" + Date.now() + "@sadolayn", "DTSTAMP:" + new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z", st, en, "SUMMARY:" + clean(ti), $("sNote").value.trim() ? "DESCRIPTION:" + clean($("sNote").value.trim()) : "", "BEGIN:VALARM", "TRIGGER:-PT30M", "ACTION:DISPLAY", "DESCRIPTION:" + clean(ti), "END:VALARM", "END:VEVENT", "END:VCALENDAR"].filter(Boolean).join("\r\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = "randevu.ics"; document.body.appendChild(a); a.click(); a.remove();
+  atoast("Dosyayı açınca telefon takvimine eklenir");
+}
+$("sType").querySelectorAll("button").forEach((b) => (b.onclick = () => setType(b.dataset.t)));
+["sD", "sE", "sHalf"].forEach((x) => $(x).addEventListener("input", () => { if (x === "sD" && isRange({ t: sT }) && (!$("sE").value || $("sE").value < $("sD").value)) $("sE").value = $("sD").value; sCalc(); }));
+$("sSave").onclick = saveSheet; $("sCancel").onclick = closeSheet; $("sDel").onclick = delSheet; $("sIcs").onclick = icsDown;
+$("aSheet").onclick = (e) => { if (e.target === $("aSheet")) closeSheet(); };
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("aSheet").hidden) closeSheet(); });
+$("fab").onclick = () => openSheet(document.querySelector('.tabs button.active').dataset.tab === "ay" ? selected : today);
+$("addDay").onclick = () => openSheet(selected);
+
+// ---------- Ajanda sekmesi ----------
+let aYear = YEARS.includes(today.getFullYear()) ? today.getFullYear() : YEARS[0], aF = "all";
+function ring(Y) {
+  const R = 40, C = 2 * Math.PI * R, tot = Math.max(Y.top, Y.kul + Y.pln, 1);
+  const a = (Y.kul / tot) * C, b = (Y.pln / tot) * C;
+  return `<svg width="104" height="104" viewBox="0 0 104 104" aria-label="İzin durumu"><circle cx="52" cy="52" r="${R}" fill="none" stroke="#222" stroke-width="12"/>
+    <circle cx="52" cy="52" r="${R}" fill="none" stroke="#a77bf3" stroke-width="12" stroke-dasharray="${a} ${C}" transform="rotate(-90 52 52)"/>
+    <circle cx="52" cy="52" r="${R}" fill="none" stroke="#5b4688" stroke-width="12" stroke-dasharray="${b} ${C}" stroke-dashoffset="${-a}" transform="rotate(-90 52 52)"/>
+    <text x="52" y="52" text-anchor="middle" font-size="22" font-weight="700" fill="${Y.kal < 0 ? "#ef6a4c" : "#f2f2f2"}">${fmtG(Y.kal)}</text><text x="52" y="69" text-anchor="middle" font-size="10" fill="#8a8a8a">gün kaldı</text></svg>`;
+}
+function renderAjanda() {
+  $("yearsel3").innerHTML = YEARS.map((y) => `<button data-y="${y}" class="${y === aYear ? "active" : ""}">${y}</button>`).join("");
+  $("yearsel3").querySelectorAll("button").forEach((b) => (b.onclick = () => { aYear = Number(b.dataset.y); renderAjanda(); }));
+  const Y = izinYil(aYear);
+  $("ihY").textContent = aYear;
+  if (document.activeElement !== $("ihHak")) $("ihHak").value = A.hak[aYear] ?? "";
+  if (document.activeElement !== $("ihDev")) $("ihDev").value = A.dev[aYear] ?? "";
+  $("ihQ").querySelectorAll("button").forEach((b) => b.classList.toggle("active", Number(b.dataset.v) === Number(A.hak[aYear])));
+  $("iHak").textContent = fmtG(Y.top); $("iKul").textContent = fmtG(Y.kul); $("iPln").textContent = fmtG(Y.pln); $("iKal").textContent = fmtG(Y.kal);
+  $("iKal").style.color = Y.kal < 0 ? "var(--hol)" : "var(--accent)";
+  $("iRing").innerHTML = Y.top || Y.kul || Y.pln ? `${ring(Y)}<div class="k">
+    <div><span>Hak${Y.dev ? " + devreden" : ""}</span><b>${fmtG(Y.hak)}${Y.dev ? " + " + fmtG(Y.dev) : ""} gün</b></div>
+    <div><span><i class="sw" style="background:#a77bf3"></i>Kullanılan</span><b>${fmtG(Y.kul)} gün</b></div>
+    <div><span><i class="sw" style="background:#5b4688"></i>Planlanan</span><b>${fmtG(Y.pln)} gün</b></div>
+    <div class="kl"><span>Kalan</span><b style="${Y.kal < 0 ? "color:var(--hol)" : ""}">${fmtG(Y.kal)} gün</b></div>
+    ${Y.diger ? `<div><span><i class="sw" style="background:var(--dgr)"></i>Diğer izin</span><b>${fmtG(Y.diger)} gün</b></div>` : ""}</div>` : '<div class="aempty" style="flex:1;padding:6px"><b>🏖️</b>Yıllık izin hakkını gir; izin ekledikçe ne kadar kaldığını burada görürsün.</div>';
+  // Yaklaşanlar
+  const tk = keyOf(today), up = A.items.filter((x) => (x.e || x.d) >= tk).sort(byDate).slice(0, 5);
+  $("aUp").innerHTML = up.length ? up.map((x) => aItemHTML(x)).join("") : '<div class="aempty"><b>🗒️</b>Yaklaşan kaydın yok.<br>Sağ alttaki <b style="display:inline;font-size:inherit;color:#c9b4f7">＋</b> ile not, randevu ya da izin ekle.</div>';
+  // Tüm kayıtlar (yıla göre)
+  const yi = A.items.filter((x) => x.d.slice(0, 4) <= String(aYear) && (x.e || x.d).slice(0, 4) >= String(aYear) && (aF === "all" || x.t === aF)).sort(byDate);
+  $("aAllT").textContent = `${aYear} kayıtlarım (${yi.length})`;
+  let html = "", lastM = -1;
+  for (const x of yi) { const m = x.d.slice(0, 4) < String(aYear) ? 0 : parse(x.d).getMonth(); if (m !== lastM) { html += `<div class="mgrp">${MONTHS[m]}</div>`; lastM = m; } html += aItemHTML(x); }
+  $("aAll").innerHTML = html || `<div class="aempty">Bu filtrede ${aYear} için kayıt yok.</div>`;
+  renderPosA();
+  setStickH();
+}
+$("aF").querySelectorAll("button").forEach((b) => (b.onclick = () => { aF = b.dataset.f; $("aF").querySelectorAll("button").forEach((x) => x.classList.toggle("active", x === b)); renderAjanda(); }));
+const setHak = (k, v) => { const n = v === "" ? null : Math.max(0, Math.min(k === "hak" ? 60 : 120, Number(v) || 0)); if (n === null) delete A[k][aYear]; else A[k][aYear] = n; saveA(); renderAjanda(); };
+$("ihHak").addEventListener("input", () => setHak("hak", $("ihHak").value));
+$("ihDev").addEventListener("input", () => setHak("dev", $("ihDev").value));
+$("ihQ").querySelectorAll("button").forEach((b) => (b.onclick = () => { $("ihHak").value = b.dataset.v; setHak("hak", b.dataset.v); }));
+
+// ---------- POS rulosu ----------
+function posModel() {
+  const y = aYear, Y = izinYil(y);
+  const its = A.items.filter((x) => x.d.slice(0, 4) <= String(y) && (x.e || x.d).slice(0, 4) >= String(y)).sort(byDate);
+  const izin = its.filter((x) => x.t === "izin").map((x) => ({ x, c: izinCalc(x, y) }));
+  const diger = its.filter((x) => x.t === "diger").map((x) => ({ x, c: izinCalc(x, y) }));
+  const notlar = its.filter((x) => !isRange(x));
+  let wdHol = 0; const seen = new Set();
+  for (const [k, recs] of DAYS) if (k.startsWith(y + "-") && recs.some((r) => r.type === "tam") && !seen.has(k)) { seen.add(k); const d = parse(k); if (d.getDay() % 6) wdHol++; }
+  const now = new Date();
+  return { y, Y, izin, diger, notlar, wdHol, when: now.toLocaleDateString("tr-TR") + " " + now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }), fis: String(y).slice(2) + pad(now.getMonth() + 1) + pad(now.getDate()) + "-" + pad(A.items.length) };
+}
+const rangeTxt = (x) => (x.e && x.e !== x.d ? `${shD(x.d)} – ${shD(x.e)}` : shD(x.d) + (x.half ? " ½" : ""));
+function stampOf(Y) { if (!Y.top) return null; if (Y.kal < 0) return { t: `${fmtG(-Y.kal)} GÜN AŞIM`, c: "#c0392b" }; if (Y.kal === 0) return { t: "İZİN TAMAM ✓", c: "#16824f" }; return { t: `KALAN ${fmtG(Y.kal)} GÜN`, c: "#7a4fd0" }; }
+function renderPosA() {
+  const P = posModel(), Y = P.Y, el = $("aPos"), st = stampOf(Y), tot = Math.max(Y.top, Y.kul + Y.pln, 1), mx = Math.max(...Y.aylik, 1);
+  const row = (a, b, cls) => `<div class="pz-row${cls ? " " + cls : ""}"><span>${a}</span><b>${b}</b></div>`;
+  el.innerHTML = `
+    <div class="pz-c"><div class="pz-logo">SADOLAYN</div><div class="pz-s">TAKVİM &amp; AJANDA · YILLIK DÖKÜM<br><b style="font-size:15px;color:#262626">${P.y}</b><br>${P.when} · Fiş no ${P.fis}</div></div>
+    ${st ? `<div class="pz-stamp" style="--sc:${st.c}">${st.t}</div>` : ""}
+    <hr class="pz-hr">
+    <div class="pz-h">YILLIK İZİN</div>
+    ${row("Yıllık hak", fmtG(Y.hak) + " gün")}${Y.dev ? row("Devreden", fmtG(Y.dev) + " gün") : ""}
+    ${row("Kullanılan", "−" + fmtG(Y.kul) + " gün")}${row("Planlanan", "−" + fmtG(Y.pln) + " gün")}
+    ${row("KALAN", fmtG(Y.kal) + " gün", "tot")}
+    <div class="pz-bar"><i style="width:${(Y.kul / tot) * 100}%;background:#a77bf3"></i><i style="width:${(Y.pln / tot) * 100}%;background:#cdb8f5"></i></div>
+    ${!Y.top ? '<div class="pz-sub">Ajanda sekmesinden yıllık izin hakkını girersen kalan gün hesaplanır.</div>' : ""}
+    <hr class="pz-hr">
+    <div class="pz-h">İZİN DÖNEMLERİ</div>
+    ${P.izin.length ? P.izin.map(({ x, c }) => row(rangeTxt(x), fmtG(c.gun) + " gün") + `<div class="pz-sub">${esc(x.ti || "Yıllık izin")}${c.hol.length ? " · resmi tatil düşüldü: " + esc(c.hol.map((h) => h.split(" ").slice(0, 2).join(" ")).join(", ")) : ""}${c.half.length ? " · arife ½" : ""}</div>`).join("") : '<div class="pz-row" style="color:#999"><span>Yıllık izin kaydı yok</span><span>—</span></div>'}
+    <div class="pz-months">${Y.aylik.map((v, i) => `<div>${v ? `<em>${fmtG(v)}</em>` : ""}<i style="height:${(v / mx) * 70}%;${v ? "" : "background:#e2dac4"}"></i>${MI[i]}</div>`).join("")}</div>
+    ${P.diger.length ? `<hr class="pz-hr"><div class="pz-h">DİĞER İZİNLER <span style="font-weight:400">(yıllıktan düşülmez)</span></div>` + P.diger.map(({ x, c }) => row(rangeTxt(x), fmtG(c.gun) + " gün") + `<div class="pz-sub">${esc(x.ti || "Diğer izin")}</div>`).join("") : ""}
+    <hr class="pz-hr">
+    <div class="pz-h">RANDEVU &amp; NOTLAR · ${P.notlar.length}</div>
+    ${P.notlar.length ? P.notlar.slice(0, 40).map((x) => `<div class="pz-row"><span>${x.t === "randevu" ? "⏰" : "📝"} ${shD(x.d)}${x.tm ? " " + x.tm : ""}</span><span style="text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:62%">${esc(x.ti)}</span></div>`).join("") + (P.notlar.length > 40 ? `<div class="pz-sub">+${P.notlar.length - 40} kayıt daha</div>` : "") : '<div class="pz-row" style="color:#999"><span>Kayıt yok</span><span>—</span></div>'}
+    <hr class="pz-hr">
+    ${row("Hafta içi resmi tatil", P.wdHol + " gün")}
+    <div class="pz-bc"></div>
+    <div class="pz-warn">KİŞİSEL KAYITTIR · RESMİ İZİN BELGESİ DEĞİLDİR</div>
+    <div class="pz-c pz-s">Bilgi paylaştıkça büyür · sadolayn.github.io/SadoDepo</div>`;
+  if ($("ajanda").classList.contains("active")) { el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; }
+}
+if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h) { this.rect(x, y, w, h); };
+function posCanvasA() {
+  const P = posModel(), Y = P.Y, W = 640, M = 40, st = stampOf(Y);
+  const c = document.createElement("canvas"); c.width = W; c.height = 1400 + (P.izin.length + P.diger.length) * 56 + Math.min(P.notlar.length, 40) * 30;
+  const g = c.getContext("2d");
+  g.fillStyle = "#fbf7ec"; g.fillRect(0, 0, W, c.height);
+  const T = (t, x, y, f, col, al) => { g.font = f; g.fillStyle = col || "#262626"; g.textAlign = al || "left"; g.fillText(t, x, y); };
+  const fit = (t, f, w) => { g.font = f; if (g.measureText(t).width <= w) return t; while (t.length > 1 && g.measureText(t + "…").width > w) t = t.slice(0, -1); return t + "…"; };
+  const hr = (y) => { g.strokeStyle = "#bdb5a0"; g.lineWidth = 1; g.setLineDash([6, 5]); g.beginPath(); g.moveTo(M, y); g.lineTo(W - M, y); g.stroke(); g.setLineDash([]); };
+  const mono = (sz, b) => `${b ? "bold " : ""}${sz}px 'Courier New', monospace`;
+  const row = (a, b, y, bold) => { T(a, M, y, mono(bold ? 24 : 20, bold)); T(b, W - M, y, mono(bold ? 24 : 20, 1), "#262626", "right"); };
+  T("SADOLAYN", W / 2, 66, "italic bold 44px Georgia, serif", "#a8741c", "center");
+  T("TAKVİM & AJANDA · YILLIK DÖKÜM", W / 2, 100, mono(18), "#555", "center");
+  T(String(P.y), W / 2, 130, mono(26, 1), "#262626", "center");
+  T(`${P.when} · Fiş no ${P.fis}`, W / 2, 158, mono(16), "#777", "center");
+  let y = 180; hr(y); y += 32; T("YILLIK İZİN", M, y, mono(15, 1), "#8a8270"); y += 32;
+  row("Yıllık hak", fmtG(Y.hak) + " gün", y); y += 30;
+  if (Y.dev) { row("Devreden", fmtG(Y.dev) + " gün", y); y += 30; }
+  row("Kullanılan", "−" + fmtG(Y.kul) + " gün", y); y += 30; row("Planlanan", "−" + fmtG(Y.pln) + " gün", y); y += 14;
+  g.fillStyle = "#262626"; g.fillRect(M, y, W - 2 * M, 2); y += 32; row("KALAN", fmtG(Y.kal) + " gün", y, 1); y += 18;
+  const bw = W - 2 * M, tot = Math.max(Y.top, Y.kul + Y.pln, 1);
+  g.fillStyle = "#ebe4d0"; g.beginPath(); g.roundRect(M, y, bw, 16, 8); g.fill();
+  g.save(); g.beginPath(); g.roundRect(M, y, bw, 16, 8); g.clip();
+  g.fillStyle = "#a77bf3"; g.fillRect(M, y, bw * Y.kul / tot, 16); g.fillStyle = "#cdb8f5"; g.fillRect(M + bw * Y.kul / tot, y, bw * Y.pln / tot, 16); g.restore();
+  y += 40; hr(y); y += 32; T("İZİN DÖNEMLERİ", M, y, mono(15, 1), "#8a8270"); y += 32;
+  const per = (arr, def) => arr.forEach(({ x, c }) => {
+    row(rangeTxt(x), fmtG(c.gun) + " gün", y); y += 24;
+    const sub = (x.ti || def) + (c.hol.length ? " · resmi tatil düşüldü: " + c.hol.map((h) => h.split(" ").slice(0, 2).join(" ")).join(", ") : "") + (c.half.length ? " · arife ½" : "");
+    T(fit(sub, mono(15), bw), M, y, mono(15), "#8a8270"); y += 32;
+  });
+  if (P.izin.length) per(P.izin, "Yıllık izin"); else { T("Yıllık izin kaydı yok", M, y, mono(20), "#999"); y += 32; }
+  // aylık çubuklar
+  const mx = Math.max(...Y.aylik, 1), cw = bw / 12; y += 8;
+  Y.aylik.forEach((v, i) => { const h = (v / mx) * 70, x0 = M + i * cw + cw * 0.15; g.fillStyle = v ? "#a77bf3" : "#e2dac4"; g.fillRect(x0, y + 80 - Math.max(h, 3), cw * 0.7, Math.max(h, 3)); if (v) T(fmtG(v), x0 + cw * 0.35, y + 74 - h, mono(13, 1), "#262626", "center"); T(MI[i], x0 + cw * 0.35, y + 100, mono(13), "#8a8270", "center"); });
+  y += 124;
+  if (P.diger.length) { hr(y); y += 32; T("DİĞER İZİNLER (yıllıktan düşülmez)", M, y, mono(15, 1), "#8a8270"); y += 32; per(P.diger, "Diğer izin"); }
+  hr(y); y += 32; T(`RANDEVU & NOTLAR · ${P.notlar.length}`, M, y, mono(15, 1), "#8a8270"); y += 32;
+  if (P.notlar.length) { P.notlar.slice(0, 40).forEach((x) => { const l = `${x.t === "randevu" ? "⏰" : "📝"} ${shD(x.d)}${x.tm ? " " + x.tm : ""}`; T(l, M, y, mono(19)); g.font = mono(19); const lw = g.measureText(l).width; T(fit(x.ti, mono(19), bw - lw - 20), W - M, y, mono(19), "#262626", "right"); y += 30; }); if (P.notlar.length > 40) { T(`+${P.notlar.length - 40} kayıt daha`, M, y, mono(15), "#8a8270"); y += 28; } }
+  else { T("Kayıt yok", M, y, mono(20), "#999"); y += 30; }
+  y += 4; hr(y); y += 34; row("Hafta içi resmi tatil", P.wdHol + " gün", y); y += 30;
+  g.fillStyle = "#262626"; let bx = W * 0.15, i = 0; while (bx < W * 0.85) { const w = [2, 1, 3, 1, 2][i++ % 5]; g.fillRect(bx, y, w, 40); bx += w + [2, 3, 1, 2][i % 4]; }
+  y += 66; T("KİŞİSEL KAYITTIR · RESMİ İZİN BELGESİ DEĞİLDİR", W / 2, y, mono(14, 1), "#8a8270", "center");
+  y += 26; T("Bilgi paylaştıkça büyür · sadolayn.github.io/SadoDepo", W / 2, y, mono(15), "#777", "center"); y += 34;
+  if (st) { g.save(); g.translate(W - 150, 214); g.rotate(-0.18); g.scale(.85, .85); g.strokeStyle = st.c; g.lineWidth = 4; g.font = "800 22px system-ui, sans-serif"; const tw = g.measureText(st.t).width + 30; g.fillStyle = "rgba(251,247,236,.75)"; g.fillRect(-tw / 2, -24, tw, 48); g.strokeRect(-tw / 2, -24, tw, 48); T(st.t, 0, 8, "800 22px system-ui, sans-serif", st.c, "center"); g.restore(); }
+  const out = document.createElement("canvas"); out.width = W; out.height = y + 14; const o = out.getContext("2d");
+  o.drawImage(c, 0, 0); o.fillStyle = "#fff"; for (let x = 7; x < W; x += 14) { o.beginPath(); o.arc(x, out.height, 6, 0, 7); o.fill(); }
+  return out;
+}
+const loadJs = (src) => new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
+$("aPdf").onclick = async () => {
+  try {
+    if (!window.jspdf) { atoast("PDF hazırlanıyor…"); await loadJs("lib/jspdf.umd.min.js"); }
+    const c = posCanvasA(), w = 80, h = (c.height / c.width) * w;
+    const doc = new window.jspdf.jsPDF({ unit: "mm", format: [w, h], orientation: "portrait" });
+    doc.addImage(c.toDataURL("image/jpeg", 0.92), "JPEG", 0, 0, w, h);
+    doc.save(`Ajanda_${aYear}.pdf`); atoast("PDF indirildi");
+  } catch (e) { atoast("PDF oluşturulamadı, görsel olarak indir"); }
+};
+$("aPng").onclick = async () => {
+  const blob = await new Promise((r) => posCanvasA().toBlob(r, "image/png")), ad = `Ajanda_${aYear}.png`, file = new File([blob], ad, { type: "image/png" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title: `${aYear} ajanda dökümü` }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = ad; document.body.appendChild(a); a.click(); a.remove(); atoast("Görsel indirildi");
+};
+// ---------- Yedek ----------
+$("bkOut").onclick = () => {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify({ app: "sadolayn-ajanda", v: 1, ...A }, null, 1)], { type: "application/json" }));
+  a.download = `ajanda-yedek-${keyOf(today)}.json`; document.body.appendChild(a); a.click(); a.remove(); atoast("Yedek indirildi");
+};
+$("bkIn").onclick = () => $("bkFile").click();
+$("bkFile").onchange = async () => {
+  const f = $("bkFile").files[0]; if (!f) return;
+  try {
+    const j = JSON.parse(await f.text());
+    if (!j || !Array.isArray(j.items)) throw 0;
+    const ok = j.items.filter((x) => x && TYPES[x.t] && /^\d{4}-\d\d-\d\d$/.test(x.d)).map((x) => ({ id: String(x.id || Math.random().toString(36).slice(2)), t: x.t, d: x.d, ti: String(x.ti || "").slice(0, 80), ...(x.e && /^\d{4}-\d\d-\d\d$/.test(x.e) ? { e: x.e } : {}), ...(x.tm ? { tm: String(x.tm).slice(0, 5) } : {}), ...(x.half ? { half: 1 } : {}), ...(x.n ? { n: String(x.n).slice(0, 300) } : {}) }));
+    const ids = new Set(A.items.map((x) => x.id)); let n = 0;
+    for (const x of ok) if (!ids.has(x.id)) { A.items.push(x); n++; }
+    for (const k of ["hak", "dev"]) if (j[k] && typeof j[k] === "object") for (const y in j[k]) if (A[k][y] == null && Number.isFinite(Number(j[k][y]))) A[k][y] = Number(j[k][y]);
+    saveA(); renderAll(); atoast(`${n} kayıt yüklendi`);
+  } catch (e) { atoast("Bu dosya ajanda yedeği değil"); }
+  $("bkFile").value = "";
+};
+function renderAll() { renderMonth(); if (selected) showDetail(selected); renderYear(); renderAjanda(); }
+
 // ================= Sekmeler ve başlangıç =================
 document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
   document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
@@ -588,6 +1115,8 @@ document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("cli
   b.classList.add("active"); $(b.dataset.tab).classList.add("active");
   document.querySelectorAll(".sh").forEach((x) => x.classList.toggle("on", x.dataset.sh === b.dataset.tab));
   window.scrollTo({ top: 0 });
+  $("fab").hidden = !["ay", "yil", "ajanda"].includes(b.dataset.tab);
+  if (b.dataset.tab === "ajanda") renderAjanda();
   setStickH();
 }));
 function setStickH() { const s = document.querySelector(".stick"); if (s) document.documentElement.style.setProperty("--stickH", s.offsetHeight + "px"); }
@@ -598,7 +1127,8 @@ const endM = new Date(today.getFullYear(), today.getMonth() + 1, 0, 12);
 $("h1b").value = iso(endM);
 $("h2a").value = iso(today);
 selected = today;
-renderMonth(); showDetail(today); calc1(); calc2(); renderList(); renderYear(); setStickH();
+renderMonth(); showDetail(today); calc1(); calc2(); renderList(); renderYear(); renderAjanda(); setStickH();
+if (location.hash === "#ajanda") document.querySelector('.tabs button[data-tab="ajanda"]').click();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">Copyright © <span class="cy">2026</span> Sadolayn. All rights reserved.<br><span style="font-size:10.5px;letter-spacing:.3px;color:#555">Tüm hakları saklıdır.</span></footer>
 <script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
