@@ -1440,26 +1440,33 @@ function shareText(txt) {
 
 // ---------- Ödeme planı PDF (üç kredide ortak) ----------
 let tkPdf = null, k2Pdf = null, tcPdf = null;
-const PDF_NOTE = "*** Bilgi amaçlıdır; kesin tutar işlem günü belirlenir. Krediye ilişkin ücret, masraf ve komisyon bilgileri dahil edilmemiştir.";
-function planPdfHTML(o) {
-  const d = (x) => shortD(x).replace(/\./g, "-"), f = fmt2, o3 = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-  const S = (k) => R2(o.rows.reduce((a, x) => a + x[k], 0));
-  const head = [
-    ["Döviz Kodu", "TL"], ["Ödeme Planı Hazırlama Tarihi", d(new Date())], ["Kredi Veriliş Tarihi", d(o.bas)], ["Ödeme Başlangıç Tarihi", d(o.rows[0].d)],
-    ["Kredi Tutarı", f(o.P) + " TL"], ["Akdi Faiz Oranı (%) (Aylık)", o3(o.r * 100)], ["Akdi Faiz Oranı (%) (Yıllık)", o3(o.r * 1200)],
-    ["Vergi Oranı (%)", o3(o.bsmv * 100)], ["Fon Oranı (%)", o3(o.kkdf * 100)], ["Taksit Sayısı", String(o.rows.length)],
-    ["Toplam Faiz", f(o.tF) + " TL"], ["Toplam Vergi", f(o.tV) + " TL"], ["Toplam Fon", f(o.tFo) + " TL"], ["Genel Toplam", f(o.top) + " TL"], ["Taksit Tutarı", f(o.T) + " TL"],
+const PDF_NOTE = "Bu belge Sadolayn sitesinde yapılmış tahmini bir hesaplamadır; bankanın resmi ödeme planı değildir. Kesin tutarlar ve tarihler işlem günü bankanızca belirlenir. Ücret, masraf, komisyon ve sigorta dahil edilmemiştir.";
+// Özet kutuları: ilk satır kredi, ikinci satır ödeme bilgisi
+function planKutular(o) {
+  const f = fmt2, pc = (x) => "%" + x.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+  return [
+    [["Kredi tutarı", f(o.P) + " TL"], ["Vade", o.rows.length + " taksit"], ["Aylık faiz", pc(o.r * 100)]],
+    [["Aylık taksit", f(o.T) + " TL"], ["Toplam geri ödeme", f(o.top) + " TL"], ["Faiz + vergi + fon", f(o.tF + o.tV + o.tFo) + " TL"]],
   ];
-  const cell = "border:1px solid #9a9a9a;padding:3px 6px;text-align:right";
-  return `<div style="width:760px;padding:28px 34px;background:#fff;color:#000;font-family:'Times New Roman',Times,serif;font-size:12.5px;line-height:1.35">
-    <div style="font-size:15px;font-weight:700;letter-spacing:.3px;margin-bottom:6px">${o.tur.toLocaleUpperCase("tr-TR")} ÖDEME PLANI</div>
-    ${head.map(([k, v], i) => `<div style="margin:2px 0${i === 10 ? ";margin-top:10px" : ""}">${k} : <b>${v}</b></div>`).join("")}
+}
+function planPdfHTML(o) {
+  const d = (x) => shortD(x), f = fmt2, pc = (x) => "%" + x.toLocaleString("tr-TR", { maximumFractionDigits: 3 });
+  const S = (k) => R2(o.rows.reduce((a, x) => a + x[k], 0));
+  const K = planKutular(o), cell = "padding:5px 6px;text-align:right;border-bottom:1px solid #ece6d8";
+  const kutu = (row, koyu) => `<div style="display:flex;gap:8px;margin-top:8px">${row.map(([k, v]) => `<div style="flex:1;padding:9px 11px;border-radius:9px;${koyu ? "background:#1c1a16;color:#f3dca8" : "background:#faf6ec;border:1px solid #e6dcc4;color:#222"}"><div style="font-size:10.5px;opacity:.75">${k}</div><div style="font-size:15px;font-weight:700;margin-top:2px">${v}</div></div>`).join("")}</div>`;
+  return `<div style="width:760px;padding:26px 32px;background:#fff;color:#222;font-family:Georgia,'Times New Roman',serif;font-size:12px;line-height:1.4">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #c9953c;padding-bottom:8px">
+      <div><div style="font-style:italic;font-weight:700;font-size:22px;letter-spacing:2px;color:#a8741c">Sadolayn</div><div style="font-size:15px;font-weight:700">${o.tur} · Hesaplama Özeti</div></div>
+      <div style="text-align:right;font-size:10.5px;color:#777">Hesaplama tarihi: ${d(new Date())}<br>İlk taksit: ${d(o.rows[0].d)}</div></div>
+    <div style="margin-top:6px;font-size:10.5px;color:#a8741c;font-weight:700">BİLGİLENDİRME AMAÇLI · RESMİ ÖDEME PLANI DEĞİLDİR</div>
+    ${kutu(K[0], false)}${kutu(K[1], true)}
+    <div style="margin-top:6px;font-size:10.5px;color:#777">BSMV ${pc(o.bsmv * 100)} · KKDF ${pc(o.kkdf * 100)} · Toplam faiz ${f(o.tF)} TL · vergi ${f(o.tV)} TL · fon ${f(o.tFo)} TL</div>
     <table style="width:100%;border-collapse:collapse;margin-top:14px;font-size:11px">
-      <thead><tr>${["Sıra<br>No", "Taksit Tarihi", "Anapara", "Faiz", "Fon", "Vergi", "Taksit Tutarı", "Kalan Anapara"].map((h) => `<th style="background:#5a5a5a;color:#fff;border:1px solid #4a4a4a;padding:5px 4px;font-weight:700;text-align:center;position:static;white-space:normal">${h}</th>`).join("")}</tr></thead>
-      <tbody>${o.rows.map((x, k) => `<tr style="page-break-inside:avoid;background:${k % 2 ? "#f1f1f1" : "#fff"}"><td style="${cell};text-align:center">${k + 1}</td><td style="${cell};text-align:center">${d(x.d)}</td><td style="${cell}">${f(x.a)}</td><td style="${cell}">${f(x.f)}</td><td style="${cell}">${f(x.fo)}</td><td style="${cell}">${f(x.v)}</td><td style="${cell}">${f(x.t)}</td><td style="${cell}">${f(x.b)}</td></tr>`).join("")}
-      <tr style="background:#f4e9a6;font-weight:700"><td style="${cell}"></td><td style="${cell};text-align:center">TOPLAM:</td><td style="${cell}">${f(S("a"))}</td><td style="${cell}">${f(S("f"))}</td><td style="${cell}">${f(S("fo"))}</td><td style="${cell}">${f(S("v"))}</td><td style="${cell}">${f(S("t"))}</td><td style="${cell}"></td></tr></tbody>
+      <thead><tr>${["#", "Tarih", "Taksit", "Anapara", "Faiz", "Vergi", "Fon", "Kalan borç"].map((h, i) => `<th style="background:#1c1a16;color:#f3dca8;padding:6px 5px;font-weight:700;text-align:${i < 2 ? "center" : "right"}">${h}</th>`).join("")}</tr></thead>
+      <tbody>${o.rows.map((x, k) => `<tr style="page-break-inside:avoid"><td style="${cell};text-align:center;color:#999">${k + 1}</td><td style="${cell};text-align:center">${d(x.d)}</td><td style="${cell};font-weight:700">${f(x.t)}</td><td style="${cell}">${f(x.a)}</td><td style="${cell}">${f(x.f)}</td><td style="${cell}">${f(x.v)}</td><td style="${cell}">${f(x.fo)}</td><td style="${cell};color:#777">${f(x.b)}</td></tr>`).join("")}
+      <tr style="background:#faf0d4;font-weight:700"><td style="${cell}"></td><td style="${cell};text-align:center">Toplam</td><td style="${cell}">${f(S("t"))}</td><td style="${cell}">${f(S("a"))}</td><td style="${cell}">${f(S("f"))}</td><td style="${cell}">${f(S("v"))}</td><td style="${cell}">${f(S("fo"))}</td><td style="${cell}"></td></tr></tbody>
     </table>
-    <p style="margin-top:16px;font-size:12px">${PDF_NOTE}</p></div>`;
+    <p style="margin-top:14px;font-size:10.5px;color:#666;border-top:1px solid #e6dcc4;padding-top:8px">${PDF_NOTE}<br><span style="color:#a8741c">sadolayn.github.io/SadoDepo · Bilgi paylaştıkça büyür</span></p></div>`;
 }
 // PDF kitaplıkları sitenin kendi içinde (lib/), dış bağlantı gerekmez; ilk tıklamada yüklenir
 const loadJs = (src) => new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
@@ -1469,36 +1476,66 @@ function buildPlanPdf(o, name) {
   const doc = new window.jspdf.jsPDF({ unit: "mm", format: "a4" });
   doc.addFileToVFS("FS.ttf", PDF_FONTS.regular); doc.addFont("FS.ttf", "FS", "normal");
   doc.addFileToVFS("FSB.ttf", PDF_FONTS.bold); doc.addFont("FSB.ttf", "FS", "bold");
-  const d = (x) => shortD(x).replace(/\./g, "-"), f = fmt2, o3 = (x) => x.toLocaleString("tr-TR", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+  const d = (x) => shortD(x), f = fmt2, pc = (x) => "%" + x.toLocaleString("tr-TR", { maximumFractionDigits: 3 });
   const S = (k) => R2(o.rows.reduce((a, x) => a + x[k], 0));
-  const L = 14; let y = 16;
-  doc.setFont("FS", "bold"); doc.setFontSize(13); doc.text(`${o.tur.toLocaleUpperCase("tr-TR")} ÖDEME PLANI`, L, y); y += 7;
-  doc.setFontSize(10);
-  const line = (k, v, gap) => { if (gap) y += 2.5; doc.setFont("FS", "normal"); const t = k + " : "; doc.text(t, L, y); doc.setFont("FS", "bold"); doc.text(v, L + doc.getTextWidth(t), y); y += 4.8; };
-  [["Döviz Kodu", "TL"], ["Ödeme Planı Hazırlama Tarihi", d(new Date())], ["Kredi Veriliş Tarihi", d(o.bas)], ["Ödeme Başlangıç Tarihi", d(o.rows[0].d)],
-    ["Kredi Tutarı", f(o.P) + " TL"], ["Akdi Faiz Oranı (%) (Aylık)", o3(o.r * 100)], ["Akdi Faiz Oranı (%) (Yıllık)", o3(o.r * 1200)],
-    ["Vergi Oranı (%)", o3(o.bsmv * 100)], ["Fon Oranı (%)", o3(o.kkdf * 100)], ["Taksit Sayısı", String(o.rows.length)]].forEach(([k, v]) => line(k, v));
-  [["Toplam Faiz", f(o.tF) + " TL"], ["Toplam Vergi", f(o.tV) + " TL"], ["Toplam Fon", f(o.tFo) + " TL"], ["Genel Toplam", f(o.top) + " TL"], ["Taksit Tutarı", f(o.T) + " TL"]].forEach(([k, v], i) => line(k, v, i === 0));
-  doc.autoTable({
-    startY: y + 2, margin: { left: L, right: L }, theme: "grid", showHead: "everyPage", showFoot: "lastPage",
-    head: [["Sıra No", "Taksit Tarihi", "Anapara", "Faiz", "Fon", "Vergi", "Taksit Tutarı", "Kalan Anapara"]],
-    body: o.rows.map((x, k) => [k + 1, d(x.d), f(x.a), f(x.f), f(x.fo), f(x.v), f(x.t), f(x.b)]),
-    foot: [["", "TOPLAM:", f(S("a")), f(S("f")), f(S("fo")), f(S("v")), f(S("t")), ""]],
-    styles: { font: "FS", fontSize: 8.5, cellPadding: 1.3, halign: "right", textColor: 0, lineColor: [150, 150, 150], lineWidth: 0.15 },
-    headStyles: { font: "FS", fontStyle: "bold", fillColor: [90, 90, 90], textColor: 255, halign: "center", valign: "middle" },
-    footStyles: { font: "FS", fontStyle: "bold", fillColor: [244, 233, 166], textColor: 0, halign: "right" },
-    alternateRowStyles: { fillColor: [242, 242, 242] },
-    columnStyles: { 0: { halign: "center", cellWidth: 11 }, 1: { halign: "center", cellWidth: 23 } },
+  const L = 14, W = 182, GOLD = [201, 149, 60], DARK = [28, 26, 22], CREAM = [250, 246, 236];
+  let y = 18;
+  // Başlık
+  doc.setFont("FS", "bold"); doc.setFontSize(20); doc.setTextColor(168, 116, 28); doc.text("Sadolayn", L, y);
+  doc.setFontSize(13); doc.setTextColor(34, 34, 34); doc.text(`${o.tur} · Hesaplama Özeti`, L, y + 7);
+  doc.setFont("FS", "normal"); doc.setFontSize(9); doc.setTextColor(119, 119, 119);
+  doc.text(`Hesaplama tarihi: ${d(new Date())}`, L + W, y, { align: "right" }); doc.text(`İlk taksit: ${d(o.rows[0].d)}`, L + W, y + 5, { align: "right" });
+  doc.setDrawColor(...GOLD); doc.setLineWidth(0.9); doc.line(L, y + 10, L + W, y + 10);
+  doc.setFont("FS", "bold"); doc.setFontSize(8.5); doc.setTextColor(168, 116, 28); doc.text("BİLGİLENDİRME AMAÇLI · RESMİ ÖDEME PLANI DEĞİLDİR", L, y + 15);
+  y += 19;
+  // Yan yana özet kutuları
+  const K = planKutular(o), bw = (W - 8) / 3, bh = 15;
+  K.forEach((row, ri) => {
+    row.forEach(([k, v], i) => {
+      const x = L + i * (bw + 4);
+      if (ri === 1) { doc.setFillColor(...DARK); doc.roundedRect(x, y, bw, bh, 2.5, 2.5, "F"); doc.setTextColor(243, 220, 168); }
+      else { doc.setFillColor(...CREAM); doc.setDrawColor(230, 220, 196); doc.setLineWidth(0.25); doc.roundedRect(x, y, bw, bh, 2.5, 2.5, "FD"); doc.setTextColor(90, 90, 90); }
+      doc.setFont("FS", "normal"); doc.setFontSize(8.5); doc.text(k, x + 4, y + 5.5);
+      doc.setFont("FS", "bold"); doc.setFontSize(12); if (ri === 0) doc.setTextColor(34, 34, 34); doc.text(v, x + 4, y + 11.8);
+    });
+    y += bh + 3;
   });
-  y = doc.lastAutoTable.finalY + 8;
-  if (y > 280) { doc.addPage(); y = 18; }
-  doc.setFont("FS", "normal"); doc.setFontSize(9.5);
-  doc.text(doc.splitTextToSize(PDF_NOTE, 182), L, y);
+  doc.setFont("FS", "normal"); doc.setFontSize(8.5); doc.setTextColor(119, 119, 119);
+  doc.text(`BSMV ${pc(o.bsmv * 100)} · KKDF ${pc(o.kkdf * 100)} · Toplam faiz ${f(o.tF)} TL · vergi ${f(o.tV)} TL · fon ${f(o.tFo)} TL`, L, y + 2);
+  // Taksit tablosu
+  doc.autoTable({
+    startY: y + 6, margin: { left: L, right: L, bottom: 20 }, theme: "plain", showHead: "everyPage", showFoot: "lastPage",
+    head: [["#", "Tarih", "Taksit", "Anapara", "Faiz", "Vergi", "Fon", "Kalan borç"]],
+    body: o.rows.map((x, k) => [k + 1, d(x.d), f(x.t), f(x.a), f(x.f), f(x.v), f(x.fo), f(x.b)]),
+    foot: [["", "Toplam", f(S("t")), f(S("a")), f(S("f")), f(S("v")), f(S("fo")), ""]],
+    styles: { font: "FS", fontSize: 8.5, cellPadding: { top: 1.6, bottom: 1.6, left: 1.5, right: 1.5 }, halign: "right", textColor: [40, 40, 40], lineColor: [236, 230, 216], lineWidth: { bottom: 0.2 } },
+    headStyles: { font: "FS", fontStyle: "bold", fillColor: DARK, textColor: [243, 220, 168], halign: "right" },
+    footStyles: { font: "FS", fontStyle: "bold", fillColor: [250, 240, 212], textColor: [34, 34, 34], halign: "right" },
+    columnStyles: { 0: { halign: "center", cellWidth: 9, textColor: [150, 150, 150] }, 1: { halign: "center", cellWidth: 22 }, 2: { fontStyle: "bold" }, 7: { textColor: [120, 120, 120] } },
+    didParseCell: (h) => { if (h.section === "head" && h.column.index < 2) h.cell.styles.halign = "center"; },
+  });
+  // Not
+  y = doc.lastAutoTable.finalY + 7;
+  if (y > 268) { doc.addPage(); y = 20; }
+  doc.setFont("FS", "normal"); doc.setFontSize(8.5); doc.setTextColor(102, 102, 102);
+  doc.text(doc.splitTextToSize(PDF_NOTE, W), L, y);
+  // Her sayfa: soluk filigran ve alt bilgi
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) {
+    doc.setPage(i);
+    try { doc.saveGraphicsState(); doc.setGState(new doc.GState({ opacity: 0.05 })); } catch (e) {}
+    doc.setFont("FS", "bold"); doc.setFontSize(46); doc.setTextColor(168, 116, 28); doc.text("BİLGİ AMAÇLI", 105, 170, { align: "center", angle: 30 });
+    try { doc.restoreGraphicsState(); } catch (e) {}
+    doc.setDrawColor(230, 220, 196); doc.setLineWidth(0.3); doc.line(L, 284, L + W, 284);
+    doc.setFont("FS", "normal"); doc.setFontSize(8); doc.setTextColor(168, 116, 28);
+    doc.text("sadolayn.github.io/SadoDepo · Bilgilendirme amaçlı tahmini hesaplama", L, 289);
+    doc.setTextColor(140, 140, 140); doc.text(`${i} / ${n}`, L + W, 289, { align: "right" });
+  }
   doc.save(name);
 }
 function planPdf(o, btn) {
   if (!o) return;
-  const name = `OdemePlani_${o.tur.replace(/\s+/g, "")}_${Math.round(o.P)}TL.pdf`.replace(/İ/g, "I").replace(/ı/g, "i").replace(/Ş/g, "S").replace(/ş/g, "s").replace(/Ğ/g, "G").replace(/ğ/g, "g").replace(/Ü/g, "U").replace(/ü/g, "u").replace(/Ö/g, "O").replace(/ö/g, "o").replace(/Ç/g, "C").replace(/ç/g, "c");
+  const name = `Sadolayn_Hesap_${o.tur.replace(/\s+/g, "")}_${Math.round(o.P)}TL.pdf`.replace(/İ/g, "I").replace(/ı/g, "i").replace(/Ş/g, "S").replace(/ş/g, "s").replace(/Ğ/g, "G").replace(/ğ/g, "g").replace(/Ü/g, "U").replace(/ü/g, "u").replace(/Ö/g, "O").replace(/ö/g, "o").replace(/Ç/g, "C").replace(/ç/g, "c");
   const lbl = btn.textContent; btn.textContent = "⏳ PDF hazırlanıyor…"; btn.disabled = true;
   const done = () => { btn.textContent = lbl; btn.disabled = false; };
   loadPdfLib().then(() => { buildPlanPdf(o, name); done(); }).catch(() => {
