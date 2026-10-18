@@ -22,15 +22,15 @@
 <meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
 <style>
   :root {
-    --bg: #07080b;
-    --card: #111318;
-    --card2: #171a21;
-    --field: #1c2029;
-    --ink: #f2f3f6;
-    --muted: #8b91a0;
+    --bg: #000000;
+    --card: #0d0d0d;
+    --card2: #141414;
+    --field: #161616;
+    --ink: #f2f2f2;
+    --muted: #8a8a8a;
     --accent: #e0a24f;
     --accent2: #f3c27c;
-    --line: #252a34;
+    --line: #262626;
     --ok: #3fc283;
     --mid: #e8b52b;
     --low: #ef6a4c;
@@ -41,7 +41,7 @@
   body { margin: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 0 14px 24px; }
   .wrap { max-width: 480px; margin: 0 auto; }
   .stick { position: sticky; top: 0; z-index: 30; background: var(--bg); margin: 0 -14px 12px; padding: 10px 14px 8px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
-  .stick.stuck { border-bottom-color: #1d2028; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
+  .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   header h1 { margin: 0; font-size: 19px; flex: 1; text-align: center; }
   .home { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex: 0 0 44px; border-radius: 14px; background: var(--field); border: 1px solid var(--accent); font-size: 21px; text-decoration: none; }
@@ -223,6 +223,7 @@
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
 <script type="module" src="canli.js"></script>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 <div class="wrap">

@@ -1,0 +1,32 @@
+/* Sadolayn ortak renk sistemi
+   Tüm sayfalar aynı zemin, kart ve vurgu renklerini kullanır; renkli kutucuklar bu paletten seçilir.
+   Yeni bir sayfa ya da menü yaparken renkleri buradan al. */
+:root {
+  /* Zemin ve metin */
+  --s-bg: #000000;
+  --s-card: #0d0d0d;
+  --s-field: #161616;
+  --s-line: #262626;
+  --s-ink: #f2f2f2;
+  --s-muted: #8a8a8a;
+  /* Marka */
+  --s-gold: #e0a24f;     /* Sadolayn altını: ana vurgu */
+  --s-bank: #4a63ff;     /* İş Bankası mavisi */
+  /* Kutucuk paleti (menülerde sırayla) */
+  --s-green: #3fc283;
+  --s-blue: #5aa9f0;
+  --s-purple: #b48cf0;
+  --s-orange: #ef8a4c;
+  --s-teal: #3fbfd6;
+  --s-red: #ef5a5a;
+  --s-pink: #ff4fa3;
+  --s-olive: #a8c94a;
+  --s-yellow: #f0c64a;
+  /* Durum */
+  --s-ok: #3fc283;
+  --s-warn: #e8b52b;
+  --s-bad: #ef6a4c;
+}
+/* Renkli kutucuk: style="--c: var(--s-blue)" vererek kullanılır */
+.s-tile { --c: var(--s-gold); border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 36%, #000), color-mix(in srgb, var(--c) 10%, #060606)); color: color-mix(in srgb, var(--c) 35%, #fff); border-radius: 11px; }
+.s-tile.on { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 45%, transparent); }
