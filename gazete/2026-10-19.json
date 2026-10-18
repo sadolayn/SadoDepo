@@ -1,0 +1,163 @@
+{
+  "tarih": "2026-10-19",
+  "sayi": "33405",
+  "guncelleme": "2026-10-19T01:27:09+03:00",
+  "ozet": "19 Ekim 2026 tarihli 33405 sayılı Resmi Gazete tamamen elektrik piyasasına ayrılmış durumda: EPDK sekiz yönetmelikte kapsamlı bir değişiklik paketi yayımladı ve 24 Eylül tarihli yedi kurul kararını ilan etti. Paketin ana başlıkları; şebeke kullanıcılarından alınan teminatların sınırlandırılması ve hızlı iadesi, tüketicilerin kendi ölçüm noktalarında depolama tesisi kurabilmesi, lisanssız (çoğunlukla güneş) üretim tesislerine acil durumda uzaktan müdahale yetkisi ve YEKDEM ödeme formüllerinin yeniden düzenlenmesi. YEKDEM'de sahte ya da yanıltıcı belge verenlerin listeden çıkarılıp geçmiş ödemelerin faiziyle geri alınması öngörülüyor. Bankacılık açısından dikkat çeken nokta, dağıtım teminatlarında banka teminat mektubu ve e-teminat mektubunun açıkça sayılması ve teminat tutarlarının düzenli ödeme yapan kullanıcılar için düşürülmesi. Bugün atama kararı ve mükerrer sayı yok.",
+  "onemli_atamalar": [],
+  "bankacilik": [
+    {
+      "baslik": "Elektrik dağıtım teminatlarında banka teminat mektubu ve e-teminat mektubu",
+      "aciklama": "Dağıtım sistemi kullanıcılarından alınan teminat kesin ve süresiz banka teminat mektubu, nakit veya e-teminat mektubu olarak verilebilecek; son 24 ayda faturalarını aksatmayan kullanıcılarda teminat üst sınırı 1 kata indirildiği için bu kullanıcıların teminat mektubu tutarları ve dolayısıyla bankaların gayrinakdi kredi hacmi azalabilir, fazla teminatlar 1 ay içinde iade edilecek.",
+      "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019-1.htm"
+    },
+    {
+      "baslik": "Lisans başvuru teminatlarının iadesi (depolamalı tesisler)",
+      "aciklama": "Depolamalı üretim tesislerinde lisans başvurusu için verilen teminat (genellikle banka teminat mektubu) tesisin tamamı işletmeye geçene kadar iade edilmeyecek; enerji projelerine teminat mektubu veren bankalar için mektupların vadesi uzayabilir.",
+      "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019-3.htm"
+    }
+  ],
+  "bolumler": [
+    {
+      "baslik": "Yönetmelikler",
+      "maddeler": [
+        {
+          "baslik": "EPDK – Elektrik Piyasası Bağlantı ve Sistem Kullanım Yönetmeliğinde Değişiklik",
+          "aciklama": "Dağıtım sistemine bağlı kullanıcılardan alınan teminatların kuralları yeniden yazıldı ve bağlantı süreçlerinde bazı süreler esnetildi. Amaç, düzenli ödeme yapan kullanıcıların üzerindeki teminat yükünü azaltmak ve şebekeden ayrılma/bağlanma işlemlerini netleştirmek.",
+          "detaylar": [
+            "Teminat; kesin ve süresiz banka teminat mektubu, nakit ya da e-teminat mektubu olarak verilebilecek.",
+            "Son 24 ayda faturalarını eksiksiz ödeyen ve temerrüde düşmeyen kullanıcılarda teminat hesabındaki azami oran en fazla 1 kat olacak; bu nedenle oluşan fazla teminat yürürlükten itibaren 1 ay içinde iade edilecek.",
+            "Teminat artırımında ek teminat yazılı bildirimden itibaren 10 iş günü içinde verilecek; fazla teminat talep halinde 10 iş günü içinde iade edilecek. Eksiklik gereken tutarın %20'sine ulaşırsa dağıtım şirketi EPDK'ya bildirecek.",
+            "Bağlantı anlaşmasıyla eş zamanlı yapılması gereken bir işlem, artık anlaşmanın imzalanmasından sonra en geç 30 gün içinde yapılabilecek.",
+            "Üretim lisansı sahipleri, lisansları iptal edilmedikçe veya sona ermedikçe dağıtım sisteminden ayrılma talep edemeyecek; iletim sistemine geçiş isteyenler lisanstaki bağlantı noktası değiştikten sonra başvurabilecek."
+          ],
+          "yururluk": "Yayımı tarihinde (19 Ekim 2026)",
+          "kimi": "Dağıtım sistemi kullanıcıları (özellikle sanayi ve ticari aboneler), dağıtım şirketleri, üretim lisansı sahipleri; haberlere göre konut aboneleri için genel bir iade söz konusu değil",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019-1.htm"
+        },
+        {
+          "baslik": "EPDK – Elektrik Piyasası Dengeleme ve Uzlaştırma Yönetmeliğinde Değişiklik",
+          "aciklama": "Gün içi piyasası ve dengeleme güç piyasasının işleyişine ilişkin teknik hükümler güncellendi. Haberlere göre fiyat sınırlarının belirlenme esasları ile tekliflerin veriliş biçimi değişti.",
+          "detaylar": [
+            "Gün içi piyasasındaki azami ve asgari fiyat limitlerinin belirlenme esasları değiştirildi (haberlerde rakam verilmiyor).",
+            "Dengeleme güç piyasası tekliflerinin günlük ve uzlaştırma dönemi bazında verilmesi hükme bağlandı.",
+            "Acil durum talimatlarının dengeleme güç piyasası kapsamında uygulanmasına ilişkin düzenlemeler yapıldı."
+          ],
+          "yururluk": "Haberlere göre yayımı tarihinde",
+          "kimi": "Piyasa katılımcıları, üretim ve tedarik şirketleri, Piyasa İşletmecisi (EPİAŞ) ve TEİAŞ",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019-2.pdf"
+        },
+        {
+          "baslik": "EPDK – Elektrik Piyasası Lisans Yönetmeliğinde Değişiklik",
+          "aciklama": "Depolamalı üretim tesislerine ilişkin lisans ve teminat kuralları netleştirildi, mücbir sebep ve şirket unvanı hükümleri sıkılaştırıldı.",
+          "detaylar": [
+            "Bazı maddelerde 'kapasite' ifadesi 'güç' olarak değiştirildi; depolamalı tesislerin belgelerinde depolama ünitesinin gücü dikkate alınacak.",
+            "Lisans başvuru teminatı tesisin tamamı işletmeye geçene kadar iade edilmeyecek; depolama ünitesinin teminatı kabul edilen ünitenin gücüne göre iade edilecek.",
+            "Önceden mücbir sebep sayılan bir olay yatırımı tamamlanamaz hale getiren sürekli bir duruma dönüşürse artık mücbir sebep sayılmayacak.",
+            "Şirket unvanlarında yalnızca aynı unvanlar değil, başka bir şirketle ilişki izlenimi verebilecek unvanlar da dikkate alınacak."
+          ],
+          "yururluk": "Yayımı tarihinde (19 Ekim 2026)",
+          "kimi": "Üretim lisansı sahipleri ve başvuru sahipleri, depolamalı santral yatırımcıları",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019-3.htm"
+        },
+        {
+          "baslik": "EPDK – Elektrik Piyasası Yan Hizmetler Yönetmeliğinde Değişiklik",
+          "aciklama": "Talep tarafı katılımı (tüketimini sistem ihtiyacına göre azaltan toplayıcılar) için ödeme ve performans kuralları yeniden düzenlendi ve bir geçiş tarihi ertelendi.",
+          "detaylar": [
+            "Toplayıcılara yapılacak ödeme, aylık kapasite bedeli ile talimatın yerine getirilmesiyle oluşan aktivasyon bedelinden oluşacak.",
+            "Performans değerlendirmesinde talimattan fazla ya da eksik yük düşülmesi için %10, %25 ve %50 eşikleri belirlendi.",
+            "Geçici 12. maddedeki 1 Eylül 2026 tarihi 31 Aralık 2026 olarak değiştirildi."
+          ],
+          "yururluk": "Yayımı tarihinde (19 Ekim 2026)",
+          "kimi": "Toplayıcılar, talep tarafı katılımı yapan büyük tüketiciler, TEİAŞ",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019-4.htm"
+        },
+        {
+          "baslik": "EPDK – Elektrik Piyasasında Depolama Faaliyetleri Yönetmeliğinde Değişiklik",
+          "aciklama": "Tüketicilerin kendi tesislerinde elektrik depolama (batarya) kurmasının şartları belirlendi. Depolamadan şebekeye izinsiz enerji verilmesini önleyecek teknik zorunluluklar getirildi.",
+          "detaylar": [
+            "Tüketiciler, şebeke işletmecisinden uygun bağlantı görüşü almaları ve tesisin tüketim tesisiyle aynı ölçüm noktasında olması şartıyla depolama tesisi kurabilecek.",
+            "Depolama kurulu gücü anlaşma gücünden yüksek olanlar otomatik güç kontrol ünitesi ve enerji kesme sistemi kurmak zorunda.",
+            "Bu sistemler depolamadan şebekeye enerji verilmesini ve şebekeden çekişin anlaşma gücünü aşmasını engelleyecek."
+          ],
+          "yururluk": "Yayımı tarihinde (19 Ekim 2026)",
+          "kimi": "Depolama kurmak isteyen sanayi, ticari ve konut tüketicileri, dağıtım şirketleri",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019-5.htm"
+        },
+        {
+          "baslik": "EPDK – Elektrik Piyasasında Lisanssız Elektrik Üretim Yönetmeliğinde Değişiklik",
+          "aciklama": "Lisanssız (çoğunlukla çatı ve arazi tipi güneş) üretim tesislerine şebeke güvenliği için acil durumlarda uzaktan müdahale imkânı getirildi ve talimata uymamanın mali sonucu belirlendi. İç tüketimin mahsuplaşmaya nasıl katılacağı da netleştirildi.",
+          "detaylar": [
+            "Dağıtım şirketleri ve dağıtım lisanslı OSB/endüstri bölgeleri, acil durum talimatları için belirli tesisleri uzaktan kontrol edebilecek; acil durum bitince 15 dakika içinde tesis sahibine bildirim yapılacak, yeniden enerjilendirme tesis sahibinin sorumluluğunda olacak.",
+            "Yük atma talimatına uyulmayan kısma karşılık gelen üretim için ödeme yapılmayacak; bu tutar hesaplanıp üreticiden tahsil edilecek.",
+            "Belirli lisanssız üreticiler bağlantı anlaşmalarını revize ettirmek için 60 gün içinde başvuracak; başvurmayanlar için mevcut hükümler geçerli olacak. Bazı cezai şartlar 30 Nisan 2027'ye kadar uygulanmayacak.",
+            "Üretim ve tüketim tesisi aynı dağıtım bölgesinde ama farklı ölçüm noktalarındaysa, üretim tesisinin iç tüketimi ilişkili tüketim tesisine eklenerek mahsuplaşmaya dahil edilecek; ilişkili tüketim yoksa abone grubu tarifesinden fatura kesilebilecek."
+          ],
+          "yururluk": "Yayımı tarihinde (19 Ekim 2026); 60 günlük başvuru süresi ve 30 Nisan 2027 geçiş tarihi var",
+          "kimi": "Lisanssız üreticiler, güneş enerjisi yatırımcıları, dağıtım şirketleri",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019-6.htm"
+        },
+        {
+          "baslik": "EPDK – OSB ve Endüstri Bölgelerinin Elektrik Piyasası Faaliyetlerine İlişkin Yönetmelikte Değişiklik",
+          "aciklama": "Dağıtım lisanslı organize sanayi bölgeleri ve endüstri bölgelerine, bölgelerindeki lisanssız tesislere yönelik talimatları uygulama yükümlülüğü getirildi.",
+          "detaylar": [
+            "Sorumlu tüzel kişiler, görevli tedarik şirketlerinin lisanssız tesislere ilettiği yük atma talimatlarını yerine getirecek.",
+            "TEİAŞ'ın acil durum talimatlarına uyacak, uygulama bilgilerini paylaşacak ve istenen verileri eksiksiz iletecek.",
+            "Yükümlülükler yerine getirilmezse Elektrik Piyasası Kanunu'nun 16. maddesindeki yaptırımlar uygulanabilecek."
+          ],
+          "yururluk": "Yayımı tarihinde (19 Ekim 2026)",
+          "kimi": "Dağıtım lisanslı OSB'ler ve endüstri bölgeleri, bölgedeki sanayi işletmeleri",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019-7.htm"
+        },
+        {
+          "baslik": "EPDK – Yenilenebilir Enerji Kaynaklarının Belgelendirilmesi ve Desteklenmesine İlişkin Yönetmelikte (YEKDEM) Değişiklik",
+          "aciklama": "YEKDEM kapsamındaki ödemelerin hesaplama formülleri depolamalı tesisler, kapasite artışları ve lisanssız üretim için yeniden düzenlendi. Sahte belgeyle destek alanlara karşı geri tahsil yaptırımı getirildi.",
+          "detaylar": [
+            "Depolamalı tesislerde şebekeden çekilip depolanan enerjinin depodan verilen kısmına YEKDEM ödemesi yapılmayacak; uzlaştırmaya esas veriş sanal kayıtlarla belirlenecek.",
+            "YEKTOB formülüne kurulu güç artışı katsayısı eklendi; lisanssız üretim bedeli (YEKBED) talimata uyulmayan miktar düşülerek hesaplanacak, negatif çıkarsa sıfır alınacak.",
+            "30 Haziran 2021 sonrası işletmeye giren ve YEKDEM'e kayıtlı olmayan tesislerde yerli aksam kullanılırsa yerli aksam destek fiyatı üzerinden ödeme yapılacak.",
+            "Sahte veya yanıltıcı belge verdiği tespit edilen kişi o yılın nihai YEK listesinden çıkarılacak; geçmişte ödenen bedeller 6183 sayılı Kanun'daki gecikme zammı oranıyla güncellenerek geri alınacak."
+          ],
+          "yururluk": "Yayımı tarihinde (19 Ekim 2026)",
+          "kimi": "Yenilenebilir enerji üreticileri (YEKDEM katılımcıları), depolamalı santraller, EPİAŞ",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019-8.pdf"
+        }
+      ]
+    },
+    {
+      "baslik": "Kurul Kararları",
+      "maddeler": [
+        {
+          "baslik": "Enerji Piyasası Düzenleme Kurulunun 24/09/2026 tarihli ve 14907–14913 sayılı kararları",
+          "aciklama": "Yönetmelik paketini tamamlayan yedi EPDK kurul kararı yayımlandı. Haberlere göre sapma katsayıları, teklif fiyat sınırları, dengesizlik tutarı ve depolama lisansı teminatları güncellendi.",
+          "detaylar": [
+            "14907: Üretim planından sapma tutarında rüzgâr, güneş, depolama ve diğer kaynaklar için ayrı katsayı ve toleranslar belirlendi.",
+            "14910: Hidroelektrik hariç santrallerin yük alma/yük atma teklif fiyatları belirli sınırlar içinde bildirilecek.",
+            "14911: Enerji dengesizlik tutarı hesabında kullanılan değer, yayımı izleyen fatura döneminden itibaren 100 TL/MWh olacak.",
+            "14909 ve 14912: Lisanssız bağlantı anlaşması hükümleri ile müstakil depolama tesislerinin lisans başvurusundaki sermaye ve teminat şartları güncellendi; 14908 ve 14913 talimat raporlaması ve reaktif güç yan hizmetiyle ilgili."
+          ],
+          "yururluk": "Yayımı tarihinde; 14911 sayılı karar izleyen fatura döneminden itibaren",
+          "kimi": "Elektrik piyasası katılımcıları, üreticiler ve depolama yatırımcıları",
+          "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261019-9.pdf"
+        }
+      ]
+    },
+    {
+      "baslik": "İlan Bölümü",
+      "maddeler": [
+        { "baslik": "Yargı ilanları", "aciklama": "Mahkemelerin tebligat ve duyuruları.", "url": "https://www.resmigazete.gov.tr/ilanlar/eskiilanlar/2026/10/20261019-2.htm" },
+        { "baslik": "Artırma, eksiltme ve ihale ilanları", "aciklama": "Kamu kurumlarının ihale ve satış ilanları.", "url": "https://www.resmigazete.gov.tr/ilanlar/eskiilanlar/2026/10/20261019-3.htm" },
+        { "baslik": "Çeşitli ilanlar", "aciklama": "Kurumların çeşitli duyuruları.", "url": "https://www.resmigazete.gov.tr/ilanlar/eskiilanlar/2026/10/20261019-4.htm" },
+        { "baslik": "TCMB – Devlet İç Borçlanma Senetlerinin günlük değerleri", "aciklama": "Merkez Bankasınca belirlenen DİBS günlük değerleri ilan edildi.", "url": "https://www.resmigazete.gov.tr/ilanlar/eskiilanlar/2026/10/20261019-5.htm" }
+      ]
+    }
+  ],
+  "kaynaklar": [
+    { "ad": "Öğretmenler.net – 19 Ekim 2026 tarihli ve 33405 sayılı Resmî Gazete", "url": "https://www.ogretmenler.net/19-ekim-2026-tarihli-ve-33405-sayili-resmi-gazete" },
+    { "ad": "Alomaliye – 19 Ekim 2026 tarihli Resmi Gazete'de yayımlanan yönetmelikler", "url": "https://www.alomaliye.com/2026/10/19/19-ekim-2026-tarihli-resmi-gazetede-yayimlanan-yonetmelikler/" },
+    { "ad": "Gazete Merhaba – EPDK'dan elektrik üretimi, depolama ve şebeke kullanımına yeni düzenlemeler", "url": "https://gazetemerhaba.com/gundem/19-ekim-2026-resmi-gazete-kararlari-epdkdan-elektrik-uretimi-depolama-ve-sebeke-kullanimina-yeni-duzenlemeler-124637" },
+    { "ad": "CNBC-e – EPDK'dan elektrik piyasasında kapsamlı değişiklik", "url": "https://www.cnbce.com/enerji/epdkdan-elektrik-piyasasinda-kapsamli-degisiklik-iste-yeni-kurallar-h39717" },
+    { "ad": "Enerji Günlüğü – YEKDEM formülleri revize edildi, sahte belgeye yeni yaptırım", "url": "https://www.enerjigunlugu.net/yekdem-formulleri-revize-edildisahte-belgeye-yeni-yaptirim-geldi-70240h.htm" },
+    { "ad": "Urfada Bugün – EPDK'den 7 kurul kararı Resmi Gazete'de", "url": "https://www.urfadabugun.com/haber/262316/epdkden-elektrik-piyasasina-iliskin-7-kurul-karari-resmi-gazetede-yayinlandi.html" },
+    { "ad": "Haberler.com – 19 Ekim 2026 Resmi Gazete", "url": "https://www.haberler.com/haber/19-ekim-pazartesi-2026-resmi-gazete-atama-20343224-haberi/" }
+  ]
+}
