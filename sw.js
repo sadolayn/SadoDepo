@@ -11,3 +11,25 @@ self.addEventListener("fetch", (e) => {
     return res;
   }).catch(() => caches.match(r, { ignoreSearch: true }).then((m) => m || (r.mode === "navigate" ? caches.match("./index.html") : Response.error()))));
 });
+
+// ---- Sadolayn Alerts telefon bildirimleri (Firebase Cloud Messaging üzerinden gelen web push) ----
+self.addEventListener("push", (e) => {
+  let j = {};
+  try { j = e.data ? e.data.json() : {}; } catch (err) { j = { notification: { body: e.data ? e.data.text() : "" } }; }
+  const n = j.notification || {}, d = j.data || {};
+  const url = d.url || (j.fcmOptions && j.fcmOptions.link) || "./alerts.html#bugun";
+  e.waitUntil(self.registration.showNotification(n.title || d.title || "Sadolayn Alerts", {
+    body: n.body || d.body || "Bugünün haberleri hazır.",
+    icon: "img/icon.png", badge: "img/icon.png",
+    tag: d.tag || "sadolayn-alerts", renotify: true,
+    data: { url }
+  }));
+});
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const url = new URL((e.notification.data && e.notification.data.url) || "./alerts.html#bugun", self.registration.scope).href;
+  e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+    for (const c of list) if (c.url.split("#")[0] === url.split("#")[0] && "focus" in c) { c.navigate(url).catch(() => {}); return c.focus(); }
+    return self.clients.openWindow(url);
+  }));
+});

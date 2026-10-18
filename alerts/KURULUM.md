@@ -19,3 +19,13 @@ Notlar
 - Ücretsiz Gmail günde ~100 e-posta gönderebilir; bu yüzden abone sınırı 80.
 - Abone listesi Google Drive'ında "Sadolayn Alerts — Aboneler" tablosunda durur.
 - Code.gs'i değiştirirsen: Dağıt → Dağıtımları yönet → düzenle → **Yeni sürüm**.
+
+
+## Telefon bildirimi (Firebase Cloud Messaging)
+
+1. Firebase konsolu → Proje ayarları → Genel → Web uygulaması ekle (</>) → çıkan `firebaseConfig` değerleri `alerts.html` içindeki `PUSH_CFG`'ye yazılır (herkese açık değerlerdir).
+2. Proje ayarları → Cloud Messaging → Web Push sertifikaları → Anahtar çifti oluştur → `alerts.html` içindeki `VAPID`'e yazılır.
+3. Proje ayarları → Hizmet hesapları → Yeni özel anahtar oluştur → inen JSON'un tamamı Apps Script → Proje Ayarları → Komut dosyası özellikleri'ne `FCM_SA` adıyla eklenir. **Bu dosya gizlidir; siteye, GitHub'a ya da sohbete konmaz.**
+4. Apps Script'te `testPushSetup` bir kez çalıştırılır, sonra Dağıt → Dağıtımları yönet → Yeni sürüm.
+
+Bildirimler `dailyDigest` içinde e-postalardan sonra gönderilir. Kayıtlı telefonlar tablodaki **Bildirim** sayfasındadır; geçersiz olanlar gönderimde kendiliğinden silinir.

@@ -133,6 +133,25 @@
   @keyframes notif { from { transform: translateY(-14px); opacity: 0; } }
   .bi-ic { flex: none; width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: linear-gradient(160deg, #f6dc9a, #c9953c); font-size: 17px; }
   .bildirim b { display: block; font-size: 13px; color: #fff; } .bildirim b small { font-weight: 500; color: #8a8a8a; } .bildirim span { display: block; font-size: 12.5px; color: #c9c9c9; line-height: 1.4; }
+  /* ===== Telefon bildirimi ===== */
+  .push { position: relative; overflow: hidden; border-color: #2c3a2f; background: radial-gradient(110% 120% at 100% 0%, rgba(63,194,131,.14), rgba(0,0,0,0) 55%), var(--card); }
+  .push .ph { display: flex; gap: 12px; align-items: center; }
+  .push .pi { flex: none; width: 46px; height: 46px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 23px; background: linear-gradient(160deg, #9ff0c8, #2fae72); box-shadow: 0 6px 18px rgba(63,194,131,.35); }
+  .push .pi.on { animation: ring 2.4s ease-in-out infinite; }
+  @keyframes ring { 0%, 70%, 100% { transform: rotate(0); } 75% { transform: rotate(14deg); } 80% { transform: rotate(-12deg); } 85% { transform: rotate(8deg); } 90% { transform: rotate(-4deg); } }
+  .push h3 { margin: 0; font-size: 16px; } .push h3 small { font-size: 11px; font-weight: 800; letter-spacing: 1px; padding: 2px 7px; border-radius: 99px; margin-left: 6px; vertical-align: 2px; background: #1f5a3d; color: #a8ecc9; }
+  .push .ps { font-size: 13px; color: #b9c7bd; margin-top: 2px; line-height: 1.45; }
+  .push .pb { display: grid; gap: 8px; margin-top: 12px; }
+  .push .pb.two { grid-template-columns: 1fr 1fr; }
+  .push button.go { background: linear-gradient(160deg, #6fe0a8, #2fae72); color: #04140b; border: none; }
+  .push .pk { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .push .pk span { font-size: 12.5px; padding: 4px 10px; border-radius: 99px; background: #10241a; border: 1px solid #1f5a3d; color: #a8ecc9; }
+  .push .ios { margin-top: 12px; display: grid; gap: 8px; }
+  .push .ios div { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--field); font-size: 13.5px; color: #d6d6d6; }
+  .push .ios b { flex: none; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #2fae72; color: #04140b; font-size: 12px; }
+  .push .pmsg { margin-top: 10px; font-size: 13px; color: #a8ecc9; } .push .pmsg.bad { color: #ffb3b3; } .push .pmsg:empty { display: none; }
+  .push .pdiff { margin-top: 8px; font-size: 12.5px; color: #f0d9a8; }
+  @media (prefers-reduced-motion: reduce) { .push .pi.on { animation: none; } }
   @media (prefers-reduced-motion: reduce) { .radar .sweep, .tk-run, .blip, .tk-et { animation: none; } .tk-run { padding-left: 0; } }
 </style>
 <script src="pwa.js"></script>
@@ -154,7 +173,7 @@
     <div class="rh-txt">
       <span class="rh-et">SADOLAYN ALERTS</span>
       <h2>Gündem <em>Radarı</em></h2>
-      <p>Kelimeni radara koy. Her sabah <b>10:00</b>'da son 24 saatin haberleri kahvenle birlikte e-postanda.</p>
+      <p>Kelimeni radara koy. Her sabah <b>10:00</b>'da son 24 saatin haberleri kahvenle birlikte e-postanda ya da <b>telefonunda</b>.</p>
     </div>
     <div class="radar" id="radar" aria-hidden="true">
       <i class="r1"></i><i class="r2"></i><i class="r3"></i><span class="sweep"></span><span class="core">🔔</span>
@@ -165,7 +184,7 @@
 
   <div class="flow">
     <div><b>1</b><span>Kelimeni yaz</span></div><i></i>
-    <div><b>2</b><span>E-postanı onayla</span></div><i></i>
+    <div><b>2</b><span>E-posta ya da bildirim</span></div><i></i>
     <div><b>3</b><span>10:00'da oku ☕</span></div>
   </div>
 
@@ -203,6 +222,11 @@
     <div id="msg" class="msg"></div>
   </div>
 
+  <div class="card push" id="push">
+    <div class="ph"><span class="pi" id="pIc">📲</span><div><h3 id="pT">Telefonuma bildirim gelsin<small>YENİ</small></h3><div class="ps" id="pS">Her sabah 10:00'da kelimelerinle ilgili haber varsa telefonuna bildirim düşer. E-posta gerekmez.</div></div></div>
+    <div id="pBody"></div>
+    <div class="pmsg" id="pMsg"></div>
+  </div>
   <div class="card pv" id="pv" style="display:none"></div>
 
   <div class="card faq">
@@ -210,6 +234,7 @@
     <p><b>Ne zaman gelir?</b> Her gün 10:00 civarı (±15 dk). O gün kelimenle ilgili haber yoksa e-posta gönderilmez.</p>
     <p><b>Kelimeleri nasıl değiştiririm?</b> Aynı e-postayla yeniden abone ol; onay verince yeni liste geçerli olur.</p>
     <p><b>Nasıl çıkarım?</b> Her e-postanın altında "Abonelikten çık" bağlantısı var, tek tıkla biter.</p>
+    <p><b>Telefon bildirimi nasıl çalışır?</b> “Bildirim aç” deyip izin verince telefonun, seçtiğin kelimelerle kaydedilir; e-posta istemez. Android'de Chrome ile hemen çalışır. iPhone'da önce siteyi Safari'den “Ana Ekrana Ekle” yapıp oradan açman gerekir (Apple kuralı). İstediğin an aynı karttan kapatabilirsin.</p>
     <p><b>Gizlilik:</b> E-posta adresin yalnızca bu bülteni göndermek için saklanır, kimseyle paylaşılmaz. Onay vermeden hiçbir bülten gönderilmez.</p>
   </div>
 </div>
@@ -286,7 +311,7 @@ function render() {
     SUGG.filter((s) => !low.includes(s.toLocaleLowerCase("tr")))
       .map((s) => `<button data-s="${esc(s)}">+ ${esc(s)}</button>`).join("");
   $("add").disabled = kws.length >= MAX;
-  blipsCiz(); bildirimGoster();
+  blipsCiz(); bildirimGoster(); if (typeof renderPush === "function") renderPush();
   const live = !!ENDPOINT;
   $("setupNote").style.display = live ? "none" : "block";
   $("preview").disabled = !live || !kws.length;
@@ -339,7 +364,7 @@ $("preview").onclick = async () => {
         ? s.items.map((it) => `<a class="news" href="${esc(it.link)}" target="_blank" rel="noopener"><b>${esc(it.title)}</b><span>${esc(it.source)} · ${ago(it.ts)}</span></a>`).join("")
         : `<div class="none">Son 24 saatte haber yok.</div>`;
     }
-    $("pv").innerHTML = `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Bugün gelecek e-postanın önizlemesi</div>` + html;
+    $("pv").innerHTML = `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">${window.__bugun ? "☀️ Bugünkü haberlerin · son 24 saat" : "Bugün gelecek e-postanın önizlemesi"}</div>` + html;
     $("pv").style.display = "block";
     $("pv").scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (e) {
@@ -366,6 +391,110 @@ $("sub").onclick = async () => {
   }
 };
 
+
+// ================= Telefon bildirimi (Firebase Cloud Messaging) =================
+// Firebase web uygulaması ayarları: herkese açık değerlerdir (gizli anahtar değil). Gönderim yetkisi yalnızca Apps Script'te.
+const PUSH_CFG = { apiKey: "", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: "" };
+const VAPID = "";
+const FBV = "10.12.2";
+const P = {
+  ios: /iphone|ipad|ipod/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1),
+  standalone: window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true,
+  ok: "serviceWorker" in navigator && "PushManager" in window && "Notification" in window,
+  ready: () => !!(PUSH_CFG.apiKey && PUSH_CFG.appId && VAPID && ENDPOINT),
+};
+let pushSt = null;
+try { pushSt = JSON.parse(localStorage.getItem("alerts_push") || "null"); } catch (e) {}
+const pSave = () => { try { pushSt ? localStorage.setItem("alerts_push", JSON.stringify(pushSt)) : localStorage.removeItem("alerts_push"); } catch (e) {} };
+const pMsg = (t, bad) => { $("pMsg").textContent = t || ""; $("pMsg").className = "pmsg" + (bad ? " bad" : ""); };
+const same = (a, b) => a.length === b.length && a.every((x, i) => x.toLocaleLowerCase("tr") === String(b[i]).toLocaleLowerCase("tr"));
+function renderPush() {
+  const B = $("pBody"), on = !!(pushSt && pushSt.token);
+  $("pIc").classList.toggle("on", on);
+  if (on) {
+    $("pT").innerHTML = "Bildirimler açık ✓";
+    $("pS").textContent = "Her sabah 10:00'da şu kelimeler için haber varsa telefonuna bildirim gelir:";
+    const diff = kws.length && !same(kws, pushSt.kws || []);
+    B.innerHTML = `<div class="pk">${(pushSt.kws || []).map((k) => `<span>${esc(k)}</span>`).join("")}</div>
+      ${diff ? `<div class="pdiff">✏️ Radardaki kelimelerin değişti. Bildirimler için de güncellemek ister misin?</div>` : ""}
+      <div class="pb two">${diff ? `<button class="go" id="pUpd">🔄 Kelimeleri güncelle</button>` : `<button id="pTest">🧪 Deneme bildirimi</button>`}<button id="pOff">🔕 Bildirimi kapat</button></div>`;
+    if ($("pUpd")) $("pUpd").onclick = () => pushOn(true);
+    if ($("pTest")) $("pTest").onclick = pushTest;
+    $("pOff").onclick = pushOff;
+    return;
+  }
+  $("pT").innerHTML = 'Telefonuma bildirim gelsin<small>YENİ</small>';
+  $("pS").textContent = "Her sabah 10:00'da kelimelerinle ilgili haber varsa telefonuna bildirim düşer. E-posta gerekmez.";
+  if (!P.ready()) { B.innerHTML = `<div class="pb"><button disabled>⏳ Çok yakında açılıyor</button></div>`; return; }
+  if (P.ios && !P.standalone) {
+    B.innerHTML = `<div class="ios"><div><b>1</b><span>Safari'de alttaki ⬆️ Paylaş düğmesine dokun</span></div><div><b>2</b><span>“Ana Ekrana Ekle”yi seç</span></div><div><b>3</b><span>Ana ekrandaki Sadolayn simgesinden açıp buraya gel, “Bildirim aç”a dokun</span></div></div>
+      <div class="ps" style="margin-top:8px">Apple, iPhone'da bildirimi yalnızca ana ekrana eklenmiş sitelere izin veriyor (iOS 16.4 ve sonrası).</div>`;
+    return;
+  }
+  if (!P.ok) { B.innerHTML = `<div class="ps" style="margin-top:10px">Bu tarayıcı bildirim desteklemiyor. Android'de <b>Chrome</b> ile açmayı dene.</div>`; return; }
+  if (Notification.permission === "denied") { B.innerHTML = `<div class="ps" style="margin-top:10px">🔒 Bu site için bildirimler kapalı. Tarayıcı ayarlarından (adres çubuğundaki kilit simgesi → İzinler → Bildirimler) izin verip sayfayı yenile.</div>`; return; }
+  B.innerHTML = `<div class="pb"><button class="go" id="pOn" ${kws.length ? "" : "disabled"}>🔔 ${kws.length ? `Bu ${kws.length} kelimeyle bildirim aç` : "Önce yukarıya kelime ekle"}</button></div>`;
+  $("pOn").onclick = () => pushOn(false);
+}
+async function fcmToken() {
+  const reg = await navigator.serviceWorker.register("sw.js");
+  await navigator.serviceWorker.ready;
+  const { initializeApp, getApps } = await import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-app.js`);
+  const { getMessaging, getToken } = await import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-messaging.js`);
+  const app = getApps().find((a) => a.name === "push") || initializeApp(PUSH_CFG, "push");
+  return getToken(getMessaging(app), { vapidKey: VAPID, serviceWorkerRegistration: reg });
+}
+async function pushOn(update) {
+  if (!kws.length) return pMsg("Önce yukarıya en az bir kelime ekle.", true);
+  const b = $("pOn") || $("pUpd"); if (b) { b.disabled = true; b.textContent = "Hazırlanıyor…"; }
+  pMsg("");
+  try {
+    if (Notification.permission !== "granted") {
+      const pr = await Notification.requestPermission();
+      if (pr !== "granted") { pMsg("Bildirim izni verilmedi. İstersen tekrar deneyebilirsin.", true); renderPush(); return; }
+    }
+    const token = await fcmToken();
+    if (!token) throw new Error("token");
+    const j = await (await fetch(ENDPOINT, { method: "POST", body: JSON.stringify({ action: "push_sub", token, keywords: kws, os: P.ios ? "ios" : /android/i.test(navigator.userAgent) ? "android" : "diger" }) })).json();
+    if (!j.ok) throw new Error(j.msg || "hata");
+    if (pushSt && pushSt.token && pushSt.token !== token) fetch(ENDPOINT, { method: "POST", body: JSON.stringify({ action: "push_unsub", token: pushSt.token }) }).catch(() => {});
+    pushSt = { token, kws: kws.slice(), t: Date.now() }; pSave();
+    renderPush();
+    pMsg(update ? "Kelimeler güncellendi ✓" : "🎉 Bildirimler açıldı! Bir deneme bildirimi gönderiyorum…");
+    if (!update) setTimeout(pushTest, 600);
+  } catch (e) {
+    const m = String(e && e.message || e);
+    pMsg(/msg|kota|kapasite|geçersiz/i.test(m) ? m : "Bildirim açılamadı. Sayfayı yenileyip tekrar dene; olmazsa Chrome ile dene.", true);
+    renderPush();
+  }
+}
+async function pushTest() {
+  if (!pushSt) return;
+  const b = $("pTest"); if (b) { b.disabled = true; b.textContent = "Gönderiliyor…"; }
+  try {
+    const j = await (await fetch(ENDPOINT, { method: "POST", body: JSON.stringify({ action: "push_test", token: pushSt.token }) })).json();
+    pMsg(j.ok ? "📨 Deneme bildirimi gönderildi; birkaç saniye içinde gelir." : j.msg || "Gönderilemedi.", !j.ok);
+    if (j.gone) { pushSt = null; pSave(); renderPush(); }
+  } catch (e) { pMsg("Bağlantı hatası, biraz sonra tekrar dene.", true); }
+  if (b && document.body.contains(b)) { b.disabled = false; b.textContent = "🧪 Deneme bildirimi"; }
+}
+async function pushOff() {
+  if (!pushSt) return;
+  const b = $("pOff"); b.disabled = true; b.textContent = "Kapatılıyor…";
+  try { await fetch(ENDPOINT, { method: "POST", body: JSON.stringify({ action: "push_unsub", token: pushSt.token }) }); } catch (e) {}
+  try {
+    const { getApps } = await import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-app.js`);
+    const { getMessaging, deleteToken } = await import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-messaging.js`);
+    const app = getApps().find((a) => a.name === "push"); if (app) await deleteToken(getMessaging(app));
+  } catch (e) {}
+  pushSt = null; pSave(); renderPush(); pMsg("Bildirimler kapatıldı. İstediğin zaman yeniden açabilirsin.");
+}
+// Bildirime dokununca: bugünün haberlerini göster
+if (location.hash === "#bugun") {
+  if (pushSt && pushSt.kws && pushSt.kws.length) kws = pushSt.kws.slice();
+  window.__bugun = true;
+  addEventListener("load", () => setTimeout(() => { if (kws.length && ENDPOINT) $("preview").click(); }, 300));
+}
 render();
 </script>
 <footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">Copyright © <span class="cy">2026</span> Sadolayn. All rights reserved.<br><span style="font-size:10.5px;letter-spacing:.3px;color:#555">Tüm hakları saklıdır.</span></footer>

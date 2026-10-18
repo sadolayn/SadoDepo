@@ -7,6 +7,8 @@
  *   - Her sabah 10:00 (İstanbul) Google Haberler'den anahtar kelimelere
  *     uyan son 24 saatin haberlerini toplar ve özet e-posta gönderir
  *   - Her e-postada "abonelikten çık" bağlantısı bulunur
+ *   - Bildirim açan telefonlara aynı saatte Firebase Cloud Messaging ile
+ *     bildirim gönderir (e-posta gerekmez; telefon kendi kelimeleriyle kayıtlı)
  *
  * Kurulum: alerts/KURULUM.md
  */
@@ -21,11 +23,15 @@ const CFG = {
   DAILY_SIGNUP_LIMIT: 30, // günde en fazla yeni onay e-postası
   CONFIRM_COOLDOWN_MIN: 10,
   HOUR: 10,
+  MAX_PUSH: 500,          // en fazla bildirim kayıtlı telefon
+  DAILY_PUSH_SIGNUP: 150, // günde en fazla yeni telefon kaydı
   TZ: 'Europe/Istanbul'
 };
 
 const COLS = ['email', 'keywords', 'pendingKw', 'ctoken', 'utoken', 'status', 'created', 'lastConfirmMail', 'lastSent'];
 const C = Object.fromEntries(COLS.map((c, i) => [c, i]));
+const PCOLS = ['token', 'keywords', 'os', 'created', 'lastSent', 'lastTest'];
+const PC = Object.fromEntries(PCOLS.map((c, i) => [c, i]));
 
 /* ---------- Kurulum ---------- */
 
@@ -92,6 +98,9 @@ function doPost(e) {
   let body = {};
   try { body = JSON.parse(e.postData.contents || '{}'); } catch (err) { return json_({ ok: false, msg: 'Geçersiz istek.' }); }
   if (body.action === 'subscribe') return json_(subscribe_(body));
+  if (body.action === 'push_sub') return json_(pushSub_(body));
+  if (body.action === 'push_unsub') return json_(pushUnsub_(body));
+  if (body.action === 'push_test') return json_(pushTest_(body));
   return json_({ ok: false, msg: 'Bilinmeyen işlem.' });
 }
 
@@ -257,7 +266,7 @@ function dailyDigest() {
   for (let i = 1; i < data.length; i++) {
     const r = data[i];
     if (r[C.status] !== 'active' || !r[C.keywords]) continue;
-    if (MailApp.getRemainingDailyQuota() < 1) break;
+    if (MailApp.getRemainingDailyQuota() < 1) continue;
 
     const kws = String(r[C.keywords]).split(' | ').filter(Boolean);
     const used = {};
@@ -281,6 +290,160 @@ function dailyDigest() {
       Logger.log('Gönderilemedi: ' + r[C.email] + ' — ' + e);
     }
   }
+  try { pushDigest_(news); } catch (e) { Logger.log('Bildirimler gönderilemedi: ' + e); }
+}
+
+
+/* ---------- Telefon bildirimleri (Firebase Cloud Messaging) ----------
+ * Kurulum: Firebase hizmet hesabı JSON'unu Apps Script > Proje Ayarları > Komut dosyası özellikleri'ne
+ * FCM_SA adıyla yapıştır. Bu anahtar yalnızca burada durur; sitede ya da GitHub'da yer almaz.
+ */
+
+function pushSheet_() {
+  const ss = sheet_().getParent();
+  let sh = ss.getSheetByName('Bildirim');
+  if (!sh) { sh = ss.insertSheet('Bildirim'); sh.appendRow(PCOLS); sh.setFrozenRows(1); }
+  return sh;
+}
+
+function cleanToken_(t) {
+  t = String(t || '').trim();
+  return /^[\w:\-]{100,400}$/.test(t) ? t : '';
+}
+
+function pushSub_(b) {
+  const token = cleanToken_(b.token);
+  if (!token) return { ok: false, msg: 'Bildirim kaydı geçersiz, sayfayı yenileyip tekrar dene.' };
+  const kws = cleanKeywords_(b.keywords);
+  if (!kws.length) return { ok: false, msg: 'En az bir anahtar kelime ekle.' };
+  const os = ['ios', 'android', 'diger'].indexOf(b.os) >= 0 ? b.os : 'diger';
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sh = pushSheet_(), data = sh.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) if (data[i][PC.token] === token) {
+      sh.getRange(i + 1, PC.keywords + 1, 1, 2).setValues([[kws.join(' | '), os]]);
+      return { ok: true, msg: 'Güncellendi.' };
+    }
+    if (data.length - 1 >= CFG.MAX_PUSH) return { ok: false, msg: 'Şu an yeni bildirim kaydı alınamıyor (kapasite dolu).' };
+    const props = PropertiesService.getScriptProperties();
+    const dayKey = 'pushsub_' + Utilities.formatDate(new Date(), CFG.TZ, 'yyyyMMdd');
+    const today = Number(props.getProperty(dayKey) || 0);
+    if (today >= CFG.DAILY_PUSH_SIGNUP) return { ok: false, msg: 'Bugünlük bildirim kotası doldu, yarın tekrar dene.' };
+    const row = new Array(PCOLS.length).fill('');
+    row[PC.token] = token; row[PC.keywords] = kws.join(' | '); row[PC.os] = os; row[PC.created] = new Date();
+    sh.appendRow(row);
+    props.setProperty(dayKey, String(today + 1));
+    return { ok: true, msg: 'Bildirimler açıldı.' };
+  } finally { lock.releaseLock(); }
+}
+
+function pushUnsub_(b) {
+  const token = cleanToken_(b.token);
+  if (!token) return { ok: false };
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sh = pushSheet_(), data = sh.getDataRange().getValues();
+    for (let i = data.length - 1; i >= 1; i--) if (data[i][PC.token] === token) sh.deleteRow(i + 1);
+    return { ok: true };
+  } finally { lock.releaseLock(); }
+}
+
+function pushTest_(b) {
+  const token = cleanToken_(b.token);
+  if (!token) return { ok: false, msg: 'Kayıt bulunamadı.' };
+  const sh = pushSheet_(), data = sh.getDataRange().getValues();
+  let i = 1; for (; i < data.length; i++) if (data[i][PC.token] === token) break;
+  if (i >= data.length) return { ok: false, gone: true, msg: 'Bu telefon kayıtlı değil; bildirimi yeniden aç.' };
+  const last = data[i][PC.lastTest];
+  if (last && (Date.now() - new Date(last).getTime()) < 60000) return { ok: false, msg: 'Az önce deneme gönderildi, bir dakika sonra tekrar dene.' };
+  const kws = String(data[i][PC.keywords]).split(' | ').filter(Boolean);
+  sh.getRange(i + 1, PC.lastTest + 1).setValue(new Date());
+  const res = UrlFetchApp.fetch(fcmUrl_(), fcmReq_(token, '🔔 Sadolayn Alerts · deneme',
+    'Bildirimler çalışıyor ✓ Her sabah 10:00\'da ' + (kws[0] ? '“' + kws[0] + '”' + (kws.length > 1 ? ' ve ' + (kws.length - 1) + ' kelimen daha' : '') : 'kelimelerin') + ' için haber varsa buraya düşecek.', 'test'));
+  const code = res.getResponseCode(), txt = res.getContentText();
+  if (code === 200) return { ok: true };
+  if (code === 404 || /UNREGISTERED/.test(txt)) { sh.deleteRow(i + 1); return { ok: false, gone: true, msg: 'Bu telefonun kaydı geçersiz olmuş; bildirimi yeniden aç.' }; }
+  Logger.log('Deneme bildirimi hatası ' + code + ': ' + txt);
+  return { ok: false, msg: 'Deneme bildirimi gönderilemedi (' + code + ').' };
+}
+
+function fcmSa_() {
+  const raw = PropertiesService.getScriptProperties().getProperty('FCM_SA');
+  if (!raw) throw new Error('FCM_SA ayarı yok (Firebase hizmet hesabı JSON).');
+  return JSON.parse(raw);
+}
+function fcmUrl_() { return 'https://fcm.googleapis.com/v1/projects/' + fcmSa_().project_id + '/messages:send'; }
+
+// Hizmet hesabıyla imzalı JWT → 1 saatlik erişim anahtarı (önbellekte tutulur)
+function fcmAccess_() {
+  const cache = CacheService.getScriptCache(), hit = cache.get('fcm_at');
+  if (hit) return hit;
+  const sa = fcmSa_(), now = Math.floor(Date.now() / 1000);
+  const b64 = (o) => Utilities.base64EncodeWebSafe(typeof o === 'string' ? o : JSON.stringify(o)).replace(/=+$/, '');
+  const head = b64({ alg: 'RS256', typ: 'JWT' });
+  const claim = b64({ iss: sa.client_email, scope: 'https://www.googleapis.com/auth/firebase.messaging', aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 });
+  const sig = Utilities.base64EncodeWebSafe(Utilities.computeRsaSha256Signature(head + '.' + claim, sa.private_key)).replace(/=+$/, '');
+  const res = UrlFetchApp.fetch('https://oauth2.googleapis.com/token', {
+    method: 'post', muteHttpExceptions: true,
+    payload: { grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: head + '.' + claim + '.' + sig }
+  });
+  const j = JSON.parse(res.getContentText() || '{}');
+  if (!j.access_token) throw new Error('Firebase erişim anahtarı alınamadı: ' + res.getContentText());
+  cache.put('fcm_at', j.access_token, 3300);
+  return j.access_token;
+}
+
+function fcmReq_(token, title, body, tag) {
+  const url = CFG.PAGE + '#bugun';
+  return {
+    method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+    headers: { Authorization: 'Bearer ' + fcmAccess_() },
+    payload: JSON.stringify({ message: {
+      token: token,
+      data: { title: title, body: body, url: url, tag: 'sadolayn-' + tag },
+      webpush: { headers: { TTL: '43200', Urgency: 'high' }, notification: { title: title, body: body, icon: CFG.SITE + 'img/icon.png' }, fcm_options: { link: url } }
+    } })
+  };
+}
+
+function pushDigest_(news) {
+  if (!PropertiesService.getScriptProperties().getProperty('FCM_SA')) return;
+  const sh = pushSheet_(), data = sh.getDataRange().getValues();
+  const jobs = [];
+  for (let i = 1; i < data.length; i++) {
+    const kws = String(data[i][PC.keywords] || '').split(' | ').filter(Boolean);
+    if (!data[i][PC.token] || !kws.length) continue;
+    const used = {};
+    const hits = kws.map(kw => ({ kw, items: news(kw).filter(x => !used[x.link] && (used[x.link] = 1)).slice(0, CFG.PER_KEYWORD) })).filter(s => s.items.length);
+    const total = hits.reduce((s, x) => s + x.items.length, 0);
+    if (!total) continue; // haber yoksa bildirim yok
+    let body = hits[0].kw + ': ' + hits[0].items[0].title;
+    if (body.length > 120) body = body.slice(0, 117) + '…';
+    if (hits.length > 1) body += ' · +' + (hits.length - 1) + ' kelimende daha haber var';
+    jobs.push({ row: i + 1, req: Object.assign({ url: fcmUrl_() }, fcmReq_(data[i][PC.token], '☀️ Sadolayn Alerts · ' + total + ' haber', body, 'gunluk')) });
+  }
+  const gone = [], now = new Date();
+  for (let k = 0; k < jobs.length; k += 50) {
+    const part = jobs.slice(k, k + 50), res = UrlFetchApp.fetchAll(part.map(j => j.req));
+    res.forEach((r, n) => {
+      const code = r.getResponseCode(), txt = r.getContentText();
+      if (code === 200) sh.getRange(part[n].row, PC.lastSent + 1).setValue(now);
+      else if (code === 404 || /UNREGISTERED/.test(txt)) gone.push(part[n].row);
+      else Logger.log('Bildirim hatası ' + code + ': ' + txt.slice(0, 300));
+    });
+  }
+  gone.sort((a, b) => b - a).forEach(r => sh.deleteRow(r)); // artık geçersiz telefonları temizle
+  Logger.log('Bildirim: ' + (jobs.length - gone.length) + ' gönderildi, ' + gone.length + ' geçersiz kayıt silindi.');
+}
+
+// Kurulumdan sonra bir kez çalıştır: Firebase bağlantısı tamam mı?
+function testPushSetup() {
+  const sa = fcmSa_();
+  Logger.log('Hizmet hesabı: ' + sa.client_email + ' · proje: ' + sa.project_id);
+  fcmAccess_();
+  Logger.log('✅ Firebase erişimi tamam. Bildirim tablosu: ' + pushSheet_().getParent().getUrl());
 }
 
 /* ---------- E-posta şablonları ---------- */
