@@ -118,7 +118,12 @@
   .jnote { font-size: 11.5px; color: var(--muted); margin: -2px 0 10px; line-height: 1.45; }
   .jbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .jbtns button { padding: 10px 6px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
-  .ccal { background: linear-gradient(135deg, rgba(255,45,149,.10), rgba(255,45,149,.02)); border: 1px solid #5a1f3e; border-radius: 16px; padding: 12px; margin-bottom: 10px; }
+  .jtick { display: block; width: 100%; margin: 0 0 10px; padding: 7px 0; border-radius: 99px; border: 1px solid #7a2a52; background: linear-gradient(90deg, rgba(255,45,149,.16), rgba(255,45,149,.06)); color: #ffd1e8; font-size: 12.5px; font-weight: 600; cursor: pointer; overflow: hidden; }
+  .jtick .jt-w { display: block; overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .jtick .jt-r { display: inline-block; white-space: nowrap; animation: jtk 26s linear infinite; }
+  @keyframes jtk { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .jtick .jt-r { animation: none; } }
+  .ccal { margin-top: 14px !important; background: linear-gradient(135deg, rgba(255,45,149,.10), rgba(255,45,149,.02)); border: 1px solid #5a1f3e; border-radius: 16px; padding: 12px; margin-bottom: 10px; }
   .ccal.hot { background: linear-gradient(135deg, rgba(255,45,149,.26), rgba(255,45,149,.05)); border-color: #ff5aab; box-shadow: 0 6px 22px rgba(255,45,149,.18); }
   .ctop { display: flex; gap: 10px; align-items: flex-start; }
   .ctop .cl { flex: 1; min-width: 0; } .ctop .cl > b { display: block; font-size: 14.5px; color: #fff; } .ctop .cl > span { display: block; font-size: 12.5px; color: #f1d6e4; line-height: 1.45; margin-top: 3px; }
@@ -778,7 +783,7 @@ function campCal() {
   const bar = ilkHafta
     ? `<div class="appr hot"><div class="lbl"><span>🎯 İlk hafta</span><b>${7 - d + 1} gün kaldı</b></div><div class="track"><i style="width:${Math.round(d / 7 * 100)}%"></i><em style="left:${Math.round(d / 7 * 100)}%"></em></div><div class="ends"><span>1 ${ayAd}</span><span>7 ${ayAd}</span></div></div>`
     : `<div class="appr"><div class="lbl"><span>⏳ ${nextAy} başına yaklaşıyor</span><b>${kalan} gün</b></div><div class="track"><i style="width:${pct}%"></i><em style="left:${pct}%"></em></div><div class="ends"><span>bugün ${d} ${ayAd}</span><span>1 ${nextAy} 🎯</span></div></div>`;
-  return `<div class="ccal${ilkHafta ? " hot" : ""}">
+  return `<div class="ccal${ilkHafta ? " hot" : ""}" id="ccal">
       <div class="ctop"><div class="cl">${msg}</div><button type="button" id="jIcs" class="cadd" title="Her ayın 1'inde hatırlatma">📅 Ay başını<br>takvime ekle</button></div>
       ${bar}
       <div class="cals">${miniCal(y, m, t)}${miniCal(m === 11 ? y + 1 : y, (m + 1) % 12, t)}</div>
@@ -790,6 +795,16 @@ function campCal() {
         <p>Bazı taksit ve indirim kampanyaları ayrıca katılım istemeyebilir.</p>
       </details>
     </div>`;
+}
+// Üstte ince kayan hatırlatma: ay başına 5 gün kala ve ayın ilk haftasında görünür
+function campTick() {
+  const t = new Date(), y = t.getFullYear(), m = t.getMonth(), d = t.getDate(), last = new Date(y, m + 1, 0).getDate();
+  const kalan = last - d + 1, ayAd = t.toLocaleDateString("tr-TR", { month: "long" }), nextAy = new Date(y, m + 1, 1).toLocaleDateString("tr-TR", { month: "long" });
+  let tx = "";
+  if (d <= 7) tx = `🎯 Ayın ilk haftası · ${ayAd} kampanyalarına bakma zamanı · ilk haftanın bitmesine ${7 - d + 1} gün · beğendiklerine Katıl`;
+  else if (kalan <= 5) tx = `⏳ 1 ${nextAy}'a ${kalan} gün kaldı · yeni ayın kampanyaları geliyor · ilk hafta göz atmayı unutma`;
+  if (!tx) return "";
+  return `<button type="button" class="jtick" id="jTick" aria-label="Kampanya takvimine git"><span class="jt-w"><span class="jt-r">${tx} &nbsp;·&nbsp; takvim için dokun ↓ &nbsp;&nbsp;&nbsp; ${tx} &nbsp;·&nbsp; takvim için dokun ↓</span></span></button>`;
 }
 function campCard(k) {
   const n = daysLeft(k.bitis), u = n <= 3;
@@ -816,11 +831,13 @@ function renderCamps() {
   if (SP.includes(campTur)) { if (campTur === "🛒 Pazarama") { $("list").innerHTML = pazHtml(); bindPaz(); return; } $("list").innerHTML = campTur === "✈️ Maximiles" ? milesHtml() : oneHtml(); bindSpecial(); return; }
   const vis = camps.filter((k) => campTur === "Tümü" || k.tur === campTur);
   const urg = vis.filter((k) => daysLeft(k.bitis) <= 3);
-  let html = campCal();
+  let html = campTick();
   if (urg.length) html += `<div class="alarm">⏰ <b>${urg.length} kampanya</b> 3 gün içinde bitiyor!</div>`;
   html += vis.map(campCard).join("");
   html += `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm kampanyalar ve katılım koşulları ↗</a>`;
+  html += campCal();
   $("list").innerHTML = html;
+  const tk = $("jTick"); if (tk) tk.onclick = () => { const st = document.querySelector(".stick, header.sticky, .top"), h = st && getComputedStyle(st).position === "sticky" ? st.offsetHeight : 0; window.scrollTo({ top: $("ccal").getBoundingClientRect().top + scrollY - h - 10, behavior: "smooth" }); };
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
   $("jIcs").onclick = icsReminder;
 }
