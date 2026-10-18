@@ -1,4 +1,4 @@
-/**
+/*
  * Sadolayn Alerts — Google Apps Script arka ucu
  * ------------------------------------------------------------
  * Görevleri:
