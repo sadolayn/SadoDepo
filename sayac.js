@@ -1,4 +1,4 @@
-// canli.js — anonim "şu an sitede" sayacı (Firebase Realtime Database).
+// sayac.js — anonim "şu an sitede" sayacı (Firebase Realtime Database).
 // Yazılan tek şey: hangi sayfa, telefon mu bilgisayar mı, zaman. İsim, cihaz kodu, konum, IP yok.
 // Sekme kapanınca kayıt Firebase tarafından kendiliğinden silinir. Günlük sayaç her cihazda günde bir artar.
 const FB_DB = "https://sadolaynsadosan-default-rtdb.europe-west1.firebasedatabase.app";
