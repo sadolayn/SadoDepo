@@ -73,7 +73,19 @@ function doGet(e) {
   if (p.action === 'preview') return json_(preview_(p.q || ''));
   if (p.action === 'confirm') return page_(confirm_(p.t || ''));
   if (p.action === 'unsub') return page_(unsub_(p.t || ''));
+  if (p.action === 'count') return json_(count_());
   return json_({ ok: true, name: CFG.NAME });
+}
+
+// Sitedeki "kalan yer" sayacı için: yalnızca sayılar döner, e-posta ya da kelime dönmez
+function count_() {
+  const c = CacheService.getScriptCache(), k = 'count_v1', hit = c.get(k);
+  if (hit) return JSON.parse(hit);
+  const data = sheet_().getDataRange().getValues().slice(1);
+  const active = data.filter(r => r[C.status] === 'active').length;
+  const o = { ok: true, active: active, max: CFG.MAX_SUBS, left: Math.max(0, CFG.MAX_SUBS - active) };
+  c.put(k, JSON.stringify(o), 120);
+  return o;
 }
 
 function doPost(e) {
