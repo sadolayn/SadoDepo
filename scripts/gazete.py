@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Resmi Gazete günlük özetini çeker ve gazete/ klasörüne yazar.
-Her sabah GitHub Actions ile otomatik çalışır.
+Türkçe karakter desteği düzeltilmiş versiyon.
 """
 
 import json
@@ -12,6 +12,7 @@ from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 from html.parser import HTMLParser
 from zoneinfo import ZoneInfo
+from html import unescape
 
 TZ = ZoneInfo("Europe/Istanbul")
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
@@ -40,6 +41,7 @@ class FihristParser(HTMLParser):
         if tag == "a" and self._in_link:
             text = " ".join(self._text).strip()
             text = re.sub(r"\s+", " ", text)
+            text = unescape(text)
             if text and len(text) > 8:
                 self.items.append({
                     "baslik": text[:300],
@@ -62,9 +64,20 @@ class FihristParser(HTMLParser):
 
 
 def fetch(url: str) -> str:
-    req = Request(url, headers={"User-Agent": UA})
+    req = Request(url, headers={
+        "User-Agent": UA,
+        "Accept": "text/html,application/xhtml+xml",
+        "Accept-Language": "tr-TR,tr;q=0.9"
+    })
     with urlopen(req, timeout=45) as r:
-        return r.read().decode("utf-8", errors="replace")
+        raw = r.read()
+        # Türkçe siteler için sırayla dene
+        for enc in ("utf-8", "windows-1254", "iso-8859-9", "latin-1"):
+            try:
+                return raw.decode(enc)
+            except UnicodeDecodeError:
+                continue
+        return raw.decode("utf-8", errors="replace")
 
 
 def bugunun_tarihi():
@@ -183,7 +196,7 @@ def main():
     with open(f"gazete/{tarih_str}.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    # index.json (son 30 gün)
+    # index.json
     index_path = "gazete/index.json"
     if os.path.exists(index_path):
         with open(index_path, encoding="utf-8") as f:
@@ -196,7 +209,6 @@ def main():
     with open(index_path, "w", encoding="utf-8") as f:
         json.dump(index, f, ensure_ascii=False)
 
-    # kontrol.json
     with open("gazete/kontrol.json", "w", encoding="utf-8") as f:
         json.dump({"son_kontrol": dt.datetime.now(TZ).isoformat()}, f, ensure_ascii=False)
 
