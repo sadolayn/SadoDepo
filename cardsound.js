@@ -15,26 +15,46 @@
     try { const b = AC.createBuffer(1, 1, 22050); const s = AC.createBufferSource(); s.buffer = b; s.connect(AC.destination); s.start(0); } catch (e) {}
     if (AC.state !== "running") AC.resume();
   }
-  // Tek bir kart sesi: kısa, parlak bir hışırtı + masaya değme "tık"ı
+  // Tek bir kart sesi: kâğıdın havada/çuhada kaymasıyla çıkan yumuşak "fşt" + çuhaya düşen kısa, boğuk "pat".
+  // (Eski sürümdeki sinüs "tok" sesi taş/pul gibi duyuluyordu; artık yalnızca filtrelenmiş hışırtı var.)
   function flick(when = 0, vol = 1, bright = 1) {
     if (!AC || muted) return;
-    const t = AC.currentTime + when;
-    const src = AC.createBufferSource(); src.buffer = noise;
-    src.playbackRate.value = 0.9 + Math.random() * 0.25;
-    const bp = AC.createBiquadFilter(); bp.type = "bandpass";
-    bp.frequency.setValueAtTime(3200 * bright, t); bp.frequency.exponentialRampToValueAtTime(1300 * bright, t + 0.07); bp.Q.value = 0.9;
-    const hp = AC.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 600;
-    const g = AC.createGain();
-    g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.55 * vol, t + 0.006);
-    g.gain.exponentialRampToValueAtTime(0.0005, t + 0.09);
-    src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(out);
-    src.start(t, Math.random() * 0.2); src.stop(t + 0.12);
-    // masaya değme
-    const o = AC.createOscillator(), og = AC.createGain();
-    o.type = "sine"; o.frequency.setValueAtTime(190, t + 0.012); o.frequency.exponentialRampToValueAtTime(90, t + 0.06);
-    og.gain.setValueAtTime(0.0001, t + 0.01); og.gain.exponentialRampToValueAtTime(0.18 * vol, t + 0.016); og.gain.exponentialRampToValueAtTime(0.0005, t + 0.07);
-    o.connect(og); og.connect(out); o.start(t + 0.01); o.stop(t + 0.08);
+    const t = AC.currentTime + when, j = 0.9 + Math.random() * 0.2;
+    // 1) kayma: geniş bantlı, tiz ama yumuşatılmış kâğıt hışırtısı
+    const s1 = AC.createBufferSource(); s1.buffer = noise; s1.playbackRate.value = j;
+    const bp = AC.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 0.6;
+    bp.frequency.setValueAtTime(5200 * bright * j, t); bp.frequency.exponentialRampToValueAtTime(2400 * bright, t + 0.06);
+    const lp = AC.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 8500;
+    const g1 = AC.createGain();
+    g1.gain.setValueAtTime(0.0001, t);
+    g1.gain.exponentialRampToValueAtTime(0.32 * vol, t + 0.012);
+    g1.gain.exponentialRampToValueAtTime(0.0005, t + 0.075);
+    s1.connect(bp); bp.connect(lp); lp.connect(g1); g1.connect(out);
+    s1.start(t, Math.random() * 0.25); s1.stop(t + 0.09);
+    // 2) düşme: çok kısa, boğuk kâğıt "pat"ı (gürültü, sinüs yok)
+    const t2 = t + 0.05 + Math.random() * 0.012;
+    const s2 = AC.createBufferSource(); s2.buffer = noise;
+    const lp2 = AC.createBiquadFilter(); lp2.type = "lowpass"; lp2.frequency.value = 1800; lp2.Q.value = 0.5;
+    const hp2 = AC.createBiquadFilter(); hp2.type = "highpass"; hp2.frequency.value = 350;
+    const g2 = AC.createGain();
+    g2.gain.setValueAtTime(0.0001, t2);
+    g2.gain.exponentialRampToValueAtTime(0.38 * vol, t2 + 0.003);
+    g2.gain.exponentialRampToValueAtTime(0.0005, t2 + 0.035);
+    s2.connect(hp2); hp2.connect(lp2); lp2.connect(g2); g2.connect(out);
+    s2.start(t2, Math.random() * 0.25); s2.stop(t2 + 0.045);
+  }
+  // Karıştırma (riffle): kartların uçlarının art arda bırakılmasıyla çıkan hızlı "trrrr"
+  function riffle(when = 0, dur = 0.55, vol = 0.5) {
+    if (!AC || muted) return;
+    const n = Math.round(dur / 0.012);
+    for (let i = 0; i < n; i++) {
+      const t = AC.currentTime + when + i * (dur / n) + Math.random() * 0.004;
+      const s = AC.createBufferSource(); s.buffer = noise;
+      const bp = AC.createBiquadFilter(); bp.type = "bandpass"; bp.Q.value = 1.2; bp.frequency.value = 3000 + Math.random() * 2500;
+      const g = AC.createGain(), v = vol * (0.5 + 0.5 * Math.sin(Math.PI * i / n)) * (0.7 + Math.random() * 0.3);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.3 * v, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.018);
+      s.connect(bp); bp.connect(g); g.connect(out); s.start(t, Math.random() * 0.3); s.stop(t + 0.022);
+    }
   }
   // Kayma sesi (kartları toplama / desteyi çevirme)
   function swish(when = 0, dur = 0.22, vol = 0.5) {
@@ -51,9 +71,9 @@
   const CardSfx = {
     play() { init(); flick(0, 1, 1); },
     flip() { init(); flick(0, 0.7, 1.2); },
-    deal(n = 13) { init(); for (let i = 0; i < n; i++) flick(i * 0.055, 0.55 + Math.random() * 0.25, 1); },
+    deal(n = 13) { init(); for (let i = 0; i < n; i++) flick(i * 0.06, 0.5 + Math.random() * 0.25, 1); },
     collect() { init(); swish(0, 0.24, 0.55); },
-    shuffle() { init(); for (let i = 0; i < 18; i++) flick(i * 0.028, 0.35, 1.3); swish(0.5, 0.25, 0.4); },
+    shuffle() { init(); riffle(0, 0.55, 0.55); swish(0.6, 0.22, 0.4); },
   };
   window.CardSfx = CardSfx;
 
