@@ -415,6 +415,17 @@
   .filmKart img { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; object-position: 50% 18%; filter: grayscale(1) sepia(.5); border: 1px solid #6b5222; }
   .filmKart div { flex: 1; } .filmKart b { display: block; font-size: 15px; color: #f3dca8; } .filmKart span { font-size: 12.5px; color: var(--muted); }
   .filmKart em { flex: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #e0a24f; color: #000; font-style: normal; font-size: 16px; }
+  /* Başlık akışın içinde: portreyle asla üst üste binmez */
+  .ataIntro { justify-content: flex-start; padding-top: max(26px, env(safe-area-inset-top)); overflow-y: auto; }
+  .aiTop { position: static !important; margin: 0 0 auto; padding-bottom: 14px; }
+  .aiTop span { font-family: Georgia, serif !important; font-style: normal !important; font-weight: 700; letter-spacing: 3px !important; font-size: 13px !important; text-transform: uppercase; color: #c9a050 !important; }
+  .aiImg { flex: none; width: min(62vw, 300px, 42vh) !important; margin-top: auto; }
+  .aiQ, .aiSahne { flex: none; }
+  .ataIntro > .aiNok { margin-bottom: auto; }
+  .ataIntro:not(.film) .aiQ { margin-bottom: auto; }
+  .ataIntro.film .aiSahne { margin-bottom: 0; }
+  .aiImza { position: absolute; left: 18px; bottom: max(22px, env(safe-area-inset-bottom)); font-family: Georgia, serif; font-style: italic; font-size: 13px; letter-spacing: 2px; color: #6b5a3a; opacity: 0; animation: aiFade 1.5s 1s forwards; }
+  .ataIntro.film.sahnede .aiQ { display: none; }
 </style>
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
@@ -435,12 +446,12 @@ window.ataOyna = function (film, ozelNot, yas) {
     ["Vasiyet", "Atatürk'ün hisselerinin kâr payları, vasiyeti gereği Türk Dil Kurumu ve Türk Tarih Kurumu'na gider."],
     ["Bir asırdır", "İş Bankası 2024'te 100 yaşını kutladı; ikinci yüzyılına \"Türkiye'nin Bankası\" olarak girdi."]
   ];
-  el.innerHTML = '<div class="aiTop"><span>SADOLAYN</span><i></i><b>İş Bankası Gündemi</b></div>' +
+  el.innerHTML = '<div class="aiTop"><span>İş Bankası Gündemi</span><i></i></div>' +
     (ozelNot ? '<div class="aiOzel' + (yas ? " yas" : "") + '">' + ozelNot + '</div>' : "") +
     '<div class="aiImg"><span class="aiGlow"></span><img src="img/ataturk.jpg" alt="Mustafa Kemal Atatürk" decoding="async"></div>' +
     '<blockquote class="aiQ">Sermayenin azlığına bakarak cesaretiniz kırılmasın! Böyle kurumlar için en kuvvetli sermaye; zekâ, dikkat, iffettir; teknik ve metodik çalışmasını bilmektir. Bu inançla işe sarılınız, mutlaka başarırsınız!<cite>Mustafa Kemal Atatürk</cite></blockquote>' +
     (film ? '<div class="aiSahne" id="aiSahne"></div><div class="aiNok">' + SAHNE.map(function () { return "<i></i>"; }).join("") + "</div>" : "") +
-    '<button type="button" class="aiSkip">' + (film ? "Kapat ✕" : "Geç ›") + "</button>";
+    '<button type="button" class="aiSkip">' + (film ? "Kapat ✕" : "Geç ›") + '</button><div class="aiImza">Sadolayn</div>';
   document.body.appendChild(el); document.documentElement.style.overflow = "hidden";
   var bitti = false, zam = [], kapat = function () { if (bitti) return; bitti = true; zam.forEach(clearTimeout); el.classList.add("out"); document.documentElement.style.overflow = ""; setTimeout(function () { el.remove(); }, 900); };
   if (film) el.querySelector(".aiSkip").onclick = kapat; else el.addEventListener("click", kapat);
@@ -457,7 +468,7 @@ window.ataOyna = function (film, ozelNot, yas) {
         nok.forEach(function (n, k) { n.classList.toggle("on", k <= i); });
       }, 13000 + i * 5200));
     });
-    zam.push(setTimeout(function () { box.classList.remove("on"); void box.offsetWidth; box.innerHTML = "<b>Bilgi paylaştıkça büyür</b><span>Sadolayn · saygıyla</span>"; box.classList.add("on", "son"); }, 13000 + SAHNE.length * 5200));
+    zam.push(setTimeout(function () { box.classList.remove("on"); void box.offsetWidth; box.innerHTML = "<b>Bilgi paylaştıkça büyür</b><span>Saygıyla</span>"; box.classList.add("on", "son"); }, 13000 + SAHNE.length * 5200));
     zam.push(setTimeout(kapat, 13000 + SAHNE.length * 5200 + 6000));
   };
   if (img.complete && img.naturalWidth) basla(); else { img.addEventListener("load", basla); img.addEventListener("error", kapat); zam.push(setTimeout(basla, 4000)); }
