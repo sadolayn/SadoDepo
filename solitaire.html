@@ -85,6 +85,11 @@
   .btn.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); margin-top: 8px; }
   .confetti { position: fixed; top: -40px; font-size: 22px; pointer-events: none; z-index: 1001; animation: fall linear forwards; }
   @keyframes fall { to { transform: translateY(110vh) rotate(540deg); } }
+  .card.target, .slot.target { box-shadow: 0 0 0 3px #3fc283, 0 0 18px rgba(63,194,131,.7) !important; }
+  .card.ghost { pointer-events: none; box-shadow: 0 0 0 3px var(--accent), 0 10px 24px rgba(0,0,0,.6); transition: none; }
+  .solToast { position: fixed; left: 50%; bottom: max(18px, env(safe-area-inset-bottom)); transform: translate(-50%, 20px); max-width: 92vw; padding: 11px 16px; border-radius: 14px; background: rgba(20,18,14,.96); border: 1px solid #6b5222; color: #f3dca8; font-size: 14.5px; line-height: 1.4; text-align: center; box-shadow: 0 10px 28px rgba(0,0,0,.6); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; z-index: 1500; }
+  .solToast.show { opacity: 1; transform: translate(-50%, 0); }
+  .solToast b { color: #fff; } .solToast small { color: #b8a27a; }
 </style>
 <script src="cardsound.js"></script>
 <script src="pwa.js"></script>
@@ -229,6 +234,7 @@ function drawStock() {
   S.moves++;
   startTimer();
   render();
+  checkStuck();
 }
 
 // ---------- Etkileşim ----------
@@ -240,6 +246,7 @@ function onCardTap(id, el) {
   doMove(m);
   render();
   checkWin();
+  checkStuck();
 }
 function shake(el) { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
 function undo() {
@@ -261,14 +268,94 @@ function allMoves() {
   }
   return out;
 }
+// ---------- Akıllı ipucu ve çıkmaz tespiti ----------
+const cName = (c) => (RANK[c.r] || c.r) + c.s;
+function cardTarget(card) {
+  const fi = foundIndexFor(card); if (fi >= 0) return { to: "found", i: fi };
+  for (let ti = 0; ti < 7; ti++) if (canTab(card, ti) && (S.tab[ti].length || card.r === 13)) return { to: "tab", i: ti };
+  return null;
+}
+// Hiç hamle yapmadan desteyi çevirmeye devam edilirse hangi kartlar en üste gelir (3'lü açılış)
+function stockReach() {
+  let st = S.stock.slice(), wa = S.waste.slice();
+  const total = st.length + wa.length, seen = new Map();
+  if (!total) return [];
+  const limit = Math.ceil(total / 3) * 2 + 4;
+  for (let n = 1; n <= limit; n++) {
+    if (!st.length) { st = wa.slice().reverse(); wa = []; }
+    else for (let i = 0; i < 3 && st.length; i++) wa.push(st.pop());
+    if (wa.length) { const t = wa[wa.length - 1]; if (!seen.has(t.id)) seen.set(t.id, { c: t, n }); }
+  }
+  return [...seen.values()];
+}
+function rankMoves() {
+  const score = ({ m }) => (m.to === "found" ? 4 : 0) + (m.loc.from === "tab" && m.loc.k > 0 && !S.tab[m.loc.i][m.loc.k - 1].up ? 3 : 0) + (m.loc.from === "waste" ? 1 : 0);
+  return allMoves().sort((a, b) => score(b) - score(a));
+}
+function targetEl(t) {
+  if (t.to === "found") return els.get("__f" + t.i);
+  const col = S.tab[t.i]; return col.length ? els.get(lastOf(col).id) : els.get("__t" + t.i);
+}
+function toast(txt) {
+  let el = $("solToast"); if (!el) { el = document.createElement("div"); el.id = "solToast"; el.className = "solToast"; document.body.appendChild(el); }
+  el.innerHTML = txt; el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 3200);
+}
+// Kaynaktan hedefe uçan hayalet kart
+function ghostFly(srcEl, dstEl, isTab) {
+  if (!srcEl || !dstEl) return;
+  const a = srcEl.getBoundingClientRect(), b = dstEl.getBoundingClientRect();
+  const g = srcEl.cloneNode(true); g.className = srcEl.className + " ghost"; g.onclick = null;
+  Object.assign(g.style, { position: "fixed", left: a.left + "px", top: a.top + "px", width: a.width + "px", height: a.height + "px", zIndex: 2000, margin: 0 });
+  document.body.appendChild(g);
+  dstEl.classList.add("target"); srcEl.classList.add("hint");
+  const dy = isTab && dstEl.classList.contains("card") ? b.height * 0.36 : 0;
+  const run = () => g.animate([{ transform: "translate(0,0) scale(1)", opacity: .95 }, { transform: `translate(${b.left - a.left}px,${b.top - a.top + dy}px) scale(1.04)`, opacity: .9, offset: .7 }, { transform: `translate(${b.left - a.left}px,${b.top - a.top + dy}px) scale(1)`, opacity: 0 }], { duration: 950, easing: "cubic-bezier(.4,.1,.3,1)" });
+  const an = run(); an.onfinish = () => { const a2 = run(); a2.onfinish = () => { g.remove(); dstEl.classList.remove("target"); srcEl.classList.remove("hint"); }; };
+}
 function hint() {
-  const mv = allMoves().sort((a, b) => (b.m.to === "found") - (a.m.to === "found"));
-  if (!mv.length) {
-    if (S.stock.length || S.waste.length) flash(els.get("__stock"));
+  const mv = rankMoves();
+  if (mv.length) {
+    const { id, m } = mv[0], card = m.loc.from === "waste" ? lastOf(S.waste) : S.tab[m.loc.i][m.loc.k];
+    const dst = targetEl(m), hedef = m.to === "found" ? "bitiş yığınına" : S.tab[m.i].length ? cName(lastOf(S.tab[m.i])) + " kartının üstüne" : "boş sütuna";
+    ghostFly(els.get(id), dst, m.to === "tab");
+    toast(`💡 <b>${cName(card)}</b> → ${hedef}${m.loc.from === "tab" && m.loc.k < S.tab[m.loc.i].length - 1 ? ` <small>(altındaki kartlarla birlikte)</small>` : ""}`);
     return;
   }
-  flash(els.get(mv[0].id));
+  const r = stockReach().map((x) => ({ ...x, t: cardTarget(x.c) })).filter((x) => x.t).sort((a, b) => a.n - b.n)[0];
+  if (r) {
+    flash(els.get("__stock")); const st = els.get("__stock"); st.classList.add("target"); setTimeout(() => st.classList.remove("target"), 1800);
+    const hedef = r.t.to === "found" ? "bitiş yığınına" : S.tab[r.t.i].length ? cName(lastOf(S.tab[r.t.i])) + " kartının üstüne" : "boş sütuna";
+    toast(`🂠 Desteyi <b>${r.n} kez</b> aç: <b>${cName(r.c)}</b> gelecek → ${hedef}`);
+    return;
+  }
+  stuckModal(true);
 }
+// Destedeki kartlar dahil hiçbir kart oynanamıyorsa oyunu sonlandırmayı öner
+function isStuck() {
+  if (isWon() || canAutoFinish()) return false;
+  if (rankMoves().length) return false;
+  return !stockReach().some((x) => cardTarget(x.c));
+}
+function stuckModal(force) {
+  if (!force && !isStuck()) return;
+  clearInterval(timer); timer = null;
+  const t = $("solToast"); t && t.classList.remove("show");
+  document.querySelectorAll(".card.ghost").forEach((g) => g.remove());
+  const kalan = 52 - S.found.reduce((a, f) => a + f.length, 0);
+  window.Rapor && Rapor.oyun("solitaire", false, `Tıkandı · ${52 - kalan}/52 kart bitişte · ${S.moves} hamle`);
+  $("modal").innerHTML = `<div class="moon">🧩</div><h2>Hamle kalmadı</h2>
+    <p>Destedeki kartlar da dahil oynanabilecek bir kart yok; desteyi boşuna çevirmene gerek yok.${kalan < 52 ? `<br><b style="color:var(--accent)">${52 - kalan}</b> kartı bitişe taşıdın 👏` : ""}</p>
+    <button class="btn" id="stNew">Yeni oyun</button>
+    <button class="btn ghost" id="stUndo">↶ Birkaç hamle geri al</button>
+    <button class="btn ghost" id="stLook">Masaya bakayım</button>`;
+  $("overlay").classList.add("show");
+  $("stNew").onclick = () => { $("overlay").classList.remove("show"); wishScreen(); };
+  $("stUndo").onclick = () => { $("overlay").classList.remove("show"); for (let i = 0; i < 3; i++) undo(); };
+  $("stLook").onclick = () => $("overlay").classList.remove("show");
+}
+let stuckT = null;
+function checkStuck() { clearTimeout(stuckT); stuckT = setTimeout(() => { if (isStuck()) stuckModal(false); }, 450); }
 function flash(el) { if (!el) return; el.classList.add("hint"); setTimeout(() => el.classList.remove("hint"), 900); }
 function canAutoFinish() {
   return !S.stock.length && !S.waste.length && S.tab.every((col) => col.every((c) => c.up)) && !isWon();
