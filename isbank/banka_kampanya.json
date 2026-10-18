@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-10-18",
+ "kontrol": "2026-10-19",
  "kategoriler": [
   {
    "slug": "iste-maasa-ozel",
@@ -77,21 +77,9 @@
    "slug": "bireysel-kredi-kampanyalari",
    "ic": "🏦",
    "ad": "Bireysel kredi",
-   "adet": 3,
+   "adet": 1,
    "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
    "kampanyalar": [
-    {
-     "baslik": "Avantajlı %3,49’dan Başlayan Faiz Oranıyla, Taksitli Ek Hesap Kullanma Fırsatı İş Bankası’nda!",
-     "bitis": "2026-10-18",
-     "ozet": "Nakit ihtiyacınızı kolayca karşılayabileceğiniz Taksitli Ek Hesap, aylık %3,49’dan başlayan faiz oranıyla şimdi daha avantajlı!",
-     "url": "https://www.isbank.com.tr/kampanyalar/indirimli-taksitli-ek-hesap-kampanyasi"
-    },
-    {
-     "baslik": "14-18 Ekim 2026 tarihlerine özel kredi fırsatını kaçırmayın!",
-     "bitis": "2026-10-18",
-     "ozet": "Tüm ihtiyaçlarınız için 14 Ekim 2026 saat 00:00 ile 18 Ekim 2026 saat 23:59 saatleri arasına özel %3,48’den başlayan faiz oranlı 36 ay vadeli Anında Kredi İşCep",
-     "url": "https://www.isbank.com.tr/kampanyalar/iscep-aninda-kredide-sinirli-firsat"
-    },
     {
      "baslik": "Gürgençler Alışveriş Kredisi Kampanyası!",
      "bitis": "2026-12-31",
@@ -230,7 +218,7 @@
    "slug": "diger-kampanyalar",
    "ic": "✨",
    "ad": "Diğer kampanyalar",
-   "adet": 9,
+   "adet": 8,
    "url": "https://www.isbank.com.tr/kampanyalar/diger-kampanyalar",
    "kampanyalar": [
     {
@@ -280,12 +268,6 @@
      "bitis": "2026-12-31",
      "ozet": "Sephora’da Anında Alışveriş Kredisi ve Taksitli Ek Hesap ile 3 aya varan vade Fırsatlarıyla Avantajlı Ödeme Koşulları İş Bankası’nda!",
      "url": "https://www.isbank.com.tr/kampanyalar/isbankasindan-sephorada-ozel-yapacaginiz-alisverislerde-firsatlar"
-    },
-    {
-     "baslik": "MediaMarkt'ta Samsung Z Serisine (Z Flip 8, Z Fold 8, Z Fold 8 Ultra) özel 5.000 TL MaxiPuan Fırsatı!",
-     "bitis": "2026-10-18",
-     "ozet": "İşCep'ten kampanyaya katılın, 8 -18 Ekim 2026 tarihleri arasında Maximum Kart’ınızla MediaMarkt mağazaları veya www.mediamarkt.com.tr adresinden yapacağınız peş",
-     "url": "https://www.isbank.com.tr/kampanyalar/mediamarktta-samsung-z-serisi-lansmanina-ozel-maxipuan-kampanyasi"
     }
    ]
   }
