@@ -119,6 +119,10 @@
   html { overflow-anchor: none; }
   .stick header { margin-bottom: 8px; }
   .stick .cal { margin-top: 8px; }
+  .calTog { margin-left: 6px; padding: 2px 8px; border-radius: 99px; border: 1px solid #5a4320; color: var(--accent); font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .sum .lead { font-size: 15.5px !important; font-weight: 600; line-height: 1.55 !important; }
+  .sum li { font-size: 14.5px !important; }
+  .hero .date { font-size: 19px !important; }
 </style>
 <script src="pwa.js"></script>
 <script src="rapor.js"></script>
@@ -174,7 +178,7 @@ const AYLAR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz",
 let calY, calM, selDate = null;
 const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 
-let calCompact = false, weekRef = null;
+let calCompact = true, calUser = false, weekRef = null;
 const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 function dayBtn(iso, today, set) {
   const c = ["day", set.has(iso) ? "has" : "", iso === today ? "today" : "", iso === selDate ? "sel" : "", iso > today ? "fut" : ""].join(" ");
@@ -187,7 +191,7 @@ function renderWeek() {
   const days = [...Array(7)].map((_, i) => { const d = new Date(mon); d.setDate(mon.getDate() + i); return d; });
   const a = days[0], b = days[6];
   const label = a.getMonth() === b.getMonth() ? `${a.getDate()}–${b.getDate()} ${AYLAR[b.getMonth()]} ${b.getFullYear()}` : `${a.getDate()} ${AYLAR[a.getMonth()].slice(0, 3)} – ${b.getDate()} ${AYLAR[b.getMonth()].slice(0, 3)} ${b.getFullYear()}`;
-  let h = `<div class="cal-h"><button id="cprev" aria-label="Önceki hafta">‹</button><b style="font-size:14px">${label}</b>
+  let h = `<div class="cal-h"><button id="cprev" aria-label="Önceki hafta">‹</button><b style="font-size:14px">${label} <span class="calTog" id="calTog" role="button" tabindex="0">📅 Ay ▾</span></b>
     <button id="cnext" aria-label="Sonraki hafta" ${isoOf(b) >= today ? "disabled" : ""}>›</button></div><div class="cal-g">`;
   h += ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"].map((w, i) => `<div class="wd ${i > 4 ? "we" : ""}">${w}</div>`).join("");
   h += days.map((d) => dayBtn(isoOf(d), today, set)).join("") + "</div>";
@@ -195,6 +199,7 @@ function renderWeek() {
   const shift = (n) => { const r = new Date(ref); r.setDate(r.getDate() + n); weekRef = isoOf(r); renderWeek(); };
   $("cprev").onclick = () => shift(-7);
   $("cnext").onclick = () => shift(7);
+  $("calTog").onclick = () => { calCompact = false; calUser = true; const r = weekRef || selDate; calY = +r.slice(0, 4); calM = +r.slice(5, 7) - 1; renderCal(); };
 }
 function renderCal() {
   if (calCompact) return renderWeek();
@@ -203,7 +208,7 @@ function renderCal() {
   const oldest = dates.length ? dates[dates.length - 1] : today;
   const ym = `${calY}-${String(calM + 1).padStart(2, "0")}`;
   let h = `<div class="cal-h"><button id="cprev" aria-label="Önceki ay" ${ym <= "2021-01" ? "disabled" : ""}>‹</button>
-    <b>${AYLAR[calM]} ${calY}</b>
+    <b>${AYLAR[calM]} ${calY} <span class="calTog" id="calTog" role="button" tabindex="0">Hafta ▴</span></b>
     <button id="cnext" aria-label="Sonraki ay" ${ym >= today.slice(0, 7) ? "disabled" : ""}>›</button></div><div class="cal-g">`;
   h += ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"].map((w, i) => `<div class="wd ${i > 4 ? "we" : ""}">${w}</div>`).join("");
   for (let i = 0; i < lead; i++) h += "<div></div>";
@@ -214,6 +219,7 @@ function renderCal() {
   }
   h += `</div><div class="cal-f"><span><i></i>Özet var</span><span>Diğer günler: resmi siteye bağlantı</span></div>`;
   $("cal").innerHTML = h;
+  $("calTog").onclick = () => { calCompact = true; calUser = false; renderCal(); };
   $("cprev").onclick = () => { calM--; if (calM < 0) { calM = 11; calY--; } renderCal(); };
   $("cnext").onclick = () => { calM++; if (calM > 11) { calM = 0; calY++; } renderCal(); };
 }
@@ -301,7 +307,7 @@ async function init() {
   // Aşağı kaydırınca takvim tek haftaya iner, en üste dönünce ay görünümü geri gelir
   window.addEventListener("scroll", () => {
     if (!calCompact && window.scrollY > 80) { calCompact = true; renderCal(); }
-    else if (calCompact && window.scrollY < 6) { calCompact = false; calY = +(weekRef || selDate).slice(0, 4); calM = +(weekRef || selDate).slice(5, 7) - 1; renderCal(); }
+
   }, { passive: true });
   renderStatus();
   const want = location.hash.slice(1);
