@@ -26,6 +26,12 @@
     <p style="margin:0 0 8px"><b style="color:#e0a24f">Telefon donuyorsa: 4 parça halinde yapıştır</b><br>Kod.gs'ye 1. parçayı yapıştır. Sonra Dosyalar'ın yanındaki <b>+ → Komut dosyası</b> ile <b>Kod2</b>, <b>Kod3</b>, <b>Kod4</b> dosyalarını aç; her birine sıradaki parçayı yapıştırıp 💾 kaydet.</p>
     <div id="pb" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
   </div>
+  <div style="margin:16px 0 4px;padding:12px;border:1px solid #1f5a3d;border-radius:14px;background:#08140d">
+    <p style="margin:0 0 8px"><b style="color:#6fe0a8">🔐 Firebase gizli anahtar dosyası (FCM_SA)</b><br>Firebase'den indirdiğin <b>.json</b> dosyasını seç; içeriği panoya kopyalanır. Dosya <b>hiçbir yere gönderilmez</b>, yalnızca bu telefonda okunur.</p>
+    <label style="display:block;padding:14px;border-radius:12px;background:#2fae72;color:#04140b;font-weight:800;text-align:center;font-size:16px;cursor:pointer">📂 .json dosyasını seç<input type="file" id="sa" accept=".json,application/json" hidden></label>
+    <div id="saMsg" style="margin-top:8px;font-size:14px;color:#a8ecc9"></div>
+    <button id="saCp" style="display:none;margin-top:8px">📋 Anahtarı kopyala</button>
+  </div>
   <ol>
     <li>Yukarıdaki düğmeye bas (kod panoya kopyalanır).</li>
     <li>Apps Script'te Kod.gs'nin içine dokun, <b>uzun bas → Tümünü seç</b>, sil.</li>
@@ -55,6 +61,25 @@ fetch("Code.gs?v=" + Date.now()).then((r) => r.text()).then((t) => {
     };
   } else document.getElementById("parts").style.display = "none";
 }).catch(() => { document.getElementById("cp").textContent = "Yüklenemedi, sayfayı yenile"; });
+let saTxt = "";
+document.getElementById("sa").onchange = async (e) => {
+  const f = e.target.files[0], m = document.getElementById("saMsg"), b = document.getElementById("saCp");
+  if (!f) return;
+  try {
+    const j = JSON.parse(await f.text());
+    if (j.type !== "service_account" || !j.private_key || !j.client_email) throw new Error("Bu dosya hizmet hesabı anahtarı değil.");
+    saTxt = JSON.stringify(j);
+    m.innerHTML = "✅ Doğru dosya · proje: <b>" + j.project_id + "</b>" + (j.project_id !== "sadolaynsadosan" ? " <span style='color:#ffb3b3'>(beklenen: sadolaynsadosan)</span>" : "");
+    b.style.display = "block"; b.className = ""; b.textContent = "📋 Anahtarı kopyala";
+  } catch (er) { m.innerHTML = "<span style='color:#ffb3b3'>⚠️ " + (er.message.includes("hizmet") ? er.message : "Dosya okunamadı; Firebase'den indirilen .json dosyasını seç.") + "</span>"; b.style.display = "none"; }
+  e.target.value = "";
+};
+document.getElementById("saCp").onclick = async () => {
+  const b = document.getElementById("saCp");
+  try { await navigator.clipboard.writeText(saTxt); } catch (er) { const ta = document.createElement("textarea"); ta.value = saTxt; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
+  b.className = "ok"; b.textContent = "✅ Kopyalandı! Apps Script → ⚙️ → FCM_SA değerine yapıştır";
+  setTimeout(() => { saTxt = ""; }, 120000);
+};
 document.getElementById("cp").onclick = async () => {
   const b = document.getElementById("cp");
   try { await navigator.clipboard.writeText(code); }
