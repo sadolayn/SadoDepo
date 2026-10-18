@@ -125,6 +125,7 @@
   .hero .date { font-size: 19px !important; }
 </style>
 <script src="pwa.js"></script>
+<script src="ortak.js"></script>
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
@@ -155,11 +156,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<
 const fmtDate = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
 let dates = [];
 
-async function getJSON(url) {
-  const r = await fetch(url + "?t=" + Date.now(), { cache: "no-store" });
-  if (!r.ok) throw new Error(r.status);
-  return r.json();
-}
+const getJSON = (url) => Ortak.json(url);
 
 const fmtTime = (iso) => { const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }); };
 async function renderStatus() {
@@ -283,7 +280,8 @@ async function show(date) {
       <div style="margin-bottom:10px">Bu sayfa haber kaynaklarından hazırlanan bir özettir; resmi metin için Resmi Gazete'ye bakın.</div></div>`;
     $("content").innerHTML = html;
   } catch (e) {
-    $("content").innerHTML = '<div class="empty">Bu günün özeti bulunamadı.</div>';
+    if (/HTTP 404/.test(e && e.message)) $("content").innerHTML = '<div class="empty">Bu günün özeti bulunamadı.</div>';
+    else Ortak.hata("content", { ne: "Resmi Gazete özeti", tekrar: () => show(date) });
   }
 }
 
@@ -291,7 +289,7 @@ async function init() {
   try {
     dates = (await getJSON("gazete/index.json")).sort().reverse();
   } catch (e) {
-    $("content").innerHTML = '<div class="empty">Henüz özet yok.</div>';
+    Ortak.hata("content", { ne: "Resmi Gazete özetleri", tekrar: init });
     return;
   }
   $("pick").innerHTML = dates.map((d) => `<option value="${d}">${fmtDate(d)}</option>`).join("");
@@ -315,8 +313,6 @@ async function init() {
 }
 init();
 </script>
-<footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">Copyright © <span class="cy">2026</span> Sadolayn. All rights reserved.<br><span style="font-size:10.5px;letter-spacing:.3px;color:#555">Tüm hakları saklıdır.</span></footer>
-<script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",s.getBoundingClientRect().top<=0&&window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 </body>

@@ -155,6 +155,7 @@
   @media (prefers-reduced-motion: reduce) { .radar .sweep, .tk-run, .blip, .tk-et { animation: none; } .tk-run { padding-left: 0; } }
 </style>
 <script src="pwa.js"></script>
+<script src="ortak.js"></script>
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
@@ -297,7 +298,7 @@ function bildirimGoster() {
 }
 (async function ticker() {
   try {
-    const d = await (await fetch("data/haberler.json", { cache: "no-cache" })).json();
+    const d = await Ortak.json("data/haberler.json");
     const L = [...(d.cats.gundem || []).slice(0, 6), ...(d.cats.ekonomi || []).slice(0, 4), ...(d.cats.isbank || []).slice(0, 3)];
     if (L.length) { $("tk").innerHTML = L.map((x) => esc(x.t)).join("<b>◆</b>"); $("tk").style.animationDuration = Math.max(40, L.length * 7) + "s"; }
   } catch (e) { $("tk").textContent = "Gündem birazdan burada akacak…"; }
@@ -497,8 +498,6 @@ if (location.hash === "#bugun") {
 }
 render();
 </script>
-<footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">Copyright © <span class="cy">2026</span> Sadolayn. All rights reserved.<br><span style="font-size:10.5px;letter-spacing:.3px;color:#555">Tüm hakları saklıdır.</span></footer>
-<script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 </body>

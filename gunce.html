@@ -221,6 +221,7 @@
   .pz-bc { height: 34px; margin: 12px auto 4px; width: 75%; background: repeating-linear-gradient(90deg, #262626 0 2px, transparent 2px 4px, #262626 4px 5px, transparent 5px 8px, #262626 8px 11px, transparent 11px 12px); }
 </style>
 <script src="pwa.js"></script>
+<script src="ortak.js"></script>
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
@@ -868,8 +869,6 @@ $("resetM").onclick = () => { if (confirm(`${qName()} (${qRange()}) günlük kay
 load(); migrate(); save(); render();
 if (!withTargets().length && phase() === "simdi") setTimeout(() => { try { if (!sessionStorage.getItem("gunceT")) { sessionStorage.setItem("gunceT", 1); openTargets(); } } catch (e) {} }, 600);
 </script>
-<footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">Copyright © <span class="cy">2026</span> Sadolayn. All rights reserved.<br><span style="font-size:10.5px;letter-spacing:.3px;color:#555">Tüm hakları saklıdır.</span></footer>
-<script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 </body>

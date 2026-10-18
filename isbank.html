@@ -433,6 +433,7 @@
   .ataIntro.film.sahnede .aiQ { display: none; }
 </style>
 <script src="pwa.js"></script>
+<script src="ortak.js"></script>
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
@@ -849,7 +850,7 @@ function renderSubeler() {
     d = Object.assign({}, d, { atm: S.atm[L] ?? d.atm, calisan: S.calisan[L] ?? d.calisan, calisanDonem: pLabel(fin.periods[L]),
       yurtici: S.sube[L] != null ? S.sube[L] - d.yurtdisi : d.yurtici, donem: pLabel(fin.periods[L]) });
   }
-  if (!d) { $("list").innerHTML = '<div class="empty">Şube bilgisi yüklenemedi.</div>'; return; }
+  if (!d) { Ortak.hata("list", { ne: "Şube bilgileri" }); return; }
   const f = (n) => Number(n).toLocaleString("tr-TR");
   $("upd").textContent = "Veri dönemi: " + d.donem + " · banka bu verileri 3 ayda bir açıklar";
   $("list").innerHTML = `${sfHtml()}
@@ -902,7 +903,7 @@ async function sfOverpass(q) {
 // Önce sitenin kendi şube dosyası (günde bir güncellenir); yoksa harita sunucularına sorulur
 let SFDB = null;
 async function sfLocal(lat, lon, R, atm) {
-  if (!SFDB) SFDB = await (await fetch("isbank/sube_konum.json", { cache: "no-cache" })).json();
+  if (!SFDB) SFDB = await Ortak.json("isbank/sube_konum.json");
   if (!SFDB || !Array.isArray(SFDB.e) || !SFDB.e.length) throw new Error("bos");
   let E = SFDB.e.filter((x) => (atm || !x.a) && sfDist(lat, lon, x.la, x.lo) <= R);
   SF.uzak = false;
@@ -1101,7 +1102,7 @@ function yatHtml() {
 }
 function renderIscep() {
   const d = iscep;
-  if (!d) { $("list").innerHTML = '<div class="empty">İşCep sürüm bilgisi yüklenemedi.</div>'; return; }
+  if (!d) { Ortak.hata("list", { ne: "İşCep sürüm bilgisi" }); return; }
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "En son sürüm: " + new Date(d.surumler[0].tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
   const fmt = (t) => new Date(t + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
   let html = `<div class="odul">
@@ -1397,43 +1398,36 @@ function renderList() {
 
 (async () => {
   try {
-    const r = await fetch("isbank/haberler.json?t=" + Date.now(), { cache: "no-store" });
-    const d = await r.json();
+    const d = await Ortak.json("isbank/haberler.json");
     all = (d.haberler || []).sort((a, b) => b.tarih.localeCompare(a.tarih));
     newsUpd = d.guncelleme || null;
     try {
-      const rc = await fetch("isbank/kampanyalar.json?t=" + Date.now(), { cache: "no-store" });
-      const c = await rc.json();
+      const c = await Ortak.json("isbank/kampanyalar.json");
       campUpd = c.guncelleme || null;
       camps = (c.kampanyalar || []).filter((k) => daysLeft(k.bitis) >= 1).sort((a, b) => a.bitis.localeCompare(b.bitis));
     } catch (e) {}
     try {
-      const ri = await fetch("isbank/iscep.json?t=" + Date.now(), { cache: "no-store" });
-      iscep = await ri.json();
+      iscep = await Ortak.json("isbank/iscep.json");
     } catch (e) {}
     try {
-      const rs = await fetch("isbank/subeler.json?t=" + Date.now(), { cache: "no-store" });
-      subeler = await rs.json();
+      subeler = await Ortak.json("isbank/subeler.json");
     } catch (e) {}
     try {
-      const rh = await fetch("data/haberler.json?t=" + Date.now(), { cache: "no-store" });
-      const h = await rh.json();
+      const h = await Ortak.json("data/haberler.json");
       live = (h.cats && h.cats.isbank) || []; liveUpd = h.updated || null;
     } catch (e) {}
     if (!CATS.some((c) => c[0] === cat)) cat = "Tümü";
-    try { fin = await (await fetch("isbank/finans.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
-    try { yat = await (await fetch("isbank/yatirimci.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
-    try { bkamp = await (await fetch("isbank/banka_kampanya.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
-    try { blk = await (await fetch("isbank/black.json?t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
-    try { kontrol = (await (await fetch("isbank/kontrol.json?t=" + Date.now(), { cache: "no-store" })).json()).son_kontrol; } catch (e) {}
+    try { fin = await Ortak.json("isbank/finans.json"); } catch (e) {}
+    try { yat = await Ortak.json("isbank/yatirimci.json"); } catch (e) {}
+    try { bkamp = await Ortak.json("isbank/banka_kampanya.json"); } catch (e) {}
+    try { blk = await Ortak.json("isbank/black.json"); } catch (e) {}
+    try { kontrol = (await Ortak.json("isbank/kontrol.json")).son_kontrol; } catch (e) {}
     seenInit(); renderList(); renderChips();
   } catch (e) {
-    $("list").innerHTML = '<div class="empty">Haberler yüklenemedi.</div>';
+    Ortak.hata("list", { ne: "İş Bankası gündemi" });
   }
 })();
 </script>
-<footer class="copyright" style="width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">Copyright © <span class="cy">2026</span> Sadolayn. All rights reserved.<br><span style="font-size:10.5px;letter-spacing:.3px;color:#555">Tüm hakları saklıdır.</span></footer>
-<script>document.querySelectorAll(".cy").forEach(e=>e.textContent=new Date().getFullYear())</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 <script>
