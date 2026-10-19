@@ -377,7 +377,7 @@
     <div class="card">
       <div class="big"><span id="et_lbl">12 ay · aylık taksit</span><b id="et_out">–</b></div>
       <div class="rows" id="et_rows"></div>
-      <p class="note" id="et_note">Sigorta primi dahil değil. İlk taksit kullanımdan 30 gün sonra.</p>
+      <p class="note" id="et_note">İlk taksit kullanımdan 30 gün sonra.</p>
       <div class="tsbtns" style="margin-top:12px"><button type="button" id="et_copy" class="tscopy">📋 Özeti kopyala</button><button type="button" id="et_share" class="tscopy share">📤 Paylaş</button></div>
     </div>
     <p class="eksrc" id="e_src"></p>
@@ -2253,7 +2253,7 @@ $("v_copy").addEventListener("click", () => {
     w.innerHTML = asim
       ? `<b>⚠️ ${Math.round(num("e_gun"))} gün yazıldı; hesap 30 güne göre gösteriliyor.</b> Bir aydan uzun kullanımda dönem faizi ödenmezse ana paraya eklenir ve faize faiz işler; tutar değişir. Uzun vade için aşağıdaki <b>Taksitli Nakit Avans</b>'a bak.`
       : `<b>⚠️ 1 aydan sonra dikkat:</b> Ek hesap faizi her hesap kesim döneminde tahsil edilir. Müşteri dönem faizini ödemezse faiz ana paraya eklenir, faize de faiz işler; tutar bu hesaptan farklı olabilir.`;
-    ekOzet = ozetMetni("BİREYSEL EK HESAP FAİZ ÖZETİ", [[`Kullanılacak tutar: ${tl(P)}`, `Süre: ${gunAd(g)}`, `Aylık faiz oranı: %${f2(r)}`], [`Faiz: ${tl(k.faiz)}`, `KKDF (%15): ${tl(k.kkdf)}`, `BSMV (%15): ${tl(k.bsmv)}`, `Toplam maliyet: ${tl(k.top)}`, `Geri ödenecek toplam: ${tl(P + k.top)}`]], "Valör dikkate alınmıştır. 1 aydan uzun kullanımda dönem faizi ödenmezse anaparaya eklenir; tutar değişebilir.");
+    ekOzet = ozetMetni("BİREYSEL EK HESAP FAİZ ÖZETİ", [[`Kullanılacak tutar: ${tl(P)}`, `Süre: ${gunAd(g)}`, `Aylık faiz oranı: %${f2(r)}`], [`Faiz: ${tl(k.faiz)}`, `KKDF (%15): ${tl(k.kkdf)}`, `BSMV (%15): ${tl(k.bsmv)}`, `Toplam maliyet: ${tl(k.top)}`, `Geri ödenecek toplam: ${tl(P + k.top)}`]]);
     $("e_hapT").textContent = `· ${tl(P)} · %${f2(r)}`;
     $("e_hap").innerHTML = GUNLER.map(([v, ad]) => { const x = kalem(P, r, v); return `<tr class="r${v === g ? " on" : ""}" data-g="${v}"><td>${ad}</td><td>${f2(x.faiz)}</td><td>${f2(x.v)}</td><td>${f2(x.top)} TL</td></tr>`; }).join("");
     $("e_hap").querySelectorAll("tr").forEach((tr) => (tr.onclick = () => { $("e_gun").value = tr.dataset.g; calcEk(); $("e_out").scrollIntoView({ behavior: "smooth", block: "center" }); }));
@@ -2278,8 +2278,8 @@ $("v_copy").addEventListener("click", () => {
     $("et_lbl").textContent = `${n} ay · aylık taksit`;
     $("et_out").textContent = tl(t);
     rows("et_rows", [["Toplam geri ödeme", tl(top), "total"], ["Toplam faiz", tl(sF)], ["KKDF + BSMV", tl(sV)], ["Efektif aylık maliyet", "%" + (re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })]]);
-    $("et_note").textContent = (P < 500 || P > 600000 ? "⚠️ Taksitli kullanım 500 TL – 600.000 TL arası ve ek hesap limiti kadar. " : "") + "Sigorta primi dahil değil. İlk taksit kullanımdan 30 gün sonra.";
-    tOzet = ozetMetni("TAKSİTLİ NAKİT AVANS ÖZETİ (Ek Hesaba bağlı)", [[`Tutar: ${tl(P)}`, `Vade: ${n} ay`, `Aylık faiz oranı: %${f2(r * 100)}`], [`Aylık taksit tutarı: ${tl(t)}`, `Toplam geri ödeme: ${tl(top)}`], [`Toplam faiz: ${tl(sF)}`, `KKDF + BSMV: ${tl(sV)}`, `Efektif aylık maliyet: %${(re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })}`]], "Sigorta primi dahil değildir; oran kullanım günü sabitlenir.");
+    $("et_note").textContent = (P < 500 || P > 600000 ? "⚠️ Taksitli kullanım 500 TL – 600.000 TL arası ve ek hesap limiti kadar. " : "") + "İlk taksit kullanımdan 30 gün sonra.";
+    tOzet = ozetMetni("TAKSİTLİ NAKİT AVANS ÖZETİ (Ek Hesaba bağlı)", [[`Tutar: ${tl(P)}`, `Vade: ${n} ay`, `Aylık faiz oranı: %${f2(r * 100)}`], [`Aylık taksit tutarı: ${tl(t)}`, `Toplam geri ödeme: ${tl(top)}`], [`Toplam faiz: ${tl(sF)}`, `KKDF + BSMV: ${tl(sV)}`, `Efektif aylık maliyet: %${(re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })}`]], "Oran kullanım günü sabitlenir, vade boyunca değişmez.");
     const K = EK.kampanya, kEl = $("et_kamp");
     if (K && bugun >= (K.bas || "") && bugun <= K.bit) { kEl.hidden = false; kEl.href = K.url; kEl.innerHTML = `🎉 <b>${K.ad}</b> · ${trh(K.bit)}'e kadar: ${K.oran} ↗`; } else kEl.hidden = true;
   };
