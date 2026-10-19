@@ -1339,7 +1339,7 @@ async function ipYukle() {
   if (IPJ) return;
   try { IPJ = await Ortak.json("isbank/iscep_ipucu.json"); IPK = IPJ.kategoriler.map((x) => [x.k, x.ic, x.ad]); IPUCU = IPJ.ipuclari; } catch (e) { IPJ = { ipuclari: [] }; }
 }
-let ipSec = null, ipGun = null, ipGecmis = [];
+let ipSec = null, ipGun = null, ipGecmis = [], ipTorba = null; // ipTorba: bu turda henüz çıkmamış ipuçları (hepsi bitmeden tekrar yok)
 const IPC = { ayar: "#3f8cff", para: "#3fc283", maxi: "#b48cf0", kolay: "#f0c64a", arac: "#ef5a5a", ev: "#ef8a4c", aile: "#ff4fa3", seyahat: "#5aa9f0", yatirim: "#a8c94a" };
 // İşCep başlıkları: Maximum'daki gibi menünün hemen altında, yapışkan alanda
 function ipTiles() {
@@ -1358,8 +1358,8 @@ function iscepIpHtml() {
   const L = IPUCU.map((x, i) => [x, i]).filter(([x]) => !ipSec || x.k === ipSec);
   const bas = ipSec ? `<div class="ipsec"><b>${(IPK.find((c) => c[0] === ipSec) || [])[1] || ""} ${esc((IPK.find((c) => c[0] === ipSec) || [])[2] || "")}</b><span>${L.length} ipucu</span><button type="button" data-ipk="">🌟 Hepsine dön</button></div>` : "";
   return (ipSec ? `<div class="iphero mini"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in gizli süper güçleri 🚀</b></div>` : `<div class="iphero"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in gizli süper güçleri 🚀</b><span>800'den fazla işlemin içinden en çok “wow!” dedirtenler. Her gün biri öne çıkar.</span></div>`) + `
-    <div class="ipgun"><div class="iph"><i>${g.ic}</i><div><em>Günün ipucu</em><b>${esc(g.t)}</b></div></div><p>${esc(g.d)}</p><div class="ipn">📍 ${esc(g.n)}</div>
-      <div class="ipl"><a href="${g.u}" target="_blank" rel="noopener">Ayrıntı ↗</a>${ipGecmis.length ? `<button type="button" id="ipGeri">◀ Önceki</button>` : ""}<button type="button" id="ipZar">🎲 Bir tane daha</button></div></div>` + bas + `
+    <div class="ipgun"><div class="iph"><i>${g.ic}</i><div><em>${ipTorba ? `İpucu · ${IPUCU.length - ipTorba.length}/${IPUCU.length}` : "Günün ipucu"}</em><b>${esc(g.t)}</b></div></div><p>${esc(g.d)}</p><div class="ipn">📍 ${esc(g.n)}</div>
+      <div class="ipl"><a href="${g.u}" target="_blank" rel="noopener">Ayrıntı ↗</a>${ipGecmis.length ? `<button type="button" id="ipGeri">◀ Önceki</button>` : ""}<button type="button" id="ipZar">${ipTorba && !ipTorba.length ? "🔁 Hepsini gördün · baştan" : "🎲 Bir tane daha"}</button></div></div>` + bas + `
     ${L.map(([x, i], n) => { const p = n ? L[n - 1][0] : null; let h = "";
       if (x.k === "ayar" && (!p || p.k !== "ayar")) h += `<div class="ipay"><b>⚙️ Bir kez ayarla, hep kullan</b><span>Bunlar İşCep'te <b>bir kez</b> açılır, sonra her gün kendiliğinden çalışır. Çoğu <b>Profil ve Ayarlar</b> menüsünde, kartla ilgili olanlar <b>Kartlar</b> menüsünde.</span></div>`;
       if (x.g && (!p || p.g !== x.g)) h += `<div class="ipgr">${esc(x.g)}</div>`;
@@ -1367,7 +1367,11 @@ function iscepIpHtml() {
     <p class="ipkon">🔄 İpuçları haftada bir isbank.com.tr ile karşılaştırılıp güncellenir${IPJ && IPJ.kontrol ? " · son kontrol: " + new Date(IPJ.kontrol + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : ""}. Uygulamada farklı görürsen İşCep'teki adı geçerlidir.</p>`;
 }
 function bindIscep() {
-  const z = $("ipZar"); if (z) z.onclick = () => { let n; do { n = Math.floor(Math.random() * IPUCU.length); } while (n === ipGun && IPUCU.length > 1); ipGecmis.push(ipGun); if (ipGecmis.length > 30) ipGecmis.shift(); ipGun = n; renderIscep(); };
+  const z = $("ipZar"); if (z) z.onclick = () => {
+    // Torba usulü: karıştırılmış sırayla gelir, hepsi görülmeden hiçbiri tekrar çıkmaz
+    if (!ipTorba || !ipTorba.length) { ipTorba = IPUCU.map((_, i) => i).filter((i) => i !== ipGun); for (let i = ipTorba.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ipTorba[i], ipTorba[j]] = [ipTorba[j], ipTorba[i]]; } }
+    ipGecmis.push(ipGun); if (ipGecmis.length > 100) ipGecmis.shift(); ipGun = ipTorba.pop(); renderIscep();
+  };
   const gr = $("ipGeri"); if (gr) gr.onclick = () => { if (ipGecmis.length) { ipGun = ipGecmis.pop(); renderIscep(); } };
   $("list").querySelectorAll("[data-ipk]").forEach((b) => (b.onclick = () => { ipSec = b.dataset.ipk || null; renderIscep(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
   ipTiles();
