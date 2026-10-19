@@ -130,7 +130,7 @@
    "k": "ayar",
    "ic": "📱",
    "t": "Telefonunla temassız öde: bir kez aç, hep kullan",
-   "d": "Kartını İşCep'te mobil temassıza tanımla; sonra telefonu POS'a yaklaştırman yeter, uygulamayı açman bile gerekmez. 2.500 TL altı şifresiz. NFC'li Android telefonlarda (Android 9 ve üzeri). iPhone'da yok: Apple, Türkiye'de bankaların NFC ile ödemesine izin vermiyor; iPhone'da kasada Karekod ile öde.",
+   "d": "Kartını İşCep'te mobil temassıza tanımla; sonra telefonu POS'a yaklaştırman yeter, uygulamayı açman bile gerekmez. 2.500 TL altı şifresiz. NFC'li Android telefonlarda (Android 9 ve üzeri). iPhone'da bu özellik şu an Türkiye'de sunulmuyor; iPhone'da kasada Karekod ile öde.",
    "n": "Kartlar › Mobil Temassız Ödeme › aç ve kartını seç",
    "u": "https://www.isbank.com.tr/iscep-mobil-temassiz-odeme",
    "git": "📲 Kartsız öde",
