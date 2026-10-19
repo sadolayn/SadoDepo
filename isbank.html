@@ -375,11 +375,11 @@
   .otiles .ot.pay { border-color: #23707e; background: linear-gradient(160deg, rgba(63,191,214,.28), #0b1416); }
   .otiles .ot:active { transform: scale(.96); }
   .otiles.six { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .ocard.flash, .pay.flash { animation: oflash 1.2s ease-out; }
+  .ocard.flash, .pay.flash, .kz.flash { animation: oflash 1.2s ease-out; }
   @keyframes oflash { 0%, 30% { box-shadow: 0 0 0 2px var(--accent); } 100% { box-shadow: 0 0 0 0 transparent; } }
   /* Kartsız öde */
   .pay-hero { margin: 2px 0 10px; padding: 14px; border-radius: 16px; border: 1px solid #23707e; background: radial-gradient(120% 120% at 0% 0%, rgba(63,191,214,.3), rgba(63,191,214,.04) 60%), #0b1012; }
-  .pay-hero b { display: block; font-size: 18px; } .pay-hero span { display: block; margin-top: 4px; font-size: 13px; color: #b9d6dc; line-height: 1.45; }
+  .pay-hero > b { display: block; font-size: 18px; } .pay-hero > span { display: block; margin-top: 4px; font-size: 13px; color: #b9d6dc; line-height: 1.45; }
   .pay-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 10px; }
   .pay { padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--card); }
   .pay.new { border-color: #2f7d55; background: linear-gradient(180deg, rgba(63,194,131,.12), var(--card) 65%); }
@@ -387,6 +387,20 @@
   .pay .ph b { font-size: 15.5px; } .pay .ph small { display: block; font-size: 12px; color: #6fc6d6; font-weight: 600; }
   .pay p { margin: 8px 0 6px; font-size: 13.5px; color: #cfcfcf; line-height: 1.5; }
   .pay .pn { font-size: 12.5px; color: #e9d5ad; background: rgba(224,162,79,.08); border-radius: 9px; padding: 7px 9px; line-height: 1.45; }
+  .pay-hero .hsum { margin-top: 10px; display: inline-block; padding: 6px 11px; border-radius: 99px; background: rgba(224,162,79,.16); border: 1px solid #6b5222; font-size: 12.5px; color: #f3dca8; }
+  .pay-hero .hsum b { color: #fff; }
+  .otiles.six { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .otiles .ot.kz-on { border-color: #6b5222; }
+  .kz { display: block; margin-bottom: 8px; padding: 12px 14px; border-radius: 16px; border: 1px solid #6b5222; background: linear-gradient(160deg, rgba(240,198,116,.16), rgba(13,13,13,1) 70%); color: inherit; text-decoration: none; }
+  .kz .kzh { display: flex; align-items: center; gap: 8px; } .kz .kzh i { font-style: normal; font-size: 22px; } .kz .kzh b { flex: 1; font-size: 15px; line-height: 1.3; }
+  .kz .kzh span { flex: none; font-size: 11.5px; font-weight: 700; color: #f3dca8; background: rgba(0,0,0,.4); border-radius: 99px; padding: 3px 8px; } .kz .kzh span.u { color: #fff; background: #c4352b; }
+  .kz .kzo { margin: 8px 0 6px; font-size: 14px; color: #f6e6c3; line-height: 1.45; }
+  .kz .kzy { display: flex; flex-wrap: wrap; gap: 5px; } .kz .kzy em { font-style: normal; font-size: 11.5px; font-weight: 600; padding: 3px 8px; border-radius: 99px; background: rgba(63,191,214,.14); border: 1px solid #23707e; color: #bfe9f1; }
+  .kz p { margin: 8px 0 4px; font-size: 12.5px; color: #bdbdbd; line-height: 1.45; } .kz small { font-size: 12px; color: var(--accent); font-weight: 600; }
+  .kz.flash { animation: oflash 1.2s ease-out; }
+  .pay .pk { display: flex; flex-direction: column; gap: 5px; margin: 8px 0 2px; }
+  .pay .pk button { text-align: left; padding: 7px 10px; border-radius: 10px; border: 1px solid #6b5222; background: rgba(224,162,79,.1); color: #f3dca8; font: 600 12.5px system-ui, sans-serif; cursor: pointer; }
+  .pay .pk.none { font-size: 12px; color: var(--muted); margin: 8px 0 2px; }
   .pay-tip { font-size: 12.5px; color: var(--muted); text-align: center; margin: 4px 6px 8px; }
   .tfil { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 10px; }
   .tfil button { border: 1px solid var(--line); background: #161616; color: #ddd; border-radius: 999px; padding: 6px 11px; font: inherit; font-size: 12.5px; cursor: pointer; }
@@ -697,23 +711,46 @@ function oneHtml() {
 // ===== Kartsız öde: Maximum ile temassız ve yeni ödeme yolları =====
 // Kaynaklar: isbank.com.tr/iscep-mobil-temassiz-odeme, .../maxsticker-kart, .../maximum-karttan-samsung-akilli-saat-ile-odeme-yapma-kolayligi, .../tr-karekod-ile-odeme; yüzle ödeme duyurusu (Haziran 2025)
 const ODE = [
-  { ic: "💳", ad: "Temassız kart", alt: "En bilinen yol", p: "Kartı POS'a yaklaştır, o kadar. Temassız limitin üstündeki tutarlarda POS kart şifreni ister.", n: "Temassız özelliğini İşCep'te kartının ayarlarından açıp kapatabilirsin." },
-  { ic: "📱", ad: "Telefonla öde", alt: "İşCep · Maximum Mobil", p: "NFC'li Android telefonda kart cebinde kalır. Ekran kilidi açık olsun yeter, uygulamayı açman gerekmez. 2.500 TL altı şifresiz, üstünde POS'ta şifre sorulur.", n: "Maximum Mobil › Kartlarım › kartın sağ üstündeki temassız simgesi · İşCep › Kartlar › Mobil Temassız Ödeme", u: "https://www.isbank.com.tr/iscep-mobil-temassiz-odeme", ua: "isbank.com.tr" },
-  { ic: "⌚", ad: "Akıllı saatle öde", alt: "Samsung · Wear OS", p: "Telefon cepte, bilek POS'a: Wear OS 3.0 ve üzeri Samsung saatlerde Maximum Mobil uygulamasıyla ödenir.", n: "Saatteki Maximum Mobil › \"Saat ile Öde\"yi aç, temassız uygulama olarak Maximum'u ve kartını seç.", u: "https://www.isbank.com.tr/bankamizi-taniyin/maximum-karttan-samsung-akilli-saat-ile-odeme-yapma-kolayligi", ua: "isbank.com.tr" },
-  { ic: "🏷️", ad: "MaxSticker", alt: "Yapıştır, öde", yeni: true, p: "Kredi kartının gücü küçük bir etikette: telefonun arkasına ya da sık kullandığın bir eşyaya yapıştırırsın. Üzerinde kart numarası, son kullanma tarihi ve CVV yoktur.", n: "İşCep › MaxSticker Kartlarım'dan başvurulur. Limit sıfırdan başlar, İşCep'ten sen belirlersin. Metal ve MagSafe kılıfların üstünde çalışmaz.", u: "https://www.isbank.com.tr/maxsticker-kart", ua: "isbank.com.tr" },
-  { ic: "🙂", ad: "Yüzle öde", alt: "Kart, telefon, şifre yok", p: "Anlaşmalı mağazalarda (ör. CarrefourSA) kasadaki kameraya bakarak ödersin. Türk bankacılığında bir ilk; Visa iş birliğiyle.", n: "İşCep'te yüzünü bir kez tanımla ve ödemelerin yansıyacağı kredi kartını seç.", u: "https://www.dha.com.tr/ekonomi/is-bankasi-yuz-tanima-teknolojisi-ile-odeme-donemini-baslatiyor-2661768", ua: "duyuru haberi" },
-  { ic: "🔳", ad: "TR Karekod", alt: "QR ile öde", p: "POS'taki karekodu telefonunla okut, kartını ya da hesabını seç, tutarı onayla. Kart çıkarmana gerek yok; Maximum Mobil'le de olur.", n: "İşCep › Ödeme Yap › Karekod ile öde › kodu okut › Onayla", u: "https://www.isbank.com.tr/tr-karekod-ile-odeme", ua: "isbank.com.tr" },
+  { ic: "💳", ad: "Temassız kart", k: "Kart", alt: "En bilinen yol", p: "Kartı POS'a yaklaştır, o kadar. Temassız limitin üstündeki tutarlarda POS kart şifreni ister.", n: "Temassız özelliğini İşCep'te kartının ayarlarından açıp kapatabilirsin.", kn: "ℹ️ 600 TL'lik kampanyada fiziki kartla temassız ödeme sayılmıyor; telefon, saat ya da karekod kullan." },
+  { ic: "📱", ad: "Telefonla öde", k: "Telefon", alt: "İşCep · Maximum Mobil", p: "NFC'li Android telefonda kart cebinde kalır. Ekran kilidi açık olsun yeter, uygulamayı açman gerekmez. 2.500 TL altı şifresiz, üstünde POS'ta şifre sorulur.", n: "Maximum Mobil › Kartlarım › kartın sağ üstündeki temassız simgesi · İşCep › Kartlar › Mobil Temassız Ödeme", u: "https://www.isbank.com.tr/iscep-mobil-temassiz-odeme", ua: "isbank.com.tr" },
+  { ic: "⌚", ad: "Akıllı saatle öde", k: "Saat", alt: "Samsung · Wear OS", p: "Telefon cepte, bilek POS'a: Wear OS 3.0 ve üzeri Samsung saatlerde Maximum Mobil uygulamasıyla ödenir.", n: "Saatteki Maximum Mobil › \"Saat ile Öde\"yi aç, temassız uygulama olarak Maximum'u ve kartını seç.", u: "https://www.isbank.com.tr/bankamizi-taniyin/maximum-karttan-samsung-akilli-saat-ile-odeme-yapma-kolayligi", ua: "isbank.com.tr" },
+  { ic: "🏷️", ad: "MaxSticker", k: "MaxSticker", alt: "Yapıştır, öde", yeni: true, p: "Kredi kartının gücü küçük bir etikette: telefonun arkasına ya da sık kullandığın bir eşyaya yapıştırırsın. Üzerinde kart numarası, son kullanma tarihi ve CVV yoktur.", n: "İşCep › MaxSticker Kartlarım'dan başvurulur. Limit sıfırdan başlar, İşCep'ten sen belirlersin. Metal ve MagSafe kılıfların üstünde çalışmaz.", u: "https://www.isbank.com.tr/maxsticker-kart", ua: "isbank.com.tr", kn: "ℹ️ Şu an MaxSticker'a özel kampanya yok; çıkınca burada görünür." },
+  { ic: "🙂", ad: "Yüzle öde", k: "Yüzle", alt: "Kart, telefon, şifre yok", p: "Anlaşmalı mağazalarda (ör. CarrefourSA) kasadaki kameraya bakarak ödersin. Türk bankacılığında bir ilk; Visa iş birliğiyle.", n: "İşCep'te yüzünü bir kez tanımla ve ödemelerin yansıyacağı kredi kartını seç.", u: "https://www.dha.com.tr/ekonomi/is-bankasi-yuz-tanima-teknolojisi-ile-odeme-donemini-baslatiyor-2661768", ua: "duyuru haberi" },
+  { ic: "🔳", ad: "TR Karekod", k: "Karekod", alt: "QR ile öde", p: "POS'taki karekodu telefonunla okut, kartını ya da hesabını seç, tutarı onayla. Kart çıkarmana gerek yok; Maximum Mobil'le de olur.", n: "İşCep › Ödeme Yap › Karekod ile öde › kodu okut › Onayla", u: "https://www.isbank.com.tr/tr-karekod-ile-odeme", ua: "isbank.com.tr" },
+  { ic: "🅿️", ad: "İşPay", k: "İşPay", alt: "Online, kart bilgisi yok", p: "İnternet alışverişinde ödeme adımında İşPay'i seçersin; kart bilgisi girmeden kredi kartı, MaxiPuan, havale, Taksitli Ek Hesap ya da Anında Alışveriş Kredisi ile ödersin.", n: "Alışveriş sitesinin ödeme sayfasında \"İşPay\" seçeneğine dokun, İş Bankası ile onayla.", u: "https://www.isbank.com.tr/bankamizi-taniyin/is-bankasi-odeme-deneyimini-ispay-ile-tek-platformda-topladi", ua: "isbank.com.tr" },
 ];
+// Kartsız ödemeye kampanyalar (resmi sayfalardan doğrulandı; yollar: hangi ödeme yollarında geçerli)
+const ODE_K = [
+  { ic: "🎁", ad: "Mobil temassız, saat ve karekoda 600 TL MaxiPuan", tl: 600, od: "Her <b>1.500 TL ve üzeri</b> ödemeye <b>30 TL</b>, toplam <b>600 TL</b> MaxiPuan · günde 1 kez sayılır", yollar: ["📱", "⌚", "🔳"], bas: "2026-10-01", bitis: "2026-10-31",
+    not: "Önce İşCep / Maximum Mobil › Kampanyalar › <b>KATIL</b>. Telefonla temassızda yalnız Android geçerli; fiziki kartla temassız sayılmaz. Kredi kartı, Bankamatik ve MaxiPara kartlar dahil.", u: "https://www.maximum.com.tr/kampanyalar/mobil-temassiz-ve-tr-karekod-odemelerinize-maxipuan-firsati" },
+  { ic: "⛽", ad: "Shell'de kartsız ödeyene +50 TL", tl: 50, od: "Akaryakıta 450 TL MaxiPuan + ödemelerden biri mobil temassız ya da karekodla ise <b>+50 TL</b> · toplam 500 TL", yollar: ["📱", "🔳"], bas: "2026-10-01", bitis: "2026-11-15",
+    not: "İki kampanya birlikte işler: aynı ödeme 600 TL'lik kampanyaya da sayılabilir (1.500 TL ve üzeriyse).", u: "https://www.maximum.com.tr/kampanyalar/shell-maxipuan-kampanyasi" },
+  { ic: "✈️", ad: "ETS'de İşPay ile 1.000 TL'ye varan ek MaxiPuan", tl: 1000, od: "Tek seferde 45.000 TL+ → 350 TL · 70.000 TL+ → 700 TL · 120.000 TL+ → <b>1.000 TL</b>", yollar: ["🅿️"], bas: "2026-10-01", bitis: "2026-10-31",
+    not: "Etstur sitesinde ödeme adımında <b>İşPay</b>'i seç ya da İşCep › Hayatım › Seyahatim › Etstur'dan öde.", u: "https://www.isbank.com.tr/kampanyalar/etsde-iscep-seyahatime-ozel-ek-maxipuan-firsati" },
+];
+const kGun = (k) => daysLeft(k.bitis);
 function odeHtml() {
-  const L = camps.filter((c) => /temassız|temassiz|karekod|qr|maxsticker|saat ile|yüz/i.test(c.baslik + " " + c.ozet));
-  return `<div class="pay-hero"><b>📲 Kartsız öde</b><span>Maximum ile kart, telefon, saat, etiket, yüz ya da karekodla; sana uyanı seç.</span></div>
-    <div class="otiles six">${ODE.map((o, i) => `<button type="button" class="ot${o.yeni ? " pay" : ""}" data-go="ode${i}"><i>${o.ic}</i><span>${o.ad}</span>${o.yeni ? '<em class="y">YENİ</em>' : ""}</button>`).join("")}</div>
-    <div class="pay-grid">${ODE.map((o, i) => `<div class="pay${o.yeni ? " new" : ""}" id="ode${i}"><div class="ph"><i>${o.ic}</i><div><b>${o.ad}${o.yeni ? ' <span class="newtag">YENİ</span>' : ""}</b><small>${o.alt}</small></div></div>
-      <p>${o.p}</p><div class="pn">👉 ${o.n}</div>${o.u ? `<a class="olink" href="${o.u}" target="_blank" rel="noopener">Ayrıntılar · ${o.ua} ↗</a>` : ""}</div>`).join("")}</div>
-    <div class="ocard"><div class="oh"><i>🎁</i><b>Kartsız ödemeye kampanya</b></div>
-      <a class="omini olnk" href="https://www.maximum.com.tr/kampanyalar/shell-maxipuan-kampanyasi" target="_blank" rel="noopener"><span>Shell'de en az bir ödemeyi mobil temassız ya da karekodla yapana <b>+50 TL MaxiPuan</b>&nbsp;<i class="oarr">↗</i></span><small>15 Kas</small></a>
-      ${L.map((c) => `<a class="omini olnk" href="${esc(c.url || "https://www.maximum.com.tr/kampanyalar")}" target="_blank" rel="noopener"><span>${esc(c.baslik)}&nbsp;<i class="oarr">↗</i></span><small>${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></a>`).join("")}
-      <a class="olink dim" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Mobil temassız kampanyaları · maximum.com.tr ↗</a></div>
+  const K = ODE_K.filter((k) => kGun(k) >= 0);
+  const known = new Set(K.map((k) => k.u));
+  const L = camps.filter((c) => !known.has(c.url) && /temassız|temassiz|karekod|qr|maxsticker|saat ile|yüz ile|işpay|ispay/i.test(c.baslik + " " + c.ozet));
+  const tag = (o) => K.filter((k) => k.yollar.includes(o.ic));
+  const kCard = (k, i) => { const n = kGun(k); return `<a class="kz" id="kz${i}" href="${k.u}" target="_blank" rel="noopener">
+      <div class="kzh"><i>${k.ic}</i><b>${k.ad}</b><span class="${n <= 3 ? "u" : ""}">${n <= 0 ? "Son gün" : "Son " + n + " gün"}</span></div>
+      <div class="kzo">${k.od}</div>
+      <div class="kzy">${k.yollar.map((y) => { const o = ODE.find((x) => x.ic === y); return `<em>${y} ${o ? o.ad : ""}</em>`; }).join("")}</div>
+      <p>${k.not}</p><small>${new Date(k.bas + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })} – ${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })} · koşullar ↗</small></a>`; };
+  return `<div class="pay-hero"><b>📲 Kartsız öde, kazan</b><span>Telefon, saat, karekod, MaxSticker, yüz ya da İşPay… Kartsız ödemeye özel kampanyalar ve hangi yolun nerede geçtiği tek yerde.</span>
+      ${K.length ? `<div class="hsum"><b>${K.length}</b> kampanya · toplam <b>${K.reduce((t, k) => t + k.tl, 0).toLocaleString("tr-TR")} TL</b>'ye varan MaxiPuan</div>` : ""}</div>
+    <div class="otiles six">${ODE.map((o, i) => { const t = tag(o).length; return `<button type="button" class="ot${o.yeni ? " pay" : ""}${t ? " kz-on" : ""}" data-go="ode${i}"><i>${o.ic}</i><span>${o.k}</span>${o.yeni ? '<em class="y">YENİ</em>' : t ? `<em>🎁${t}</em>` : ""}</button>`; }).join("")}</div>
+    <div class="ohead" style="margin-top:4px">🎁 Kartsız ödemeye kampanyalar<span>Kartın üstüne dokun, resmi kampanya sayfası açılır</span></div>
+    ${K.map(kCard).join("")}
+    ${L.length ? `<div class="ocard">${L.map((c) => `<a class="omini olnk" href="${esc(c.url || "https://www.maximum.com.tr/kampanyalar")}" target="_blank" rel="noopener"><span>${esc(c.baslik)}&nbsp;<i class="oarr">↗</i></span><small>${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></a>`).join("")}</div>` : ""}
+    <div class="ohead" style="margin-top:16px">🧭 Ödeme yolları<span>Nasıl açılır, hangi kampanyada geçerli</span></div>
+    <div class="pay-grid">${ODE.map((o, i) => { const T = tag(o); return `<div class="pay${o.yeni ? " new" : ""}" id="ode${i}"><div class="ph"><i>${o.ic}</i><div><b>${o.ad}${o.yeni ? ' <span class="newtag">YENİ</span>' : ""}</b><small>${o.alt}</small></div></div>
+      <p>${o.p}</p><div class="pn">👉 ${o.n}</div>
+      ${T.length ? `<div class="pk">${T.map((k) => `<button type="button" data-go="kz${ODE_K.indexOf(k)}">🎁 ${k.ad}</button>`).join("")}</div>` : o.kn ? `<div class="pk none">${o.kn}</div>` : ""}
+      ${o.u ? `<a class="olink" href="${o.u}" target="_blank" rel="noopener">Ayrıntılar · ${o.ua} ↗</a>` : ""}</div>`; }).join("")}</div>
+    <a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Yeni kartsız ödeme kampanyaları · maximum.com.tr ↗</a>
     <div class="pay-tip">🔒 Kartın, telefonun ya da MaxSticker'ın kaybolursa İşCep'ten hemen geçici olarak kapatabilirsin.</div>`;
 }
 // ===== Black: İş Black programı (2 kademe) + Maximiles Black kart =====
