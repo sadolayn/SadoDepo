@@ -183,6 +183,26 @@
   .blk { position: relative; overflow: hidden; border-radius: 18px; padding: 16px; margin-bottom: 10px; color: #eee; background: radial-gradient(120% 90% at 100% 0%, #3a3123 0%, #121212 45%, #050505 100%); border: 1px solid #3a3326; box-shadow: inset 0 1px 0 rgba(255,230,180,.08); }
   .blk::after { content: ""; position: absolute; right: -40px; top: -40px; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, rgba(240,198,116,.18), transparent 70%); pointer-events: none; }
   .blk .bh span { font-size: 10.5px; letter-spacing: 3px; color: #b79a74; } .blk .bh b { display: block; font-family: Georgia, serif; font-size: 26px; color: #f3dca8; letter-spacing: .5px; margin: 2px 0; } .blk .bh small { color: #a9a39a; font-size: 12.5px; }
+  .aysec { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+  .aysec button { position: relative; padding: 10px 8px; border-radius: 12px; border: 1px solid #3a3326; background: #0d0d0d; color: #e6e0d4; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .aysec button small { display: block; font-size: 10.5px; font-weight: 500; color: #9a9a9a; margin-top: 2px; }
+  .aysec button.on { background: linear-gradient(160deg, #f3dca8, #c9a050); color: #000; border-color: #f3dca8; } .aysec button.on small { color: #3a2c14; }
+  .aysec button.p { border-color: #23506b; } .aysec button.p.on { background: linear-gradient(160deg, #6fe3e3, #3f7cff); border-color: #9fe9ff; color: #001133; } .aysec button.p.on small { color: #0b2350; }
+  .aykim { display: flex; gap: 8px; font-size: 12.5px; line-height: 1.5; color: #c9c9c9; background: #0d0d0d; border: 1px solid var(--line); border-radius: 12px; padding: 9px 11px; margin-bottom: 10px; }
+  .aykim a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .ipl { position: relative; overflow: hidden; border-radius: 18px; padding: 16px; margin-bottom: 10px; color: #eee; background: radial-gradient(120% 90% at 100% 0%, #10405a 0%, #0a1830 50%, #050812 100%); border: 1px solid #1f3f6b; }
+  .ipl .bh span { font-size: 10.5px; letter-spacing: 3px; color: #7fb8d8; } .ipl .bh b { display: block; font-size: 26px; color: #9fe9ff; margin: 2px 0; font-weight: 800; } .ipl .bh small { color: #a9b6c8; font-size: 12.5px; line-height: 1.45; display: block; }
+  .ipt3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 12px 0 8px; }
+  .ipt3 div { border-radius: 12px; padding: 9px 8px; background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #000), #050812); border: 1px solid color-mix(in srgb, var(--c) 70%, #000); min-width: 0; }
+  .ipt3 em { font-style: normal; font-size: 9.5px; letter-spacing: 1.5px; color: #fff; font-weight: 800; } .ipt3 b { display: block; font-size: 15px; color: #fff; margin: 3px 0 1px; white-space: nowrap; letter-spacing: -.3px; } .ipt3 span { display: block; font-size: 10.5px; color: #b9c6d8; } .ipt3 i { display: block; font-style: normal; font-size: 10.5px; color: #dfe9ff; margin-top: 5px; line-height: 1.35; }
+  .ipl p { font-size: 12.5px; color: #a9b6c8; margin: 8px 0; line-height: 1.5; } .ipl p b { color: #dfe9ff; } .ipl > a { color: #9fe9ff; font-size: 13px; text-decoration: none; font-weight: 600; }
+  .iptab { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 6px 0; }
+  .iptab th { font-size: 11px; font-weight: 800; padding: 6px 3px; text-align: center; border-bottom: 1px solid #1f3f6b; } .iptab th:first-child { text-align: left; color: #7fb8d8; font-weight: 600; }
+  .iptab td { padding: 7px 3px; border-bottom: 1px solid rgba(255,255,255,.06); text-align: center; font-weight: 700; color: #fff; white-space: nowrap; } .iptab td.n { color: #4a5568; font-weight: 400; }
+  .iptab td:first-child { text-align: left; white-space: normal; font-weight: 500; } .iptab td:first-child a { color: #dfe9ff; text-decoration: none; }
+  .ipadim { border-radius: 14px; padding: 12px; margin-bottom: 10px; background: rgba(224,162,79,.07); border: 1px solid #6b5326; font-size: 13px; line-height: 1.5; color: #e6e0d4; }
+  .ipadim > b { display: block; color: var(--accent); margin-bottom: 6px; } .ipadim div { display: flex; gap: 8px; margin-top: 6px; } .ipadim i { flex: 0 0 10px; height: 10px; margin-top: 5px; border-radius: 50%; background: var(--c); }
+  .ipdet { margin-bottom: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 4px 12px; background: #0d0d0d; } .ipdet summary { cursor: pointer; padding: 8px 0; font-size: 13.5px; color: var(--accent); font-weight: 600; } .ipdet p { font-size: 12.5px; line-height: 1.5; color: #c9c9c9; margin: 6px 0; }
   .tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
   .tier { border-radius: 14px; padding: 12px; background: linear-gradient(160deg, #1d1d1d, #0a0a0a); border: 1px solid #3a3a3a; } .tier.plus { background: linear-gradient(160deg, #3b301c, #120e07); border-color: #8a6a2e; }
   .tier em { font-style: normal; font-size: 10.5px; letter-spacing: 2px; color: #b79a74; } .tier b { display: block; font-size: 20px; color: #fff; margin: 4px 0 2px; } .tier.plus b { color: #f3dca8; } .tier span { font-size: 11.5px; color: #9a9a9a; }
@@ -623,13 +643,15 @@ const CATS = [
   ["Soru", "#e0a24f", "❓"],
   ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "Maximum": "Maximum<small>Maximiles</small>", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>" };
+const LBL = { "Maximum": "Maximum<small>Maximiles</small>", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "Black<small>İş Plus</small>" };
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
 let bkamp = null, blk = null, fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
-if (location.hash === "#maximum") cat = "Maximum"; // ana sayfadaki kampanya hatırlatıcısından gelince
+if (location.hash === "#maximum") cat = "Maximum";
+let ayr = "black", ipl = null; try { ayr = localStorage.getItem("isbankAyr") || "black"; } catch (e) {}
+if (location.hash === "#isplus") { cat = "Black"; ayr = "plus"; } // ana sayfadaki kampanya hatırlatıcısından gelince
 
 // ===== "Yeni" takibi: okunmamış içerik düğmede kırmızı sayı olarak görünür, bakınca düşer =====
 let SEEN = null, NEWNOW = new Set();
@@ -780,6 +802,37 @@ function odeHtml() {
 }
 // ===== Black: İş Black programı (2 kademe) + Maximiles Black kart =====
 // Kaynak: isbank.com.tr duyurusu (23.01.2026), maximiles.com.tr Maximiles Black sayfası, İş Bankası lounge kampanya sayfası
+// ===== Ayrıcalık programları: İş Black (varlığa göre) · İş Plus (İşCep ve kart kullanımına göre) =====
+function ayrSecHtml() {
+  return `<div class="aysec"><button type="button" data-ayr="black" class="${ayr !== "plus" ? "on" : ""}">🖤 İş Black<small>varlığa göre</small></button><button type="button" data-ayr="plus" class="p ${ayr === "plus" ? "on" : ""}">💠 İş Plus<small>İşCep ve kart kullanımına göre</small></button></div>
+    <div class="aykim">🧭 <span><b>Müşteri hangi programda?</b> Varlığı 1 milyon TL ve üzeri → <b>İş Black</b> · maaşını İş Bankası'ndan alıyor → <a href="https://www.isbank.com.tr/kampanyalar/iste-maasa-ozel" target="_blank" rel="noopener">İş'te Maaş'a Özel ↗</a> · diğerleri İşCep'i ve kartını kullandıkça → <b>İş Plus</b></span></div>`;
+}
+function isplusHtml() {
+  const J = ipl;
+  if (!J) return `<div class="empty">İş Plus bilgileri yüklenemedi. <a href="https://www.isbank.com.tr/isplus" target="_blank" rel="noopener" style="color:var(--accent)">isbank.com.tr/isplus ↗</a></div>`;
+  const S = J.seviyeler;
+  return `<div class="ipl">
+      <div class="bh"><span>İŞCEP KULLANIMINA GÖRE</span><b>İş Plus</b><small>${esc(J.ozet)}</small></div>
+      <div class="ipt3">${S.map((x) => `<div style="--c:${x.renk}"><em>${esc(x.ad.toUpperCase())}</em><b>${esc(x.kart)}+</b><span>30 günde kart harcaması</span><i>${x.ek === "Ek koşul yok" ? "ek koşul yok" : "+ " + esc(x.ek)}</i></div>`).join("")}</div>
+      <p class="iort">✔️ Üç seviyede de ortak koşul: ${esc(J.ortak)}. Hesap hep <b>son 30 güne</b> bakar.</p>
+      <table class="iptab"><thead><tr><th>Ayrıcalık</th>${S.map((x) => `<th style="color:${x.renk === "#2a3a9c" ? "#8fa2ff" : x.renk}">${esc(x.ad)}</th>`).join("")}</tr></thead><tbody>
+        ${J.ayricaliklar.map((a) => `<tr><td><a href="${a.u}" target="_blank" rel="noopener">${a.ic} ${esc(a.ad)}</a></td>${a.v.map((v) => `<td class="${v === "–" ? "n" : ""}">${esc(v)}</td>`).join("")}</tr>`).join("")}
+      </tbody></table>
+      <p>📍 Seviyeni gör: <b>${esc(J.nerede)}</b></p>
+      <a href="${J.kaynak}" target="_blank" rel="noopener">İş Plus'ın tüm koşulları ↗</a>
+    </div>
+    <div class="ipadim"><b>💡 Müşteriye bir adım: seviyeyi nasıl yükseltir?</b>
+      <div><i style="--c:${S[0].renk}"></i><span><b>Turkuaz → Mavi:</b> kart harcamasını ayda ${esc(S[1].kart)}'ye çıkarıp <b>1 fatura talimatı</b> vermesi yeter (ya da hesabına 30 günde 90.000 TL gelmesi). Kazancı: ayda 4 ücretsiz EFT/FAST, markette %10, kitap ve sinemada %10.</span></div>
+      <div><i style="--c:${S[1].renk}"></i><span><b>Mavi → Lacivert:</b> ayda ${esc(S[2].kart)} kart harcaması + <b>3 fatura talimatı</b> (ya da 120.000 TL gelen para). Kazancı: ayda 6 ücretsiz EFT/FAST, %15 indirimler, konser ve yapay zekâ platformlarında %15.</span></div>
+      <div><i style="--c:#e0a24f"></i><span>En kolay adım çoğu zaman <b>fatura talimatı</b>: elektrik, su, telefon faturasını İşCep'ten talimata bağlamak hem seviyeyi yükseltir hem gecikmeyi önler.</span></div>
+    </div>
+    <details class="ipdet"><summary>Hangi harcamalar sayılır, seviye ne zaman değişir?</summary>
+      <p>✅ <b>Sayılır:</b> ${esc(J.harcama_dahil)}</p>
+      <p>❌ <b>Sayılmaz:</b> ${esc(J.harcama_haric)}</p>
+      <p>🔄 ${esc(J.guncelleme)}</p>
+      <p>ℹ️ ${esc(J.dahil_degil)}</p>
+    </details>`;
+}
 function blackHtml() {
   return `<div class="blk">
       <div class="bh"><span>İŞ BANKASI</span><b>İş Black</b><small>Varlığına göre kendiliğinden tanımlanan ayrıcalık programı · başvuru gerekmez</small></div>
@@ -1554,7 +1607,10 @@ function renderList() {
   if (cat === "Black") {
     const fd = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
     $("upd").innerHTML = `🔄 Ayrıcalıklar her gün kontrol edilir, değişiklik olursa burada güncellenir${blk ? ` · son kontrol <b>${fd(blk.kontrol)}</b>` : ""}<br>Ayrıcalıklar <b>31.12.2026</b>'ya kadar geçerli`;
-    $("list").innerHTML = blackHtml(); return;
+    if (ayr === "plus") $("upd").innerHTML = `🔄 İş Plus koşulları haftada bir isbank.com.tr ile karşılaştırılır${ipl ? ` · son kontrol <b>${fd(ipl.kontrol)}</b>` : ""}`;
+    $("list").innerHTML = ayrSecHtml() + (ayr === "plus" ? isplusHtml() : blackHtml());
+    $("list").querySelectorAll("[data-ayr]").forEach((b) => (b.onclick = () => { ayr = b.dataset.ayr; try { localStorage.setItem("isbankAyr", ayr); } catch (e) {} renderList(); }));
+    return;
   }
   if (cat === "Soru") return renderSoru();
   if (cat === "Tarihçe") return renderTarihce();
@@ -1602,6 +1658,7 @@ function renderList() {
     try { yat = await Ortak.json("isbank/yatirimci.json"); } catch (e) {}
     try { bkamp = await Ortak.json("isbank/banka_kampanya.json"); } catch (e) {}
     try { blk = await Ortak.json("isbank/black.json"); } catch (e) {}
+    try { ipl = await Ortak.json("isbank/isplus.json"); } catch (e) {}
     try { kontrol = (await Ortak.json("isbank/kontrol.json")).son_kontrol; } catch (e) {}
     seenInit(); renderList(); renderChips();
   } catch (e) {

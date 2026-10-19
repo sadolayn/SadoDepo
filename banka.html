@@ -2119,7 +2119,7 @@ $("v_copy").addEventListener("click", () => {
 // Faiz = tutar × aylık oran × gün / 30; KKDF %15 + BSMV %15 faize eklenir.
 // Taksitli Ek Hesap: vergi dahil aylık oranla eşit taksit (isbank.com.tr örnek ödeme tablosuyla birebir).
 (function () {
-  let EK = { aylik: 4.25, maasli: 4.19, maasli_bit: "2026-10-31", isplus: { Turkuaz: 4.23, Mavi: 4.21, Lacivert: 4.19 }, kontrol: "2026-10-19", link: "https://www.isbank.com.tr/ek-hesap", taksit_max: 12, kampanya: null };
+  let EK = { aylik: 4.25, maasli: 4.19, maasli_bit: "2026-10-31", isplus: { Turkuaz: 4.23, Mavi: 4.21, Lacivert: 4.19 }, black: { Black: 4.15, "Black Plus": 4.10 }, kontrol: "2026-10-19", link: "https://www.isbank.com.tr/ek-hesap", taksit_max: 12, kampanya: null };
   const VG = 0.30, GUNLER = [[1, "1 gün"], [5, "5 gün"], [10, "10 gün"], [15, "15 gün"], [30, "1 ay"]];
   const f2 = (v) => v.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const trh = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
@@ -2137,7 +2137,7 @@ $("v_copy").addEventListener("click", () => {
     const ip = EK.isplus ? Object.entries(EK.isplus).map(([k, v]) => `${k} %${f2(v)}`).join(" · ") : "";
     $("e_oranlarNot") && $("e_oranlarNot").remove();
     const n = document.createElement("div"); n.id = "e_oranlarNot"; n.className = "ekoran";
-    n.innerHTML = `${EK.maasli_bit && bugun <= EK.maasli_bit ? `Maaş müşterisi oranı ${trh(EK.maasli_bit)}'e kadar. ` : ""}${ip ? `İş Plus: ${ip}. ` : ""}Taksitli kullanımda indirim yok. <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr ↗</a>`;
+    n.innerHTML = `${EK.maasli_bit && bugun <= EK.maasli_bit ? `Maaş müşterisi oranı ${trh(EK.maasli_bit)}'e kadar. ` : ""}${ip ? `İş Plus: ${ip}. ` : ""}${EK.black ? `İş Black %${f2(EK.black.Black)} · Black Plus %${f2(EK.black["Black Plus"])}. ` : ""}Taksitli kullanımda indirim yok. <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr ↗</a>`;
     $("e_oranlar").after(n);
   }
   function gunler(g) {

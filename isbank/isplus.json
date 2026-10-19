@@ -1,0 +1,27 @@
+{
+  "kontrol": "2026-10-19",
+  "kaynak": "https://www.isbank.com.tr/isplus",
+  "ozet": "İşCep'i ve İş Bankası kartını kullandıkça kendiliğinden yükselen seviye programı. Başvuru gerekmez; kriterleri sağlayan müşteri otomatik dahil olur.",
+  "seviyeler": [
+    { "ad": "Turkuaz", "renk": "#2ec4c4", "kart": "40.000 TL", "ek": "Ek koşul yok" },
+    { "ad": "Mavi", "renk": "#3f7cff", "kart": "50.000 TL", "ek": "1 ödenmiş fatura talimatı ya da 90.000 TL gelen para" },
+    { "ad": "Lacivert", "renk": "#2a3a9c", "kart": "80.000 TL", "ek": "3 ödenmiş fatura talimatı ya da 120.000 TL gelen para" }
+  ],
+  "ortak": "Son 30 günde en az 1 kez İşCep girişi",
+  "ayricaliklar": [
+    { "ic": "💸", "ad": "Ücretsiz EFT/FAST (İşCep havaleleri zaten ücretsiz)", "v": ["ayda 2", "ayda 4", "ayda 6"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-ucretsiz-para-transferi-ayricaligi" },
+    { "ic": "➕", "ad": "Ek Hesap faiz oranı", "v": ["%4,23", "%4,21", "%4,19"], "u": "https://www.isbank.com.tr/kampanyalar/ek-hesap-faiz-oraninda-indirim-ayricaligi" },
+    { "ic": "🛒", "ad": "Market, kafe-restoran, giyim-kozmetik (ayın ilk alışverişi)", "v": ["%5", "%10", "%15"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-kafe-restoran-market-giyim-kozmetik-alisverislerinize-ozel-indirimler" },
+    { "ic": "📚", "ad": "Kitap (ayın ilk alışverişi)", "v": ["–", "%10", "%15"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-kitap-alisverislerinize-ozel-indirimler" },
+    { "ic": "🎬", "ad": "Sinema bileti (ayın ilk bileti)", "v": ["–", "%10", "%15"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-sinema-biletleri-ozel-indirimleri" },
+    { "ic": "🎤", "ad": "Konser ve etkinlik bileti", "v": ["–", "–", "%15"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-konser-etkinlik-biletlerine-ozel-indirim" },
+    { "ic": "🤖", "ad": "Yapay zekâ platformu harcaması", "v": ["–", "–", "%15"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-yapay-zeka-platform-harcamaniza-ozel-indirim" },
+    { "ic": "🎂", "ad": "İş Bankalı olma yıl dönümünde hediye MaxiPuan", "v": ["✓", "✓", "✓"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-is-bankali-olma-yildonumunde-hediye-maxipuan" },
+    { "ic": "🌳", "ad": "Geleceğe Orman karbon puanı (1.000 puanda fidan)", "v": ["100", "200", "300"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-gelecege-orman-katiliminiza-ozel-karbon-puan-hediye" }
+  ],
+  "nerede": "İşCep › Profil ve Ayarlar › İş Plus'ı Keşfedin",
+  "guncelleme": "Seviye yükselişi ertesi gün yansır; düşüş bir sonraki ayın 2'sinde uygulanır (eski seviyenin ayrıcalıkları ay sonuna kadar sürer).",
+  "dahil_degil": "İş Black, Maximum Genç ve maaş/emekli maaşı müşterileri (kendi programları var) İş Plus'a dahil edilmez. Aynı anda tek seviyenin ayrıcalığı geçerlidir.",
+  "harcama_dahil": "Maximum, Maximiles, Privia bireysel kredi kartları ve Bankamatik kartı (ek ve sanal kart dahil), diğer bankaların POS'ları da sayılır.",
+  "harcama_haric": "Ticari kartlar, MaxiPara, ön ödemeli kart, MaxiPuan'la ödeme, iptal/iade, para yükleme, vergi-sigorta-prim ve fatura ödemeleri, kuyum. Taksitlide yalnızca o ayın toplamı sayılır."
+}
