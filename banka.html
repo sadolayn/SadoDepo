@@ -45,7 +45,7 @@
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header h1 { margin: 0; font-size: 20px; }
   .tabs {
-    display: grid; grid-template-columns: 1.08fr repeat(4, 1fr) 1.08fr; grid-template-rows: auto auto auto auto; gap: 4px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
     background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px;
     margin-bottom: 14px;
   }
@@ -62,11 +62,8 @@
   .tabs button i { font-style: normal; font-size: 19px; line-height: 1.1; }
   .tabs button span { text-align: center; }
   .tabs button:active { transform: scale(.96); }
-  .tabs .tlab { grid-column: 2 / 6; font-size: 10.5px; font-weight: 700; letter-spacing: .4px; color: var(--muted); padding: 1px 4px 0; text-transform: uppercase; }
-  .tabs .tlab.t1 { grid-row: 1; } .tabs .tlab.t2 { grid-row: 3; margin-top: 2px; }
-  .tabs button[data-tab="mev"] { grid-column: 1; grid-row: 1 / 5; }
-  .tabs button[data-tab="vergi"] { grid-column: 6; grid-row: 1 / 5; }
-  .tabs button em { font-style: normal; font-size: 9.5px; font-weight: 600; opacity: .75; text-align: center; margin-top: 3px; line-height: 1.2; }
+  .tabs .tlab { grid-column: 1 / -1; font-size: 10.5px; font-weight: 700; letter-spacing: .4px; color: var(--muted); padding: 1px 4px 0; text-transform: uppercase; }
+  .tabs .tlab.t2 { margin-top: 2px; }
   .tabs button.active { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
   .tabs button[data-tab="bch"]   { --c: #4a63ff; --d: #0c1240; --t: #c9d2ff; }
   .tabs button[data-tab="ek"]    { --c: #f2c230; --d: #2b2205; --t: #fbe7a6; }
@@ -295,8 +292,8 @@
   </header>
 
   <div class="tabs">
-    <button data-tab="mev"><i>💰</i><span>Vadeli<br>Mevduat</span><em>bireysel<br>+ ticari</em></button>
-    <div class="tlab t1">👤 Bireysel</div>
+    <div class="tlab">👤 Bireysel</div>
+    <button data-tab="mev"><i>💰</i><span>Vadeli<br>Mevduat</span></button>
     <button data-tab="tk"><i>🛍️</i><span>Tüketici<br>Kredisi</span></button>
     <button data-tab="ek" data-yeni="ekhesap|2026-10-19|•"><i>➕</i><span>Ek<br>Hesap</span></button>
     <button data-tab="kk"><i>💳</i><span>Kart<br>Gecikme</span></button>
@@ -306,7 +303,7 @@
     <button data-tab="tic"><i>📦</i><span>Taksitli<br>Ticari</span></button>
     <button data-tab="cek"><i>🧾</i><span>Çek İskonto<br>&amp; Valör</span></button>
     <button data-tab="tarim"><i>🌾</i><span>Tarım<br>Kredisi</span></button>
-    <button data-tab="vergi"><i>🗓️</i><span>Vergi<br>Takvimi</span><em>herkes<br>için</em></button>
+    <button data-tab="vergi"><i>🗓️</i><span>Vergi<br>Takvimi</span></button>
   </div>
   </div>
 
