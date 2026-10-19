@@ -68,6 +68,17 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", footer); else footer();
 
+  // Sayfa internetten değil, cihazdaki son kopyadan geldiyse (ağ siteyi engelliyor ya da bağlantı yok) üstte söyle
+  if (window.__yedek) {
+    var uy = function () {
+      var d = document.createElement("div");
+      d.style.cssText = "position:relative;z-index:60;margin:0 0 8px;padding:10px 14px;border-radius:0 0 14px 14px;background:#2a2410;border:1px solid #6b5520;border-top:0;color:#f3d79c;font:13.5px/1.45 system-ui,-apple-system,'Segoe UI',sans-serif;text-align:center";
+      d.innerHTML = "📴 <b>Bu ağda siteye şu an ulaşılamıyor</b>; bu sayfanın cihazda kayıtlı <b>eski bir kopyasını</b> görüyorsun. Güncel hâli için telefondan (mobil veriyle) bak.";
+      document.body.insertBefore(d, document.body.firstChild);
+    };
+    if (document.body) uy(); else document.addEventListener("DOMContentLoaded", uy);
+  }
+
   // ---- 3) Telefonda aç: bilgisayarda sayfanın karekodu ----
   var ME = (document.currentScript && document.currentScript.src) || "";
   function karekod() {
