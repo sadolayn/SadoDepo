@@ -840,11 +840,7 @@ function ayrSecHtml() {
   t.className = "tfil aysec"; t.hidden = false;
   t.innerHTML = `<button type="button" data-ayr="black" class="${ayr !== "plus" ? "on" : ""}">🖤 İş Black<small>varlığa göre</small></button><button type="button" data-ayr="plus" class="p ${ayr === "plus" ? "on" : ""}">💠 İş Plus<small>İşCep ve kart kullanımına göre</small></button>`;
   t.onclick = (e) => { const b = e.target.closest("[data-ayr]"); if (!b) return; ayr = b.dataset.ayr; try { localStorage.setItem("isbankAyr", ayr); } catch (x) {} renderList(); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  return `<div class="aykim">🧭 <span><b>Hangi müşteri hangi ayrıcalıktan yararlanır?</b>
-      <i>🖤 Varlığı 1 milyon TL ve üzeri → <b>İş Black</b> (4 milyon TL ve üzeri Black Plus)</i>
-      <i>💼 Maaşını İş Bankası'ndan alıyor → <a href="https://www.isbank.com.tr/kampanyalar/iste-maasa-ozel" target="_blank" rel="noopener">maaşlı müşteri ayrıcalıkları ↗</a></i>
-      <i>💠 Diğer müşteriler → İşCep'i ve kartını kullandıkça <b>İş Plus</b> (Turkuaz, Mavi, Lacivert)</i>
-      <small>İş Black ve maaşlı müşteriler İş Plus'a dahil edilmez. Hepsinde başvuru gerekmez, kendiliğinden tanımlanır.</small></span></div>`;
+  return "";
 }
 function isplusHtml() {
   const J = ipl;
