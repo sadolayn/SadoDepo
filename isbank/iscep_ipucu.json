@@ -1,0 +1,320 @@
+{
+ "kontrol": "2026-10-19",
+ "not": "Haftada bir isbank.com.tr ile karşılaştırılır. src=uygulama olanlar İşCep uygulamasında görülen, isbank.com.tr'de ayrıca anlatılmayan özelliklerdir.",
+ "kategoriler": [
+  {
+   "k": "ayar",
+   "ic": "⚙️",
+   "ad": "Ayarla"
+  },
+  {
+   "k": "para",
+   "ic": "💸",
+   "ad": "Para"
+  },
+  {
+   "k": "maxi",
+   "ic": "🤖",
+   "ad": "Maxi"
+  },
+  {
+   "k": "kolay",
+   "ic": "✨",
+   "ad": "Kolaylık"
+  },
+  {
+   "k": "arac",
+   "ic": "🚗",
+   "ad": "Aracım"
+  },
+  {
+   "k": "ev",
+   "ic": "🏠",
+   "ad": "Evim"
+  },
+  {
+   "k": "aile",
+   "ic": "👨‍👩‍👧",
+   "ad": "Ailem"
+  },
+  {
+   "k": "seyahat",
+   "ic": "✈️",
+   "ad": "Seyahat"
+  },
+  {
+   "k": "yatirim",
+   "ic": "📈",
+   "ad": "Yatırım"
+  }
+ ],
+ "ipuclari": [
+  {
+   "k": "para",
+   "ic": "🏧",
+   "t": "Kartın yanında değil mi? Bankamatik'ten İşCep'le para çek",
+   "d": "Bankamatik ekranındaki karekodu İşCep'le okut, tutarı seç; para çekme ve yatırma kartsız olur. Günde 20.000 TL'ye kadar ücretsiz.",
+   "n": "İşCep açılış ekranı › Karekod İşlemleri (ya da giriş yapıp Bankamatik Para Çek/Yatır)",
+   "u": "https://www.isbank.com.tr/bankamatik",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "para",
+   "ic": "🙋",
+   "t": "Arkadaşın borcunu unuttu mu? Ödeme İste",
+   "d": "Ona bir ödeme isteği gönder; onaylayınca para FAST ile anında hesabına geçer. 7/24 çalışır, IBAN sormana gerek yok.",
+   "n": "Para Aktar › Ödeme İste",
+   "u": "https://www.isbank.com.tr/bankamizi-taniyin/odeme-almanin-yeni-yolu-odeme-iste-iscepte",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "para",
+   "ic": "🔁",
+   "t": "Diğer bankalardaki hesapların da İşCep'te",
+   "d": "Başka bankalardaki hesap ve kartlarını ekle, bakiyelerini tek ekranda gör; istersen o bankaya gitmeden paranı İş Bankası'na getir. Açık Bankacılık ile ücretsiz.",
+   "n": "Hesaplarım › Diğer Banka Hesabı/Kartı Ekle · Para Aktar › İş Bankası Hesabıma Para Getir",
+   "u": "https://www.isbank.com.tr/acik-bankacilik",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "para",
+   "ic": "🔳",
+   "t": "Kasada telefonla öde: TR Karekod",
+   "d": "POS'taki karekodu okut, kartını ya da hesabını seç, onayla. Kart çıkarmadan ödersin; iptal de karekodla yapılır.",
+   "n": "Ödeme Yap › Karekod ile öde",
+   "u": "https://www.isbank.com.tr/tr-karekod-ile-odeme",
+   "git": "📲 Kartsız öde",
+   "gitAd": "📲 Kartsız öde",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "para",
+   "ic": "📷",
+   "t": "IBAN'ı yazma, kameraya okut",
+   "d": "Para gönderirken IBAN alanındaki kamera simgesine dokun; kâğıttaki ya da ekrandaki IBAN'ı okutunca kendiliğinden yazılır. Yanlış rakam derdi biter.",
+   "n": "Para gönderirken IBAN alanındaki 📷 simgesi",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "uygulama"
+  },
+  {
+   "k": "ayar",
+   "ic": "🎁",
+   "t": "Kampanyalara İşCep'ten tek dokunuşla katıl",
+   "d": "Çoğu kampanya katılım ister: KATIL'a basmadan yapılan harcama puan kazandırmaz. İşCep ana sayfasındaki Kampanyalar alanında sana özel fırsatlar da görünür; bütün müşteriler katılabilir.",
+   "n": "Ana sayfa › Kampanyalar › KATIL",
+   "u": "https://www.maximum.com.tr/kampanyalar",
+   "git": "Tümü",
+   "gitAd": "Güncel kampanyalar",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "ayar",
+   "ic": "📱",
+   "t": "Telefonunla temassız öde: bir kez aç, hep kullan",
+   "d": "Kartını İşCep'te mobil temassıza tanımla; sonra telefonu POS'a yaklaştırman yeter, uygulamayı açman bile gerekmez. 2.500 TL altı şifresiz. NFC'li Android telefonlarda.",
+   "n": "Kartlar › Mobil Temassız Ödeme › aç ve kartını seç",
+   "u": "https://www.isbank.com.tr/iscep-mobil-temassiz-odeme",
+   "git": "📲 Kartsız öde",
+   "gitAd": "📲 Kartsız öde",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "ayar",
+   "ic": "⌚",
+   "t": "Saatinle öde, Bankamatik'ten para bile çek",
+   "d": "NFC'li, Wear OS 3.0 ve üzeri Android saatine kartını yükle; sonra internet, Bluetooth ya da telefon olmadan saatle ödeme yap, Bankamatik'ten para çek.",
+   "n": "Kartlar › Akıllı Saat ile Öde / Para Çek › Kullanmaya Başla",
+   "u": "https://www.isbank.com.tr/iscep-akilli-saat-ile-odeme",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "ayar",
+   "ic": "🛡️",
+   "t": "Zararlı yazılım koruması: İşCep Antivirüs",
+   "d": "SMS, e-posta ya da sosyal medya bağlantısıyla gelen zararlı yazılımları engeller, telefondakileri temizler; fotoğraf, mesaj ve rehberini korur. Android'de. Açınca bildirim çubuğunda İş Bankası logosu görünür.",
+   "n": "Profil ve Ayarlar › Güvenlik › Antivirüs (istenen izinleri ver)",
+   "u": "https://www.isbank.com.tr/antivirus-ve-gelen-arama-bilgilendirme",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "ayar",
+   "ic": "📞",
+   "t": "Seni banka mı arıyor, dolandırıcı mı?",
+   "d": "Gelen Arama Bilgilendirme açıksa Çözüm Merkezi aramaları ekranda \"Türkiye İş Bankası Müşteri Hizmetleri\", şüpheli numaralar \"Olası Şüpheli Çağrı\" olarak görünür. Android ve iPhone.",
+   "n": "Profil ve Ayarlar › Güvenlik › Gelen Arama Bilgilendirme (Android'de Antivirüs içinde)",
+   "u": "https://www.isbank.com.tr/antivirus-ve-gelen-arama-bilgilendirme",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "maxi",
+   "ic": "🤖",
+   "t": "Maxi'ye sor: \"Bu ay markete ne kadar harcadım?\"",
+   "d": "Yapay zekâ asistanı Maxi harcamalarını kategori kategori söyler; yazarak ya da sesle sorabilirsin.",
+   "n": "İşCep › Maxi",
+   "u": "https://www.isbank.com.tr/maxi",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "maxi",
+   "ic": "🗣️",
+   "t": "Sesinle para gönder",
+   "d": "Maxi'ye söylemen yeter; sesli komutla para transferi yapar, bakiye ve IBAN'ını da paylaşır.",
+   "n": "İşCep › Maxi › mikrofon",
+   "u": "https://www.isbank.com.tr/maxi",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "maxi",
+   "ic": "⏰",
+   "t": "Fatura günü geldiğinde Maxi hatırlatır",
+   "d": "İşCep'e kaydettiğin faturaların ödeme günü gelince haber verir; \"ISCTR ne kadar?\", \"Bugün piyasalar nasıl?\" sorularını da yanıtlar.",
+   "n": "İşCep › Maxi",
+   "u": "https://www.isbank.com.tr/maxi",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "kolay",
+   "ic": "👆",
+   "t": "İşCep simgesine basılı tut",
+   "d": "Uygulamayı açmadan kısayollar çıkar: karekodla öde, Bankamatik'ten para çek, para yatır. Kasada ya da Bankamatik başında saniye kazandırır.",
+   "n": "Telefonun ana ekranında İşCep simgesine basılı tut",
+   "u": "https://www.isbank.com.tr/bankamatik",
+   "src": "uygulama"
+  },
+  {
+   "k": "kolay",
+   "ic": "🙈",
+   "t": "Kalabalıkta bakiyeni gizle: Hassas Mod",
+   "d": "Ana sayfadaki tutarları tek dokunuşla gizler; göz simgesine basınca geri gelir.",
+   "n": "Ana sayfa › 👁️ göz simgesi",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "kolay",
+   "ic": "🔎",
+   "t": "Menüyü ezberleme: İşCep'te Ara",
+   "d": "Yapmak istediğin işlemi yaz, menüsü karşına gelsin.",
+   "n": "Ana sayfa ya da menünün üstündeki arama alanı",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "kolay",
+   "ic": "🔠",
+   "t": "Annen, baban için büyük yazı",
+   "d": "Yazı boyutunu küçükten çok büyüğe ayarla; görme engelli kullanıcılar için ekrandaki yazılar sesli de okunabiliyor (Engelsiz Bankacılık).",
+   "n": "Profil › Görünüm Tercihlerim",
+   "u": "https://www.isbank.com.tr/engelsiz-bankacilik",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "kolay",
+   "ic": "⭐",
+   "t": "En çok kullandıklarını öne al: Kısayollarım",
+   "d": "16 kısayol ekleyebilirsin, 4'ü ana sayfada durur. Ana sayfadaki kutucukları da kendin düzenlersin.",
+   "n": "Ana sayfa › Ana Sayfayı Düzenle",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "kolay",
+   "ic": "🪪",
+   "t": "e-Devlet'e şifresiz gir",
+   "d": "e-Devlet işlemlerine İşCep'ten şifre girmeden geçebilirsin: tapu bilgisi, ikametgâh belgesi, araç sorgulama, pasaport randevusu…",
+   "n": "İşCep › E-Devlet'e Giriş",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "kolay",
+   "ic": "🎥",
+   "t": "Şubeye gitmeden müşteri ol",
+   "d": "Tanıdığın İş Bankalı değilse: görüntülü görüşmeyle müşteri olur, şifresini de kartıyla ya da kimliği ve yüz tanımayla İşCep'ten anında alır.",
+   "n": "İşCep'i indir, açılış ekranından başla",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "arac",
+   "ic": "🚗",
+   "t": "Arabanı satsan kaça gider?",
+   "d": "İşCep Aracım aracının tahmini değerini ve satış süresini söyler. MTV, trafik cezası ve HGS işlemleri de aynı yerde.",
+   "n": "İşCep › Hayatım › Aracım",
+   "u": "https://www.isbank.com.tr/iscep-aracim",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "arac",
+   "ic": "🔔",
+   "t": "Muayene ve sigorta tarihini unutma",
+   "d": "Sigorta vadesi, muayene, bakım ve lastik değişim tarihlerini kaydet, zamanı gelince bildirim al; en yakın İSPARK'ı ve elektrikli araç şarjını da bul.",
+   "n": "İşCep › Hayatım › Aracım",
+   "u": "https://www.isbank.com.tr/iscep-aracim",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "ev",
+   "ic": "🏠",
+   "t": "Evin bugün kaç para eder?",
+   "d": "Konutunun satış ve kira değerini hesapla, rapor al. e-Devlet'ten tapu bilgisini sorgula, ikametgâh belgeni iste.",
+   "n": "İşCep › Hayatım › Evim",
+   "u": "https://www.isbank.com.tr/iscep-evim",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "ev",
+   "ic": "🔧",
+   "t": "Tesisatçı lazım mı?",
+   "d": "Su, elektrik tesisatı ve montaj için KonutKonfor'dan randevu al; elektronik cihaz kirala, ev aboneliklerini tek yerden yönet.",
+   "n": "İşCep › Hayatım › Evim",
+   "u": "https://www.isbank.com.tr/iscep-evim",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "aile",
+   "ic": "💊",
+   "t": "Gece nöbetçi eczane nerede?",
+   "d": "Yakınındaki nöbetçi eczaneyi ve yol tarifini gösterir; ilaç bilgisi ve sağlıklı beslenme önerileri de var.",
+   "n": "İşCep › Hayatım › Ailem",
+   "u": "https://www.isbank.com.tr/iscep-ailem",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "aile",
+   "ic": "🎒",
+   "t": "Çocuğunun karnesi İşCep'te",
+   "d": "e-Okul notlarını ve okul duyurularını gör; çocuğuna kumbara hesabı aç, Pati Kart'a başvur.",
+   "n": "İşCep › Hayatım › Ailem",
+   "u": "https://www.isbank.com.tr/iscep-ailem",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "seyahat",
+   "ic": "🛂",
+   "t": "Yurt dışı çıkış harcı ve pasaport harcı",
+   "d": "Harçları İşCep'ten öde; e-Devlet'ten şifresiz pasaport randevusu al, yurt dışı seyahat sigortanı yaptır.",
+   "n": "İşCep › Hayatım › Seyahatim",
+   "u": "https://www.isbank.com.tr/iscep-seyahatim",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "seyahat",
+   "ic": "🛋️",
+   "t": "Sabiha Gökçen'de lounge ve fast track",
+   "d": "Uçuştan önce lounge ve hızlı geçiş hizmetini İşCep'ten satın al; uçak, otel, feribot bileti ve araç kiralama da aynı yerde.",
+   "n": "İşCep › Hayatım › Seyahatim",
+   "u": "https://www.isbank.com.tr/iscep-seyahatim",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "yatirim",
+   "ic": "📈",
+   "t": "Borsa cebinde: İşCep Mobil Borsa",
+   "d": "Hisse ve varant alıp sat; tahvil, repo, Eurobond ve altın hesabı da İşCep'te.",
+   "n": "İşCep › Yatırım",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "isbank.com.tr"
+  }
+ ]
+}
