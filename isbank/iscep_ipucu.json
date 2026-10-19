@@ -242,10 +242,10 @@
   {
    "k": "ayar",
    "g": "🔐 Profil ve Ayarlar › Güvenlik ve İşlem Ayarları",
-   "ic": "🎛️",
-   "t": "Kullanmadığın kanalı sen yönet",
-   "d": "İnternet Şube, Maximum Mobil ve Çözüm Merkezi kullanım tercihlerin tek ekranda. Kullanmadığın kanalı kısıtlamak ek bir güvenlik katmanı sağlar.",
-   "n": "Profil ve Ayarlar › Güvenlik ve İşlem Ayarları › Kanal Kullanım Tercihleri",
+   "ic": "🕘",
+   "t": "İnternet Şube'yi, Maximum Mobil'i, Çözüm Merkezi'ni sen aç-kapa",
+   "d": "Her kanal için seç: Kullanılmasın, Hafta içi kullanılsın ya da Tüm günler kullanılsın. İstersen kullanım saat aralığı da belirlersin (ör. yalnızca 09:00–22:00). Kullanmadığın kanalı kapatmak, gece ya da hafta sonu yetkisiz işleme karşı güçlü bir kilit.",
+   "n": "Profil ve Ayarlar › Güvenlik ve İşlem Ayarları › Kanal Kullanım Tercihleri › İnternet Şube / Maximum Mobil / Çözüm Merkezi",
    "u": "https://www.isbank.com.tr/iscep",
    "src": "uygulama"
   },
