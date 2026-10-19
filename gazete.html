@@ -165,7 +165,7 @@ async function renderStatus() {
   const last = k && k.son_kontrol ? new Date(k.son_kontrol) : null;
   const ageH = last ? (Date.now() - last) / 36e5 : 99;
   $("status").innerHTML = `<span><span class="dot${ageH > 12 ? " old" : ""}"></span>Son kontrol: <b>${last ? esc(fmtTime(k.son_kontrol)) : "—"}</b></span>
-    <span>Kontrol: 01:19 · 09:19 · 14:19 · 20:19</span>`;
+    <span>Her sabah 07:00 civarı güncellenir</span>`;
   if (!have) {
     const h = new Date().getHours();
     $("cal").insertAdjacentHTML("beforebegin", `<div class="warnbox" id="nowarn">📭 Bugünün (${esc(fmtDate(today))}) özeti henüz eklenmedi${h < 2 ? " — kontrol sürüyor, birazdan eklenecek" : "; bir sonraki kontrolde eklenecek"}. Şimdilik <a href="https://www.resmigazete.gov.tr/" target="_blank" rel="noopener">Resmi Gazete'nin sitesine</a> bakabilirsin.</div>`);

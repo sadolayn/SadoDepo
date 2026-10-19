@@ -573,7 +573,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   <div class="disc">
     <b>ℹ️ Bu sayfa kişisel bir projedir.</b>
     <p>Bilgiler kamuya açık kaynaklardan özenle derlenir ve düzenli olarak kontrol edilir. Ürün, kampanya ve koşulların en güncel ve kesin hâli için lütfen <a href="https://www.isbank.com.tr" target="_blank" rel="noopener">www.isbank.com.tr</a> ve <a href="https://www.maximum.com.tr" target="_blank" rel="noopener">www.maximum.com.tr</a> adreslerini ziyaret ediniz.</p>
-    <small>Seçilmiş haberler ve kampanyalar günde iki kez, "Güncel" sekmesi her saat otomatik güncellenir.</small>
+    <small>Seçilmiş haberler ve kampanyalar her sabah, "Güncel" sekmesi her saat otomatik güncellenir.</small>
   </div>
 </div>
 
@@ -1485,7 +1485,7 @@ function renderList() {
   if (cat === "İşCep") return renderIscep();
   if (cat === "Maximum") return renderCamps();
   if (cat === "Şubeler") return renderSubeler();
-  $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "") + " · günde 2 kez";
+  $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "") + " · her sabah";
   const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
   if (!items.length) { $("list").innerHTML = '<div class="empty">Bu kategoride henüz haber yok.</div>'; return; }
   let html = "", last = "";
