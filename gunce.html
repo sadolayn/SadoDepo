@@ -270,12 +270,6 @@
     </div>
   </div>
 
-  <!-- Bilgisayardan açanlara: telefonda kullan + taşı -->
-  <div class="card dev" id="devCard" hidden>
-    <div class="dh"><i>📱</i><div><b>Günce en rahat telefonda</b><span>Veriler yalnızca bu cihazın tarayıcısında saklanır; bilgisayarda girdiklerin telefonda kendiliğinden görünmez. İş bilgisayarında site kapanırsa da veriler orada kalır.</span></div></div>
-    <button type="button" class="btn pri" id="tasiBtn">📲 Verilerimi telefona taşı</button>
-  </div>
-
   <!-- 1. Sonuç raporu -->
   <div class="card hero" id="hero"></div>
 
@@ -309,6 +303,12 @@
     <div class="posTop"><h3 style="margin:0">🧾 Performans fişim</h3><span class="note" style="margin:0">Satış yaptıkça fişin uzar ✨</span></div>
     <div class="posSlot"><div class="posPaper" id="posPaper"></div></div>
     <div class="btns" style="margin-top:12px"><button class="btn pri" id="posPng">🧾 Fişi indir / paylaş</button><button class="btn" id="posPdf">📄 PDF indir</button></div>
+  </div>
+
+  <!-- Bilgisayardan açanlara: hedeflerini telefonuna al -->
+  <div class="card dev" id="devCard" hidden>
+    <div class="dh"><i>📱</i><div><b>Günce cebinde daha güzel</b><span>Hedeflerini ve işaretlemelerini telefonuna al: satış biter bitmez tek dokunuşla işaretle, gün içinde hedefinin neresinde olduğunu her an gör. Bilgiler yalnızca senin telefonunda durur; kimse göremez, hiçbir yere gönderilmez.</span></div></div>
+    <button type="button" class="btn pri" id="tasiBtn">📲 Hedeflerimi telefonuma al</button>
   </div>
 
   <div class="card">
@@ -976,8 +976,8 @@ async function tasiGoster() {
   if (!window.qrcode) { try { await loadJs("lib/qrcode.js"); } catch (e) { toast("Karekod hazırlanamadı"); return; } }
   const q = qrcode(0, "L"); q.addData(url); q.make();
   const nDay = Object.keys(D.days).length;
-  const m = tasiModal(`<h3>📲 Telefona taşı</h3>
-    <p>Telefonunun kamerasıyla okut; açılan sayfada <b>Taşı</b>'ya bas. Hedeflerin ve ${nDay} günlük işaretlemen telefona geçer.</p>
+  const m = tasiModal(`<h3>📲 Telefonuna al</h3>
+    <p>Telefonunun kamerasıyla okut; açılan sayfada <b>Taşı</b>'ya bas. Hedeflerin ve ${nDay} günlük işaretlemen telefonuna geçer.</p>
     <div class="qr">${q.createSvgTag({ cellSize: 3, margin: 0, scalable: true })}</div>
     <small>Veriler yalnızca bu karekodun içinde taşınır; hiçbir sunucuya gönderilmez. Karekodu kimseyle paylaşma.</small>
     <div class="bt"><button type="button" class="c">🔗 Bağlantıyı kopyala</button><button type="button" class="k" data-x>Kapat</button></div>`);
