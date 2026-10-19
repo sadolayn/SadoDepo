@@ -797,7 +797,7 @@
   <section class="panel" id="kk">
     <div class="card">
       <h2>Bireysel Kredi Kartı Gecikme Faizi</h2>
-      <p class="hint">Asgari ödemenin ödenmeyen kısmına gecikme faizi, kalan borca akdi faiz işler. Faizlere BSMV ve KKDF eklenir.</p>
+      <p class="hint"><b>Akdi faiz:</b> asgariyi ödeyip borcun kalanını sonraki aya devredince kalan borca işleyen normal faiz.<br><b>Gecikme faizi:</b> asgari ödeme bile tam yapılmazsa, asgarinin ödenmeyen kısmına işleyen daha yüksek faiz.<br>İkisine de BSMV ve KKDF eklenir.</p>
       <label>Dönem borcu</label>
       <div class="field"><input id="k_borc" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div>
       <div class="two">
@@ -1341,9 +1341,10 @@ function calcKK() {
   const fA = akdiMatrah * ra * g / 30, fG = gecMatrah * rg * g / 30;
   const vergi = (fA + fG) * v;
   const top = fA + fG + vergi;
-  $("k_note").textContent = kkManual
-    ? "Faiz oranlarını elle girdin."
-    : `Oranlar borç dilimine göre TCMB azami oranlarından seçildi (${t[2]}, Eylül 2026). Bankanın oranı daha düşük olabilir.`;
+  const TB = [[0, "30.000 TL altı", 3.25, 3.55], [30000, "30.000 – 180.000 TL", 3.75, 4.05], [180001, "180.000 TL üstü", 4.25, 4.55]];
+  $("k_note").innerHTML = `<b>Oranlar neden değişiyor?</b> TCMB azami faizi <b>dönem borcunun tutarına göre</b> üç dilimde belirliyor. Dönem borcunu değiştirince dilim değişirse oranlar da kendiliğinden değişir${kkManual ? " (şu an oranları elle girdin, otomatik seçim kapalı)" : ""}:
+    <table class="ltvtab" style="margin-top:6px"><tr><th>Dönem borcu</th><th>Akdi</th><th>Gecikme</th></tr>${TB.map((r) => `<tr class="${!kkManual && r[1] === t[2] ? "on" : ""}"><td>${r[1]}</td><td>%${nfx(r[2])}</td><td>%${nfx(r[3])}</td></tr>`).join("")}</table>
+    <span style="display:block;margin-top:4px">Aylık azami oranlar (Eylül 2026). Bankanın oranı daha düşük olabilir; oranı elle de yazabilirsin.</span>`;
   $("k_out").textContent = tl(top);
   rows("k_rows", [
     ["Asgari ödeme", tl(asg)],
