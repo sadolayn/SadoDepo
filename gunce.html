@@ -139,6 +139,20 @@
   .eksik { margin: 8px 0 2px; } .eksik > span { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
   .eksik .ch { display: flex; flex-wrap: wrap; gap: 5px; } .eksik .ch button { padding: 5px 9px; border-radius: 99px; border: 1px dashed #8a6d2c; background: rgba(232,181,43,.08); color: #f0d48a; font-size: 12px; font-weight: 600; cursor: pointer; }
   #mark { scroll-margin-top: 112px; }
+  .card.dev { border-color: #2c4e72; background: linear-gradient(160deg, rgba(90,169,240,.14), var(--card) 70%); }
+  .card.dev[hidden] { display: none; }
+  .dev .dh { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; } .dev .dh i { font-style: normal; font-size: 30px; line-height: 1; }
+  .dev .dh b { display: block; font-size: 15.5px; } .dev .dh span { display: block; font-size: 13px; color: #b9cbe0; line-height: 1.5; margin-top: 3px; }
+  .dev .btn { width: 100%; }
+  .tasiM { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.72); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .tasiM[hidden] { display: none; }
+  .tasiM .in { width: 100%; max-width: 380px; background: #111; border: 1px solid #2c2c2c; border-radius: 20px; padding: 20px; text-align: center; }
+  .tasiM h3 { margin: 0 0 6px; font-size: 18px; } .tasiM p { margin: 0 0 12px; font-size: 13.5px; color: #c9c9c9; line-height: 1.5; } .tasiM p.s { font-size: 12.5px; color: var(--muted); }
+  .tasiM .qr { background: #fff; border-radius: 14px; padding: 12px; width: 290px; height: 290px; max-width: 100%; margin: 0 auto 10px; } .tasiM .qr svg { width: 100%; height: 100%; display: block; }
+  .tasiM small { display: block; font-size: 11.5px; color: var(--muted); margin-bottom: 12px; }
+  .tasiM .bt { display: flex; gap: 8px; } .tasiM .bt.col { flex-direction: column; }
+  .tasiM .bt button { flex: 1; padding: 11px; border-radius: 12px; border: 1px solid #333; background: #1a1a1a; color: #eee; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .tasiM .bt button.k { background: var(--accent); border-color: var(--accent); color: #000; }
   .keyhint { font-size: 11px; color: var(--muted); text-align: right; margin-top: 2px; }
   .dayinfo { font-size: 13px; color: var(--muted); margin: 4px 0 2px; }
   .dayinfo b { color: var(--accent); }
@@ -241,7 +255,7 @@
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
 </head>
-<body>
+<body data-karekod="yok">
 <div class="wrap">
   <div class="stick">
     <header>
@@ -254,6 +268,12 @@
       <div><b id="mTitle"></b><small id="mSub"></small></div>
       <button id="nextM" aria-label="Sonraki çeyrek">›</button>
     </div>
+  </div>
+
+  <!-- Bilgisayardan açanlara: telefonda kullan + taşı -->
+  <div class="card dev" id="devCard" hidden>
+    <div class="dh"><i>📱</i><div><b>Günce en rahat telefonda</b><span>Veriler yalnızca bu cihazın tarayıcısında saklanır; bilgisayarda girdiklerin telefonda kendiliğinden görünmez. İş bilgisayarında site kapanırsa da veriler orada kalır.</span></div></div>
+    <button type="button" class="btn pri" id="tasiBtn">📲 Verilerimi telefona taşı</button>
   </div>
 
   <!-- 1. Sonuç raporu -->
@@ -297,10 +317,11 @@
       <button class="btn pri" id="expCsv" style="grid-column:1/3">📊 Çeyreği Excel'e aktar</button>
       <button class="btn" id="expJson">⬇️ Yedeği indir</button>
       <button class="btn" id="impJson">⬆️ Yedekten yükle</button>
+      <button class="btn" id="tasiBtn2" style="grid-column:1/3">📲 Başka cihaza taşı (karekod)</button>
       <button class="btn danger" id="resetM" style="grid-column:1/3">Bu çeyreğin günlük kayıtlarını sıfırla</button>
     </div>
     <input type="file" id="fileIn" accept="application/json,.json" hidden>
-    <p class="note" style="margin:10px 0 0">Veriler yalnızca bu telefonda, bu tarayıcıda saklanır; kimse göremez, hiçbir sisteme gönderilmez. Tarayıcı verilerini silersen ya da cihaz değiştirirsen kaybolmaması için ara ara yedek indir.</p>
+    <p class="note" style="margin:10px 0 0">Veriler yalnızca bu cihazda, bu tarayıcıda saklanır; kimse göremez, hiçbir sisteme gönderilmez. Başka cihazda görmek için <b>📲 Başka cihaza taşı</b>'yı kullan. Tarayıcı verilerini silersen kaybolmaması için ara ara yedek indir.</p>
   </div>
 
   <p class="note warn">🔒 Buraya <b>müşteri bilgisi</b> (ad, TCKN, hesap no vb.) girme; yalnızca adetleri işle. Hesaplar senin girdiğin hedef ve adetlere göre yapılan tahminlerdir.</p>
@@ -912,6 +933,80 @@ $("posPdf").onclick = async () => {
     doc.save(`gunce-fis-${qy}-Q${qn + 1}.pdf`); toast("PDF indirildi");
   } catch (e) { toast("PDF oluşturulamadı, fişi görsel olarak indir"); }
 };
+// ================= Telefona taşı: veriler karekodun içinde, sunucuya uğramadan =================
+// Adres: gunce.html#tasi=<1|0><base64url>  (1 = sıkıştırılmış). "#" sonrası hiçbir sunucuya gönderilmez.
+const b64u = (u8) => { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+const unb64u = (t) => { const s = atob(t.replace(/-/g, "+").replace(/_/g, "/")); const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; };
+async function zip(u8, mode) {
+  const cs = mode === "c" ? new CompressionStream("deflate-raw") : new DecompressionStream("deflate-raw");
+  const out = new Response(new Blob([u8]).stream().pipeThrough(cs));
+  return new Uint8Array(await out.arrayBuffer());
+}
+async function packData(obj) {
+  const raw = new TextEncoder().encode(JSON.stringify(obj));
+  if (window.CompressionStream) { try { return "1" + b64u(await zip(raw, "c")); } catch (e) {} }
+  return "0" + b64u(raw);
+}
+async function unpackData(t) {
+  const u = unb64u(t.slice(1));
+  const raw = t[0] === "1" ? await zip(u, "d") : u;
+  return JSON.parse(new TextDecoder().decode(raw));
+}
+async function tasiLink() {
+  const base = location.href.split("#")[0];
+  let obj = { products: D.products, targets: D.targets, days: D.days, bal: D.bal || {} };
+  let t = await packData(obj);
+  if (t.length > 1200) { // uzunsa (karekod sık olmasın diye) yalnızca bu ve önceki çeyreğin günlerini taşı
+    const from = keyOf(new Date(qy, qn * 3 - 3, 1, 12));
+    obj = { ...obj, days: Object.fromEntries(Object.entries(D.days).filter(([k]) => k >= from)) };
+    t = await packData(obj);
+  }
+  return t.length > 2600 ? null : base + "#tasi=" + t;
+}
+function tasiModal(html) {
+  let m = $("tasiM");
+  if (!m) { m = document.createElement("div"); m.id = "tasiM"; m.className = "tasiM"; document.body.appendChild(m); m.onclick = (e) => { if (e.target === m) m.hidden = true; }; }
+  m.innerHTML = `<div class="in">${html}</div>`; m.hidden = false;
+  const x = m.querySelector("[data-x]"); if (x) x.onclick = () => (m.hidden = true);
+  return m;
+}
+async function tasiGoster() {
+  const url = await tasiLink();
+  if (!url) { toast("Veri çok büyük; 💾 Yedeği indir ile dosya olarak taşı"); return; }
+  if (!window.qrcode) { try { await loadJs("lib/qrcode.js"); } catch (e) { toast("Karekod hazırlanamadı"); return; } }
+  const q = qrcode(0, "L"); q.addData(url); q.make();
+  const nDay = Object.keys(D.days).length;
+  const m = tasiModal(`<h3>📲 Telefona taşı</h3>
+    <p>Telefonunun kamerasıyla okut; açılan sayfada <b>Taşı</b>'ya bas. Hedeflerin ve ${nDay} günlük işaretlemen telefona geçer.</p>
+    <div class="qr">${q.createSvgTag({ cellSize: 3, margin: 0, scalable: true })}</div>
+    <small>Veriler yalnızca bu karekodun içinde taşınır; hiçbir sunucuya gönderilmez. Karekodu kimseyle paylaşma.</small>
+    <div class="bt"><button type="button" class="c">🔗 Bağlantıyı kopyala</button><button type="button" class="k" data-x>Kapat</button></div>`);
+  m.querySelector(".c").onclick = function () { (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => (this.textContent = "✅ Kopyalandı"), () => (this.textContent = "Kopyalanamadı")); };
+}
+// Telefonda: adreste #tasi= varsa önce sor, sonra birleştir ya da yerine koy
+async function tasiAl() {
+  const h = location.hash;
+  if (!h.startsWith("#tasi=")) return;
+  history.replaceState(null, "", location.pathname + location.search);
+  let G;
+  try { G = await unpackData(h.slice(6)); if (!G || !Array.isArray(G.products) || typeof G.days !== "object") throw 0; }
+  catch (e) { tasiModal(`<h3>😕 Taşınamadı</h3><p>Karekod okunamadı ya da eksik. Bilgisayarda karekodu yeniden açıp tekrar okut.</p><div class="bt"><button type="button" class="k" data-x>Tamam</button></div>`); return; }
+  const mine = Object.keys(D.days).length, gel = Object.keys(G.days).length;
+  const m = tasiModal(`<h3>📲 Veriler geldi</h3>
+    <p><b>${G.products.length}</b> kalem · <b>${gel}</b> günlük işaretleme.${mine ? ` Bu cihazda da <b>${mine}</b> günlük kayıt var.` : ""}</p>
+    ${mine ? `<p class="s">“Birleştir” iki cihazdaki kayıtları bir araya getirir; aynı gün ve kalemde büyük olan sayı kalır.</p>` : ""}
+    <div class="bt col">${mine ? `<button type="button" class="k" data-a="b">🔀 Birleştir</button><button type="button" class="c" data-a="y">♻️ Bu cihazdakileri sil, gelenleri koy</button>` : `<button type="button" class="k" data-a="y">✅ Taşı</button>`}<button type="button" class="c" data-x>Vazgeç</button></div>`);
+  m.querySelectorAll("[data-a]").forEach((b) => (b.onclick = () => {
+    if (b.dataset.a === "y") D = { products: G.products, targets: G.targets || {}, days: G.days, bal: G.bal || {}, v3: true };
+    else {
+      for (const p of G.products) if (!D.products.some((x) => x.id === p.id)) D.products.push(p);
+      for (const [q, t] of Object.entries(G.targets || {})) D.targets[q] = Object.assign({}, t, D.targets[q] || {});
+      for (const [k, v] of Object.entries(G.days)) { const d = (D.days[k] ||= {}); for (const [id, n] of Object.entries(v)) d[id] = Math.max(d[id] || 0, n || 0); }
+      for (const [k, v] of Object.entries(G.bal || {})) if (D.bal[k] == null) D.bal[k] = v;
+    }
+    migrate(); save(); render(); m.hidden = true; toast("✅ Veriler bu cihaza taşındı");
+  }));
+}
 function shiftQuarter(dir) {
   qn += dir;
   if (qn < 0) { qn = 3; qy--; } if (qn > 3) { qn = 0; qy++; }
@@ -935,7 +1030,12 @@ $("expCsv").onclick = exportCsv;
 $("resetM").onclick = () => { if (confirm(`${qName()} (${qRange()}) günlük kayıtları silinsin mi? (Hedefler kalır)`)) { eachQuarterDay((d) => delete D.days[keyOf(d)]); save(); render(); } };
 
 load(); migrate(); save(); render();
-if (!withTargets().length && phase() === "simdi") setTimeout(() => { try { if (!sessionStorage.getItem("gunceT")) { sessionStorage.setItem("gunceT", 1); openTargets(); } } catch (e) {} }, 600);
+const PC = window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches;
+$("devCard").hidden = !PC;
+$("tasiBtn").onclick = tasiGoster; $("tasiBtn2").onclick = tasiGoster;
+const geliyor = location.hash.startsWith("#tasi=");
+tasiAl();
+if (!geliyor && !withTargets().length && phase() === "simdi") setTimeout(() => { try { if (!sessionStorage.getItem("gunceT")) { sessionStorage.setItem("gunceT", 1); openTargets(); } } catch (e) {} }, 600);
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
