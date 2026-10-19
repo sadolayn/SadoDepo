@@ -1,9 +1,37 @@
 {
   "guncelleme": "2026-10-19",
   "kaynak": "İş Bankası kredi hesaplama aracı / HesapKurdu karşılaştırması",
-  "ihtiyac": { "12": 4.06, "24": 3.90, "36": 3.82 },
-  "konut": { "36": 3.10, "60": 3.10, "120": 3.10 },
+  "ihtiyac": {
+    "12": 4.06,
+    "24": 3.9,
+    "36": 3.82
+  },
+  "konut": {
+    "36": 3.1,
+    "60": 3.1,
+    "120": 3.1
+  },
   "konut_not": "İlk konut (isbank.com.tr), en düşük oran",
   "link_ihtiyac": "https://www.isbank.com.tr/ihtiyac-kredisi",
-  "link_konut": "https://www.isbank.com.tr/ihtiyac-kredisi"
+  "link_konut": "https://www.isbank.com.tr/ihtiyac-kredisi",
+  "ek_hesap": {
+    "aylik": 4.25,
+    "maasli": 4.19,
+    "maasli_bit": "2026-10-31",
+    "isplus": {
+      "Turkuaz": 4.23,
+      "Mavi": 4.21,
+      "Lacivert": 4.19
+    },
+    "kontrol": "2026-10-19",
+    "link": "https://www.isbank.com.tr/ek-hesap",
+    "taksit_max": 12,
+    "kampanya": {
+      "ad": "İndirimli Taksitli Ek Hesap",
+      "bas": "2026-10-16",
+      "bit": "2026-10-23",
+      "oran": "3 aya kadar %3,49 · 4–12 ay %3,79 (sigortalı)",
+      "url": "https://www.isbank.com.tr/tkskm"
+    }
+  }
 }
