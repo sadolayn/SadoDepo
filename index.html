@@ -575,17 +575,22 @@
   const kutu = document.getElementById("kayan"), ser = document.getElementById("kayanSer");
   if (!kutu) return;
   const L = [
-    ["iscep", "📲 İşCep'in <b>gizli süper güçleri</b> · hepsini biliyor musun? 🤫"],
-    ["iscep", "🔍 Her gün açtığın İşCep, <b>sandığından fazlasını</b> yapıyor"],
-    ["iscep", "💡 İşCep'te <b>bir kez açıp</b> hep kullanacağın ayarlar var"],
+    ["iscep", "📲 İşCep'in <b>süper gizli güçlerini</b> hiç merak ettin mi? 🤫"],
+    ["iscep", "🛡️ İşCep'te dolandırıcılara karşı <b>gizli bir kalkan</b> var… seninki açık mı?"],
+    ["iscep", "👛 Cüzdan evde kaldı… <b>İşCep'le yine de</b> ödeyebilir misin? 🤔"],
+    ["iscep", "🏧 Kartsız Bankamatik mi? <b>İşCep'in bildiği</b> bir yol var 😉"],
+    ["iscep", "🔍 Her gün açtığın İşCep, <b>sandığından çok daha fazlasını</b> yapıyor"],
+    ["iscep", "💡 İşCep'te <b>bir kez açıp</b> hep kullanacağın ayarlar var. Hangileri mi?"],
     ["black", "🖤 <b>İş Black</b>'liler bunu biliyor… ya sen?"],
     ["black", "✨ İş Black'in <b>ayrıcalıklarından</b> hiç kullanmadığın var mı?"],
     ["isplus", "💎 <b>İş Plus</b>'ta seviyen yükseldikçe neler açılıyor?"],
   ];
+  const ilk = L.shift(); // "süper gizli güçler" hep en başta
   for (let i = L.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [L[i], L[j]] = [L[j], L[i]]; }
+  L.unshift(ilk);
   // Araya ve sona açık çağrı: nereye dokunacağını bilmeyen de anlasın
   const CAGRI = ["iscep", "👉 Hepsi ve daha fazlası <b>İş Bankası Gündemi</b>'nde · dokun, gir"];
-  const dizi = [...L.slice(0, 3), CAGRI, ...L.slice(3), CAGRI];
+  const dizi = [...L.slice(0, 3), CAGRI, ...L.slice(3, 6), CAGRI, ...L.slice(6), CAGRI];
   const tek = dizi.map(([h, x]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}" data-h="${h}">${x}</span>`).join("");
   ser.innerHTML = tek + tek; // iki kopya: kesintisiz döngü
   kutu.hidden = false;
