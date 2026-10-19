@@ -296,7 +296,7 @@
     <button data-tab="mev"><i>💰</i><span>Vadeli<br>Mevduat</span></button>
     <button data-tab="tk"><i>🛍️</i><span>Tüketici<br>Kredisi</span></button>
     <button data-tab="ek" data-yeni="ekhesap|2026-10-19|•"><i>➕</i><span>Ek<br>Hesap</span></button>
-    <button data-tab="kk"><i>💳</i><span>Kart<br>Gecikme</span></button>
+    <button data-tab="kk"><i>💳</i><span>Bireysel Kart<br>Gecikme</span></button>
     <button data-tab="konut"><i>🏠</i><span>Konut<br>Kredisi</span></button>
     <div class="tlab t2">🏢 Ticari</div>
     <button data-tab="bch" class="active"><i>🔄</i><span>BCH<br>Rotatif</span></button>
@@ -332,6 +332,7 @@
     <div class="card">
       <div class="big"><span>Toplam maliyet</span><b id="b_out">–</b></div>
       <div class="rows" id="b_rows"></div>
+      <div class="tsbtns" style="margin-top:12px"><button type="button" id="b_copy" class="tscopy">📋 Özeti kopyala</button><button type="button" id="b_share" class="tscopy share">📤 Paylaş</button></div>
     </div>
   </section>
 
@@ -354,7 +355,7 @@
       <div class="big"><span id="e_lbl">30 günde ödenecek faiz + vergi</span><b id="e_out">–</b></div>
       <div class="rows" id="e_rows"></div>
       <div class="ekwarn" id="e_warn"></div>
-      <button type="button" class="ekbtn" id="e_copy">📋 Müşteriye söylenecek özeti kopyala</button>
+      <div class="tsbtns" style="margin-top:12px"><button type="button" id="e_copy" class="tscopy">📋 Özeti kopyala</button><button type="button" id="e_share" class="tscopy share">📤 Paylaş</button></div>
     </div>
     <div class="card">
       <h2 style="font-size:15px">⚡ Hap tablo <span style="font-weight:400;color:var(--muted);font-size:12.5px" id="e_hapT"></span></h2>
@@ -377,8 +378,7 @@
       <div class="big"><span id="et_lbl">12 ay · aylık taksit</span><b id="et_out">–</b></div>
       <div class="rows" id="et_rows"></div>
       <p class="note" id="et_note">Sigorta primi dahil değil. İlk taksit kullanımdan 30 gün sonra.</p>
-      <details><summary>Ödeme planını göster</summary><div class="tbl"><table><thead><tr><th>#</th><th>Taksit</th><th>Anapara</th><th>Faiz</th><th>Vergi</th><th>Kalan</th></tr></thead><tbody id="et_plan"></tbody></table></div></details>
-      <button type="button" class="ekbtn" id="et_copy">📋 Özeti kopyala</button>
+      <div class="tsbtns" style="margin-top:12px"><button type="button" id="et_copy" class="tscopy">📋 Özeti kopyala</button><button type="button" id="et_share" class="tscopy share">📤 Paylaş</button></div>
     </div>
     <p class="eksrc" id="e_src"></p>
   </section>
@@ -654,6 +654,8 @@
         <summary>Ödeme planını göster</summary>
         <div class="tbl"><table id="tr_plan"></table></div>
       </details>
+      <div class="tsbtns" style="margin-top:12px"><button type="button" id="tr_copy" class="tscopy">📋 Özeti kopyala</button><button type="button" id="tr_share" class="tscopy share">📤 Paylaş</button></div>
+      <button type="button" id="tr_pdf" class="tscopy pdfbtn">📄 Ödeme planı PDF indir</button>
     </div>
     <p class="note">Vergi levhalı (gerçek usul) çiftçide KKDF %0, BSMV %5. Levhasız, ÇKS / çiftçilik belgeli çiftçide KKDF %15, BSMV %5; kredi tutarı 15.000 TL'ye kadarsa KKDF %0. Hazine faiz destekli (sübvansiyonlu) tarım kredilerinde faiz oranı ayrıca indirimlidir. Uygulamayı bankanın güncel yönergesiyle teyit et.</p>
   </section>
@@ -722,7 +724,8 @@
       <label style="margin-top:12px">Çekler</label>
       <div id="c_list"></div>
       <button type="button" class="ckadd" id="c_add">+ Çek ekle</button>
-      <button type="button" class="ckcopy" id="c_copy">📋 Müşteriye özet kopyala</button>
+      <div class="tsbtns" style="margin-top:12px"><button type="button" id="c_copy" class="tscopy">📋 Özeti kopyala</button><button type="button" id="c_share" class="tscopy share">📤 Paylaş</button></div>
+      <button type="button" id="c_pdf" class="tscopy pdfbtn">📄 Çek listesi PDF indir</button>
       <pre class="ckprev" id="c_prev" hidden></pre>
       <div class="two">
         <div><label>Yıllık faiz</label><div class="field"><input id="c_faiz" type="text" inputmode="decimal" value="39"><span class="unit">%</span></div></div>
@@ -793,7 +796,7 @@
   <!-- Kredi kartı -->
   <section class="panel" id="kk">
     <div class="card">
-      <h2>Kredi Kartı Gecikme Faizi</h2>
+      <h2>Bireysel Kredi Kartı Gecikme Faizi</h2>
       <p class="hint">Asgari ödemenin ödenmeyen kısmına gecikme faizi, kalan borca akdi faiz işler. Faizlere BSMV ve KKDF eklenir.</p>
       <label>Dönem borcu</label>
       <div class="field"><input id="k_borc" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div>
@@ -814,6 +817,8 @@
     <div class="card">
       <div class="big"><span>Faiz + vergi toplamı</span><b id="k_out">–</b></div>
       <div class="rows" id="k_rows"></div>
+      <div class="tsbtns" style="margin-top:12px"><button type="button" id="k_copy" class="tscopy">📋 Özeti kopyala</button><button type="button" id="k_share" class="tscopy share">📤 Paylaş</button></div>
+      <p class="note">Bireysel kredi kartlarında TCMB azami akdi ve gecikme faizi oranlarıyla yapılan yaklaşık hesaptır; kesin tutar bir sonraki hesap özetinde yer alır.</p>
     </div>
   </section>
 
@@ -863,7 +868,9 @@ function calcBCH() {
     ["Aylık faiz karşılığı", pct(aylik)],
     ["Yıllık efektif maliyet (vergiler dahil)", pct(efektif)],
   ]);
+  bchOzet = P ? ozetMetni("BCH ROTATİF KREDİ ÖZETİ", [[`Kullanılan tutar: ${tl(P)}`, `Kullanım süresi: ${g} gün (gün esası ${esas})`, `Yıllık faiz oranı: ${pct(ry * 100)}`], [`Faiz: ${tl(faiz)}`, `BSMV (${pct(bsmv * 100)}): ${tl(vB)}`, ...(vK ? [`KKDF (${pct(kkdf * 100)}): ${tl(vK)}`] : []), `Toplam maliyet: ${tl(top)}`, `Dönem sonu borç: ${tl(P + top)}`], [`Aylık faiz karşılığı: ${pct(aylik)}`, `Yıllık efektif maliyet (vergiler dahil): ${pct(efektif)}`]]) : "";
 }
+let bchOzet = "";
 
 // ---------- Mevduat ----------
 let stopajManual = false;
@@ -1346,7 +1353,9 @@ function calcKK() {
     ["BSMV + KKDF", tl(vergi)],
     ["Sonraki ekstreye devreden", tl(kalan + top), "total"],
   ]);
+  kkOzet = B ? ozetMetni("BİREYSEL KREDİ KARTI GECİKME ÖZETİ", [[`Dönem borcu: ${tl(B)}`, `Ödenen tutar: ${tl(O)}`, `Asgari ödeme (%${nfx(num("k_asg"))}): ${tl(asg)}`], [`Aylık akdi faiz: %${nfx(ra * 100)}`, `Aylık gecikme faizi: %${nfx(rg * 100)}`, `Faiz işleyen gün: ${g}`], [`Gecikme faizi: ${tl(fG)}`, `Akdi faiz: ${tl(fA)}`, `BSMV + KKDF: ${tl(vergi)}`, `Toplam faiz + vergi: ${tl(top)}`, `Sonraki ekstreye devreden: ${tl(kalan + top)}`]], "Yaklaşık hesaptır; kesin tutar bir sonraki hesap özetinde yer alır.") : "";
 }
+let kkOzet = "";
 
 // ---------- Konut ----------
 // BDDK 29.01.2026 tarihli 11364 sayılı karar: ekspertiz değerine ve enerji sınıfına göre azami kredi/değer oranı
@@ -1508,6 +1517,21 @@ function vkCalc(pre) { ({ t: calcTK, k2: calcKonut, tc: calcTic })[pre](); vkRen
   $(pre + "_ters").addEventListener("click", (e) => { const b = e.target.closest("button[data-p]"); if (!b) return; $(pre + "_tutar").value = (+b.dataset.p).toLocaleString("tr-TR"); vkCalc(pre); $(pre + "_tutar").scrollIntoView({ behavior: "smooth", block: "center" }); });
   $(pre + "_butce").addEventListener("input", () => vkRender(pre));
 });
+// Müşteri özeti: tek tip metin (WhatsApp / e-posta) + kopyala/paylaş düğmeleri
+function ozetMetni(baslik, bolumler, not) {
+  const L = "──────────────────";
+  return [baslik, L, ...bolumler.flatMap((b, i) => (i ? [L, ...b] : b)), L, ...(not ? [not] : []), "Bilgi amaçlıdır; kesin tutar işlem günü belirlenir."].join("\n");
+}
+function ozetBagla(pre, getT) {
+  const c = $(pre + "_copy"), sh = $(pre + "_share");
+  if (c) c.addEventListener("click", () => {
+    const t = getT(); if (!t) return; const o = c.textContent;
+    const done = () => { c.textContent = "✅ Kopyalandı"; setTimeout(() => (c.textContent = o), 1500); };
+    const fb = () => { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); } catch (e) {} a.remove(); done(); };
+    if (navigator.clipboard) navigator.clipboard.writeText(t).then(done, fb); else fb();
+  });
+  if (sh) sh.addEventListener("click", () => shareText(getT()));
+}
 // Paylaş: telefonda paylaşım menüsü (WhatsApp, mail, SMS…); yoksa WhatsApp
 function shareText(txt) {
   if (!txt) return;
@@ -1522,8 +1546,8 @@ const PDF_NOTE = "Bu belge tahmini bir hesaplamadır; bankanın resmi ödeme pla
 function planKutular(o) {
   const f = fmt2, pc = (x) => "%" + x.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
   return [
-    [["Kredi tutarı", f(o.P) + " TL"], ["Vade", o.rows.length + " taksit"], ["Aylık faiz", pc(o.r * 100)]],
-    [["Aylık taksit", f(o.T) + " TL"], ["Toplam geri ödeme", f(o.top) + " TL"], ["Faiz + vergi + fon", f(o.tF + o.tV + o.tFo) + " TL"]],
+    [["Kredi tutarı", f(o.P) + " TL"], ["Vade", o.rows.length + " taksit"], o.faizK || ["Aylık faiz", pc(o.r * 100)]],
+    [[o.taksitK || "Aylık taksit", f(o.T) + " TL"], ["Toplam geri ödeme", f(o.top) + " TL"], ["Faiz + vergi + fon", f(o.tF + o.tV + o.tFo) + " TL"]],
   ];
 }
 function planPdfHTML(o) {
@@ -1634,8 +1658,8 @@ function krediOzet(o) {
     L,
     `Kredi türü: ${o.tur}`,
     `Kredi tutarı: ${tl(o.P)}`,
-    `Vade: ${o.tek ? "Tek taksit" : o.n + " ay"}`,
-    `Aylık faiz oranı: %${(o.r * 100).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`,
+    `Vade: ${o.vadeTxt || (o.tek ? "Tek taksit" : o.n + " ay")}`,
+    o.faizTxt || `Aylık faiz oranı: %${(o.r * 100).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 4 })}`,
     L,
     `${o.tek ? "Ödenecek tutar" : "Aylık taksit tutarı"}: ${tl(o.taksit)}`,
     ...(ilkF ? [`İlk taksit tutarı: ${tl(first)}`] : []),
@@ -1727,7 +1751,7 @@ $("tc_copy").addEventListener("click", () => {
 // [KKDF, BSMV] — levhasız ÇKS/çiftçilik belgeli: KKDF %15, ancak 15.000 TL'ye kadar olan kredide %0
 const TR_PRESET = { levha: [0, 5], cks: [15, 5] };
 const trKkdf = (durum, P) => (durum === "cks" && P <= 15000 ? 0 : TR_PRESET[durum][0]);
-let trManual = false;
+let trManual = false, trOzet = "", trPdf = null;
 ["tr_kkdf", "tr_bsmv"].forEach((x) => $(x).addEventListener("input", () => (trManual = true)));
 let trLast = null;
 let trModeLast = "aylik";
@@ -1761,7 +1785,7 @@ function calcTarim() {
   const cnt = mode === "aylik" ? n : mode === "yillik" ? Math.max(1, Math.round(n / 12)) : 1;
   $("tr_ilkLbl").textContent = mode === "hasat" ? "Ödeme (vade) tarihi" : "İlk taksit tarihi";
   const D = dateSetup("tr", step, cnt, mode === "aylik" ? 5 : 1, mode === "aylik" ? 45 : 99999);
-  if (!P || !n || !D.ok) { $("tr_out").textContent = "–"; rows("tr_rows", []); $("tr_plan").innerHTML = ""; return; }
+  if (!P || !n || !D.ok) { $("tr_out").textContent = "–"; rows("tr_rows", []); $("tr_plan").innerHTML = ""; trOzet = ""; trPdf = null; return; }
   // Dönem faizi: aylık = yıllık/12 (kırık ilk dönem gün/30); yıllık ve hasat = gün/360
   const rp = mode === "aylik" ? ry / 12 : ry;
   const per = mode === "hasat" ? [{ d: D.ilk, fac: ymd(addMonthsC(D.bas, n)) === ymd(D.ilk) ? n / 12 : D.g / 360, g: D.g }] : mkPerStep(D.bas, D.ilk, cnt, step, mode === "aylik" ? 30 : 360);
@@ -1784,6 +1808,10 @@ function calcTarim() {
     ...(alt && fark > 0.005 ? [["Levhasıza göre tasarruf (KKDF yok)", tl(fark), "pos"]] : []),
   ]);
   $("tr_plan").innerHTML = planHead + cur.plan.map((x, j) => planRow(x, j + 1)).join("") + planTot(cur.plan);
+  { const tek = mode === "hasat", T0 = tek ? cur.plan[0].t : R2(cur.T), odAd = { aylik: "aylık eşit taksit", hasat: "vade sonunda tek ödeme", yillik: "yıllık eşit taksit" }[mode];
+    const fz = `Yıllık faiz oranı: %${nfx(ry * 100)} (aylık %${(ry / 12 * 100).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 4 })})`;
+    trOzet = krediOzet({ tur: "Tarım Kredisi", P, n, r: ry / 12, taksit: T0, plan: cur.plan, bsmv, kkdf, tF: fz ? sum(cur.plan, "f") : 0, tB: sum(cur.plan, "bs"), tK: sum(cur.plan, "kk"), toplam, d0: cur.plan[0].d, d1: cur.plan[cur.plan.length - 1].d, tek, vadeTxt: `${n} ay · ${odAd}`, faizTxt: fz }).replace("KREDİ ÖDEME ÖZETİ", "TARIM KREDİSİ ÖDEME ÖZETİ");
+    trPdf = { tur: "Tarım Kredisi", P, r: ry / 12, n, bsmv, kkdf, tF: sum(cur.plan, "f"), tV: sum(cur.plan, "bs"), tFo: sum(cur.plan, "kk"), top: toplam, T: T0, faizK: ["Yıllık faiz", "%" + nfx(ry * 100)], taksitK: tek ? "Vade sonu ödeme" : mode === "yillik" ? "Yıllık taksit" : "Aylık taksit", rows: cur.plan.map((x) => ({ d: x.d, a: x.ana, f: x.f, fo: x.kk, v: x.bs, t: x.t, b: x.bal })) }; }
   const txt = {
     levha: "<b>KKDF %0</b>: Vergi levhalı (gerçek usulde vergilendirilen) çiftçinin zirai faaliyet için kullandığı kredi ticari/zirai kredi sayılır. Alınan makine, ekipman vb. işletme aktifine kaydedilir ve faturayla belgelenir.",
     cks: num("tr_tutar") <= 15000 ? "<b>KKDF %0 + BSMV %5</b>: Levhasız, ÇKS / çiftçilik belgeli çiftçide kredi tutarı 15.000 TL'ye kadar olduğu için KKDF alınmaz." : "<b>KKDF %15 + BSMV %5</b>: Vergi levhası olmayan, ÇKS / çiftçilik belgeli çiftçide KKDF %15 uygulanır. Kredi tutarı 15.000 TL'ye kadar olursa KKDF %0 olur.",
@@ -1895,19 +1923,84 @@ function calcCek() {
     res.map((x) => `<tr><td>${x.i + 1}</td><td>${fmt2(x.T)}</td><td>${shortD(x.v)}</td><td>${x.nv}</td><td>${shortD(x.val)}</td><td>${x.nf}</td><td>${fmt2(x.F)}</td><td>${fmt2(x.bs)}</td></tr>`).join("");
   $("c_warn").innerHTML = warns.some((w) => !w.startsWith("ℹ️")) ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : `<div class="ckwarn" style="border-color:#1f6f4a;background:rgba(31,111,74,.12);color:#9fe0bf">✅ Vade ve valör tarihleri iş gününe denk geliyor.${warns.map((w) => `<div>${w}</div>`).join("")}</div>`;
   $("c_note").textContent = !ic ? `Banka tablosu: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ ${B}; gün = valör − kullandırım + 1 (valör günü dahil). Ortalama vade gün sayısı tutar ağırlıklıdır. Faiz kullandırımda peşin alınır.` : `Reeskont: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ (${B} + yıllık faiz × gün). Faiz kullandırımda peşin alınır; gün sayısı kullandırımdan valör (hesaba geçiş) tarihine kadardır.`;
-  const sum = [`Çek iskontosu özeti (${shortD(isl)})`, ""]
-    .concat(res.map((x) => `${x.i + 1}) ${fmt2(x.T)} TL · vade ${shortD(x.v)} · valör ${shortD(x.val)} · ${x.nf} gün`))
-    .concat(["", `Toplam çek: ${tl(TT)}`, ...(oran < 1 ? [`Kullandırılan (%${nfx(oran * 100)}): ${tl(AA)}`] : []), `Faiz oranı: yıllık %${nfx(ry * 100)}`, `Faiz + BSMV: ${tl(FF + BS)}`, ...(KK ? [`KKDF: ${tl(KK)}`] : []), ...(kom ? [`Kullandırım komisyonu + BSMV: ${tl(kom + komBS)}`] : []),
-      `Ortalama vade: ${shortD(ortVD)} · valör ${shortD(ortVV)}`, `Hesabınıza geçecek net tutar: ${tl(net)}`, "", "Bilgi amaçlıdır; kesin tutar işlem günü belirlenir."]);
+  const sum = [ozetMetni("TL ÇEK İSKONTO ÖZETİ", [[`İşlem (kullandırım) tarihi: ${shortD(isl)}`, `Çek adedi: ${res.length}`, `Yıllık faiz oranı: %${nfx(ry * 100)}`],
+    res.map((x) => `${x.i + 1}) ${fmt2(x.T)} TL · vade ${shortD(x.v)} · valör ${shortD(x.val)} · ${x.nf} gün`),
+    [`Toplam çek: ${tl(TT)}`, ...(oran < 1 ? [`Kullandırılan (%${nfx(oran * 100)}): ${tl(AA)}`] : []), `İskonto faizi: ${tl(FF)}`, `BSMV (%${nfx(bsmv * 100)}): ${tl(BS)}`, ...(KK ? [`KKDF: ${tl(KK)}`] : []), ...(kom ? [`Kullandırım komisyonu + BSMV: ${tl(kom + komBS)}`] : []), `Ortalama vade: ${shortD(ortVD)} · valör ${shortD(ortVV)}`, `Hesabınıza geçecek net tutar: ${tl(net)}`]],
+    "Faiz kullandırımda peşin alınır; valör tarihleri hafta sonu ve resmi tatillere göre kaydırılmıştır.")];
   $("c_prev").textContent = sum.join("\n");
+  cekPdf = { isl, ry, res, TT, AA, FF, BS, KK, kom: kom + komBS, net, ortVD, ortVV, bsmv, kkdf, oran };
   renderCal(isl, res);
 }
-$("c_copy").addEventListener("click", () => {
-  const t = $("c_prev").textContent; if (!t) return;
-  const done = () => { $("c_copy").textContent = "✓ Kopyalandı"; setTimeout(() => ($("c_copy").textContent = "📋 Müşteriye özet kopyala"), 1600); };
-  const fb = () => { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); } catch (e) {} a.remove(); done(); };
-  if (navigator.clipboard) navigator.clipboard.writeText(t).then(done, fb); else fb();
-});
+let cekPdf = null;
+ozetBagla("c", () => $("c_prev").textContent);
+$("c_pdf").addEventListener("click", (e) => cekPdf && belgePdf(cekBelge(cekPdf), e.currentTarget));
+// Çek listesi: kredi planıyla aynı görünüm, satırlar çek bazında
+function cekBelge(o) {
+  const f = fmt2, d = shortD, S = (k) => o.res.reduce((a, x) => a + x[k], 0);
+  return {
+    ust: "ÇEK İSKONTO HESAPLAMA ÖZETİ", baslik: "TL Çek İskontosu", sag: [`Hesaplama tarihi: ${d(new Date())}`, `Kullandırım: ${d(o.isl)}`],
+    kutular: [[["Toplam çek", f(o.TT) + " TL"], ["Çek adedi", o.res.length + " adet"], ["Yıllık faiz", "%" + nfx(o.ry * 100)]],
+      [["Hesaba geçecek net", f(o.net) + " TL"], ["Ortalama vade", d(o.ortVD)], ["Ort. valör günü", d(o.ortVV)]]],
+    alt: `Kullandırılan ${f(o.AA)} TL${o.oran < 1 ? " (%" + nfx(o.oran * 100) + ")" : ""} · İskonto faizi ${f(o.FF)} TL · BSMV ${f(o.BS)} TL${o.KK ? " · KKDF " + f(o.KK) + " TL" : ""}${o.kom ? " · Komisyon+BSMV " + f(o.kom) + " TL" : ""}`,
+    head: ["#", "Çek tutarı", "Vade", "Takas günü", "Valör", "Gün", "Faiz", "BSMV"],
+    body: o.res.map((x) => [x.i + 1, f(x.T), d(x.v), d(x.vIs), d(x.val), x.nf, f(x.F), f(x.bs)]),
+    foot: ["", f(S("T")), "", "", "Toplam", "", f(S("F")), f(S("bs"))],
+    center: [0, 2, 3, 4, 5], dosya: `CekIskonto_${Math.round(o.TT)}TL.pdf`,
+    not: "Bu belge tahmini bir hesaplamadır. Faiz = tutar × yıllık faiz × gün ÷ 360 (gün = valör − kullandırım + 1). Toplam faiz ortalama vade gününe göre hesaplandığından satır toplamından kuruş farkı olabilir. Kesin tutar işlem günü belirlenir.",
+  };
+}
+// Genel belge PDF'i (çek listesi vb.): kredi planıyla aynı tasarım
+function belgePdf(o, btn) {
+  const lbl = btn.textContent; btn.textContent = "⏳ PDF hazırlanıyor…"; btn.disabled = true;
+  const done = () => { btn.textContent = lbl; btn.disabled = false; };
+  loadPdfLib().then(() => {
+    const doc = new window.jspdf.jsPDF({ unit: "mm", format: "a4" });
+    doc.addFileToVFS("FS.ttf", PDF_FONTS.regular); doc.addFont("FS.ttf", "FS", "normal");
+    doc.addFileToVFS("FSB.ttf", PDF_FONTS.bold); doc.addFont("FSB.ttf", "FS", "bold");
+    const L = 14, W = 182, GOLD = [201, 149, 60], DARK = [28, 26, 22], CREAM = [250, 246, 236]; let y = 18;
+    doc.setFont("FS", "bold"); doc.setFontSize(9); doc.setTextColor(168, 116, 28); doc.text(o.ust, L, y - 1);
+    doc.setFontSize(17); doc.setTextColor(34, 34, 34); doc.text(o.baslik, L, y + 6.5);
+    doc.setFont("FS", "normal"); doc.setFontSize(9); doc.setTextColor(119, 119, 119);
+    o.sag.forEach((t, i) => doc.text(t, L + W, y + i * 5, { align: "right" }));
+    doc.setDrawColor(...GOLD); doc.setLineWidth(0.9); doc.line(L, y + 10, L + W, y + 10);
+    doc.setFont("FS", "bold"); doc.setFontSize(8.5); doc.setTextColor(168, 116, 28); doc.text("BİLGİLENDİRME AMAÇLI · RESMİ BELGE DEĞİLDİR", L, y + 15);
+    y += 19;
+    const bw = (W - 8) / 3, bh = 15;
+    o.kutular.forEach((row, ri) => { row.forEach(([k, v], i) => { const x = L + i * (bw + 4);
+      if (ri === 1) { doc.setFillColor(...DARK); doc.roundedRect(x, y, bw, bh, 2.5, 2.5, "F"); doc.setTextColor(243, 220, 168); }
+      else { doc.setFillColor(...CREAM); doc.setDrawColor(230, 220, 196); doc.setLineWidth(0.25); doc.roundedRect(x, y, bw, bh, 2.5, 2.5, "FD"); doc.setTextColor(90, 90, 90); }
+      doc.setFont("FS", "normal"); doc.setFontSize(8.5); doc.text(k, x + 4, y + 5.5);
+      doc.setFont("FS", "bold"); doc.setFontSize(12); if (ri === 0) doc.setTextColor(34, 34, 34); doc.text(String(v), x + 4, y + 11.8); }); y += bh + 3; });
+    doc.setFont("FS", "normal"); doc.setFontSize(8.5); doc.setTextColor(119, 119, 119); doc.text(doc.splitTextToSize(o.alt, W), L, y + 2);
+    const cs = {}; (o.center || []).forEach((i) => (cs[i] = { halign: "center" })); cs[0] = { halign: "center", cellWidth: 9, textColor: [150, 150, 150] };
+    doc.autoTable({ startY: y + 7, margin: { left: L, right: L, bottom: 20 }, theme: "plain", showHead: "everyPage", showFoot: "lastPage",
+      head: [o.head], body: o.body, foot: [o.foot],
+      styles: { font: "FS", fontSize: 8.5, cellPadding: { top: 1.6, bottom: 1.6, left: 1.5, right: 1.5 }, halign: "right", textColor: [40, 40, 40], lineColor: [236, 230, 216], lineWidth: { bottom: 0.2 } },
+      headStyles: { font: "FS", fontStyle: "bold", fillColor: DARK, textColor: [243, 220, 168], halign: "right" },
+      footStyles: { font: "FS", fontStyle: "bold", fillColor: [250, 240, 212], textColor: [34, 34, 34], halign: "right" },
+      columnStyles: cs, didParseCell: (h) => { if (h.section !== "body" && (o.center || []).includes(h.column.index)) h.cell.styles.halign = "center"; } });
+    y = doc.lastAutoTable.finalY + 7; if (y > 268) { doc.addPage(); y = 20; }
+    doc.setFont("FS", "normal"); doc.setFontSize(8.5); doc.setTextColor(102, 102, 102); doc.text(doc.splitTextToSize(o.not, W), L, y);
+    const n = doc.getNumberOfPages();
+    for (let i = 1; i <= n; i++) { doc.setPage(i);
+      try { doc.saveGraphicsState(); doc.setGState(new doc.GState({ opacity: 0.05 })); } catch (e) {}
+      doc.setFont("FS", "bold"); doc.setFontSize(46); doc.setTextColor(168, 116, 28); doc.text("BİLGİ AMAÇLI", 105, 170, { align: "center", angle: 30 });
+      try { doc.restoreGraphicsState(); } catch (e) {}
+      doc.setDrawColor(230, 220, 196); doc.setLineWidth(0.3); doc.line(L, 284, L + W, 284);
+      doc.setFont("FS", "normal"); doc.setFontSize(8); doc.setTextColor(168, 116, 28); doc.text("Bilgilendirme amaçlı tahmini hesaplamadır · resmi belge değildir", L, 289);
+      doc.setTextColor(140, 140, 140); doc.text(`${i} / ${n}`, L + W, 289, { align: "right" }); }
+    doc.save(o.dosya); done();
+  }).catch(() => {
+    const cell = "padding:5px 6px;text-align:right;border-bottom:1px solid #ece6d8";
+    const html = `<div style="font-family:Georgia,serif;font-size:12px;color:#222;padding:20px"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#a8741c">${o.ust}</div><div style="font-size:19px;font-weight:700">${o.baslik}</div><div style="color:#777;font-size:10.5px">${o.sag.join(" · ")}</div>
+      ${o.kutular.map((r) => `<div style="display:flex;gap:8px;margin-top:8px">${r.map(([k, v]) => `<div style="flex:1;padding:8px 10px;border:1px solid #e6dcc4;border-radius:8px"><div style="font-size:10.5px;color:#777">${k}</div><b>${v}</b></div>`).join("")}</div>`).join("")}
+      <p style="font-size:10.5px;color:#777">${o.alt}</p><table style="width:100%;border-collapse:collapse;font-size:11px"><tr>${o.head.map((h) => `<th style="background:#1c1a16;color:#f3dca8;padding:6px">${h}</th>`).join("")}</tr>
+      ${o.body.map((r) => `<tr>${r.map((c) => `<td style="${cell}">${c}</td>`).join("")}</tr>`).join("")}<tr style="background:#faf0d4;font-weight:700">${o.foot.map((c) => `<td style="${cell}">${c}</td>`).join("")}</tr></table><p style="font-size:10.5px;color:#666">${o.not}</p></div>`;
+    const fr = document.createElement("iframe"); fr.style.cssText = "position:fixed;width:0;height:0;border:0;right:0;bottom:0"; document.body.appendChild(fr);
+    fr.contentDocument.write(`<!doctype html><html><head><meta charset="utf-8"><title>${o.dosya}</title><style>@page{size:A4;margin:10mm}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}</style></head><body>${html}</body></html>`); fr.contentDocument.close();
+    setTimeout(() => { fr.contentWindow.print(); setTimeout(() => fr.remove(), 2000); done(); }, 300);
+  });
+}
 function renderCal(isl, res) {
   const marks = {};
   const add = (d, c) => { const k = ymd(d); (marks[k] = marks[k] || new Set()).add(c); };
@@ -2160,7 +2253,7 @@ $("v_copy").addEventListener("click", () => {
     w.innerHTML = asim
       ? `<b>⚠️ ${Math.round(num("e_gun"))} gün yazıldı; hesap 30 güne göre gösteriliyor.</b> Bir aydan uzun kullanımda dönem faizi ödenmezse ana paraya eklenir ve faize faiz işler; tutar değişir. Uzun vade için aşağıdaki <b>Taksitli Nakit Avans</b>'a bak.`
       : `<b>⚠️ 1 aydan sonra dikkat:</b> Ek hesap faizi her hesap kesim döneminde tahsil edilir. Müşteri dönem faizini ödemezse faiz ana paraya eklenir, faize de faiz işler; tutar bu hesaptan farklı olabilir.`;
-    ekOzet = `Ek hesap: ${tl(P)} · ${gunAd(g)}\nFaiz: ${tl(k.faiz)} + KKDF/BSMV: ${tl(k.v)}\nToplam maliyet: ${tl(k.top)} · Geri ödeme: ${tl(P + k.top)}\n(Aylık %${f2(r)}, valör dikkate alındı. Bilgi amaçlıdır.)`;
+    ekOzet = ozetMetni("BİREYSEL EK HESAP FAİZ ÖZETİ", [[`Kullanılacak tutar: ${tl(P)}`, `Süre: ${gunAd(g)}`, `Aylık faiz oranı: %${f2(r)}`], [`Faiz: ${tl(k.faiz)}`, `KKDF (%15): ${tl(k.kkdf)}`, `BSMV (%15): ${tl(k.bsmv)}`, `Toplam maliyet: ${tl(k.top)}`, `Geri ödenecek toplam: ${tl(P + k.top)}`]], "Valör dikkate alınmıştır. 1 aydan uzun kullanımda dönem faizi ödenmezse anaparaya eklenir; tutar değişebilir.");
     $("e_hapT").textContent = `· ${tl(P)} · %${f2(r)}`;
     $("e_hap").innerHTML = GUNLER.map(([v, ad]) => { const x = kalem(P, r, v); return `<tr class="r${v === g ? " on" : ""}" data-g="${v}"><td>${ad}</td><td>${f2(x.faiz)}</td><td>${f2(x.v)}</td><td>${f2(x.top)} TL</td></tr>`; }).join("");
     $("e_hap").querySelectorAll("tr").forEach((tr) => (tr.onclick = () => { $("e_gun").value = tr.dataset.g; calcEk(); $("e_out").scrollIntoView({ behavior: "smooth", block: "center" }); }));
@@ -2185,9 +2278,8 @@ $("v_copy").addEventListener("click", () => {
     $("et_lbl").textContent = `${n} ay · aylık taksit`;
     $("et_out").textContent = tl(t);
     rows("et_rows", [["Toplam geri ödeme", tl(top), "total"], ["Toplam faiz", tl(sF)], ["KKDF + BSMV", tl(sV)], ["Efektif aylık maliyet", "%" + (re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })]]);
-    $("et_plan").innerHTML = plan;
     $("et_note").textContent = (P < 500 || P > 600000 ? "⚠️ Taksitli kullanım 500 TL – 600.000 TL arası ve ek hesap limiti kadar. " : "") + "Sigorta primi dahil değil. İlk taksit kullanımdan 30 gün sonra.";
-    tOzet = `Taksitli nakit avans (ek hesap): ${tl(P)} · ${n} ay\nAylık taksit: ${tl(t)} · Toplam: ${tl(top)}\n(Aylık %${f2(r * 100)}, KKDF/BSMV dahil, sigorta hariç. Bilgi amaçlıdır.)`;
+    tOzet = ozetMetni("TAKSİTLİ NAKİT AVANS ÖZETİ (Ek Hesaba bağlı)", [[`Tutar: ${tl(P)}`, `Vade: ${n} ay`, `Aylık faiz oranı: %${f2(r * 100)}`], [`Aylık taksit tutarı: ${tl(t)}`, `Toplam geri ödeme: ${tl(top)}`], [`Toplam faiz: ${tl(sF)}`, `KKDF + BSMV: ${tl(sV)}`, `Efektif aylık maliyet: %${(re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })}`]], "Sigorta primi dahil değildir; oran kullanım günü sabitlenir.");
     const K = EK.kampanya, kEl = $("et_kamp");
     if (K && bugun >= (K.bas || "") && bugun <= K.bit) { kEl.hidden = false; kEl.href = K.url; kEl.innerHTML = `🎉 <b>${K.ad}</b> · ${trh(K.bit)}'e kadar: ${K.oran} ↗`; } else kEl.hidden = true;
   };
@@ -2199,7 +2291,7 @@ $("v_copy").addEventListener("click", () => {
     const done = () => { b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = o), 1500); };
     if (navigator.clipboard) navigator.clipboard.writeText(t).then(done, () => prompt("Kopyala:", t)); else prompt("Kopyala:", t);
   });
-  kopya("e_copy", () => ekOzet); kopya("et_copy", () => tOzet);
+  ozetBagla("e", () => ekOzet); ozetBagla("et", () => tOzet);
   $("e_faiz").addEventListener("input", (e) => { if (e.isTrusted) oranElle = true; });
   $("et_faiz").addEventListener("input", (e) => { if (e.isTrusted) tOranElle = true; });
   ["e_tutar", "et_tutar"].forEach((id) => $(id).addEventListener("blur", () => { $(id).value = num(id).toLocaleString("tr-TR", { maximumFractionDigits: 2 }); }));
@@ -2209,6 +2301,8 @@ $("v_copy").addEventListener("click", () => {
   Ortak.json("data/kredi_oran.json").then((j) => { if (j && j.ek_hesap && j.ek_hesap.aylik) { EK = Object.assign(EK, j.ek_hesap); uygula(); } }).catch(() => {});
 })();
 
+ozetBagla("b", () => bchOzet); ozetBagla("k", () => kkOzet); ozetBagla("tr", () => trOzet);
+$("tr_pdf").addEventListener("click", (e) => trPdf && planPdf(trPdf, e.currentTarget));
 // ---------- Sekmeler ----------
 document.querySelectorAll(".tabs button").forEach((b) => {
   b.addEventListener("click", () => {
