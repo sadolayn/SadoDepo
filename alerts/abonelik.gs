@@ -6,9 +6,10 @@
  *    aslında abonelik onaylanmış oluyordu.)
  * 2) Abone olan cihaz, kendi aboneliğinin durumunu görebilir: siteye yalnızca o cihaza verilen gizli bir
  *    "durum anahtarı" (stoken) ile sorulur. E-posta adresiyle sorgu YOK; başkası kimin abone olduğunu öğrenemez.
+ * Not: Telefonda yapıştırırken satır sonları kaybolsa da çalışır (// açıklama yok).
  * Tabloya en sağa "stoken" sütunu eklenir (10. sütun). Eski satırlar etkilenmez.
  */
-const S_COL = 9; // COLS.length: 'stoken' sütunu (0'dan sayılır)
+const S_COL = 9; /* COLS.length: 'stoken' sütunu (0'dan sayılır) */
 
 function doGet(e) {
   const p = (e && e.parameter) || {};
@@ -83,7 +84,7 @@ function subscribe_(b) {
   }
 }
 
-// Onay: bağlantı tekrar açılırsa (ya da e-posta güvenlik sistemi önceden açtıysa) "zaten onaylı" der
+/* Onay: bağlantı tekrar açılırsa (ya da e-posta güvenlik sistemi önceden açtıysa) "zaten onaylı" der */
 function confirm_(t) {
   const f = findBy_(C.ctoken, t);
   if (!f) return { ok: false, title: 'Bağlantı geçersiz', msg: 'Bu onay bağlantısı eski. Sitede yeniden abone olduysan en son gelen onay e-postasındaki bağlantıyı kullan.' };
@@ -92,11 +93,11 @@ function confirm_(t) {
     return { ok: true, title: 'Aboneliğin zaten onaylı', msg: 'Takip ettiğin kelimeler: ' + f.rec[C.keywords] + '. Her sabah 10:00 civarı, kelimelerine uyan yeni haber varsa özetin gelir.' };
   f.sh.getRange(f.row, C.keywords + 1).setValue(pend);
   f.sh.getRange(f.row, C.pendingKw + 1).setValue('');
-  f.sh.getRange(f.row, C.status + 1).setValue('active'); // ctoken silinmez: ikinci tıklamada "zaten onaylı" görünsün
+  f.sh.getRange(f.row, C.status + 1).setValue('active'); /* ctoken silinmez: ikinci tıklamada "zaten onaylı" görünsün */
   return { ok: true, title: 'Abonelik onaylandı', msg: 'Takip ettiğin kelimeler: ' + pend + '. Her sabah 10:00 civarı haber özetin gelecek.' };
 }
 
-// Durum: yalnızca durum anahtarını bilen cihaz sorabilir; e-posta maskelenir
+/* Durum: yalnızca durum anahtarını bilen cihaz sorabilir; e-posta maskelenir */
 function status_(s) {
   if (!s || s.length < 20) return { ok: false };
   const sh = sheet_();
