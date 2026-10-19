@@ -393,7 +393,7 @@ $("sub").onclick = async () => {
     const r = await fetch(ENDPOINT, { method: "POST", body: JSON.stringify({ action: "subscribe", email, keywords: kws }) });
     const j = await r.json();
     show(j.ok ? "ok" : "bad", (j.ok ? "📧 " : "") + j.msg + (j.ok ? " Gelmezse spam / gereksiz klasörüne de bak." : ""));
-    if (j.ok || j.s) aboneKaydet(email, j.s);
+    if (j.ok) aboneKaydet(email, "");
   } catch (e) {
     show("bad", "Bağlantı hatası, biraz sonra tekrar dene.");
   } finally {
@@ -408,8 +408,9 @@ const ABK = "alertsAbonelik";
 const abOku = () => { try { return JSON.parse(localStorage.getItem(ABK) || "[]") || []; } catch (e) { return []; } };
 const abYaz = (L) => { try { localStorage.setItem(ABK, JSON.stringify(L.slice(0, 3))); } catch (e) {} };
 function aboneKaydet(email, s) {
+  const eski = abOku().find((x) => x.email === email.toLowerCase());
   const L = abOku().filter((x) => x.email !== email.toLowerCase());
-  L.unshift({ email: email.toLowerCase(), s: s || "", t: Date.now(), kws: kws.slice() });
+  L.unshift({ email: email.toLowerCase(), s: s || (eski && eski.s) || "", t: Date.now(), kws: kws.slice() });
   abYaz(L); abGoster();
 }
 const abTarih = (iso) => { if (!iso) return ""; const d = new Date(iso); return d.toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) + " " + d.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }); };
@@ -421,7 +422,7 @@ async function abGoster() {
     if (d && d.ok) {
       if (d.status === "active") { cls = "ok"; ic = "✅"; durum = "Abonelik aktif"; alt = `Kelimeler: ${esc(d.keywords.split(" | ").join(", "))}<br>Her sabah 10:00'da, kelimelerine uyan <b>yeni haber varsa</b> özet gelir; haber yoksa o gün e-posta gelmez.` + (d.pending ? `<br>Yeni kelimelerin için onay bekleniyor.` : ""); }
       else if (d.status === "unsub") { cls = "off"; ic = "🚫"; durum = "Abonelikten çıkıldı"; alt = "Yeniden abone olmak için yukarıdan kelimelerini seçip <b>Abone ol</b>'a bas."; }
-    } else if (!x.s) { alt = "Onay e-postandaki bağlantıya tıkladıysan abonelik başlamıştır. Durumu buradan görebilmek için bir kez daha <b>Abone ol</b>'a basabilirsin."; durum = "Bu cihazdan abone olundu"; ic = "📬"; }
+    } else if (!x.s) { alt = "E-postana gelen bağlantıyı (<b>Aboneliği onayla</b> ya da <b>Aboneliğimi bu cihazda göster</b>) <b>bu cihazda</b> açınca durumun burada görünür. Gelmediyse spam / gereksiz klasörüne bak."; durum = "E-posta bekleniyor"; ic = "📬"; }
     return `<div class="ab ${cls}"><i>${ic}</i><div><b>${esc(x.email)}</b><span><b style="display:inline;font-size:12.5px">${durum}</b> · ${alt}</span>${d && d.lastSent ? `<small>📨 Son gönderim: ${abTarih(d.lastSent)}</small>` : ""}</div><button type="button" data-sil="${esc(x.email)}" title="Bu cihazdan listeden kaldır">✕</button></div>`;
   };
   box.innerHTML = `<div class="abon"><h4>📬 BU CİHAZDAKİ ABONELİKLERİN</h4>${L.map((x) => satir(x, null)).join("")}</div>`;
@@ -429,6 +430,13 @@ async function abGoster() {
   box.innerHTML = `<div class="abon"><h4>📬 BU CİHAZDAKİ ABONELİKLERİN</h4>${L.map((x, i) => satir(x, D[i])).join("")}</div>`;
   box.querySelectorAll("[data-sil]").forEach((b) => (b.onclick = () => { abYaz(abOku().filter((x) => x.email !== b.dataset.sil)); abGoster(); }));
 }
+// E-postadaki "aboneliğimi göster" bağlantısıyla gelindiyse: bu cihaza kaydet, adresi temizle
+(() => {
+  const h = location.hash; if (!h.startsWith("#abone=")) return;
+  const q = new URLSearchParams(h.slice(1)), s = q.get("abone") || "", e = (q.get("e") || "").toLowerCase();
+  history.replaceState(null, "", location.pathname + location.search);
+  if (s.length >= 20 && e) { aboneKaydet(e, s); setTimeout(() => { const b = $("abon"); if (b) b.scrollIntoView({ behavior: "smooth", block: "center" }); }, 400); }
+})();
 abGoster();
 
 // ================= Telefon bildirimi (Firebase Cloud Messaging) =================
