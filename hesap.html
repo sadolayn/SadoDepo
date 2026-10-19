@@ -87,24 +87,24 @@
   .warn.ok { background: rgba(63,194,131,.08); border-color: #1f4d36; color: #9ff0c8; }
   /* ===== Eski tip masa hesap makinesi ===== */
   .calcbox { position: sticky; top: var(--sh, 120px); z-index: 20; background: #000; padding-bottom: 8px; }
-  .calc { margin: 0 auto; max-width: 244px; border-radius: 18px; padding: 8px 9px 10px;
+  .calc { margin: 0 auto; max-width: 340px; border-radius: 20px; padding: 10px 11px 12px;
     background: linear-gradient(160deg, #3a3631, #26231f 55%, #1c1a17); border: 1px solid #4a4540;
     box-shadow: 0 10px 30px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08); }
   .brand { display: flex; justify-content: space-between; align-items: center; margin: 0 2px 5px; }
-  .brand button { background: none; border: none; font-size: 15px; cursor: pointer; padding: 0 2px; opacity: .85; }
-  .brand b { font-family: Georgia, serif; font-style: italic; color: #e0c48f; font-size: 15px; letter-spacing: 1px; }
-  .brand i { font-style: normal; font-size: 9.5px; letter-spacing: 2px; color: #9b9184; }
-  .solar { width: 64px; height: 14px; border-radius: 3px; background: repeating-linear-gradient(90deg, #2b1f15 0 15px, #3d2c1e 15px 16px); border: 1px solid #111; }
-  .lcd { position: relative; border-radius: 8px; padding: 3px 9px 3px; margin-bottom: 7px; background: linear-gradient(180deg, #a9b49a, #96a288); border: 3px solid #141414; box-shadow: inset 0 3px 8px rgba(0,0,0,.35); color: #1d2418; }
-  .lcd .ind { display: flex; gap: 10px; font-size: 10px; font-weight: 800; letter-spacing: 1px; min-height: 12px; opacity: .85; }
+  .brand button { background: none; border: none; font-size: 18px; cursor: pointer; padding: 0 2px; opacity: .85; }
+  .brand b { font-family: Georgia, serif; font-style: italic; color: #e0c48f; font-size: 18px; letter-spacing: 1px; }
+  .brand i { font-style: normal; font-size: 11px; letter-spacing: 2px; color: #9b9184; }
+  .solar { width: 84px; height: 17px; border-radius: 3px; background: repeating-linear-gradient(90deg, #2b1f15 0 15px, #3d2c1e 15px 16px); border: 1px solid #111; }
+  .lcd { position: relative; border-radius: 9px; padding: 4px 11px 5px; margin-bottom: 9px; background: linear-gradient(180deg, #a9b49a, #96a288); border: 3px solid #141414; box-shadow: inset 0 3px 8px rgba(0,0,0,.35); color: #1d2418; }
+  .lcd .ind { display: flex; gap: 12px; font-size: 11.5px; font-weight: 800; letter-spacing: 1px; min-height: 12px; opacity: .85; }
   .lcd .ind span { opacity: .12; } .lcd .ind span.on { opacity: 1; }
-  .lcd .op { position: absolute; left: 12px; bottom: 10px; font-size: 18px; font-weight: 800; opacity: .8; }
-  .lcd .num { text-align: right; font-family: "Courier New", ui-monospace, monospace; font-weight: 700; font-size: 21px; letter-spacing: 1px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-shadow: 1px 1px 0 rgba(0,0,0,.12); }
+  .lcd .op { position: absolute; left: 13px; bottom: 11px; font-size: 22px; font-weight: 800; opacity: .8; }
+  .lcd .num { text-align: right; font-family: "Courier New", ui-monospace, monospace; font-weight: 700; font-size: 30px; letter-spacing: 1px; line-height: 1.15; white-space: nowrap; overflow: hidden; text-shadow: 1px 1px 0 rgba(0,0,0,.12); }
   /* Tuş yatağı ve 3 boyutlu, oyuk yüzeyli eski tip tuşlar */
-  .bed { background: #221d19; border-radius: 11px; padding: 6px 6px 9px; box-shadow: inset 0 3px 8px rgba(0,0,0,.7), inset 0 -1px 0 rgba(255,255,255,.05); }
-  .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px 4px; }
+  .bed { background: #221d19; border-radius: 12px; padding: 8px 8px 11px; box-shadow: inset 0 3px 8px rgba(0,0,0,.7), inset 0 -1px 0 rgba(255,255,255,.05); }
+  .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px 7px; }
   .k { --c1: #f3ead6; --c2: #d9c9a6; --sk: #b9a47c; --sh: #6f5f42; --tx: #3a2e1e;
-    position: relative; isolation: isolate; height: 29px; border: none; border-radius: 7px; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; user-select: none; touch-action: manipulation;
+    position: relative; isolation: isolate; height: 42px; border: none; border-radius: 8px; font: inherit; font-size: 18px; font-weight: 800; cursor: pointer; user-select: none; touch-action: manipulation;
     color: var(--tx); background: linear-gradient(180deg, var(--c2), var(--sk));
     box-shadow: 0 4px 0 var(--sh), 0 6px 8px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.18);
     text-shadow: 0 1px 0 rgba(255,255,255,.35); transition: transform .05s, box-shadow .05s; }
@@ -115,18 +115,26 @@
   .k.op { --c1: #f3a066; --c2: #e07a3c; --sk: #bd5d26; --sh: #6a2e0e; --tx: #fff7ec; text-shadow: 0 -1px 0 rgba(0,0,0,.3); }
   .k.o  { --c1: #b5503d; --c2: #96392a; --sk: #7a2a1e; --sh: #3e130b; --tx: #ffe6d6; text-shadow: 0 -1px 0 rgba(0,0,0,.4); }
   .k.r  { --c1: #e2603f; --c2: #c4432a; --sk: #9e321c; --sh: #50170a; --tx: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4); }
-  .k.eq { --c1: #e2603f; --c2: #c4432a; --sk: #9e321c; --sh: #50170a; --tx: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4); font-size: 19px; }
-  .k.sm { font-size: 11px; letter-spacing: .3px; }
+  .k.eq { --c1: #e2603f; --c2: #c4432a; --sk: #9e321c; --sh: #50170a; --tx: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4); font-size: 24px; }
+  .k.sm { font-size: 13.5px; letter-spacing: .3px; }
   .k.z { grid-column: span 2; }
   /* kâğıt rulo */
-  .tape { position: relative; margin: 4px auto 0; max-width: 270px; background: #f4efe3; color: #2b2620; border-radius: 4px 4px 0 0; padding: 14px 14px 10px; font-family: "Courier New", ui-monospace, monospace; font-size: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.5); min-height: 110px; max-height: max(150px, calc(100vh - var(--sh, 120px) - var(--ch, 330px) - 64px)); overflow-y: auto;
+  .tape { position: relative; margin: 4px auto 0; max-width: 340px; background: #f4efe3; color: #2b2620; border-radius: 4px 4px 0 0; padding: 14px 14px 10px; font-family: "Courier New", ui-monospace, monospace; font-size: 15px; box-shadow: 0 6px 18px rgba(0,0,0,.5); min-height: 300px; max-height: max(300px, calc(100vh - var(--sh, 120px) - var(--ch, 330px) - 64px)); overflow-y: auto;
     -webkit-mask-image: linear-gradient(transparent, #000 14%); mask-image: linear-gradient(transparent, #000 14%); }
   .tape div { display: flex; justify-content: space-between; gap: 10px; line-height: 1.55; font-variant-numeric: tabular-nums; }
   .tape div span:first-child { color: #8a7f6c; min-width: 22px; }
   .tape div.t { border-top: 1px dashed #b5ab98; margin-top: 3px; padding-top: 3px; font-weight: 700; }
   .tape div.c { color: #a33; }
   .tape .e { color: #9b9184; text-align: center; display: block; }
-  .tapebar { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+  /* rulonun üstüne kalemle çizim: tuval yazıyla birlikte kayar */
+  #tapeIn { position: relative; display: block; min-height: 276px; }
+  #tapeCv { position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; touch-action: none; }
+  .tape.pen #tapeCv { pointer-events: auto; cursor: crosshair; }
+  .tape.pen { box-shadow: 0 6px 18px rgba(0,0,0,.5), 0 0 0 2px #c4432a; }
+  .tapebar { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 10px; }
+  .tapebar button.on { background: #c4432a; border-color: #c4432a; color: #fff; }
+  .penc { display: inline-flex; gap: 6px; align-items: center; } .penc[hidden] { display: none; }
+  .penc i { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #333; cursor: pointer; } .penc i.on { border-color: #fff; box-shadow: 0 0 0 2px var(--accent); }
   .smart { margin: 12px auto 0; max-width: 300px; text-align: center; font-size: 12.5px; line-height: 1.55; color: #d9c9a6; background: rgba(224,162,79,.06); border: 1px dashed #4a3a22; border-radius: 12px; padding: 9px 10px; }
   .smart s { color: #ef8a6c; text-decoration-thickness: 2px; }
   .tapebar button { background: transparent; border: 1px solid var(--line); color: var(--accent); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer; }
@@ -224,7 +232,7 @@
     box-shadow: 0 18px 40px rgba(0,0,0,.75), 0 0 0 1px #0b0a09, 0 0 0 3px #6b5222, 0 0 22px rgba(224,162,79,.18), inset 0 1px 0 rgba(255,255,255,.12); }
   .calc::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: repeating-linear-gradient(90deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px); }
   .calc::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -14px; height: 14px; border-radius: 50%; background: radial-gradient(closest-side, rgba(224,162,79,.25), transparent); pointer-events: none; }
-  .brand b { background: linear-gradient(90deg, #b8862e, #f6dc9a 45%, #c9953c 60%, #f3d38a); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; font-size: 16px; }
+  .brand b { background: linear-gradient(90deg, #b8862e, #f6dc9a 45%, #c9953c 60%, #f3d38a); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; font-size: 19px; }
   .solar { background: linear-gradient(115deg, rgba(255,255,255,.22) 0 18%, transparent 30%), repeating-linear-gradient(90deg, #2b1f15 0 15px, #3d2c1e 15px 16px); box-shadow: inset 0 1px 2px rgba(0,0,0,.6); }
   .lcd { background: linear-gradient(180deg, #c3d1a8, #a7b88e 60%, #9aab82); border-color: #0e0e0e; box-shadow: inset 0 3px 8px rgba(0,0,0,.35), 0 0 14px rgba(170,200,120,.25); }
   .lcd::after { content: ""; position: absolute; inset: 0; border-radius: 5px; pointer-events: none; background: linear-gradient(155deg, rgba(255,255,255,.35) 0 22%, transparent 34%); }
@@ -267,10 +275,11 @@
         <button class="k o sm" data-k="CE">CE</button><button class="k n" data-k="1">1</button><button class="k n" data-k="2">2</button><button class="k n" data-k="3">3</button><button class="k op" data-k="-">−</button>
         <button class="k o" data-k="⌫">⌫</button><button class="k n z" data-k="0">0</button><button class="k n" data-k=",">,</button><button class="k op" data-k="+">+</button>
       </div>
-      <div class="keys" style="margin-top:6px"><button class="k n sm" data-k="00" style="grid-column:span 2">00</button><button class="k o sm" data-k="√">√</button><button class="k eq" data-k="=" style="grid-column:span 2">=</button></div></div>
+      <div class="keys" style="margin-top:9px"><button class="k n sm" data-k="00" style="grid-column:span 2">00</button><button class="k o sm" data-k="√">√</button><button class="k eq" data-k="=" style="grid-column:span 2">=</button></div></div>
     </div></div>
-    <div class="tape" id="tape"><span class="e">— rulo boş —</span></div>
-    <div class="tapebar"><button id="tPdf">📄 PDF indir</button><button id="tCopy">📋 Kopyala</button><button id="tClear">🧻 Kopar</button></div>
+    <div class="tape" id="tape"><div id="tapeIn"><span class="e">— rulo boş —</span></div><canvas id="tapeCv"></canvas></div>
+    <div class="tapebar"><button id="tPen">✏️ Kalem</button><span class="penc" id="penC" hidden><i data-c="#c4432a" class="on" style="background:#c4432a"></i><i data-c="#2456c9" style="background:#2456c9"></i><i data-c="#2b2620" style="background:#2b2620"></i></span><button id="tUndo" hidden>↶ Geri al</button></div>
+    <div class="tapebar" style="margin-top:8px"><button id="tPdf">📄 PDF indir</button><button id="tCopy">📋 Kopyala</button><button id="tClear">🧻 Kopar</button></div>
     <div class="smart">🧠 <b>Bu hesap makinesi akıllıdır!</b><br>10'u 3'e bölüp 3 ile çarparsanız tertemiz <b>10</b> bulursunuz.<br><s>9,9999999</s> diyen makinelere itibar etmeyiniz 😁</div>
   </section>
 
@@ -536,7 +545,7 @@ function disp() {
   $("iM").classList.toggle("on", !!mem && mem.n !== 0n); $("iE").classList.toggle("on", err); $("iK").classList.toggle("on", !err && t.startsWith("-"));
 }
 function fmtEntry(e) { const neg = e.startsWith("-"), s = neg ? e.slice(1) : e, [i, f] = s.split(","); return (neg ? "-" : "") + i.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (f !== undefined ? "," + f : ""); }
-function tape(a, b, cls) { tapeL.push([a, b, cls]); if (tapeL.length > 200) tapeL.shift(); const el = $("tape"); el.innerHTML = tapeL.map(([x, y, c]) => `<div class="${c || ""}"><span>${y}</span><span>${x}</span></div>`).join(""); el.scrollTop = el.scrollHeight; }
+function tape(a, b, cls) { tapeL.push([a, b, cls]); if (tapeL.length > 200) tapeL.shift(); const el = $("tape"); $("tapeIn").innerHTML = tapeL.map(([x, y, c]) => `<div class="${c || ""}"><span>${y}</span><span>${x}</span></div>`).join(""); cvBoyut(); el.scrollTop = el.scrollHeight; }
 const curQ = () => (entry !== null ? qParse(entry === "-" ? "0" : entry) : acc || Q(0n));
 function press(k) {
   if (err && k !== "C") return;
@@ -582,7 +591,26 @@ document.addEventListener("keydown", (e) => {
   const k = /^\d$/.test(e.key) ? e.key : m[e.key]; if (!k) return; e.preventDefault(); tik(k === "=" || k === "C"); press(k);
   const b = document.querySelector(`.calc [data-k="${CSS.escape(k)}"]`); if (b) { b.classList.add("down"); setTimeout(() => b.classList.remove("down"), 90); }
 });
-$("tClear").onclick = () => { tapeL.length = 0; $("tape").innerHTML = '<span class="e">— rulo boş —</span>'; };
+$("tClear").onclick = () => { tapeL.length = 0; $("tapeIn").innerHTML = '<span class="e">— rulo boş —</span>'; cizgi.length = 0; cvBoyut(); };
+// ===== Rulonun üstüne kalemle çizim (yazılar görünür kalır; çizgiler yazıyla birlikte kayar) =====
+const cizgi = []; let kalem = false, renk = "#c4432a", aktif = null;
+function cvBoyut() {
+  const cv = $("tapeCv"), t = $("tape"), st = t.scrollTop; cv.style.height = "0px"; // önce sıfırla ki eski boy ölçümü şişirmesin
+  const w = t.clientWidth, h = Math.max(t.scrollHeight, t.clientHeight), r = Math.min(2, window.devicePixelRatio || 1);
+  cv.style.height = h + "px"; t.scrollTop = st;
+  if (cv.width !== Math.round(w * r) || cv.height !== Math.round(h * r)) { cv.width = Math.round(w * r); cv.height = Math.round(h * r); }
+  const g = cv.getContext("2d"); g.setTransform(r, 0, 0, r, 0, 0); g.clearRect(0, 0, w, h); g.lineCap = g.lineJoin = "round";
+  cizgi.forEach((c) => { g.strokeStyle = c.r; g.lineWidth = 2.6; g.beginPath(); c.p.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); if (c.p.length === 1) g.lineTo(c.p[0][0] + .1, c.p[0][1]); g.stroke(); });
+  $("tUndo").hidden = !kalem || !cizgi.length;
+}
+const cvNokta = (e) => { const b = $("tapeCv").getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; };
+$("tapeCv").addEventListener("pointerdown", (e) => { if (!kalem) return; e.preventDefault(); $("tapeCv").setPointerCapture(e.pointerId); aktif = { r: renk, p: [cvNokta(e)] }; cizgi.push(aktif); cvBoyut(); });
+$("tapeCv").addEventListener("pointermove", (e) => { if (!aktif) return; e.preventDefault(); aktif.p.push(cvNokta(e)); cvBoyut(); });
+["pointerup", "pointercancel"].forEach((ev) => $("tapeCv").addEventListener(ev, () => (aktif = null)));
+$("tPen").onclick = () => { kalem = !kalem; $("tape").classList.toggle("pen", kalem); $("tPen").classList.toggle("on", kalem); $("tPen").textContent = kalem ? "✋ Kaydır" : "✏️ Kalem"; $("penC").hidden = !kalem; cvBoyut(); };
+$("penC").onclick = (e) => { const i = e.target.closest("i[data-c]"); if (!i) return; renk = i.dataset.c; $("penC").querySelectorAll("i").forEach((x) => x.classList.toggle("on", x === i)); };
+$("tUndo").onclick = () => { cizgi.pop(); cvBoyut(); };
+window.addEventListener("resize", () => cvBoyut()); cvBoyut();
 // Ruloyu gerçek fiş gibi dar bir PDF olarak indir (kitaplık sitenin içinde, ilk tıklamada yüklenir)
 const loadJs = (src) => new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
 let pdfP = null;
