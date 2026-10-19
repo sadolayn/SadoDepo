@@ -677,6 +677,10 @@ try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 if (location.hash === "#maximum") cat = "Maximum"; // ana sayfadaki kampanya hatırlatıcısından gelince
 let ayr = "black", ipl = null; try { ayr = localStorage.getItem("isbankAyr") || "black"; } catch (e) {}
 if (location.hash === "#isplus") { cat = "Black"; ayr = "plus"; }
+// Ana sayfadaki kayan yazıdan gelince
+if (location.hash === "#iscep") cat = "İşCep";
+if (location.hash === "#black") { cat = "Black"; ayr = "black"; }
+if (location.hash === "#kampanya") cat = "Kampanya";
 
 // ===== "Yeni" takibi: okunmamış içerik düğmede kırmızı sayı olarak görünür, bakınca düşer =====
 let SEEN = null, NEWNOW = new Set();

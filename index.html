@@ -44,6 +44,20 @@
   .top { display: flex; flex-direction: column; align-items: center; padding-top: 18px; width: 100%; }
   .hello { display: grid; grid-template-columns: 76px 1fr 76px; align-items: center; gap: 6px; width: 100%; max-width: 420px; margin: 4px 0 22px; }
   .hello .mid { text-align: center; min-width: 0; }
+  /* ===== Kayan yazı ===== */
+  .kayan { display: flex; align-items: stretch; width: 100%; max-width: 420px; margin: -8px 0 20px; border-radius: 12px; overflow: hidden; text-decoration: none;
+    border: 1px solid #5a4320; background: linear-gradient(90deg, rgba(224,162,79,.10), rgba(224,162,79,.04)); box-shadow: 0 0 18px rgba(224,162,79,.08); }
+  .kayan[hidden] { display: none; }
+  .kyEt { flex: none; display: flex; align-items: center; padding: 0 10px; font-size: 11.5px; font-weight: 800; letter-spacing: .4px; color: #1a1206;
+    background: linear-gradient(135deg, #f3d38a, #e0a24f); position: relative; z-index: 1; box-shadow: 6px 0 10px rgba(0,0,0,.55); }
+  .kyYol { flex: 1; min-width: 0; overflow: hidden; position: relative; -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 92%, transparent); }
+  .kySer { display: inline-flex; white-space: nowrap; padding: 8px 0; will-change: transform; animation: kyKay var(--sure, 60s) linear infinite; }
+  .kayan:active .kySer, .kayan:hover .kySer { animation-play-state: paused; }
+  .kyOge { display: inline-flex; align-items: center; gap: 5px; padding: 0 14px; font-size: 13px; color: #e9dcc0; }
+  .kyOge b { color: #f3d38a; font-weight: 800; }
+  .kyOge::after { content: "✦"; margin-left: 14px; color: #6b5222; font-size: 10px; }
+  @keyframes kyKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .kyYol { overflow-x: auto; } .kySer { animation: none; } }
   .hello .mid p.greet { margin: 0; font-size: 19px; min-height: 0; }
   .hello .mid p.welcome { margin: 5px 0 0; font-size: 12.5px; letter-spacing: 1.2px; color: var(--muted); transition: opacity .6s ease; min-height: 17px; }
   .hello .mid p.welcome.fade { opacity: 0; }
@@ -197,6 +211,11 @@
         <div class="m" id="dm"></div><div class="d" id="dd"></div><div class="w" id="dw"></div>
       </div>
     </div>
+    <!-- Kayan yazı: İş Bankası Gündemi'nden merak uyandıran kısa haberler -->
+    <a class="kayan" id="kayan" href="isbank.html" hidden aria-label="İş Bankası Gündemi'nden öne çıkanlar">
+      <span class="kyEt">👀 Kaçırma</span>
+      <span class="kyYol"><span class="kySer" id="kayanSer"></span></span>
+    </a>
   </header>
   <div class="bar" id="bar" aria-hidden="true">
     <div class="clock bc"><svg viewBox="0 0 100 100" aria-hidden="true">
@@ -550,5 +569,45 @@
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script src="yeni.js"></script>
+<script>
+// Kayan yazı: İşCep ipuçları, Maximum kampanyaları, İş Black / İş Plus ayrıcalıkları. Dokununca ilgili yere gider.
+(async function () {
+  const kutu = document.getElementById("kayan"), ser = document.getElementById("kayanSer");
+  if (!kutu || !window.Ortak) return;
+  const al = (u) => Ortak.json(u).catch(() => null);
+  const [ip, mx, bl, pl, bk] = await Promise.all(["isbank/iscep_ipucu.json", "isbank/kampanyalar.json", "isbank/black.json", "isbank/isplus.json", "isbank/banka_kampanya.json"].map(al));
+  const esc = (x) => String(x || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const karis = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const bugun = new Date(); bugun.setHours(0, 0, 0, 0);
+  const kalan = (d) => Math.round((new Date(d + "T00:00:00") - bugun) / 864e5);
+  const L = []; // [hedef, html]
+  if (ip && ip.ipuclari && ip.ipuclari.length) {
+    L.push(["iscep", `📲 <b>İşCep'in ${ip.ipuclari.length} gizli süper gücü</b> · sen kaçını biliyorsun?`]);
+    karis(ip.ipuclari).slice(0, 3).forEach((x) => L.push(["iscep", `${x.ic} <b>Biliyor muydun?</b> ${esc(x.t)}`]));
+  }
+  if (mx && mx.kampanyalar) {
+    const ak = mx.kampanyalar.filter((c) => !c.bitis || kalan(c.bitis) >= 0);
+    if (ak.length) L.push(["maximum", `💳 <b>Maximum'da ${ak.length} kampanya</b> şu an açık · bitmeden yakala`]);
+    const yakin = ak.filter((c) => c.bitis && kalan(c.bitis) <= 3).sort((a, b) => a.bitis.localeCompare(b.bitis))[0];
+    if (yakin) { const g = kalan(yakin.bitis); L.push(["maximum", `⏳ <b>${g === 0 ? "Bugün son gün" : g === 1 ? "Yarın son gün" : g + " gün kaldı"}:</b> ${esc(yakin.baslik)}`]); }
+    const one = karis(ak.filter((c) => c !== yakin))[0]; if (one) L.push(["maximum", `🎯 ${esc(one.baslik)}`]);
+  }
+  if (bl && bl.ayricaliklar && bl.ayricaliklar.length) L.push(["black", `🖤 <b>İş Black'in ${bl.ayricaliklar.length} ayrıcalığı</b> · hepsinden haberin var mı?`]);
+  if (pl && pl.ayricaliklar && pl.ayricaliklar.length) L.push(["isplus", `💎 <b>İş Plus</b> · seviyene göre ${pl.ayricaliklar.length} ayrıcalık, hangisi senin?`]);
+  if (bk && bk.kategoriler) { const n = bk.kategoriler.reduce((t, k) => t + (k.adet || 0), 0); if (n) L.push(["kampanya", `🎁 <b>Banka kampanyalarında ${n} fırsat</b> · maaştan krediye`]); }
+  if (L.length < 3) return;
+  // İşCep ve kampanyalar sırayla karışsın; açılışta hep aynı şey önde olmasın
+  const sira = karis(L);
+  const tek = sira.map(([h, x]) => `<span class="kyOge" data-h="${h}">${x}</span>`).join("");
+  ser.innerHTML = tek + tek; // iki kopya: kesintisiz döngü
+  kutu.hidden = false;
+  requestAnimationFrame(() => { const w = ser.scrollWidth / 2; ser.style.setProperty("--sure", Math.max(25, Math.round(w / 55)) + "s"); });
+  kutu.addEventListener("click", (e) => {
+    const o = e.target.closest(".kyOge"); const h = o ? o.dataset.h : "";
+    window.Rapor && Rapor.bolum("kayan-" + (h || "genel"));
+    if (h) { e.preventDefault(); location.href = "isbank.html#" + h; }
+  });
+})();
+</script>
 </body>
 </html>
