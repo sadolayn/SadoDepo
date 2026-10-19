@@ -51,6 +51,15 @@
  "ipuclari": [
   {
    "k": "para",
+   "ic": "💰",
+   "t": "Diğer bankadaki paranı tek dokunuşla İş Bankası'na getir",
+   "d": "O bankanın uygulamasını açmadan, diğer bankadaki vadesiz TL hesabındaki parayı İşCep'ten İş Bankası hesabına çek. Hesap ekli değilse işlem sırasında listeden bankanı seçmen yeter; izni bir kez verince sonrası tek dokunuş. Gelen parayla hemen vadeli hesap aç, fatura ya da kart borcu öde. Açık Bankacılık ile ücretsiz.",
+   "n": "Para Aktar › İş Bankası Hesabıma Para Getir",
+   "u": "https://www.isbank.com.tr/acik-bankacilik",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "para",
    "ic": "💠",
    "t": "İşCep'i kullandıkça seviye atla: İş Plus",
    "d": "Kartla harcadıkça ve fatura talimatı verdikçe Turkuaz, Mavi, Lacivert seviyelerine kendiliğinden geçersin: ayda 6'ya kadar ücretsiz EFT/FAST, markette %15'e varan indirim, daha düşük ek hesap faizi. Başvuru gerekmez.",
@@ -274,7 +283,7 @@
    "g": "🏦 Profil ve Ayarlar › Diğer Banka İzinleri",
    "ic": "🔗",
    "t": "Diğer bankalara verdiğin izinler tek ekranda",
-   "d": "Açık Bankacılık ile başka bankadaki hesap ve kartlarını İşCep'e eklediysen, hangi bankaya hangi izni (hesap görüntüleme, ödeme başlatma) verdiğini buradan görür, yönetirsin. İzin süresi dolunca eklemeyi yenilemen gerekir; artık kullanmadığın izni kaldırmak da güvenliğin parçası. Hizmet ücretsiz.",
+   "d": "Açık Bankacılık ile başka bankadaki hesap ve kartlarını İşCep'e eklediysen, hangi bankaya hangi izni (hesap görüntüleme, ödeme başlatma) verdiğini buradan görür, yönetirsin. İzni bir kez verince diğer bankadaki paranı tek dokunuşla İş Bankası'na getirebilirsin (Para Aktar › İş Bankası Hesabıma Para Getir). İzin süresi dolunca eklemeyi yenilemen gerekir; kullanmadığın izni kaldırmak da güvenliğin parçası. Ücretsiz.",
    "n": "Profil ve Ayarlar › Diğer Banka İzinleri",
    "u": "https://www.isbank.com.tr/acik-bankacilik",
    "src": "isbank.com.tr"

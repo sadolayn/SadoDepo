@@ -227,6 +227,7 @@
   .iphero { border-radius: 18px; padding: 16px; margin-bottom: 10px; border: 1px solid #2f6fd0; background: radial-gradient(120% 120% at 100% 0%, rgba(90,169,240,.35), rgba(13,13,13,.2) 60%), #0b1220; }
   .iphero small { display: block; font-size: 11.5px; letter-spacing: 1.4px; color: #9fd0ff; font-weight: 800; } .iphero b { display: block; font-size: 21px; margin: 4px 0; } .iphero span { display: block; font-size: 13px; color: #c6d6ea; line-height: 1.45; }
   .ipay { border-radius: 14px; padding: 11px 13px; margin: 2px 0 8px; border: 1px dashed #3f8cff; background: rgba(63,140,255,.08); } .ipay b { display: block; font-size: 14.5px; color: #cfe0ff; } .ipay span { display: block; font-size: 12.5px; line-height: 1.5; color: #b9c6d8; margin-top: 3px; } .ipay span b { display: inline; font-size: inherit; color: #fff; }
+  .ipsec { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid #1f3f6b; background: rgba(63,140,255,.08); } .ipsec b { font-size: 16px; } .ipsec span { font-size: 12px; color: var(--muted); flex: 1; } .ipsec button { padding: 6px 10px; border-radius: 9px; border: 1px solid #6b5222; background: rgba(224,162,79,.1); color: var(--accent); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
   .ipgr { font-size: 12px; font-weight: 800; letter-spacing: .3px; color: #9fd0ff; margin: 12px 4px 6px; }
   .ipgun { border-radius: 16px; padding: 14px; margin-bottom: 12px; border: 1px solid #8a6d2c; background: linear-gradient(160deg, rgba(240,198,116,.18), #0e0e0e 70%); }
   .ipgun .iph em { display: block; font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; }
@@ -424,6 +425,7 @@
   .tfil.mtiles button.mt.on { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
   .tfil.mtiles button.mt.on em { background: #000; color: #fff; }
   .chipbar .tfil.mtiles { grid-template-columns: repeat(60, minmax(0, 1fr)) !important; }
+  .chipbar .tfil.mtiles.ipm { border-color: #1f3f6b; background: linear-gradient(135deg, rgba(63,140,255,.14), rgba(63,140,255,.02)); }
   .tfil.mtiles button.mt[style*="span 12"] { gap: 2px; padding: 3px 1px; } .tfil.mtiles button.mt[style*="span 12"] i { font-size: 11px; } .tfil.mtiles button.mt[style*="span 12"] span { letter-spacing: -.3px; }
   .tfil.mtiles button.mt em.y, .otiles .ot em.y { font-size: 8px; letter-spacing: .3px; background: #3fc283; color: #000; }
   /* Öne çıkan: başlık kutucukları */
@@ -1032,7 +1034,7 @@ function renderCamps() {
   const tile = (t, cnt, span) => { const [ic, ad, c] = TI[t] || ["🎁", t, "#9aa0a6"]; const yeni = t === "📲 Kartsız öde" && new Date() < new Date("2026-11-03");
     return `<button data-t="${esc(t)}" class="mt${t === campTur ? " on" : ""}" style="--c:${c};grid-column:span ${span}"><i>${ic}</i><span>${esc(ad)}</span>${cnt != null ? `<em>${cnt}</em>` : yeni ? `<em class="y">YENİ</em>` : ""}</button>`; };
   $("tfil").innerHTML = SP.map((t) => tile(t, null, 60 / SP.length)).join("") + turs.map((t) => tile(t, t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length, 60 / Math.min(6, turs.length) | 0)).join("");
-  $("tfil").classList.add("mtiles");
+  $("tfil").classList.add("mtiles"); $("tfil").classList.remove("ipm");
   $("tfil").hidden = false;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
   if (SP.includes(campTur)) { if (campTur === "🛒 Pazarama") { $("list").innerHTML = pazHtml(); bindPaz(); return; } $("list").innerHTML = campTur === "✈️ Maximiles" ? milesHtml() : campTur === "📲 Kartsız öde" ? odeHtml() : oneHtml(); bindSpecial(); return; }
@@ -1331,7 +1333,16 @@ async function ipYukle() {
   if (IPJ) return;
   try { IPJ = await Ortak.json("isbank/iscep_ipucu.json"); IPK = IPJ.kategoriler.map((x) => [x.k, x.ic, x.ad]); IPUCU = IPJ.ipuclari; } catch (e) { IPJ = { ipuclari: [] }; }
 }
-let ipSec = null, ipGun = null;
+let ipSec = null, ipGun = null, ipGecmis = [];
+const IPC = { ayar: "#3f8cff", para: "#3fc283", maxi: "#b48cf0", kolay: "#f0c64a", arac: "#ef5a5a", ev: "#ef8a4c", aile: "#ff4fa3", seyahat: "#5aa9f0", yatirim: "#a8c94a" };
+// İşCep başlıkları: Maximum'daki gibi menünün hemen altında, yapışkan alanda
+function ipTiles() {
+  const t = $("tfil"); if (!IPK.length) { t.hidden = true; return; }
+  const tile = (k, ic, ad, c, n) => `<button type="button" data-ipk="${k}" class="mt${(ipSec || "") === k ? " on" : ""}" style="--c:${c};grid-column:span 12"><i>${ic}</i><span>${esc(ad)}</span>${n != null ? `<em>${n}</em>` : ""}</button>`;
+  t.innerHTML = tile("", "🌟", "Hepsi", "#e0a24f", IPUCU.length) + IPK.map(([k, ic, ad]) => tile(k, ic, ad, IPC[k] || "#9aa0a6", IPUCU.filter((x) => x.k === k).length)).join("");
+  t.classList.add("mtiles", "ipm"); t.hidden = false;
+  t.onclick = (e) => { const b = e.target.closest("button[data-ipk]"); if (!b) return; ipSec = b.dataset.ipk || null; renderIscep(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+}
 function iscepIpHtml() {
   const day = Math.floor(Date.now() / 864e5);
   if (!IPUCU.length) return '<div class="sfmsg">İpuçları yükleniyor…</div>';
@@ -1339,10 +1350,10 @@ function iscepIpHtml() {
   const g = IPUCU[ipGun];
   const kart = (x, i) => `<div class="ipk" id="ip${i}"><div class="iph"><i>${x.ic}</i><b>${esc(x.t)}</b></div><p>${esc(x.d)}</p><div class="ipn">📍 ${esc(x.n)}</div><div class="ipl"><a href="${x.u}" target="_blank" rel="noopener">${x.src === "uygulama" ? "İşCep uygulamasında · ayrıntı" : (x.u.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr") + "'de ayrıntı"} ↗</a>${x.git ? `<button type="button" class="ipgo" data-camp="${esc(x.git)}">${esc(x.gitAd || x.git)} ›</button>` : ""}</div></div>`;
   const L = IPUCU.map((x, i) => [x, i]).filter(([x]) => !ipSec || x.k === ipSec);
-  return `<div class="iphero"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in gizli süper güçleri 🚀</b><span>800'den fazla işlemin içinden en çok “wow!” dedirtenler. Her gün biri öne çıkar.</span></div>
+  const bas = ipSec ? `<div class="ipsec"><b>${(IPK.find((c) => c[0] === ipSec) || [])[1] || ""} ${esc((IPK.find((c) => c[0] === ipSec) || [])[2] || "")}</b><span>${L.length} ipucu</span><button type="button" data-ipk="">🌟 Hepsine dön</button></div>` : "";
+  return (ipSec ? bas : `<div class="iphero"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in gizli süper güçleri 🚀</b><span>800'den fazla işlemin içinden en çok “wow!” dedirtenler. Her gün biri öne çıkar.</span></div>
     <div class="ipgun"><div class="iph"><i>${g.ic}</i><div><em>Günün ipucu</em><b>${esc(g.t)}</b></div></div><p>${esc(g.d)}</p><div class="ipn">📍 ${esc(g.n)}</div>
-      <div class="ipl"><a href="${g.u}" target="_blank" rel="noopener">Ayrıntı ↗</a><button type="button" id="ipZar">🎲 Bir tane daha</button></div></div>
-    <div class="otiles ipt"><button type="button" class="ot${!ipSec ? " on" : ""}" data-ipk=""><i>🌟</i><span>Hepsi</span><em>${IPUCU.length}</em></button>${IPK.map(([k, ic, ad]) => `<button type="button" class="ot${ipSec === k ? " on" : ""}" data-ipk="${k}"><i>${ic}</i><span>${ad}</span></button>`).join("")}</div>
+      <div class="ipl"><a href="${g.u}" target="_blank" rel="noopener">Ayrıntı ↗</a>${ipGecmis.length ? `<button type="button" id="ipGeri">◀ Önceki</button>` : ""}<button type="button" id="ipZar">🎲 Bir tane daha</button></div></div>`) + `
     ${L.map(([x, i], n) => { const p = n ? L[n - 1][0] : null; let h = "";
       if (x.k === "ayar" && (!p || p.k !== "ayar")) h += `<div class="ipay"><b>⚙️ Bir kez ayarla, hep kullan</b><span>Bunlar İşCep'te <b>bir kez</b> açılır, sonra her gün kendiliğinden çalışır. Çoğu <b>Profil ve Ayarlar</b> menüsünde, kartla ilgili olanlar <b>Kartlar</b> menüsünde.</span></div>`;
       if (x.g && (!p || p.g !== x.g)) h += `<div class="ipgr">${esc(x.g)}</div>`;
@@ -1350,8 +1361,10 @@ function iscepIpHtml() {
     <p class="ipkon">🔄 İpuçları haftada bir isbank.com.tr ile karşılaştırılıp güncellenir${IPJ && IPJ.kontrol ? " · son kontrol: " + new Date(IPJ.kontrol + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : ""}. Uygulamada farklı görürsen İşCep'teki adı geçerlidir.</p>`;
 }
 function bindIscep() {
-  const z = $("ipZar"); if (z) z.onclick = () => { let n; do { n = Math.floor(Math.random() * IPUCU.length); } while (n === ipGun && IPUCU.length > 1); ipGun = n; renderIscep(); };
-  $("list").querySelectorAll("[data-ipk]").forEach((b) => (b.onclick = () => { ipSec = b.dataset.ipk || null; renderIscep(); const t = $("list").querySelector(".ipt"); if (t) { const st = document.querySelector(".chipbar"), h = st ? st.getBoundingClientRect().bottom : 0; window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - h - 8, behavior: "smooth" }); } }));
+  const z = $("ipZar"); if (z) z.onclick = () => { let n; do { n = Math.floor(Math.random() * IPUCU.length); } while (n === ipGun && IPUCU.length > 1); ipGecmis.push(ipGun); if (ipGecmis.length > 30) ipGecmis.shift(); ipGun = n; renderIscep(); };
+  const gr = $("ipGeri"); if (gr) gr.onclick = () => { if (ipGecmis.length) { ipGun = ipGecmis.pop(); renderIscep(); } };
+  $("list").querySelectorAll("[data-ipk]").forEach((b) => (b.onclick = () => { ipSec = b.dataset.ipk || null; renderIscep(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
+  ipTiles();
   $("list").querySelectorAll("[data-camp]").forEach((b) => (b.onclick = () => { cat = "Maximum"; campTur = b.dataset.camp; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); window.scrollTo({ top: 0 }); }));
 }
 function renderIscep() {
@@ -1365,7 +1378,7 @@ function renderIscep() {
       <div class="odAlt"><span>📲 <b>2007</b>'den beri</span><span>👥 <b>~16 milyon</b> müşteri (Haz. 2026)</span><span>⚙️ <b>800+</b> işlem</span></div>
       <a href="https://www.isbank.com.tr/bankamizi-taniyin/iscep-ucuncu-kez-dunyanin-en-iyi-mobil-bankacilik-uygulamasi-secildi" target="_blank" rel="noopener">Ödül haberi, 23 Ekim 2025 ↗</a> · <a href="https://www.isbank.com.tr/contentmanagement/IsbankInvestorDocuments/pdf/YatirimciSunumu.pdf" target="_blank" rel="noopener">Müşteri sayısı: yatırımcı sunumu ↗</a>
     </div>`;
-  let html = iscepIpHtml() + odul;
+  let html = iscepIpHtml() + (ipSec ? "" : odul);
   if (d && d.surumler && d.surumler.length) {
     const yeni = d.surumler.some((v) => isNew("v:" + v.surum));
     html += `<details class="surn"><summary>🛠️ Sürüm notları <span>· ${esc(d.surumler[0].surum)} · ${fmt(d.surumler[0].tarih)}</span>${yeni ? '<span class="newtag">YENİ</span>' : ""}</summary>`;
@@ -1624,7 +1637,7 @@ function bindFact() {
 function renderList() {
   window.Rapor && Rapor.bolum(cat.replace(/<[^>]+>/g, ""));
   markSeen(cat);
-  $("tfil").hidden = cat !== "Maximum";
+  $("tfil").hidden = cat !== "Maximum" && cat !== "İşCep";
   renderSoon();
   if (cat === "📰 Güncel") return renderLive();
   if (cat === "📅 Takvim") return renderTakvim();
