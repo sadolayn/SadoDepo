@@ -192,10 +192,10 @@
   {
    "k": "ayar",
    "g": "🔐 Profil ve Ayarlar › Güvenlik ve bildirimler",
-   "ic": "👆",
-   "t": "Şifre yazma: parmak izi ya da yüz tanımayla gir",
-   "d": "Bir kez aç, İşCep'e parmak izi ya da yüzünle saniyede gir. Hem hızlı hem şifren göz önünde yazılmaz.",
-   "n": "Profil ve Ayarlar › Güvenlik › Parmak İzi / Yüz Tanıma",
+   "ic": "🧬",
+   "t": "Şifrene ek kilit: yüz tanıma ya da parmak izi",
+   "d": "Şifrenin yanına ikinci bir güvenlik katmanı ekle: İşCep şifreye ek olarak yüzünü ya da parmak izini de doğrular. Şifren başkasının eline geçse bile hesabına ek bir engel olur.",
+   "n": "Profil ve Ayarlar › Güvenlik › Yüz Tanıma / Parmak İzi",
    "u": "https://www.isbank.com.tr/iscep",
    "src": "uygulama"
   },
