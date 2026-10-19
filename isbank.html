@@ -204,6 +204,16 @@
   .blive a { display: block; padding: 6px 0; border-bottom: 1px dashed #2c2a25; color: #e6e0d4 !important; font-weight: 500 !important; font-size: 13px !important; }
   .lounge { margin-top: 10px; border-top: 1px solid #2c2a25; padding-top: 10px; font-size: 13px; } .lounge > b { display: block; color: #f3dca8; margin-bottom: 6px; }
   .lounge div { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; } .lounge span { color: #9a9a9a; } .lounge em { font-style: normal; color: #eee; text-align: right; }
+  .snet { border-radius: 18px; border: 1px solid #3a50f0; background: linear-gradient(160deg, #1b2a9e 0%, #101a63 55%, #0b1240 100%); padding: 12px; margin-bottom: 10px; }
+  .snh { display: flex; justify-content: space-between; align-items: center; margin: 0 2px 8px; } .snh span { font-weight: 800; font-size: 15px; color: #fff; } .snh em { font-style: normal; font-size: 11.5px; color: #b9c0e6; background: rgba(0,0,0,.25); padding: 3px 8px; border-radius: 99px; }
+  .snhero { text-align: center; padding: 6px 0 12px; } .snhero small { display: block; font-size: 12px; color: #b9c0e6; letter-spacing: .5px; } .snhero b { display: block; font-size: 40px; line-height: 1.1; color: #fff; font-variant-numeric: tabular-nums; } .snhero span { font-size: 11.5px; color: #93a0d8; }
+  .sng { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .sn { background: rgba(0,0,0,.32); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: 9px 6px 8px; text-align: center; min-width: 0; }
+  .sn i { display: block; font-style: normal; font-size: 18px; line-height: 1; margin-bottom: 4px; }
+  .sn b { display: block; font-size: 18px; color: #fff; font-variant-numeric: tabular-nums; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sn span { display: block; font-size: 11px; color: #d6dcff; font-weight: 600; margin-top: 2px; } .sn small { display: block; font-size: 10px; color: #93a0d8; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .otiles.sjump { margin-bottom: 10px; } .otiles.sjump .ot span { white-space: normal; line-height: 1.15; text-align: center; }
+  .sfmore { display: block; width: 100%; margin-top: 8px; padding: 10px; border-radius: 11px; border: 1px dashed #3a50f0; background: rgba(58,80,240,.08); color: #cfdcff; font: 600 13.5px system-ui, sans-serif; cursor: pointer; }
   .sf { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px; margin-bottom: 8px; }
   .sfh { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; } .sfh b { font-size: 15px; } .sfh a { font-size: 12px; color: #8fb0ff; text-decoration: none; white-space: nowrap; }
   .sfs { display: flex; gap: 8px; } .sfs input { flex: 1; min-width: 0; padding: 11px 12px; font-size: 16px; background: #161616; color: var(--ink); border: 1px solid var(--line); border-radius: 12px; outline: none; } .sfs input:focus { border-color: var(--accent); }
@@ -958,22 +968,39 @@ function renderSubeler() {
   if (!d) { Ortak.hata("list", { ne: "Şube bilgileri" }); return; }
   const f = (n) => Number(n).toLocaleString("tr-TR");
   $("upd").textContent = "Veri dönemi: " + d.donem + " · banka bu verileri 3 ayda bir açıklar";
-  $("list").innerHTML = `${sfHtml()}
-    <div class="day" style="margin-top:18px">📊 Şube ağı</div>
-    <div class="stats">
-      <div class="stat hero"><span>Toplam müşteri</span><b>${esc(d.musteri)}</b><small style="color:#b9c0d6">${esc(d.musteriDonem)}</small></div>
-      <div class="stat"><span>Toplam şube</span><b>${f(d.yurtici + d.yurtdisi)}</b><small>Türkiye + ${f(d.ulke)} ülke</small></div>
-      <div class="stat"><span>Çalışan</span><b>${f(d.calisan)}</b><small>${esc(d.calisanDonem)}</small></div>
-      <div class="stat"><span>Yurt içi şube</span><b>${f(d.yurtici)}</b><small>81 ilin tamamında</small></div>
-      <div class="stat"><span>Yurt dışı şube</span><b>${f(d.yurtdisi)}</b><small>${f(d.ulke)} ülkede</small></div>
-      <div class="stat"><span>ATM</span><b>${f(d.atm)}</b><small>Türkiye'nin en geniş ağı</small></div>
-      <div class="stat"><span>İşCep müşterisi</span><b>${esc(d.iscep)}</b><small>${esc(d.iscepDonem)}</small></div>
+  const T = (ic, ad, v, alt) => `<div class="sn"><i>${ic}</i><b>${v}</b><span>${ad}</span>${alt ? `<small>${alt}</small>` : ""}</div>`;
+  $("list").innerHTML = `
+    <div class="snet">
+      <div class="snh"><span>📊 İş Bankası şube ağı</span><em>${esc(d.donem)}</em></div>
+      <div class="snhero"><small>Toplam müşteri</small><b>${esc(d.musteri)}</b><span>${esc(d.musteriDonem)}</span></div>
+      <div class="sng">
+        ${T("🏦", "Toplam şube", f(d.yurtici + d.yurtdisi), "Türkiye + " + f(d.ulke) + " ülke")}
+        ${T("🇹🇷", "Yurt içi şube", f(d.yurtici), "81 ilin tamamı")}
+        ${T("🌍", "Yurt dışı şube", f(d.yurtdisi), f(d.ulke) + " ülkede")}
+        ${T("🏧", "Bankamatik", f(d.atm), "En geniş ağ")}
+        ${T("👥", "Çalışan", f(d.calisan), esc(d.calisanDonem))}
+        ${T("📱", "İşCep müşterisi", esc(d.iscep), esc(d.iscepDonem))}
+      </div>
     </div>
-    <div class="day" style="margin-top:18px">🏛️ İlk şubeler</div>
+    <div class="otiles sjump">
+      <button type="button" class="ot" data-sj="sfBox"><i>📍</i><span>En yakın şube</span></button>
+      <button type="button" class="ot" data-sj="sfBox" data-sm="g"><i>🗺️</i><span>Haritada</span></button>
+      <button type="button" class="ot" data-sj="ilkBox"><i>🏛️</i><span>İlk şubeler</span></button>
+      <button type="button" class="ot" data-sj="notBox"><i>💡</i><span>Bunları biliyor musun?</span></button>
+    </div>
+    <div id="sfBox">${sfHtml()}</div>
+    <div class="day" id="ilkBox" style="margin-top:18px">🏛️ İlk şubeler</div>
     ${ILK.map((x) => `<div class="tk" style="--c:${x.c}"><div class="dt"><b>${x.g}</b><span>${x.ay}</span></div><div class="tt"><b>${x.ad}</b><span>${x.a}</span></div><div class="kl" style="font-size:16px">${x.y}<small>${new Date().getFullYear() - x.y} yıl</small></div></div>`).join("")}
     <p class="note" style="text-align:left;margin:0 4px 10px">Banka 26 Ağustos 1924'te 2 şube ve 37 çalışanla kuruldu. 1930'da 28 olan şube sayısı 1953'te 130'a ulaştı.</p>
+    <div class="day" id="notBox" style="margin-top:18px">💡 Bunları biliyor musun?</div>
     <div class="facts"><ul>${(d.notlar || []).map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
     <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(d.kaynak)} ↗</a>`;
+  $("list").querySelectorAll("[data-sj]").forEach((b) => (b.onclick = () => {
+    if (b.dataset.sm && SF.mode !== b.dataset.sm) { SF.mode = b.dataset.sm; sfSave(); document.querySelectorAll(".sft button").forEach((x) => x.classList.toggle("on", x.dataset.m === SF.mode)); sfLoad(); }
+    else if (b.dataset.sj === "sfBox" && !b.dataset.sm && SF.mode !== "l") { SF.mode = "l"; sfSave(); document.querySelectorAll(".sft button").forEach((x) => x.classList.toggle("on", x.dataset.m === SF.mode)); sfLoad(); }
+    const t = $(b.dataset.sj), st = document.querySelector(".chipbar"), h = st ? st.getBoundingClientRect().bottom : 0;
+    window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - h - 8, behavior: "smooth" });
+  }));
   sfBind();
 }
 // ===== Şube bulucu: konum / il-ilçe arama, 1-3-5-10 km, mesafeli liste (OpenStreetMap) + Google Haritalar + isbank.com.tr =====
@@ -1017,7 +1044,7 @@ async function sfLocal(lat, lon, R, atm) {
 }
 function sfHtml() {
   return `<div class="sf">
-    <div class="sfh"><b>📍 En yakın İş Bankası şubeleri</b><a href="https://www.isbank.com.tr/sube-ve-bankamatikler" target="_blank" rel="noopener">isbank.com.tr şube bul ↗</a></div>
+    <div class="sfh"><b>📍 En yakın şubeler</b><a href="https://www.isbank.com.tr/sube-ve-bankamatikler" target="_blank" rel="noopener">isbank.com.tr şube bul ↗</a></div>
     <div class="sfs"><input id="sfq" type="search" placeholder="İl, ilçe, mahalle ara (ör. Bornova, İzmir)" autocomplete="off"><button type="button" id="sfloc" title="Konumumu kullan">📍</button></div>
     <div class="sfres" id="sfres"></div>
     <div class="sfp"><span id="sfpl">Konum seçilmedi</span><div class="sfr" id="sfr">${[1000, 3000, 5000, 10000].map((r) => `<button data-r="${r}">${r / 1000} km</button>`).join("")}</div></div>
@@ -1079,11 +1106,12 @@ async function sfLoad() {
     L.forEach((x) => { if (x.atm) return; let best = null; br.forEach((y) => { if (y === x) return; const dd = sfDist(x.la, x.lo, y.la, y.lo); if (!best || dd < best.d) best = { d: dd, n: y.br || y.name }; }); x.yakin = best; });
     { let no = 0; L.forEach((x) => { if (!x.atm) x.no = ++no; }); }
     if (!L.length) { $("sfbody").innerHTML = `<div class="sfmsg">${R / 1000} km içinde kayıtlı İş Bankası ${SF.atm ? "şubesi/bankamatiği" : "şubesi"} bulunamadı. Mesafeyi büyütmeyi dene.</div>${links}`; return; }
-    $("sfbody").innerHTML = (SF.uzak ? `<div class="sfcnt">${R / 1000} km içinde kayıtlı şube yok · <b>en yakın şubeler</b></div>` : `<div class="sfcnt">${br.length} şube${SF.atm ? ` · ${L.length - br.length} bankamatik` : ""} · ${R / 1000} km içinde</div>`) + L.slice(0, 30).map((x, i) => `<div class="sfi${x.atm ? " atm" : ""}">
+    $("sfbody").innerHTML = (SF.uzak ? `<div class="sfcnt">${R / 1000} km içinde kayıtlı şube yok · <b>en yakın şubeler</b></div>` : `<div class="sfcnt">${br.length} şube${SF.atm ? ` · ${L.length - br.length} bankamatik` : ""} · ${R / 1000} km içinde</div>`) + L.slice(0, SF.hepsi ? 30 : 3).map((x, i) => `<div class="sfi${x.atm ? " atm" : ""}">
         <div class="sfn"><i>${x.atm ? "🏧" : x.no}</i><div><b>${esc(x.br ? (/şube/i.test(x.br) ? x.br : x.br + " Şubesi") : x.name)}</b>${x.adr ? `<small>${esc(x.adr)}</small>` : ""}${x.saat ? `<small>🕘 ${esc(x.saat)}</small>` : ""}</div><em>${sfFmt(x.d)}</em></div>
-        ${x.yakin ? `<div class="sfy">↔️ En yakın diğer şube: <b>${esc(x.yakin.n)}</b> · ${sfFmt(x.yakin.d)}</div>` : ""}
+        ${x.yakin && !/^(t[üu]rkiye\s+)?[iİI][şs]\s*bankas[ıi]$/i.test(x.yakin.n.trim()) ? `<div class="sfy">↔️ En yakın diğer şube: <b>${esc(x.yakin.n)}</b> · ${sfFmt(x.yakin.d)}</div>` : ""}
         <div class="sfa"><a href="https://www.google.com/maps/dir/?api=1&destination=${x.la},${x.lo}" target="_blank" rel="noopener">🧭 Yol tarifi</a><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((x.br || x.name) + " ")}${x.la},${x.lo}" target="_blank" rel="noopener">🗺️ Haritada</a>${x.tel ? `<a href="tel:${esc(x.tel.replace(/\s/g, ""))}">📞 Ara</a>` : ""}</div>
-      </div>`).join("") + links + `<p class="note" style="text-align:left">Liste OpenStreetMap kayıtlarından mesafeye göre sıralanır; eksik şube olabilir. Güncel çalışma saatleri için isbank.com.tr'ye bakın.</p>`;
+      </div>`).join("") + (L.length > 3 ? `<button type="button" class="sfmore" id="sfMore">${SF.hepsi ? "▲ Daha az göster" : `▼ ${Math.min(L.length, 30) - 3} şube daha göster`}</button>` : "") + links + `<p class="note" style="text-align:left">Liste OpenStreetMap kayıtlarından mesafeye göre sıralanır; eksik şube olabilir. Güncel çalışma saatleri için isbank.com.tr'ye bakın.</p>`;
+    const mb = $("sfMore"); if (mb) mb.onclick = () => { SF.hepsi = !SF.hepsi; sfLoad(); if (!SF.hepsi) $("sfBox").scrollIntoView({ block: "start" }); };
   } catch (e) { $("sfbody").innerHTML = `<div class="sfmsg">Harita sunucuları şu an yoğun, liste gelmedi.<br><button type="button" id="sfRetry" class="sfRetry">🔄 Tekrar dene</button></div>${links}`; const b = $("sfRetry"); if (b) b.onclick = sfLoad; }
 }
 // İlk şubeler — kaynak: isbank.com.tr (müze sayfası), Wikipedia (Ankara müzesi)
