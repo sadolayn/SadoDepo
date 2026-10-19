@@ -235,6 +235,88 @@
   .lcd { background: linear-gradient(180deg, #c3d1a8, #a7b88e 60%, #9aab82); border-color: #0e0e0e; box-shadow: inset 0 3px 8px rgba(0,0,0,.35), 0 0 14px rgba(170,200,120,.25); }
   .lcd::after { content: ""; position: absolute; inset: 0; border-radius: 5px; pointer-events: none; background: linear-gradient(155deg, rgba(255,255,255,.35) 0 22%, transparent 34%); }
   .bed { background: linear-gradient(180deg, #1c1814, #241f1a); box-shadow: inset 0 3px 10px rgba(0,0,0,.8), inset 0 -1px 0 rgba(255,255,255,.06), 0 1px 0 rgba(255,255,255,.05); }
+  /* ===== Görünüm seçici ===== */
+  .brand { position: relative; }
+  .brb { display: inline-flex; gap: 2px; }
+  .prt { display: none; }
+  .skinpop { position: absolute; z-index: 40; top: 40px; right: 12px; width: 190px; background: #141414; border: 1px solid #3a3a3a; border-radius: 14px; padding: 8px; box-shadow: 0 14px 30px rgba(0,0,0,.7); display: grid; gap: 6px; }
+  .skinpop[hidden] { display: none; }
+  .skinpop b { font-size: 11.5px; color: #9a9a9a; font-weight: 700; letter-spacing: .5px; padding: 2px 4px; }
+  .skinpop button { display: flex; align-items: center; gap: 10px; background: #1d1d1d; border: 1px solid #2c2c2c; color: #eee; border-radius: 10px; padding: 7px 9px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; text-align: left; }
+  .skinpop button.on { border-color: var(--accent); background: rgba(224,162,79,.12); }
+  .sw { width: 30px; height: 20px; border-radius: 5px; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.3); }
+  .sw-s { background: linear-gradient(180deg, #fdfcf8 0 35%, #e4e2db 35% 55%, #3d4147 55%); }
+  .sw-k { background: linear-gradient(180deg, #a7b88e 0 35%, #2b2722 35% 55%, #d9c9a6 55%); }
+  .sw-p { background: linear-gradient(180deg, #c4c9c2 0 35%, #f4cadb 35% 55%, #fde49a 55% 72%, #c4e2fb 72%); }
+  .rulobox { position: relative; }
+
+  /* ===== ŞERİTLİ (yazıcılı ofis makinesi) ===== */
+  #calc[data-skin="seritli"].on { display: flex; flex-direction: column; }
+  #calc[data-skin="seritli"] .rulobox { order: 1; z-index: 3; padding-top: 12px; margin: 0 auto -18px; width: 100%; max-width: 340px; }
+  #calc[data-skin="seritli"] .calcbox { order: 2; position: static; z-index: auto; background: none; padding-bottom: 0; }
+  #calc[data-skin="seritli"] .tapebar { order: 3; }
+  #calc[data-skin="seritli"] .smart { order: 4; }
+  /* kâğıt bobini */
+  #calc[data-skin="seritli"] .rulobox::before { content: ""; position: absolute; z-index: 2; top: 0; left: 50%; transform: translateX(-50%); width: 84%; height: 22px; border-radius: 11px;
+    background: linear-gradient(180deg, #bdb7a8 0%, #f4f1ea 30%, #ffffff 48%, #e3dfd4 72%, #a9a291 100%); box-shadow: 0 4px 8px rgba(0,0,0,.55), inset 0 0 0 1px rgba(0,0,0,.12); }
+  /* yazıcı ağzı + tırtıklı kesme bıçağı */
+  #calc[data-skin="seritli"] .rulobox::after { content: ""; position: absolute; z-index: 4; left: 50%; bottom: 3px; transform: translateX(-50%); width: 90%; height: 14px; border-radius: 3px 3px 8px 8px;
+    background: repeating-linear-gradient(90deg, #8f8a7e 0 2px, #d6d2c7 2px 5px) top / 100% 3px no-repeat, linear-gradient(180deg, #0c0c0c, #2b2b2b) 0 3px / 100% 11px no-repeat;
+    box-shadow: 0 2px 0 #f6f5f1, 0 -1px 4px rgba(0,0,0,.4); }
+  #calc[data-skin="seritli"] .tape { max-width: 78%; margin: 0 auto; border-radius: 0; background: #fdfcf8; color: #1d1d1d; padding: 16px 14px 18px;
+    box-shadow: 0 0 0 1px #e6e2d8, 0 6px 16px rgba(0,0,0,.45);
+    background-image: linear-gradient(90deg, rgba(0,0,0,.035), transparent 6%, transparent 94%, rgba(0,0,0,.035));
+    height: max(150px, calc(100vh - var(--sh, 120px) - var(--ch, 330px) - 96px)); height: max(150px, calc(100dvh - var(--sh, 120px) - var(--ch, 330px) - 96px));
+    -webkit-mask-image: linear-gradient(transparent, #000 12%); mask-image: linear-gradient(transparent, #000 12%); }
+  #calc[data-skin="seritli"] .tape div span:first-child { color: #555; }
+  #calc[data-skin="seritli"] .tape div.t { border-top-color: #9a9a9a; }
+  #calc[data-skin="seritli"] .tape div.c { color: #c0262d; }
+  #calc[data-skin="seritli"] .tape div.yeni { animation: basil .3s steps(5, end) both; }
+  @keyframes basil { from { clip-path: inset(0 100% 0 0); transform: translateY(5px); } to { clip-path: inset(0 0 0 0); transform: none; } }
+  /* gövde */
+  #calc[data-skin="seritli"] .calc { max-width: 340px; padding-top: 26px; border-radius: 16px 16px 20px 20px;
+    background: linear-gradient(172deg, #f6f5f1 0%, #e4e2db 45%, #d3d0c7 100%); border: 1px solid #b9b5aa;
+    box-shadow: 0 18px 40px rgba(0,0,0,.75), 0 0 0 1px #0b0a09, 0 0 24px rgba(224,162,79,.14), inset 0 1px 0 #fff, inset 0 -2px 0 rgba(0,0,0,.08); }
+  #calc[data-skin="seritli"] .calc::before { background: repeating-linear-gradient(90deg, rgba(0,0,0,.012) 0 1px, transparent 1px 3px); }
+  #calc[data-skin="seritli"] .brand b { background: linear-gradient(90deg, #6b4a14, #a87a2a 45%, #5e4110); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #calc[data-skin="seritli"] .brand i { color: #6f6b61; font-weight: 700; }
+  #calc[data-skin="seritli"] .solar { display: none; }
+  #calc[data-skin="seritli"] .prt { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: #6f6b61; }
+  .led { width: 8px; height: 8px; border-radius: 50%; background: #2c7a5c; box-shadow: inset 0 1px 1px rgba(0,0,0,.4); transition: background .1s, box-shadow .1s; }
+  #calc.basiyor .led { background: #7dffc0; box-shadow: 0 0 8px #3fe39a, 0 0 2px #fff; }
+  #calc[data-skin="seritli"] .lcd { background: linear-gradient(180deg, #0a100e, #121b18 60%, #0d1412); border: 3px solid #2a2a2a; color: #6dffd8; box-shadow: inset 0 3px 10px rgba(0,0,0,.8), 0 1px 0 #fff; }
+  #calc[data-skin="seritli"] .lcd::after { background: linear-gradient(160deg, rgba(255,255,255,.10) 0 18%, transparent 30%); }
+  #calc[data-skin="seritli"] .lcd .num { text-shadow: 0 0 6px rgba(90,255,210,.75), 0 0 16px rgba(90,255,210,.3); letter-spacing: 2px; }
+  #calc[data-skin="seritli"] .lcd .op, #calc[data-skin="seritli"] .lcd .ind span.on { text-shadow: 0 0 6px rgba(90,255,210,.7); }
+  #calc[data-skin="seritli"] .bed { background: linear-gradient(180deg, #c9c6bd, #d6d3ca); box-shadow: inset 0 3px 8px rgba(0,0,0,.28), 0 1px 0 #fff; }
+  #calc[data-skin="seritli"] .k { --c1: #5d6269; --c2: #3e4248; --sk: #2c2f34; --sh: #131518; --tx: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.6); }
+  #calc[data-skin="seritli"] .k.o { --c1: #fbfaf7; --c2: #e4e2db; --sk: #c6c2b8; --sh: #8b877b; --tx: #34332f; text-shadow: 0 1px 0 rgba(255,255,255,.7); }
+  #calc[data-skin="seritli"] .k.op { --c1: #80868e; --c2: #5f646b; --sk: #474b51; --sh: #222528; --tx: #fff; }
+  #calc[data-skin="seritli"] .k.r, #calc[data-skin="seritli"] .k.eq { --c1: #74d8c0; --c2: #3db398; --sk: #2c937d; --sh: #145446; --tx: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.35); }
+  #calc[data-skin="seritli"] .brb button { filter: grayscale(.2); }
+
+  /* ===== PASTEL ===== */
+  #calc[data-skin="pastel"] .calc { border-radius: 28px; background: linear-gradient(160deg, #fde7ef 0%, #f6cddd 55%, #efbfd3 100%); border: 1px solid #e6a8c2;
+    box-shadow: 0 18px 40px rgba(0,0,0,.7), 0 0 0 1px #0b0a09, 0 0 26px rgba(255,170,205,.2), inset 0 1px 0 #fff, inset 0 -3px 0 rgba(160,60,100,.12); }
+  #calc[data-skin="pastel"] .calc::before { background: none; }
+  #calc[data-skin="pastel"] .brand b { background: linear-gradient(90deg, #b8487a, #e98bb0 50%, #a63e6c); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #calc[data-skin="pastel"] .brand i { color: #b07090; font-weight: 700; }
+  #calc[data-skin="pastel"] .solar { background: linear-gradient(115deg, rgba(255,255,255,.25) 0 18%, transparent 30%), repeating-linear-gradient(90deg, #6d4a5a 0 15px, #7e5869 15px 16px); border-color: #a9879a; }
+  #calc[data-skin="pastel"] .lcd { border-radius: 14px; background: linear-gradient(180deg, #d3d8d1, #bcc2ba); border-color: #c48aa4; color: #2b2b2b; box-shadow: inset 0 3px 8px rgba(0,0,0,.25); }
+  #calc[data-skin="pastel"] .bed { background: linear-gradient(180deg, #f0c0d2, #f5ccdb); box-shadow: inset 0 3px 8px rgba(150,60,100,.25), 0 1px 0 rgba(255,255,255,.6); border-radius: 20px; }
+  #calc[data-skin="pastel"] .k { border-radius: 999px; text-shadow: none; --c1: #fdf0f5; --c2: #f3d9e4; --sk: #ddb6c8; --sh: #a9819a; --tx: #8a4e6c; }
+  #calc[data-skin="pastel"] .k::before { border-radius: 999px; }
+  #calc[data-skin="pastel"] .k[data-k="7"], #calc[data-skin="pastel"] .k[data-k="8"], #calc[data-skin="pastel"] .k[data-k="9"] { --c1: #fff4c9; --c2: #fde49a; --sk: #e8c86c; --sh: #b39246; --tx: #6b5418; }
+  #calc[data-skin="pastel"] .k[data-k="4"], #calc[data-skin="pastel"] .k[data-k="5"], #calc[data-skin="pastel"] .k[data-k="6"] { --c1: #ffe3ec; --c2: #f9c4d4; --sk: #e7a2b8; --sh: #b46d87; --tx: #7d3552; }
+  #calc[data-skin="pastel"] .k[data-k="1"], #calc[data-skin="pastel"] .k[data-k="2"], #calc[data-skin="pastel"] .k[data-k="3"] { --c1: #f1e7ff; --c2: #dccaf7; --sk: #c1a7e8; --sh: #8b6db5; --tx: #4f3a7a; }
+  #calc[data-skin="pastel"] .k[data-k="0"], #calc[data-skin="pastel"] .k[data-k="00"], #calc[data-skin="pastel"] .k[data-k=","] { --c1: #e4f3ff; --c2: #c4e2fb; --sk: #9dc8ec; --sh: #6893ba; --tx: #2f5677; }
+  #calc[data-skin="pastel"] .k.op { --c1: #ffe9d8; --c2: #fcd0b0; --sk: #eeae87; --sh: #b77955; --tx: #7a4220; }
+  #calc[data-skin="pastel"] .k.r { --c1: #ffc08c; --c2: #f7974d; --sk: #df792f; --sh: #a24f18; --tx: #fff; }
+  #calc[data-skin="pastel"] .k.eq { --c1: #c4e6ff; --c2: #8fcbf7; --sk: #69ade5; --sh: #3d7aae; --tx: #fff; }
+  #calc[data-skin="pastel"] .tape { background: #fffafc; color: #5a3a4a; border-radius: 14px 14px 0 0; }
+  #calc[data-skin="pastel"] .tape div span:first-child { color: #b07090; }
+  #calc[data-skin="pastel"] .k::after { background: radial-gradient(closest-side, #fff, rgba(255,160,200,.95) 35%, rgba(240,120,170,.55) 62%, transparent); }
+  #calc[data-skin="pastel"] .k.lit { filter: drop-shadow(0 0 10px rgba(255,150,200,.95)) drop-shadow(0 0 20px rgba(240,110,170,.6)); }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -262,9 +344,10 @@
   </div>
 
   <!-- ===== Hesap makinesi ===== -->
-  <section class="panel on" id="calc">
+  <section class="panel on" id="calc" data-skin="seritli">
     <div class="calcbox"><div class="calc">
-      <div class="brand"><b>Sadolayn</b><div class="solar"></div><button type="button" id="snd" aria-label="Tuş sesi">🔊</button><i>SL-12</i></div>
+      <div class="brand"><b>Sadolayn</b><div class="solar"></div><span class="prt"><i class="led"></i>PRINT</span><span class="brb"><button type="button" id="skinB" aria-label="Görünüm" data-yeni="gorunum|2026-10-20|•">🎨</button><button type="button" id="snd" aria-label="Tuş sesi">🔊</button></span><i id="mdl">SL-12</i></div>
+      <div class="skinpop" id="skinPop" hidden><b>Makinenin görünümü</b><button type="button" data-s="seritli"><i class="sw sw-s"></i>Şeritli</button><button type="button" data-s="klasik"><i class="sw sw-k"></i>Klasik</button><button type="button" data-s="pastel"><i class="sw sw-p"></i>Pastel</button></div>
       <div class="lcd"><div class="ind"><span id="iM">M</span><span id="iE">E</span><span id="iK">−</span></div><div class="op" id="lOp"></div><div class="num" id="lNum">0</div></div>
       <div class="bed"><div class="keys" id="keys">
         <button class="k o sm" data-k="MC">MC</button><button class="k o sm" data-k="MR">MR</button><button class="k o sm" data-k="M-">M−</button><button class="k o sm" data-k="M+">M+</button><button class="k r sm" data-k="C">C</button>
@@ -275,7 +358,7 @@
       </div>
       <div class="keys" style="margin-top:9px"><button class="k n sm" data-k="00" style="grid-column:span 2">00</button><button class="k o sm" data-k="√">√</button><button class="k eq" data-k="=" style="grid-column:span 2">=</button></div></div>
     </div></div>
-    <div class="tape" id="tape"><div id="tapeIn"><span class="e">— rulo boş —</span></div></div>
+    <div class="rulobox"><div class="tape" id="tape"><div id="tapeIn"><span class="e">— rulo boş —</span></div></div></div>
     <div class="tapebar"><button id="tPdf">📄 PDF indir</button><button id="tCopy">📋 Kopyala</button><button id="tClear">🧻 Kopar</button></div>
     <div class="smart">🧠 <b>Bu hesap makinesi akıllıdır!</b><br>10'u 3'e bölüp 3 ile çarparsanız tertemiz <b>10</b> bulursunuz.<br><s>9,9999999</s> diyen makinelere itibar etmeyiniz 😁</div>
   </section>
@@ -542,7 +625,7 @@ function disp() {
   $("iM").classList.toggle("on", !!mem && mem.n !== 0n); $("iE").classList.toggle("on", err); $("iK").classList.toggle("on", !err && t.startsWith("-"));
 }
 function fmtEntry(e) { const neg = e.startsWith("-"), s = neg ? e.slice(1) : e, [i, f] = s.split(","); return (neg ? "-" : "") + i.replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (f !== undefined ? "," + f : ""); }
-function tape(a, b, cls) { tapeL.push([a, b, cls]); if (tapeL.length > 200) tapeL.shift(); const el = $("tape"); $("tapeIn").innerHTML = tapeL.map(([x, y, c]) => `<div class="${c || ""}"><span>${y}</span><span>${x}</span></div>`).join(""); el.scrollTop = el.scrollHeight; ruloGoster(); }
+function tape(a, b, cls) { tapeL.push([a, b, cls]); if (tapeL.length > 200) tapeL.shift(); const el = $("tape"); $("tapeIn").innerHTML = tapeL.map(([x, y, c], i) => `<div class="${c || ""}${i === tapeL.length - 1 ? " yeni" : ""}"><span>${y}</span><span>${x}</span></div>`).join(""); el.scrollTop = el.scrollHeight; ruloGoster(); yazdir(); }
 const curQ = () => (entry !== null ? qParse(entry === "-" ? "0" : entry) : acc || Q(0n));
 function press(k) {
   if (err && k !== "C") return;
@@ -593,7 +676,34 @@ document.addEventListener("keydown", (e) => {
 });
 $("tClear").onclick = () => { tapeL.length = 0; $("tapeIn").innerHTML = '<span class="e">— rulo boş —</span>'; };
 // Rakam girilince rulo ekranda değilse sayfa kayar, rulonun son satırı makinenin altında görünür
-function ruloGoster() { const r = $("tape").getBoundingClientRect(), alt = window.innerHeight; if (r.bottom > alt + 2) window.scrollBy({ top: r.bottom - alt + 6, behavior: "smooth" }); }
+function ruloGoster() { const r = $("tape").getBoundingClientRect(), alt = window.innerHeight, ust = document.querySelector(".stick").offsetHeight; if (r.bottom > alt + 2) window.scrollBy({ top: r.bottom - alt + 6, behavior: "smooth" }); else if (r.top < ust - 2) window.scrollBy({ top: r.top - ust - 6, behavior: "smooth" }); }
+// ===== Görünüm: Şeritli (varsayılan) · Klasik · Pastel =====
+const SKIN = { seritli: "SL-12P", klasik: "SL-12", pastel: "SL-12 ♡" };
+let skin = "seritli"; try { skin = localStorage.getItem("hesapGorunum") || "seritli"; } catch (e) {} if (!SKIN[skin]) skin = "seritli";
+function skinUygula(s) {
+  skin = s; $("calc").dataset.skin = s; $("mdl").textContent = SKIN[s];
+  $("skinPop").querySelectorAll("button[data-s]").forEach((b) => b.classList.toggle("on", b.dataset.s === s));
+  try { localStorage.setItem("hesapGorunum", s); } catch (e) {}
+  setTimeout(() => { setSH(); const t = $("tape"); t.scrollTop = t.scrollHeight; }, 0);
+}
+skinUygula(skin);
+$("skinB").onclick = (e) => { e.stopPropagation(); $("skinPop").hidden = !$("skinPop").hidden; };
+$("skinPop").onclick = (e) => { const b = e.target.closest("button[data-s]"); if (!b) return; skinUygula(b.dataset.s); $("skinPop").hidden = true; window.Rapor && Rapor.bolum("makine-" + b.dataset.s); };
+document.addEventListener("click", (e) => { if (!e.target.closest("#skinPop, #skinB")) $("skinPop").hidden = true; });
+// Şeritli: her satır basılırken ışık yanar, yazıcı "vızz" sesi gelir
+function yazdir() {
+  if (skin !== "seritli") return;
+  const c = $("calc"); c.classList.add("basiyor"); clearTimeout(c._b); c._b = setTimeout(() => c.classList.remove("basiyor"), 320);
+  if (!SND) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume();
+    const t = AC.currentTime + 0.02, d = 0.24, len = Math.floor(AC.sampleRate * d), buf = AC.createBuffer(1, len, AC.sampleRate), x = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) { const f = i / len, zarf = Math.min(1, f * 12) * Math.pow(1 - f, 1.5), titres = 0.55 + 0.45 * Math.sign(Math.sin(2 * Math.PI * 48 * i / AC.sampleRate)); x[i] = (Math.random() * 2 - 1) * zarf * titres; }
+    const src = AC.createBufferSource(); src.buffer = buf;
+    const bp = AC.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = 1300; bp.Q.value = 0.9;
+    const g = AC.createGain(); g.gain.value = 0.35; src.connect(bp).connect(g).connect(AC.destination); src.start(t);
+  } catch (e) {}
+}
 // Ruloyu gerçek fiş gibi dar bir PDF olarak indir (kitaplık sitenin içinde, ilk tıklamada yüklenir)
 const loadJs = (src) => new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
 let pdfP = null;
