@@ -213,7 +213,7 @@
       </div>
     </div>
     <!-- Kayan yazı: merak cümleleri + açık bir "gir, bak" düğmesi -->
-    <a class="kayan" id="kayan" href="isbank.html#iscep" hidden aria-label="İşCep ve İş Black: ayrıntılar İş Bankası Gündemi'nin ilgili bölümünde">
+    <a class="kayan" id="kayan" href="isbank.html#iscep" hidden aria-label="İşCep, İş Black ve İş Plus: ayrıntılar İş Bankası Gündemi'nin ilgili bölümünde">
       <span class="kyYol"><span class="kySer" id="kayanSer"></span></span>
     </a>
   </header>
@@ -578,7 +578,7 @@
   // Sade: iki cümle, ikisi de dokununca ilgili bölüme açılır
   const dizi = [
     ["iscep", "🚀 İşCep'in <b>gizli süper güçleri</b> neler, biliyor musun? Hepsi ve daha fazlası <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde"],
-    ["black", "🖤 Peki ya <b>İş Black</b>? Ayrıcalıkların ayrıntısı <b class=\"gir\">İş Bankası Gündemi › İş Black</b> bölümünde"],
+    ["black", "🖤 Peki ya <b>İş Black</b> ve <b>İş Plus</b>? Ayrıcalıkların ayrıntısı <b class=\"gir\">İş Bankası Gündemi › İş Black · İş Plus</b> bölümünde"],
   ];
   const CAGRI = [null, null];
   const tek = dizi.map(([h, x]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}" data-h="${h}">${x}</span>`).join("");
