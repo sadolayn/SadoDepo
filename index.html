@@ -44,21 +44,27 @@
   .top { display: flex; flex-direction: column; align-items: center; padding-top: 18px; width: 100%; }
   .hello { display: grid; grid-template-columns: 76px 1fr 76px; align-items: center; gap: 6px; width: 100%; max-width: 420px; margin: 4px 0 22px; }
   .hello .mid { text-align: center; min-width: 0; }
-  /* ===== Kayan yazı ===== */
-  .kayan { display: flex; align-items: stretch; width: 100%; max-width: 420px; margin: -8px 0 20px; border-radius: 12px; overflow: hidden; text-decoration: none;
-    border: 1px solid #5a4320; background: linear-gradient(90deg, rgba(224,162,79,.10), rgba(224,162,79,.04)); box-shadow: 0 0 18px rgba(224,162,79,.08); }
+  /* ===== Eski TV kapanışı gibi değişen merak cümlesi ===== */
+  .kayan { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 420px; min-height: 44px; margin: -8px 0 20px; padding: 6px 12px; box-sizing: border-box;
+    border-radius: 12px; overflow: hidden; text-decoration: none; text-align: center; position: relative;
+    border: 1px solid #3a2c14; background: radial-gradient(120% 140% at 50% 50%, #17130c, #070605 75%); box-shadow: inset 0 0 18px rgba(0,0,0,.9), 0 0 16px rgba(224,162,79,.07); }
   .kayan[hidden] { display: none; }
-  .kyEt { flex: none; display: flex; align-items: center; padding: 0 10px; font-size: 11.5px; font-weight: 800; letter-spacing: .4px; color: #1a1206;
-    background: linear-gradient(135deg, #f3d38a, #e0a24f); position: relative; z-index: 1; box-shadow: 6px 0 10px rgba(0,0,0,.55); }
-  .kyYol { flex: 1; min-width: 0; overflow: hidden; position: relative; -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 92%, transparent); }
-  .kySer { display: inline-flex; white-space: nowrap; padding: 8px 0; will-change: transform; animation: kyKay var(--sure, 60s) linear infinite; }
-  .kayan:active .kySer, .kayan:hover .kySer { animation-play-state: paused; }
-  .kyOge { display: inline-flex; align-items: center; gap: 5px; padding: 0 14px; font-size: 13px; color: #e9dcc0; }
-  .kyOge b { color: #f3d38a; font-weight: 800; }
-  .kyOge i { font-style: normal; color: #e0a24f; font-weight: 800; }
-  .kyOge::after { content: "✦"; margin-left: 14px; color: #6b5222; font-size: 10px; }
-  @keyframes kyKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) { .kyYol { overflow-x: auto; } .kySer { animation: none; } }
+  .kayan::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(180deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px); }
+  .kyM { display: inline-block; font-size: 13.5px; line-height: 1.35; color: #e9dcc0; border-radius: 6px; padding: 2px 6px; transform-origin: 50% 50%; }
+  .kyM b { color: #f3d38a; font-weight: 800; } .kyM i { font-style: normal; color: #e0a24f; font-weight: 800; }
+  .kyM.kapan { animation: tvKapan .55s cubic-bezier(.55,0,.8,.2) forwards; }
+  .kyM.acil { animation: tvAc .6s cubic-bezier(.2,.8,.4,1) both; }
+  @keyframes tvKapan {
+    0% { transform: scale(1, 1); filter: brightness(1); }
+    45% { transform: scale(1, .07); filter: brightness(3); background: #fff; color: transparent; box-shadow: 0 0 26px 8px rgba(255,255,255,.9); }
+    75% { transform: scale(.03, .1); background: #fff; color: transparent; box-shadow: 0 0 30px 12px rgba(255,255,255,1); }
+    100% { transform: scale(0, 0); background: #fff; color: transparent; opacity: 0; } }
+  @keyframes tvAc {
+    0% { transform: scale(0, 0); background: #fff; color: transparent; opacity: 0; }
+    25% { transform: scale(.03, .1); background: #fff; color: transparent; opacity: 1; box-shadow: 0 0 30px 12px rgba(255,255,255,1); }
+    55% { transform: scale(1, .07); background: #fff; color: transparent; box-shadow: 0 0 26px 8px rgba(255,255,255,.9); filter: brightness(3); }
+    100% { transform: scale(1, 1); filter: brightness(1); } }
+  @media (prefers-reduced-motion: reduce) { .kyM.kapan { animation: none; opacity: 0; } .kyM.acil { animation: none; } }
   .hello .mid p.greet { margin: 0; font-size: 19px; min-height: 0; }
   .hello .mid p.welcome { margin: 5px 0 0; font-size: 12.5px; letter-spacing: 1.2px; color: var(--muted); transition: opacity .6s ease; min-height: 17px; }
   .hello .mid p.welcome.fade { opacity: 0; }
@@ -212,11 +218,8 @@
         <div class="m" id="dm"></div><div class="d" id="dd"></div><div class="w" id="dw"></div>
       </div>
     </div>
-    <!-- Kayan yazı: İş Bankası Gündemi'nden merak uyandıran kısa haberler -->
-    <a class="kayan" id="kayan" href="isbank.html" hidden aria-label="İş Bankası Gündemi'nden öne çıkanlar">
-      <span class="kyEt">👀 Kaçırma</span>
-      <span class="kyYol"><span class="kySer" id="kayanSer"></span></span>
-    </a>
+    <!-- Eski TV gibi kapanıp açılan merak cümleleri -->
+    <a class="kayan" id="kayan" href="isbank.html#iscep" hidden aria-live="polite"><span class="kyM" id="kayanM"></span></a>
   </header>
   <div class="bar" id="bar" aria-hidden="true">
     <div class="clock bc"><svg viewBox="0 0 100 100" aria-hidden="true">
@@ -571,9 +574,10 @@
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script src="yeni.js"></script>
 <script>
-// Kayan yazı: ayrıntı vermez, merak uyandırır; dokununca İş Bankası Gündemi'nde ilgili bölüm açılır
+// Merak cümleleri: ayrıntı vermez; eski TV kapanışı gibi beyaz çizgiye inip noktada söner, sonra yenisi açılır.
+// Dokununca İş Bankası Gündemi'nde ilgili bölüm açılır.
 (function () {
-  const kutu = document.getElementById("kayan"), ser = document.getElementById("kayanSer");
+  const kutu = document.getElementById("kayan"), m = document.getElementById("kayanM");
   if (!kutu) return;
   const L = [
     ["iscep", "📲 <b>İşCep'in gizli süper güçleri</b> · hepsini biliyor musun? 🤫"],
@@ -581,17 +585,18 @@
     ["iscep", "💡 <b>Bir kez ayarla, hep kullan:</b> İşCep'te açman gereken birkaç şey var"],
     ["black", "🖤 <b>İş Black'liler</b> bunu biliyor… ya sen?"],
     ["black", "✨ İş Black'in <b>ayrıcalıklarından</b> hiç kullanmadığın var mı?"],
-    ["isplus", "💎 <b>İş Plus</b>'ta seviyen yükseldikçe neler açılıyor, hiç baktın mı?"],
+    ["isplus", "💎 <b>İş Plus</b>'ta seviyen yükseldikçe neler açılıyor?"],
   ];
-  const karis = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const tek = karis(L).map(([h, x]) => `<span class="kyOge" data-h="${h}">${x} <i>›</i></span>`).join("");
-  ser.innerHTML = tek + tek; // iki kopya: kesintisiz döngü
-  kutu.hidden = false;
-  requestAnimationFrame(() => { const w = ser.scrollWidth / 2; ser.style.setProperty("--sure", Math.max(25, Math.round(w / 55)) + "s"); });
-  kutu.addEventListener("click", (e) => {
-    const o = e.target.closest(".kyOge"); const h = o ? o.dataset.h : "iscep";
-    e.preventDefault(); window.Rapor && Rapor.bolum("kayan-" + h); location.href = "isbank.html#" + h;
-  });
+  for (let i = L.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [L[i], L[j]] = [L[j], L[i]]; }
+  let k = 0;
+  const goster = () => { const [h, x] = L[k]; m.innerHTML = x + " <i>›</i>"; kutu.href = "isbank.html#" + h; kutu.dataset.h = h; };
+  goster(); kutu.hidden = false; m.classList.add("acil");
+  setInterval(() => {
+    if (document.hidden) return;
+    m.classList.remove("acil"); void m.offsetWidth; m.classList.add("kapan");
+    setTimeout(() => { k = (k + 1) % L.length; goster(); m.classList.remove("kapan"); void m.offsetWidth; m.classList.add("acil"); }, 750);
+  }, 5000);
+  kutu.addEventListener("click", () => { window.Rapor && Rapor.bolum("kayan-" + (kutu.dataset.h || "")); });
 })();
 </script>
 </body>
