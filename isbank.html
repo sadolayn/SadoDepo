@@ -426,6 +426,7 @@
   .tfil.mtiles button.mt.on { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
   .tfil.mtiles button.mt.on em { background: #000; color: #fff; }
   .chipbar .tfil.mtiles { grid-template-columns: repeat(60, minmax(0, 1fr)) !important; }
+  .tfil.mtiles.ipm button.mt.uzun span { white-space: normal; font-size: 9.5px; line-height: 1.05; letter-spacing: -.2px; text-align: left; }
   .chipbar .tfil.mtiles.ipm { border-color: #1f3f6b; background: linear-gradient(135deg, rgba(63,140,255,.14), rgba(63,140,255,.02)); }
   .tfil.mtiles button.mt[style*="span 12"] { gap: 2px; padding: 3px 1px; } .tfil.mtiles button.mt[style*="span 12"] i { font-size: 11px; } .tfil.mtiles button.mt[style*="span 12"] span { letter-spacing: -.3px; }
   .tfil.mtiles button.mt em.y, .otiles .ot em.y { font-size: 8px; letter-spacing: .3px; background: #3fc283; color: #000; }
@@ -1339,7 +1340,7 @@ const IPC = { ayar: "#3f8cff", para: "#3fc283", maxi: "#b48cf0", kolay: "#f0c64a
 // İşCep başlıkları: Maximum'daki gibi menünün hemen altında, yapışkan alanda
 function ipTiles() {
   const t = $("tfil"); if (!IPK.length) { t.hidden = true; return; }
-  const tile = (k, ic, ad, c, n) => `<button type="button" data-ipk="${k}" class="mt${(ipSec || "") === k ? " on" : ""}" style="--c:${c};grid-column:span 12"><i>${ic}</i><span>${esc(ad)}</span>${n != null ? `<em>${n}</em>` : ""}</button>`;
+  const tile = (k, ic, ad, c, n) => `<button type="button" data-ipk="${k}" class="mt${(ipSec || "") === k ? " on" : ""}${ad.length > 12 ? " uzun" : ""}" style="--c:${c};grid-column:span 12"><i>${ic}</i><span>${esc(ad)}</span>${n != null ? `<em>${n}</em>` : ""}</button>`;
   t.innerHTML = tile("", "🌟", "Hepsi", "#e0a24f", IPUCU.length) + IPK.map(([k, ic, ad]) => tile(k, ic, ad, IPC[k] || "#9aa0a6", IPUCU.filter((x) => x.k === k).length)).join("");
   t.classList.add("mtiles", "ipm"); t.hidden = false;
   t.onclick = (e) => { const b = e.target.closest("button[data-ipk]"); if (!b) return; ipSec = b.dataset.ipk || null; renderIscep(); window.scrollTo({ top: 0, behavior: "smooth" }); };
