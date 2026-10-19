@@ -5,7 +5,7 @@
   {
    "k": "ayar",
    "ic": "⚙️",
-   "ad": "Ayarla"
+   "ad": "Ayarlar"
   },
   {
    "k": "para",
@@ -114,7 +114,8 @@
    "u": "https://www.maximum.com.tr/kampanyalar",
    "git": "Tümü",
    "gitAd": "Güncel kampanyalar",
-   "src": "isbank.com.tr"
+   "src": "isbank.com.tr",
+   "g": "💳 Kartlar ve kampanyalar"
   },
   {
    "k": "ayar",
@@ -125,7 +126,8 @@
    "u": "https://www.isbank.com.tr/iscep-mobil-temassiz-odeme",
    "git": "📲 Kartsız öde",
    "gitAd": "📲 Kartsız öde",
-   "src": "isbank.com.tr"
+   "src": "isbank.com.tr",
+   "g": "💳 Kartlar ve kampanyalar"
   },
   {
    "k": "ayar",
@@ -134,7 +136,98 @@
    "d": "NFC'li, Wear OS 3.0 ve üzeri Android saatine kartını yükle; sonra internet, Bluetooth ya da telefon olmadan saatle ödeme yap, Bankamatik'ten para çek.",
    "n": "Kartlar › Akıllı Saat ile Öde / Para Çek › Kullanmaya Başla",
    "u": "https://www.isbank.com.tr/iscep-akilli-saat-ile-odeme",
+   "src": "isbank.com.tr",
+   "g": "💳 Kartlar ve kampanyalar"
+  },
+  {
+   "k": "ayar",
+   "g": "🎨 Profil ve Ayarlar › Görünüm Tercihleri",
+   "ic": "🌙",
+   "t": "Koyu mod ve tema rengi: İşCep'i kendine göre giydir",
+   "d": "Açık ya da koyu modu ve tema rengini seç; gece gözünü yormaz, İşCep tam senin zevkine göre olur.",
+   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Açık/Koyu Mod · Tema Rengi",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "uygulama"
+  },
+  {
+   "k": "ayar",
+   "ic": "🔠",
+   "t": "Annen, baban için büyük yazı",
+   "d": "Yazı boyutunu küçükten çok büyüğe ayarla; görme engelli kullanıcılar için ekrandaki yazılar sesli de okunabiliyor (Engelsiz Bankacılık).",
+   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Yazı Tipi Boyutu",
+   "u": "https://www.isbank.com.tr/engelsiz-bankacilik",
+   "src": "isbank.com.tr",
+   "g": "🎨 Profil ve Ayarlar › Görünüm Tercihleri"
+  },
+  {
+   "k": "ayar",
+   "ic": "⭐",
+   "t": "Ana sayfayı kendine göre diz: kısayollar",
+   "d": "16 kısayol ekleyebilirsin, 4'ü ana sayfada durur. Ana sayfadaki kutucukları da kendin düzenlersin.",
+   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Ana Sayfa Düzeni / Kısayol Tercihi",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "isbank.com.tr",
+   "g": "🎨 Profil ve Ayarlar › Görünüm Tercihleri"
+  },
+  {
+   "k": "ayar",
+   "g": "🎨 Profil ve Ayarlar › Görünüm Tercihleri",
+   "ic": "💳",
+   "t": "Favori hesabını seç, her seferinde aramakla uğraşma",
+   "d": "Birden çok hesabın varsa en çok kullandığını favori yap; işlemlerde o hesap öne gelir.",
+   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Favori Hesap Seçimi",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "uygulama"
+  },
+  {
+   "k": "ayar",
+   "g": "🎨 Profil ve Ayarlar › Görünüm Tercihleri",
+   "ic": "🔓",
+   "t": "Şifresiz alan tercihi: giriş yapmadan bak",
+   "d": "Şifre girmeden açılış ekranında görmek istediklerini seçebilirsin; tercihin 90 gün boyunca geçerli kalır. Az bilinen ama çok pratik bir ayar.",
+   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Şifresiz Alan Tercihi",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "uygulama"
+  },
+  {
+   "k": "ayar",
+   "g": "🔐 Profil ve Ayarlar › Güvenlik ve bildirimler",
+   "ic": "👆",
+   "t": "Şifre yazma: parmak izi ya da yüz tanımayla gir",
+   "d": "Bir kez aç, İşCep'e parmak izi ya da yüzünle saniyede gir. Hem hızlı hem şifren göz önünde yazılmaz.",
+   "n": "Profil ve Ayarlar › Güvenlik › Parmak İzi / Yüz Tanıma",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "uygulama"
+  },
+  {
+   "k": "ayar",
+   "g": "🔐 Profil ve Ayarlar › Güvenlik ve bildirimler",
+   "ic": "🔔",
+   "t": "Her harcamada haberin olsun: bildirim ayarları",
+   "d": "Kart harcaması, hesaba gelen para, fatura günü… Hangi bildirimi almak istediğini sen seç; hesabında olan her şeyden anında haberin olur.",
+   "n": "Profil ve Ayarlar › Bildirim Ayarları",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "uygulama"
+  },
+  {
+   "k": "ayar",
+   "g": "🔐 Profil ve Ayarlar › Güvenlik ve bildirimler",
+   "ic": "🚦",
+   "t": "İşlem kısıtlaması: hesabına kendi kilidini koy",
+   "d": "Para transferi, EFT gibi işlemlere işlem başı ya da günlük limit koy; istersen Standart, Kısıtlı ya da Çok Kısıtlı seviyeye çek. Dolandırıcılığa karşı güçlü bir kalkan.",
+   "n": "Profil ve Ayarlar › Güvenlik › İşlem Kısıtlama",
+   "u": "https://www.isbank.com.tr/TR/guvenlik/bizim-yaptiklarimiz/Sayfalar/bizim-yaptiklarimiz.aspx",
    "src": "isbank.com.tr"
+  },
+  {
+   "k": "ayar",
+   "ic": "📞",
+   "t": "Sahte arama tespiti: seni banka mı arıyor, dolandırıcı mı?",
+   "d": "Gelen Arama Bilgilendirme açıksa Çözüm Merkezi aramaları ekranda \"Türkiye İş Bankası Müşteri Hizmetleri\", şüpheli numaralar \"Olası Şüpheli Çağrı\" olarak görünür. Android ve iPhone.",
+   "n": "Profil ve Ayarlar › Güvenlik › Gelen Arama Bilgilendirme (Android'de Antivirüs içinde)",
+   "u": "https://www.isbank.com.tr/antivirus-ve-gelen-arama-bilgilendirme",
+   "src": "isbank.com.tr",
+   "g": "🔐 Profil ve Ayarlar › Güvenlik ve bildirimler"
   },
   {
    "k": "ayar",
@@ -143,16 +236,8 @@
    "d": "SMS, e-posta ya da sosyal medya bağlantısıyla gelen zararlı yazılımları engeller, telefondakileri temizler; fotoğraf, mesaj ve rehberini korur. Android'de. Açınca bildirim çubuğunda İş Bankası logosu görünür.",
    "n": "Profil ve Ayarlar › Güvenlik › Antivirüs (istenen izinleri ver)",
    "u": "https://www.isbank.com.tr/antivirus-ve-gelen-arama-bilgilendirme",
-   "src": "isbank.com.tr"
-  },
-  {
-   "k": "ayar",
-   "ic": "📞",
-   "t": "Seni banka mı arıyor, dolandırıcı mı?",
-   "d": "Gelen Arama Bilgilendirme açıksa Çözüm Merkezi aramaları ekranda \"Türkiye İş Bankası Müşteri Hizmetleri\", şüpheli numaralar \"Olası Şüpheli Çağrı\" olarak görünür. Android ve iPhone.",
-   "n": "Profil ve Ayarlar › Güvenlik › Gelen Arama Bilgilendirme (Android'de Antivirüs içinde)",
-   "u": "https://www.isbank.com.tr/antivirus-ve-gelen-arama-bilgilendirme",
-   "src": "isbank.com.tr"
+   "src": "isbank.com.tr",
+   "g": "🔐 Profil ve Ayarlar › Güvenlik ve bildirimler"
   },
   {
    "k": "maxi",
@@ -205,24 +290,6 @@
    "t": "Menüyü ezberleme: İşCep'te Ara",
    "d": "Yapmak istediğin işlemi yaz, menüsü karşına gelsin.",
    "n": "Ana sayfa ya da menünün üstündeki arama alanı",
-   "u": "https://www.isbank.com.tr/iscep",
-   "src": "isbank.com.tr"
-  },
-  {
-   "k": "kolay",
-   "ic": "🔠",
-   "t": "Annen, baban için büyük yazı",
-   "d": "Yazı boyutunu küçükten çok büyüğe ayarla; görme engelli kullanıcılar için ekrandaki yazılar sesli de okunabiliyor (Engelsiz Bankacılık).",
-   "n": "Profil › Görünüm Tercihlerim",
-   "u": "https://www.isbank.com.tr/engelsiz-bankacilik",
-   "src": "isbank.com.tr"
-  },
-  {
-   "k": "kolay",
-   "ic": "⭐",
-   "t": "En çok kullandıklarını öne al: Kısayollarım",
-   "d": "16 kısayol ekleyebilirsin, 4'ü ana sayfada durur. Ana sayfadaki kutucukları da kendin düzenlersin.",
-   "n": "Ana sayfa › Ana Sayfayı Düzenle",
    "u": "https://www.isbank.com.tr/iscep",
    "src": "isbank.com.tr"
   },
