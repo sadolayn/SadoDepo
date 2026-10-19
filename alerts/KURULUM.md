@@ -29,3 +29,16 @@ Notlar
 4. Apps Script'te `testPushSetup` bir kez çalıştırılır, sonra Dağıt → Dağıtımları yönet → Yeni sürüm.
 
 Bildirimler `dailyDigest` içinde e-postalardan sonra gönderilir. Kayıtlı telefonlar tablodaki **Bildirim** sayfasındadır; geçersiz olanlar gönderimde kendiliğinden silinir.
+
+## Düzeltme 4 — abonelik.gs (onay bağlantısı + "aboneliklerim")
+
+1. Apps Script'te sol menüden **Dosyalar ＋ → Komut dosyası** → adı `abonelik` → `alerts/abonelik.gs` içeriğinin tamamını yapıştır → Kaydet.
+   Dosya listesinde **en altta** olmalı (Code ve duzelt'ten sonra); aynı adlı fonksiyonların yerine bunlar çalışır.
+2. **Dağıt → Dağıtımları yönet → ✏️ düzenle → Sürüm: Yeni sürüm → Dağıt.** Adres değişmez.
+3. Kontrol: `…/exec` adresini tarayıcıda aç → `"v":4` görünmeli.
+
+Ne değişir:
+- Onay bağlantısına ikinci kez tıklanırsa (kurumsal e-posta güvenlik sistemleri bağlantıları önceden açabiliyor) "Bağlantı geçersiz" yerine **"Aboneliğin zaten onaylı ✅"** çıkar.
+- Abone olunan cihazda sitede **"📬 Bu cihazdaki aboneliklerin"** kutusu çıkar: onay bekleniyor / aktif / çıkıldı ve son gönderim saati.
+  Durum yalnızca o cihaza verilen gizli anahtarla sorulur; e-posta adresiyle sorgu yapılamaz.
+- Tabloya en sağa `stoken` sütunu eklenir.

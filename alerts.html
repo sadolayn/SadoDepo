@@ -73,6 +73,13 @@
   .msg { margin-top: 12px; padding: 12px 14px; border-radius: 12px; font-size: 14px; display: none; }
   .msg.ok { display: block; background: #0f2a1d; border: 1px solid #1f5a3d; color: #a8ecc9; }
   .msg.bad { display: block; background: #2a1212; border: 1px solid #5a2222; color: #ffc2c2; }
+  .abon { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .abon h4 { margin: 0 0 8px; font-size: 13px; color: var(--muted); letter-spacing: .5px; font-weight: 700; }
+  .ab { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 12px; background: #111; border: 1px solid #262626; margin-bottom: 6px; }
+  .ab i { font-style: normal; font-size: 20px; line-height: 1.2; }
+  .ab div { flex: 1; min-width: 0; } .ab div > b { display: block; font-size: 14px; word-break: break-all; } .ab span { display: block; font-size: 12.5px; color: #bdbdbd; line-height: 1.45; margin-top: 2px; } .ab small { display: block; font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+  .ab.ok { border-color: #1f5a3d; } .ab.wait { border-color: #4a3a14; } .ab.off { opacity: .7; }
+  .ab button { flex: none; background: none; border: 1px solid #333; color: #aaa; border-radius: 9px; padding: 5px 8px; font-size: 12px; cursor: pointer; }
   .msg.info { display: block; background: #1a1608; border: 1px solid #4a3a14; color: #f0d9a8; }
   .pv h3 { margin: 12px 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); }
   .pv h3:first-child { margin-top: 0; }
@@ -221,6 +228,7 @@
       <button id="sub" class="main">🔔 Abone ol</button>
     </div>
     <div id="msg" class="msg"></div>
+    <div id="abon"></div>
   </div>
 
   <div class="card push" id="push">
@@ -384,7 +392,8 @@ $("sub").onclick = async () => {
   try {
     const r = await fetch(ENDPOINT, { method: "POST", body: JSON.stringify({ action: "subscribe", email, keywords: kws }) });
     const j = await r.json();
-    show(j.ok ? "ok" : "bad", (j.ok ? "📧 " : "") + j.msg);
+    show(j.ok ? "ok" : "bad", (j.ok ? "📧 " : "") + j.msg + (j.ok ? " Gelmezse spam / gereksiz klasörüne de bak." : ""));
+    if (j.ok || j.s) aboneKaydet(email, j.s);
   } catch (e) {
     show("bad", "Bağlantı hatası, biraz sonra tekrar dene.");
   } finally {
@@ -392,6 +401,35 @@ $("sub").onclick = async () => {
   }
 };
 
+
+// ================= Bu cihazdaki aboneliklerim =================
+// Abone olunca e-posta ve gizli "durum anahtarı" yalnızca bu cihazda saklanır; durum sunucuya bu anahtarla sorulur.
+const ABK = "alertsAbonelik";
+const abOku = () => { try { return JSON.parse(localStorage.getItem(ABK) || "[]") || []; } catch (e) { return []; } };
+const abYaz = (L) => { try { localStorage.setItem(ABK, JSON.stringify(L.slice(0, 3))); } catch (e) {} };
+function aboneKaydet(email, s) {
+  const L = abOku().filter((x) => x.email !== email.toLowerCase());
+  L.unshift({ email: email.toLowerCase(), s: s || "", t: Date.now(), kws: kws.slice() });
+  abYaz(L); abGoster();
+}
+const abTarih = (iso) => { if (!iso) return ""; const d = new Date(iso); return d.toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) + " " + d.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }); };
+async function abGoster() {
+  const L = abOku(), box = $("abon");
+  if (!L.length) { box.innerHTML = ""; return; }
+  const satir = (x, d) => {
+    let cls = "wait", ic = "⏳", durum = "Onay bekleniyor", alt = "E-postandaki <b>Aboneliğini onayla</b> bağlantısına tıkla. Gelmediyse spam / gereksiz klasörüne bak.";
+    if (d && d.ok) {
+      if (d.status === "active") { cls = "ok"; ic = "✅"; durum = "Abonelik aktif"; alt = `Kelimeler: ${esc(d.keywords.split(" | ").join(", "))}<br>Her sabah 10:00'da, kelimelerine uyan <b>yeni haber varsa</b> özet gelir; haber yoksa o gün e-posta gelmez.` + (d.pending ? `<br>Yeni kelimelerin için onay bekleniyor.` : ""); }
+      else if (d.status === "unsub") { cls = "off"; ic = "🚫"; durum = "Abonelikten çıkıldı"; alt = "Yeniden abone olmak için yukarıdan kelimelerini seçip <b>Abone ol</b>'a bas."; }
+    } else if (!x.s) { alt = "Onay e-postandaki bağlantıya tıkladıysan abonelik başlamıştır. Durumu buradan görebilmek için bir kez daha <b>Abone ol</b>'a basabilirsin."; durum = "Bu cihazdan abone olundu"; ic = "📬"; }
+    return `<div class="ab ${cls}"><i>${ic}</i><div><b>${esc(x.email)}</b><span><b style="display:inline;font-size:12.5px">${durum}</b> · ${alt}</span>${d && d.lastSent ? `<small>📨 Son gönderim: ${abTarih(d.lastSent)}</small>` : ""}</div><button type="button" data-sil="${esc(x.email)}" title="Bu cihazdan listeden kaldır">✕</button></div>`;
+  };
+  box.innerHTML = `<div class="abon"><h4>📬 BU CİHAZDAKİ ABONELİKLERİN</h4>${L.map((x) => satir(x, null)).join("")}</div>`;
+  const D = await Promise.all(L.map((x) => x.s ? fetch(ENDPOINT + "?action=status&s=" + encodeURIComponent(x.s)).then((r) => r.json()).catch(() => null) : null));
+  box.innerHTML = `<div class="abon"><h4>📬 BU CİHAZDAKİ ABONELİKLERİN</h4>${L.map((x, i) => satir(x, D[i])).join("")}</div>`;
+  box.querySelectorAll("[data-sil]").forEach((b) => (b.onclick = () => { abYaz(abOku().filter((x) => x.email !== b.dataset.sil)); abGoster(); }));
+}
+abGoster();
 
 // ================= Telefon bildirimi (Firebase Cloud Messaging) =================
 // Firebase web uygulaması ayarları: herkese açık değerlerdir (gizli anahtar değil). Gönderim yetkisi yalnızca Apps Script'te.
