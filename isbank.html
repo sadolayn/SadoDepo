@@ -189,7 +189,7 @@
   .aysec button.on { background: linear-gradient(160deg, #f3dca8, #c9a050); color: #000; border-color: #f3dca8; } .aysec button.on small { color: #3a2c14; }
   .aysec button.p { border-color: #23506b; } .aysec button.p.on { background: linear-gradient(160deg, #6fe3e3, #3f7cff); border-color: #9fe9ff; color: #001133; } .aysec button.p.on small { color: #0b2350; }
   .aykim { display: flex; gap: 8px; font-size: 12.5px; line-height: 1.5; color: #c9c9c9; background: #0d0d0d; border: 1px solid var(--line); border-radius: 12px; padding: 9px 11px; margin-bottom: 10px; }
-  .aykim a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .aykim a { color: var(--accent); text-decoration: none; font-weight: 600; } .aykim i { display: block; font-style: normal; margin-top: 4px; } .aykim small { display: block; margin-top: 6px; color: var(--muted); font-size: 11.5px; }
   .isplus { position: relative; overflow: hidden; border-radius: 18px; padding: 16px; margin-bottom: 10px; color: #eee; background: radial-gradient(120% 90% at 100% 0%, #10405a 0%, #0a1830 50%, #050812 100%); border: 1px solid #1f3f6b; }
   .isplus .bh span { font-size: 10.5px; letter-spacing: 3px; color: #7fb8d8; } .isplus .bh b { display: block; font-size: 26px; color: #9fe9ff; margin: 2px 0; font-weight: 800; } .isplus .bh small { color: #a9b6c8; font-size: 12.5px; line-height: 1.45; display: block; }
   .ipt3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 12px 0 8px; }
@@ -840,7 +840,11 @@ function ayrSecHtml() {
   t.className = "tfil aysec"; t.hidden = false;
   t.innerHTML = `<button type="button" data-ayr="black" class="${ayr !== "plus" ? "on" : ""}">🖤 İş Black<small>varlığa göre</small></button><button type="button" data-ayr="plus" class="p ${ayr === "plus" ? "on" : ""}">💠 İş Plus<small>İşCep ve kart kullanımına göre</small></button>`;
   t.onclick = (e) => { const b = e.target.closest("[data-ayr]"); if (!b) return; ayr = b.dataset.ayr; try { localStorage.setItem("isbankAyr", ayr); } catch (x) {} renderList(); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  return `<div class="aykim">🧭 <span><b>Müşteri hangi programda?</b> Varlığı 1 milyon TL ve üzeri → <b>İş Black</b> · maaşını İş Bankası'ndan alıyor → <a href="https://www.isbank.com.tr/kampanyalar/iste-maasa-ozel" target="_blank" rel="noopener">İş'te Maaş'a Özel ↗</a> · diğerleri İşCep'i ve kartını kullandıkça → <b>İş Plus</b></span></div>`;
+  return `<div class="aykim">🧭 <span><b>Hangi müşteri hangi ayrıcalıktan yararlanır?</b>
+      <i>🖤 Varlığı 1 milyon TL ve üzeri → <b>İş Black</b> (4 milyon TL ve üzeri Black Plus)</i>
+      <i>💼 Maaşını İş Bankası'ndan alıyor → <a href="https://www.isbank.com.tr/kampanyalar/iste-maasa-ozel" target="_blank" rel="noopener">maaşlı müşteri ayrıcalıkları ↗</a></i>
+      <i>💠 Diğer müşteriler → İşCep'i ve kartını kullandıkça <b>İş Plus</b> (Turkuaz, Mavi, Lacivert)</i>
+      <small>İş Black ve maaşlı müşteriler İş Plus'a dahil edilmez. Hepsinde başvuru gerekmez, kendiliğinden tanımlanır.</small></span></div>`;
 }
 function isplusHtml() {
   const J = ipl;
