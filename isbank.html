@@ -318,7 +318,10 @@
   .menu button.hasnew { border-color: #e5383b; }
   .menu button[data-k="Tarihçe"]  { --c: #e0a24f; --d: #2a1d0a; --t: #f3dca8; }
   .menu button[data-k="Black"]    { --c: #c9a050; --d: #0a0a0a; --t: #f3dca8; }
-  .menu button[data-k="Maximum"]  { --c: #ff2d95; --d: #3a0020; --t: #ffd1e8; }
+  .menu button[data-k="Maximum"]  { --c: #ff2d95; --d: #b0005c; --t: #fff; background: linear-gradient(160deg, #ff2d95, #b0005c); border-color: #ff5aab; }
+  .menu button[data-k="Maximum"].active { background: linear-gradient(160deg, #ffd1e8, #ff6fb5); color: #5a0030; border-color: #fff; }
+  .menu button[data-k="Maximum"] span, .menu button[data-k="Black"] span { font-size: 10px; line-height: 1.15; letter-spacing: -.2px; }
+  .menu button[data-k="Black"] i { filter: drop-shadow(0 0 2px rgba(243,220,168,.9)); }
   .menu button[data-k="Kampanya"] { --c: #3fc283; --d: #0b2a1d; --t: #c9f5de; }
   .menu button[data-k="İşCep"]    { --c: #3f8cff; --d: #0a1a3a; --t: #cfe0ff; }
   .menu button[data-k="Şubeler"]  { --c: #8a7dff; --d: #15123a; --t: #dcd8ff; }
@@ -656,9 +659,9 @@ const CATS = [
   ["Soru", "#e0a24f", "❓"],
   ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "Maximum": "Maximum<small>Maximiles</small>", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<small>İş Plus</small>", "Haberler": "Haberler<small>Güncel · KAP</small>" };
+const LBL = { "Maximum": "Maximum<br>Maximiles", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<small>Güncel · KAP</small>" };
 // Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
-const MENU = [["Tarihçe", "📜"], ["Black", "💎"], ["Maximum", "💳"], ["Kampanya", "🎁"], ["İşCep", "📲"], ["Şubeler", "📍"], ["📅 Takvim", "📅"], ["Haberler", "📰"], ["Soru", "❓"]];
+const MENU = [["Tarihçe", "🏛️"], ["Black", "🖤"], ["Maximum", "💳"], ["Kampanya", "🎁"], ["İşCep", "📲"], ["Şubeler", "📍"], ["📅 Takvim", "📅"], ["Haberler", "📰"], ["Soru", "❓"]];
 const NEWS = ["Tümü", "📰 Güncel", "Haber", "Ürün", "Dijital", "KAP"];
 const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
 let lastNews = "Tümü"; try { lastNews = localStorage.getItem("isbankNews") || "Tümü"; } catch (e) {}
