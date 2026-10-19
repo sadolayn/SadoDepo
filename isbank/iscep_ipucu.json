@@ -80,7 +80,7 @@
    "k": "para",
    "ic": "🔁",
    "t": "Diğer bankalardaki hesapların da İşCep'te",
-   "d": "Başka bankalardaki hesap ve kartlarını ekle, bakiyelerini tek ekranda gör; istersen o bankaya gitmeden paranı İş Bankası'na getir. Açık Bankacılık ile ücretsiz.",
+   "d": "Başka bankalardaki hesap ve kartlarını ekle, bakiyelerini tek ekranda gör; istersen o bankaya gitmeden paranı İş Bankası'na getir. Açık Bankacılık ile ücretsiz. Verdiğin izinleri Profil ve Ayarlar › Diğer Banka İzinleri'nden yönetirsin.",
    "n": "Hesaplarım › Diğer Banka Hesabı/Kartı Ekle · Para Aktar › İş Bankası Hesabıma Para Getir",
    "u": "https://www.isbank.com.tr/acik-bankacilik",
    "src": "isbank.com.tr"
@@ -268,6 +268,16 @@
    "n": "Profil ve Ayarlar › Bildirim ve Paylaşım Ayarları › Bilgi Paylaşım Tercihleri › Konumunuza Göre Fırsatlar",
    "u": "https://www.isbank.com.tr/iscep",
    "src": "uygulama"
+  },
+  {
+   "k": "ayar",
+   "g": "🏦 Profil ve Ayarlar › Diğer Banka İzinleri",
+   "ic": "🔗",
+   "t": "Diğer bankalara verdiğin izinler tek ekranda",
+   "d": "Açık Bankacılık ile başka bankadaki hesap ve kartlarını İşCep'e eklediysen, hangi bankaya hangi izni (hesap görüntüleme, ödeme başlatma) verdiğini buradan görür, yönetirsin. İzin süresi dolunca eklemeyi yenilemen gerekir; artık kullanmadığın izni kaldırmak da güvenliğin parçası. Hizmet ücretsiz.",
+   "n": "Profil ve Ayarlar › Diğer Banka İzinleri",
+   "u": "https://www.isbank.com.tr/acik-bankacilik",
+   "src": "isbank.com.tr"
   },
   {
    "k": "maxi",
