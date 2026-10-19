@@ -183,7 +183,7 @@
   .blk { position: relative; overflow: hidden; border-radius: 18px; padding: 16px; margin-bottom: 10px; color: #eee; background: radial-gradient(120% 90% at 100% 0%, #3a3123 0%, #121212 45%, #050505 100%); border: 1px solid #3a3326; box-shadow: inset 0 1px 0 rgba(255,230,180,.08); }
   .blk::after { content: ""; position: absolute; right: -40px; top: -40px; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, rgba(240,198,116,.18), transparent 70%); pointer-events: none; }
   .blk .bh span { font-size: 10.5px; letter-spacing: 3px; color: #b79a74; } .blk .bh b { display: block; font-family: Georgia, serif; font-size: 26px; color: #f3dca8; letter-spacing: .5px; margin: 2px 0; } .blk .bh small { color: #a9a39a; font-size: 12.5px; }
-  .aysec { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+  .aysec { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; } .chipbar .tfil.aysec { display: grid; margin: 6px 0 0; padding: 0; } .chipbar .tfil.aysec button { padding: 8px 6px; font-size: 13.5px; }
   .aysec button { position: relative; padding: 10px 8px; border-radius: 12px; border: 1px solid #3a3326; background: #0d0d0d; color: #e6e0d4; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
   .aysec button small { display: block; font-size: 10.5px; font-weight: 500; color: #9a9a9a; margin-top: 2px; }
   .aysec button.on { background: linear-gradient(160deg, #f3dca8, #c9a050); color: #000; border-color: #f3dca8; } .aysec button.on small { color: #3a2c14; }
@@ -831,8 +831,12 @@ function odeHtml() {
 // Kaynak: isbank.com.tr duyurusu (23.01.2026), maximiles.com.tr Maximiles Black sayfası, İş Bankası lounge kampanya sayfası
 // ===== Ayrıcalık programları: İş Black (varlığa göre) · İş Plus (İşCep ve kart kullanımına göre) =====
 function ayrSecHtml() {
-  return `<div class="aysec"><button type="button" data-ayr="black" class="${ayr !== "plus" ? "on" : ""}">🖤 İş Black<small>varlığa göre</small></button><button type="button" data-ayr="plus" class="p ${ayr === "plus" ? "on" : ""}">💠 İş Plus<small>İşCep ve kart kullanımına göre</small></button></div>
-    <div class="aykim">🧭 <span><b>Müşteri hangi programda?</b> Varlığı 1 milyon TL ve üzeri → <b>İş Black</b> · maaşını İş Bankası'ndan alıyor → <a href="https://www.isbank.com.tr/kampanyalar/iste-maasa-ozel" target="_blank" rel="noopener">İş'te Maaş'a Özel ↗</a> · diğerleri İşCep'i ve kartını kullandıkça → <b>İş Plus</b></span></div>`;
+  // İş Black / İş Plus seçimi menünün altında, yapışkan alanda durur (aşağı kaydırınca da görünür)
+  const t = $("tfil");
+  t.className = "tfil aysec"; t.hidden = false;
+  t.innerHTML = `<button type="button" data-ayr="black" class="${ayr !== "plus" ? "on" : ""}">🖤 İş Black<small>varlığa göre</small></button><button type="button" data-ayr="plus" class="p ${ayr === "plus" ? "on" : ""}">💠 İş Plus<small>İşCep ve kart kullanımına göre</small></button>`;
+  t.onclick = (e) => { const b = e.target.closest("[data-ayr]"); if (!b) return; ayr = b.dataset.ayr; try { localStorage.setItem("isbankAyr", ayr); } catch (x) {} renderList(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  return `<div class="aykim">🧭 <span><b>Müşteri hangi programda?</b> Varlığı 1 milyon TL ve üzeri → <b>İş Black</b> · maaşını İş Bankası'ndan alıyor → <a href="https://www.isbank.com.tr/kampanyalar/iste-maasa-ozel" target="_blank" rel="noopener">İş'te Maaş'a Özel ↗</a> · diğerleri İşCep'i ve kartını kullandıkça → <b>İş Plus</b></span></div>`;
 }
 function isplusHtml() {
   const J = ipl;
@@ -1036,7 +1040,7 @@ function renderCamps() {
   const tile = (t, cnt, span) => { const [ic, ad, c] = TI[t] || ["🎁", t, "#9aa0a6"]; const yeni = t === "📲 Kartsız öde" && new Date() < new Date("2026-11-03");
     return `<button data-t="${esc(t)}" class="mt${t === campTur ? " on" : ""}" style="--c:${c};grid-column:span ${span}"><i>${ic}</i><span>${esc(ad)}</span>${cnt != null ? `<em>${cnt}</em>` : yeni ? `<em class="y">YENİ</em>` : ""}</button>`; };
   $("tfil").innerHTML = SP.map((t) => tile(t, null, 60 / SP.length)).join("") + turs.map((t) => tile(t, t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length, 60 / Math.min(6, turs.length) | 0)).join("");
-  $("tfil").classList.add("mtiles"); $("tfil").classList.remove("ipm");
+  $("tfil").className = "tfil mtiles";
   $("tfil").hidden = false;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
   if (SP.includes(campTur)) { if (campTur === "🛒 Pazarama") { $("list").innerHTML = pazHtml(); bindPaz(); return; } $("list").innerHTML = campTur === "✈️ Maximiles" ? milesHtml() : campTur === "📲 Kartsız öde" ? odeHtml() : oneHtml(); bindSpecial(); return; }
@@ -1342,7 +1346,7 @@ function ipTiles() {
   const t = $("tfil"); if (!IPK.length) { t.hidden = true; return; }
   const tile = (k, ic, ad, c, n) => `<button type="button" data-ipk="${k}" class="mt${(ipSec || "") === k ? " on" : ""}${ad.length > 12 ? " uzun" : ""}" style="--c:${c};grid-column:span 12"><i>${ic}</i><span>${esc(ad)}</span>${n != null ? `<em>${n}</em>` : ""}</button>`;
   t.innerHTML = tile("", "🌟", "Hepsi", "#e0a24f", IPUCU.length) + IPK.map(([k, ic, ad]) => tile(k, ic, ad, IPC[k] || "#9aa0a6", IPUCU.filter((x) => x.k === k).length)).join("");
-  t.classList.add("mtiles", "ipm"); t.hidden = false;
+  t.className = "tfil mtiles ipm"; t.hidden = false;
   t.onclick = (e) => { const b = e.target.closest("button[data-ipk]"); if (!b) return; ipSec = b.dataset.ipk || null; renderIscep(); window.scrollTo({ top: 0, behavior: "smooth" }); };
 }
 function iscepIpHtml() {
@@ -1639,7 +1643,7 @@ function bindFact() {
 function renderList() {
   window.Rapor && Rapor.bolum(cat.replace(/<[^>]+>/g, ""));
   markSeen(cat);
-  $("tfil").hidden = cat !== "Maximum" && cat !== "İşCep";
+  $("tfil").hidden = cat !== "Maximum" && cat !== "İşCep" && cat !== "Black";
   renderSoon();
   if (cat === "📰 Güncel") return renderLive();
   if (cat === "📅 Takvim") return renderTakvim();
