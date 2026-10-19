@@ -607,7 +607,7 @@ window.ataOyna = function (film, ozelNot, yas) {
 <div class="wrap">
   <div class="stick">
   <header>
-    <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Anasayfa" aria-label="Anasayfa">🏠</a>
+    <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
     <h1>🏛️ İş Bankası Gündemi</h1>
     <span style="width:52px"></span>
   </header>
@@ -1488,7 +1488,7 @@ function takvim() {
   PPK.forEach((d) => L.push({ d, t: "TCMB faiz kararı (PPK)", a: "Saat 14:00'te açıklanır · kredi ve mevduat faizlerini etkiler", c: "#5aa9f0" }));
   for (let y = now.getFullYear(); y <= now.getFullYear() + 1; y++) {
     [["03-31", "1. çeyrek"], ["06-30", "2. çeyrek (yarıyıl)"], ["09-30", "3. çeyrek"], ["12-31", "Yıl sonu"]].forEach(([md, n]) => L.push({ d: `${y}-${md}`, t: `${n} bilanço dönemi kapanışı`, a: "Çeyrek sonu · hedef ve bütçe dönemi", c: "#8a8a8a" }));
-    L.push({ d: `${y}-08-26`, t: `İş Bankası ${y - 1924}. kuruluş yıldönümü 🎂`, a: "26 Ağustos 1924, Ankara", c: "#ef6a4c" });
+    L.push({ d: `${y}-08-26`, t: `İş Bankası ${y - 1924}. kuruluş yıl dönümü 🎂`, a: "26 Ağustos 1924, Ankara", c: "#ef6a4c" });
   }
   return L.filter((x) => dLeft(x.d) >= 0).sort((a, b) => a.d.localeCompare(b.d)).slice(0, 14);
 }

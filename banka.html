@@ -286,7 +286,7 @@
 <div class="wrap">
   <div class="stick">
   <header>
-    <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Anasayfa" aria-label="Anasayfa">🏠</a>
+    <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
     <h1>🏦 Bankacılık</h1>
     <span style="width:52px"></span>
   </header>
@@ -741,7 +741,7 @@
         <div><label>Kullandırım komisyonu</label><div class="field"><input id="c_kom" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
         <div><label>Müşteri limiti (ops.)</label><div class="field"><input id="c_lim" type="text" inputmode="decimal" placeholder="boş = yok"><span class="unit">TL</span></div></div>
       </div>
-      <p class="hint" style="margin-top:6px">TCMB ticari müşteri ücret tebliği: kredi kullandırım ücreti işlem başına azami <b>%1,10</b> (+BSMV). Kredi tahsis ücreti limitin <b>%0,20</b>'si (1 Kasım 2025 öncesi onaylı limitlerde %0,25 = onbinde 25); limit bazında alınır, her iskontoda değil.</p>
+      <p class="hint" style="margin-top:6px">TCMB ticari müşteri ücret tebliği: kredi kullandırım ücreti işlem başına azami <b>%1,10</b> (+BSMV). Kredi tahsis ücreti limitin <b>%0,20</b>'si (1 Kasım 2025 öncesi onaylı limitlerde %0,25 = on binde 25); limit bazında alınır, her iskontoda değil.</p>
     </div>
     <div class="card">
       <h2 style="margin-bottom:6px">Hesap detayı</h2>
@@ -2262,8 +2262,8 @@ $("v_copy").addEventListener("click", () => {
     const w = $("e_warn");
     w.className = "ekwarn" + (asim ? " hot" : "");
     w.innerHTML = asim
-      ? `<b>⚠️ ${Math.round(num("e_gun"))} gün yazıldı; hesap 30 güne göre gösteriliyor.</b> Bir aydan uzun kullanımda dönem faizi ödenmezse ana paraya eklenir ve faize faiz işler; tutar değişir. Uzun vade için aşağıdaki <b>Taksitli Nakit Avans</b>'a bak.`
-      : `<b>⚠️ 1 aydan sonra dikkat:</b> Ek hesap faizi her hesap kesim döneminde tahsil edilir. Müşteri dönem faizini ödemezse faiz ana paraya eklenir, faize de faiz işler; tutar bu hesaptan farklı olabilir.`;
+      ? `<b>⚠️ ${Math.round(num("e_gun"))} gün yazıldı; hesap 30 güne göre gösteriliyor.</b> Bir aydan uzun kullanımda dönem faizi ödenmezse anaparaya eklenir ve faize faiz işler; tutar değişir. Uzun vade için aşağıdaki <b>Taksitli Nakit Avans</b>'a bak.`
+      : `<b>⚠️ 1 aydan sonra dikkat:</b> Ek hesap faizi her hesap kesim döneminde tahsil edilir. Müşteri dönem faizini ödemezse faiz anaparaya eklenir, faize de faiz işler; tutar bu hesaptan farklı olabilir.`;
     ekOzet = ozetMetni("BİREYSEL EK HESAP FAİZ ÖZETİ", [[`Kullanılacak tutar: ${tl(P)}`, `Süre: ${gunAd(g)}`, `Aylık faiz oranı: %${f2(r)}`], [`Faiz: ${tl(k.faiz)}`, `KKDF (%15): ${tl(k.kkdf)}`, `BSMV (%15): ${tl(k.bsmv)}`, `Toplam maliyet: ${tl(k.top)}`, `Geri ödenecek toplam: ${tl(P + k.top)}`]]);
     $("e_hapT").textContent = `· ${tl(P)} · %${f2(r)}`;
     $("e_hap").innerHTML = GUNLER.map(([v, ad]) => { const x = kalem(P, r, v); return `<tr class="r${v === g ? " on" : ""}" data-g="${v}"><td>${ad}</td><td>${f2(x.faiz)}</td><td>${f2(x.v)}</td><td>${f2(x.top)} TL</td></tr>`; }).join("");
