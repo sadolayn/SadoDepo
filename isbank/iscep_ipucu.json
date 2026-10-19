@@ -144,8 +144,8 @@
    "g": "🎨 Profil ve Ayarlar › Görünüm Tercihleri",
    "ic": "🌙",
    "t": "Koyu mod ve tema rengi: İşCep'i kendine göre giydir",
-   "d": "Açık ya da koyu modu ve tema rengini seç; gece gözünü yormaz, İşCep tam senin zevkine göre olur.",
-   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Açık/Koyu Mod · Tema Rengi",
+   "d": "Açık Mod, Koyu Mod ya da telefonun ayarına uyan “Telefon Ayarlarını Kullan”ı seç; İşCep Teması'ndan da mavi ya da kırmızı rengi seç. Gece gözünü yormaz.",
+   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Açık / Koyu Mod · İşCep Teması",
    "u": "https://www.isbank.com.tr/iscep",
    "src": "uygulama"
   },
@@ -153,8 +153,8 @@
    "k": "ayar",
    "ic": "🔠",
    "t": "Annen, baban için büyük yazı",
-   "d": "Yazı boyutunu küçükten çok büyüğe ayarla; görme engelli kullanıcılar için ekrandaki yazılar sesli de okunabiliyor (Engelsiz Bankacılık).",
-   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Yazı Tipi Boyutu",
+   "d": "Metin boyutunu Küçük, Standart, Büyük ya da Ekstra Büyük yap; görme engelli kullanıcılar için ekrandaki yazılar sesli de okunabiliyor (Engelsiz Bankacılık).",
+   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Metin Boyutu",
    "u": "https://www.isbank.com.tr/engelsiz-bankacilik",
    "src": "isbank.com.tr",
    "g": "🎨 Profil ve Ayarlar › Görünüm Tercihleri"
@@ -164,7 +164,7 @@
    "ic": "⭐",
    "t": "Ana sayfayı kendine göre diz: kısayollar",
    "d": "16 kısayol ekleyebilirsin, 4'ü ana sayfada durur. Ana sayfadaki kutucukları da kendin düzenlersin.",
-   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Ana Sayfa Düzeni / Kısayol Tercihi",
+   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Ana Sayfa Yönetimi › Ana Sayfayı Düzenle · Kısayol Tercihlerim",
    "u": "https://www.isbank.com.tr/iscep",
    "src": "isbank.com.tr",
    "g": "🎨 Profil ve Ayarlar › Görünüm Tercihleri"
@@ -175,7 +175,7 @@
    "ic": "💳",
    "t": "Favori hesabını seç, her seferinde aramakla uğraşma",
    "d": "Birden çok hesabın varsa en çok kullandığını favori yap; işlemlerde o hesap öne gelir.",
-   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Favori Hesap Seçimi",
+   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Ana Sayfa Yönetimi › Favori Hesap Seçimi",
    "u": "https://www.isbank.com.tr/iscep",
    "src": "uygulama"
   },
@@ -183,40 +183,40 @@
    "k": "ayar",
    "g": "🎨 Profil ve Ayarlar › Görünüm Tercihleri",
    "ic": "🔓",
-   "t": "Şifresiz alan tercihi: giriş yapmadan bak",
-   "d": "Şifre girmeden açılış ekranında görmek istediklerini seçebilirsin; tercihin 90 gün boyunca geçerli kalır. Az bilinen ama çok pratik bir ayar.",
-   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Şifresiz Alan Tercihi",
+   "t": "Şifre tuşlamadan hesabına bak: Şifresiz Alan",
+   "d": "“Hesap Bilgilerimi Göster”i açarsan 90 gün boyunca şifre tuşlamadan hesap bilgilerini görüntüleyebilirsin. Kalabalıkta göz simgesiyle (Hassas Mod) gizlemeyi unutma.",
+   "n": "Profil ve Ayarlar › Görünüm Tercihleri › Şifresiz Alan Tercihlerim › Hesap Bilgilerimi Göster",
    "u": "https://www.isbank.com.tr/iscep",
    "src": "uygulama"
   },
   {
    "k": "ayar",
-   "g": "🔐 Profil ve Ayarlar › Güvenlik ve bildirimler",
+   "g": "🔐 Profil ve Ayarlar › Güvenlik ve İşlem Ayarları",
    "ic": "🧬",
    "t": "Şifrene ek kilit: yüz tanıma ya da parmak izi",
-   "d": "Şifrenin yanına ikinci bir güvenlik katmanı ekle: İşCep şifreye ek olarak yüzünü ya da parmak izini de doğrular. Şifren başkasının eline geçse bile hesabına ek bir engel olur.",
-   "n": "Profil ve Ayarlar › Güvenlik › Yüz Tanıma / Parmak İzi",
+   "d": "Şifrene ek bir güvenlik önlemi: İşCep'e girerken şifrenin yanında yüzün ya da parmak izin de doğrulanır. Şifren başkasının eline geçse bile hesabına ek bir engel olur.",
+   "n": "Profil ve Ayarlar › Güvenlik ve İşlem Ayarları › Yüz ve Parmak İzi Tanıma ile Giriş",
    "u": "https://www.isbank.com.tr/iscep",
    "src": "uygulama"
   },
   {
    "k": "ayar",
-   "g": "🔐 Profil ve Ayarlar › Güvenlik ve bildirimler",
-   "ic": "🔔",
-   "t": "Her harcamada haberin olsun: bildirim ayarları",
-   "d": "Kart harcaması, hesaba gelen para, fatura günü… Hangi bildirimi almak istediğini sen seç; hesabında olan her şeyden anında haberin olur.",
-   "n": "Profil ve Ayarlar › Bildirim Ayarları",
-   "u": "https://www.isbank.com.tr/iscep",
-   "src": "uygulama"
-  },
-  {
-   "k": "ayar",
-   "g": "🔐 Profil ve Ayarlar › Güvenlik ve bildirimler",
+   "g": "🔐 Profil ve Ayarlar › Güvenlik ve İşlem Ayarları",
    "ic": "🚦",
-   "t": "İşlem kısıtlaması: hesabına kendi kilidini koy",
+   "t": "İşlem kısıtlaması ve limitler: hesabına kendi kilidini koy",
    "d": "Para transferi, EFT gibi işlemlere işlem başı ya da günlük limit koy; istersen Standart, Kısıtlı ya da Çok Kısıtlı seviyeye çek. Dolandırıcılığa karşı güçlü bir kalkan.",
-   "n": "Profil ve Ayarlar › Güvenlik › İşlem Kısıtlama",
+   "n": "Profil ve Ayarlar › Güvenlik ve İşlem Ayarları › İşlem Kısıtlamaları · Para Aktarma Limitleri",
    "u": "https://www.isbank.com.tr/TR/guvenlik/bizim-yaptiklarimiz/Sayfalar/bizim-yaptiklarimiz.aspx",
+   "src": "isbank.com.tr"
+  },
+  {
+   "k": "ayar",
+   "g": "🔐 Profil ve Ayarlar › Güvenlik ve İşlem Ayarları",
+   "ic": "📲",
+   "t": "Eski telefonun hâlâ tanımlı mı?",
+   "d": "Kullanmadığın ya da kaybolan telefonu tanımlı telefonlarından kaldır; hesabına yalnızca senin cihazın erişsin.",
+   "n": "Profil ve Ayarlar › Güvenlik ve İşlem Ayarları › Tanımlı Telefon Tercihi",
+   "u": "https://www.isbank.com.tr/sss",
    "src": "isbank.com.tr"
   },
   {
@@ -224,20 +224,50 @@
    "ic": "📞",
    "t": "Sahte arama tespiti: seni banka mı arıyor, dolandırıcı mı?",
    "d": "Gelen Arama Bilgilendirme açıksa Çözüm Merkezi aramaları ekranda \"Türkiye İş Bankası Müşteri Hizmetleri\", şüpheli numaralar \"Olası Şüpheli Çağrı\" olarak görünür. Android ve iPhone.",
-   "n": "Profil ve Ayarlar › Güvenlik › Gelen Arama Bilgilendirme (Android'de Antivirüs içinde)",
+   "n": "Profil ve Ayarlar › Güvenlik ve İşlem Ayarları › Banka Arama Bilgilendirme › Sahte Arama Tespiti İzni (açılan ekranda telefonun “Arayan Kimliği ve Spam Uygulaması” menüsünden İşCep'e izin ver)",
    "u": "https://www.isbank.com.tr/antivirus-ve-gelen-arama-bilgilendirme",
    "src": "isbank.com.tr",
-   "g": "🔐 Profil ve Ayarlar › Güvenlik ve bildirimler"
+   "g": "🔐 Profil ve Ayarlar › Güvenlik ve İşlem Ayarları"
   },
   {
    "k": "ayar",
    "ic": "🛡️",
-   "t": "Zararlı yazılım koruması: İşCep Antivirüs",
-   "d": "SMS, e-posta ya da sosyal medya bağlantısıyla gelen zararlı yazılımları engeller, telefondakileri temizler; fotoğraf, mesaj ve rehberini korur. Android'de. Açınca bildirim çubuğunda İş Bankası logosu görünür.",
-   "n": "Profil ve Ayarlar › Güvenlik › Antivirüs (istenen izinleri ver)",
+   "t": "Zararlı Yazılım Koruma: telefonundaki tehlikeyi İşCep yakalasın",
+   "d": "İşCep Zararlı Yazılım Koruma, uygulama kapalıyken bile arka planda çalışır; telefonu tarar, zararlı yazılım bulursa seni hemen uyarır. Android'de.",
+   "n": "Profil ve Ayarlar › Güvenlik ve İşlem Ayarları › Zararlı Yazılım Koruma (“Diğer Uygulamaların Üstünde Göster” ve “Dosya Erişim İzni”ni de aç)",
    "u": "https://www.isbank.com.tr/antivirus-ve-gelen-arama-bilgilendirme",
    "src": "isbank.com.tr",
-   "g": "🔐 Profil ve Ayarlar › Güvenlik ve bildirimler"
+   "g": "🔐 Profil ve Ayarlar › Güvenlik ve İşlem Ayarları"
+  },
+  {
+   "k": "ayar",
+   "g": "🔐 Profil ve Ayarlar › Güvenlik ve İşlem Ayarları",
+   "ic": "🎛️",
+   "t": "Kullanmadığın kanalı sen yönet",
+   "d": "İnternet Şube, Maximum Mobil ve Çözüm Merkezi kullanım tercihlerin tek ekranda. Kullanmadığın kanalı kısıtlamak ek bir güvenlik katmanı sağlar.",
+   "n": "Profil ve Ayarlar › Güvenlik ve İşlem Ayarları › Kanal Kullanım Tercihleri",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "uygulama"
+  },
+  {
+   "k": "ayar",
+   "g": "🔔 Profil ve Ayarlar › Bildirim ve Paylaşım Ayarları",
+   "ic": "🔔",
+   "t": "Her harcamada haberin olsun: bildirim ayarları",
+   "d": "Kart harcaması, hesaba gelen para, fatura günü… Hangi bildirimi almak istediğini sen seç; hesabında olan her şeyden anında haberin olur.",
+   "n": "Profil ve Ayarlar › Bildirim ve Paylaşım Ayarları › Bildirim Ayarları",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "uygulama"
+  },
+  {
+   "k": "ayar",
+   "g": "🔔 Profil ve Ayarlar › Bildirim ve Paylaşım Ayarları",
+   "ic": "📍",
+   "t": "Yakınındaki fırsatlar ayağına gelsin",
+   "d": "Konumuna göre fırsatları açarsan, telefonun konum izni “Her Zaman” olduğunda yakınındaki sana özel fırsatlar bildirim olarak gelir.",
+   "n": "Profil ve Ayarlar › Bildirim ve Paylaşım Ayarları › Bilgi Paylaşım Tercihleri › Konumunuza Göre Fırsatlar",
+   "u": "https://www.isbank.com.tr/iscep",
+   "src": "uygulama"
   },
   {
    "k": "maxi",
