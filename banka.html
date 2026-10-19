@@ -800,9 +800,15 @@
       <p class="hint"><b>Akdi faiz:</b> asgariyi ödeyip borcun kalanını sonraki aya devredince kalan borca işleyen normal faiz.<br><b>Gecikme faizi:</b> asgari ödeme bile tam yapılmazsa, asgarinin ödenmeyen kısmına işleyen daha yüksek faiz.<br>İkisine de BSMV ve KKDF eklenir.</p>
       <label>Dönem borcu</label>
       <div class="field"><input id="k_borc" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div>
+      <label>Müşterinin ödediği tutar</label>
+      <div class="field"><input id="k_odenen" type="text" inputmode="decimal" value="5.000"><span class="unit">TL</span></div>
+      <label>Kart limiti</label>
+      <div class="vchips" id="k_lim" style="margin-bottom:0"><button type="button" data-a="20" class="on">100.000 TL ve altı<br><small>asgari %20</small></button><button type="button" data-a="40">100.000 TL üstü<br><small>asgari %40</small></button></div>
+      <div class="ekok" id="k_oto" style="margin-top:12px"></div>
+      <details id="k_det" style="margin-top:8px"><summary>⚙️ Oranları değiştir (gerekirse)</summary>
       <div class="two">
-        <div><label>Ödediğin tutar</label><div class="field"><input id="k_odenen" type="text" inputmode="decimal" value="5.000"><span class="unit">TL</span></div></div>
         <div><label>Asgari ödeme oranı</label><div class="field"><input id="k_asg" type="text" inputmode="decimal" value="20"><span class="unit">%</span></div></div>
+        <div></div>
       </div>
       <div class="two">
         <div><label>Aylık akdi faiz</label><div class="field"><input id="k_akdi" type="text" inputmode="decimal" value="3,75"><span class="unit">%</span></div></div>
@@ -813,6 +819,7 @@
         <div><label>BSMV + KKDF</label><div class="field"><input id="k_vergi" type="text" inputmode="decimal" value="30"><span class="unit">%</span></div></div>
       </div>
       <p class="note" id="k_note"></p>
+      </details>
     </div>
     <div class="card">
       <div class="big"><span>Faiz + vergi toplamı</span><b id="k_out">–</b></div>
@@ -1325,6 +1332,7 @@ function kkTier(b) {
   if (b <= 180000) return [3.75, 4.05, "30.000 – 180.000 TL"];
   return [4.25, 4.55, "180.000 TL üstü"];
 }
+$("k_lim") && $("k_lim").addEventListener("click", (e) => { const b = e.target.closest("button[data-a]"); if (!b) return; $("k_asg").value = b.dataset.a; calcKK(); });
 function calcKK() {
   const B = num("k_borc");
   const t = kkTier(B);
@@ -1346,6 +1354,8 @@ function calcKK() {
     <table class="ltvtab" style="margin-top:6px"><tr><th>Dönem borcu</th><th>Akdi</th><th>Gecikme</th></tr>${TB.map((r) => `<tr class="${!kkManual && r[1] === t[2] ? "on" : ""}"><td>${r[1]}</td><td>%${nfx(r[2])}</td><td>%${nfx(r[3])}</td></tr>`).join("")}</table>
     <span style="display:block;margin-top:4px">✅ <b>İş Bankası da bu oranları uyguluyor:</b> Maximum kartlarda akdi faiz %3,25 / %3,75 / %4,25 (aylık, BSMV-KKDF hariç; <a href="https://www.maximum.com.tr/harcama-taksitlendirme" target="_blank" rel="noopener" style="color:var(--accent)">maximum.com.tr ↗</a>). Gecikme faizi de TCMB üst sınırında. Oranlar TCMB\'nin 1 Ekim 2026 tablosuyla aynı; kesin oran müşterinin hesap özetinde yazar.</span>`;
   $("k_out").textContent = tl(top);
+  $("k_lim").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.a === num("k_asg")));
+  $("k_oto").innerHTML = `<span>✓</span><span>Oranlar otomatik: <b>akdi %${nfx(ra * 100)}</b> · <b>gecikme %${nfx(rg * 100)}</b> · asgari %${nfx(num("k_asg"))} · ${g} gün · BSMV+KKDF %${nfx(v * 100)}${kkManual ? " (elle değiştirildi)" : ` <span style="opacity:.75">(dönem borcu ${t[2]} dilimi, İş Bankası oranı)</span>`}. Sadece borcu, ödenen tutarı ve limiti girmen yeter.</span>`;
   rows("k_rows", [
     ["Asgari ödeme", tl(asg)],
     [O >= asg ? "Asgari ödendi ✓" : "Ödenmeyen asgari", O >= asg ? "" : tl(asg - O), O >= asg ? "pos" : "neg"],
