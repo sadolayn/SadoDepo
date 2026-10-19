@@ -115,16 +115,31 @@
   .mchips button small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
   .mchips button.sel { background: var(--accent); border-color: var(--accent); color: #000; }
   .mchips button.sel small { color: #000; }
-  .days { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 6px; scrollbar-width: none; }
-  .days::-webkit-scrollbar { display: none; }
-  .days button { flex: none; width: 44px; padding: 6px 0; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); cursor: pointer; text-align: center; }
+  .wkbar { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .wkbar .nav { width: 38px; height: 34px; flex: none; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 17px; cursor: pointer; }
+  .wkbar .nav:disabled { opacity: .3; cursor: default; }
+  .wkbar .lbl { flex: 1; text-align: center; font-size: 13.5px; font-weight: 700; }
+  .wkbar .lbl small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
+  .wkbar .tdy { flex: none; height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--accent); background: none; color: var(--accent); font-weight: 700; font-size: 13px; cursor: pointer; }
+  .wkbar .tdy[hidden] { display: none; }
+  .days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; padding: 8px 0 6px; }
+  .days button { position: relative; min-width: 0; padding: 6px 0 5px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); cursor: pointer; text-align: center; }
   .days button small { display: block; font-size: 10px; color: var(--muted); }
-  .days button b { font-size: 16px; }
+  .days button b { display: block; font-size: 16px; line-height: 1.2; }
+  .days button i { display: block; font-style: normal; font-size: 10.5px; font-weight: 700; color: var(--ok); min-height: 13px; }
   .days button.off { opacity: .45; }
+  .days button:disabled { opacity: .22; cursor: default; }
+  .days button.td { border-color: var(--accent); }
+  .days button.td::before { content: "BUGÜN"; position: absolute; top: -7px; left: 50%; transform: translateX(-50%); font-size: 8px; font-weight: 800; letter-spacing: .4px; background: var(--accent); color: #000; border-radius: 6px; padding: 1px 4px; }
   .days button.sel { background: var(--accent); border-color: var(--accent); color: #000; }
-  .days button.sel small { color: #000; }
-  .days button.has::after { content: ""; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--ok); margin: 2px auto 0; }
-  .days button.sel.has::after { background: #000; }
+  .days button.sel small, .days button.sel i { color: #000; }
+  .days button.bos:not(.sel) i { color: #e8b52b; }
+  .past { display: flex; align-items: center; gap: 8px; margin: 6px 0 4px; padding: 8px 10px; border-radius: 12px; background: rgba(90,169,240,.1); border: 1px solid #2c4e72; font-size: 13px; color: #cfe3ff; }
+  .past b { color: #fff; } .past button { margin-left: auto; flex: none; padding: 6px 10px; border-radius: 9px; border: 1px solid #5aa9f0; background: none; color: #9fd0ff; font-weight: 700; font-size: 12.5px; cursor: pointer; }
+  .eksik { margin: 8px 0 2px; } .eksik > span { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+  .eksik .ch { display: flex; flex-wrap: wrap; gap: 5px; } .eksik .ch button { padding: 5px 9px; border-radius: 99px; border: 1px dashed #8a6d2c; background: rgba(232,181,43,.08); color: #f0d48a; font-size: 12px; font-weight: 600; cursor: pointer; }
+  #mark { scroll-margin-top: 112px; }
+  .keyhint { font-size: 11px; color: var(--muted); text-align: right; margin-top: 2px; }
   .dayinfo { font-size: 13px; color: var(--muted); margin: 4px 0 2px; }
   .dayinfo b { color: var(--accent); }
   .prod { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid var(--line); }
@@ -251,9 +266,13 @@
   <div class="card" id="mark">
     <h3>✍️ Günlük işaretleme <span class="r">her satış için +</span></h3>
     <div class="mchips" id="mchips"></div>
+    <div class="wkbar"><button type="button" class="nav" id="wkPrev" aria-label="Önceki hafta">‹</button><div class="lbl" id="wkLbl"></div><button type="button" class="nav" id="wkNext" aria-label="Sonraki hafta">›</button><button type="button" class="tdy" id="wkToday">Bugün</button></div>
     <div class="days" id="days"></div>
     <div class="dayinfo" id="dayInfo"></div>
+    <div id="pastBox"></div>
     <div id="prods"></div>
+    <div id="eksik"></div>
+    <div class="keyhint" id="keyhint" hidden>⌨️ ← → iş günü değiştir · T bugün</div>
   </div>
 
   <div class="card">
@@ -556,25 +575,73 @@ function renderChips() {
   }).join("");
   $("mchips").querySelectorAll("button").forEach((b) => (b.onclick = () => {
     viewMonth = Number(b.dataset.m);
-    selDay = viewMonth === today.getMonth() && qy === today.getFullYear() ? new Date(today) : new Date(qy, viewMonth, 1, 12);
+    { const first = new Date(qy, viewMonth, 1, 12), last = new Date(qy, viewMonth + 1, 0, 12); selDay = keyOf(first) <= TK && keyOf(last) >= TK ? new Date(today) : keyOf(last) < TK ? last : first; }
     renderChips(); renderDays(); renderProds(); renderHeat();
   }));
 }
+// Haftalık görünüm: 7 gün tek satırda, ‹ › ile hafta değiştir; bugünden ileri ve çeyrek dışı günler kapalı
+const qStart = () => new Date(qy, qn * 3, 1, 12);
+const dayTot = (k) => { const v = D.days[k]; return v ? Object.values(v).reduce((a, x) => a + (x || 0), 0) : 0; };
+const canPick = (dt) => keyOf(dt) >= keyOf(qStart()) && keyOf(dt) <= keyOf(qEnd()) && keyOf(dt) <= TK;
+function pickDay(dt) {
+  selDay = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 12);
+  if (selDay.getMonth() !== viewMonth) { viewMonth = selDay.getMonth(); renderChips(); renderHeat(); }
+  renderDays(); renderProds();
+}
 function renderDays() {
-  const y = qy, m = viewMonth, n = new Date(y, m + 1, 0).getDate();
+  const mon = new Date(selDay); mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
+  const sun = new Date(mon); sun.setDate(sun.getDate() + 6);
   let html = "";
-  for (let d = 1; d <= n; d++) {
-    const dt = new Date(y, m, d, 12), k = keyOf(dt);
-    const has = D.days[k] && Object.values(D.days[k]).some((v) => v > 0);
-    html += `<button data-d="${d}" class="${isWork(dt) ? "" : "off"} ${keyOf(selDay) === k ? "sel" : ""} ${has ? "has" : ""}"><small>${DOW[dt.getDay()]}</small><b>${d}</b></button>`;
+  for (let i = 0; i < 7; i++) {
+    const dt = new Date(mon); dt.setDate(mon.getDate() + i);
+    const k = keyOf(dt), t = dayTot(k), ok = canPick(dt), w = isWork(dt);
+    const bos = ok && w && !t && k < TK;
+    html += `<button data-k="${k}" class="${w ? "" : "off"} ${k === TK ? "td" : ""} ${keyOf(selDay) === k ? "sel" : ""} ${bos ? "bos" : ""}" ${ok ? "" : "disabled"}><small>${DOW[dt.getDay()]}</small><b>${dt.getDate()}</b><i>${t ? t : bos ? "–" : ""}</i></button>`;
   }
   $("days").innerHTML = html;
-  $("days").querySelectorAll("button").forEach((b) => (b.onclick = () => { selDay = new Date(y, m, Number(b.dataset.d), 12); renderDays(); renderProds(); }));
-  const sel = $("days").querySelector(".sel");
-  if (sel) $("days").scrollLeft = sel.offsetLeft - $("days").clientWidth / 2 + 22;
-  const k = keyOf(selDay);
-  const tag = k === TK ? "Bugün" : selDay.toLocaleDateString("tr-TR", { weekday: "long" });
+  $("days").querySelectorAll("button[data-k]").forEach((b) => (b.onclick = () => { const [y, m, d] = b.dataset.k.split("-").map(Number); pickDay(new Date(y, m - 1, d, 12)); }));
+  const fmt = (d) => `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  const thisMon = new Date(today); thisMon.setDate(thisMon.getDate() - ((thisMon.getDay() + 6) % 7));
+  const wkDiff = Math.round((Date.UTC(mon.getFullYear(), mon.getMonth(), mon.getDate()) - Date.UTC(thisMon.getFullYear(), thisMon.getMonth(), thisMon.getDate())) / 864e5 / 7);
+  $("wkLbl").innerHTML = `${fmt(mon)} – ${fmt(sun)}<small>${wkDiff === 0 ? "Bu hafta" : wkDiff === -1 ? "Geçen hafta" : wkDiff < 0 ? -wkDiff + " hafta önce" : wkDiff + " hafta sonra"}</small>`;
+  const pm = new Date(mon); pm.setDate(pm.getDate() - 1); const nm = new Date(sun); nm.setDate(nm.getDate() + 1);
+  $("wkPrev").disabled = keyOf(pm) < keyOf(qStart()); $("wkNext").disabled = !canPick(nm);
+  $("wkPrev").onclick = () => { const d = new Date(selDay); d.setDate(d.getDate() - 7); pickDay(keyOf(d) < keyOf(qStart()) ? qStart() : d); };
+  $("wkNext").onclick = () => { const d = new Date(selDay); d.setDate(d.getDate() + 7); pickDay(keyOf(d) > TK ? new Date(today) : d); };
+  const k = keyOf(selDay), isT = k === TK;
+  $("wkToday").hidden = isT || !canPick(today);
+  $("wkToday").onclick = () => pickDay(new Date(today));
+  const tag = isT ? "Bugün" : selDay.toLocaleDateString("tr-TR", { weekday: "long" });
   $("dayInfo").innerHTML = `İşaretlenen gün: <b>${selDay.getDate()} ${MONTHS[selDay.getMonth()]} · ${tag}</b>${!isWork(selDay) ? " (tatil/hafta sonu)" : HALF.has(k) ? " (yarım gün)" : ""}`;
+  $("pastBox").innerHTML = isT || !canPick(today) || k > TK ? "" : `<div class="past">⏪ <span>Geçmiş bir günü işaretliyorsun: <b>${selDay.getDate()} ${MONTHS[selDay.getMonth()]}</b></span><button type="button" id="backToday">Bugüne dön</button></div>`;
+  if ($("backToday")) $("backToday").onclick = () => pickDay(new Date(today));
+  renderEksik();
+}
+// Son 2 haftada hiç işaretleme olmayan iş günleri: tek dokunuşla o güne git
+function renderEksik() {
+  const L = [];
+  for (let i = 1; i <= 14; i++) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    if (canPick(d) && isWork(d) && !dayTot(keyOf(d))) L.push(d);
+  }
+  $("eksik").innerHTML = L.length ? `<div class="eksik"><span>📌 Son 2 haftada boş görünen iş günleri · satış olduysa dokun, işaretle</span><div class="ch">${L.slice(0, 8).map((d) => `<button type="button" data-k="${keyOf(d)}">${DOW[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}</button>`).join("")}</div></div>` : "";
+  $("eksik").querySelectorAll("[data-k]").forEach((b) => (b.onclick = () => { const [y, m, d] = b.dataset.k.split("-").map(Number); pickDay(new Date(y, m - 1, d, 12)); $("mark").scrollIntoView({ behavior: "smooth", block: "start" }); }));
+}
+// Bilgisayarda klavye: ← → gün, T bugün (yazı alanındayken ya da pencere açıkken çalışmaz)
+if (window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+  const kh = () => { const h = $("keyhint"); if (h) h.hidden = false; };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", kh); else kh();
+  document.addEventListener("keydown", (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test((e.target && e.target.tagName) || "") && e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || "") || (e.target && e.target.isContentEditable)) return;
+    if (document.querySelector(".overlay.show, .sheet:not([hidden]), dialog[open]")) return;
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+      // hafta sonu ve tatilleri atla
+      const step = e.key === "ArrowLeft" ? -1 : 1, d = new Date(selDay);
+      for (let i = 0; i < 10; i++) { d.setDate(d.getDate() + step); if (!canPick(d)) return; if (isWork(d)) break; }
+      e.preventDefault(); pickDay(d);
+    } else if (e.key === "t" || e.key === "T") { if (canPick(today)) pickDay(new Date(today)); }
+  });
 }
 function renderProds() {
   const dd = D.days[keyOf(selDay)] || {}, isT = keyOf(selDay) === TK;
@@ -601,7 +668,7 @@ function renderHeat() {
     html += `<div class="d ${isWork(dt) ? "" : "off"} ${keyOf(dt) === TK ? "td" : ""}" data-d="${d}" style="${bg}">${d}${s ? `<small>${s}</small>` : ""}</div>`;
   }
   $("heat").innerHTML = html;
-  $("heat").querySelectorAll("[data-d]").forEach((el) => (el.onclick = () => { selDay = new Date(y, m, Number(el.dataset.d), 12); renderDays(); renderProds(); $("mark").scrollIntoView({ behavior: "smooth" }); }));
+  $("heat").querySelectorAll("[data-d]").forEach((el) => (el.onclick = () => { const dt = new Date(y, m, Number(el.dataset.d), 12); if (!canPick(dt)) { toast("İleri tarihe işaretleme yapılmaz"); return; } pickDay(dt); $("mark").scrollIntoView({ behavior: "smooth" }); }));
 }
 function renderProb() {
   const O = overall(), ph = phase(), T = timeInfo();
@@ -698,6 +765,7 @@ function bump(pid, delta) {
     if (s.done === s.tgt) toast(`🎉 ${p.name} çeyrek hedefi tamamlandı!`);
     else if (keyOf(selDay) === TK && s.todayNeed === 0 && s.ph === "simdi" && s.done < s.tgt && s.todayDone === Math.ceil(s.perDay * s.T.todayWork - 1e-9)) toast(`✅ ${p.name}: bugünkü hedef tamam!`);
   }
+  if (delta > 0 && keyOf(selDay) !== TK) toast(`📅 ${selDay.getDate()} ${MONTHS[selDay.getMonth()]}: ${p ? p.name : ""} +1`);
   renderHero(); renderCoach(); renderChips(); renderDays(); renderProds(); renderHeat(); renderProb();
 }
 function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 2200); }
