@@ -204,6 +204,20 @@
   .blive a { display: block; padding: 6px 0; border-bottom: 1px dashed #2c2a25; color: #e6e0d4 !important; font-weight: 500 !important; font-size: 13px !important; }
   .lounge { margin-top: 10px; border-top: 1px solid #2c2a25; padding-top: 10px; font-size: 13px; } .lounge > b { display: block; color: #f3dca8; margin-bottom: 6px; }
   .lounge div { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; } .lounge span { color: #9a9a9a; } .lounge em { font-style: normal; color: #eee; text-align: right; }
+  .iphero { border-radius: 18px; padding: 16px; margin-bottom: 10px; border: 1px solid #2f6fd0; background: radial-gradient(120% 120% at 100% 0%, rgba(90,169,240,.35), rgba(13,13,13,.2) 60%), #0b1220; }
+  .iphero small { display: block; font-size: 11.5px; letter-spacing: 1.4px; color: #9fd0ff; font-weight: 800; } .iphero b { display: block; font-size: 21px; margin: 4px 0; } .iphero span { display: block; font-size: 13px; color: #c6d6ea; line-height: 1.45; }
+  .ipgun { border-radius: 16px; padding: 14px; margin-bottom: 12px; border: 1px solid #8a6d2c; background: linear-gradient(160deg, rgba(240,198,116,.18), #0e0e0e 70%); }
+  .ipgun .iph em { display: block; font-style: normal; font-size: 11px; font-weight: 800; letter-spacing: 1px; color: var(--accent); text-transform: uppercase; }
+  .iph { display: flex; gap: 10px; align-items: flex-start; } .iph i { font-style: normal; font-size: 26px; line-height: 1.1; flex: none; } .iph b { font-size: 15.5px; line-height: 1.3; }
+  .ipk { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; }
+  .ipk p, .ipgun p { margin: 7px 0 6px; font-size: 13.5px; color: #cfcfcf; line-height: 1.5; }
+  .ipn { font-size: 12.5px; color: #e9d5ad; background: rgba(224,162,79,.08); border-radius: 9px; padding: 6px 9px; line-height: 1.4; }
+  .ipl { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-top: 8px; } .ipl a { color: var(--accent); font-size: 12.5px; font-weight: 600; text-decoration: none; }
+  .ipl button { padding: 6px 10px; border-radius: 9px; border: 1px solid #6b5222; background: rgba(224,162,79,.1); color: #f3dca8; font: 700 12.5px system-ui, sans-serif; cursor: pointer; }
+  .otiles.ipt { grid-template-columns: repeat(3, minmax(0, 1fr)); } .otiles .ot.on { border-color: var(--accent); background: linear-gradient(160deg, rgba(224,162,79,.3), #0e0e0e); }
+  .surn { margin-top: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); padding: 4px 12px; }
+  .surn summary { cursor: pointer; padding: 10px 2px; font-weight: 700; font-size: 14px; list-style: none; } .surn summary::-webkit-details-marker { display: none; } .surn summary span { color: var(--muted); font-weight: 500; font-size: 12.5px; }
+  .surn summary::after { content: "▾"; float: right; color: var(--muted); } .surn[open] summary::after { content: "▴"; }
   .snet { border-radius: 18px; border: 1px solid #3a50f0; background: linear-gradient(160deg, #1b2a9e 0%, #101a63 55%, #0b1240 100%); padding: 12px; margin-bottom: 10px; }
   .snh { display: flex; justify-content: space-between; align-items: center; margin: 0 2px 8px; } .snh span { font-weight: 800; font-size: 15px; color: #fff; } .snh em { font-style: normal; font-size: 11.5px; color: #b9c0e6; background: rgba(0,0,0,.25); padding: 3px 8px; border-radius: 99px; }
   .snhero { text-align: center; padding: 6px 0 12px; } .snhero small { display: block; font-size: 12px; color: #b9c0e6; letter-spacing: .5px; } .snhero b { display: block; font-size: 40px; line-height: 1.1; color: #fff; font-variant-numeric: tabular-nums; } .snhero span { font-size: 11.5px; color: #93a0d8; }
@@ -592,20 +606,20 @@ window.ataOyna = function (film, ozelNot, yas) {
 const $ = (x) => document.getElementById(x);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const CATS = [
-  ["Tümü", null, "📋"],
-  ["Ürün", "var(--urun)", "🧾"],
-  ["KAP", "var(--kap)", "📢"],
-  ["Haber", "var(--haber)", "🗞️"],
+  ["Tarihçe", "#e0a24f", "🏛️"],
+  ["Şubeler", "#3a50f0", "🏦"],
   ["Maximum", "var(--accent)", "💳"],
   ["Black", "#f0c674", "🖤"],
   ["Kampanya", "#3fc283", "🎁"],
-  ["Dijital", "var(--dijital)", "💡"],
   ["İşCep", "var(--dijital)", "📲"],
-  ["📰 Güncel", "#5d8fe0", "📰"],
   ["📅 Takvim", "#e0a24f", "📅"],
-  ["Şubeler", "#3a50f0", "🏦"],
+  ["Tümü", null, "📋"],
+  ["📰 Güncel", "#5d8fe0", "📰"],
+  ["Haber", "var(--haber)", "🗞️"],
+  ["Ürün", "var(--urun)", "🧾"],
+  ["Dijital", "var(--dijital)", "💡"],
+  ["KAP", "var(--kap)", "📢"],
   ["Soru", "#e0a24f", "❓"],
-  ["Tarihçe", "#e0a24f", "🏛️"],
   ["Finans", "#3a50f0", "📊"],
 ];
 const LBL = { "Maximum": "Maximum<small>Maximiles</small>", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>" };
@@ -1233,25 +1247,74 @@ function yatHtml() {
   }
   return h;
 }
+// ===== İşCep: "Bunu da mı yapıyormuş?" ipuçları — kaynak: isbank.com.tr (İşCep, Bankamatik, Maxi, Hayatım sayfaları) =====
+const IPK = [["para", "💸", "Para"], ["maxi", "🤖", "Maxi"], ["kolay", "✨", "Kolaylık"], ["arac", "🚗", "Aracım"], ["ev", "🏠", "Evim"], ["aile", "👨‍👩‍👧", "Ailem"], ["seyahat", "✈️", "Seyahat"], ["yatirim", "📈", "Yatırım"]];
+const IPUCU = [
+  { k: "para", ic: "🏧", t: "Kartın yanında değil mi? Bankamatik'ten İşCep'le para çek", d: "Bankamatik ekranındaki karekodu İşCep'le okut, tutarı seç; para çekme ve yatırma kartsız olur. Günde 20.000 TL'ye kadar ücretsiz.", n: "İşCep açılış ekranı › Karekod İşlemleri (ya da giriş yapıp Bankamatik Para Çek/Yatır)", u: "https://www.isbank.com.tr/bankamatik" },
+  { k: "para", ic: "🙋", t: "Arkadaşın borcunu unuttu mu? Ödeme İste", d: "Ona bir ödeme isteği gönder; onaylayınca para FAST ile anında hesabına geçer. 7/24 çalışır, IBAN sormana gerek yok.", n: "Para Aktar › Ödeme İste", u: "https://www.isbank.com.tr/bankamizi-taniyin/odeme-almanin-yeni-yolu-odeme-iste-iscepte" },
+  { k: "para", ic: "🔁", t: "Diğer bankalardaki hesapların da İşCep'te", d: "Başka bankalardaki hesap ve kartlarını ekle, bakiyelerini tek ekranda gör; istersen o bankaya gitmeden paranı İş Bankası'na getir. Açık Bankacılık ile ücretsiz.", n: "Hesaplarım › Diğer Banka Hesabı/Kartı Ekle · Para Aktar › İş Bankası Hesabıma Para Getir", u: "https://www.isbank.com.tr/acik-bankacilik" },
+  { k: "para", ic: "🔳", t: "Kasada telefonla öde: TR Karekod", d: "POS'taki karekodu okut, kartını ya da hesabını seç, onayla. Kart çıkarmadan ödersin; iptal de karekodla yapılır.", n: "Ödeme Yap › Karekod ile öde", u: "https://www.isbank.com.tr/tr-karekod-ile-odeme", git: "📲 Kartsız öde" },
+  { k: "maxi", ic: "🤖", t: "Maxi'ye sor: \"Bu ay markete ne kadar harcadım?\"", d: "Yapay zekâ asistanı Maxi harcamalarını kategori kategori söyler; yazarak ya da sesle sorabilirsin.", n: "İşCep › Maxi", u: "https://www.isbank.com.tr/maxi" },
+  { k: "maxi", ic: "🗣️", t: "Sesinle para gönder", d: "Maxi'ye söylemen yeter; sesli komutla para transferi yapar, bakiye ve IBAN'ını da paylaşır.", n: "İşCep › Maxi › mikrofon", u: "https://www.isbank.com.tr/maxi" },
+  { k: "maxi", ic: "⏰", t: "Fatura günü geldiğinde Maxi hatırlatır", d: "İşCep'e kaydettiğin faturaların ödeme günü gelince haber verir; \"ISCTR ne kadar?\", \"Bugün piyasalar nasıl?\" sorularını da yanıtlar.", n: "İşCep › Maxi", u: "https://www.isbank.com.tr/maxi" },
+  { k: "kolay", ic: "🙈", t: "Kalabalıkta bakiyeni gizle: Hassas Mod", d: "Ana sayfadaki tutarları tek dokunuşla gizler; göz simgesine basınca geri gelir.", n: "Ana sayfa › 👁️ göz simgesi", u: "https://www.isbank.com.tr/iscep" },
+  { k: "kolay", ic: "🔎", t: "Menüyü ezberleme: İşCep'te Ara", d: "Yapmak istediğin işlemi yaz, menüsü karşına gelsin.", n: "Ana sayfa ya da menünün üstündeki arama alanı", u: "https://www.isbank.com.tr/iscep" },
+  { k: "kolay", ic: "🔠", t: "Annen, baban için büyük yazı", d: "Yazı boyutunu küçükten çok büyüğe ayarla; görme engelli kullanıcılar için ekrandaki yazılar sesli de okunabiliyor (Engelsiz Bankacılık).", n: "Profil › Görünüm Tercihlerim", u: "https://www.isbank.com.tr/engelsiz-bankacilik" },
+  { k: "kolay", ic: "⭐", t: "En çok kullandıklarını öne al: Kısayollarım", d: "16 kısayol ekleyebilirsin, 4'ü ana sayfada durur. Ana sayfadaki kutucukları da kendin düzenlersin.", n: "Ana sayfa › Ana Sayfayı Düzenle", u: "https://www.isbank.com.tr/iscep" },
+  { k: "kolay", ic: "🪪", t: "e-Devlet'e şifresiz gir", d: "e-Devlet işlemlerine İşCep'ten şifre girmeden geçebilirsin: tapu bilgisi, ikametgâh belgesi, araç sorgulama, pasaport randevusu…", n: "İşCep › E-Devlet'e Giriş", u: "https://www.isbank.com.tr/iscep" },
+  { k: "kolay", ic: "🎥", t: "Şubeye gitmeden müşteri ol", d: "Tanıdığın İş Bankalı değilse: görüntülü görüşmeyle müşteri olur, şifresini de kartıyla ya da kimliği ve yüz tanımayla İşCep'ten anında alır.", n: "İşCep'i indir, açılış ekranından başla", u: "https://www.isbank.com.tr/iscep" },
+  { k: "arac", ic: "🚗", t: "Arabanı satsan kaça gider?", d: "İşCep Aracım aracının tahmini değerini ve satış süresini söyler. MTV, trafik cezası ve HGS işlemleri de aynı yerde.", n: "İşCep › Hayatım › Aracım", u: "https://www.isbank.com.tr/iscep-aracim" },
+  { k: "arac", ic: "🔔", t: "Muayene ve sigorta tarihini unutma", d: "Sigorta vadesi, muayene, bakım ve lastik değişim tarihlerini kaydet, zamanı gelince bildirim al; en yakın İSPARK'ı ve elektrikli araç şarjını da bul.", n: "İşCep › Hayatım › Aracım", u: "https://www.isbank.com.tr/iscep-aracim" },
+  { k: "ev", ic: "🏠", t: "Evin bugün kaç para eder?", d: "Konutunun satış ve kira değerini hesapla, rapor al. e-Devlet'ten tapu bilgisini sorgula, ikametgâh belgeni iste.", n: "İşCep › Hayatım › Evim", u: "https://www.isbank.com.tr/iscep-evim" },
+  { k: "ev", ic: "🔧", t: "Tesisatçı lazım mı?", d: "Su, elektrik tesisatı ve montaj için KonutKonfor'dan randevu al; elektronik cihaz kirala, ev aboneliklerini tek yerden yönet.", n: "İşCep › Hayatım › Evim", u: "https://www.isbank.com.tr/iscep-evim" },
+  { k: "aile", ic: "💊", t: "Gece nöbetçi eczane nerede?", d: "Yakınındaki nöbetçi eczaneyi ve yol tarifini gösterir; ilaç bilgisi ve sağlıklı beslenme önerileri de var.", n: "İşCep › Hayatım › Ailem", u: "https://www.isbank.com.tr/iscep-ailem" },
+  { k: "aile", ic: "🎒", t: "Çocuğunun karnesi İşCep'te", d: "e-Okul notlarını ve okul duyurularını gör; çocuğuna kumbara hesabı aç, Pati Kart'a başvur.", n: "İşCep › Hayatım › Ailem", u: "https://www.isbank.com.tr/iscep-ailem" },
+  { k: "seyahat", ic: "🛂", t: "Yurt dışı çıkış harcı ve pasaport harcı", d: "Harçları İşCep'ten öde; e-Devlet'ten şifresiz pasaport randevusu al, yurt dışı seyahat sigortanı yaptır.", n: "İşCep › Hayatım › Seyahatim", u: "https://www.isbank.com.tr/iscep-seyahatim" },
+  { k: "seyahat", ic: "🛋️", t: "Sabiha Gökçen'de lounge ve fast track", d: "Uçuştan önce lounge ve hızlı geçiş hizmetini İşCep'ten satın al; uçak, otel, feribot bileti ve araç kiralama da aynı yerde.", n: "İşCep › Hayatım › Seyahatim", u: "https://www.isbank.com.tr/iscep-seyahatim" },
+  { k: "yatirim", ic: "📈", t: "Borsa cebinde: İşCep Mobil Borsa", d: "Hisse ve varant alıp sat; tahvil, repo, Eurobond ve altın hesabı da İşCep'te.", n: "İşCep › Yatırım", u: "https://www.isbank.com.tr/iscep" },
+];
+let ipSec = null, ipGun = null;
+function iscepIpHtml() {
+  const day = Math.floor(Date.now() / 864e5);
+  if (ipGun == null) ipGun = day % IPUCU.length;
+  const g = IPUCU[ipGun];
+  const kart = (x, i) => `<div class="ipk" id="ip${i}"><div class="iph"><i>${x.ic}</i><b>${esc(x.t)}</b></div><p>${esc(x.d)}</p><div class="ipn">📍 ${esc(x.n)}</div><div class="ipl"><a href="${x.u}" target="_blank" rel="noopener">isbank.com.tr'de ayrıntı ↗</a>${x.git ? `<button type="button" class="ipgo" data-camp="${esc(x.git)}">${esc(x.git)} ›</button>` : ""}</div></div>`;
+  const L = IPUCU.map((x, i) => [x, i]).filter(([x]) => !ipSec || x.k === ipSec);
+  return `<div class="iphero"><small>💡 BİLİYOR MUYDUN?</small><b>İşCep'te bunu da mı varmış!</b><span>800'den fazla işlemin içinden en çok "aaa" dedirtenler. Her gün bir yenisi öne çıkar.</span></div>
+    <div class="ipgun"><div class="iph"><i>${g.ic}</i><div><em>Günün ipucu</em><b>${esc(g.t)}</b></div></div><p>${esc(g.d)}</p><div class="ipn">📍 ${esc(g.n)}</div>
+      <div class="ipl"><a href="${g.u}" target="_blank" rel="noopener">Ayrıntı ↗</a><button type="button" id="ipZar">🎲 Bir tane daha</button></div></div>
+    <div class="otiles ipt"><button type="button" class="ot${!ipSec ? " on" : ""}" data-ipk=""><i>🌟</i><span>Hepsi</span><em>${IPUCU.length}</em></button>${IPK.map(([k, ic, ad]) => `<button type="button" class="ot${ipSec === k ? " on" : ""}" data-ipk="${k}"><i>${ic}</i><span>${ad}</span></button>`).join("")}</div>
+    ${L.map(([x, i]) => kart(x, i)).join("")}`;
+}
+function bindIscep() {
+  const z = $("ipZar"); if (z) z.onclick = () => { let n; do { n = Math.floor(Math.random() * IPUCU.length); } while (n === ipGun && IPUCU.length > 1); ipGun = n; renderIscep(); };
+  $("list").querySelectorAll("[data-ipk]").forEach((b) => (b.onclick = () => { ipSec = b.dataset.ipk || null; renderIscep(); const t = $("list").querySelector(".ipt"); if (t) { const st = document.querySelector(".chipbar"), h = st ? st.getBoundingClientRect().bottom : 0; window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - h - 8, behavior: "smooth" }); } }));
+  $("list").querySelectorAll("[data-camp]").forEach((b) => (b.onclick = () => { cat = "Maximum"; campTur = b.dataset.camp; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); window.scrollTo({ top: 0 }); }));
+}
 function renderIscep() {
   const d = iscep;
-  if (!d) { Ortak.hata("list", { ne: "İşCep sürüm bilgisi" }); return; }
-  $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "En son sürüm: " + new Date(d.surumler[0].tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+  $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Kaynak: isbank.com.tr";
   const fmt = (t) => new Date(t + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
-  let html = `<div class="odul">
+  const odul = `<div class="odul">
       <div class="odTop"><span class="odKupa">🏆</span><div><small>GLOBAL FINANCE · EN İYİ DİJİTAL BANKA ÖDÜLLERİ</small><b>Dünyanın En İyi Mobil Bankacılık Uygulaması</b></div></div>
       <div class="odYil"><span><i>🥇</i><b>2023</b>Birinci</span><span><i>🥇</i><b>2024</b>Birinci</span><span class="son"><i>🥇</i><b>2025</b>3 yıl üst üste</span></div>
       <div class="odAlt"><span>📲 <b>2007</b>'den beri</span><span>👥 <b>~16 milyon</b> müşteri (Haz. 2026)</span><span>⚙️ <b>800+</b> işlem</span></div>
       <a href="https://www.isbank.com.tr/bankamizi-taniyin/iscep-ucuncu-kez-dunyanin-en-iyi-mobil-bankacilik-uygulamasi-secildi" target="_blank" rel="noopener">Ödül haberi, 23 Ekim 2025 ↗</a> · <a href="https://www.isbank.com.tr/contentmanagement/IsbankInvestorDocuments/pdf/YatirimciSunumu.pdf" target="_blank" rel="noopener">Müşteri sayısı: yatırımcı sunumu ↗</a>
     </div>`;
-  d.surumler.forEach((v, i) => {
-    html += `<div class="ver ${i === 0 ? "new" : ""}">
-      <div class="top"><span class="vn">Sürüm ${esc(v.surum)}${isNew("v:" + v.surum) ? '<span class="newtag">YENİ</span>' : ""}${i === 0 ? '<span class="badge">GÜNCEL</span>' : ""}</span><span class="vd">${fmt(v.tarih)}</span></div>
-      <ul>${v.yenilikler.map((y) => `<li>${esc(y)}</li>`).join("")}</ul>
-    </div>`;
-  });
-  html += `<a class="maxlink" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">İşCep'i App Store'da aç ↗</a>`;
+  let html = iscepIpHtml() + odul;
+  if (d && d.surumler && d.surumler.length) {
+    const yeni = d.surumler.some((v) => isNew("v:" + v.surum));
+    html += `<details class="surn"><summary>🛠️ Sürüm notları <span>· ${esc(d.surumler[0].surum)} · ${fmt(d.surumler[0].tarih)}</span>${yeni ? '<span class="newtag">YENİ</span>' : ""}</summary>`;
+    d.surumler.forEach((v, i) => {
+      html += `<div class="ver ${i === 0 ? "new" : ""}">
+        <div class="top"><span class="vn">Sürüm ${esc(v.surum)}${isNew("v:" + v.surum) ? '<span class="newtag">YENİ</span>' : ""}${i === 0 ? '<span class="badge">GÜNCEL</span>' : ""}</span><span class="vd">${fmt(v.tarih)}</span></div>
+        <ul>${v.yenilikler.map((y) => `<li>${esc(y)}</li>`).join("")}</ul>
+      </div>`;
+    });
+    html += `<a class="maxlink" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">İşCep'i App Store'da aç ↗</a></details>`;
+  }
   $("list").innerHTML = html;
+  bindIscep();
 }
 
 const fmtT = (t) => new Date(t).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
