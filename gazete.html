@@ -258,13 +258,14 @@ async function show(date) {
       </div>`;
     // Başlık bağlantısı: maddenin kendi Resmi Gazete adresi varsa o, yoksa günün fihristi
     const lk = (it, txt) => { const u = it.url && /^https:\/\/www\.resmigazete\.gov\.tr\//.test(it.url) ? it.url : resmi; return `<a class="rg" href="${esc(u)}" target="_blank" rel="noopener" title="${it.url ? "Resmi metni aç" : "Günün Resmi Gazete fihristini aç"}">${txt}<i>${it.url ? "↗" : "📜"}</i></a>`; };
-    const atm = g.onemli_atamalar || [];
-    if (atm.length) {
-      html += `<div class="sec imp"><h2>🏛️ Önemli atamalar</h2>` + atm.map((a) => `<div class="item"><span class="kurum">${esc(a.kurum)}</span><b>${lk(a, esc(a.kisi))}</b><span>${esc(a.gorev)}${a.aciklama ? " · " + esc(a.aciklama) : ""}</span></div>`).join("") + `</div>`;
-    }
+    // Öncelik bankacılık: önce bankacılığı ilgilendirenler, sonra atamalar
     const bnk = g.bankacilik || [];
     if (bnk.length) {
       html += `<div class="sec bnk"><h2>🏦 Bankacılığı ilgilendirenler</h2>` + bnk.map((it) => `<div class="item"><b>${lk(it, esc(it.baslik))}</b>${it.aciklama ? `<span>${esc(it.aciklama)}</span>` : ""}</div>`).join("") + `</div>`;
+    }
+    const atm = g.onemli_atamalar || [];
+    if (atm.length) {
+      html += `<div class="sec imp"><h2>🏛️ Önemli atamalar</h2>` + atm.map((a) => `<div class="item"><span class="kurum">${esc(a.kurum)}</span><b>${lk(a, esc(a.kisi))}</b><span>${esc(a.gorev)}${a.aciklama ? " · " + esc(a.aciklama) : ""}</span></div>`).join("") + `</div>`;
     }
     for (const b of g.bolumler || []) {
       html += `<div class="sec"><h2>${esc(b.baslik)}</h2>`;
