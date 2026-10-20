@@ -159,7 +159,8 @@
   .push .pmsg { margin-top: 10px; font-size: 13px; color: #a8ecc9; } .push .pmsg.bad { color: #ffb3b3; } .push .pmsg:empty { display: none; }
   .push .pdiff { margin-top: 8px; font-size: 12.5px; color: #f0d9a8; }
   @media (prefers-reduced-motion: reduce) { .push .pi.on { animation: none; } }
-  @media (prefers-reduced-motion: reduce) { .radar .sweep, .tk-run, .blip, .tk-et { animation: none; } .tk-run { padding-left: 0; } }
+  .ticker:hover .tk-run { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) { .radar .sweep, .blip, .tk-et { animation: none; } .tk-run { animation-duration: 90s; } }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>

@@ -58,7 +58,8 @@
   .kyOge.son b { color: #1a1206; background: linear-gradient(135deg, #f3d38a, #e0a24f); border-radius: 6px; padding: 1px 7px; }
   .kyOge b.gir { color: #1a1206; background: linear-gradient(135deg, #f3d38a, #e0a24f); border-radius: 6px; padding: 1px 7px; margin-left: 6px; }
   @keyframes kyKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) { .kyYol { overflow-x: auto; } .kySer { animation: none; } }
+  /* Bilgisayarda "animasyonları azalt" açıksa da kaysın (durdurmak için üstüne gel), sadece biraz yavaş */
+  @media (prefers-reduced-motion: reduce) { .kySer { animation-duration: calc(var(--sure, 60s) * 1.5); } }
   .hello .mid p.greet { margin: 0; font-size: 19px; min-height: 0; }
   .hello .mid p.welcome { margin: 5px 0 0; font-size: 12.5px; letter-spacing: 1.2px; color: var(--muted); transition: opacity .6s ease; min-height: 17px; }
   .hello .mid p.welcome.fade { opacity: 0; }

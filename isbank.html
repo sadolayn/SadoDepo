@@ -122,7 +122,8 @@
   .jtick .jt-w { display: block; overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
   .jtick .jt-r { display: inline-block; white-space: nowrap; animation: jtk 26s linear infinite; }
   @keyframes jtk { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) { .jtick .jt-r { animation: none; } }
+  .jtick:hover .jt-r { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) { .jtick .jt-r { animation-duration: 40s; } }
   .ccal { margin-top: 14px !important; background: linear-gradient(135deg, rgba(255,45,149,.10), rgba(255,45,149,.02)); border: 1px solid #5a1f3e; border-radius: 16px; padding: 12px; margin-bottom: 10px; }
   .ccal.hot { background: linear-gradient(135deg, rgba(255,45,149,.26), rgba(255,45,149,.05)); border-color: #ff5aab; box-shadow: 0 6px 22px rgba(255,45,149,.18); }
   .ctop { display: flex; gap: 10px; align-items: flex-start; }
