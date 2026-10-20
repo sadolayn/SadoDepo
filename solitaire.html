@@ -31,7 +31,8 @@
     --card: #0d0d0d;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; min-height: 100%; color: var(--ink); }
+  /* Aşağı çekince sayfa yenilenmesin (oyun kaybolmasın) */
+  html, body { margin: 0; min-height: 100%; color: var(--ink); overscroll-behavior: none; }
   html { background: var(--felt); }
   body {
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 560px; margin: 0 auto; user-select: none; -webkit-user-select: none;
@@ -138,6 +139,9 @@
   .backs button { border: 2px solid transparent; background: none; border-radius: 12px; padding: 6px; cursor: pointer; color: #bbb; font: 600 11.5px system-ui; }
   .backs button.on { border-color: var(--accent); }
   .backs .card { position: relative; display: block; width: 46px; height: 66px; margin: 0 auto 4px; }
+  .seg { display: flex; flex: none; gap: 3px; padding: 3px; border-radius: 11px; background: #222; }
+  .seg button { border: 0; background: none; color: #aaa; padding: 7px 14px; border-radius: 8px; font: 700 14px system-ui, sans-serif; cursor: pointer; }
+  .seg button.on { background: var(--accent); color: #1a1205; }
   .rec { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
   .rec div { background: #1a1a1a; border-radius: 12px; padding: 10px 4px; }
   .rec b { display: block; font-size: 18px; } .rec span { font-size: 11px; color: #8a8a8a; }
@@ -182,6 +186,7 @@
     <label class="opt"><span>💡 Otomatik ipucu<small>Bir süre hamle yapmazsan yol gösterir</small></span><span class="sw"><input type="checkbox" id="oIp"><i></i></span></label>
     <label class="opt"><span>⚡ Otomatik tamamlama<small>Bütün kartlar açılınca kendiliğinden bitirir</small></span><span class="sw"><input type="checkbox" id="oTam"><i></i></span></label>
     <label class="opt"><span>🃏 3 kart modu<small>Desteden 3'er kart açılır (yeni oyunda geçerli)</small></span><span class="sw"><input type="checkbox" id="o3"><i></i></span></label>
+    <div class="opt"><span>✋ Deste tarafı<small>Solaksan desteyi sola al</small></span><span class="seg" id="oYan"><button type="button" data-k="sol">Sol</button><button type="button" data-k="sag">Sağ</button></span></div>
     <h4>MASA RENGİ</h4>
     <div class="colors" id="colors"></div>
     <h4>KART ARKASI</h4>
@@ -201,7 +206,7 @@ const MASA = [
   ["bordo", "Bordo", "#6b1a2a"], ["mor", "Mürdüm", "#43215e"], ["kahve", "Ceviz", "#4a2f1d"], ["antrasit", "Antrasit", "#24272d"],
 ];
 const ARKA = [["altin", "Altın"], ["lacivert", "Lacivert"], ["bordo", "Bordo"]];
-const OPT = { ses: true, ip: false, tam: true, uc: true, masa: "yesil", arka: "altin" };
+const OPT = { ses: true, ip: false, tam: true, uc: true, masa: "yesil", arka: "altin", sol: false };
 try { Object.assign(OPT, JSON.parse(localStorage.getItem("solOpt") || "{}")); } catch (e) {}
 if (window.CardSfx && CardSfx.muted) OPT.ses = !CardSfx.muted();
 const saveOpt = () => { try { localStorage.setItem("solOpt", JSON.stringify(OPT)); } catch (e) {} };
@@ -546,9 +551,12 @@ function render() {
     els.get("__stock").onclick = drawStock;
   }
   const place = (key, left, y) => { const s = els.get(key); Object.assign(s.style, { left: left + "px", top: y + "px", width: cw + "px", height: ch + "px", fontSize: Math.round(cw * 0.5) + "px" }); };
-  // Sıra: bitiş yığınları solda, deste sağda (sağ elle kolay)
-  place("__stock", x(6), topY);
-  for (let i = 0; i < 4; i++) place("__f" + i, x(i), topY);
+  // Sağ el: bitiş yığınları solda, deste sağda. Solak: deste solda, bitiş yığınları sağda.
+  const SOL = !!OPT.sol;
+  const stockX = SOL ? x(0) : x(6);
+  const fX = (i) => (SOL ? x(3 + i) : x(i));
+  place("__stock", stockX, topY);
+  for (let i = 0; i < 4; i++) place("__f" + i, fX(i), topY);
   for (let i = 0; i < 7; i++) place("__t" + i, x(i), tabY);
   const stk = els.get("__stock");
   stk.textContent = S.stock.length ? "" : S.waste.length ? "↻" : "";
@@ -563,25 +571,25 @@ function render() {
     Object.assign(el.style, { width: cw + "px", height: ch + "px", zIndex: z++ });
     if (fresh && dealAnim) {
       // Dağıtma: kartlar desteden masaya uçar
-      Object.assign(el.style, { left: x(6) + "px", top: topY + "px", transition: "none" });
+      Object.assign(el.style, { left: stockX + "px", top: topY + "px", transition: "none" });
       const d = dealN++ * 28;
       requestAnimationFrame(() => requestAnimationFrame(() => { el.style.transition = `left .32s ${d}ms cubic-bezier(.2,.8,.3,1), top .32s ${d}ms cubic-bezier(.2,.8,.3,1)`; el.style.left = left + "px"; el.style.top = y + "px"; setTimeout(() => (el.style.transition = ""), d + 400); }));
     } else Object.assign(el.style, { left: left + "px", top: y + "px" });
     el.onclick = onTap;
     seen.add(c.id);
   };
-  // Deste (sağ üst) — kalınlık için birkaç kart hafif kaydırılır
-  S.stock.forEach((c, i) => putCard(c, x(6), topY - Math.floor(i / 8), false, drawStock));
-  // Açık kartlar: destenin solunda, sola doğru yelpaze
+  // Deste — kalınlık için birkaç kart hafif kaydırılır
+  S.stock.forEach((c, i) => putCard(c, stockX, topY - Math.floor(i / 8), false, drawStock));
+  // Açık kartlar destenin yanında yelpaze olur; en üstteki kart hep tam görünür
   const fan = Math.round(cw * 0.3), wl = S.waste.length, show = Math.min(3, wl);
+  const wBase = SOL ? x(1) + Math.round(cw * 0.15) : x(5) - (show - 1) * fan - Math.round(cw * 0.15);
   S.waste.forEach((c, i) => {
-    const pos = i - (wl - show); // 0..show-1 görünenler
-    const left = x(5) - (show - 1) * fan + Math.max(0, pos) * fan - Math.round(cw * 0.15);
+    const pos = Math.max(0, i - (wl - show)); // 0..show-1 görünenler, altta kalanlar ilk yerde
     const isTop = i === wl - 1;
-    putCard(c, pos < 0 ? x(5) - (show - 1) * fan - Math.round(cw * 0.15) : left, topY, true, isTop ? (e) => onCardTap(c.id, e.currentTarget) : null);
+    putCard(c, wBase + pos * fan, topY, true, isTop ? (e) => onCardTap(c.id, e.currentTarget) : null);
   });
   // Bitiş yığınları
-  S.found.forEach((f, fi) => f.forEach((c, i) => putCard(c, x(fi), topY, true, i === f.length - 1 ? (e) => onCardTap(c.id, e.currentTarget) : null)));
+  S.found.forEach((f, fi) => f.forEach((c, i) => putCard(c, fX(fi), topY, true, i === f.length - 1 ? (e) => onCardTap(c.id, e.currentTarget) : null)));
   // Tablo: sütun çok uzarsa aralık daralır ki ekrana sığsın
   const avail = Math.max(ch * 3, window.innerHeight - board.getBoundingClientRect().top - window.scrollY * 0 - 110 - tabY);
   let maxBottom = tabY + ch;
@@ -601,7 +609,41 @@ function render() {
   board.style.height = maxBottom + 12 + "px";
   $("auto").hidden = !(canAutoFinish() && !OPT.tam && !autoRunning);
   updateStats();
+  saveGame();
 }
+
+// ---------- Kaldığın yerden devam ----------
+// Sayfa yenilense ya da tarayıcı arka planda kapatsa bile oyun kaybolmasın.
+const GAME_KEY = "solGame";
+function saveGame() {
+  try {
+    if (!S || isWon()) { localStorage.removeItem(GAME_KEY); return; }
+    localStorage.setItem(GAME_KEY, JSON.stringify({ v: 1, S, history: history.slice(-50), elapsed, DRAW }));
+  } catch (e) {}
+}
+function restoreGame() {
+  try {
+    const g = JSON.parse(localStorage.getItem(GAME_KEY) || "null");
+    if (!g || g.v !== 1 || !g.S || !g.S.moves) return false;
+    S = g.S; history = Array.isArray(g.history) ? g.history : []; elapsed = g.elapsed || 0; DRAW = g.DRAW || DRAW;
+    if (isWon()) return false;
+    $("board").innerHTML = ""; els = new Map();
+    render(); idle();
+    toast("🃏 Kaldığın yerden devam ediyorsun");
+    return true;
+  } catch (e) { return false; }
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden) saveGame(); });
+window.addEventListener("pagehide", saveGame);
+// Yedek önlem: sayfa en üstteyken parmakla aşağı çekmeyi tarayıcıya bırakma (bazı tarayıcılar CSS ayarını dinlemiyor)
+let touchY0 = 0;
+document.addEventListener("touchstart", (e) => { touchY0 = e.touches[0].clientY; }, { passive: true });
+document.addEventListener("touchmove", (e) => {
+  if (e.touches.length !== 1 || window.scrollY > 0 || e.touches[0].clientY - touchY0 <= 0) return;
+  const kutu = e.target.closest && e.target.closest(".sheet .in");
+  if (kutu && kutu.scrollTop > 0) return;
+  if (e.cancelable) e.preventDefault();
+}, { passive: false });
 
 // ---------- Dilek ekranı ----------
 function wishScreen() {
@@ -617,6 +659,7 @@ function wishScreen() {
 // ---------- Ayarlar ----------
 function openSettings() {
   $("oSes").checked = OPT.ses; $("oIp").checked = OPT.ip; $("oTam").checked = OPT.tam; $("o3").checked = OPT.uc;
+  $("oYan").querySelectorAll("button").forEach((b) => b.classList.toggle("on", (b.dataset.k === "sol") === !!OPT.sol));
   $("colors").innerHTML = MASA.map(([k, ad, c]) => `<button data-k="${k}" class="${OPT.masa === k ? "on" : ""}" style="background:radial-gradient(120% 90% at 50% 30%, color-mix(in srgb, ${c} 85%, #fff), ${c} 60%)">${ad}</button>`).join("");
   $("backs").innerHTML = ARKA.map(([k, ad]) => `<button data-k="${k}" class="back-${k} ${OPT.arka === k ? "on" : ""}"><span class="card back"></span>${ad}</button>`).join("");
   $("rec").innerHTML = `<div><b>${REC.wins}</b><span>Kazanılan</span></div><div><b>${REC.best || "–"}</b><span>En yüksek puan</span></div><div><b>${REC.bestT ? fmtT(REC.bestT) : "–"}</b><span>En hızlı</span></div>`;
@@ -629,6 +672,11 @@ if (window.CardSfx && CardSfx.muted && CardSfx.muted() === OPT.ses) { /* tek kay
 $("oIp").onchange = (e) => { OPT.ip = e.target.checked; saveOpt(); idle(); };
 $("oTam").onchange = (e) => { OPT.tam = e.target.checked; saveOpt(); render(); if (OPT.tam && canAutoFinish()) autoFinish(); };
 $("o3").onchange = (e) => { OPT.uc = e.target.checked; saveOpt(); toast(`🃏 ${OPT.uc ? "3" : "1"} kart modu yeni oyunda başlayacak`); };
+$("oYan").querySelectorAll("button").forEach((b) => (b.onclick = () => {
+  OPT.sol = b.dataset.k === "sol"; saveOpt();
+  $("oYan").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+  render();
+}));
 $("shClose").onclick = () => ($("sheet").hidden = true);
 $("sheet").onclick = (e) => { if (e.target === $("sheet")) $("sheet").hidden = true; };
 
@@ -640,8 +688,7 @@ $("setb").onclick = openSettings;
 $("paint").onclick = openSettings;
 window.addEventListener("resize", () => S && render());
 applyLook();
-deal.sessiz = true; deal(); deal.sessiz = false;
-wishScreen();
+if (!restoreGame()) { deal.sessiz = true; deal(); deal.sessiz = false; wishScreen(); }
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>

@@ -1,7 +1,7 @@
 // Sadolayn — çevrimdışı yedek. Önce internetten alır (güncellemeler hemen gelir).
 // İnternet yoksa ya da sunucu hata verirse en son başarılı kopyayı gösterir.
 // Önbellek anahtarı "?t=..." gibi ekler olmadan tutulur; her istek ayrı kopya olarak birikmez.
-const CACHE = "sadolayn-v66";
+const CACHE = "sadolayn-v67";
 self.addEventListener("install", (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(["./", "./index.html", "./img/icon.png"]).catch(() => {}))); });
 self.addEventListener("activate", (e) => { e.waitUntil(caches.keys().then((k) => Promise.all(k.filter((x) => x !== CACHE).map((x) => caches.delete(x)))).then(() => self.clients.claim())); });
 function yedek(key, navigate) {
