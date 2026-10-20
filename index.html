@@ -58,24 +58,27 @@
   .kyOge.son b { color: #1a1206; background: linear-gradient(135deg, #f3d38a, #e0a24f); border-radius: 6px; padding: 1px 7px; }
   .kyOge b.gir { color: #1a1206; background: linear-gradient(135deg, #f3d38a, #e0a24f); border-radius: 6px; padding: 1px 7px; margin-left: 6px; }
   @keyframes kyKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  /* ===== PPK: toplantıdan 2 gün önce uyarı, karar günü 14:15'ten sonra karar haberi ===== */
-  .ppk { display: flex; gap: 11px; align-items: flex-start; width: 100%; max-width: 420px; margin: -8px 0 20px; padding: 11px 13px; border-radius: 14px;
-    border: 1px solid #7c3a26; background: linear-gradient(135deg, rgba(239,106,76,.17), rgba(239,106,76,.04)); color: #f6e3da; text-align: left; }
-  .ppk[hidden] { display: none; }
-  .ppk .pI { flex: 0 0 auto; font-size: 22px; line-height: 1.15; }
-  .ppk .pM { flex: 1; min-width: 0; }
-  .ppk .pE { display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: .9px; color: #1a0a05; background: #ef8a5d; border-radius: 6px; padding: 2px 7px; margin-bottom: 5px; animation: ppkP 1.8s ease-in-out infinite; }
-  .ppk .pT { font-size: 15px; font-weight: 700; line-height: 1.3; color: #fff; }
-  .ppk .pS { font-size: 12.5px; color: #d9b9ab; margin-top: 3px; line-height: 1.4; }
-  .ppk .pS b { color: #ffd2bd; }
-  .ppk .pB { display: flex; gap: 8px; margin-top: 9px; flex-wrap: wrap; }
-  .ppk .pB a, .ppk .pB button { font: inherit; font-size: 13px; padding: 7px 11px; border-radius: 9px; cursor: pointer; text-decoration: none; border: 1px solid #e0a24f; color: #e0a24f; background: transparent; }
-  .ppk .pB button.ana { background: linear-gradient(135deg, #f3d38a, #e0a24f); color: #1a1206; font-weight: 800; border-color: transparent; }
-  .ppk.haber { border-color: #6b5222; background: linear-gradient(135deg, rgba(224,162,79,.16), rgba(224,162,79,.04)); color: #efe3cc; }
-  .ppk.haber .pE { background: linear-gradient(135deg, #f3d38a, #e0a24f); color: #1a1206; animation: none; }
-  .ppk.haber .pS { color: #bfae8e; } .ppk.haber .pS b { color: #f3d38a; }
-  .ppk .pT a { color: inherit; }
-  @keyframes ppkP { 50% { opacity: .7; } }
+  /* ===== PPK (TCMB faiz kararı) kayan yazının başında: 2 gün önce uyarı, karar günü 14:15'ten sonra karar ===== */
+  .kyOge.ppk { color: #fff; }
+  .kyOge b.uy { color: #1a0a05; background: #ef8a5d; border-radius: 6px; padding: 1px 7px; margin: 0 6px 0 0; font-size: 11.5px; letter-spacing: .5px; }
+  .kyOge b.tc { color: #0b1220; background: #cfd8e6; border-radius: 6px; padding: 1px 7px; margin: 0 6px 0 0; font-size: 11.5px; letter-spacing: .5px; }
+  .kyOge.ppk::after { color: #8a3d22; }
+  /* Dokununca açılan küçük pencere: karar ayrıntısı + paylaş */
+  .ppkSh { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; padding: 16px; }
+  .ppkSh[hidden] { display: none; }
+  .ppkK { position: relative; width: 100%; max-width: 420px; background: #0f0d0a; border: 1px solid #5a4320; border-radius: 16px; padding: 16px 16px 14px; color: #efe3cc; box-shadow: 0 -6px 30px rgba(0,0,0,.6); animation: ppkUp .22s ease-out; }
+  @keyframes ppkUp { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .ppkK .x { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%; border: 0; background: #1c1812; color: #bfae8e; font-size: 16px; cursor: pointer; }
+  .ppkK .pE { display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: .9px; color: #0b1220; background: #cfd8e6; border-radius: 6px; padding: 2px 7px; margin-bottom: 8px; }
+  .ppkK .pE.uy { background: #ef8a5d; color: #1a0a05; }
+  .ppkK .pT { font-size: 17px; font-weight: 700; line-height: 1.3; color: #fff; padding-right: 30px; }
+  .ppkK .pS { font-size: 13px; color: #bfae8e; margin-top: 6px; line-height: 1.5; }
+  .ppkK .pS b { color: #f3d38a; }
+  .ppkK .pT a { color: inherit; }
+  .ppkK .pB { display: flex; gap: 8px; margin-top: 14px; }
+  .ppkK .pB a, .ppkK .pB button { flex: 1; text-align: center; font: inherit; font-size: 14px; padding: 10px; border-radius: 10px; cursor: pointer; text-decoration: none; border: 1px solid #e0a24f; color: #e0a24f; background: transparent; }
+  .ppkK .pB button.ana { background: linear-gradient(135deg, #f3d38a, #e0a24f); color: #1a1206; font-weight: 800; border-color: transparent; }
+  .ppkK .pK { font-size: 11px; color: #6f6656; margin-top: 10px; }
   /* Bilgisayarda "animasyonları azalt" açıksa da kaysın (durdurmak için üstüne gel), sadece biraz yavaş */
   @media (prefers-reduced-motion: reduce) { .kySer { animation-duration: calc(var(--sure, 60s) * 1.5); } }
   .hello .mid p.greet { margin: 0; font-size: 19px; min-height: 0; }
@@ -235,9 +238,9 @@
     <a class="kayan" id="kayan" href="isbank.html#iscep" hidden aria-label="İşCep, İş Black ve İş Plus: ayrıntılar İş Bankası Gündemi'nin ilgili bölümünde">
       <span class="kyYol"><span class="kySer" id="kayanSer"></span></span>
     </a>
-    <!-- PPK: toplantıya 2 gün kala uyarı; karar günü 14:15'ten itibaren karar haberi + paylaş -->
-    <div class="ppk" id="ppk" hidden role="status" aria-live="polite"></div>
   </header>
+  <!-- PPK: kayan yazıdaki TCMB satırına dokununca açılır -->
+  <div class="ppkSh" id="ppkSh" hidden><div class="ppkK" role="dialog" aria-modal="true" aria-label="TCMB faiz kararı"><button type="button" class="x" aria-label="Kapat">✕</button><div id="ppkIc"></div></div></div>
   <div class="bar" id="bar" aria-hidden="true">
     <div class="clock bc"><svg viewBox="0 0 100 100" aria-hidden="true">
           <defs><radialGradient id="cf2" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#1c1710"/><stop offset="1" stop-color="#070707"/></radialGradient></defs>
@@ -602,23 +605,33 @@
     ["black", "🖤 Peki ya <b>İş Black</b> ve <b>İş Plus</b>? Ayrıcalıkların ayrıntısı <b class=\"gir\">İş Bankası Gündemi › İş Black · İş Plus</b> bölümünde"],
   ];
   const CAGRI = [null, null];
-  const tek = dizi.map(([h, x]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}" data-h="${h}">${x}</span>`).join("");
-  ser.innerHTML = tek + tek; // iki kopya: kesintisiz döngü
-  kutu.hidden = false;
-  requestAnimationFrame(() => { const w = ser.scrollWidth / 2; ser.style.setProperty("--sure", Math.max(25, Math.round(w / 55)) + "s"); });
+  // PPK satırı (TCMB faiz kararı) varsa en başa gelir; ana sayfadaki PPK betiği Kayan.ppk(...) ile verir
+  let ppk = null;
+  function ciz() {
+    const tek = (ppk ? `<span class="kyOge ppk" data-h="ppk">${ppk.html}</span>` : "") +
+      dizi.map(([h, x]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}" data-h="${h}">${x}</span>`).join("");
+    ser.innerHTML = tek + tek; // iki kopya: kesintisiz döngü
+    kutu.hidden = false;
+    requestAnimationFrame(() => { const w = ser.scrollWidth / 2; ser.style.setProperty("--sure", Math.max(25, Math.round(w / 55)) + "s"); });
+  }
+  ciz();
+  window.Kayan = { ppk: (o) => { if ((o && o.html) === (ppk && ppk.html)) { ppk = o; return; } ppk = o; ciz(); } };
   kutu.addEventListener("click", (e) => {
     const o = e.target.closest(".kyOge"); const h = o ? o.dataset.h : "iscep";
-    e.preventDefault(); window.Rapor && Rapor.bolum("kayan-" + h); location.href = "isbank.html#" + h;
+    e.preventDefault();
+    if (h === "ppk") { ppk && ppk.tap && ppk.tap(); return; }
+    window.Rapor && Rapor.bolum("kayan-" + h); location.href = "isbank.html#" + h;
   });
 })();
 </script>
 <script>
-// PPK kuralı: her toplantıdan 2 gün önce "Dikkat" uyarısı; karar günü 14:15'ten (TR) itibaren
-// ertesi gün sonuna kadar karar haberi ve paylaş düğmesi. Karar data/ppk.json'dan gelir
-// (TCMB basın duyurusundan otomatik); henüz gelmediyse ekonomi manşetine bakılır, 2 dakikada bir yenilenir.
+// PPK kuralı (TCMB faiz kararı), kayan yazının en başında:
+// her toplantıdan 2 gün önce "DİKKAT" satırı; karar günü 14:15'ten (TR) ertesi gün sonuna kadar karar satırı.
+// Satıra dokununca ayrıntı + paylaş penceresi açılır. Karar data/ppk.json'dan gelir (TCMB basın duyurusundan
+// otomatik); henüz gelmediyse ekonomi manşetine bakılır, karar beklenirken 2 dakikada bir yenilenir.
 (function () {
-  const kutu = document.getElementById("ppk");
-  if (!kutu || !window.Ortak) return;
+  const sh = document.getElementById("ppkSh"), ic = document.getElementById("ppkIc");
+  if (!sh || !window.Ortak || !window.Kayan) return;
   const AY = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
   const GUN = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
   const SITE = "https://sadolayn.github.io/SadoDepo/";
@@ -643,13 +656,14 @@
     return (sert ? "t" : "d") + (on ? "e" : "a") + (tur === "den" ? "n" : "");
   }
   const yz = (x, tur) => `%${nf(x)}'${ek(x, tur)}`;
-  let J = null, H = null, sonCekim = 0, yuk = false, hYuk = false;
+  let J = null, H = null, sonCekim = 0, yuk = false, hYuk = false, acik = null;
 
   function kararCumlesi(L) {
     const eski = L.rate - (L.change || 0), bp = Math.round(Math.abs(L.change || 0) * 100);
-    if (!L.change) return { kisa: `TCMB politika faizini ${yz(L.rate, "de")} sabit tuttu`, uzun: `Politika faizi ${yz(L.rate, "de")} sabit tutuldu.`, bp: "" };
+    if (!L.change) return { kisa: `politika faizini <b>${yz(L.rate, "de")} sabit</b> tuttu`, baslik: `TCMB politika faizini ${yz(L.rate, "de")} sabit tuttu`, uzun: `Politika faizi ${yz(L.rate, "de")} sabit tutuldu.`, bp: "" };
     const fiil = L.change < 0 ? ["indirdi", "indirildi"] : ["yükseltti", "yükseltildi"];
-    return { kisa: `TCMB politika faizini ${yz(eski, "den")} ${yz(L.rate, "e")} ${fiil[0]}`, uzun: `Politika faizi ${yz(eski, "den")} ${yz(L.rate, "e")} ${fiil[1]} (${bp} baz puan).`, bp: `${bp} baz puan ${L.change < 0 ? "indirim" : "artış"}` };
+    return { kisa: `politika faizini <b>${yz(eski, "den")} ${yz(L.rate, "e")}</b> ${fiil[0]}`, baslik: `TCMB politika faizini ${yz(eski, "den")} ${yz(L.rate, "e")} ${fiil[0]}`,
+      uzun: `Politika faizi ${yz(eski, "den")} ${yz(L.rate, "e")} ${fiil[1]} (${bp} baz puan).`, bp: `${bp} baz puan ${L.change < 0 ? "indirim" : "artış"}` };
   }
   function manset(m) {
     if (!H || !H.cats) return null;
@@ -663,50 +677,56 @@
     if (navigator.share) { navigator.share({ text: txt }).catch(() => {}); return; }
     window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
   }
-  function goster(html, haber, txt) {
-    kutu.className = "ppk" + (haber ? " haber" : "");
-    kutu.innerHTML = html; kutu.hidden = false;
-    const b = kutu.querySelector("button[data-pay]"); if (b) b.onclick = () => paylas(txt);
+  // Pencere: ayrıntı + paylaş
+  function pencere(o) {
+    ic.innerHTML = `<span class="pE${o.uy ? " uy" : ""}">${o.etiket}</span><div class="pT">${o.baslik}</div>${o.alt ? `<div class="pS">${o.alt}</div>` : ""}
+      <div class="pB">${o.pay ? `<button type="button" class="ana" data-pay>📤 Paylaş</button>` : ""}${o.url ? `<a href="${esc(o.url)}" target="_blank" rel="noopener">${o.urlAd || "Kaynak"} ↗</a>` : ""}</div>
+      <div class="pK">Kaynak: ${o.kaynak || "TCMB Para Politikası Kurulu"}. Bilgi amaçlıdır.</div>`;
+    const b = ic.querySelector("[data-pay]"); if (b) b.onclick = () => paylas(o.pay);
+    sh.hidden = false; window.Rapor && Rapor.bolum("kayan-ppk");
   }
+  sh.addEventListener("click", (e) => { if (e.target === sh || e.target.closest(".x")) sh.hidden = true; });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") sh.hidden = true; });
+  const ver = (html, o) => { acik = o; Kayan.ppk(html ? { html, tap: () => pencere(acik) } : null); };
+
   function ciz() {
     if (!J) return;
     const t = trNow(), bugun = iso(t), dk = t.getUTCHours() * 60 + t.getUTCMinutes();
     const M = J.meetings || [], L = J.last || {};
-    // Karar haberi: karar günü 14:15'ten ertesi günün sonuna kadar
+    // Karar: karar günü 14:15'ten ertesi günün sonuna kadar
     const gec = M.filter((m) => { const k = fark(m, bugun); return (k === 0 && dk >= 855) || k === 1; }).pop();
     if (gec) {
       if (L.date === gec && L.rate != null) {
         const c = kararCumlesi(L), url = L.url || "https://www.tcmb.gov.tr/";
         const txt = `📣 TCMB faiz kararı · ${gunAy(gec)} ${gec.slice(0, 4)}\n${c.uzun}\nGecelik borç verme %${nf(L.lend)} · gecelik borçlanma %${nf(L.borrow)}\nKaynak: TCMB ${url}\n${SITE}`;
-        goster(`<div class="pI">📣</div><div class="pM"><span class="pE">PPK KARARI · ${gunAy(gec).toLocaleUpperCase("tr")}</span>
-          <div class="pT">${c.kisa}</div>
-          <div class="pS">${c.bp ? `<b>${c.bp}</b> · ` : ""}Gecelik borç verme <b>%${nf(L.lend)}</b> · borçlanma <b>%${nf(L.borrow)}</b></div>
-          <div class="pB"><button type="button" class="ana" data-pay>📤 Haberi paylaş</button><a href="${esc(url)}" target="_blank" rel="noopener">TCMB duyurusu ↗</a></div></div>`, true, txt);
+        ver(`<b class="tc">📣 TCMB</b>${c.kisa} <b class="gir">Paylaş</b>`, {
+          etiket: `TCMB · PPK KARARI · ${gunAy(gec).toLocaleUpperCase("tr")}`, baslik: c.baslik,
+          alt: `${c.bp ? `<b>${c.bp}</b><br>` : ""}Gecelik borç verme <b>%${nf(L.lend)}</b> · gecelik borçlanma <b>%${nf(L.borrow)}</b>`,
+          pay: txt, url, urlAd: "TCMB duyurusu" });
         return;
       }
       if (!H && !hYuk) { hYuk = true; Ortak.json("data/haberler.json").then((x) => { H = x; ciz(); }).catch(() => {}); } // manşet yedeği
       const h = manset(gec);
-      if (h) {
-        goster(`<div class="pI">📣</div><div class="pM"><span class="pE">PPK KARARI AÇIKLANDI</span>
-          <div class="pT"><a href="${esc(h.u)}" target="_blank" rel="noopener">${esc(h.t)}</a></div>
-          <div class="pS">${esc(h.s || "")} · TCMB rakamları birkaç dakika içinde burada</div>
-          <div class="pB"><button type="button" class="ana" data-pay>📤 Haberi paylaş</button></div></div>`, true, `📣 ${h.t}\n${h.u}\n${SITE}`);
-      } else {
-        goster(`<div class="pI">📣</div><div class="pM"><span class="pE">PPK KARARI AÇIKLANDI</span>
-          <div class="pT">Faiz kararı açıklandı</div><div class="pS">TCMB rakamları birkaç dakika içinde burada görünecek.</div></div>`, true);
-      }
+      if (h) ver(`<b class="tc">📣 TCMB</b>PPK faiz kararı açıklandı: ${esc(h.t)} <b class="gir">Paylaş</b>`, {
+        etiket: "TCMB · PPK KARARI AÇIKLANDI", baslik: `<a href="${esc(h.u)}" target="_blank" rel="noopener">${esc(h.t)}</a>`,
+        alt: `${esc(h.s || "")} · TCMB rakamları birkaç dakika içinde burada`, pay: `📣 ${h.t}\n${h.u}\n${SITE}`, url: h.u, urlAd: "Haberi aç", kaynak: esc(h.s || "haber sitesi") });
+      else ver(`<b class="tc">📣 TCMB</b>PPK faiz kararı açıklandı · rakamlar birkaç dakika içinde burada`, {
+        etiket: "TCMB · PPK KARARI AÇIKLANDI", baslik: "Faiz kararı açıklandı", alt: "TCMB rakamları birkaç dakika içinde burada görünecek." });
       bekle(); return;
     }
     // Uyarı: toplantıdan 2 gün önce başlar
     const yak = M.find((m) => { const k = fark(bugun, m); return k >= 0 && k <= 2; });
-    if (!yak) { kutu.hidden = true; return; }
-    const k = fark(bugun, yak), simdi = L.rate != null ? ` · politika faizi şu an <b>%${nf(L.rate)}</b>` : "";
-    let baslik, alt;
-    if (k === 2) { baslik = "PPK faiz kararına 2 gün kaldı"; alt = `${gunAyHafta(yak)} · karar saat <b>14:00'te</b>${simdi}`; }
-    else if (k === 1) { baslik = "PPK faiz kararı yarın"; alt = `${gunAyHafta(yak)} · karar saat <b>14:00'te</b>${simdi}`; }
-    else if (dk < 840) { baslik = "Bugün PPK günü: faiz kararı 14:00'te"; alt = `Karar haberi <b>14:15'ten</b> itibaren burada${simdi}`; }
-    else { baslik = "Faiz kararı açıklanıyor"; alt = `Karar haberi <b>14:15'te</b> burada${simdi}`; bekle(); }
-    goster(`<div class="pI">⚠️</div><div class="pM"><span class="pE">DİKKAT · PPK</span><div class="pT">${baslik}</div><div class="pS">${alt}</div></div>`, false);
+    if (!yak) { ver(null); return; }
+    const k = fark(bugun, yak), simdi = L.rate != null ? `Politika faizi şu an <b>%${nf(L.rate)}</b>` : "";
+    const hat = `⏰ Hatırlatma: TCMB PPK faiz kararı ${gunAyHafta(yak)} saat 14:00'te açıklanacak.${L.rate != null ? ` Politika faizi şu an %${nf(L.rate)}.` : ""}\n${SITE}`;
+    let satir, baslik;
+    if (k === 2) { satir = `TCMB PPK faiz kararına <b>2 gün</b> kaldı · ${gunAyHafta(yak)}, saat 14:00`; baslik = "TCMB PPK faiz kararına 2 gün kaldı"; }
+    else if (k === 1) { satir = `TCMB PPK faiz kararı <b>yarın</b> · ${gunAyHafta(yak)}, saat 14:00`; baslik = "TCMB PPK faiz kararı yarın"; }
+    else if (dk < 840) { satir = `Bugün TCMB PPK günü · faiz kararı saat <b>14:00'te</b>`; baslik = "Bugün TCMB PPK günü"; }
+    else { satir = `TCMB PPK faiz kararı açıklanıyor · ayrıntı <b>14:15'te</b> burada`; baslik = "Faiz kararı açıklanıyor"; bekle(); }
+    ver(`<b class="uy">⚠️ DİKKAT</b>${satir}`, { uy: true, etiket: "⚠️ DİKKAT · TCMB PPK", baslik,
+      alt: `${gunAyHafta(yak)} · karar saat <b>14:00'te</b>, karar haberi <b>14:15'ten</b> itibaren burada${simdi ? "<br>" + simdi : ""}`,
+      pay: hat, url: "https://www.tcmb.gov.tr/wps/wcm/connect/tr/tcmb+tr/main+menu/duyurular/takvim", urlAd: "TCMB takvimi" });
   }
   // Karar bekleniyorsa 2 dakikada bir yeni veri al
   function bekle() {
