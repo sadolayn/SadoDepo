@@ -64,6 +64,12 @@
   .colors button { border-radius: 14px; border: 2px solid #3a2c1f; background: #17120d; padding: 8px 4px 6px; cursor: pointer; color: var(--ink); font-family: inherit; font-size: 11px; }
   .colors button.on { border-color: var(--accent); background: #241a10; }
   .colors svg { width: 44px; height: 44px; display: block; margin: 0 auto 4px; }
+  .desenler { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+  .desenler button { border-radius: 12px; border: 2px solid #3a2c1f; background: #17120d; padding: 5px 3px 4px; cursor: pointer; color: var(--ink); font-family: inherit; font-size: 10.5px; line-height: 1.2; }
+  .desenler button.on { border-color: var(--accent); background: #241a10; }
+  .desenler svg { width: 100%; height: auto; display: block; border-radius: 5px; margin-bottom: 3px; }
+  #desenOv { background: rgba(0,0,0,.28); align-items: flex-end; }
+  #desenOv .modal { max-width: 460px; }
   .go { width: 100%; margin-top: 16px; padding: 14px; border-radius: 14px; border: none; background: var(--accent); color: #000; font-size: 17px; font-weight: 800; cursor: pointer; font-family: inherit; }
   .rules { text-align: left; font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 12px; }
   .big { font-size: 46px; margin: 4px 0; }
@@ -73,6 +79,7 @@
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
+<script src="yeni.js"></script>
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
@@ -81,7 +88,7 @@
 <header>
   <a class="hbtn" href="oyunlar.html" title="Oyunlar" aria-label="Oyunlar">🎮</a>
   <h1>🎲 Tavla</h1>
-  <div style="display:flex;gap:6px"><button class="hbtn" id="sndBtn" title="Ses" aria-label="Ses">🔊</button><button class="hbtn" id="newBtn" title="Yeni maç" aria-label="Yeni maç">⟲</button></div>
+  <div style="display:flex;gap:6px"><button class="hbtn" id="desenBtn" title="Tahta deseni" aria-label="Tahta deseni" data-yeni="tavlaDesen|2026-10-20|•">🎨</button><button class="hbtn" id="sndBtn" title="Ses" aria-label="Ses">🔊</button><button class="hbtn" id="newBtn" title="Yeni maç" aria-label="Yeni maç">⟲</button></div>
 </header>
 
 <div class="score">
@@ -106,8 +113,17 @@
   <div id="isimler"></div>
   <h3>Pul rengin</h3>
   <div class="colors" id="colors"></div>
+  <h3>Tahta deseni</h3>
+  <div class="desenler" id="desenler"></div>
   <button class="go" id="goBtn">Oyuna başla</button>
   <div class="rules">• Mars (rakip hiç pul toplamadan bitirmek) 2 puan, normal galibiyet 1 puan.<br>• Seçtiğin sayıda puana ilk ulaşan maçı kazanır.<br>• Kırılan pul kenara çıkar; önce onu oyuna sokmalısın.<br>• Zarın ikisini de oynamak zorunlusun; çift atınca dört kez oynarsın.</div>
+</div></div>
+
+<div class="ov" id="desenOv"><div class="modal">
+  <h2 style="font-size:34px">Tahta deseni</h2>
+  <p>Dokun, tahta hemen değişsin. Oyun kaldığı yerden devam eder.</p>
+  <div class="desenler" id="desenler2"></div>
+  <button class="go" id="desenOk">Tamam</button>
 </div></div>
 
 <div class="ov" id="endOv"><div class="modal">
@@ -274,8 +290,20 @@ const COLORS = {
   kehribar: { ad: "Kehribar", base: "#e0973a", edge: "#a85f17", dark: "#7a3f08", txt: "#5a2a00", light: true },
   zumrut: { ad: "Zümrüt", base: "#1f6b4f", edge: "#0f3f2d", dark: "#082a1e", txt: "#d8f0d0", light: false },
 };
-let OPT = { n: 3, col: "agac" };
+// Tahta desenleri — hepsinde ortada "PNR TKN" yazısı ve baklava motifi kalır
+const DESEN = {
+  ceviz:    { ad: "Klasik Ceviz", frame: ["#5a3b26", "#3f281a"], field: ["#7a5636", "#8c6542", "#775334"], fx: "wood", fxOp: 0.6, triD: ["#1d2a55", "#2b3a70", "#1b274f"], triL: ["#b98a4e", "#d4a865", "#b3844a"], triGrain: true },
+  sedef:    { ad: "Sedef Kakma", frame: ["#2a1810", "#120904"], field: ["#3b2316", "#4b2d1d", "#371f12"], fx: "wood", fxOp: 0.55, triD: ["#6e1422", "#8d1f2f", "#65111e"], triL: ["#e4def0", "#fdfcf8", "#dcefe6"], triStroke: "#1a0d07", trim: "#efe7d6", dots: true, pearl: true, inlay: "sedef", dia: ["#f4efe6", "#1a0d07", "#efe9f3", "#8d1f2f"] },
+  cuha:     { ad: "Çuha Yeşili", frame: ["#6a2b17", "#3b1409"], field: ["#1c5a3b", "#236a47", "#195235"], fx: "felt", triD: ["#6a1325", "#851f31", "#5c0f1f"], triL: ["#ecdfc0", "#faf1da", "#e0d0aa"], trim: "#c9a066" },
+  lacivert: { ad: "Lacivert Altın", frame: ["#151821", "#06070b"], field: ["#15214a", "#1c2b5d", "#131e45"], fx: "leather", triD: ["#a9792a", "#e0b25a", "#9c6f26"], triL: ["#ebe2cd", "#fffaf0", "#ded2b8"], trim: "#d4a54a", trim2: true, txt: "#f1cf86", dia: ["#f1cf86", "#0b1028", "#fff6e0", "#1c2b5d"] },
+  bordo:    { ad: "Bordo Deri", frame: ["#2b1410", "#130705"], field: ["#5c1420", "#721f2b", "#52111b"], fx: "leather", triD: ["#17120f", "#2c2420", "#120e0c"], triL: ["#e8d6b0", "#f7ebcf", "#dac59c"], trim: "#e6c88f", stitch: true },
+  mermer:   { ad: "Beyaz Mermer", frame: ["#2c2c2f", "#111113"], field: ["#e6e4df", "#f5f4f0", "#dfdcd5"], fx: "marble", triD: ["#1a1a1c", "#2f2f33", "#141416"], triL: ["#b3863a", "#d8ab56", "#a3772e"], trim: "#b3863a", txt: "#2b2b2e", txtS: "#f7f5ef", lbl: "#3a3a3d", dia: ["#d8ab56", "#1a1a1c", "#f7f5ef", "#b3863a"] },
+  cini:     { ad: "İznik Çini", frame: ["#1a3b63", "#0c2240"], field: ["#f2eada", "#fbf6eb", "#ebe1ca"], fx: "fine", triD: ["#1d4b97", "#2a5fb5", "#183f85"], triL: ["#2a958e", "#3cb1a9", "#23847e"], triStroke: "#10295a", trim: "#c0392b", inlay: "cini", txt: "#1d4b97", txtS: "#fbf6eb", lbl: "#1d3b6e", dia: ["#fbf6eb", "#1d4b97", "#3cb1a9", "#c0392b"] },
+  akcaagac: { ad: "Akçaağaç", frame: ["#6b4527", "#452c17"], field: ["#d8b684", "#e7cd9f", "#cfab78"], fx: "wood", fxOp: 0.35, triD: ["#5a3920", "#71482a", "#4e311b"], triL: ["#f4e8cf", "#fffaf0", "#eadabb"], triGrain: true, txt: "#5a3418", txtS: "#f6e7c8", lbl: "#4a2c12", dia: ["#f6e7c8", "#5a3418", "#fffaf0", "#7a2027"] },
+};
+let OPT = { n: 3, col: "agac", desen: "ceviz" };
 try { Object.assign(OPT, JSON.parse(localStorage.getItem("tavlaOpt") || "{}")); } catch (e) {}
+const tema = () => DESEN[OPT.desen] || DESEN.ceviz;
 const aiColor = () => (COLORS[OPT.col].light ? (OPT.col === "agac" ? "maun" : "maun") : (OPT.col === "maun" ? "agac" : "fildisi"));
 
 // Mutlak konum = insanın kanonik konumu (insan pozitif, 24→1)
@@ -298,13 +326,17 @@ function stackY(top, k, n) {
 const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
 
 function defs() {
+  const T = tema();
+  const lg = (id, c, diag) => `<linearGradient id="${id}" x1="0" y1="0" x2="1" y2="${diag ? 1 : 0}"><stop offset="0" stop-color="${c[0]}"/><stop offset=".5" stop-color="${c[1]}"/><stop offset="1" stop-color="${c[2] || c[0]}"/></linearGradient>`;
   return `<defs>
     <filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.42" numOctaves="3" seed="7"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
     <filter id="grain2" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.25" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 .9  0 0 0 0 .7  0 0 0 .18 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
-    <linearGradient id="walnut" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a5636"/><stop offset=".5" stop-color="#8c6542"/><stop offset="1" stop-color="#775334"/></linearGradient>
-    <linearGradient id="oak" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b98a4e"/><stop offset=".5" stop-color="#d4a865"/><stop offset="1" stop-color="#b3844a"/></linearGradient>
-    <linearGradient id="navy" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1d2a55"/><stop offset=".5" stop-color="#2b3a70"/><stop offset="1" stop-color="#1b274f"/></linearGradient>
-    <linearGradient id="frame" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a3b26"/><stop offset=".5" stop-color="#3f281a"/><stop offset="1" stop-color="#5a3b26"/></linearGradient>
+    <filter id="fine" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 -.35"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+    <filter id="leather" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.22" numOctaves="3" seed="9"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.1 -.42"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+    <filter id="veins" x="0" y="0" width="100%" height="100%"><feTurbulence type="turbulence" baseFrequency="0.005 0.013" numOctaves="4" seed="21"/><feColorMatrix values="0 0 0 0 .38  0 0 0 0 .37  0 0 0 0 .4  -9 0 0 0 1"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+    <linearGradient id="pearl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcfe9" stop-opacity=".45"/><stop offset=".35" stop-color="#c9fff0" stop-opacity=".38"/><stop offset=".7" stop-color="#ddd5ff" stop-opacity=".45"/><stop offset="1" stop-color="#fff0cf" stop-opacity=".4"/></linearGradient>
+    <radialGradient id="vig" cx=".5" cy=".5" r=".72"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".38"/></radialGradient>
+    ${lg("field", T.field)}${lg("triL", T.triL)}${lg("triD", T.triD)}${lg("frame", [T.frame[0], T.frame[1], T.frame[0]], true)}
     <path id="ring" d="M 0,${(R * 0.72).toFixed(2)} a ${(R * 0.72).toFixed(2)},${(R * 0.72).toFixed(2)} 0 1,1 0.01,0"/>
     ${Object.entries(COLORS).map(([k, c]) => `
     <radialGradient id="g_${k}" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="${c.base}"/><stop offset=".75" stop-color="${c.edge}"/><stop offset="1" stop-color="${c.dark}"/></radialGradient>
@@ -318,32 +350,68 @@ function defs() {
     </g>`).join("")}
   </defs>`;
 }
-function diamond(cx, cy, s) {
+function diamond(cx, cy, s, c) {
+  c = c || ["#efe1c4", "#14110f", "#f4ead5", "#7a2027"];
   return `<g transform="translate(${cx},${cy})">
-    <polygon points="${-s * 2},0 0,${-s * 0.7} ${s * 2},0 0,${s * 0.7}" fill="#efe1c4" stroke="#2a1a10" stroke-width="1.2"/>
-    <polygon points="${-s * 1.5},0 0,${-s * 0.52} ${s * 1.5},0 0,${s * 0.52}" fill="#14110f"/>
-    <polygon points="${-s * 0.9},0 0,${-s * 0.42} ${s * 0.9},0 0,${s * 0.42}" fill="#f4ead5"/>
-    <polygon points="${-s * 0.55},0 0,${-s * 0.3} ${s * 0.55},0 0,${s * 0.3}" fill="#7a2027"/>
-    <polygon points="${-s * 0.28},0 0,${-s * 0.16} ${s * 0.28},0 0,${s * 0.16}" fill="#f4ead5"/>
+    <polygon points="${-s * 2},0 0,${-s * 0.7} ${s * 2},0 0,${s * 0.7}" fill="${c[0]}" stroke="#2a1a10" stroke-width="1.2"/>
+    <polygon points="${-s * 1.5},0 0,${-s * 0.52} ${s * 1.5},0 0,${s * 0.52}" fill="${c[1]}"/>
+    <polygon points="${-s * 0.9},0 0,${-s * 0.42} ${s * 0.9},0 0,${s * 0.42}" fill="${c[2]}"/>
+    <polygon points="${-s * 0.55},0 0,${-s * 0.3} ${s * 0.55},0 0,${s * 0.3}" fill="${c[3]}"/>
+    <polygon points="${-s * 0.28},0 0,${-s * 0.16} ${s * 0.28},0 0,${s * 0.16}" fill="${c[2]}"/>
   </g>`;
 }
+// Çerçeveye kakma süsler (sedef baklavalar ya da çini çiçekleri)
+function frameInlay(T) {
+  const seq = (a, b, step) => { const o = []; for (let v = a + step / 2; v < b; v += step) o.push(v); return o; };
+  const yT = FR / 2, yB = H - FR / 2, xMax = W - FRR - 4;
+  let s = "";
+  if (T.inlay === "sedef") {
+    const dm = (x, y, w, hh) => `<polygon points="${x - w},${y} ${x},${y - hh} ${x + w},${y} ${x},${y + hh}" fill="#f1ebdf" opacity=".92"/>`;
+    for (const y of [yT, yB]) for (const x of seq(6, xMax, 16)) s += dm(x, y, 5, 3.6) + `<circle cx="${x + 8}" cy="${y}" r="1.2" fill="#f1ebdf" opacity=".8"/>`;
+    for (const y of seq(FR + 4, H - FR - 4, 16)) s += dm(FR / 2, y, 3.6, 5);
+  } else if (T.inlay === "cini") {
+    const fl = (x, y) => `<g transform="translate(${x},${y})"><circle cx="-2.5" r="1.9" fill="#f6f1e4"/><circle cx="2.5" r="1.9" fill="#f6f1e4"/><circle cy="-2.5" r="1.9" fill="#f6f1e4"/><circle cy="2.5" r="1.9" fill="#f6f1e4"/><circle r="1.5" fill="#c0392b"/></g>`;
+    for (const y of [yT, yB]) for (const x of seq(6, xMax, 20)) s += fl(x, y) + `<circle cx="${x + 10}" cy="${y}" r="1.2" fill="#3cb1a9"/>`;
+    for (const y of seq(FR + 6, H - FR - 6, 20)) s += fl(FR / 2, y);
+  }
+  return s;
+}
+function fieldFx(T, x0) {
+  const r = (filter, op) => `<rect x="${x0}" y="${FR}" width="${HW}" height="${H - 2 * FR}" fill="#000" filter="url(#${filter})" opacity="${op}"/>`;
+  if (T.fx === "wood") return r("grain", T.fxOp ?? 0.6);
+  if (T.fx === "felt") return r("fine", 0.4);
+  if (T.fx === "leather") return r("leather", 0.5);
+  if (T.fx === "marble") return r("veins", 0.75);
+  if (T.fx === "fine") return r("fine", 0.13);
+  return "";
+}
 function drawStatic() {
+  const T = tema();
   let h = defs();
   // çerçeve
   h += `<rect x="0" y="0" width="${W}" height="${H}" rx="14" fill="url(#frame)"/><rect x="0" y="0" width="${W}" height="${H}" rx="14" fill="#000" filter="url(#grain)" opacity=".5"/>`;
+  if (T.inlay) h += frameInlay(T);
   // iki yarı
   for (const x0 of [xL, xR]) {
-    h += `<rect x="${x0}" y="${FR}" width="${HW}" height="${H - 2 * FR}" fill="url(#walnut)"/>`;
-    h += `<rect x="${x0}" y="${FR}" width="${HW}" height="${H - 2 * FR}" fill="#000" filter="url(#grain)" opacity=".6"/>`;
+    h += `<rect x="${x0}" y="${FR}" width="${HW}" height="${H - 2 * FR}" fill="url(#field)"/>`;
+    h += fieldFx(T, x0);
+    h += `<rect x="${x0}" y="${FR}" width="${HW}" height="${H - 2 * FR}" fill="url(#vig)"/>`;
   }
   // üçgenler
   for (let i = 1; i <= 24; i++) {
     const { x, top } = ptCol(i); const dark = i % 2 === (top ? 1 : 0);
     const y0 = top ? FR : H - FR, y1 = top ? FR + TRI : H - FR - TRI;
     const pts = `${x - PW / 2 + 1},${y0} ${x + PW / 2 - 1},${y0} ${x + 2.2},${y1} ${x - 2.2},${y1}`;
-    h += `<polygon points="${pts}" fill="url(#${dark ? "navy" : "oak"})"/>`;
-    h += `<polygon points="${pts}" fill="#fff" filter="url(#grain2)"/>`;
-    h += `<circle cx="${x}" cy="${top ? y1 + 3 : y1 - 3}" r="${PW * 0.2}" fill="url(#${dark ? "navy" : "oak"})"/>`;
+    h += `<polygon points="${pts}" fill="url(#${dark ? "triD" : "triL"})"${T.triStroke ? ` stroke="${T.triStroke}" stroke-width="1" stroke-opacity=".7"` : ""}/>`;
+    if (T.triGrain) h += `<polygon points="${pts}" fill="#fff" filter="url(#grain2)"/>`;
+    if (T.pearl && !dark) h += `<polygon points="${pts}" fill="url(#pearl)"/>`;
+    h += `<circle cx="${x}" cy="${top ? y1 + 3 : y1 - 3}" r="${PW * 0.2}" fill="url(#${dark ? "triD" : "triL"})"/>`;
+  }
+  // iç çerçeve çizgisi: sedefte inci noktalar, deride dikiş, diğerlerinde ince fileto
+  if (T.trim) for (const x0 of [xL, xR]) {
+    const st = T.dots ? `stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 8"` : T.stitch ? `stroke-width="1.7" stroke-dasharray="7 4.5"` : `stroke-width="1.4"`;
+    h += `<rect x="${x0 + 4.5}" y="${FR + 4.5}" width="${HW - 9}" height="${H - 2 * FR - 9}" rx="3" fill="none" stroke="${T.trim}" ${st} opacity=".9"/>`;
+    if (T.trim2) h += `<rect x="${x0 + 8.5}" y="${FR + 8.5}" width="${HW - 17}" height="${H - 2 * FR - 17}" rx="2" fill="none" stroke="${T.trim}" stroke-width=".7" opacity=".55"/>`;
   }
   // orta menteşe şeridi
   const bx = FR + HW;
@@ -357,7 +425,7 @@ function drawStatic() {
 
   // kakma motif + isim (sol düz, sağ ters)
   const cy = H / 2;
-  const eng = (x, rot) => `<g transform="translate(${x},${cy})${rot ? " rotate(180)" : ""}">${diamond(0, -42, 19)}<text x="0" y="-62" text-anchor="middle" font-family="'Dancing Script',cursive" font-weight="700" font-size="44" fill="#f3d6a0" stroke="#1c0e05" stroke-width="2.4" paint-order="stroke" letter-spacing="1.5">PNR TKN</text></g>`;
+  const eng = (x, rot) => `<g transform="translate(${x},${cy})${rot ? " rotate(180)" : ""}">${diamond(0, -42, 19, T.dia)}<text x="0" y="-62" text-anchor="middle" font-family="'Dancing Script',cursive" font-weight="700" font-size="44" fill="${T.txt || "#f3d6a0"}" stroke="${T.txtS || "#1c0e05"}" stroke-width="2.4" paint-order="stroke" letter-spacing="1.5">PNR TKN</text></g>`;
   h += eng(xL + HW / 2, false) + eng(xR + HW / 2, true);
   // toplama alanları (sağ çerçeve)
   h += `<rect id="offA" x="${W - FRR + 4}" y="${FR}" width="${FRR - 8}" height="${H / 2 - FR - 8}" rx="5" fill="#000" opacity=".28"/>`;
@@ -427,9 +495,9 @@ function render() {
       const q0 = o(0), q1 = o(1);
       dieSVG(g, cx - 23 + q0.x, dyy + 2 + q0.y, faces[0], DS, u0 || allUsed || dim, rolling, q0.r);
       dieSVG(g, cx + 23 + q1.x, dyy - 2 + q1.y, faces[1], DS, u1 || allUsed || dim, rolling, q1.r);
-      if (act && dbl && !rolling && rem.length) el("text", { x: cx + 58, y: dyy + 5, "text-anchor": "middle", "font-size": 14, "font-weight": 800, fill: "#f3d19a" }, g).textContent = `×${rem.length}`;
+      if (act && dbl && !rolling && rem.length) el("text", { x: cx + 58, y: dyy + 5, "text-anchor": "middle", "font-size": 14, "font-weight": 800, fill: tema().lbl || "#f3d19a" }, g).textContent = `×${rem.length}`;
     }
-    if (label && !offs) el("text", { x: cx, y: up ? dyy - 25 : dyy + 33, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: "#f3d19a", opacity: 0.9 }, g).textContent = label;
+    if (label && !offs) el("text", { x: cx, y: up ? dyy - 25 : dyy + 33, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: tema().lbl || "#f3d19a", opacity: 0.9 }, g).textContent = label;
   };
   let lf = null, rf = null, lroll = false, rroll = false, lact = false, ract = false, ldim = false, loffs = null, roffs = null;
   const rolling2 = rollingFaces || (cock && cock.faces);
@@ -730,8 +798,37 @@ function openOptions() {
   ISIM.bind($("isimler"), () => { $("nmH").textContent = ISIM.ben(); render(); });
   $("segN").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.n === OPT.n));
   $("colors").innerHTML = Object.entries(COLORS).map(([k, c]) => `<button data-c="${k}" class="${k === OPT.col ? "on" : ""}"><svg viewBox="-24 -24 48 48">${""}<use href="#pul_${k}" transform="scale(${22 / R})"/></svg>${c.ad}</button>`).join("");
+  desenListesi($("desenler"));
   $("optOv").classList.add("show");
 }
+// ---------- Tahta deseni ----------
+function desenKucuk(k) { // küçük önizleme
+  const T = DESEN[k];
+  let s = `<svg viewBox="0 0 64 70"><rect width="64" height="70" rx="5" fill="${T.frame[0]}"/>`;
+  for (const x0 of [3, 35]) {
+    s += `<rect x="${x0}" y="3" width="26" height="64" fill="${T.field[1]}"/>`;
+    for (let i = 0; i < 6; i++) {
+      const x = x0 + (i * 26) / 6, w = 26 / 6, a = i % 2 ? T.triL[1] : T.triD[1], b = i % 2 ? T.triD[1] : T.triL[1];
+      s += `<polygon points="${x + 0.2},3 ${x + w - 0.2},3 ${x + w / 2},25" fill="${a}"/><polygon points="${x + 0.2},67 ${x + w - 0.2},67 ${x + w / 2},45" fill="${b}"/>`;
+    }
+    if (T.trim) s += `<rect x="${x0 + 1}" y="4" width="24" height="62" fill="none" stroke="${T.trim}" stroke-width=".8"${T.stitch ? ' stroke-dasharray="2 1.3"' : T.dots ? ' stroke-dasharray=".1 2.4" stroke-linecap="round" stroke-width="1.3"' : ""}/>`;
+    s += `<text x="${x0 + 13}" y="37.5" text-anchor="middle" font-family="'Dancing Script',cursive" font-weight="700" font-size="7" fill="${T.txt || "#f3d6a0"}" stroke="${T.txtS || "#1c0e05"}" stroke-width=".5" paint-order="stroke">PNR TKN</text>`;
+  }
+  return s + `<rect x="29" y="0" width="6" height="70" fill="${T.frame[1]}"/></svg>`;
+}
+function desenListesi(box) {
+  box.innerHTML = Object.entries(DESEN).map(([k, T]) => `<button data-d="${k}" class="${k === OPT.desen ? "on" : ""}">${desenKucuk(k)}${T.ad}</button>`).join("");
+  box.onclick = (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    OPT.desen = b.dataset.d;
+    try { localStorage.setItem("tavlaOpt", JSON.stringify(OPT)); } catch (er) {}
+    document.querySelectorAll(".desenler button").forEach((x) => x.classList.toggle("on", x.dataset.d === OPT.desen));
+    drawStatic(); render(); tick();
+  };
+}
+$("desenBtn").onclick = () => { desenListesi($("desenler2")); $("desenOv").classList.add("show"); };
+$("desenOk").onclick = () => $("desenOv").classList.remove("show");
+$("desenOv").onclick = (e) => { if (e.target === $("desenOv")) $("desenOv").classList.remove("show"); };
 $("segN").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; OPT.n = +b.dataset.n; $("segN").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); };
 $("colors").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; OPT.col = b.dataset.c; $("colors").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); };
 $("goBtn").onclick = () => { ac(); try { localStorage.setItem("tavlaOpt", JSON.stringify(OPT)); } catch (e) {} $("optOv").classList.remove("show"); newMatch(); };
