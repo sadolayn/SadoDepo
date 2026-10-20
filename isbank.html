@@ -1194,10 +1194,11 @@ async function sfLoad() {
   const { lat, lon } = SF.place, ll = `${(+lat).toFixed(5)},${(+lon).toFixed(5)}`, pn = sfPn();
   $("sfpl").innerHTML = `📍 <b>${esc(SF.place.name)}</b>`;
   const gq = "Türkiye İş Bankası" + (SF.atm ? " bankamatik" : "") + (pn && pn !== "Bulunduğun yer" ? " " + pn : "");
-  const z = SF.r <= 1000 ? 16 : SF.r <= 3000 ? 14 : SF.r <= 5000 ? 13 : 12;
+  const z = SF.r <= 1000 ? 15 : SF.r <= 3000 ? 13 : SF.r <= 5000 ? 12 : 11; // harita seçilen mesafeyi kapsasın
   const gUrl = `https://www.google.com/maps/search/${encodeURIComponent(gq)}/@${ll},${z}z`;
   const links = `<div class="sfl"><a href="${gUrl}" target="_blank" rel="noopener">🗺️ Google Haritalar'da aç</a><a href="https://www.isbank.com.tr/sube-ve-bankamatikler" target="_blank" rel="noopener">🏦 isbank.com.tr'de ara</a></div>`;
-  if (SF.mode === "g") { $("sfbody").innerHTML = `<div class="mapcard"><iframe title="İş Bankası şubeleri" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=${encodeURIComponent(gq)}&ll=${ll}&sll=${ll}&z=${z}&hl=tr&output=embed"></iframe></div>${links}`; return; }
+  const gMap = `<div class="mapcard"><iframe title="İş Bankası şubeleri" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=${encodeURIComponent(gq)}&ll=${ll}&sll=${ll}&z=${z}&hl=tr&output=embed"></iframe></div>`;
+  if (SF.mode === "g") { $("sfbody").innerHTML = gMap + links; return; }
   $("sfbody").innerHTML = '<div class="sfmsg"><span class="sfsp"></span> Şubeler aranıyor…</div>';
   const R = SF.r, re = "İş Bankası|Is Bankasi|İşbank|Isbank|İŞ BANKASI|Iş Bankası";
   const q = `[out:json][timeout:25];(nwr["amenity"="bank"]["name"~"${re}",i](around:${R},${lat},${lon});nwr["amenity"="bank"]["brand"~"${re}",i](around:${R},${lat},${lon});${SF.atm ? `nwr["amenity"="atm"]["operator"~"${re}",i](around:${R},${lat},${lon});nwr["amenity"="atm"]["brand"~"${re}",i](around:${R},${lat},${lon});nwr["amenity"="atm"]["name"~"${re}",i](around:${R},${lat},${lon});` : ""});out center tags;`;
@@ -1213,7 +1214,7 @@ async function sfLoad() {
     if (!L.length) {
       $("sfbody").innerHTML = `<div class="sfmsg">${R / 1000} km içinde kayıtlı İş Bankası ${SF.atm ? "şubesi/bankamatiği" : "şubesi"} bulunamadı.${R < 10000 ? " Mesafeyi büyütmeyi dene." : ""}
         ${!SF.atm && SF.atmR ? `<br><button type="button" id="sfAtmGo" class="sfRetry">🏧 Bu alanda ${SF.atmR} bankamatik var · göster</button>` : ""}
-        <br><small style="color:var(--muted)">Harita kayıtları eksik olabilir; Google Haritalar'da da bakabilirsin.</small></div>${links}`;
+        <br><small style="color:var(--muted)">Listedeki kayıtlar eksik olabilir. Bu çevredeki şubeler Google Haritalar'da 👇</small></div>${gMap}${links}`;
       const ab = $("sfAtmGo"); if (ab) ab.onclick = () => { SF.atm = true; $("sfatm").checked = true; sfSave(); sfLoad(); };
       return;
     }
