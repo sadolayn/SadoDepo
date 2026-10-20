@@ -1,6 +1,7 @@
 name: Güncel haberler
 # GitHub'ın zamanlayıcısı bu depoda tetiklenmediği için iş, bittiğinde
 # ~1 saat bekleyip kendini yeniden başlatır (zincir). Cron yalnızca yedek.
+# PPK günü bekleme 14:01'e ayarlanır; karar kaydedilene kadar ~2,5 dakikada bir denenir.
 on:
   schedule:
     - cron: "7 * * * *"
@@ -20,6 +21,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: PPK faiz kararı (karar günü 14:00'ten sonra)
+        run: |
+          python scripts/ppk.py
+          git config user.name "sadolayn-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/ppk.json
+          git diff --cached --quiet || (git commit -q -m "PPK faiz kararı güncellendi" && git pull --rebase -q && git push -q)
+        continue-on-error: true
       - name: Haberler
         run: python scripts/haberler.py
         continue-on-error: true
@@ -36,12 +45,15 @@ jobs:
         run: |
           git config user.name "sadolayn-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/haberler.json data/piyasa.json isbank/finans.json isbank/black.json isbank/banka_kampanya.json
+          git add data/haberler.json data/piyasa.json data/ppk.json isbank/finans.json isbank/black.json isbank/banka_kampanya.json
           git diff --cached --quiet || (git commit -q -m "Haberler ve piyasa güncellendi" && git pull --rebase -q && git push -q)
-      - name: Bir saat sonra yeniden başlat
+      - name: Bir saat sonra yeniden başlat (PPK günü karar saatine göre)
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          sleep 3300
+          S=$(python scripts/ppk.py --sleep 2>/dev/null || echo 3300)
+          case "$S" in ''|*[!0-9]*) S=3300 ;; esac
+          echo "Bekleme: $S sn"
+          sleep "$S"
           gh workflow run haberler.yml --repo "${{ github.repository }}" --ref main

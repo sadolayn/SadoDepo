@@ -209,6 +209,19 @@
   .rows div { display: flex; justify-content: space-between; padding: 9px 0; border-top: 1px solid var(--line); font-size: 15px; }
   .rows div span:first-child { color: var(--muted); }
   .rows div.total span:last-child { font-weight: 700; }
+  /* Vadeli: değer tek satırda kalsın, uzun etiket gerekirse alta kaysın */
+  #mev .rows div { align-items: baseline; gap: 12px; font-size: 14.5px; }
+  #mev .rows div span:first-child { flex: 1 1 auto; min-width: 0; }
+  #mev .rows div span:last-child { flex: 0 0 auto; white-space: nowrap; text-align: right; }
+  #mev .rows div.wrapv span:last-child { flex: 0 1 auto; white-space: normal; }
+  #mev .brm { margin-top: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 2px 12px; }
+  #mev .brm div:first-child { border-top: 0; font-weight: 700; color: var(--accent); }
+  #mev .brm div:first-child span { color: var(--accent); }
+  #m_sum { margin-top: 0; }
+  #m_sum .ts b { font-size: 16.5px; overflow-wrap: normal; }
+  #m_sum .ts.main b { font-size: 28px; }
+  #m_sum .ts.wide b { font-size: 18px; white-space: nowrap; }
+  #m_sum .ts b.neg { color: var(--neg); }
   .neg { color: var(--neg); }
   .pos { color: var(--pos); }
   details { margin-top: 4px; }
@@ -293,7 +306,7 @@
 
   <div class="tabs">
     <div class="tlab">👤 Bireysel</div>
-    <button data-tab="mev"><i>💰</i><span>Vadeli<br>Mevduat</span></button>
+    <button data-tab="mev" data-yeni="mevozet|2026-10-20|•"><i>💰</i><span>Vadeli<br>Mevduat</span></button>
     <button data-tab="tk"><i>🛍️</i><span>Tüketici<br>Kredisi</span></button>
     <button data-tab="ek" data-yeni="ekhesap|2026-10-19|•"><i>➕</i><span>Ek<br>Hesap</span></button>
     <button data-tab="kk"><i>💳</i><span>Bireysel Kart<br>Gecikme</span></button>
@@ -410,8 +423,15 @@
       <p class="note" style="border-left:3px solid var(--accent);padding-left:8px">📅 <b>Artık yıl notu:</b> 4'e tam bölünebilen yıllar artık yıldır (2028, 2032…) ve yıl 365 değil <b>366 gün</b> sayılır; Şubat 29 çeker. 100'e bölünüp 400'e bölünmeyen yıllar (2100 gibi) artık yıl değildir. Vade bir artık yıla denk gelen günler için faiz ÷366 ile hesaplanır.</p>
     </div>
     <div class="card">
-      <div class="big"><span id="m_bigLabel">Net getiri</span><b id="m_out">–</b></div>
-      <div class="rows" id="m_rows"></div>
+      <div id="m_sum" class="tsum">
+        <div class="ts main"><span id="m_bigLabel">Net getiri</span><b id="m_out">–</b><i id="m_outi"></i></div>
+        <div class="ts wide"><span id="m_balL">Vade sonu bakiye</span><b id="m_bal">–</b></div>
+        <div class="ts"><span id="m_p1L">Vade sonu</span><b id="m_p1">–</b><i id="m_p1i"></i></div>
+        <div class="ts"><span id="m_p2L">Brüt faiz</span><b id="m_p2">–</b></div>
+        <div class="ts"><span id="m_p3L">Stopaj</span><b id="m_p3" class="neg">–</b></div>
+        <div class="ts"><span id="m_p4L">Günlük net</span><b id="m_p4">–</b></div>
+        <div class="tsbtns"><button type="button" id="mv_copy" class="tscopy">📋 Özeti kopyala</button><button type="button" id="mv_share" class="tscopy share">📤 Paylaş</button></div>
+      </div>
     </div>
     <div class="card emp">
       <h2>🧮 Vadesiz başabaş</h2>
@@ -880,7 +900,7 @@ function calcBCH() {
 let bchOzet = "";
 
 // ---------- Mevduat ----------
-let stopajManual = false;
+let stopajManual = false, mevOzet = "";
 $("m_stopaj").addEventListener("input", () => (stopajManual = true));
 function autoStopaj(g) {
   if (g <= 182) return 17.5;
@@ -935,13 +955,13 @@ function calcBreak(P, r, g, start) {
     return { pc, vad, rest, rMin };
   });
   const pr = (x) => isFinite(x) ? "%" + nfx(Math.round(x * 10000) / 100) : "–";
-  $("v_out").innerHTML = sc.map((x) => `<div class="rows" style="margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:4px 12px">
-      <div style="font-weight:700;color:var(--accent)"><span>%${nfx(x.pc)} barem${P * x.pc / 100 < mn && x.vad === mn ? " (asgari " + tl(mn) + ")" : ""}</span><span></span></div>
-      <div><span>Vadesizde kalan (müşteriye faiz yok)</span><span>${tl(x.vad)}</span></div>
-      <div><span>Vadeliye giden tutar</span><span>${tl(x.rest)}</span></div>
-      <div class="total"><span>Başabaş faiz oranı (kalan tutar)</span><span>${pr(x.rMin)}</span></div>
+  $("v_out").innerHTML = sc.map((x) => `<div class="rows brm">
+      <div><span>%${nfx(x.pc)} barem</span><span>${P * x.pc / 100 < mn && x.vad === mn ? "asgari tutar uygulandı" : ""}</span></div>
+      <div><span>Vadesizde (faizsiz)</span><span>${tl(x.vad)}</span></div>
+      <div><span>Vadeliye giden</span><span>${tl(x.rest)}</span></div>
+      <div class="total"><span>Başabaş oran</span><span>${pr(x.rMin)}</span></div>
     </div>`).join("");
-  $("v_note").textContent = `Başabaş faiz oranı: müşterinin kalan tutarla aynı net faizi (${tl(target)}) alması için gereken oran. Bu oranın altındaki teklif müşteriye daha az, üstündeki daha fazla net faiz getirir.`;
+  $("v_note").textContent = `Başabaş oran: müşterinin vadeliye giden tutarla aynı net faizi (${tl(target)}) alması için gereken oran. Bu oranın altındaki teklif müşteriye daha az, üstündeki daha fazla net faiz getirir.`;
 }
 
 function calcExtra(P, r, g, start) {
@@ -955,11 +975,11 @@ function calcExtra(P, r, g, start) {
     $("m2_label").textContent = diff > 0 ? "Rakip daha fazla kazandırıyor" : "Bizim teklif daha iyi";
     $("m2_out").textContent = (diff > 0 ? "+" : "") + tl(diff);
     const list = [
-      [`Bizim net getiri (%${nfx(r * 100)} · ${g} gün)`, tl(ours)],
-      [`Rakip net getiri (%${nfx(r2 * 100)} · ${g2} gün)`, tl(theirs)],
-      ["Fark (vade başına, net)", tl(Math.abs(diff)), diff > 0 ? "neg" : "pos"],
+      [`Bizim net (%${nfx(r * 100)} · ${g} gün)`, tl(ours)],
+      [`Rakip net (%${nfx(r2 * 100)} · ${g2} gün)`, tl(theirs)],
+      ["Fark (vade başına)", tl(Math.abs(diff)), diff > 0 ? "neg" : "pos"],
       ["Günlük fark", tl(Math.abs(diff) / Math.max(g, g2))],
-      ["1 yıl boyunca yenilenirse yaklaşık fark", tl(Math.abs(diff) * 365 / g2)],
+      ["Yıllık fark (yenilenirse)", tl(Math.abs(diff) * 365 / g2)],
     ];
     let note = "";
     if (diff > 0) {
@@ -989,12 +1009,12 @@ function calcExtra(P, r, g, start) {
   const inVade = (PPK.meetings || []).map((x) => new Date(x + "T12:00:00")).filter((d) => dayDiff(start, d) >= 0 && dayDiff(d, end) > 0);
   const L = PPK.last || {};
   const r3 = [
-    ["Sonraki bilanço günü", `${fdtw(nextQ)} · <b>${dayDiff(today, nextQ)} gün</b> kaldı`],
+    ["Sonraki bilanço", `${fdtw(nextQ)} · <b>${dayDiff(today, nextQ)} gün</b>`],
     ...qs.slice(1).map((d) => ["", `${fdt(d)} · ${dayDiff(today, d)} gün`]),
-    ["Bu mevduat bilançoyu kapsıyor mu?", covers ? `✅ Evet (${fdt(startQ)} bilançosunda)` : `❌ Hayır · en az <b>${minDays} gün</b> seçilmeli`, covers ? "pos" : "neg"],
-    ["Politika faizi", L.rate != null ? `%${nfx(L.rate)} <span style="color:var(--muted)">(${fdt(new Date(L.date + "T12:00:00"))} kararı)</span>` : "–"],
-    ["Sonraki PPK toplantısı", nextP[0] ? `${fdtw(nextP[0])} · <b>${dayDiff(today, nextP[0])} gün</b> kaldı` : "Takvim açıklanmadı"],
-    ["Vade içinde PPK", inVade.length ? `⚠️ ${inVade.map(fdt).join(", ")}` : "Yok"],
+    ["Bilanço kapsamı", covers ? `✅ Evet · ${fdt(startQ)}` : `❌ Hayır · en az <b>${minDays} gün</b>`, covers ? "pos" : "neg"],
+    ["Politika faizi", L.rate != null ? `%${nfx(L.rate)} <span style="color:var(--muted)">· ${fdt(new Date(L.date + "T12:00:00"))}</span>` : "–"],
+    ["Sonraki PPK", nextP[0] ? `${fdtw(nextP[0])} · <b>${dayDiff(today, nextP[0]) ? dayDiff(today, nextP[0]) + " gün" : "bugün"}</b>` : "Takvim açıklanmadı"],
+    ["Vade içinde PPK", inVade.length ? `⚠️ ${inVade.map((d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "short" })).join(" · ")}` : "Yok", "wrapv"],
   ];
   $("m3_rows").innerHTML = r3.map(([k, v, c]) => `<div class="${c || ""}"><span>${k}</span><span style="text-align:right">${v}</span></div>`).join("");
   $("m3_note").textContent = (inVade.length ? "Vade süresince faiz kararı açıklanacak: vade sonunda yenileme oranı değişebilir. " : "") +
@@ -1030,19 +1050,25 @@ function calcMev() {
   let leapInfo = "";
   let totalLeap = y1.leapDays;
   const stopajTxt = stopajManual ? "Stopaj oranını elle girdin." : `Stopaj vadeye göre otomatik seçildi (6 aya kadar %17,5 · 1 yıla kadar %15 · 1 yıldan uzun %10).`;
+  const fd = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+  const pill = (k, L, v, i) => { const e = $("m_" + k); $("m_" + k + "L").textContent = L; e.textContent = v; if (i != null) $("m_" + k + "i").textContent = i;
+    if (k !== "bal") e.style.fontSize = v.length >= 16 ? "13.5px" : v.length >= 14 ? "15px" : ""; }; // büyük tutarlar kutuya sığsın
+  const sTxt = `%${nfx(s * 100)}`, netY = pct(r * (1 - s) * 100);
   if (n === 1) {
+    const end = addDays(start, g);
     $("m_bigLabel").textContent = "Net getiri";
     $("m_out").textContent = tl(net1);
-    const end = new Date(start); end.setDate(end.getDate() + g);
-    rows("m_rows", [
-      ["Vade sonu tarihi", end.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })],
-      ["Brüt faiz", tl(brut1)],
-      ["Stopaj kesintisi", "−" + tl(brut1 * s), "neg"],
-      ["Net faiz", tl(net1), "pos"],
-      ["Vade sonu bakiye", tl(P + net1), "total"],
-      ["Günlük net getiri", tl(g ? net1 / g : 0)],
-      ["Yıllık net oran", pct(r * (1 - s) * 100)],
-    ]);
+    $("m_outi").textContent = `${g} gün · yıllık net oran ${netY}`;
+    pill("bal", "Vade sonu bakiye", tl(P + net1));
+    pill("p1", "Vade sonu", fd(end), end.toLocaleDateString("tr-TR", { weekday: "long" }));
+    pill("p2", "Brüt faiz", tl(brut1));
+    pill("p3", `Stopaj (${sTxt})`, "−" + tl(brut1 * s));
+    pill("p4", "Günlük net", tl(g ? net1 / g : 0));
+    mevOzet = P && g && r ? ozetMetni("VADELİ MEVDUAT ÖZETİ", [
+      [`Anapara: ${tl(P)}`, `Vade: ${g} gün (${fd(start)} – ${fd(end)})`, `Yıllık brüt faiz oranı: %${nfx(r * 100)}`],
+      [`Brüt faiz: ${tl(brut1)}`, `Stopaj (${sTxt}): −${tl(brut1 * s)}`, `Net faiz: ${tl(net1)}`, `Vade sonu bakiye: ${tl(P + net1)}`],
+      [`Günlük net getiri: ${tl(g ? net1 / g : 0)}`, `Yıllık net oran: ${netY}`],
+    ]) : "";
   } else {
     let bal = P, brutT = 0, stT = 0;
     const d = new Date(start);
@@ -1056,15 +1082,16 @@ function calcMev() {
     }
     $("m_bigLabel").textContent = `${n} vade sonunda net getiri`;
     $("m_out").textContent = tl(bal - P);
-    rows("m_rows", [
-      ["Son vade tarihi", d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })],
-      ["İlk vade net faiz", tl(net1)],
-      ["Toplam brüt faiz", tl(brutT)],
-      ["Toplam stopaj", "−" + tl(stT), "neg"],
-      ["Toplam net faiz", tl(bal - P), "pos"],
-      ["Son bakiye", tl(bal), "total"],
-      ["Toplam süre", `${Math.round(g * n)} gün`],
-    ]);
+    $("m_outi").textContent = `${g} gün × ${n} vade · toplam ${Math.round(g * n)} gün`;
+    pill("bal", "Son bakiye", tl(bal));
+    pill("p1", "Son vade", fd(d), d.toLocaleDateString("tr-TR", { weekday: "long" }));
+    pill("p2", "Toplam brüt faiz", tl(brutT));
+    pill("p3", `Toplam stopaj (${sTxt})`, "−" + tl(stT));
+    pill("p4", "İlk vade net faiz", tl(net1));
+    mevOzet = P && g && r ? ozetMetni("VADELİ MEVDUAT ÖZETİ", [
+      [`Anapara: ${tl(P)}`, `Vade: ${g} gün × ${n} dönem (toplam ${Math.round(g * n)} gün)`, `Başlangıç: ${fd(start)} · Son vade: ${fd(d)}`, `Yıllık brüt faiz oranı: %${nfx(r * 100)}`],
+      [`İlk vade net faiz: ${tl(net1)}`, `Toplam brüt faiz: ${tl(brutT)}`, `Toplam stopaj (${sTxt}): −${tl(stT)}`, `Toplam net faiz: ${tl(bal - P)}`, `Son bakiye: ${tl(bal)}`],
+    ], "Her vade sonunda net faizin anaparaya eklenip aynı oranla yenilendiği varsayılmıştır.") : "";
   }
   calcExtra(P, r, g, start);
   // Yıl gün sayısı vadenin düştüğü yıllara göre otomatik
@@ -2312,7 +2339,7 @@ $("v_copy").addEventListener("click", () => {
   Ortak.json("data/kredi_oran.json").then((j) => { if (j && j.ek_hesap && j.ek_hesap.aylik) { EK = Object.assign(EK, j.ek_hesap); uygula(); } }).catch(() => {});
 })();
 
-ozetBagla("b", () => bchOzet); ozetBagla("k", () => kkOzet); ozetBagla("tr", () => trOzet);
+ozetBagla("b", () => bchOzet); ozetBagla("mv", () => mevOzet); ozetBagla("k", () => kkOzet); ozetBagla("tr", () => trOzet);
 $("tr_pdf").addEventListener("click", (e) => trPdf && planPdf(trPdf, e.currentTarget));
 // ---------- Sekmeler ----------
 document.querySelectorAll(".tabs button").forEach((b) => {
