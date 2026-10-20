@@ -222,6 +222,7 @@
   #m_sum .ts.main b { font-size: 28px; }
   #m_sum .ts.wide b { font-size: 18px; white-space: nowrap; }
   #m_sum .ts b.neg { color: var(--neg); }
+  #m_sum .ts i.uy { color: #f3b394; font-weight: 600; }
   .neg { color: var(--neg); }
   .pos { color: var(--pos); }
   details { margin-top: 4px; }
@@ -425,6 +426,7 @@
     <div class="card">
       <div id="m_sum" class="tsum">
         <div class="ts main"><span id="m_bigLabel">Net getiri</span><b id="m_out">–</b><i id="m_outi"></i></div>
+        <div class="tswarn" id="m_warn" hidden></div>
         <div class="ts wide"><span id="m_balL">Vade sonu bakiye</span><b id="m_bal">–</b></div>
         <div class="ts"><span id="m_p1L">Vade sonu</span><b id="m_p1">–</b><i id="m_p1i"></i></div>
         <div class="ts"><span id="m_p2L">Brüt faiz</span><b id="m_p2">–</b></div>
@@ -1052,15 +1054,29 @@ function calcMev() {
   const stopajTxt = stopajManual ? "Stopaj oranını elle girdin." : `Stopaj vadeye göre otomatik seçildi (6 aya kadar %17,5 · 1 yıla kadar %15 · 1 yıldan uzun %10).`;
   const fd = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
   const pill = (k, L, v, i) => { const e = $("m_" + k); $("m_" + k + "L").textContent = L; e.textContent = v; if (i != null) $("m_" + k + "i").textContent = i;
-    if (k !== "bal") e.style.fontSize = v.length >= 16 ? "13.5px" : v.length >= 14 ? "15px" : ""; }; // büyük tutarlar kutuya sığsın
+    if (k !== "bal") e.style.fontSize = v.length >= 16 ? "13.5px" : v.length >= 14 ? "15px" : ""; // büyük tutarlar kutuya sığsın
+    if (k === "p1") $("m_p1i").classList.toggle("uy", /tatil|arife/.test(i || "")); };
   const sTxt = `%${nfx(s * 100)}`, netY = pct(r * (1 - s) * 100);
+  // Vade sonu tatile/arifeye denk geliyorsa yalnızca uyarı (hesap seçilen gün sayısıyla kalır)
+  const end1 = addDays(start, g), wd = (d) => d.toLocaleDateString("tr-TR", { weekday: "long" });
+  const tAd = g ? tatilAdi(end1) : null, aAd = g && !tAd ? arifeAdi(end1) : null;
+  let tNot = "";
+  if (tAd) {
+    const nb = nextBiz(end1), g2 = g + dayDiff(end1, nb), ilk = n === 1 ? "Vade sonu" : "İlk vade sonu";
+    $("m_warn").innerHTML = `📅 <b>${ilk} tatile denk geliyor:</b> ${fd(end1)} ${wd(end1)} (${tAd}). İlk iş günü <b>${fd(nb)} ${wd(nb)}</b>; vade <b>${g2} gün</b> açılabilir. Hesap ${g} güne göre yapıldı, bilginiz olsun.`;
+    tNot = `Not: ${ilk} ${fd(end1)} ${wd(end1)} (${tAd}) gününe denk geliyor. Vade, ilk iş günü olan ${fd(nb)} ${wd(nb)} tarihine göre ${g2} gün olarak açılabilir; yukarıdaki tutarlar ${g} gün içindir.`;
+  } else if (aAd) {
+    $("m_warn").innerHTML = `📅 <b>${n === 1 ? "Vade sonu" : "İlk vade sonu"} arifeye denk geliyor:</b> ${fd(end1)} ${wd(end1)} (${aAd}, yarım gün çalışılır). Bilginiz olsun.`;
+    tNot = `Not: ${n === 1 ? "Vade sonu" : "İlk vade sonu"} ${fd(end1)} ${wd(end1)} ${aAd} (yarım gün) gününe denk geliyor.`;
+  }
+  $("m_warn").hidden = !(tAd || aAd);
   if (n === 1) {
     const end = addDays(start, g);
     $("m_bigLabel").textContent = "Net getiri";
     $("m_out").textContent = tl(net1);
     $("m_outi").textContent = `${g} gün · yıllık net oran ${netY}`;
     pill("bal", "Vade sonu bakiye", tl(P + net1));
-    pill("p1", "Vade sonu", fd(end), end.toLocaleDateString("tr-TR", { weekday: "long" }));
+    pill("p1", "Vade sonu", fd(end), wd(end) + (tAd ? " · tatil ⚠️" : aAd ? " · arife" : ""));
     pill("p2", "Brüt faiz", tl(brut1));
     pill("p3", `Stopaj (${sTxt})`, "−" + tl(brut1 * s));
     pill("p4", "Günlük net", tl(g ? net1 / g : 0));
@@ -1068,7 +1084,7 @@ function calcMev() {
       [`Anapara: ${tl(P)}`, `Vade: ${g} gün (${fd(start)} – ${fd(end)})`, `Yıllık brüt faiz oranı: %${nfx(r * 100)}`],
       [`Brüt faiz: ${tl(brut1)}`, `Stopaj (${sTxt}): −${tl(brut1 * s)}`, `Net faiz: ${tl(net1)}`, `Vade sonu bakiye: ${tl(P + net1)}`],
       [`Günlük net getiri: ${tl(g ? net1 / g : 0)}`, `Yıllık net oran: ${netY}`],
-    ]) : "";
+    ], tNot) : "";
   } else {
     let bal = P, brutT = 0, stT = 0;
     const d = new Date(start);
@@ -1084,14 +1100,14 @@ function calcMev() {
     $("m_out").textContent = tl(bal - P);
     $("m_outi").textContent = `${g} gün × ${n} vade · toplam ${Math.round(g * n)} gün`;
     pill("bal", "Son bakiye", tl(bal));
-    pill("p1", "Son vade", fd(d), d.toLocaleDateString("tr-TR", { weekday: "long" }));
+    pill("p1", "Son vade", fd(d), wd(d) + (tatilAdi(d) ? " · tatil" : ""));
     pill("p2", "Toplam brüt faiz", tl(brutT));
     pill("p3", `Toplam stopaj (${sTxt})`, "−" + tl(stT));
     pill("p4", "İlk vade net faiz", tl(net1));
     mevOzet = P && g && r ? ozetMetni("VADELİ MEVDUAT ÖZETİ", [
       [`Anapara: ${tl(P)}`, `Vade: ${g} gün × ${n} dönem (toplam ${Math.round(g * n)} gün)`, `Başlangıç: ${fd(start)} · Son vade: ${fd(d)}`, `Yıllık brüt faiz oranı: %${nfx(r * 100)}`],
       [`İlk vade net faiz: ${tl(net1)}`, `Toplam brüt faiz: ${tl(brutT)}`, `Toplam stopaj (${sTxt}): −${tl(stT)}`, `Toplam net faiz: ${tl(bal - P)}`, `Son bakiye: ${tl(bal)}`],
-    ], "Her vade sonunda net faizin anaparaya eklenip aynı oranla yenilendiği varsayılmıştır.") : "";
+    ], [tNot, "Her vade sonunda net faizin anaparaya eklenip aynı oranla yenilendiği varsayılmıştır."].filter(Boolean).join("\n")) : "";
   }
   calcExtra(P, r, g, start);
   // Yıl gün sayısı vadenin düştüğü yıllara göre otomatik
@@ -1115,6 +1131,22 @@ function isHoliday(d) {
   return TK_FIXED.includes(md) || (TK_REL[d.getFullYear()] || []).includes(md);
 }
 function nextBiz(d) { const x = new Date(d); while (isHoliday(x)) x.setDate(x.getDate() + 1); return x; }
+// Vade sonu kontrolü: günün tatil adı (bayram / resmi tatil / hafta sonu), değilse null
+const TK_AD = { "01-01": "Yılbaşı", "04-23": "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı", "05-01": "1 Mayıs Emek ve Dayanışma Günü", "05-19": "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı",
+  "07-15": "15 Temmuz Demokrasi ve Millî Birlik Günü", "08-30": "30 Ağustos Zafer Bayramı", "10-29": "29 Ekim Cumhuriyet Bayramı" };
+function tatilAdi(d) {
+  const md = ymd(d).slice(5), i = (TK_REL[d.getFullYear()] || []).indexOf(md);
+  if (i >= 0) return i < 3 ? "Ramazan Bayramı" : "Kurban Bayramı";
+  if (TK_AD[md]) return TK_AD[md];
+  const w = d.getDay(); return w === 0 || w === 6 ? "hafta sonu" : null;
+}
+// Arife (yarım gün çalışılır): 28 Ekim ve bayramların bir önceki günü
+function arifeAdi(d) {
+  if (tatilAdi(d)) return null;
+  const y = addDays(d, 1), r = TK_REL[y.getFullYear()] || [], md = ymd(y).slice(5);
+  if (ymd(d).slice(5) === "10-28") return "Cumhuriyet Bayramı arifesi";
+  return r[0] === md ? "Ramazan Bayramı arifesi" : r[3] === md ? "Kurban Bayramı arifesi" : null;
+}
 function addMonthsC(d, m) { // ay sonunu aşarsa ayın son günü
   const day = d.getDate(), x = new Date(d.getFullYear(), d.getMonth() + m, 1, 12);
   x.setDate(Math.min(day, new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate()));
