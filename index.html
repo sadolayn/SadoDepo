@@ -60,6 +60,7 @@
   @keyframes kyKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   /* ===== PPK (TCMB faiz kararı) kayan yazının başında: 2 gün önce uyarı, karar günü 14:15'ten sonra karar ===== */
   .kyOge.ppk { color: #fff; }
+  .kyOge b.yn { color: #fff; background: #e5383b; border-radius: 6px; padding: 1px 6px; margin: 0 6px 0 0; font-size: 11px; letter-spacing: .5px; }
   .kyOge b.uy { color: #1a0a05; background: #ef8a5d; border-radius: 6px; padding: 1px 7px; margin: 0 6px 0 0; font-size: 11.5px; letter-spacing: .5px; }
   .kyOge b.tc { color: #0b1220; background: #cfd8e6; border-radius: 6px; padding: 1px 7px; margin: 0 6px 0 0; font-size: 11.5px; letter-spacing: .5px; }
   .kyOge.ppk::after { color: #8a3d22; }
@@ -600,7 +601,10 @@
   const kutu = document.getElementById("kayan"), ser = document.getElementById("kayanSer");
   if (!kutu) return;
   // Sade: iki cümle, ikisi de dokununca ilgili bölüme açılır
+  // [bölüm, cümle, son gün (isteğe bağlı)] — son günü geçen cümle kendiliğinden kalkar
+  const bugunTR = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);
   const dizi = [
+    ["iscep", "🌍 <b class=\"yn\">YENİ</b>Yurt dışına para göndermek artık <b>dakikalar</b> sürüyor, hem de sabit ücretle. Nasıl mı? <b class=\"gir\">İş Bankası Gündemi › İşCep</b>", "2026-12-31"],
     ["iscep", "🚀 İşCep'in <b>gizli süper güçleri</b> neler, biliyor musun? Hepsi ve daha fazlası <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde"],
     ["black", "🖤 Peki ya <b>İş Black</b> ve <b>İş Plus</b>? Ayrıcalıkların ayrıntısı <b class=\"gir\">İş Bankası Gündemi › İş Black · İş Plus</b> bölümünde"],
   ];
@@ -609,7 +613,7 @@
   let ppk = null;
   function ciz() {
     const tek = (ppk ? `<span class="kyOge ppk" data-h="ppk">${ppk.html}</span>` : "") +
-      dizi.map(([h, x]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}" data-h="${h}">${x}</span>`).join("");
+      dizi.filter((d) => !d[2] || bugunTR <= d[2]).map(([h, x]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}" data-h="${h}">${x}</span>`).join("");
     ser.innerHTML = tek + tek; // iki kopya: kesintisiz döngü
     kutu.hidden = false;
     requestAnimationFrame(() => { const w = ser.scrollWidth / 2; ser.style.setProperty("--sure", Math.max(25, Math.round(w / 55)) + "s"); });
