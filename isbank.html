@@ -1365,13 +1365,15 @@ function ipTiles() {
 function iscepIpHtml() {
   const day = Math.floor(Date.now() / 864e5);
   if (!IPUCU.length) return '<div class="sfmsg">İpuçları yükleniyor…</div>';
-  if (ipGun == null) ipGun = day % IPUCU.length;
+  // Yeni eklenen ipucu (yeni: tarih, 14 gün) önce "Günün ipucu" olur ve YENİ etiketi taşır
+  const taze = (x) => x.yeni && Date.now() - new Date(x.yeni + "T00:00:00") < 14 * 864e5;
+  if (ipGun == null) { const yi = IPUCU.findIndex(taze); ipGun = yi >= 0 ? yi : day % IPUCU.length; }
   const g = IPUCU[ipGun];
-  const kart = (x, i) => `<div class="ipk" id="ip${i}"><div class="iph"><i>${x.ic}</i><b>${esc(x.t)}</b></div><p>${esc(x.d)}</p><div class="ipn">📍 ${esc(x.n)}</div><div class="ipl"><a href="${x.u}" target="_blank" rel="noopener">${x.src === "uygulama" ? "İşCep uygulamasında · ayrıntı" : (x.u.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr") + "'de ayrıntı"} ↗</a>${x.git ? `<button type="button" class="ipgo" data-camp="${esc(x.git)}">${esc(x.gitAd || x.git)} ›</button>` : ""}</div></div>`;
+  const kart = (x, i) => `<div class="ipk" id="ip${i}"><div class="iph"><i>${x.ic}</i><b>${esc(x.t)}${taze(x) ? '<span class="newtag">YENİ</span>' : ""}</b></div><p>${esc(x.d)}</p><div class="ipn">📍 ${esc(x.n)}</div><div class="ipl"><a href="${x.u}" target="_blank" rel="noopener">${x.src === "uygulama" ? "İşCep uygulamasında · ayrıntı" : (x.u.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr") + "'de ayrıntı"} ↗</a>${x.git ? `<button type="button" class="ipgo" data-camp="${esc(x.git)}">${esc(x.gitAd || x.git)} ›</button>` : ""}</div></div>`;
   const L = IPUCU.map((x, i) => [x, i]).filter(([x]) => !ipSec || x.k === ipSec);
   const bas = ipSec ? `<div class="ipsec"><b>${(IPK.find((c) => c[0] === ipSec) || [])[1] || ""} ${esc((IPK.find((c) => c[0] === ipSec) || [])[2] || "")}</b><span>${L.length} ipucu</span><button type="button" data-ipk="">🌟 Hepsine dön</button></div>` : "";
   return (ipSec ? `<div class="iphero mini"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in gizli süper güçleri 🚀</b></div>` : `<div class="iphero"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in gizli süper güçleri 🚀</b><span>800'den fazla işlemin içinden en çok “wow!” dedirtenler. Her gün biri öne çıkar.</span></div>`) + `
-    <div class="ipgun"><div class="iph"><i>${g.ic}</i><div><em>${ipTorba ? `İpucu · ${IPUCU.length - ipTorba.length}/${IPUCU.length}` : "Günün ipucu"}</em><b>${esc(g.t)}</b></div></div><p>${esc(g.d)}</p><div class="ipn">📍 ${esc(g.n)}</div>
+    <div class="ipgun"><div class="iph"><i>${g.ic}</i><div><em>${ipTorba ? `İpucu · ${IPUCU.length - ipTorba.length}/${IPUCU.length}` : "Günün ipucu"}</em><b>${esc(g.t)}${taze(g) ? '<span class="newtag">YENİ</span>' : ""}</b></div></div><p>${esc(g.d)}</p><div class="ipn">📍 ${esc(g.n)}</div>
       <div class="ipl"><a href="${g.u}" target="_blank" rel="noopener">Ayrıntı ↗</a>${ipGecmis.length ? `<button type="button" id="ipGeri">◀ Önceki</button>` : ""}<button type="button" id="ipZar">${ipTorba && !ipTorba.length ? "🔁 Hepsini gördün · baştan" : "🎲 Bir tane daha"}</button></div></div>` + bas + `
     ${L.map(([x, i], n) => { const p = n ? L[n - 1][0] : null; let h = "";
       if (x.k === "ayar" && (!p || p.k !== "ayar")) h += `<div class="ipay"><b>⚙️ Bir kez ayarla, hep kullan</b><span>Bunlar İşCep'te <b>bir kez</b> açılır, sonra her gün kendiliğinden çalışır. Çoğu <b>Profil ve Ayarlar</b> menüsünde, kartla ilgili olanlar <b>Kartlar</b> menüsünde.</span></div>`;

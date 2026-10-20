@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-10-19",
+ "kontrol": "2026-10-21",
  "not": "Haftada bir isbank.com.tr ile karşılaştırılır. src=uygulama olanlar İşCep uygulamasında görülen, isbank.com.tr'de ayrıca anlatılmayan özelliklerdir.",
  "kategoriler": [
   {
@@ -49,6 +49,16 @@
   }
  ],
  "ipuclari": [
+  {
+   "k": "para",
+   "ic": "🌍",
+   "t": "Yurt dışına dakikalar içinde para gönder: Visa ile",
+   "d": "ABD'ye USD, Avrupa ülkelerine EUR, İngiltere'ye GBP; para alıcının bankasına dakikalar içinde iletilir. 250 TL sabit ücret; muhabir banka masrafı yok, gönderilen tutardan kesinti yapılmaz. İşlem başına 30 – 5.000 USD (veya karşılığı), günlük 10.000 USD, aylık 50.000 USD. 18 yaş üstü bireysel müşteriler; kendi ya da başkasının yurt dışı hesabına gönderilebilir. Takip: İşlem Takibi ekranı.",
+   "n": "Para Aktar › Başka Hesaba › Visa ile Yurt Dışı Para Transferi",
+   "u": "https://www.isbank.com.tr/visa-ile-yurt-disi-para-transferi",
+   "src": "isbank.com.tr",
+   "yeni": "2026-10-21"
+  },
   {
    "k": "para",
    "ic": "💰",
