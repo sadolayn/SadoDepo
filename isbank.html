@@ -344,6 +344,7 @@
   .dq .nav button, .daycard .more { border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 999px; padding: 7px 14px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
   .dq .score { font-size: 12px; color: var(--muted); }
   .dq .src { font-size: 11px; color: #8fb0ff; margin-bottom: 4px; }
+  .dq .src::after { content: none; }
   .congrats { animation: cg .6s ease; } @keyframes cg { 0% { transform: scale(.9); opacity: 0; } 60% { transform: scale(1.05); } 100% { transform: none; opacity: 1; } }
   .fact { transition: opacity .25s; } .fact.fade { opacity: 0; }
   .chipbar .tfil { margin: 6px 0 0; padding: 0 0 2px; flex-wrap: wrap; gap: 5px; overflow: visible; }
@@ -692,7 +693,9 @@ const idsFor = (k) => {
   if (k === "İşCep") return iscep ? iscep.surumler.map((v) => "v:" + v.surum) : [];
   if (k === "📰 Güncel") return live.map((x) => "g:" + (x.u || x.t));
   if (k === "Finans") return fin ? ["f:" + fin.periods[fin.periods.length - 1]] : [];
-  if (k === "Şubeler" || k === "Soru" || k === "Tarihçe" || k === "Black") return [];
+  // Soru: son 21 günde eklenen sorular menüde sayı rozetiyle görünür
+  if (k === "Soru") return (typeof ISQ !== "undefined" ? ISQ : []).filter((q) => q[5] && (Date.now() - new Date(q[5] + "T00:00:00")) / 864e5 <= 21).map((q) => "s:" + q[0]);
+  if (k === "Şubeler" || k === "Tarihçe" || k === "Black") return [];
   if (k === "Kampanya") return bkamp ? bkamp.kategoriler.flatMap((c) => c.kampanyalar.map((x) => "b:" + x.url)) : [];
   if (k === "📅 Takvim") return [];
   return all.filter((h) => h.kategori === k).map((h) => "n:" + (h.url || h.baslik));
@@ -1597,12 +1600,41 @@ function campQs() {
   return Q.sort(() => Math.random() - 0.5).slice(0, 4);
 }
 let QD = null, qI = 0, qDone = false;
+// Güne bağlı rastgele sayı: aynı gün herkes aynı sırayı görür, ertesi gün sıra değişir
+function gunRng(seed) {
+  return () => { seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function karistir(a, r) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const yeniSoru = (q) => q[5] && (Date.now() - new Date(q[5] + "T00:00:00")) / 864e5 <= 21;
+// Deste: sorular konu konu ayrılır, her konu kendi içinde karıştırılır, sonra her konu destenin
+// başından sonuna eşit aralıklarla dağıtılır (bir konu ne başta ne sonda birikir).
+// Aynı konudan iki soru art arda gelirse araya en yakın başka konudan soru alınır.
 function deck() {
   if (QD) return QD;
-  const pool = (typeof ISQ !== "undefined" ? ISQ : []).map((x) => ({ q: x[0], o: x[1], c: x[2], src: "" }));
-  const off = (dayIdx() * 7) % (pool.length || 1); // her gün farklı yerden başla
-  const rest = [...pool.slice(off), ...pool.slice(0, off)], cq = campQs();
-  QD = []; rest.forEach((x, i) => { if (i % 3 === 0 && cq.length) QD.push(cq.shift()); QD.push(x); }); QD.push(...cq); // güncel sorular araya serpiştirilir
+  const r = gunRng(dayIdx() * 7919 + 13), KON = typeof ISQ_KONU !== "undefined" ? ISQ_KONU : {};
+  const gr = {};
+  (typeof ISQ !== "undefined" ? ISQ : []).forEach((x) => {
+    const k = x[4] || "genel", ord = karistir(x[1].map((_, i) => i), r); // şıklar da karışır
+    (gr[k] = gr[k] || []).push({ q: x[0], o: ord.map((i) => x[1][i]), c: ord.indexOf(x[2]), k, src: (yeniSoru(x) ? "🆕 Yeni soru · " : "") + (KON[k] || "") });
+  });
+  const D = [];
+  Object.values(gr).forEach((a) => { karistir(a, r); const o = r(); a.forEach((x, j) => { x.p = (j + o + (r() - 0.5) * 0.6) / a.length; D.push(x); }); });
+  D.sort((a, b) => a.p - b.p);
+  for (let i = 1; i < D.length; i++) {
+    if (D[i].k !== D[i - 1].k) continue;
+    const j = D.findIndex((x, n) => n > i && x.k !== D[i].k);
+    if (j > 0) { D.splice(i, 0, D.splice(j, 1)[0]); continue; }
+    // Sonda başka konu kalmadıysa bu soruyu öne, iki farklı konunun arasına taşı
+    const k = D[i].k, p = D.findIndex((x, n) => n > 0 && n < i - 1 && x.k !== k && D[n - 1].k !== k);
+    if (p > 0) { D.splice(p, 0, D.splice(i, 1)[0]); i--; }
+  }
+  // Güncel kampanya soruları başlarda, üç soruda bir araya serpiştirilir (Maximum konusu yanına gelmesin)
+  const cq = campQs();
+  for (let i = 0; cq.length && i <= D.length; i += 3) {
+    let n = i; while (n <= D.length && ((D[n - 1] && D[n - 1].k === "kart") || (D[n] && D[n].k === "kart"))) n++;
+    D.splice(n, 0, Object.assign(cq.shift(), { k: "kart" })); i = n;
+  }
+  QD = D;
   return QD;
 }
 let SC = { d: 0, t: 0, s: 0 }; try { SC = Object.assign(SC, JSON.parse(localStorage.getItem("isbQuiz") || "{}")); } catch (e) {}
@@ -1628,7 +1660,8 @@ function bindQ() {
   $("dqNext").onclick = () => { qI++; $("dqBox").innerHTML = qHtml(); bindQ(); };
 }
 function renderSoru() {
-  $("upd").textContent = "Güncel kampanya soruları her gün kendiliğinden yenilenir";
+  const yS = (typeof ISQ !== "undefined" ? ISQ : []).filter(yeniSoru).length;
+  $("upd").innerHTML = `🔀 ${typeof ISQ !== "undefined" ? ISQ.length : 0} soru her gün karışık gelir, aynı konu art arda gelmez${yS ? `<br>🆕 İşCep'in gizli özellikleri ve Bankamatik · Gişematik'ten <b>${yS} yeni soru</b>` : ""}`;
   $("list").innerHTML = `<div class="daycard dq" id="dqBox">${qHtml()}</div>`;
   bindQ();
 }
