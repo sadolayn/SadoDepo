@@ -381,6 +381,9 @@
   a.live b { display: block; font-size: 15px; font-weight: 600; line-height: 1.35; }
   a.live span { font-size: 12px; color: var(--muted); }
   a.live span i { font-style: normal; color: #8fb0ff; font-weight: 600; }
+  a.live.vd { border-left-color: #e5383b; } a.live.vd span i { color: #ff8a8c; }
+  .vdHes { margin-top: 14px; } .vdHes small { display: block; font-size: 12px; color: var(--muted); margin-bottom: 7px; }
+  .vdHes div { display: flex; flex-wrap: wrap; gap: 7px; } .vdHes a { font-size: 13px; padding: 7px 11px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
   /* ===== Günün kartı, takvim, grafikler, kampanya aciliyeti ===== */
   .nextev { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: linear-gradient(90deg, rgba(224,162,79,.14), rgba(224,162,79,.03)); border: 1px solid #4a3a22; border-radius: 14px; padding: 10px 12px; color: var(--ink, #f2f2f2); font: inherit; cursor: pointer; margin-bottom: 8px; }
   .nextev .n { font-size: 26px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1; text-align: center; min-width: 46px; }
@@ -640,7 +643,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   <div class="disc">
     <b>ℹ️ Bu sayfa kişisel bir projedir.</b>
     <p>Bilgiler kamuya açık kaynaklardan özenle derlenir ve düzenli olarak kontrol edilir. Ürün, kampanya ve koşulların en güncel ve kesin hâli için lütfen <a href="https://www.isbank.com.tr" target="_blank" rel="noopener">www.isbank.com.tr</a> ve <a href="https://www.maximum.com.tr" target="_blank" rel="noopener">www.maximum.com.tr</a> adreslerini ziyaret ediniz.</p>
-    <small>Seçilmiş haberler ve kampanyalar her sabah, "Güncel" sekmesi her saat otomatik güncellenir.</small>
+    <small>Seçilmiş haberler ve kampanyalar her sabah, "Güncel" ve "Video" sekmeleri her saat otomatik güncellenir.</small>
   </div>
 </div>
 
@@ -658,6 +661,7 @@ const CATS = [
   ["📅 Takvim", "#e0a24f", "📅"],
   ["Tümü", null, "📋"],
   ["📰 Güncel", "#5d8fe0", "📰"],
+  ["🎬 Video", "#e5383b", "🎬"],
   ["Haber", "var(--haber)", "🗞️"],
   ["Ürün", "var(--urun)", "🧾"],
   ["Dijital", "var(--dijital)", "💡"],
@@ -666,15 +670,15 @@ const CATS = [
   ["Finans", "#3a50f0", "📊"],
 ];
 const LBL = { "Maximum": "Maximum<br>Maximiles", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<small>Güncel · KAP</small>" };
-// Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
+// Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Video, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
 const MENU = [["Tarihçe", "🏛️"], ["İşCep", "📲"], ["Black", "🖤"], ["Maximum", "💳"], ["Kampanya", "🎁"], ["Şubeler", "📍"], ["📅 Takvim", "📅"], ["Haberler", "📰"], ["Soru", "❓"]];
-const NEWS = ["Tümü", "📰 Güncel", "Haber", "Ürün", "Dijital", "KAP"];
-const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
+const NEWS = ["Tümü", "📰 Güncel", "🎬 Video", "Haber", "Ürün", "Dijital", "KAP"];
+const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "🎬 Video": "🎬 Video", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
 let lastNews = "Tümü"; try { lastNews = localStorage.getItem("isbankNews") || "Tümü"; } catch (e) {}
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
-let bkamp = null, blk = null, fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null;
+let bkamp = null, blk = null, fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null, vids = [];
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 if (location.hash === "#maximum") cat = "Maximum"; // ana sayfadaki kampanya hatırlatıcısından gelince
 let ayr = "black", ipl = null; try { ayr = localStorage.getItem("isbankAyr") || "black"; } catch (e) {}
@@ -692,6 +696,7 @@ const idsFor = (k) => {
   if (k === "Maximum") return camps.map((c) => "c:" + c.baslik);
   if (k === "İşCep") return iscep ? iscep.surumler.map((v) => "v:" + v.surum) : [];
   if (k === "📰 Güncel") return live.map((x) => "g:" + (x.u || x.t));
+  if (k === "🎬 Video") return vids.map((x) => "y:" + x.u);
   if (k === "Finans") return fin ? ["f:" + fin.periods[fin.periods.length - 1]] : [];
   // Soru: son 21 günde eklenen sorular menüde sayı rozetiyle görünür
   if (k === "Soru") return (typeof ISQ !== "undefined" ? ISQ : []).filter((q) => q[5] && (Date.now() - new Date(q[5] + "T00:00:00")) / 864e5 <= 21).map((q) => "s:" + q[0]);
@@ -709,6 +714,7 @@ function seenInit() {
   all.forEach((h) => { if (ago(h.tarih) > 3) SEEN["n:" + (h.url || h.baslik)] = 1; });
   if (iscep) iscep.surumler.forEach((v) => { if (ago(v.tarih) > 7) SEEN["v:" + v.surum] = 1; });
   live.forEach((x) => { if (!x.d || ago(x.d) > 0.5) SEEN["g:" + (x.u || x.t)] = 1; });
+  vids.forEach((x) => { if (!x.d || ago(x.d) > 7) SEEN["y:" + x.u] = 1; });
   camps.forEach((c) => { if (!campUpd || ago(campUpd) > 3) SEEN["c:" + c.baslik] = 1; });
   if (fin) SEEN["f:" + fin.periods[fin.periods.length - 1]] = 1;
   seenSave();
@@ -725,7 +731,7 @@ function renderChips() {
   $("subeBar").onclick = () => { cat = cat === "Finans" ? "Tümü" : "Finans"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const go = (k) => { cat = k; if (NEWS.includes(k)) { lastNews = k; try { localStorage.setItem("isbankNews", k); } catch (e) {} } try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); window.scrollTo({ top: 0, behavior: "smooth" }); };
   const inNews = NEWS.includes(cat);
-  const nU = unseen("Tümü").length + unseen("📰 Güncel").length;
+  const nU = unseen("Tümü").length + unseen("📰 Güncel").length + unseen("🎬 Video").length;
   $("chips").innerHTML = MENU.map(([k, ic]) => {
     const on = k === "Haberler" ? inNews : k === cat;
     const u = k === "Haberler" ? nU : unseen(k).length;
@@ -1453,6 +1459,17 @@ function renderLive() {
     + `<p class="note" style="margin-top:8px">Bu liste haber sitelerinden ve Google Haberler'den her saat otomatik toplanır; habere dokununca yayıncının sitesinde açılır.</p>`;
 }
 
+// ===== Video: bankanın resmi YouTube kanalındaki son paylaşımlar (yeni ürünler çoğu zaman önce burada tanıtılıyor) =====
+const RESMI = [["▶️ YouTube", "https://www.youtube.com/user/turkiyeisbankasi"], ["📸 Instagram", "https://www.instagram.com/isbankasi/"], ["✖️ X", "https://twitter.com/isbankasi"], ["💼 LinkedIn", "https://www.linkedin.com/company/isbankasi"], ["👍 Facebook", "https://www.facebook.com/isbankasi"]];
+function renderVideo() {
+  if (liveUpd) $("upd").textContent = "Her saat otomatik · son: " + new Date(liveUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  const tarih = (d) => (Date.now() - new Date(d)) / 864e5 < 1 ? agoTxt(d) : new Date(d).toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+  const hesap = `<div class="vdHes"><small>Bankanın resmi hesapları</small><div>${RESMI.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join("")}</div></div>`;
+  if (!vids.length) { $("list").innerHTML = '<div class="empty">Videolar şu an alınamadı, birazdan tekrar bak.</div>' + hesap; return; }
+  $("list").innerHTML = vids.map((x) => `<a class="live vd" href="${esc(x.u)}" target="_blank" rel="noopener"><b>${isNew("y:" + x.u) ? '<span class="newtag" style="margin:0 6px 0 0">YENİ</span>' : ""}🎬 ${esc(x.t)}</b><span><i>YouTube</i>${x.d ? " · " + tarih(x.d) : ""}</span></a>`).join("") + hesap
+    + `<p class="note" style="margin-top:8px">Bankanın resmi YouTube kanalındaki son videolar her saat otomatik gelir; dokununca YouTube'da açılır. Instagram, X ve TikTok paylaşımları dışarıya açık bir akış sunmadığı için buraya otomatik alınamıyor, yukarıdaki bağlantılardan bakabilirsin.</p>`;
+}
+
 // ===== Bilanço grafikleri (bankanın çeyreklik resmi verisinden) =====
 function chartSvg(vals, labels, o) {
   const W = 340, H = 150, L = 6, R = 6, T = 18, B = 22, n = vals.length;
@@ -1698,6 +1715,7 @@ function renderList() {
   $("tfil").hidden = cat !== "Maximum" && cat !== "İşCep" && cat !== "Black";
   renderSoon();
   if (cat === "📰 Güncel") return renderLive();
+  if (cat === "🎬 Video") return renderVideo();
   if (cat === "📅 Takvim") return renderTakvim();
   if (cat === "Finans") return renderFinans();
   if (cat === "Kampanya") return renderBankaKamp();
@@ -1749,6 +1767,7 @@ function renderList() {
     try {
       const h = await Ortak.json("data/haberler.json");
       live = (h.cats && h.cats.isbank) || []; liveUpd = h.updated || null;
+      vids = h.isbvideo || [];
     } catch (e) {}
     if (!CATS.some((c) => c[0] === cat)) cat = "Tümü";
     try { fin = await Ortak.json("isbank/finans.json"); } catch (e) {}
@@ -1757,7 +1776,10 @@ function renderList() {
     try { blk = await Ortak.json("isbank/black.json"); } catch (e) {}
     try { ipl = await Ortak.json("isbank/isplus.json"); } catch (e) {}
     try { kontrol = (await Ortak.json("isbank/kontrol.json")).son_kontrol; } catch (e) {}
-    seenInit(); renderList(); renderChips();
+    seenInit();
+    // Video sekmesi sonradan eklendi: eski ziyaretçide 1 haftadan eski videolar okunmuş sayılsın
+    if (!SEEN._yv) { vids.forEach((x) => { if (!x.d || (Date.now() - new Date(x.d)) / 864e5 > 7) SEEN["y:" + x.u] = 1; }); SEEN._yv = 1; seenSave(); }
+    renderList(); renderChips();
   } catch (e) {
     Ortak.hata("list", { ne: "İş Bankası gündemi" });
   }

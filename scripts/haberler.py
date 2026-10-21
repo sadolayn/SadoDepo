@@ -87,7 +87,7 @@ def fetch(args):
             link = text(it.find("link"))
             if not link:
                 l = it.find(f"{ns}link"); link = l.get("href") if l is not None else ""
-            d = parse_date(text(it.find("pubDate")) or text(it.find(f"{ns}updated")) or text(it.find(f"{ns}published")) or text(it.find("{http://purl.org/dc/elements/1.1/}date")))
+            d = parse_date(text(it.find("pubDate")) or text(it.find(f"{ns}published")) or text(it.find(f"{ns}updated")) or text(it.find("{http://purl.org/dc/elements/1.1/}date")))
             if not t or not link.startswith("http"): continue
             if d and (d > NOW + dt.timedelta(hours=1) or NOW - d > max_age): continue
             out.append({"t": t[:220], "s": src_name, "u": link, "d": d.astimezone(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if d else None})
@@ -118,6 +118,9 @@ jobs = [(c, s, u) for c, lst in FEEDS.items() for s, u in lst] + [("okul", s, u)
 EKONOMIM = ("Ekonomim", "https://www.ekonomim.com/rss")
 EKONOMIM_ROUTE = {"gundem": "gundem", "dunya": "dunya", "teknoloji": "teknoloji", "spor": "spor"}  # gerisi (ekonomi, finans, piyasa…) → ekonomi
 jobs += [("_ekonomim", *EKONOMIM)]
+# İş Bankası resmi YouTube kanalı (adres isbank.com.tr alt bilgisindeki bağlantıdan); yeni ürün tanıtımları burada çıkıyor
+ISB_YT = ("İş Bankası YouTube", "https://www.youtube.com/feeds/videos.xml?channel_id=UC8taW8Ljy9xA_tiWy-1OPww")
+jobs += [("_isbvideo", *ISB_YT, dt.timedelta(days=90))]
 
 # ---------- Yazarlar ----------
 # Yeni yazar eklemek için listeye bir satır ekle: (kısa ad, görünen ad, Google Haberler araması, [ek RSS akışları])
@@ -134,6 +137,7 @@ for k, n, q, extra in YAZARLAR:
 with ThreadPoolExecutor(12) as ex:
     res = list(ex.map(fetch, jobs))
 
+isbvideo = []
 norm = lambda t: re.sub(r"[^\wçğıöşü]+", " ", t.lower()).strip()
 cats = {}
 ok_src = {}
@@ -142,6 +146,8 @@ for cat, src, items, err in res:
     else: ok_src.setdefault(cat, []).append(f"{src}:{len(items)}")
     if cat.startswith("_y_"):
         cats.setdefault(cat, []).extend(items); continue
+    if cat == "_isbvideo":
+        isbvideo = sorted(items, key=lambda x: x["d"] or "", reverse=True)[:15]; continue
     if cat == "_ekonomim":
         for x in items:
             seg = urllib.parse.urlparse(x["u"]).path.strip("/").split("/")[0]
@@ -191,6 +197,7 @@ print("::notice::" + " | ".join(f"{c}: {', '.join(v)}" for c, v in ok_src.items(
 total = sum(len(v) for v in cats.values())
 if total < 20: sys.exit(f"::error::Çok az haber ({total})")
 os.makedirs("data", exist_ok=True)
+print(f"::notice::isbvideo: {len(isbvideo)}")
 print("::notice::yazarlar: " + ", ".join(f"{y['n']}:{len(y['items'])}" for y in yazarlar))
-json.dump({"updated": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"), "cats": cats, "yazarlar": yazarlar}, open("data/haberler.json", "w"), ensure_ascii=False, separators=(",", ":"))
+json.dump({"updated": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"), "cats": cats, "yazarlar": yazarlar, "isbvideo": isbvideo}, open("data/haberler.json", "w"), ensure_ascii=False, separators=(",", ":"))
 print("yazıldı", total)
