@@ -78,13 +78,14 @@ try {
     son = n; $("n").textContent = n;
     $("nSub").textContent = n ? `son güncelleme ${new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}` : "şu an kimse yok · gelen olunca burada belirir";
     $("mob").textContent = L.filter((x) => x.d === "m").length; $("pc").textContent = L.filter((x) => x.d === "d").length;
-    const c = {}; L.forEach((x) => (c[x.p] = (c[x.p] || 0) + 1));
+    // Veritabanına herkes yazabildiği için sayfa adı yalnızca harf/rakam olarak kabul edilir (araya kod sokulamasın)
+    const c = {}; L.forEach((x) => { const p = String(x.p || "").replace(/[^a-z0-9_-]/gi, "").slice(0, 30) || "?"; c[p] = (c[p] || 0) + 1; });
     const S = Object.entries(c).sort((a, b) => b[1] - a[1]), mx = S.length ? S[0][1] : 1;
     $("pages").innerHTML = S.length ? S.map(([p, k]) => `<div class="row"><span>${AD[p] || "📄 " + p}</span><b>${k}</b><div class="bar"><i style="width:${(k / mx) * 100}%"></i></div></div>`).join("") : '<div class="empty">Şu an kimse yok</div>';
   }, (e) => { $("nSub").innerHTML = '<span class="err">Okuma izni yok: Firebase kurallarını yapıştırdın mı?</span>'; });
   onValue(ref(db, "gun"), (snap) => {
     const G = snap.val() || {}, D = [];
-    for (let i = 6; i >= 0; i--) { const k = gunOf(Date.now() - i * 864e5); D.push([k, G[k] || 0]); }
+    for (let i = 6; i >= 0; i--) { const k = gunOf(Date.now() - i * 864e5); D.push([k, Math.max(0, Math.floor(Number(G[k]) || 0))]); }
     const mx = Math.max(1, ...D.map((x) => x[1])), bugun = gunOf(Date.now());
     $("days").innerHTML = D.map(([k, v]) => `<div class="${k === bugun ? "today" : ""}"><em>${v}</em><i style="height:${(v / mx) * 100}%"></i>${k === bugun ? "Bugün" : new Date(k + "T12:00:00").toLocaleDateString("tr-TR", { weekday: "short" })}</div>`).join("");
     const top = D.reduce((a, b) => a + b[1], 0);
