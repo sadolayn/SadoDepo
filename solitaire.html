@@ -22,7 +22,7 @@
 <meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
 <style>
   :root {
-    --felt: #0f5a3a;
+    --felt: var(--masa, #0f5a3a);
     --ink: #f2f2f2;
     --muted: #8a8a8a;
     --accent: #e0a24f;
@@ -58,28 +58,12 @@
   .slot.stk.done { color: rgba(255,255,255,.15); }
 
   /* Kartlar */
-  .card {
-    position: absolute; border-radius: 7px; background: linear-gradient(180deg, #ffffff 0%, #f7f5f0 100%); color: #15161a;
+  /* Kart yüzü (renk, yazı, kalınlık, punto) ve kart arkası ⚙️ Ayarlar'dan gelir (kartmasa.js, "ust" düzeni) */
+  .board .card, .card.ghost {
+    position: absolute; border-radius: 7px; overflow: visible; background: linear-gradient(180deg, #ffffff 0%, #f7f5f0 100%); color: #15161a;
     box-shadow: 0 1px 2px rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.18); border: 1px solid rgba(0,0,0,.18);
     transition: left .2s cubic-bezier(.3,.7,.3,1), top .2s cubic-bezier(.3,.7,.3,1), transform .15s; will-change: left, top;
   }
-  .card.red { color: var(--red); }
-  .card .r { position: absolute; top: 1px; left: 3px; line-height: 1; font-weight: 800; font-family: "Arial Narrow", system-ui, sans-serif; letter-spacing: -1px; }
-  .card .s1 { position: absolute; top: 2px; right: 3px; line-height: 1; }
-  .card .s2 { position: absolute; left: 0; right: 0; bottom: 3%; text-align: center; line-height: 1; }
-  /* J Q K: kendi tasarımımız — altın çerçeve içinde büyük harf */
-  .card .fc { position: absolute; left: 12%; right: 12%; top: 34%; bottom: 7%; border-radius: 4px; border: 1.5px solid #c9973f; background: linear-gradient(160deg, #fff8e8, #f3e2bb); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: .95; }
-  .card .fc b { font-family: Georgia, "Times New Roman", serif; font-weight: 700; }
-  .card .fc i { font-style: normal; }
-  .card.back > * { display: none; }
-  .card.back { border: 2px solid #fff; }
-  .card.back::after { content: ""; position: absolute; inset: 3px; border-radius: 4px; }
-  .back-altin .card.back { background: #b9802e; }
-  .back-altin .card.back::after { background: repeating-linear-gradient(45deg, rgba(255,255,255,.16) 0 4px, transparent 4px 8px), radial-gradient(circle at 50% 50%, #f1c57c 0 18%, transparent 19%), linear-gradient(160deg, #d39a45, #9c6522); }
-  .back-lacivert .card.back { background: #1b2a6b; }
-  .back-lacivert .card.back::after { background: repeating-linear-gradient(45deg, rgba(224,162,79,.35) 0 1px, transparent 1px 7px), repeating-linear-gradient(-45deg, rgba(224,162,79,.35) 0 1px, transparent 1px 7px), linear-gradient(160deg, #2a3fa8, #121c55); }
-  .back-bordo .card.back { background: #6d1426; }
-  .back-bordo .card.back::after { background: radial-gradient(circle, rgba(255,214,150,.35) 1.2px, transparent 1.6px) 0 0 / 7px 7px, linear-gradient(160deg, #9b2036, #4f0d1b); }
   .card.hint { box-shadow: 0 0 0 3px var(--accent), 0 0 16px rgba(224,162,79,.8); }
   .card.lift { transform: translateY(-3px); }
   .shake { animation: shake .3s; }
@@ -116,37 +100,12 @@
   .solToast.show { opacity: 1; transform: translate(-50%, 0); }
   .solToast b { color: #fff; } .solToast small { color: #b8a27a; }
 
-  /* Ayarlar (alt pencere) */
-  .sheet { position: fixed; inset: 0; z-index: 1100; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; }
-  .sheet[hidden] { display: none; }
-  .sheet .in { width: 100%; max-width: 560px; max-height: 88vh; overflow-y: auto; background: #121212; border-radius: 22px 22px 0 0; border: 1px solid #2a2a2a; border-bottom: 0; padding: 14px 18px calc(18px + env(safe-area-inset-bottom)); animation: up .22s ease-out; color: #eee; }
-  @keyframes up { from { transform: translateY(40px); opacity: 0; } }
-  .sheet h2 { display: flex; align-items: center; justify-content: space-between; margin: 0 0 6px; font-size: 19px; }
-  .sheet h2 button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: #222; color: #bbb; font-size: 16px; cursor: pointer; }
-  .sheet h4 { margin: 16px 0 6px; font-size: 11.5px; letter-spacing: 1.4px; color: #8a8a8a; font-weight: 700; }
-  .opt { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #1f1f1f; font-size: 15.5px; }
-  .opt span { flex: 1; } .opt small { display: block; font-size: 12px; color: #8a8a8a; margin-top: 2px; }
-  .sw { position: relative; width: 50px; height: 30px; flex: none; }
-  .sw input { opacity: 0; width: 0; height: 0; position: absolute; }
-  .sw i { position: absolute; inset: 0; border-radius: 99px; background: #3a3a3a; transition: background .2s; cursor: pointer; }
-  .sw i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
-  .sw input:checked + i { background: #3fc283; }
-  .sw input:checked + i::after { transform: translateX(20px); }
-  .colors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-  .colors button { aspect-ratio: 1.5; border-radius: 12px; border: 2px solid transparent; cursor: pointer; font: 600 11px system-ui; color: rgba(255,255,255,.85); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5px; text-shadow: 0 1px 2px rgba(0,0,0,.6); }
-  .colors button.on { border-color: #fff; box-shadow: 0 0 0 2px var(--accent); }
-  .backs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .backs button { border: 2px solid transparent; background: none; border-radius: 12px; padding: 6px; cursor: pointer; color: #bbb; font: 600 11.5px system-ui; }
-  .backs button.on { border-color: var(--accent); }
-  .backs .card { position: relative; display: block; width: 46px; height: 66px; margin: 0 auto 4px; }
-  .seg { display: flex; flex: none; gap: 3px; padding: 3px; border-radius: 11px; background: #222; }
-  .seg button { border: 0; background: none; color: #aaa; padding: 7px 14px; border-radius: 8px; font: 700 14px system-ui, sans-serif; cursor: pointer; }
-  .seg button.on { background: var(--accent); color: #1a1205; }
   .rec { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
   .rec div { background: #1a1a1a; border-radius: 12px; padding: 10px 4px; }
   .rec b { display: block; font-size: 18px; } .rec span { font-size: 11px; color: #8a8a8a; }
 </style>
 <script src="cardsound.js?v=3"></script>
+<script src="kartmasa.js?v=2" data-oyun="solitaire" data-masa="yesil" data-duzen="ust" data-hiz="yok" data-tema="1"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
@@ -178,35 +137,13 @@
 
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 
-<div class="sheet" id="sheet" hidden>
-  <div class="in">
-    <h2>⚙️ Ayarlar <button id="shClose" aria-label="Kapat">✕</button></h2>
-    <h4>OYUN</h4>
-    <label class="opt"><span>🔊 Ses efektleri</span><span class="sw"><input type="checkbox" id="oSes"><i></i></span></label>
-    <label class="opt"><span>💡 Otomatik ipucu<small>Bir süre hamle yapmazsan yol gösterir</small></span><span class="sw"><input type="checkbox" id="oIp"><i></i></span></label>
-    <label class="opt"><span>⚡ Otomatik tamamlama<small>Bütün kartlar açılınca kendiliğinden bitirir</small></span><span class="sw"><input type="checkbox" id="oTam"><i></i></span></label>
-    <label class="opt"><span>🃏 3 kart modu<small>Desteden 3'er kart açılır (yeni oyunda geçerli)</small></span><span class="sw"><input type="checkbox" id="o3"><i></i></span></label>
-    <div class="opt"><span>✋ Deste tarafı<small>Solaksan desteyi sola al</small></span><span class="seg" id="oYan"><button type="button" data-k="sol">Sol</button><button type="button" data-k="sag">Sağ</button></span></div>
-    <h4>MASA RENGİ</h4>
-    <div class="colors" id="colors"></div>
-    <h4>KART ARKASI</h4>
-    <div class="backs" id="backs"></div>
-    <h4>REKORLARIN</h4>
-    <div class="rec" id="rec"></div>
-  </div>
-</div>
-
 <script>
 const SUITS = ["♠", "♥", "♣", "♦"];
 const RANK = { 1: "A", 11: "J", 12: "Q", 13: "K" };
 const isRed = (s) => s === "♥" || s === "♦";
 const $ = (x) => document.getElementById(x);
-const MASA = [
-  ["yesil", "Çuha yeşili", "#0f5a3a"], ["zumrut", "Zümrüt", "#0b6b5c"], ["lacivert", "Gece mavisi", "#14306b"], ["mavi", "Okyanus", "#1f5f9a"],
-  ["bordo", "Bordo", "#6b1a2a"], ["mor", "Mürdüm", "#43215e"], ["kahve", "Ceviz", "#4a2f1d"], ["antrasit", "Antrasit", "#24272d"],
-];
-const ARKA = [["altin", "Altın"], ["lacivert", "Lacivert"], ["bordo", "Bordo"]];
-const OPT = { ses: true, ip: false, tam: true, uc: true, masa: "yesil", arka: "altin", sol: false };
+// Masa rengi, kart arkası ve kart yüzü ortak ⚙️ ayarlardan (kartmasa.js); burada yalnızca Solitaire'e özel olanlar
+const OPT = { ses: true, ip: false, tam: true, uc: true, sol: false };
 try { Object.assign(OPT, JSON.parse(localStorage.getItem("solOpt") || "{}")); } catch (e) {}
 if (window.CardSfx && CardSfx.muted) OPT.ses = !CardSfx.muted();
 const saveOpt = () => { try { localStorage.setItem("solOpt", JSON.stringify(OPT)); } catch (e) {} };
@@ -219,14 +156,6 @@ let els = new Map();
 let timer = null, started = 0, elapsed = 0;
 let DRAW = OPT.uc ? 3 : 1;
 let dealAnim = false;
-
-function applyLook() {
-  const m = MASA.find((x) => x[0] === OPT.masa) || MASA[0];
-  document.documentElement.style.setProperty("--felt", m[2]);
-  document.querySelector('meta[name="theme-color"]').setAttribute("content", m[2]);
-  document.body.classList.remove(...ARKA.map((a) => "back-" + a[0]));
-  document.body.classList.add("back-" + OPT.arka);
-}
 
 function deal() {
   DRAW = OPT.uc ? 3 : 1;
@@ -434,7 +363,7 @@ function hint(auto) {
 }
 // Otomatik ipucu: 25 sn hamle yoksa
 let idleT = null;
-function idle() { clearTimeout(idleT); if (!OPT.ip) return; idleT = setTimeout(() => { if (S && !isWon() && !$("overlay").classList.contains("show") && $("sheet").hidden) hint(true); idle(); }, 25000); }
+function idle() { clearTimeout(idleT); if (!OPT.ip) return; idleT = setTimeout(() => { if (S && !isWon() && !$("overlay").classList.contains("show") && !ayarAcik()) hint(true); idle(); }, 25000); }
 function isStuck() {
   if (isWon() || canAutoFinish()) return false;
   if (rankMoves().length) return false;
@@ -526,18 +455,14 @@ function confetti() {
 }
 
 // ---------- Çizim ----------
-function cardHTML(c, cw) {
-  const fs = Math.max(16, Math.round(cw * 0.5));
-  const ten = c.r === 10 ? ";letter-spacing:-2px;transform:scaleX(.82);transform-origin:left top" : "";
-  return `<span class="r" style="font-size:${fs}px${ten}">${RANK[c.r] || c.r}</span><span class="s1" style="font-size:${Math.round(cw * 0.42)}px">${c.s}</span>`
-    + `<span class="s2" style="font-size:${Math.round(cw * 0.86)}px">${c.s}</span>`;
-}
+function cardHTML(c) { return KartMasa.yuz(c); }
 function render() {
   const board = $("board");
   const W = board.clientWidth;
   const gap = Math.max(3, Math.round(W * 0.009));
   const cw = Math.floor((W - gap * 6) / 7);
   const ch = Math.round(cw * 1.5);
+  document.body.style.setProperty("--cw", cw + "px"); // kart yüzü bu boya göre çizilir (uçan kart dahil)
   const x = (i) => i * (cw + gap);
   const topY = 2, tabY = topY + ch + Math.round(ch * 0.2);
   const seen = new Set();
@@ -566,8 +491,8 @@ function render() {
   const putCard = (c, left, y, up, onTap) => {
     let el = els.get(c.id), fresh = false;
     if (!el) { el = document.createElement("div"); els.set(c.id, el); board.appendChild(el); fresh = true; }
-    el.className = "card" + (up ? (isRed(c.s) ? " red" : "") : " back");
-    el.innerHTML = up ? cardHTML(c, cw) : "";
+    el.className = up ? KartMasa.sinif(c) : "card back";
+    el.innerHTML = up ? cardHTML(c) : "";
     Object.assign(el.style, { width: cw + "px", height: ch + "px", zIndex: z++ });
     if (fresh && dealAnim) {
       // Dağıtma: kartlar desteden masaya uçar
@@ -595,7 +520,7 @@ function render() {
   let maxBottom = tabY + ch;
   S.tab.forEach((col, ti) => {
     const nDown = col.filter((c) => !c.up).length, nUp = col.length - nDown;
-    let downOff = Math.round(ch * 0.14), upOff = Math.round(ch * 0.33);
+    let downOff = Math.round(ch * 0.14), upOff = Math.round(Math.max(ch * 0.33, cw * (0.03 + 0.39 * KartMasa.olcu().kp) + 3));
     const need = nDown * downOff + Math.max(0, nUp - 1) * upOff + ch;
     if (need > avail && nUp > 1) upOff = Math.max(Math.round(ch * 0.2), Math.floor((avail - ch - nDown * downOff) / (nUp - 1)));
     let y = tabY;
@@ -640,7 +565,7 @@ let touchY0 = 0;
 document.addEventListener("touchstart", (e) => { touchY0 = e.touches[0].clientY; }, { passive: true });
 document.addEventListener("touchmove", (e) => {
   if (e.touches.length !== 1 || window.scrollY > 0 || e.touches[0].clientY - touchY0 <= 0) return;
-  const kutu = e.target.closest && e.target.closest(".sheet .in");
+  const kutu = e.target.closest && e.target.closest(".kmSheet .in");
   if (kutu && kutu.scrollTop > 0) return;
   if (e.cancelable) e.preventDefault();
 }, { passive: false });
@@ -657,28 +582,31 @@ function wishScreen() {
 }
 
 // ---------- Ayarlar ----------
-function openSettings() {
-  $("oSes").checked = OPT.ses; $("oIp").checked = OPT.ip; $("oTam").checked = OPT.tam; $("o3").checked = OPT.uc;
-  $("oYan").querySelectorAll("button").forEach((b) => b.classList.toggle("on", (b.dataset.k === "sol") === !!OPT.sol));
-  $("colors").innerHTML = MASA.map(([k, ad, c]) => `<button data-k="${k}" class="${OPT.masa === k ? "on" : ""}" style="background:radial-gradient(120% 90% at 50% 30%, color-mix(in srgb, ${c} 85%, #fff), ${c} 60%)">${ad}</button>`).join("");
-  $("backs").innerHTML = ARKA.map(([k, ad]) => `<button data-k="${k}" class="back-${k} ${OPT.arka === k ? "on" : ""}"><span class="card back"></span>${ad}</button>`).join("");
-  $("rec").innerHTML = `<div><b>${REC.wins}</b><span>Kazanılan</span></div><div><b>${REC.best || "–"}</b><span>En yüksek puan</span></div><div><b>${REC.bestT ? fmtT(REC.bestT) : "–"}</b><span>En hızlı</span></div>`;
-  $("colors").querySelectorAll("button").forEach((b) => (b.onclick = () => { OPT.masa = b.dataset.k; saveOpt(); applyLook(); openSettings(); }));
-  $("backs").querySelectorAll("button").forEach((b) => (b.onclick = () => { OPT.arka = b.dataset.k; saveOpt(); applyLook(); openSettings(); }));
-  $("sheet").hidden = false;
-}
-$("oSes").onchange = (e) => { OPT.ses = e.target.checked; saveOpt(); if (window.CardSfx && CardSfx.setMuted) { CardSfx.setMuted(!OPT.ses); if (OPT.ses) CardSfx.play(); } };
-if (window.CardSfx && CardSfx.muted && CardSfx.muted() === OPT.ses) { /* tek kaynak: kart sesi ayarı */ OPT.ses = !CardSfx.muted(); }
-$("oIp").onchange = (e) => { OPT.ip = e.target.checked; saveOpt(); idle(); };
-$("oTam").onchange = (e) => { OPT.tam = e.target.checked; saveOpt(); render(); if (OPT.tam && canAutoFinish()) autoFinish(); };
-$("o3").onchange = (e) => { OPT.uc = e.target.checked; saveOpt(); toast(`🃏 ${OPT.uc ? "3" : "1"} kart modu yeni oyunda başlayacak`); };
-$("oYan").querySelectorAll("button").forEach((b) => (b.onclick = () => {
-  OPT.sol = b.dataset.k === "sol"; saveOpt();
-  $("oYan").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
-  render();
-}));
-$("shClose").onclick = () => ($("sheet").hidden = true);
-$("sheet").onclick = (e) => { if (e.target === $("sheet")) $("sheet").hidden = true; };
+// Ortak ⚙️ penceresi (kartmasa.js): ses, kart yüzü, masa rengi, kart arkası. Solitaire'e özel seçenekler ve rekorlar araya eklenir.
+// Solitaire Token istemez; burada dilek tutulur 🌙
+const sw = (id, on) => `<span class="sw"><input type="checkbox" id="${id}"${on ? " checked" : ""}><i></i></span>`;
+KartMasa.ekstra = {
+  oyun: () => `
+    <label class="opt"><span>💡 Otomatik ipucu<small>Bir süre hamle yapmazsan yol gösterir</small></span>${sw("oIp", OPT.ip)}</label>
+    <label class="opt"><span>⚡ Otomatik tamamlama<small>Bütün kartlar açılınca kendiliğinden bitirir</small></span>${sw("oTam", OPT.tam)}</label>
+    <label class="opt"><span>🃏 3 kart modu<small>Desteden 3'er kart açılır (yeni oyunda geçerli)</small></span>${sw("o3", OPT.uc)}</label>
+    <div class="opt"><span>✋ Deste tarafı<small>Solaksan desteyi sola al</small></span><span class="kmSeg" id="oYan"><button type="button" data-k="sol" class="${OPT.sol ? "on" : ""}">Sol</button><button type="button" data-k="sag" class="${OPT.sol ? "" : "on"}">Sağ</button></span></div>`,
+  alt: () => `<h4>REKORLARIN</h4><div class="rec"><div><b>${REC.wins}</b><span>Kazanılan</span></div><div><b>${REC.best || "–"}</b><span>En yüksek puan</span></div><div><b>${REC.bestT ? fmtT(REC.bestT) : "–"}</b><span>En hızlı</span></div></div>`,
+  bagla: (k) => {
+    k.querySelector("#oIp").onchange = (e) => { OPT.ip = e.target.checked; saveOpt(); idle(); };
+    k.querySelector("#oTam").onchange = (e) => { OPT.tam = e.target.checked; saveOpt(); render(); if (OPT.tam && canAutoFinish()) autoFinish(); };
+    k.querySelector("#o3").onchange = (e) => { OPT.uc = e.target.checked; saveOpt(); toast(`🃏 ${OPT.uc ? "3" : "1"} kart modu yeni oyunda başlayacak`); };
+    k.querySelectorAll("#oYan button").forEach((b) => (b.onclick = () => {
+      OPT.sol = b.dataset.k === "sol"; saveOpt();
+      k.querySelectorAll("#oYan button").forEach((x) => x.classList.toggle("on", x === b));
+      render();
+    }));
+  },
+};
+KartMasa.onSes = (on) => { OPT.ses = on; saveOpt(); };
+KartMasa.onChange = () => { if (S) render(); };
+const openSettings = () => KartMasa.ayarlar();
+const ayarAcik = () => { const k = document.querySelector(".kmSheet"); return !!(k && !k.hidden); };
 
 $("undo").onclick = undo;
 $("hint").onclick = () => hint(false);
@@ -687,7 +615,6 @@ $("newg").onclick = wishScreen;
 $("setb").onclick = openSettings;
 $("paint").onclick = openSettings;
 window.addEventListener("resize", () => S && render());
-applyLook();
 if (!restoreGame()) { deal.sessiz = true; deal(); deal.sessiz = false; wishScreen(); }
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>

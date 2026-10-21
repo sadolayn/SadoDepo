@@ -1,23 +1,67 @@
-// Kart masası — King ve Balayı King için ortak kart görünümü ve ayarlar.
-// Kart yüzü (Solitaire ile aynı tarz), masa rengi, kart arkası deseni, ses ve oyun hızı.
-// Ayarlar "kartOpt" anahtarında saklanır; iki oyunda ortaktır.
+// Kart masası — King, Balayı King, Batak ve Solitaire için ortak kart görünümü ve ⚙️ ayarlar.
+// Kart yüzü (renk düzeni, yazı tipi, kalınlık, punto), kart arkası ve ses bütün oyunlarda ortaktır;
+// masa rengi her oyunda ayrı saklanır. Ayarlar "kartOpt" anahtarındadır.
+// Sayfa, betik etiketinde ayar verir:
+//   <script src="kartmasa.js" data-oyun="batak" data-masa="sado" data-duzen="ust" data-hiz="yok" data-tema="1">
+//   data-oyun : masa rengi bu adla saklanır (yoksa sayfa adı)
+//   data-masa : o oyunun varsayılan masa rengi
+//   data-duzen: "ust" → küçük simge sağ üstte, büyük simge altta ortada (Solitaire)
+//   data-hiz  : "yok" → "Hızlı oyun" seçeneği gösterilmez
+//   data-tema : "1" → tarayıcının şerit rengi masa rengini alır
 // Kullanım: kart boyu için kartın ya da kapsayıcısının üzerinde --cw (ör. 56px) tanımlanır.
-//   KartMasa.el(kart)  → kart öğesi (kart: { s: "♠", r: 2..14 })
-//   KartMasa.back()    → kapalı kart öğesi
-//   KartMasa.wait(ms)  → oyun hızına göre bekleme
-//   KartMasa.ayarlar() → ayarlar penceresini açar; id="ayarBtn" düğmesi kendiliğinden bağlanır
-//   KartMasa.onChange  → ayar değişince çağrılır
+//   KartMasa.el(kart) / KartMasa.html(kart) → kart (kart: { s: "♠", r: 2..14 }) · KartMasa.back() → kapalı kart
+//   KartMasa.yuz(kart) / KartMasa.sinif(kart) → yalnızca kartın içi ve sınıfı (kendi yerleşimini yapan oyunlar için)
+//   KartMasa.wait(ms) / KartMasa.hiz()      → oyun hızına göre bekleme
+//   KartMasa.ayarlar()                      → ayarlar penceresi; id="ayarBtn" düğmesi kendiliğinden bağlanır
+//   KartMasa.ekstra = { oyun: () => html, alt: () => html, bagla: (kok) => {} } → sayfaya özel bölümler
+//   KartMasa.onChange                       → görünüm değişince çağrılır
 (function () {
+  const S = document.currentScript, D = (S && S.dataset) || {};
+  const OYUN = D.oyun || (location.pathname.match(/([\w-]+)\.html$/) || [0, "kart"])[1];
   const MASA = [
-    ["sado", "Sadolayn mavisi", "#1a2bb8"], ["yesil", "Çuha yeşili", "#0f5a3a"], ["zumrut", "Zümrüt", "#0b6b5c"], ["gece", "Gece mavisi", "#14306b"],
-    ["bordo", "Bordo", "#6b1a2a"], ["mor", "Mürdüm", "#43215e"], ["kahve", "Ceviz", "#4a2f1d"], ["antrasit", "Antrasit", "#24272d"],
+    ["sado", "Sadolayn mavisi", "#1a2bb8"], ["yesil", "Çuha yeşili", "#0f5a3a"], ["zumrut", "Zümrüt", "#0b6b5c"],
+    ["gece", "Gece mavisi", "#14306b"], ["okyanus", "Okyanus", "#1f5f9a"], ["bordo", "Bordo", "#6b1a2a"],
+    ["mor", "Mürdüm", "#43215e"], ["kahve", "Ceviz", "#4a2f1d"], ["antrasit", "Antrasit", "#24272d"],
   ];
   const ARKA = [["altin", "Altın"], ["lacivert", "Lacivert"], ["bordo", "Bordo"], ["zumrut", "Zümrüt"], ["gece", "Gece"]];
-  const YUZ = [["klasik", "Klasik", "2 renk"], ["dort", "4 renk", "♦ mavi · ♣ yeşil"]];
+  // Kart yüzü seçenekleri
+  const RENK = { klasik: ["2 renk"], dort: ["4 renk"] };
+  const YAZI = {
+    modern: ["Modern", '"Arial Narrow", system-ui, sans-serif'],
+    klasik: ["Klasik", 'Georgia, "Times New Roman", "Noto Serif", serif'],
+    daktilo: ["Daktilo", 'ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, "Courier New", monospace'],
+    suslu: ["Süslü", '"Snell Roundhand", "Segoe Script", "Brush Script MT", "Dancing Script", cursive'],
+  };
+  const KALIN = { ince: ["İnce", 400, 0], kalin: ["Kalın", 800, 0], ekstra: ["Ekstra kalın", 900, 0.016] }; // ad, kalınlık, kontur
+  const PUNTO = { kucuk: ["Küçük", 0.86, 1, 0.9], normal: ["Normal", 1, 1, 1], buyuk: ["Büyük", 1.14, 0.9, 1.08], jumbo: ["Jumbo", 1.3, 0.8, 1.12] }; // ad, boy, en, simge
+  const HAZIR = [
+    ["klasik", "Klasik", "Varsayılan", { yuz: "klasik", yazi: "modern", kalin: "kalin", punto: "normal" }],
+    ["dort", "4 Renk", "♦ mavi · ♣ yeşil", { yuz: "dort", yazi: "modern", kalin: "kalin", punto: "normal" }],
+    ["okunakli", "Okunaklı", "Jumbo · ekstra kalın", { yuz: "dort", yazi: "modern", kalin: "ekstra", punto: "jumbo" }],
+    ["zarif", "Zarif", "Klasik yazı · ince", { yuz: "klasik", yazi: "klasik", kalin: "ince", punto: "normal" }],
+    ["daktilo", "Daktilo", "Eski usul · büyük", { yuz: "klasik", yazi: "daktilo", kalin: "kalin", punto: "buyuk" }],
+    ["suslu", "Süslü", "El yazısı · büyük", { yuz: "klasik", yazi: "suslu", kalin: "kalin", punto: "buyuk" }],
+  ];
   const RANK = { 1: "A", 11: "J", 12: "Q", 13: "K", 14: "A" };
-  const OPT = { masa: "sado", arka: "altin", yuz: "klasik", hizli: false };
-  try { Object.assign(OPT, JSON.parse(localStorage.getItem("kartOpt") || "{}")); } catch (e) {}
+  const OPT = { masa: "sado", masalar: {}, arka: "altin", yuz: "klasik", yazi: "modern", kalin: "kalin", punto: "normal", hizli: false };
+  let ilk = true;
+  try { const o = JSON.parse(localStorage.getItem("kartOpt") || "null"); if (o && typeof o === "object") { Object.assign(OPT, o); ilk = false; } } catch (e) {}
+  if (!OPT.masalar || typeof OPT.masalar !== "object") OPT.masalar = {};
+  if (!RENK[OPT.yuz]) OPT.yuz = "klasik";
+  if (!YAZI[OPT.yazi]) OPT.yazi = "modern";
+  if (!KALIN[OPT.kalin]) OPT.kalin = "kalin";
+  if (!PUNTO[OPT.punto]) OPT.punto = "normal";
+  if (!ARKA.some((a) => a[0] === OPT.arka)) OPT.arka = "altin";
+  // Solitaire'in eski ayarları (masa rengi, kart arkası) bir kez taşınır
+  if (OYUN === "solitaire" && !OPT.masalar.solitaire) {
+    try {
+      const s = JSON.parse(localStorage.getItem("solOpt") || "{}"), es = { lacivert: "gece", mavi: "okyanus" };
+      if (s.masa) OPT.masalar.solitaire = es[s.masa] || s.masa;
+      if (ilk && s.arka) OPT.arka = s.arka;
+    } catch (e) {}
+  }
   const save = () => { try { localStorage.setItem("kartOpt", JSON.stringify(OPT)); } catch (e) {} };
+  const masaKey = () => { const k = OPT.masalar[OYUN] || D.masa || OPT.masa; return MASA.some((m) => m[0] === k) ? k : MASA[0][0]; };
 
   const css = document.createElement("style");
   css.textContent = `
@@ -27,12 +71,17 @@
   background: linear-gradient(180deg, #ffffff 0%, #f6f3ec 100%); color: #15161a; border: 1px solid rgba(0,0,0,.2);
   box-shadow: 0 1px 2px rgba(0,0,0,.35), 0 3px 8px rgba(0,0,0,.22); font-weight: 800; overflow: hidden; }
 .card.red { color: var(--kred); }
-.yuz-dort .card.k-d { color: var(--kblue); }
-.yuz-dort .card.k-c { color: var(--kgreen); }
-.card .r { position: absolute; top: 3%; left: 7%; font: 800 calc(var(--cw, 56px) * .5)/1 "Arial Narrow", system-ui, sans-serif; letter-spacing: -1px; transform-origin: left top; }
-.card .r.ten { transform: scaleX(.8); letter-spacing: -2px; }
-.card .s1 { position: absolute; top: 36%; left: 8%; font-size: calc(var(--cw, 56px) * .32); line-height: 1; }
+.card.k-d { color: var(--kd, var(--kred)); }
+.card.k-c { color: var(--kc, #15161a); }
+.card .r { position: absolute; top: 3%; left: 7%; font-family: var(--kf, "Arial Narrow", system-ui, sans-serif); font-weight: var(--kw, 800);
+  font-size: calc(var(--cw, 56px) * .5 * var(--kp, 1)); line-height: 1; letter-spacing: -1px; transform-origin: left top; transform: scaleX(var(--kx, 1));
+  -webkit-text-stroke: calc(var(--cw, 56px) * var(--kst, 0)) currentColor; }
+.card .r.ten { transform: scaleX(calc(.8 * var(--kx, 1))); letter-spacing: -2px; }
+.card .s1 { position: absolute; top: calc(var(--cw, 56px) * (.04 + .5 * var(--kp, 1))); left: 8%; font-size: calc(var(--cw, 56px) * .32 * var(--ksp, 1)); line-height: 1; }
 .card .s2 { position: absolute; right: 9%; bottom: 5%; font-size: calc(var(--cw, 56px) * .6); line-height: 1; }
+.duzen-ust .card .r { top: 1.5%; left: 5%; }
+.duzen-ust .card .s1 { top: 3%; left: auto; right: 5%; font-size: calc(var(--cw, 56px) * .4 * var(--ksp, 1)); }
+.duzen-ust .card .s2 { left: 0; right: 0; bottom: 3%; text-align: center; font-size: calc(var(--cw, 56px) * .86); }
 .card.back > * { display: none; }
 .card.back, .kb { border: 2px solid #fff; }
 .card.back::after, .kb::after { content: ""; position: absolute; inset: 2px; border-radius: inherit; }
@@ -50,11 +99,13 @@
 .kmBtn { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%; border: 1px solid #333; background: #161616; color: #fff; font-size: 19px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
 .kmSheet { position: fixed; inset: 0; z-index: 1100; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; }
 .kmSheet[hidden] { display: none; }
-.kmSheet .in { width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto; background: #121212; border-radius: 22px 22px 0 0; border: 1px solid #2a2a2a; border-bottom: 0; padding: 14px 18px calc(18px + env(safe-area-inset-bottom)); animation: kmUp .22s ease-out; color: #eee; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; text-align: left; }
+.kmSheet .in { width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; background: #121212; border-radius: 22px 22px 0 0; border: 1px solid #2a2a2a; border-bottom: 0; padding: 14px 18px calc(18px + env(safe-area-inset-bottom)); color: #eee; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; text-align: left; }
+.kmSheet.acil .in { animation: kmUp .22s ease-out; }
 @keyframes kmUp { from { transform: translateY(40px); opacity: 0; } }
 .kmSheet h2 { display: flex; align-items: center; justify-content: space-between; margin: 0 0 4px; font-size: 19px; }
 .kmSheet h2 button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: #222; color: #bbb; font-size: 16px; cursor: pointer; }
-.kmSheet h4 { margin: 16px 0 8px; font-size: 11.5px; letter-spacing: 1.4px; color: #8a8a8a; font-weight: 700; }
+.kmSheet h4 { margin: 18px 0 8px; font-size: 11.5px; letter-spacing: 1.4px; color: #8a8a8a; font-weight: 700; }
+.kmSheet h4 small { letter-spacing: .3px; font-weight: 500; color: #6f6f6f; }
 .kmSheet .opt { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid #1f1f1f; font-size: 15.5px; }
 .kmSheet .opt > span:first-child { flex: 1; } .kmSheet .opt small { display: block; font-size: 12px; color: #8a8a8a; margin-top: 2px; }
 .kmSheet .sw { position: relative; width: 50px; height: 30px; flex: none; }
@@ -63,79 +114,125 @@
 .kmSheet .sw i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
 .kmSheet .sw input:checked + i { background: #3fc283; }
 .kmSheet .sw input:checked + i::after { transform: translateX(20px); }
-.kmColors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-.kmColors button { aspect-ratio: 1.5; border-radius: 12px; border: 2px solid transparent; cursor: pointer; font: 600 11px system-ui; color: rgba(255,255,255,.88); display: flex; align-items: flex-end; justify-content: center; padding: 0 2px 5px; text-shadow: 0 1px 2px rgba(0,0,0,.6); line-height: 1.1; }
+.kmSeg { display: flex; flex: none; gap: 3px; padding: 3px; border-radius: 11px; background: #1e1e1e; }
+.kmSeg button { flex: 1; border: 0; background: none; color: #aaa; padding: 8px 4px; border-radius: 8px; font: 700 13.5px system-ui, sans-serif; cursor: pointer; white-space: nowrap; }
+.kmSeg button.on { background: #e0a24f; color: #1a1205; }
+.kmTok { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 14px; background: linear-gradient(90deg, rgba(240,198,116,.16), rgba(240,198,116,.05)); border: 1px solid rgba(240,198,116,.3); font-size: 14px; color: #eadcc6; }
+.kmTok b { font-size: 17px; color: #ffe2a6; }
+.kmNot { margin: 6px 2px 0; font-size: 12px; color: #8a8a8a; line-height: 1.45; }
+.kmPrev { display: flex; justify-content: center; gap: 8px; padding: 14px 8px 12px; border-radius: 16px; --cw: 58px;
+  background: radial-gradient(120% 100% at 50% 20%, color-mix(in srgb, var(--masa) 82%, #fff), var(--masa) 65%, color-mix(in srgb, var(--masa), #000 30%)); }
+.kmPrevL { text-align: center; font-size: 12px; color: #9a9a9a; margin: 6px 0 12px; }
+.kmPrevL b { color: #e0a24f; font-weight: 700; }
+.kmHazir { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.kmHazir button { border: 2px solid transparent; background: #1a1a1a; border-radius: 12px; padding: 8px 4px 7px; cursor: pointer; color: #ddd; font: 700 13px system-ui, sans-serif; }
+.kmHazir button.on { border-color: #e0a24f; color: #fff; background: #221b12; }
+.kmHazir .row { display: flex; justify-content: center; gap: 3px; margin-bottom: 6px; --cw: 32px; }
+.kmHazir small { display: block; font-weight: 400; color: #8a8a8a; font-size: 10.5px; margin-top: 1px; }
+.kmAyar { display: grid; gap: 10px; margin-top: 4px; }
+.kmAyar .kmL { font-size: 12.5px; color: #a8a8a8; margin: 0 0 5px 2px; }
+.kmColors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.kmColors button { height: 46px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; font: 600 11px system-ui; color: rgba(255,255,255,.88); display: flex; align-items: flex-end; justify-content: center; padding: 0 2px 5px; text-shadow: 0 1px 2px rgba(0,0,0,.6); line-height: 1.1; }
 .kmColors button.on { border-color: #fff; box-shadow: 0 0 0 2px #e0a24f; }
 .kmBacks { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-.kmBacks button, .kmFaces button { border: 2px solid transparent; background: none; border-radius: 12px; padding: 6px 2px; cursor: pointer; color: #bbb; font: 600 11px system-ui; }
-.kmBacks button.on, .kmFaces button.on { border-color: #e0a24f; color: #fff; background: #1a1a1a; }
+.kmBacks button { border: 2px solid transparent; background: none; border-radius: 12px; padding: 6px 2px; cursor: pointer; color: #bbb; font: 600 11px system-ui; }
+.kmBacks button.on { border-color: #e0a24f; color: #fff; background: #1a1a1a; }
 .kmBacks .card { display: block; margin: 0 auto 5px; --cw: 40px; }
-.kmFaces { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.kmFaces .row { display: flex; justify-content: center; gap: 3px; margin-bottom: 6px; --cw: 34px; }
-.kmFaces small { display: block; font-weight: 400; color: #8a8a8a; font-size: 10.5px; margin-top: 1px; }
 `;
   document.head.appendChild(css);
 
   const isRed = (s) => s === "♥" || s === "♦";
   const suitCls = { "♠": "k-s", "♥": "k-h", "♣": "k-c", "♦": "k-d" };
   function face(c) {
-    return `<span class="r${c.r === 10 ? " ten" : ""}">${RANK[c.r] || c.r}</span><span class="s1">${c.s}\uFE0E</span><span class="s2">${c.s}\uFE0E</span>`;
+    return `<span class="r${c.r === 10 ? " ten" : ""}">${RANK[c.r] || c.r}</span><span class="s1">${c.s}︎</span><span class="s2">${c.s}︎</span>`;
   }
-  function el(c) {
-    const d = document.createElement("div");
-    d.className = "card " + suitCls[c.s] + (isRed(c.s) ? " red" : "");
-    d.innerHTML = face(c);
-    return d;
-  }
+  const cls = (c) => "card " + suitCls[c.s] + (isRed(c.s) ? " red" : "");
+  function el(c) { const d = document.createElement("div"); d.className = cls(c); d.innerHTML = face(c); return d; }
   function back() { const d = document.createElement("div"); d.className = "card back"; return d; }
-  const html = (c) => `<div class="card ${suitCls[c.s]}${isRed(c.s) ? " red" : ""}">${face(c)}</div>`;
+  const html = (c) => `<div class="${cls(c)}">${face(c)}</div>`;
 
+  // Kart yüzü ayarı → CSS değişkenleri (önizleme kutuları kendi değişkenlerini taşır)
+  function vars(o) {
+    const y = YAZI[o.yazi] || YAZI.modern, k = KALIN[o.kalin] || KALIN.kalin, p = PUNTO[o.punto] || PUNTO.normal, d = o.yuz === "dort";
+    return { "--kf": y[1], "--kw": k[1], "--kst": k[2], "--kp": p[1], "--kx": p[2], "--ksp": p[3], "--kd": d ? "var(--kblue)" : "var(--kred)", "--kc": d ? "var(--kgreen)" : "#15161a" };
+  }
+  const varStyle = (o) => Object.entries(vars(o)).map(([k, v]) => `${k}:${v}`).join(";").replace(/"/g, "'");
   function apply() {
-    const m = MASA.find((x) => x[0] === OPT.masa) || MASA[0];
+    const m = MASA.find((x) => x[0] === masaKey()) || MASA[0];
     document.documentElement.style.setProperty("--masa", m[2]);
+    if (D.tema === "1") { const t = document.querySelector('meta[name="theme-color"]'); if (t) t.setAttribute("content", m[2]); }
     const b = document.body;
     if (!b) return;
     b.classList.remove(...ARKA.map((a) => "arka-" + a[0]), "yuz-klasik", "yuz-dort");
     b.classList.add("arka-" + OPT.arka, "yuz-" + OPT.yuz);
+    if (D.duzen === "ust") b.classList.add("duzen-ust");
+    Object.entries(vars(OPT)).forEach(([k, v]) => b.style.setProperty(k, v));
   }
+  const ayni = (o) => ["yuz", "yazi", "kalin", "punto"].every((k) => OPT[k] === o[k]);
 
   let sheet = null;
   function ayarlar() {
+    let yeni = false;
     if (!sheet) {
       sheet = document.createElement("div");
       sheet.className = "kmSheet"; sheet.hidden = true;
       sheet.onclick = (e) => { if (e.target === sheet) sheet.hidden = true; };
       document.body.appendChild(sheet);
     }
+    if (sheet.hidden) { yeni = true; sheet.classList.add("acil"); } else sheet.classList.remove("acil");
+    const eski = sheet.querySelector(".in"), kay = eski && !yeni ? eski.scrollTop : 0; // değişiklikte kaydırma yeri korunur
     const muted = window.CardSfx && CardSfx.muted ? CardSfx.muted() : false;
     const demo = [{ s: "♠", r: 14 }, { s: "♥", r: 13 }, { s: "♦", r: 10 }, { s: "♣", r: 7 }];
+    const ex = KartMasa.ekstra || {};
+    const hz = HAZIR.find((h) => ayni(h[3]));
+    const seg = (k, L, fn) => `<div class="kmSeg" data-seg="${k}">${Object.entries(L).map(([v, a]) => `<button type="button" data-v="${v}" class="${OPT[k] === v ? "on" : ""}"${fn ? ` style="${fn(v, a)}"` : ""}>${a[0]}</button>`).join("")}</div>`;
+    const tok = window.Token && Token.bakiye ? Token.bakiye() : null;
     sheet.innerHTML = `<div class="in">
       <h2>⚙️ Ayarlar <button data-x aria-label="Kapat">✕</button></h2>
       <h4>OYUN</h4>
       <label class="opt"><span>🔊 Kart sesleri</span><span class="sw"><input type="checkbox" data-o="ses"${muted ? "" : " checked"}><i></i></span></label>
-      <label class="opt"><span>⚡ Hızlı oyun<small>Rakipler kartlarını daha çabuk atar</small></span><span class="sw"><input type="checkbox" data-o="hizli"${OPT.hizli ? " checked" : ""}><i></i></span></label>
-      <h4>KART YÜZÜ</h4>
-      <div class="kmFaces">${YUZ.map(([k, ad, alt]) => `<button data-yuz="${k}" class="yuz-${k}${OPT.yuz === k ? " on" : ""}"><div class="row">${demo.map(html).join("")}</div>${ad}<small>${alt}</small></button>`).join("")}</div>
-      <h4>MASA RENGİ</h4>
-      <div class="kmColors">${MASA.map(([k, ad, c]) => `<button data-masa="${k}" class="${OPT.masa === k ? "on" : ""}" style="background:radial-gradient(120% 90% at 50% 30%, color-mix(in srgb, ${c} 82%, #fff), ${c} 60%)">${ad}</button>`).join("")}</div>
+      ${D.hiz === "yok" ? "" : `<label class="opt"><span>⚡ Hızlı oyun<small>Rakipler kartlarını daha çabuk atar</small></span><span class="sw"><input type="checkbox" data-o="hizli"${OPT.hizli ? " checked" : ""}><i></i></span></label>`}
+      ${ex.oyun ? ex.oyun() : ""}
+      ${tok != null ? `<h4>🪙 TOKEN</h4><div class="kmTok"><span>Bakiyen</span><b>${Token.fmt(tok)} Token</b></div>
+        <p class="kmNot">Bakiyen Batak, King ve Balayı King'de ortak. Biterse 1 gün sonra İş Bankası sorusu gelir; doğru cevap 1.000 Token kazandırır.</p>` : ""}
+      <h4>KART YÜZÜ <small>· bütün kart oyunlarında</small></h4>
+      <div class="kmPrev">${demo.map(html).join("")}</div>
+      <div class="kmPrevL">${hz ? `Şu an: <b>${hz[1]}</b>` : "Şu an: <b>Senin stilin</b>"} · ${RENK[OPT.yuz][0]} · ${YAZI[OPT.yazi][0]} · ${KALIN[OPT.kalin][0]} · ${PUNTO[OPT.punto][0]} punto</div>
+      <div class="kmHazir">${HAZIR.map(([k, ad, alt, o]) => `<button type="button" data-hazir="${k}" class="${hz && hz[0] === k ? "on" : ""}"><div class="row" style="${varStyle(o)}">${demo.map(html).join("")}</div>${ad}<small>${alt}</small></button>`).join("")}</div>
+      <h4>KENDİN AYARLA</h4>
+      <div class="kmAyar">
+        <div><div class="kmL">Renk düzeni</div>${seg("yuz", RENK)}</div>
+        <div><div class="kmL">Yazı tipi</div>${seg("yazi", YAZI, (v, a) => `font-family:${a[1].replace(/"/g, "'")}`)}</div>
+        <div><div class="kmL">Kalınlık</div>${seg("kalin", KALIN, (v, a) => `font-weight:${a[1]}`)}</div>
+        <div><div class="kmL">Punto (harf ve rakam boyu)</div>${seg("punto", PUNTO)}</div>
+      </div>
+      <h4>MASA RENGİ <small>· bu oyunda</small></h4>
+      <div class="kmColors">${MASA.map(([k, ad, c]) => `<button type="button" data-masa="${k}" class="${masaKey() === k ? "on" : ""}" style="background:radial-gradient(120% 90% at 50% 30%, color-mix(in srgb, ${c} 82%, #fff), ${c} 60%)">${ad}</button>`).join("")}</div>
       <h4>KART ARKASI</h4>
-      <div class="kmBacks">${ARKA.map(([k, ad]) => `<button data-arka="${k}" class="arka-${k}${OPT.arka === k ? " on" : ""}"><span class="card back"></span>${ad}</button>`).join("")}</div>
+      <div class="kmBacks">${ARKA.map(([k, ad]) => `<button type="button" data-arka="${k}" class="arka-${k}${OPT.arka === k ? " on" : ""}"><span class="card back"></span>${ad}</button>`).join("")}</div>
+      ${ex.alt ? ex.alt() : ""}
     </div>`;
     const changed = () => { save(); apply(); ayarlar(); if (typeof KartMasa.onChange === "function") KartMasa.onChange(); };
     sheet.querySelector("[data-x]").onclick = () => (sheet.hidden = true);
-    sheet.querySelector('[data-o="ses"]').onchange = (e) => { if (window.CardSfx && CardSfx.setMuted) { CardSfx.setMuted(!e.target.checked); if (e.target.checked) CardSfx.play(); } };
-    sheet.querySelector('[data-o="hizli"]').onchange = (e) => { OPT.hizli = e.target.checked; save(); };
-    sheet.querySelectorAll("[data-yuz]").forEach((b) => (b.onclick = () => { OPT.yuz = b.dataset.yuz; changed(); }));
-    sheet.querySelectorAll("[data-masa]").forEach((b) => (b.onclick = () => { OPT.masa = b.dataset.masa; changed(); }));
+    sheet.querySelector('[data-o="ses"]').onchange = (e) => { if (window.CardSfx && CardSfx.setMuted) { CardSfx.setMuted(!e.target.checked); if (e.target.checked) CardSfx.play(); } if (typeof KartMasa.onSes === "function") KartMasa.onSes(e.target.checked); };
+    const hb = sheet.querySelector('[data-o="hizli"]'); if (hb) hb.onchange = (e) => { OPT.hizli = e.target.checked; save(); };
+    sheet.querySelectorAll("[data-hazir]").forEach((b) => (b.onclick = () => { Object.assign(OPT, HAZIR.find((h) => h[0] === b.dataset.hazir)[3]); changed(); }));
+    sheet.querySelectorAll("[data-seg] button").forEach((b) => (b.onclick = () => { OPT[b.parentNode.dataset.seg] = b.dataset.v; changed(); }));
+    sheet.querySelectorAll("[data-masa]").forEach((b) => (b.onclick = () => { OPT.masalar[OYUN] = b.dataset.masa; changed(); }));
     sheet.querySelectorAll("[data-arka]").forEach((b) => (b.onclick = () => { OPT.arka = b.dataset.arka; changed(); }));
+    if (ex.bagla) ex.bagla(sheet);
     sheet.hidden = false;
+    if (kay) sheet.querySelector(".in").scrollTop = kay;
   }
 
   const KartMasa = {
-    OPT, el, back, html, ayarlar, apply,
+    OPT, el, back, html, ayarlar, apply, MASA,
+    yuz: face, sinif: cls,
+    olcu: () => { const p = PUNTO[OPT.punto] || PUNTO.normal; return { kp: p[1], kx: p[2] }; }, // harf boyu ve eni (yerleşim için)
     hiz: () => (OPT.hizli ? 0.5 : 1),
     wait: (ms) => new Promise((r) => setTimeout(r, ms * (OPT.hizli ? 0.5 : 1))),
     onChange: null,
+    ekstra: null,
   };
   window.KartMasa = KartMasa;
   const init = () => { apply(); const b = document.getElementById("ayarBtn"); if (b) b.onclick = ayarlar; };

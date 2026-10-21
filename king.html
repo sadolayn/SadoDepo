@@ -132,7 +132,7 @@
   .hand { --cw: 58px; position: relative; height: calc(var(--cw) * 1.45 + 16px); }
   .hand .card:not(:last-child) .s2 { display: none; }
   .hand .card .r { left: 4%; }
-  .hand .card .r.ten { transform: scaleX(.64); letter-spacing: -3px; }
+  .hand .card .r.ten { transform: scaleX(calc(.64 * var(--kx, 1))); letter-spacing: -3px; }
   .hand .card { position: absolute; top: 12px; transition: transform .12s, filter .12s, left .2s; cursor: pointer; }
   .hand .card.ok { transform: translateY(-10px); box-shadow: 0 0 0 2px var(--accent), 0 6px 12px rgba(0,0,0,.45); }
   .hand .card.no { filter: brightness(.5); cursor: default; }
@@ -219,7 +219,9 @@
   .hak .no { color: var(--muted); }
 </style>
 <script src="cardsound.js?v=3"></script>
-<script src="kartmasa.js?v=1"></script>
+<script src="kartmasa.js?v=2" data-oyun="king"></script>
+<script src="isq.js"></script>
+<script src="token.js?v=1"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
@@ -733,7 +735,7 @@ function renderPens() {
 }
 function renderInfo() {
   renderPens();
-  $("info").innerHTML = `El: <b>${Math.min(G.round + 1, 20)}/20</b><br>${phase === "play" || phase === "end" ? `<b>${contractName(contract)}</b>` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
+  $("info").innerHTML = `<span style="white-space:nowrap">El: <b>${Math.min(G.round + 1, 20)}/20</b>${G.stake ? `<small style="font-size:11px"> · 🪙${Token.fmt(G.stake)}</small>` : ""}</span><br>${phase === "play" || phase === "end" ? `<b>${contractName(contract)}</b>` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
   $("scores").innerHTML = G.scores.map((s, p) => `<div>${NAMES[p]}<b class="${s < 0 ? "neg" : s > 0 ? "pos" : ""}">${s}</b></div>`).join("");
 }
 // Koltukta mini cetvel: 3 üçgen (ceza) + 2 daire (koz); söylenenler boyalı
@@ -939,6 +941,11 @@ function endRound() {
   deltas.forEach((d, p) => (G.scores[p] += d));
   G.history.push({ el: G.round + 1, secen: chooser, ct: contract, trump, oyun: contract === "koz" ? "Koz " + trump : CEZALAR[contract].ad, deltas });
   G.round++;
+  if (G.round >= 20 && !G.sonuc) {
+    // Token: tek başına birinci olan koyduğunun 3 katını alır; birincilik paylaşılırsa iade
+    const top = Math.max(...G.scores), tops = G.scores.filter((x) => x === top).length;
+    G.sonuc = Token.sonuc("king", G.stake || 0, 4, G.scores[0] === top ? (tops === 1 ? 3 : 1) : 0);
+  }
   save();
   render();
   const rows = [0, 1, 2, 3].map((p) => `
@@ -967,11 +974,12 @@ function gameOver() {
     <h2>${winner === 0 ? "🎉 Kazandın!" : `${NAMES[winner]} kazandı`}</h2>
     <p>20 el tamamlandı</p>
     <table>${rows}</table>
-    <button class="btn" id="again">Yeni oyun</button>
+    ${(G.sonuc && G.sonuc.html) || ""}
+    <button class="btn" id="again">${Token.yeter() ? "Yeni oyun" : "Devam"}</button>
     <button class="btn" id="cet3" style="margin-top:8px;background:transparent;color:var(--ink);border-color:var(--line)">📋 Cetveli gör</button>`;
   $("cet3").onclick = showCetvel;
   $("overlay").classList.add("show");
-  $("again").onclick = () => { $("overlay").classList.remove("show"); newGame(); newRound(); };
+  $("again").onclick = () => showRules(false);
   try { localStorage.removeItem("kingGame"); } catch (e) {}
 }
 
@@ -1043,6 +1051,10 @@ $("cetBtn").onclick = showCetvel;
 $("scores").onclick = showCetvel;
 
 function showRules(resume) {
+  // Yeni oyun Token ister (token.js); Token bittiyse bekleme ya da İş Bankası sorusu gelir
+  const goster = () => $("overlay").classList.add("show");
+  if (!resume && !Token.yeter()) return Token.kilit($("modal"), { goster, devam: () => showRules(false) });
+  const stake = resume && G && G.stake;
   $("modal").innerHTML = `
     <h2>👑 King</h2>
     ${ISIM.html([["ben", "Sen", "Senin adın"], ["sag", "Sadosan", "Sağındaki"], [null, "Sadolayn", "Karşındaki"], ["sol", "Sadocan", "Solundaki"]])}
@@ -1053,20 +1065,33 @@ function showRules(resume) {
       <li><b>Koz:</b> Aldığın her el +50. Her oyuncunun <b>ilk seçimi koz olamaz</b>; ilk turda herkes ceza seçer.</li>
       <li>Renge uymak zorunlu. Koz oyununda renk yoksa koz atılır ve yükseltmek gerekir.</li>
       <li>Ceza oyunlarında renk yoksa ceza kartı varsa onu atmak zorundasın (kupa, kız, erkek, rifki).</li>
+      <li><b>Token:</b> Oyuna Token koyarak başlarsın. Tek başına birinci olursan koyduğunun <b>3 katını</b> alırsın; birinciliği paylaşırsan Token'ın iade edilir. Kazanandan masa ücreti olarak masadaki toplamın %1'i alınır. Bakiyen Batak ve Balayı King'le ortak; biterse 1 gün sonra İş Bankası sorusu gelir.</li>
     </ul>
+    ${resume ? (stake ? `<div class="tkBox">🪙 Masada <b>${Token.fmt(stake)}</b> Token var; oyunu bitirince sonucunu alırsın.</div>` : "") : '<div id="tkSec"></div>'}
     <button class="btn" id="start">${resume ? "Devam et" : "Başla"}</button>
-    ${resume ? '<button class="btn" id="fresh" style="margin-top:8px;background:transparent;color:var(--muted);border-color:var(--line)">Yeni oyun başlat</button>' : ""}`;
-  $("overlay").classList.add("show");
+    ${resume ? `<button class="btn" id="fresh" style="margin-top:8px;background:transparent;color:var(--muted);border-color:var(--line)">Yeni oyun başlat</button>${stake ? `<p style="font-size:12px;margin:8px 0 0">Yeni oyunda yarım kalan ${Token.fmt(stake)} Token geri gelmez.</p>` : ""}` : ""}`;
+  goster();
   ISIM.bind($("modal"), () => { setNames(); try { renderInfo(); } catch (e) {} });
-  $("start").onclick = () => { $("overlay").classList.remove("show"); newRound(); };
-  if (resume) $("fresh").onclick = () => { $("overlay").classList.remove("show"); newGame(); newRound(); };
+  if (resume) {
+    $("start").onclick = () => { $("overlay").classList.remove("show"); newRound(); };
+    $("fresh").onclick = () => showRules(false);
+    return;
+  }
+  const sec = Token.secici($("tkSec"), "king");
+  sec.onChange = (v) => ($("start").textContent = `Başla · ${Token.fmt(v)} Token`); sec.sync();
+  $("start").onclick = () => {
+    const v = sec.deger();
+    if (!Token.koy(v)) return showRules(false);
+    newGame(); G.stake = v; save();
+    $("overlay").classList.remove("show"); newRound();
+  };
 }
 
 const saved = load();
 if (saved) G = saved; else newGame();
 renderInfo();
 fitTable();
-showRules(!!saved && saved.round > 0);
+showRules(!!saved && (saved.round > 0 || !!saved.stake));
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
