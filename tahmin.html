@@ -6,11 +6,11 @@
 <link rel="icon" type="image/png" href="img/icon.png">
 <link rel="apple-touch-icon" href="img/icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Sayı Tahmin</title>
+<title>Asal Tahmin</title>
 <meta name="description" content="Bilgi paylaştıkça büyür">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SADOLAYN">
-<meta property="og:title" content="Sayı Tahmin · Günün Kasası · SADOLAYN">
+<meta property="og:title" content="Asal Tahmin · SADOLAYN">
 <meta property="og:description" content="“Bilgi paylaştıkça büyür”">
 <meta property="og:url" content="https://sadolayn.github.io/SadoDepo/tahmin.html">
 <meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
@@ -21,157 +21,52 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
 <style>
-  /* Sayı Tahmin — dört mod: 🏦 Günün Kasası / serbest, 🔄 Ters Köşe, 📜 Yıl Avı, ⚡ 60 saniye */
-  :root { --bg: #000; --card: #0d0d0d; --field: #161616; --line: #262626; --ink: #f2f2f2; --muted: #8a8a8a; --gold: #e0a24f; --up: #6ab8ff; --down: #ff8a66; --win: #3fc283; }
+  /* Asal Tahmin: tuttuğum asal sayıyı bul. Sade tek ekran: sayı tablosuna dokun. */
+  :root { --bg: #000; --card: #0d0d0d; --field: #141414; --line: #262626; --ink: #f2f2f2; --muted: #8a8a8a; --gold: #e0a24f; --up: #5aa9f0; --down: #ef6a4c; --win: #3fc283; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); }
-  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 480px; margin: 0 auto; padding: 8px 12px calc(18px + env(safe-area-inset-bottom)); min-height: 100vh; user-select: none; -webkit-user-select: none; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 460px; margin: 0 auto; padding: 8px 14px calc(18px + env(safe-area-inset-bottom)); min-height: 100vh; user-select: none; -webkit-user-select: none; }
   .top { display: flex; align-items: center; gap: 8px; }
-  .top h1 { flex: 1; text-align: center; margin: 0; font-size: 20px; letter-spacing: .3px; }
-  .ib { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 13px; background: #161616; border: 1px solid var(--gold); display: inline-flex; align-items: center; justify-content: center; font-size: 20px; text-decoration: none; color: #fff; cursor: pointer; padding: 0; }
-  .modes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0 10px; }
-  .modes button { border: 1px solid var(--line); background: #101010; color: #b5b5b5; border-radius: 13px; padding: 6px 2px 6px; font: 600 11.5px system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; gap: 1px; cursor: pointer; }
-  .modes button b { font-size: 21px; line-height: 1.15; }
-  .modes button.on { border-color: var(--gold); color: #fff; background: linear-gradient(180deg, #2c210f, #140f07); box-shadow: 0 0 0 1px var(--gold) inset; }
-  .seg { display: flex; gap: 4px; padding: 3px; background: #121212; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; }
-  .seg button { flex: 1; border: 0; background: none; color: #a8a8a8; padding: 8px 4px; border-radius: 9px; font: 700 13px system-ui, sans-serif; cursor: pointer; white-space: nowrap; }
+  .top h1 { flex: 1; text-align: center; margin: 0; font-size: 21px; }
+  .home { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 13px; background: #161616; border: 1px solid var(--gold); display: inline-flex; align-items: center; justify-content: center; font-size: 20px; text-decoration: none; }
+  .sub { text-align: center; color: var(--muted); font-size: 14.5px; margin: 8px 0 12px; }
+  .sub b { color: var(--ink); }
+  .seg { display: flex; gap: 4px; padding: 3px; background: #111; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 12px; }
+  .seg button { flex: 1; border: 0; background: none; color: #a8a8a8; padding: 9px 4px; border-radius: 9px; font: 700 14px system-ui, sans-serif; cursor: pointer; }
   .seg button.on { background: var(--gold); color: #1a1205; }
-  .seg button small { font-weight: 600; opacity: .75; }
-
-  /* Kasa kapısı */
-  .vault { position: relative; height: 206px; perspective: 1100px; margin: 2px 0 10px; }
-  .vault.kisa { height: 170px; }
-  .inside { position: absolute; inset: 0; border-radius: 22px; background: radial-gradient(circle at 50% 42%, #4a3510, #1a1206 62%, #0b0703); border: 3px solid #3a2b12; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: inset 0 0 50px #000; overflow: hidden; }
-  .inside .coins { font-size: 40px; letter-spacing: -10px; filter: drop-shadow(0 0 14px rgba(255,200,90,.7)); }
-  .inside .sf { font: 800 28px ui-monospace, "SF Mono", "Roboto Mono", Menlo, monospace; color: #ffd88a; letter-spacing: 4px; text-shadow: 0 0 14px rgba(255,190,80,.6); }
-  .inside small { color: #c9a66a; font-size: 12px; letter-spacing: 1px; }
-  .door { position: absolute; inset: 0; border-radius: 22px; transform-origin: 0 50%; transition: transform 1.15s cubic-bezier(.3,.7,.2,1); z-index: 2;
-    background: radial-gradient(130% 100% at 28% 18%, #4f5660, #2a2e35 52%, #16181c);
-    border: 3px solid #8a6a2f; box-shadow: inset 0 0 0 6px #1b1d21, inset 0 0 0 8px #a37a33, inset 0 10px 30px rgba(255,255,255,.05), 0 14px 30px rgba(0,0,0,.65);
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px 14px; }
-  .door::before { content: ""; position: absolute; inset: 13px; border-radius: 14px; pointer-events: none;
-    background: radial-gradient(circle at 7px 7px, #e9c47a 0 2.6px, #6b4e1f 3.2px, transparent 4px), radial-gradient(circle at calc(100% - 7px) 7px, #e9c47a 0 2.6px, #6b4e1f 3.2px, transparent 4px),
-      radial-gradient(circle at 7px calc(100% - 7px), #e9c47a 0 2.6px, #6b4e1f 3.2px, transparent 4px), radial-gradient(circle at calc(100% - 7px) calc(100% - 7px), #e9c47a 0 2.6px, #6b4e1f 3.2px, transparent 4px); }
-  .door.yil { background: radial-gradient(130% 100% at 28% 18%, #6a4a2c, #3d2817 55%, #24170c); }
-  .vault.open .door { transform: rotateY(-106deg); }
-  .vault.shake .door { animation: shake .42s; }
-  .vault.parla .door { animation: parla .6s ease-out; }
-  @keyframes parla { 0% { box-shadow: inset 0 0 0 6px #1b1d21, inset 0 0 0 8px #a37a33, 0 0 0 0 rgba(63,194,131,.9); } 40% { box-shadow: inset 0 0 0 6px #1b1d21, inset 0 0 0 8px #7dffb0, 0 0 30px 8px rgba(63,194,131,.7); } }
-  @keyframes shake { 20% { transform: translateX(-7px) rotate(-.6deg); } 40% { transform: translateX(6px) rotate(.5deg); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
-  .led { max-width: 100%; text-align: center; padding: 7px 14px; border-radius: 9px; background: #06120a; border: 1px solid #1d3a24; color: #8dffbe; font: 700 13.5px ui-monospace, "SF Mono", "Roboto Mono", Menlo, monospace; letter-spacing: .6px; text-shadow: 0 0 8px currentColor; box-shadow: inset 0 0 12px rgba(0,0,0,.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .led.up { color: #8fd0ff; background: #06101a; border-color: #1b3550; }
-  .led.down { color: #ffa98a; background: #1a0a06; border-color: #4d2316; }
-  .led.warn { color: #ffd780; background: #171104; border-color: #4a3a12; }
-  /* Şifre çarkları */
-  .drums { display: flex; gap: 8px; justify-content: center; touch-action: none; }
-  .drum { position: relative; width: 56px; height: 92px; border-radius: 12px; overflow: hidden; cursor: ns-resize;
-    background: linear-gradient(180deg, #4d3712 0%, #b98b3c 20%, #f7dfa2 50%, #b98b3c 80%, #4d3712 100%);
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,.55), inset 0 2px 3px rgba(255,255,255,.3), 0 3px 8px rgba(0,0,0,.6); }
-  .drum::after { content: ""; position: absolute; left: 0; right: 0; top: 23px; bottom: 23px; border-top: 1px solid rgba(60,35,5,.45); border-bottom: 1px solid rgba(60,35,5,.45); pointer-events: none; }
-  .drum .d { position: absolute; left: 0; right: 0; text-align: center; font: 800 44px/1 ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace; color: #2a1904; pointer-events: none; }
-  .drum .c { top: 50%; transform: translateY(-50%); }
-  .drum .p { top: -3px; font-size: 22px; opacity: .4; transform: scaleY(.7); }
-  .drum .n { bottom: -3px; font-size: 22px; opacity: .4; transform: scaleY(.7); }
-  .drum.bump .c { animation: bump .14s ease-out; }
-  @keyframes bump { from { transform: translateY(-50%) scale(.9); opacity: .6; } }
-  .drums.kucuk .drum { width: 46px; height: 76px; } .drums.kucuk .drum .d.c { font-size: 36px; } .drums.kucuk .drum::after { top: 18px; bottom: 18px; }
-  .disp { display: flex; gap: 6px; justify-content: center; }
-  .disp span { width: 50px; height: 70px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font: 800 40px ui-monospace, "SF Mono", "Roboto Mono", Menlo, monospace; color: #2a1904; background: linear-gradient(180deg, #8a6424, #f3d798 50%, #8a6424); box-shadow: inset 0 0 0 1px rgba(0,0,0,.5), 0 3px 8px rgba(0,0,0,.6); }
-  .disp span.bos { color: rgba(42,25,4,.25); }
-  .kp { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0 0 10px; }
-  .kp button { height: 46px; border-radius: 13px; border: 1px solid #3a3f47; background: linear-gradient(180deg, #2c3138, #1c1f24); color: #f3e3c0; font: 800 21px ui-monospace, "SF Mono", Menlo, monospace; cursor: pointer; }
-  .kp button:active { transform: scale(.96); background: #3a3f47; }
-  .act { display: flex; gap: 8px; }
-  .act .mini { width: 52px; flex: 0 0 52px; height: 52px; border-radius: 16px; border: 1px solid var(--line); background: #141414; color: #ddd; font-size: 20px; cursor: pointer; }
-  .try { flex: 1; height: 52px; border: 0; border-radius: 16px; background: linear-gradient(180deg, #f6d48d, #d7a046); color: #2a1a05; font: 800 18px system-ui, sans-serif; cursor: pointer; box-shadow: 0 6px 16px rgba(224,162,79,.22); }
-  .try:active { transform: translateY(1px); }
-  .try:disabled { opacity: .4; box-shadow: none; }
-  /* Sıcak–soğuk */
-  .heat { margin: 14px 2px 2px; }
-  .heat .t { text-align: center; font-weight: 800; font-size: 15px; margin-bottom: 7px; min-height: 20px; }
-  .heat .bar { position: relative; height: 10px; border-radius: 99px; background: linear-gradient(90deg, #3d6bff, #58c8ff 24%, #ffe08a 55%, #ff8a3d 78%, #ff2b2b); }
-  .heat .mk { position: absolute; top: 50%; left: 0; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 3px solid #0b0b0b; transform: translate(-50%, -50%); transition: left .55s cubic-bezier(.3,.7,.2,1); box-shadow: 0 0 12px rgba(255,255,255,.7); }
-  .heat .mk.yok { opacity: 0; }
-  .heat .lb { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 5px; }
-  /* Cetvel: kalan aralık */
-  .cet { position: relative; height: 50px; margin: 8px 2px 0; }
-  .cet .rail { position: absolute; left: 0; right: 0; top: 21px; height: 8px; border-radius: 99px; background: #1c1c1c; box-shadow: inset 0 1px 2px #000; }
-  .cet .alive { position: absolute; top: 19px; height: 12px; border-radius: 99px; background: linear-gradient(90deg, #b8862e, #f6d48d, #b8862e); box-shadow: 0 0 14px rgba(240,190,90,.5); transition: left .6s cubic-bezier(.3,.7,.2,1), width .6s cubic-bezier(.3,.7,.2,1); min-width: 6px; }
-  .cet .g { position: absolute; top: 15px; width: 2px; height: 20px; margin-left: -1px; border-radius: 1px; }
-  .cet .g.up { background: var(--up); } .cet .g.down { background: var(--down); }
-  .cet .e { position: absolute; top: 35px; font: 700 11px system-ui, sans-serif; color: var(--muted); white-space: nowrap; }
-  .cet .r { position: absolute; top: 0; font: 800 12px ui-monospace, Menlo, monospace; color: #ffd88a; transform: translateX(-50%); white-space: nowrap; transition: left .6s; }
-  .row2 { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 12.5px; color: var(--muted); }
-  .hak { display: flex; gap: 4px; flex-wrap: wrap; }
-  .hak i { width: 11px; height: 11px; border-radius: 50%; background: #262626; }
-  .hak i.on { background: var(--gold); box-shadow: 0 0 6px rgba(224,162,79,.6); }
-  .jok { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
-  .jok button { border: 1px dashed #5a4620; background: #120e07; color: #f0dcb3; border-radius: 12px; padding: 7px 4px 6px; font: 700 12.5px system-ui, sans-serif; cursor: pointer; line-height: 1.2; }
-  .jok button small { display: block; font-weight: 500; color: #9a8763; font-size: 10.5px; margin-top: 1px; }
-  .jok button:disabled { opacity: .3; cursor: default; }
-  .hist { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 10px; min-height: 26px; }
-  .chip { padding: 3px 9px; border-radius: 99px; font: 700 13px ui-monospace, Menlo, monospace; background: #1a1a1a; border: 1px solid #262626; }
-  .chip.up { color: var(--up); } .chip.down { color: var(--down); }
-  .chip.ok { background: var(--win); color: #062012; border-color: var(--win); }
-  .chip.not { font-family: system-ui, sans-serif; font-weight: 600; font-size: 12px; color: #f0dcb3; border-style: dashed; border-color: #5a4620; background: #120e07; }
-  .stat3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 12px; text-align: center; }
-  .stat3 div { background: #0f0f0f; border: 1px solid var(--line); border-radius: 12px; padding: 7px 2px; }
-  .stat3 b { display: block; font-size: 18px; } .stat3 span { font-size: 11px; color: var(--muted); }
-  .note { text-align: center; font-size: 12px; color: var(--muted); margin-top: 10px; line-height: 1.45; }
-  .linkbtn { display: block; width: 100%; margin-top: 10px; padding: 11px; border-radius: 14px; border: 1px solid var(--gold); background: transparent; color: var(--gold); font: 700 14.5px system-ui, sans-serif; cursor: pointer; }
-
-  /* Ters Köşe */
-  .bot { display: flex; gap: 10px; align-items: flex-start; margin: 4px 0 12px; }
-  .av { width: 54px; height: 54px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font: italic 700 30px Georgia, "Times New Roman", serif; color: #1a1205; background: radial-gradient(circle at 35% 30%, #fff1c9, #e0a24f 55%, #8a5d1d); box-shadow: 0 0 0 2px #2b2110, 0 0 18px rgba(224,162,79,.4); }
-  .av.dus { animation: dus 1.4s ease-in-out infinite; }
-  @keyframes dus { 50% { transform: rotate(-8deg) scale(1.04); } }
-  .bubble { position: relative; flex: 1; background: #15120c; border: 1px solid #4a3a1c; border-radius: 4px 18px 18px 18px; padding: 12px 14px; font-size: 15px; line-height: 1.45; color: #f3e9d8; min-height: 54px; }
-  .bubble b.big { display: block; font: 800 46px/1.05 ui-monospace, "SF Mono", Menlo, monospace; color: #ffd88a; letter-spacing: 2px; margin: 4px 0 2px; text-shadow: 0 0 16px rgba(255,190,80,.35); }
-  .tbtn { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-  .tbtn button { height: 62px; border-radius: 16px; border: 1px solid var(--line); background: #141414; color: #fff; font: 800 14px system-ui, sans-serif; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
-  .tbtn button b { font-size: 22px; line-height: 1; }
-  .tbtn .bu { border-color: #24456b; background: #0b1622; color: var(--up); }
-  .tbtn .ku { border-color: #5a2a1a; background: #1c0d08; color: var(--down); }
-  .tbtn .ok { border-color: #1f6b45; background: #0b1e14; color: #7ee2a8; }
-  .tbtn button:disabled { opacity: .3; }
-  .tsmall { display: flex; gap: 8px; margin-top: 10px; }
-  .tsmall button { flex: 1; padding: 10px; border-radius: 13px; border: 1px solid var(--line); background: #111; color: #ccc; font: 700 13.5px system-ui, sans-serif; cursor: pointer; }
-  .big2 { width: 100%; height: 54px; border-radius: 16px; border: 0; background: linear-gradient(180deg, #f6d48d, #d7a046); color: #2a1a05; font: 800 17px system-ui, sans-serif; cursor: pointer; margin-top: 4px; }
-
-  /* Yıl Avı */
-  .qcard { background: linear-gradient(180deg, #1d150c, #120d07); border: 1px solid #4a3a1c; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; }
-  .qcard .qn { display: flex; justify-content: space-between; font-size: 12px; color: #b79a74; letter-spacing: .5px; }
-  .qcard .qn b { color: var(--gold); }
-  .qcard .q { font: 600 16.5px/1.4 Georgia, "Times New Roman", serif; color: #f6ead2; margin-top: 6px; min-height: 46px; }
-
-  /* 60 saniye */
-  .hiz { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
-  .ring { --p: 1; width: 66px; height: 66px; border-radius: 50%; flex: none; display: grid; place-items: center; background: conic-gradient(var(--rc, var(--gold)) calc(var(--p) * 1turn), #232323 0); }
-  .ring b { width: 52px; height: 52px; border-radius: 50%; background: #0b0b0b; display: grid; place-items: center; font: 800 20px ui-monospace, Menlo, monospace; }
-  .hiz .sk { text-align: center; flex: 1; }
-  .hiz .sk b { display: block; font: 800 34px ui-monospace, Menlo, monospace; color: #ffd88a; line-height: 1.1; }
-  .hiz .sk span { font-size: 12px; color: var(--muted); }
-
-  /* Pencere, bildirim, altın yağmuru */
-  .ov { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: none; overflow-y: auto; overscroll-behavior: contain; padding: 16px; z-index: 50; }
-  .ov.show { display: flex; }
-  .modal { margin: auto; width: 100%; max-width: 360px; max-height: 92vh; max-height: calc(100dvh - 32px); overflow-y: auto; background: radial-gradient(120% 80% at 50% 0%, #241a0d, #0f0c08 70%); border: 1px solid #4a3523; border-radius: 22px; padding: 20px 18px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.7); }
-  .modal .em { font-size: 46px; line-height: 1.1; }
-  .modal h2 { margin: 6px 0 6px; font: italic 700 23px Georgia, "Times New Roman", serif; color: #f0c674; }
-  .modal p { margin: 0 0 12px; color: #cbbfa8; font-size: 14.5px; line-height: 1.5; }
-  .modal .yr { font: 800 40px ui-monospace, Menlo, monospace; color: #ffd88a; letter-spacing: 3px; }
-  .modal .src { font-size: 11.5px; color: #8a7a60; margin: -4px 0 12px; }
-  .modal .btn { display: block; width: 100%; padding: 13px; border-radius: 14px; border: 0; background: linear-gradient(180deg, #f6d48d, #d7a046); color: #2a1a05; font: 800 16px system-ui, sans-serif; cursor: pointer; margin-top: 8px; }
-  .modal .btn.gh { background: transparent; border: 1px solid #4a3a1c; color: #e8d3a8; }
-  .dist { text-align: left; margin: 4px 0 12px; }
-  .dist div { display: flex; align-items: center; gap: 6px; font: 700 12px ui-monospace, Menlo, monospace; color: #b79a74; margin: 3px 0; }
-  .dist div i { display: block; height: 16px; min-width: 18px; border-radius: 4px; background: #3a2f1e; color: #fff; font-style: normal; font-size: 11px; text-align: right; padding: 0 5px; line-height: 16px; }
-  .dist div.me i { background: var(--gold); color: #1a1205; }
-  .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px); opacity: 0; transition: .25s; background: #1b160e; border: 1px solid #4a3a1c; color: #f3e3c0; padding: 10px 16px; border-radius: 14px; font-size: 14px; z-index: 60; max-width: 90vw; text-align: center; pointer-events: none; }
-  .toast.show { opacity: 1; transform: translate(-50%, 0); }
-  .rain { position: fixed; top: -50px; font-size: 26px; pointer-events: none; z-index: 70; animation: fall linear forwards; }
-  @keyframes fall { to { transform: translateY(115vh) rotate(600deg); } }
-  footer.copyright { margin-top: 26px !important; }
+  .msg { min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-size: 18px; font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+  .msg small { font-size: 13px; font-weight: 500; color: var(--muted); margin-top: 3px; }
+  .msg.up { color: var(--up); } .msg.down { color: var(--down); } .msg.win { color: var(--win); } .msg.lose { color: var(--down); }
+  /* Sayı tablosu */
+  .grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+  .grid button { aspect-ratio: 1; border-radius: 9px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: 700 15px system-ui, sans-serif; font-variant-numeric: tabular-nums; cursor: pointer; padding: 0; transition: opacity .3s, background .2s, border-color .2s; position: relative; }
+  .grid button:active { transform: scale(.94); }
+  .grid.ipucu button.asal { color: var(--gold); border-color: #4a3a1c; }
+  .grid button.disi { opacity: .16; cursor: default; }
+  .grid button.degil { color: #5a5a5a; background: #0a0a0a; }
+  .grid button.degil::after { content: ""; position: absolute; left: 22%; right: 22%; top: 50%; height: 1.5px; background: #5a5a5a; transform: rotate(-35deg); }
+  .grid button.up, .grid.ipucu button.up { background: rgba(90,169,240,.16); border-color: var(--up); color: var(--up); }
+  .grid button.down, .grid.ipucu button.down { background: rgba(239,106,76,.16); border-color: var(--down); color: var(--down); }
+  .grid button.ok, .grid.ipucu button.ok { background: var(--win); border-color: var(--win); color: #04170d; opacity: 1; }
+  .grid button.cevap, .grid.ipucu button.cevap { border: 2px solid var(--win); color: var(--win); opacity: 1; }
+  .shake { animation: shake .3s; }
+  @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+  .alt { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; font-size: 13.5px; color: var(--muted); }
+  .hak { display: flex; gap: 5px; }
+  .hak i { width: 12px; height: 12px; border-radius: 50%; background: #262626; }
+  .hak i.on { background: var(--gold); }
+  .sw { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+  .sw input { display: none; }
+  .sw i { width: 38px; height: 22px; border-radius: 99px; background: #333; position: relative; transition: background .2s; }
+  .sw i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #ddd; transition: transform .2s; }
+  .sw input:checked + i { background: var(--gold); }
+  .sw input:checked + i::after { transform: translateX(16px); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 14px; text-align: center; }
+  .stats div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 2px; }
+  .stats b { display: block; font-size: 19px; } .stats span { font-size: 11.5px; color: var(--muted); }
+  .again { display: block; width: 100%; margin-top: 12px; padding: 13px; border-radius: 14px; border: 1px solid var(--gold); background: transparent; color: var(--gold); font: 700 16px system-ui, sans-serif; cursor: pointer; }
+  .again.ana { background: var(--gold); color: #1a1205; }
+  .bilgi { margin-top: 14px; font-size: 12.5px; color: var(--muted); line-height: 1.5; text-align: center; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -181,575 +76,94 @@
 </head>
 <body>
 <header class="top">
-  <a class="ib" href="oyunlar.html" title="Oyunlar" aria-label="Oyunlar">🎮</a>
-  <h1>🎯 Sayı Tahmin</h1>
-  <button class="ib" id="sesBtn" type="button" title="Ses ve titreşim" aria-label="Ses ve titreşim">🔊</button>
+  <a class="home" href="oyunlar.html" title="Oyunlar" aria-label="Oyunlar">🎮</a>
+  <h1>🔢 Asal Tahmin</h1>
+  <span style="width:42px"></span>
 </header>
-<nav class="modes" id="modes">
-  <button type="button" data-m="kasa"><b>🏦</b>Kasa</button>
-  <button type="button" data-m="ters"><b>🔄</b>Ters Köşe</button>
-  <button type="button" data-m="yil"><b>📜</b>Yıl Avı</button>
-  <button type="button" data-m="hiz"><b>⚡</b>60 sn</button>
-</nav>
-<main id="view"></main>
-<div class="ov" id="ov"><div class="modal" id="modal"></div></div>
-<div class="toast" id="toast"></div>
+<p class="sub" id="sub"></p>
+<div class="seg" id="seg"><button type="button" data-max="50">1 – 50</button><button type="button" data-max="100">1 – 100</button></div>
+<div class="msg" id="msg"></div>
+<div class="grid" id="grid"></div>
+<div class="alt"><span id="hakT"></span><span class="hak" id="hak"></span></div>
+<div class="alt"><label class="sw"><input type="checkbox" id="ipucu"><i></i>Asal sayıları göster</label><span id="kalan"></span></div>
+<button class="again" id="again" type="button">Yeni oyun</button>
+<div class="stats" id="stats"></div>
+<p class="bilgi">Asal sayı: 1'den büyük, yalnızca 1'e ve kendisine bölünebilen sayı.<br>Asal olmayan bir sayıya dokunursan çarpanlarını görürsün, hakkın gitmez.</p>
 
 <script>
 const $ = (id) => document.getElementById(id);
-const SITE = "sadolayn.github.io/SadoDepo/tahmin.html";
 const oku = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v == null ? d : v; } catch (e) { return d; } };
 const yaz = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
-const fmt = (n) => Number(n).toLocaleString("tr-TR");
-const BUYUK = (t) => t.toLocaleUpperCase("tr-TR");
-const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
-const sec = (a) => a[Math.floor(Math.random() * a.length)];
-function okunus(n) {
-  const B = ["sıfır", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz"], O = ["", "on", "yirmi", "otuz", "kırk", "elli", "altmış", "yetmiş", "seksen", "doksan"];
-  n = Math.abs(n); if (n && n % 1000 === 0) return "bin"; if (n && n % 100 === 0) return "yüz"; n %= 100; return n % 10 ? B[n % 10] : n ? O[n / 10] : "sıfır";
-}
-const den = (n) => { const w = okunus(n), v = (w.match(/[aeıioöuü]/g) || ["a"]).pop(); return `${n}'${"çfhkpsşt".includes(w.slice(-1)) ? "t" : "d"}${"eiöü".includes(v) ? "e" : "a"}n`; };
+const HAK = { 50: 5, 100: 6 };
+const asalMi = (n) => { if (n < 2) return false; for (let i = 2; i * i <= n; i++) if (n % i === 0) return false; return true; };
+const carpanlar = (n) => { const f = []; for (let i = 2; n > 1; ) { if (n % i === 0) { f.push(i); n /= i; } else i++; } return f; };
+const ASALLAR = Array.from({ length: 100 }, (_, i) => i + 1).filter(asalMi);
+const ST = Object.assign({ kazanilan: 0, seri: 0, en: {} }, oku("asalSt", {}));
+let max = oku("asalMax", 100), s, g, bitti;
+if (!HAK[max]) max = 100;
 
-// ---------- Kayıt (bu cihazda) ----------
-const ST = Object.assign({ gunluk: { seri: 0, enSeri: 0, son: 0, oynanan: 0, acilan: 0, dagilim: Array(10).fill(0) }, serbest: { acilan: 0, en: {} }, ters: { sadolayn: 0, sen: 0, yalan: 0 }, yil: { en: 0, oyun: 0 }, hiz: { en: 0 } }, oku("tahminSt", {}));
-if (!oku("tahminSt", null)) { const eski = Number(localStorage.getItem("wins")) || 0; ST.serbest.acilan = eski; } // eski oyunun "kazanılan" sayısı taşınır
-const kaydet = () => yaz("tahminSt", ST);
-
-// ---------- Ses ve titreşim ----------
-const Ses = (() => {
-  let on = oku("tahminSes", true), ac = null;
-  const ctx = () => { if (!ac) { const A = window.AudioContext || window.webkitAudioContext; if (A) ac = new A(); } if (ac && ac.state === "suspended") ac.resume(); return ac; };
-  function ton(f, d, tip, v, f2) {
-    if (!on) return; const a = ctx(); if (!a) return;
-    const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
-    o.type = tip || "sine"; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
-    g.gain.setValueAtTime(v || 0.1, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
-    o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + d + 0.03);
-  }
-  return {
-    on: () => on,
-    set: (v) => { on = v; yaz("tahminSes", v); $("sesBtn").textContent = v ? "🔊" : "🔇"; },
-    tik: () => ton(2100, 0.025, "square", 0.025),
-    tak: () => { ton(150, 0.2, "sawtooth", 0.09, 60); },
-    bip: (y) => ton(y ? 700 : 340, 0.13, "triangle", 0.09),
-    acil: () => [523, 659, 784, 1047, 1319].forEach((f, i) => setTimeout(() => ton(f, 0.28, "triangle", 0.1), i * 95)),
-    kapali: () => [392, 330, 262].forEach((f, i) => setTimeout(() => ton(f, 0.3, "sine", 0.1), i * 160)),
-    titre: (p) => { if (on && navigator.vibrate) try { navigator.vibrate(p); } catch (e) {} },
-  };
-})();
-$("sesBtn").textContent = Ses.on() ? "🔊" : "🔇";
-$("sesBtn").onclick = () => { Ses.set(!Ses.on()); toast(Ses.on() ? "🔊 Ses ve titreşim açık" : "🔇 Ses ve titreşim kapalı"); };
-
-// ---------- Ortak yardımcılar ----------
-function toast(t) { const e = $("toast"); e.innerHTML = t; e.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => e.classList.remove("show"), 2600); }
-function pencere(html) { $("modal").innerHTML = html; $("ov").classList.add("show"); $("modal").scrollTop = 0; }
-const kapat = () => $("ov").classList.remove("show");
-$("ov").onclick = (e) => { if (e.target === $("ov") && $("ov").dataset.kapanir === "1") kapat(); };
-function yagmur(em, n) { for (let i = 0; i < n; i++) { const d = document.createElement("div"); d.className = "rain"; d.textContent = sec(em); d.style.left = Math.random() * 100 + "vw"; d.style.animationDuration = 1.8 + Math.random() * 1.8 + "s"; d.style.animationDelay = Math.random() * 0.6 + "s"; d.style.fontSize = 18 + Math.random() * 18 + "px"; document.body.appendChild(d); setTimeout(() => d.remove(), 4400); } }
-async function paylas(txt) {
-  try { if (navigator.share) { await navigator.share({ text: txt }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
-  try { await navigator.clipboard.writeText(txt); toast("📋 Kopyalandı · istediğin yere yapıştır"); } catch (e) { toast("Kopyalanamadı"); }
-}
-// Türkiye saatiyle gün: Günün Kasası #1 = 21 Ekim 2026
-const trSimdi = () => new Date(Date.now() + 3 * 36e5);
-const gunNo = () => Math.floor((Date.now() + 3 * 36e5 - Date.UTC(2026, 9, 21)) / 864e5) + 1;
-function yarinaKalan() { const t = trSimdi(), m = Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate() + 1) - t.getTime(); return `${Math.floor(m / 36e5)} sa ${Math.floor((m % 36e5) / 6e4)} dk`; }
-function mulberry(a) { return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-const gunSifre = (n) => { const r = mulberry(n * 9973 + 2026); r(); r(); return Math.floor(r() * 999) + 1; }; // herkese aynı sayı
-
-// Sıcak–soğuk: 0 buz … 5 yanıyor
-const ISI = [["🧊", "Buz gibi"], ["🌬️", "Soğuk"], ["🌤️", "Ilık"], ["♨️", "Sıcak"], ["🔥", "Çok sıcak"], ["🌋", "Yanıyorsun!"]];
-const ISIYER = [0.05, 0.24, 0.45, 0.65, 0.83, 0.97];
-function isiKasa(n, s, max) { const r = Math.abs(n - s) / max; return r <= 0.01 ? 5 : r <= 0.03 ? 4 : r <= 0.08 ? 3 : r <= 0.18 ? 2 : r <= 0.35 ? 1 : 0; }
-function isiYil(d) { d = Math.abs(d); return d <= 1 ? 5 : d <= 3 ? 4 : d <= 7 ? 3 : d <= 15 ? 2 : d <= 35 ? 1 : 0; }
-const isiHtml = () => `<div class="heat"><div class="t" id="isiT">&nbsp;</div><div class="bar"><span class="mk yok" id="isiM"></span></div><div class="lb"><span>🧊 Soğuk</span><span>Sıcak 🔥</span></div></div>`;
-function isiGoster(l, yon) {
-  if (l == null) { $("isiT").innerHTML = "&nbsp;"; $("isiM").classList.add("yok"); return; }
-  $("isiM").classList.remove("yok"); $("isiM").style.left = ISIYER[l] * 100 + "%";
-  $("isiT").innerHTML = `${ISI[l][0]} ${ISI[l][1]}${yon ? ` · <span style="color:${yon === "up" ? "var(--up)" : "var(--down)"}">${yon === "up" ? "⬆️ daha büyük" : "⬇️ daha küçük"}</span>` : ""}`;
-  Ses.titre(l >= 5 ? [90, 50, 90, 50, 90] : l === 4 ? [70, 50, 70] : l === 3 ? [60] : 0);
-}
-// Cetvel: tüm aralık, kalan aralık (altın) ve denenen sayılar
-function cetvel(id, min, max, lo, hi, g) {
-  const el = $(id); if (!el) return;
-  const x = (v) => ((v - min) / (max - min)) * 100;
-  const L = x(lo), R = x(hi);
-  el.innerHTML = `<div class="rail"></div><div class="alive" style="left:${Math.min(L, 98)}%;width:${Math.max(R - L, 1.5)}%"></div>
-    ${g.map((z) => `<span class="g ${z.d}" style="left:${x(z.n)}%"></span>`).join("")}
-    <span class="r" style="left:${Math.max(8, Math.min(92, (L + R) / 2))}%">${lo === hi ? lo : `${lo} – ${hi}`}</span>
-    <span class="e" style="left:0">${min}</span><span class="e" style="right:0">${max}</span>`;
-}
-const hakHtml = (kalan, top) => `<span class="hak">${Array.from({ length: top }, (_, i) => `<i class="${i < kalan ? "on" : ""}"></i>`).join("")}</span>`;
-
-// ---------- Giriş: şifre çarkları ya da tuş takımı ----------
-// kok: kapının içindeki alan; kpKok: tuş takımı (kapının altında); o: { min, max, deger, kucuk }
-function Giris(kok, kpKok, o) {
-  const N = String(o.max).length;
-  let tip = oku("tahminGiris", "cark"), dig = [], yazi = "";
-  const set = (v) => { v = Math.max(0, Math.min(o.max, Math.round(v || 0))); dig = String(v).padStart(N, "0").split("").map(Number); yazi = ""; };
-  set(o.deger != null ? o.deger : Math.ceil(o.max / 2));
-  const deger = () => (tip === "tus" ? (yazi ? Number(yazi) : NaN) : Number(dig.join("")));
-  function ciz() {
-    if (tip === "cark") {
-      kok.innerHTML = `<div class="drums${o.kucuk ? " kucuk" : ""}">${dig.map((d, i) => `<div class="drum" data-i="${i}"><span class="d p">${(d + 1) % 10}</span><span class="d c">${d}</span><span class="d n">${(d + 9) % 10}</span></div>`).join("")}</div>`;
-      kpKok.innerHTML = "";
-      kok.querySelectorAll(".drum").forEach(bagla);
-    } else {
-      const s = yazi.padStart(N, " ");
-      kok.innerHTML = `<div class="disp">${s.split("").map((c) => `<span class="${c === " " ? "bos" : ""}">${c === " " ? "0" : c}</span>`).join("")}</div>`;
-      kpKok.innerHTML = `<div class="kp">${[1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => `<button type="button" data-k="${k}">${k}</button>`).join("")}<button type="button" data-k="sil" aria-label="Sil">⌫</button><button type="button" data-k="0">0</button><button type="button" data-k="temiz" aria-label="Temizle">C</button></div>`;
-      kpKok.querySelectorAll("button").forEach((b) => (b.onclick = () => {
-        const k = b.dataset.k; Ses.tik();
-        if (k === "sil") yazi = yazi.slice(0, -1); else if (k === "temiz") yazi = ""; else if (yazi.length < N) yazi = (yazi + k).replace(/^0+(?=\d)/, "");
-        ciz();
-      }));
-    }
-  }
-  function adim(i, d) {
-    dig[i] = (dig[i] + d + 10) % 10; Ses.tik();
-    const el = kok.querySelectorAll(".drum")[i]; if (!el) return;
-    el.querySelector(".c").textContent = dig[i]; el.querySelector(".p").textContent = (dig[i] + 1) % 10; el.querySelector(".n").textContent = (dig[i] + 9) % 10;
-    el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
-  }
-  function bagla(el) {
-    const i = +el.dataset.i; let y0 = null, top = 0, moved = false;
-    el.onpointerdown = (e) => { y0 = e.clientY; top = 0; moved = false; try { el.setPointerCapture(e.pointerId); } catch (x) {} };
-    el.onpointermove = (e) => { if (y0 == null) return; const s = Math.trunc((e.clientY - y0) / 22); if (s !== top) { adim(i, s - top); top = s; moved = true; } };
-    el.onpointerup = (e) => { if (y0 != null && !moved) { const r = el.getBoundingClientRect(); adim(i, e.clientY < r.top + r.height / 2 ? 1 : -1); } y0 = null; };
-    el.onpointercancel = () => (y0 = null);
-    el.onwheel = (e) => { e.preventDefault(); adim(i, e.deltaY < 0 ? 1 : -1); };
-  }
+function yeni() {
+  const L = ASALLAR.filter((p) => p <= max);
+  s = L[Math.floor(Math.random() * L.length)];
+  g = []; bitti = false;
+  $("sub").innerHTML = `1 ile ${max} arasında bir <b>asal sayı</b> tuttum. Bul bakalım!`;
+  document.querySelectorAll("#seg button").forEach((b) => b.classList.toggle("on", +b.dataset.max === max));
+  mesaj("Bir sayıya dokun", "", "");
   ciz();
-  return {
-    deger, set: (v) => { set(v); ciz(); },
-    degistir: () => { const v = deger(); tip = tip === "cark" ? "tus" : "cark"; yaz("tahminGiris", tip); if (tip === "cark") set(isNaN(v) ? Math.ceil(o.max / 2) : v); else yazi = ""; ciz(); return tip; },
-    tip: () => tip,
-    temizle: () => { if (tip === "tus") { yazi = ""; ciz(); } },
-  };
 }
-const tusIkon = () => (oku("tahminGiris", "cark") === "cark" ? "⌨️" : "🎰");
-
-// ======================================================================
-// 🏦 KASA — Günün Kasası (herkese aynı şifre) ve Serbest (Kolay / Orta / Zor)
-// ======================================================================
-const SEV = { kolay: { ad: "Kolay", max: 99, hak: 7 }, orta: { ad: "Orta", max: 499, hak: 9 }, zor: { ad: "Zor", max: 999, hak: 10 } };
-const JOK = [["tek", "🎭 Tek mi?", "tek mi çift mi"], ["yari", "✂️ Yarıya böl", "hangi yarıda"], ["uc", "➗ 3'e böl", "bölünür mü"]];
-let K = null, GI = null;
-function kasaKur(tur) {
-  if (tur === "gunluk") {
-    const n = gunNo(), k = oku("tahminGun", null), kay = k && k.n === n ? k : { n, g: [], jok: {}, notlar: [], bitti: false, kazandi: false };
-    K = Object.assign({ tur, max: 999, hak: 10, s: gunSifre(n) }, kay, { n });
-  } else {
-    const sv = SEV[oku("tahminSev", "orta")] || SEV.orta;
-    K = { tur, sev: oku("tahminSev", "orta"), max: sv.max, hak: sv.hak, s: rnd(1, sv.max), g: [], jok: {}, notlar: [], bitti: false, kazandi: false };
-  }
-}
-function kasaAralik() { let lo = 1, hi = K.max; K.g.forEach((z) => { if (z.d === "up") lo = Math.max(lo, z.n + 1); if (z.d === "down") hi = Math.min(hi, z.n - 1); }); K.notlar.forEach((z) => { if (z.lo) { lo = Math.max(lo, z.lo); hi = Math.min(hi, z.hi); } }); return [lo, hi]; }
-function kasaSakla() { if (K.tur === "gunluk") yaz("tahminGun", { n: K.n, g: K.g, jok: K.jok, notlar: K.notlar, bitti: K.bitti, kazandi: K.kazandi }); }
-function renderKasa() {
-  const tur = oku("tahminKasa", "gunluk");
-  if (!K || K.tur !== tur || (tur === "gunluk" && K.n !== gunNo())) kasaKur(tur);
-  const gl = K.tur === "gunluk", sev = oku("tahminSev", "orta");
-  $("view").innerHTML = `
-    <div class="seg" id="kTur"><button type="button" data-t="gunluk" class="${gl ? "on" : ""}">🏦 Günün Kasası <small>#${gunNo()}</small></button><button type="button" data-t="serbest" class="${gl ? "" : "on"}">🎲 Serbest</button></div>
-    ${gl ? "" : `<div class="seg" id="kSev">${Object.entries(SEV).map(([k, v]) => `<button type="button" data-s="${k}" class="${sev === k ? "on" : ""}">${v.ad} <small>1–${v.max}</small></button>`).join("")}</div>`}
-    <div class="vault" id="vault"><div class="inside"><div class="coins">🪙🪙🪙🪙</div><div class="sf" id="sfT"></div><small id="sfA">KASA AÇILDI</small></div>
-      <div class="door"><div class="led" id="led"></div><div id="inp"></div></div></div>
-    <div id="kp"></div>
-    <div class="act"><button class="mini" id="tusBtn" type="button" title="Çark / tuş takımı">${tusIkon()}</button><button class="try" id="dene" type="button">🔑 Dene</button></div>
-    ${isiHtml()}
-    <div class="cet" id="cet"></div>
-    <div class="row2"><span id="hakT"></span><span id="hakL"></span></div>
-    <div class="jok" id="jok">${JOK.map(([k, a, b]) => `<button type="button" data-j="${k}">${a}<small>${b}</small></button>`).join("")}</div>
-    <div class="hist" id="hist"></div>
-    <div id="kAlt"></div>`;
-  $("kTur").querySelectorAll("button").forEach((b) => (b.onclick = () => { yaz("tahminKasa", b.dataset.t); K = null; renderKasa(); }));
-  if ($("kSev")) $("kSev").querySelectorAll("button").forEach((b) => (b.onclick = () => { yaz("tahminSev", b.dataset.s); K = null; renderKasa(); }));
-  const [lo, hi] = kasaAralik(), son = K.g[K.g.length - 1];
-  GI = Giris($("inp"), $("kp"), { max: K.max, deger: son ? son.n : Math.floor((lo + hi) / 2) });
-  $("tusBtn").onclick = () => { GI.degistir(); $("tusBtn").textContent = tusIkon(); };
-  $("dene").onclick = kasaDene;
-  $("jok").querySelectorAll("button").forEach((b) => (b.onclick = () => joker(b.dataset.j)));
-  kasaCiz(true);
-  if (K.bitti) { $("vault").classList.add("open"); if (gl && !K.goster) { K.goster = true; setTimeout(() => gunSonu(false), 350); } }
-}
-function led(t, c) { const e = $("led"); if (!e) return; e.textContent = BUYUK(t); e.className = "led" + (c ? " " + c : ""); }
-function kasaCiz(ilk) {
-  const [lo, hi] = kasaAralik(), kalan = K.hak - K.g.length, son = K.g[K.g.length - 1];
-  cetvel("cet", 1, K.max, lo, hi, K.g);
+function aralik() { let lo = 1, hi = max; g.forEach((z) => { if (z.d === "up") lo = Math.max(lo, z.n + 1); if (z.d === "down") hi = Math.min(hi, z.n - 1); }); return [lo, hi]; }
+const deneme = () => g.filter((z) => z.d !== "degil").length;
+function mesaj(t, cls, alt) { const m = $("msg"); m.className = "msg " + (cls || ""); m.innerHTML = t + (alt ? `<small>${alt}</small>` : ""); }
+function ciz() {
+  const [lo, hi] = aralik(), kalan = HAK[max] - deneme();
+  const durum = Object.fromEntries(g.map((z) => [z.n, z.d]));
+  $("grid").classList.toggle("ipucu", $("ipucu").checked);
+  $("grid").innerHTML = Array.from({ length: max }, (_, i) => {
+    const n = i + 1, d = durum[n];
+    let c = asalMi(n) ? "asal" : "";
+    if (d) c += " " + d; else if (n < lo || n > hi) c += " disi";
+    if (bitti && n === s && d !== "ok") c += " cevap";
+    return `<button type="button" data-n="${n}" class="${c}">${n}</button>`;
+  }).join("");
   $("hakT").innerHTML = `Kalan hak <b style="color:#fff">${kalan}</b>`;
-  $("hakL").innerHTML = hakHtml(kalan, K.hak);
-  $("hist").innerHTML = K.g.map((z) => `<span class="chip ${z.d}">${z.n}${z.d === "up" ? "↑" : z.d === "down" ? "↓" : "✓"}</span>`).join("") + K.notlar.map((z) => `<span class="chip not">🃏 ${z.m}</span>`).join("");
-  $("jok").querySelectorAll("button").forEach((b) => (b.disabled = !!K.jok[b.dataset.j] || K.bitti));
-  $("dene").disabled = K.bitti;
-  $("sfT").textContent = K.bitti ? String(K.s) : ""; $("sfA").textContent = K.kazandi ? "KASA AÇILDI" : "ŞİFREYDİ";
-  if (ilk) {
-    if (K.bitti) led(K.kazandi ? `🔓 Açıldı · ${K.g.length}. denemede` : `🔒 Şifre ${K.s} idi`, K.kazandi ? "" : "down");
-    else if (son) { led(son.d === "up" ? "⬆️ Daha büyük" : "⬇️ Daha küçük", son.d); isiGoster(isiKasa(son.n, K.s, K.max), son.d); }
-    else led(K.tur === "gunluk" ? `Günün kasası #${K.n} · şifre 1–999` : `Şifre 1–${K.max} · çevir, dene`, "warn");
+  $("hak").innerHTML = Array.from({ length: HAK[max] }, (_, i) => `<i class="${i < kalan ? "on" : ""}"></i>`).join("");
+  const aday = ASALLAR.filter((p) => p >= lo && p <= hi && p <= max && !durum[p]).length;
+  $("kalan").textContent = bitti ? "" : `${aday} aday asal`;
+  $("again").classList.toggle("ana", bitti);
+  $("stats").innerHTML = `<div><b>${ST.kazanilan}</b><span>Bildiğin</span></div><div><b>${ST.seri}</b><span>Seri</span></div><div><b>${ST.en[max] || "–"}</b><span>En iyi (1–${max})</span></div>`;
+}
+$("grid").onclick = (e) => {
+  const b = e.target.closest("button[data-n]"); if (!b || bitti) return;
+  const n = +b.dataset.n, [lo, hi] = aralik();
+  if (g.some((z) => z.n === n)) return;
+  if (n < lo || n > hi) { b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake"); mesaj(`${n} aralığın dışında`, "", `Sayı ${lo} ile ${hi} arasında`); return; }
+  if (!asalMi(n)) {
+    g.push({ n, d: "degil" });
+    mesaj(`${n} asal değil`, "", n === 1 ? "1 asal sayı sayılmaz · hakkın gitmedi" : `${n} = ${carpanlar(n).join(" × ")} · hakkın gitmedi`);
+    return ciz();
   }
-  const alt = $("kAlt");
-  if (K.tur === "gunluk") {
-    const G = ST.gunluk;
-    alt.innerHTML = `<div class="stat3"><div><b>🔥 ${G.seri}</b><span>Gün serisi</span></div><div><b>${G.acilan}</b><span>Açılan kasa</span></div><div><b>${G.enSeri}</b><span>En uzun seri</span></div></div>
-      ${K.bitti ? `<button class="linkbtn" id="sonuc" type="button">📊 Sonuç ve paylaş</button>` : ""}
-      <p class="note">Herkes bugün aynı kasayı açmaya çalışıyor 🏦 Yeni kasa her gece 00:00'da. Çarkları parmağınla yukarı-aşağı kaydır ya da dokun; ⌨️ ile tuş takımına geç.</p>`;
-    if ($("sonuc")) $("sonuc").onclick = () => gunSonu(false);
-  } else {
-    const en = ST.serbest.en[K.sev];
-    alt.innerHTML = `<div class="stat3"><div><b>${ST.serbest.acilan}</b><span>Açılan kasa</span></div><div><b>${en || "–"}</b><span>En iyi (${SEV[K.sev].ad})</span></div><div><b>${K.hak}</b><span>Hak</span></div></div>
-      ${K.bitti ? `<button class="linkbtn" id="yeniK" type="button">🎲 Yeni kasa</button>` : ""}`;
-    if ($("yeniK")) $("yeniK").onclick = () => { kasaKur("serbest"); renderKasa(); };
+  if (n === s) {
+    g.push({ n, d: "ok" }); bitti = true;
+    const k = deneme(), sira = ASALLAR.indexOf(s) + 1, ikiz = [s - 2, s + 2].filter(asalMi);
+    ST.kazanilan++; ST.seri++; if (!ST.en[max] || k < ST.en[max]) ST.en[max] = k; yaz("asalSt", ST);
+    mesaj(`🎉 Bildin! ${s}, ${k}. denemede`, "win", `${s}, ${sira}. asal sayı${ikiz.length ? ` · ikiz asalı ${ikiz.join(" ve ")}` : ""}`);
+    window.Rapor && Rapor.oyun("tahmin", true, `${k}. denemede`);
+    return ciz();
   }
-}
-function kasaDene() {
-  if (K.bitti) return;
-  const n = GI.deger();
-  if (!(n >= 1 && n <= K.max)) { led(`1–${K.max} arası bir sayı`, "warn"); salla(); return; }
-  if (K.g.some((z) => z.n === n)) { led(`${n} denendi, başka sayı`, "warn"); salla(); return; }
-  const d = n === K.s ? "ok" : n < K.s ? "up" : "down";
-  K.g.push({ n, d });
-  if (d === "ok") { K.bitti = true; K.kazandi = true; }
-  else if (K.g.length >= K.hak) K.bitti = true;
-  kasaSakla();
-  if (d === "ok") {
-    led(`🔓 Açıldı · ${K.g.length}. denemede`); Ses.acil(); Ses.titre([40, 40, 40, 40, 200]);
-    setTimeout(() => { $("vault").classList.add("open"); yagmur(["🪙", "✨", "💰", "⭐"], 40); }, 250);
-    kasaBitti(true);
-  } else if (K.bitti) {
-    led(`🔒 Hak bitti · şifre ${K.s}`, "down"); Ses.kapali(); salla();
-    kasaBitti(false);
-  } else {
-    led(d === "up" ? "⬆️ Daha büyük" : "⬇️ Daha küçük", d); Ses.tak(); salla();
-    isiGoster(isiKasa(n, K.s, K.max), d);
-  }
-  kasaCiz(false);
-  if (GI.tip() === "tus") GI.temizle();
-}
-function salla() { const v = $("vault"); if (!v) return; v.classList.remove("shake"); void v.offsetWidth; v.classList.add("shake"); }
-function joker(t) {
-  if (K.bitti || K.jok[t]) return;
-  K.jok[t] = true;
-  let z;
-  if (t === "tek") z = { m: K.s % 2 ? "Şifre tek" : "Şifre çift" };
-  if (t === "uc") z = { m: K.s % 3 === 0 ? "3'e bölünür" : "3'e bölünmez" };
-  if (t === "yari") { const [lo, hi] = kasaAralik(), mid = Math.floor((lo + hi) / 2); z = K.s <= mid ? { lo, hi: mid } : { lo: mid + 1, hi }; z.m = `${z.lo}–${z.hi} arasında`; }
-  K.notlar.push(z); kasaSakla(); Ses.bip(true);
-  led("🃏 " + z.m, "warn"); kasaCiz(false);
-}
-function kasaBitti(acildi) {
-  const k = K.g.length;
-  window.Rapor && Rapor.oyun(K.tur === "gunluk" ? "tahmin-gunun-kasasi" : "tahmin", acildi, acildi ? `${k}. denemede` : "açılamadı");
-  if (K.tur === "gunluk") {
-    const G = ST.gunluk; G.oynanan++;
-    if (acildi) { G.seri = G.son === K.n - 1 ? G.seri + 1 : 1; G.son = K.n; G.acilan++; G.enSeri = Math.max(G.enSeri, G.seri); G.dagilim[k - 1] = (G.dagilim[k - 1] || 0) + 1; }
-    else G.seri = 0;
-    kaydet();
-    K.goster = true; setTimeout(() => gunSonu(true), acildi ? 1700 : 900);
-  } else {
-    if (acildi) { ST.serbest.acilan++; const e = ST.serbest.en[K.sev]; if (!e || k < e) ST.serbest.en[K.sev] = k; kaydet(); }
-  }
-}
-function gunPaylas() {
-  const ok = K.g.map((z) => (z.d === "up" ? "⬆️" : z.d === "down" ? "⬇️" : "🔓")).join("") + (K.kazandi ? "" : "🔒");
-  const j = Object.keys(K.jok).length;
-  return `🏦 Günün Kasası #${K.n} · ${K.kazandi ? K.g.length : "X"}/10\n${ok}\n${j ? `🃏 ${j} joker · ` : ""}🔥 ${ST.gunluk.seri} gün seri\n${SITE}`;
-}
-function gunSonu(yeni) {
-  const G = ST.gunluk, mx = Math.max(1, ...G.dagilim), k = K.g.length;
-  $("ov").dataset.kapanir = "1";
-  pencere(`<div class="em">${K.kazandi ? "🔓" : "🔒"}</div>
-    <h2>${K.kazandi ? (k <= 3 ? "Kasa ustası!" : k <= 6 ? "Kasa açıldı!" : "Son anda açıldı!") : "Kasa kapalı kaldı"}</h2>
-    <p>${K.kazandi ? `Günün Kasası #${K.n}'yi <b>${k}. denemede</b> açtın. Şifre <b>${K.s}</b>.` : `Şifre <b>${K.s}</b> idi. Yarın yeni kasa seni bekliyor.`}</p>
-    <div class="stat3" style="margin:0 0 12px"><div><b>🔥 ${G.seri}</b><span>Seri</span></div><div><b>${G.acilan}</b><span>Açılan</span></div><div><b>${G.oynanan ? Math.round((G.acilan / G.oynanan) * 100) : 0}%</b><span>Başarı</span></div></div>
-    <div class="dist">${G.dagilim.map((v, i) => `<div class="${K.kazandi && i === k - 1 ? "me" : ""}">${String(i + 1).padStart(2, " ")}<i style="width:${Math.max(8, (v / mx) * 100)}%">${v}</i></div>`).join("")}</div>
-    <button class="btn" id="pay" type="button">📤 Sonucu paylaş</button>
-    <button class="btn gh" id="serb" type="button">🎲 Serbest oyna</button>
-    <p class="note" style="margin-top:12px">⏳ Yeni kasa: <b style="color:#f0c674">${yarinaKalan()}</b> sonra</p>`);
-  $("pay").onclick = () => paylas(gunPaylas());
-  $("serb").onclick = () => { kapat(); yaz("tahminKasa", "serbest"); K = null; renderKasa(); };
-}
-
-// ======================================================================
-// 🔄 TERS KÖŞE — sen tutarsın, Sadolayn bulur; yalanı yakalar
-// ======================================================================
-const LAF = {
-  ilk: ["Gözlerine baktım… 👀", "İçimden bir ses diyor ki…", "Kahve falı gibi bakıyorum ☕", "Hmm, şöyle bir başlayayım…"],
-  orta: ["Çember daralıyor 🔍", "Seni okumaya başladım 😏", "Matematik konuşuyor 🧮", "Hissediyorum…", "Bu sefer çok yakın olmalı!", "Kafamda şimşek çaktı ⚡", "Az kaldı, saklanamazsın 🙂"],
-  son: ["Kaçışın yok!", "Son düzlük 🏁", "Bence bu kesin!", "Artık biliyorum…"],
+  const d = n < s ? "up" : "down";
+  g.push({ n, d });
+  if (deneme() >= HAK[max]) {
+    bitti = true; ST.seri = 0; yaz("asalSt", ST);
+    mesaj(`Hakkın bitti · sayı ${s} idi`, "lose", "Yeşil çerçeveli sayı");
+    window.Rapor && Rapor.oyun("tahmin", false, `Sayı ${s} idi`);
+  } else mesaj(d === "up" ? "Daha büyük ⬆️" : "Daha küçük ⬇️", d, "");
+  ciz();
 };
-let T = null;
-function tersKur(max) { T = { max, hak: max === 100 ? 7 : 10, adim: [], tahmin: null, durum: "basla" }; }
-function tersAralik() { let lo = 1, hi = T.max; T.adim.forEach((a) => { if (a.d === "up") lo = Math.max(lo, a.g + 1); if (a.d === "down") hi = Math.min(hi, a.g - 1); }); return [lo, hi]; }
-function tersTahmin() { const [lo, hi] = tersAralik(); if (lo >= hi) return lo; const p = 0.5 + (Math.random() - 0.5) * 0.3; return Math.max(lo, Math.min(hi, Math.round(lo + (hi - lo) * p))); }
-function renderTers() {
-  const max = oku("tahminTers", 100);
-  if (!T || T.max !== max) tersKur(max);
-  $("view").innerHTML = `
-    <div class="seg" id="tMax"><button type="button" data-v="100" class="${max === 100 ? "on" : ""}">1–100 <small>· 7 hak</small></button><button type="button" data-v="1000" class="${max === 1000 ? "on" : ""}">1–1000 <small>· 10 hak</small></button></div>
-    <div class="bot"><div class="av" id="av">S</div><div class="bubble" id="bub"></div></div>
-    <div id="tAlan"></div>
-    <div class="cet" id="cet"></div>
-    <div class="row2"><span>Sadolayn'ın kalan hakkı</span><span id="hakL"></span></div>
-    <div class="hist" id="hist"></div>
-    <div class="stat3" id="tSt"></div>`;
-  $("tMax").querySelectorAll("button").forEach((b) => (b.onclick = () => { yaz("tahminTers", +b.dataset.v); T = null; renderTers(); }));
-  tersCiz();
-}
-function tersCiz() {
-  const [lo, hi] = tersAralik(), bub = $("bub"), alan = $("tAlan"), av = $("av");
-  cetvel("cet", 1, T.max, Math.min(lo, hi), Math.max(lo, hi), T.adim.map((a) => ({ n: a.g, d: a.d })));
-  $("hakL").innerHTML = hakHtml(T.hak - T.adim.length, T.hak);
-  $("hist").innerHTML = T.adim.map((a) => `<span class="chip ${a.d}">${a.g}${a.d === "up" ? "↑" : a.d === "down" ? "↓" : "✓"}</span>`).join("");
-  av.classList.toggle("dus", T.durum === "soru");
-  $("tSt").innerHTML = `<div><b>${ST.ters.sadolayn}</b><span>Sadolayn buldu</span></div><div><b>${ST.ters.sen}</b><span>Sen kazandın</span></div><div><b>${ST.ters.yalan}</b><span>Yakalanan yalan</span></div>`;
-  if (T.durum === "basla") {
-    bub.innerHTML = `Aklından <b>1 ile ${fmt(T.max)}</b> arasında bir sayı tut. Kimseye söyleme 🤫<br><small style="color:#b79a74">Ben ${T.hak} denemede bulacağım. Sen sadece "büyük" ya da "küçük" de.</small>`;
-    alan.innerHTML = `<button class="big2" id="tBasla" type="button">🤫 Tuttum, başla</button>`;
-    $("tBasla").onclick = () => { T.durum = "soru"; T.tahmin = tersTahmin(); Ses.bip(true); tersCiz(); };
-  } else if (T.durum === "soru") {
-    const n = T.adim.length, laf = n === 0 ? sec(LAF.ilk) : hi - lo <= 4 ? sec(LAF.son) : sec(LAF.orta);
-    bub.innerHTML = `${laf}<b class="big">${T.tahmin}</b>mi? <small style="color:#b79a74">· ${n + 1}. tahmin</small>`;
-    alan.innerHTML = `<div class="tbtn"><button class="bu" type="button" data-d="up"><b>⬆️</b>Daha büyük</button><button class="ok" type="button" data-d="ok"><b>🎯</b>Bildin!</button><button class="ku" type="button" data-d="down"><b>⬇️</b>Daha küçük</button></div>
-      <div class="tsmall"><button type="button" id="tGeri"${T.adim.length ? "" : " disabled"}>↩️ Son cevabı geri al</button><button type="button" id="tBas">🔄 Baştan</button></div>`;
-    alan.querySelectorAll("[data-d]").forEach((b) => (b.onclick = () => tersCevap(b.dataset.d)));
-    $("tGeri").onclick = tersGeri; $("tBas").onclick = () => { tersKur(T.max); tersCiz(); };
-  } else if (T.durum === "celiski") {
-    const ust = T.adim.filter((a) => a.d === "up").reduce((m, a) => Math.max(m, a.g), 0), alt = T.adim.filter((a) => a.d === "down").reduce((m, a) => Math.min(m, a.g), Infinity);
-    bub.innerHTML = `Dur bakalım 🤨 <b>${den(ust)}</b> büyük, <b>${den(alt)}</b> küçük dedin. Arada hiç tam sayı yok! Birinde yanlış bastın galiba.`;
-    alan.innerHTML = `<div class="tsmall" style="margin-top:0"><button type="button" id="tGeri">↩️ Son cevabı geri al</button><button type="button" id="tBas">🔄 Baştan</button></div>`;
-    $("tGeri").onclick = tersGeri; $("tBas").onclick = () => { tersKur(T.max); tersCiz(); };
-  } else if (T.durum === "buldu") {
-    bub.innerHTML = `Buldum! 🎉 Tuttuğun sayı <b class="big">${T.tahmin}</b><b>${T.adim.length}. tahminde</b> buldum. Bir daha dene, belki beni zorlarsın 😏`;
-    alan.innerHTML = `<button class="big2" id="tYeni" type="button">🔄 Yeni sayı tut</button>`;
-    $("tYeni").onclick = () => { tersKur(T.max); tersCiz(); };
-  } else if (T.durum === "pes") {
-    bub.innerHTML = `Pes ediyorum 😩 ${T.hak} hakkım bitti. Hangi sayıyı tutmuştun? Söyle, cevaplarına bir bakayım…`;
-    alan.innerHTML = `<div class="vault kisa" style="height:auto"><div class="door" style="position:relative;inset:auto;padding:14px"><div id="inp"></div></div></div><div id="kp"></div>
-      <div class="act"><button class="mini" id="tusBtn" type="button">${tusIkon()}</button><button class="try" id="tSoyle" type="button">🗣️ Bu sayıyı tutmuştum</button></div>`;
-    const [lo2, hi2] = tersAralik();
-    const gi = Giris($("inp"), $("kp"), { max: T.max, deger: Math.max(1, Math.min(T.max, lo2)) });
-    $("tusBtn").onclick = () => { gi.degistir(); $("tusBtn").textContent = tusIkon(); };
-    $("tSoyle").onclick = () => tersKontrol(gi.deger());
-  }
-}
-function tersCevap(d) {
-  T.adim.push({ g: T.tahmin, d });
-  if (d === "ok") { T.durum = "buldu"; ST.ters.sadolayn++; kaydet(); Ses.acil(); yagmur(["✨", "🎯", "⭐"], 18); window.Rapor && Rapor.oyun("tahmin-ters", false, `Sadolayn ${T.adim.length}. tahminde buldu`); return tersCiz(); }
-  Ses.tik();
-  const [lo, hi] = tersAralik();
-  if (lo > hi) { T.durum = "celiski"; ST.ters.yalan++; kaydet(); Ses.tak(); Ses.titre([60, 40, 60]); return tersCiz(); }
-  if (T.adim.length >= T.hak) { T.durum = "pes"; return tersCiz(); }
-  T.tahmin = tersTahmin(); tersCiz();
-}
-function tersGeri() { const a = T.adim.pop(); if (!a) return; T.tahmin = a.g; T.durum = "soru"; tersCiz(); }
-function tersKontrol(n) {
-  if (!(n >= 1 && n <= T.max)) return toast(`1–${fmt(T.max)} arası bir sayı seç`);
-  const yan = T.adim.findIndex((a) => (a.d === "up" && !(n > a.g)) || (a.d === "down" && !(n < a.g)));
-  if (yan >= 0) {
-    const a = T.adim[yan]; ST.ters.yalan++; kaydet(); Ses.tak();
-    pencere(`<div class="em">😏</div><h2>Yakaladım!</h2><p>${n} tutsaydın, ${yan + 1}. tahminimde (<b>${a.g}</b>) "${a.d === "up" ? "daha büyük" : "daha küçük"}" dememen gerekirdi. Sadolayn'ı kandırmak kolay değil 😉</p><button class="btn" id="tTam" type="button">🔄 Yeni oyun</button>`);
-  } else {
-    ST.ters.sen++; kaydet(); Ses.acil(); yagmur(["🏆", "✨", "⭐"], 30);
-    window.Rapor && Rapor.oyun("tahmin-ters", true, "Sadolayn bulamadı");
-    pencere(`<div class="em">🏆</div><h2>Beni yendin!</h2><p><b>${n}</b> sayısını ${T.hak} tahminde bulamadım. Cevapların da tutarlı, tebrikler! 👏</p><button class="btn" id="tTam" type="button">🔄 Rövanş</button>`);
-  }
-  $("ov").dataset.kapanir = "0";
-  $("tTam").onclick = () => { kapat(); tersKur(T.max); renderTers(); };
-}
-
-// ======================================================================
-// 📜 YIL AVI — tarihçeden yıllar (İş Bankası tarihçesi ve Cumhuriyet tarihi)
-// Kaynak: isbank.com.tr "O Günlerden Bugünlere" ve sitedeki İş Bankası Gündemi › Tarihçe
-// ======================================================================
-const YILLAR = [
-  ["Türkiye İş Bankası hangi yıl kuruldu?", 1924, "İş Bankası, Atatürk'ün direktifiyle 26 Ağustos 1924'te Ankara'da kuruldu. 2 şube, 37 çalışan ve 1 milyon lira sermayeyle yola çıktı."],
-  ["İş Bankası İzmir Şubesi hangi yıl açıldı?", 1925, "İzmir Şubesi 12 Temmuz 1925'te açıldı."],
-  ["İş Bankası'nın ilk sanayi yatırımı, Bursa'daki İpekiş hangi yıl yapıldı?", 1925, "İlk sanayi yatırımı 250 bin lira sermayeli İpekiş oldu."],
-  ["Bugünkü Anadolu Sigorta hangi yıl kuruldu?", 1925, "Anadolu Anonim Sigorta adıyla 500 bin lira sermayeyle kuruldu."],
-  ["İş Bankası, Milli İtibar Bankası ile hangi yıl birleşti?", 1927, "1927'de sermaye 2 milyon lira artırıldı ve banka Milli İtibar Bankası ile birleşti."],
-  ["Türkiye'ye ilk kumbaraları İş Bankası hangi yıl getirdi?", 1928, "Kumbara, 1928'den beri tasarruf alışkanlığının simgesi."],
-  ["Milli Reasürans hangi yıl kuruldu?", 1929, "Milli Reasürans 1929'da kuruldu ve o günden beri faaliyetini sürdürüyor."],
-  ["İş Bankası yurt dışındaki ilk şubelerini (Hamburg ve İskenderiye) hangi yıl açtı?", 1932, "Böylece yurt dışında şube açan ilk Türk bankası oldu."],
-  ["Şişecam'ın Paşabahçe fabrikası hangi yıl üretime başladı?", 1935, "Paşabahçe fabrikası Kasım 1935'te üretime başladı. 1946'ya gelindiğinde cam ihtiyacının %96'sı yurt içinden karşılanıyordu."],
-  ["İş Bankası'nın ilk genel müdürü Celal Bayar hangi yıl Cumhurbaşkanı oldu?", 1950, "Celal Bayar 1950'de Türkiye'nin 3. Cumhurbaşkanı oldu."],
-  ["İş Bankası Kültür Yayınları hangi yıldan beri kesintisiz kitap yayımlıyor?", 1956, "Hasan Âli Yücel Klasikler Dizisi de bu yayınevine ait."],
-  ["İş Bankası hangi yıl 865 şubeye ve 19.074 çalışana ulaştı?", 1979, "O yıl Türkiye'deki mevduatın %22'si İş Bankası'ndaydı."],
-  ["Türkiye'nin ilk ATM'si \"Bankamatik\" hangi yıl hizmete girdi?", 1982, "\"Bankamatik\" aslında İş Bankası'nın verdiği bir marka; zamanla bütün ATM'lerin genel adı gibi kullanılır oldu."],
-  ["İş Bankası'nın merkezi bilgisayar sistemi hangi yıl çalışmaya başladı?", 1983, "İlk olarak Ankara'daki 6 şubede çalıştı; 1993'te bütün şubeler ağa bağlandı."],
-  ["Çevrim içi Bankamatik'ler ve banka kartları hangi yıl hizmete girdi?", 1987, "1987'de modern, çevrim içi Bankamatik dönemi başladı."],
-  ["Anadolu Hayat Emeklilik hangi yıl kuruldu?", 1990, "Banka aynı yıl kredi kartı başvurusu almaya da başladı."],
-  ["Telefon bankacılığı \"Mavi Hat\" hangi yıl hizmete girdi?", 1991, "Mavi Hat, bugünkü Çözüm Merkezi'nin atasıdır."],
-  ["Türkiye'nin ilk internet şubesi hangi yıl açıldı?", 1997, "İlk internet şubesini İş Bankası açtı; ATM sayısı da aynı yıl 1.000'i geçti."],
-  ["İş Bankası genel müdürlüğü hangi yıl Ankara'dan İstanbul'a taşındı?", 2000, "Genel müdürlük Levent'teki İş Kuleleri'ne taşındı."],
-  ["Mobil bankacılık uygulaması İşCep hangi yıl yayına girdi?", 2007, "İşCep, 2023–2025 arasında üç yıl üst üste \"Dünyanın En İyi Mobil Bankacılık Uygulaması\" seçildi."],
-  ["Yurt dışındaki ilk Bankamatik, Irak'ın Erbil şehrinde hangi yıl kuruldu?", 2012, "İlk yurt dışı Bankamatik, Erbil Şubesi'nde kuruldu."],
-  ["QR kodla ödeme sistemi Parakod hangi yıl hayata geçti?", 2012, "Parakod, Türkiye'de karekodla ödemenin ilk örneklerindendir."],
-  ["İşCep ile Bankamatik'i birleştiren İşCepmatik hangi yıl hizmete girdi?", 2015, "Kart olmadan, telefonla Bankamatik'ten para çekmenin yolunu açtı."],
-  ["Yapay zekâ destekli dijital asistan Maxi hangi yıl devreye girdi?", 2017, "Maxi'ye bugün WhatsApp'tan da ulaşılabiliyor."],
-  ["İş Bankası 100. yaşını hangi yıl kutladı?", 2024, "\"Türkiye'nin Bankası\" 2024'te ikinci yüzyılına girdi."],
-  ["Türkiye Büyük Millet Meclisi hangi yıl açıldı?", 1920, "TBMM 23 Nisan 1920'de Ankara'da açıldı."],
-  ["Cumhuriyet hangi yıl ilan edildi?", 1923, "Cumhuriyet 29 Ekim 1923'te ilan edildi."],
-  ["İzmir İktisat Kongresi hangi yıl toplandı?", 1923, "Türkiye İktisat Kongresi 17 Şubat 1923'te İzmir'de toplandı."],
-  ["Yeni Türk alfabesi (Harf Devrimi) hangi yıl kabul edildi?", 1928, "Yeni Türk harfleri 1 Kasım 1928'de kabul edildi."],
-  ["Soyadı Kanunu hangi yıl kabul edildi?", 1934, "Soyadı Kanunu 21 Haziran 1934'te kabul edildi."],
-  ["Türk kadınlarına milletvekili seçme ve seçilme hakkı hangi yıl tanındı?", 1934, "Bu hak 5 Aralık 1934'te tanındı; birçok Avrupa ülkesinden önce."],
-];
-const YMIN = 1900, YMAX = 2026, YHAK = 7, YSORU = 5;
-let Y = null, YG = null;
-function yilKur() { const L = YILLAR.map((x, i) => i).sort(() => Math.random() - 0.5).slice(0, YSORU); Y = { L, i: 0, puan: 0, g: [], sonuc: [] }; }
-function yilAralik() { let lo = YMIN, hi = YMAX; Y.g.forEach((z) => { if (z.d === "up") lo = Math.max(lo, z.n + 1); if (z.d === "down") hi = Math.min(hi, z.n - 1); }); return [lo, hi]; }
-function renderYil() {
-  if (!Y) yilKur();
-  const q = YILLAR[Y.L[Y.i]];
-  $("view").innerHTML = `
-    <div class="qcard"><div class="qn"><span>📜 SORU <b>${Y.i + 1}/${YSORU}</b></span><span>Puan <b>${Y.puan}</b></span></div><div class="q">${q[0]}</div></div>
-    <div class="vault kisa" id="vault"><div class="inside"></div><div class="door yil"><div class="led" id="led"></div><div id="inp"></div></div></div>
-    <div id="kp"></div>
-    <div class="act"><button class="mini" id="tusBtn" type="button">${tusIkon()}</button><button class="try" id="dene" type="button">📜 Bu yıl!</button></div>
-    ${isiHtml()}
-    <div class="cet" id="cet"></div>
-    <div class="row2"><span id="hakT"></span><span id="hakL"></span></div>
-    <div class="hist" id="hist"></div>
-    <div class="stat3"><div><b>${ST.yil.en || "–"}</b><span>En yüksek puan</span></div><div><b>${ST.yil.oyun}</b><span>Oynanan tur</span></div><div><b>${YSORU * 100}</b><span>Tam puan</span></div></div>
-    <p class="note">Her turda ${YSORU} soru, her soruda ${YHAK} hak. İlk denemede bilirsen 100 puan. Sorular İş Bankası tarihçesinden ve Cumhuriyet tarihinden.</p>`;
-  const son = Y.g[Y.g.length - 1];
-  YG = Giris($("inp"), $("kp"), { max: 2026, deger: son ? son.n : 1960, kucuk: true });
-  $("tusBtn").onclick = () => { YG.degistir(); $("tusBtn").textContent = tusIkon(); };
-  $("dene").onclick = yilDene;
-  if (son) { led(son.d === "up" ? "⬆️ Daha sonra" : "⬇️ Daha önce", son.d); isiGoster(isiYil(son.n - q[1]), null); } else led(`Yıl ${YMIN}–${YMAX} arasında`, "warn");
-  yilCiz();
-}
-function yilCiz() {
-  const [lo, hi] = yilAralik(), kalan = YHAK - Y.g.length;
-  cetvel("cet", YMIN, YMAX, lo, hi, Y.g);
-  $("hakT").innerHTML = `Kalan hak <b style="color:#fff">${kalan}</b>`; $("hakL").innerHTML = hakHtml(kalan, YHAK);
-  $("hist").innerHTML = Y.g.map((z) => `<span class="chip ${z.d}">${z.n}${z.d === "up" ? "↑" : z.d === "down" ? "↓" : "✓"}</span>`).join("");
-}
-function yilDene() {
-  const q = YILLAR[Y.L[Y.i]], n = YG.deger();
-  if (!(n >= YMIN && n <= YMAX)) { led(`${YMIN}–${YMAX} arası bir yıl`, "warn"); salla(); return; }
-  if (Y.g.some((z) => z.n === n)) { led(`${n} denendi`, "warn"); salla(); return; }
-  const d = n === q[1] ? "ok" : n < q[1] ? "up" : "down";
-  Y.g.push({ n, d });
-  if (d === "ok" || Y.g.length >= YHAK) {
-    const p = d === "ok" ? Math.max(10, 100 - (Y.g.length - 1) * 15) : 0;
-    Y.puan += p; Y.sonuc.push(p);
-    if (d === "ok") { Ses.acil(); led(`✓ ${q[1]} · +${p} puan`); yagmur(["📜", "✨", "⭐"], 14); } else { Ses.kapali(); led(`Doğrusu ${q[1]}`, "down"); }
-    yilCiz();
-    setTimeout(() => yilBilgi(d === "ok", p), 650);
-    return;
-  }
-  led(d === "up" ? "⬆️ Daha sonra" : "⬇️ Daha önce", d); Ses.tak(); salla();
-  isiGoster(isiYil(n - q[1]), null);
-  yilCiz();
-  if (YG.tip() === "tus") YG.temizle();
-}
-function yilBilgi(ok, p) {
-  const q = YILLAR[Y.L[Y.i]], son = Y.i >= YSORU - 1;
-  $("ov").dataset.kapanir = "0";
-  pencere(`<div class="em">${ok ? "🎯" : "📜"}</div><div class="yr">${q[1]}</div>
-    <h2>${ok ? `Bildin! +${p} puan` : "Bu sefer olmadı"}</h2>
-    <p>${q[2]}</p>
-    <div class="src">Kaynak: İş Bankası tarihçesi · Cumhuriyet tarihi</div>
-    <button class="btn" id="yNext" type="button">${son ? "🏁 Sonucu gör" : "Sonraki soru ›"}</button>`);
-  $("yNext").onclick = () => { kapat(); if (son) return yilSonu(); Y.i++; Y.g = []; renderYil(); };
-}
-function yilSonu() {
-  ST.yil.oyun++; const rekor = Y.puan > (ST.yil.en || 0); if (rekor) ST.yil.en = Y.puan; kaydet();
-  window.Rapor && Rapor.oyun("tahmin-yil", Y.puan >= 250, `${Y.puan} puan`);
-  const yild = "⭐".repeat(Math.round(Y.puan / 100)) || "🌱";
-  const txt = `📜 Yıl Avı · ${Y.puan}/${YSORU * 100}\n${Y.sonuc.map((p) => (p >= 85 ? "🟩" : p > 0 ? "🟨" : "⬛")).join("")} ${yild}\n${SITE}`;
-  $("ov").dataset.kapanir = "0";
-  pencere(`<div class="em">🏁</div><h2>${Y.puan >= 400 ? "Tarih ustası!" : Y.puan >= 250 ? "Çok iyi!" : "Tur bitti"}</h2>
-    <div class="yr">${Y.puan}<small style="font-size:18px;color:#b79a74">/${YSORU * 100}</small></div>
-    <p>${Y.sonuc.map((p) => (p >= 85 ? "🟩" : p > 0 ? "🟨" : "⬛")).join(" ")}${rekor ? "<br>🏆 <b style=\"color:#f0c674\">Yeni rekor!</b>" : ""}</p>
-    <button class="btn" id="yPay" type="button">📤 Paylaş</button><button class="btn gh" id="yYeni" type="button">🔄 Yeni tur</button>`);
-  $("yPay").onclick = () => paylas(txt);
-  $("yYeni").onclick = () => { kapat(); yilKur(); renderYil(); };
-}
-
-// ======================================================================
-// ⚡ 60 SANİYE — 1–99, sınırsız deneme; süre bitene kadar kaç kasa?
-// ======================================================================
-let Hz = null, HG = null, hzT = null;
-function renderHiz() {
-  const calisiyor = Hz && Hz.bas && !Hz.bitti;
-  $("view").innerHTML = `
-    <div class="hiz"><div class="ring" id="ring"><b id="sure">60</b></div><div class="sk"><b id="skor">${calisiyor ? Hz.skor : 0}</b><span>açılan kasa</span></div><div class="sk"><b style="font-size:24px;color:#cbbfa8">${ST.hiz.en || 0}</b><span>rekor</span></div></div>
-    <div class="vault kisa" id="vault"><div class="inside"><div class="coins">🪙🪙</div></div><div class="door"><div class="led" id="led"></div><div id="inp"></div></div></div>
-    <div id="kp"></div>
-    <div class="act"><button class="mini" id="tusBtn" type="button">${tusIkon()}</button><button class="try" id="dene" type="button">${calisiyor ? "🔑 Dene" : "⚡ Başla"}</button></div>
-    ${isiHtml()}
-    <div class="hist" id="hist"></div>
-    <p class="note">60 saniyen var. Şifre 1–99 arasında, deneme sınırı yok. Açtığın her kasada yeni şifre gelir. Hız için ⌨️ tuş takımı önerilir.</p>`;
-  HG = Giris($("inp"), $("kp"), { max: 99, deger: 50 });
-  $("tusBtn").onclick = () => { HG.degistir(); $("tusBtn").textContent = tusIkon(); };
-  $("dene").onclick = () => (Hz && Hz.bas && !Hz.bitti ? hizDene() : hizBasla());
-  led(calisiyor ? "Devam!" : "Hazır mısın? ⚡", "warn");
-  hizSure();
-}
-function hizBasla() {
-  Hz = { bas: Date.now(), skor: 0, s: rnd(1, 99), g: [], bitti: false };
-  $("dene").textContent = "🔑 Dene"; $("skor").textContent = 0; $("hist").innerHTML = "";
-  led("Şifre 1–99 · çabuk!", "warn"); Ses.bip(true);
-  clearInterval(hzT); hzT = setInterval(hizSure, 100);
-}
-function hizSure() {
-  const r = $("ring"); if (!r) return;
-  if (!Hz || !Hz.bas) { r.style.setProperty("--p", 1); $("sure").textContent = 60; return; }
-  const kal = Math.max(0, 60 - (Date.now() - Hz.bas) / 1000);
-  r.style.setProperty("--p", kal / 60); r.style.setProperty("--rc", kal <= 10 ? "#ff5a3c" : "var(--gold)");
-  $("sure").textContent = Math.ceil(kal);
-  if (kal <= 0 && !Hz.bitti) hizBitti();
-}
-function hizDene() {
-  const n = HG.deger();
-  if (!(n >= 1 && n <= 99)) { led("1–99 arası", "warn"); return; }
-  if (n === Hz.s) {
-    Hz.skor++; Hz.g = []; Hz.s = rnd(1, 99); $("skor").textContent = Hz.skor; $("hist").innerHTML = "";
-    led(`🔓 ${n} · yeni kasa!`); Ses.acil(); Ses.titre([30, 30, 30]); yagmur(["🪙"], 6); isiGoster(null);
-    const v = $("vault"); v.classList.remove("parla"); void v.offsetWidth; v.classList.add("parla");
-  } else {
-    const d = n < Hz.s ? "up" : "down"; Hz.g.push({ n, d });
-    led(d === "up" ? "⬆️ Büyük" : "⬇️ Küçük", d); Ses.tik(); isiGoster(isiKasa(n, Hz.s, 99), d);
-    $("hist").innerHTML = Hz.g.map((z) => `<span class="chip ${z.d}">${z.n}${z.d === "up" ? "↑" : "↓"}</span>`).join("");
-  }
-  if (HG.tip() === "tus") HG.temizle();
-}
-function hizBitti() {
-  Hz.bitti = true; clearInterval(hzT);
-  const rekor = Hz.skor > (ST.hiz.en || 0); if (rekor) ST.hiz.en = Hz.skor; kaydet();
-  window.Rapor && Rapor.oyun("tahmin-60", Hz.skor > 0, `${Hz.skor} kasa`);
-  Ses.kapali();
-  const txt = `⚡ 60 saniyede ${Hz.skor} kasa açtım! 🏦\nSen kaç açarsın?\n${SITE}`;
-  $("ov").dataset.kapanir = "0";
-  pencere(`<div class="em">⏱️</div><h2>Süre bitti!</h2><div class="yr">${Hz.skor}</div><p>kasa açtın${rekor ? "<br>🏆 <b style=\"color:#f0c674\">Yeni rekor!</b>" : ` · rekorun ${ST.hiz.en}`}</p>
-    <button class="btn" id="hPay" type="button">📤 Paylaş</button><button class="btn gh" id="hYeni" type="button">⚡ Tekrar</button>`);
-  $("hPay").onclick = () => paylas(txt);
-  $("hYeni").onclick = () => { kapat(); Hz = null; renderHiz(); };
-}
-
-// ---------- Modlar ----------
-const MOD = { kasa: renderKasa, ters: renderTers, yil: renderYil, hiz: renderHiz };
-let mod = oku("tahminMod", "kasa"); if (!MOD[mod]) mod = "kasa";
-function ac(m) {
-  if (m !== "hiz" && Hz && Hz.bas && !Hz.bitti) { clearInterval(hzT); Hz = null; toast("⚡ 60 saniye turu bırakıldı"); }
-  mod = m; yaz("tahminMod", m);
-  document.querySelectorAll("#modes button").forEach((b) => b.classList.toggle("on", b.dataset.m === m));
-  window.Rapor && Rapor.bolum && Rapor.bolum("tahmin-" + m);
-  MOD[m]();
-}
-document.querySelectorAll("#modes button").forEach((b) => (b.onclick = () => ac(b.dataset.m)));
-document.addEventListener("keydown", (e) => {
-  if ($("ov").classList.contains("show")) return;
-  const btn = $("dene"); if (e.key === "Enter" && btn && !btn.disabled) { e.preventDefault(); btn.click(); return; }
-  const k = /^\d$/.test(e.key) ? e.key : e.key === "Backspace" ? "sil" : null, kb = k && document.querySelector(`.kp [data-k="${k}"]`);
-  if (kb) { e.preventDefault(); kb.click(); }
-});
-// Gece yarısı geçince Günün Kasası yenilensin
-document.addEventListener("visibilitychange", () => { if (!document.hidden && mod === "kasa" && K && K.tur === "gunluk" && K.n !== gunNo()) { K = null; renderKasa(); } });
-ac(mod);
+$("ipucu").checked = oku("asalIpucu", false);
+$("ipucu").onchange = (e) => { yaz("asalIpucu", e.target.checked); ciz(); };
+document.querySelectorAll("#seg button").forEach((b) => (b.onclick = () => { max = +b.dataset.max; yaz("asalMax", max); yeni(); }));
+$("again").onclick = yeni;
+yeni();
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
