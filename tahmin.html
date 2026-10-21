@@ -39,6 +39,7 @@
   .msg.up { color: var(--up); } .msg.down { color: var(--down); } .msg.win { color: var(--win); } .msg.lose { color: var(--down); }
   /* Sayı tablosu */
   .grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+  .grid.uc button { font-size: 13px; letter-spacing: -.3px; }
   .grid button { aspect-ratio: 1; border-radius: 9px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: 700 15px system-ui, sans-serif; font-variant-numeric: tabular-nums; cursor: pointer; padding: 0; transition: opacity .3s, background .2s, border-color .2s; position: relative; }
   .grid button:active { transform: scale(.94); }
   .grid.ipucu button.asal { color: var(--gold); border-color: #4a3a1c; }
@@ -81,56 +82,72 @@
   <span style="width:42px"></span>
 </header>
 <p class="sub" id="sub"></p>
-<div class="seg" id="seg"><button type="button" data-max="50">1 – 50</button><button type="button" data-max="100">1 – 100</button></div>
+<div class="seg" id="seg"><button type="button" data-sev="50">1 – 50</button><button type="button" data-sev="100">1 – 100</button><button type="button" data-sev="zor">Zor · 701–800</button></div>
 <div class="msg" id="msg"></div>
 <div class="grid" id="grid"></div>
 <div class="alt"><span id="hakT"></span><span class="hak" id="hak"></span></div>
-<div class="alt"><label class="sw"><input type="checkbox" id="ipucu"><i></i>Asal sayıları göster</label><span id="kalan"></span></div>
+<div class="alt"><label class="sw" id="ipW"><input type="checkbox" id="ipucu"><i></i>Asal sayıları göster</label><span id="kalan"></span></div>
 <button class="again" id="again" type="button">Yeni oyun</button>
 <div class="stats" id="stats"></div>
-<p class="bilgi">Asal sayı: 1'den büyük, yalnızca 1'e ve kendisine bölünebilen sayı.<br>Asal olmayan bir sayıya dokunursan çarpanlarını görürsün, hakkın gitmez.</p>
+<p class="bilgi" id="bilgi"></p>
 
 <script>
 const $ = (id) => document.getElementById(id);
 const oku = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k) || "null"); return v == null ? d : v; } catch (e) { return d; } };
 const yaz = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
-const HAK = { 50: 5, 100: 6 };
+// Seviyeler. Zor: 701–800 aralığında yalnızca 14 asal var ama 2, 3, 5, 7'ye bölünmeyen 9 "sinsi" sayı da var
+// (703 = 19 × 37 gibi). Zor'da asal olmayana dokunmak da hak götürür ve "Asal sayıları göster" kapalıdır.
+const SEV = { 50: { min: 1, max: 50, hak: 5 }, 100: { min: 1, max: 100, hak: 6 }, zor: { min: 701, max: 800, hak: 5, ceza: true } };
 const asalMi = (n) => { if (n < 2) return false; for (let i = 2; i * i <= n; i++) if (n % i === 0) return false; return true; };
 const carpanlar = (n) => { const f = []; for (let i = 2; n > 1; ) { if (n % i === 0) { f.push(i); n /= i; } else i++; } return f; };
-const ASALLAR = Array.from({ length: 100 }, (_, i) => i + 1).filter(asalMi);
+const ASALLAR = Array.from({ length: 1000 }, (_, i) => i + 1).filter(asalMi);
 const ST = Object.assign({ kazanilan: 0, seri: 0, en: {} }, oku("asalSt", {}));
-let max = oku("asalMax", 100), s, g, bitti;
-if (!HAK[max]) max = 100;
+let sev = String(oku("asalSev", oku("asalMax", 100))), V, s, g, bitti;
+if (!SEV[sev]) sev = "100";
 
 function yeni() {
-  const L = ASALLAR.filter((p) => p <= max);
+  V = SEV[sev];
+  const L = ASALLAR.filter((p) => p >= V.min && p <= V.max);
   s = L[Math.floor(Math.random() * L.length)];
   g = []; bitti = false;
-  $("sub").innerHTML = `1 ile ${max} arasında bir <b>asal sayı</b> tuttum. Bul bakalım!`;
-  document.querySelectorAll("#seg button").forEach((b) => b.classList.toggle("on", +b.dataset.max === max));
-  mesaj("Bir sayıya dokun", "", "");
+  $("sub").innerHTML = `${V.min} ile ${V.max} arasında bir <b>asal sayı</b> tuttum. Bul bakalım!`;
+  document.querySelectorAll("#seg button").forEach((b) => b.classList.toggle("on", b.dataset.sev === sev));
+  $("ipW").style.visibility = V.ceza ? "hidden" : "";
+  $("bilgi").innerHTML = "Asal sayı: 1'den büyük, yalnızca 1'e ve kendisine bölünebilen sayı.<br>" + (V.ceza
+    ? "<b style=\"color:var(--down)\">Zor:</b> asal olmayan sayıya dokunmak da 1 hak götürür. Dikkat, 703 = 19 × 37 gibi asal sanılan sayılar var!"
+    : "Asal olmayan bir sayıya dokunursan çarpanlarını görürsün, hakkın gitmez.");
+  mesaj(V.ceza ? "Zor seviye · sadece 14 asal var" : "Bir sayıya dokun", "", V.ceza ? "Asal olmayana dokunmak da hak götürür" : "");
   ciz();
 }
-function aralik() { let lo = 1, hi = max; g.forEach((z) => { if (z.d === "up") lo = Math.max(lo, z.n + 1); if (z.d === "down") hi = Math.min(hi, z.n - 1); }); return [lo, hi]; }
-const deneme = () => g.filter((z) => z.d !== "degil").length;
+function aralik() { let lo = V.min, hi = V.max; g.forEach((z) => { if (z.d === "up") lo = Math.max(lo, z.n + 1); if (z.d === "down") hi = Math.min(hi, z.n - 1); }); return [lo, hi]; }
+const deneme = () => g.filter((z) => V.ceza || z.d !== "degil").length;
 function mesaj(t, cls, alt) { const m = $("msg"); m.className = "msg " + (cls || ""); m.innerHTML = t + (alt ? `<small>${alt}</small>` : ""); }
 function ciz() {
-  const [lo, hi] = aralik(), kalan = HAK[max] - deneme();
+  const [lo, hi] = aralik(), kalan = V.hak - deneme();
   const durum = Object.fromEntries(g.map((z) => [z.n, z.d]));
-  $("grid").classList.toggle("ipucu", $("ipucu").checked);
-  $("grid").innerHTML = Array.from({ length: max }, (_, i) => {
-    const n = i + 1, d = durum[n];
+  $("grid").classList.toggle("ipucu", $("ipucu").checked && !V.ceza);
+  $("grid").classList.toggle("uc", V.max >= 100 && V.min > 1);
+  $("grid").innerHTML = Array.from({ length: V.max - V.min + 1 }, (_, i) => {
+    const n = V.min + i, d = durum[n];
     let c = asalMi(n) ? "asal" : "";
     if (d) c += " " + d; else if (n < lo || n > hi) c += " disi";
     if (bitti && n === s && d !== "ok") c += " cevap";
     return `<button type="button" data-n="${n}" class="${c}">${n}</button>`;
   }).join("");
   $("hakT").innerHTML = `Kalan hak <b style="color:#fff">${kalan}</b>`;
-  $("hak").innerHTML = Array.from({ length: HAK[max] }, (_, i) => `<i class="${i < kalan ? "on" : ""}"></i>`).join("");
-  const aday = ASALLAR.filter((p) => p >= lo && p <= hi && p <= max && !durum[p]).length;
+  $("hak").innerHTML = Array.from({ length: V.hak }, (_, i) => `<i class="${i < kalan ? "on" : ""}"></i>`).join("");
+  const aday = ASALLAR.filter((p) => p >= lo && p <= hi && !durum[p]).length;
   $("kalan").textContent = bitti ? "" : `${aday} aday asal`;
   $("again").classList.toggle("ana", bitti);
-  $("stats").innerHTML = `<div><b>${ST.kazanilan}</b><span>Bildiğin</span></div><div><b>${ST.seri}</b><span>Seri</span></div><div><b>${ST.en[max] || "–"}</b><span>En iyi (1–${max})</span></div>`;
+  const ad = V.ceza ? "Zor" : `1–${V.max}`;
+  $("stats").innerHTML = `<div><b>${ST.kazanilan}</b><span>Bildiğin</span></div><div><b>${ST.seri}</b><span>Seri</span></div><div><b>${ST.en[sev] || "–"}</b><span>En iyi (${ad})</span></div>`;
+}
+function bitir(kazandi) {
+  bitti = true;
+  if (kazandi) { const k = deneme(); ST.kazanilan++; ST.seri++; if (!ST.en[sev] || k < ST.en[sev]) ST.en[sev] = k; }
+  else ST.seri = 0;
+  yaz("asalSt", ST);
+  window.Rapor && Rapor.oyun("tahmin", kazandi, kazandi ? `${deneme()}. denemede (${sev})` : `Sayı ${s} idi (${sev})`);
 }
 $("grid").onclick = (e) => {
   const b = e.target.closest("button[data-n]"); if (!b || bitti) return;
@@ -139,29 +156,26 @@ $("grid").onclick = (e) => {
   if (n < lo || n > hi) { b.classList.remove("shake"); void b.offsetWidth; b.classList.add("shake"); mesaj(`${n} aralığın dışında`, "", `Sayı ${lo} ile ${hi} arasında`); return; }
   if (!asalMi(n)) {
     g.push({ n, d: "degil" });
-    mesaj(`${n} asal değil`, "", n === 1 ? "1 asal sayı sayılmaz · hakkın gitmedi" : `${n} = ${carpanlar(n).join(" × ")} · hakkın gitmedi`);
+    const neden = n === 1 ? "1 asal sayı sayılmaz" : `${n} = ${carpanlar(n).join(" × ")}`;
+    if (V.ceza && deneme() >= V.hak) { bitir(false); mesaj(`${n} asal değil · hakkın bitti`, "lose", `${neden} · sayı ${s} idi`); return ciz(); }
+    mesaj(`${n} asal değil`, V.ceza ? "lose" : "", `${neden} · ${V.ceza ? "1 hak gitti" : "hakkın gitmedi"}`);
     return ciz();
   }
   if (n === s) {
-    g.push({ n, d: "ok" }); bitti = true;
-    const k = deneme(), sira = ASALLAR.indexOf(s) + 1, ikiz = [s - 2, s + 2].filter(asalMi);
-    ST.kazanilan++; ST.seri++; if (!ST.en[max] || k < ST.en[max]) ST.en[max] = k; yaz("asalSt", ST);
-    mesaj(`🎉 Bildin! ${s}, ${k}. denemede`, "win", `${s}, ${sira}. asal sayı${ikiz.length ? ` · ikiz asalı ${ikiz.join(" ve ")}` : ""}`);
-    window.Rapor && Rapor.oyun("tahmin", true, `${k}. denemede`);
+    g.push({ n, d: "ok" }); bitir(true);
+    const sira = ASALLAR.indexOf(s) + 1, ikiz = [s - 2, s + 2].filter(asalMi);
+    mesaj(`🎉 Bildin! ${s}, ${deneme()}. denemede`, "win", `${s}, ${sira}. asal sayı${ikiz.length ? ` · ikiz asalı ${ikiz.join(" ve ")}` : ""}`);
     return ciz();
   }
   const d = n < s ? "up" : "down";
   g.push({ n, d });
-  if (deneme() >= HAK[max]) {
-    bitti = true; ST.seri = 0; yaz("asalSt", ST);
-    mesaj(`Hakkın bitti · sayı ${s} idi`, "lose", "Yeşil çerçeveli sayı");
-    window.Rapor && Rapor.oyun("tahmin", false, `Sayı ${s} idi`);
-  } else mesaj(d === "up" ? "Daha büyük ⬆️" : "Daha küçük ⬇️", d, "");
+  if (deneme() >= V.hak) { bitir(false); mesaj(`Hakkın bitti · sayı ${s} idi`, "lose", "Yeşil çerçeveli sayı"); }
+  else mesaj(d === "up" ? "Daha büyük ⬆️" : "Daha küçük ⬇️", d, "");
   ciz();
 };
 $("ipucu").checked = oku("asalIpucu", false);
 $("ipucu").onchange = (e) => { yaz("asalIpucu", e.target.checked); ciz(); };
-document.querySelectorAll("#seg button").forEach((b) => (b.onclick = () => { max = +b.dataset.max; yaz("asalMax", max); yeni(); }));
+document.querySelectorAll("#seg button").forEach((b) => (b.onclick = () => { sev = b.dataset.sev; yaz("asalSev", sev); yeni(); }));
 $("again").onclick = yeni;
 yeni();
 </script>
