@@ -99,7 +99,7 @@
 .kmBtn { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%; border: 1px solid #333; background: #161616; color: #fff; font-size: 19px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
 .kmSheet { position: fixed; inset: 0; z-index: 1100; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; }
 .kmSheet[hidden] { display: none; }
-.kmSheet .in { width: 100%; max-width: 480px; max-height: 88vh; overflow-y: auto; overscroll-behavior: contain; background: #121212; border-radius: 22px 22px 0 0; border: 1px solid #2a2a2a; border-bottom: 0; padding: 14px 18px calc(18px + env(safe-area-inset-bottom)); color: #eee; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; text-align: left; }
+.kmSheet .in { width: 100%; max-width: 480px; max-height: 88vh; max-height: calc(100dvh - 20px); overflow-y: auto; overscroll-behavior: contain; background: #121212; border-radius: 22px 22px 0 0; border: 1px solid #2a2a2a; border-bottom: 0; padding: 14px 18px calc(18px + env(safe-area-inset-bottom)); color: #eee; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; text-align: left; }
 .kmSheet.acil .in { animation: kmUp .22s ease-out; }
 @keyframes kmUp { from { transform: translateY(40px); opacity: 0; } }
 .kmSheet h2 { display: flex; align-items: center; justify-content: space-between; margin: 0 0 4px; font-size: 19px; }

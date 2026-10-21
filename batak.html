@@ -155,7 +155,9 @@
   .seg { display: flex; gap: 4px; background: #111; border: 1px solid var(--line); border-radius: 12px; padding: 3px; }
   .seg button { flex: 1; padding: 8px 4px; border: none; border-radius: 9px; background: transparent; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
   .seg button.on { background: var(--accent); color: #000; }
-  .modal { max-height: 92vh; overflow-y: auto; }
+  /* Pencere, tarayıcının araç çubukları arasında kalan görünür alana sığar; sığmazsa kaydırılır (vh yerine dvh) */
+  .overlay, .ov { overflow-y: auto; overscroll-behavior: contain; }
+  .modal { margin: auto; max-height: 92vh; max-height: calc(100dvh - 32px); overflow-y: auto; }
   /* Masa kur — Sadolayn teması (koyu mürdüm, altın vurgu, serif başlık) */
   .modal.ayar { max-width: 560px; padding: 0 0 16px; background: radial-gradient(120% 80% at 50% 0%, #2a1b33, #160f1d 70%); border: 1px solid #5b3f22; border-radius: 22px; color: #f3e9d8; text-align: left; overflow-x: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,220,160,.12); }
   .ayar .ah { position: relative; padding: 16px 52px 12px; text-align: center; border-bottom: 1px solid rgba(224,162,79,.25); }
@@ -187,6 +189,8 @@
   .ayar .rules { color: #e8dccb; }
   .ayar .abtn { display: block; box-sizing: border-box; width: calc(100% - 32px) !important; margin: 16px 16px 0; border-radius: 999px; background: linear-gradient(180deg, #f3cf86, #d9a54a); color: #2a1a05; border: none; font-family: Georgia, serif; font-style: italic; font-size: 18px; font-weight: 700; padding: 13px; box-shadow: 0 6px 18px rgba(217,165,74,.25); }
   .ayar .kasa { margin: 10px 16px 0; font-size: 12px; color: #b79a74; text-align: center; }
+  /* Başla düğmesi pencerenin altında hep görünür */
+  .ayar .aAlt { position: sticky; bottom: -16px; z-index: 2; margin: 8px 0 -16px; padding: 4px 0 16px; background: linear-gradient(rgba(22,15,29,0), rgba(22,15,29,.97) 14px); }
   .mpbox { background: linear-gradient(135deg, #1a2a4a, #0f1a30); border: 1px solid #2f4f8f; color: #cfdcff; border-radius: 12px; padding: 9px 12px; font-size: 14px; margin: 4px 0 8px; }
   .mpbox b { color: #fff; }
   .qopts { display: grid; gap: 8px; }
@@ -738,8 +742,8 @@ function showRules() {
       <li><b>Masa ücreti:</b> masadaki toplam Token'ın <b>%1'i</b> kazanandan alınır ve masa kasasına gider. Kasa istatistiği için oyun özeti (adın, Token, sonuç) site yöneticisine iletilir.</li>
       <li> Token biterse 1 gün sonra İş Bankası sorusu gelir; doğru cevap 1.000 Token kazandırır. Bakiyen King ve Balayı King'le ortaktır.</li>
     </ul></details>
-    <button class="btn abtn" id="start">Başla</button>
-    <div class="kasa">🏦 Bu cihazda: ${KASA.oyun} oyun · masa kasasına ${mpFmt(KASA.ucret)} Token</div>`;
+    <div class="aAlt"><button class="btn abtn" id="start">Başla</button>
+    <div class="kasa">🏦 Bu cihazda: ${KASA.oyun} oyun · masa kasasına ${mpFmt(KASA.ucret)} Token</div></div>`;
   $("overlay").classList.add("show");
   ISIM.bind($("modal"), () => { setNames(); if (typeof render === "function") try { render(); } catch (e) {} });
   const DAG = [["dengeli", "Dengeli"], ["rastgele", "Rastgele"]];

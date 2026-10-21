@@ -205,7 +205,7 @@
 
   /* ---------- Hedef sayfası (alt pencere) ---------- */
   .sheet { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; }
-  .sheet .in { width: 100%; max-width: 480px; max-height: 92vh; overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-bottom: 0; border-radius: 22px 22px 0 0; padding: 16px 16px 20px; animation: up .22s ease-out; }
+  .sheet .in { width: 100%; max-width: 480px; max-height: 92vh; max-height: calc(100dvh - 16px); overflow-y: auto; background: var(--card); border: 1px solid var(--line); border-bottom: 0; border-radius: 22px 22px 0 0; padding: 16px 16px 20px; animation: up .22s ease-out; }
   @keyframes up { from { transform: translateY(40px); opacity: 0; } }
   .sheet h2 { margin: 0 0 2px; font-size: 19px; }
   .sheet .sub { font-size: 12.5px; color: var(--muted); margin: 0 0 12px; }

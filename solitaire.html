@@ -88,6 +88,9 @@
   .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.72); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 1000; }
   .overlay.show { display: flex; }
   .modal { background: #111; border: 1px solid #2a2a2a; border-radius: 20px; padding: 26px 22px; width: 100%; max-width: 360px; text-align: center; }
+  /* Pencere, tarayıcının araç çubukları arasında kalan görünür alana sığar; sığmazsa kaydırılır (vh yerine dvh) */
+  .overlay, .ov { overflow-y: auto; overscroll-behavior: contain; }
+  .modal { margin: auto; max-height: 92vh; max-height: calc(100dvh - 32px); overflow-y: auto; }
   .modal .moon { font-size: 56px; margin-bottom: 6px; animation: float 3s ease-in-out infinite; }
   @keyframes float { 50% { transform: translateY(-6px); } }
   .modal h2 { margin: 0 0 8px; font-size: 22px; font-family: Georgia, "Times New Roman", serif; font-style: italic; color: var(--accent); }

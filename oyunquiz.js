@@ -22,9 +22,9 @@
 
   var css = document.createElement("style");
   css.textContent =
-    "#oq{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;z-index:9000;padding:16px}" +
+    "#oq{position:fixed;inset:0;overflow-y:auto;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;z-index:9000;padding:16px}" +
     "#oq.on{display:flex}" +
-    "#oq .b{width:100%;max-width:380px;background:#0d0d0d;border:1px solid #262626;border-radius:18px;padding:18px;color:#f2f2f2;max-height:92vh;overflow:auto}" +
+    "#oq .b{width:100%;max-width:380px;background:#0d0d0d;border:1px solid #262626;border-radius:18px;padding:18px;color:#f2f2f2;max-height:92vh;max-height:calc(100dvh - 32px);margin:auto;overflow:auto}" +
     "#oq h3{margin:0 0 4px;font-size:18px;color:#e0a24f}" +
     "#oq .r{font-size:12px;color:#8a8a8a;margin:0 0 12px;line-height:1.45}" +
     "#oq .q{font-size:16px;font-weight:600;margin:0 0 12px;line-height:1.4}" +

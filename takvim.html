@@ -198,7 +198,7 @@
   /* alt sayfa */
   .sheet { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.65); display: flex; align-items: flex-end; justify-content: center; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
   .sheet[hidden] { display: none; }
-  .sbox { width: 100%; max-width: 480px; max-height: 92vh; overflow: auto; background: var(--card); border: 1px solid #2c2c2c; border-bottom: none; border-radius: 22px 22px 0 0; padding: 10px 16px 18px; animation: sUp .28s cubic-bezier(.2,.8,.2,1); }
+  .sbox { width: 100%; max-width: 480px; max-height: 92vh; max-height: calc(100dvh - 16px); overflow: auto; background: var(--card); border: 1px solid #2c2c2c; border-bottom: none; border-radius: 22px 22px 0 0; padding: 10px 16px 18px; animation: sUp .28s cubic-bezier(.2,.8,.2,1); }
   @keyframes sUp { from { transform: translateY(40px); opacity: 0; } }
   .sbox .grab { width: 42px; height: 5px; border-radius: 3px; background: #333; margin: 0 auto 10px; }
   .sbox h3 { font-size: 17px; margin: 0 0 4px; }

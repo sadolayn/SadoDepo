@@ -22,10 +22,13 @@
 .tkBal { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 10px; padding: 10px 14px; border-radius: 14px; background: linear-gradient(90deg, rgba(240,198,116,.16), rgba(240,198,116,.05)); border: 1px solid rgba(240,198,116,.3); font-size: 14px; color: #eadcc6; text-align: left; }
 .tkBal b { font-size: 17px; color: #ffe2a6; }
 .tkRow { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 12px; font-size: 15px; color: #eadcc6; }
+.tkRow > span { white-space: nowrap; text-align: left; }
 .tkStep { display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,.28); border: 1px solid rgba(240,198,116,.25); border-radius: 999px; padding: 3px; }
 .tkStep button { width: 34px; height: 34px; border-radius: 50%; border: none; background: linear-gradient(180deg, #f3cf86, #d9a54a); color: #2a1a05; font-size: 18px; font-weight: 800; line-height: 1; cursor: pointer; }
 .tkStep button:disabled { opacity: .35; cursor: default; }
-.tkStep b { min-width: 74px; text-align: center; font-size: 16px; color: #fff3dc; font-variant-numeric: tabular-nums; }
+.tkStep b { min-width: 64px; text-align: center; font-size: 16px; color: #fff3dc; font-variant-numeric: tabular-nums; }
+/* Başla düğmesi uzun pencerede de hep görünür: pencerenin altına yapışık şerit */
+.tkAlt { position: sticky; bottom: -20px; z-index: 2; margin: 10px -20px -20px; padding: 14px 20px 20px; background: linear-gradient(rgba(13,13,13,0), #0d0d0d 14px); }
 .tkNot { font-size: 12px; color: #a99a83; text-align: left; margin: -4px 2px 12px; line-height: 1.45; }
 .tkBox { background: rgba(240,198,116,.08); border: 1px solid rgba(240,198,116,.3); border-radius: 12px; padding: 10px 12px; margin: 0 0 12px; font-size: 14px; line-height: 1.5; color: #eadcc6; }
 .tkBox b { color: #fff; }
@@ -42,7 +45,7 @@
     const L = secenekler(), son = oku("tokenBahis", {});
     let v = L.includes(son[oyun]) ? son[oyun] : L.includes(100) ? 100 : L[0] || 0;
     kok.innerHTML = `<div class="tkBal"><span>🪙 Bakiyen</span><b>${fmt(MP.bal)} Token</b></div>
-      <div class="tkRow"><span>Masaya koyacağın</span><div class="tkStep"><button type="button" data-d="-1" aria-label="Azalt">‹</button><b></b><button type="button" data-d="1" aria-label="Artır">›</button></div></div>`;
+      <div class="tkRow"><span>Masaya koy</span><div class="tkStep"><button type="button" data-d="-1" aria-label="Azalt">‹</button><b></b><button type="button" data-d="1" aria-label="Artır">›</button></div></div>`;
     const b = kok.querySelector(".tkStep b"), [ge, il] = kok.querySelectorAll(".tkStep button");
     const sync = () => { b.textContent = fmt(v); ge.disabled = L.indexOf(v) <= 0; il.disabled = L.indexOf(v) >= L.length - 1; if (api.onChange) api.onChange(v); };
     const api = { deger: () => v, onChange: null, sync };

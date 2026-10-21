@@ -86,6 +86,13 @@
   .pos { color: var(--win); } .neg { color: var(--red); }
   .modal .btn { width: 100%; background: var(--accent); border-color: var(--accent); color: #000; }
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
+  /* Pencere, tarayıcının araç çubukları arasında kalan görünür alana sığar; sığmazsa kaydırılır (vh yerine dvh) */
+  .overlay, .ov { overflow-y: auto; overscroll-behavior: contain; }
+  .modal { margin: auto; max-height: 92vh; max-height: calc(100dvh - 32px); overflow-y: auto; }
+  .mDet { text-align: left; margin: 0 0 8px; background: #141414; border: 1px solid var(--line); border-radius: 12px; padding: 5px 12px; }
+  .mDet summary { cursor: pointer; font-size: 14px; font-weight: 600; padding: 5px 0; color: var(--accent); }
+  .mDet .rules { margin: 6px 0 6px; }
+  .mDet .isimler, .mDet > div { margin-bottom: 6px; }
   footer.copyright { margin-top: auto !important; padding-top: 10px !important; }
 </style>
 <script src="cardsound.js?v=3"></script>
@@ -451,19 +458,20 @@ function showRules(resume) {
   const goster = () => $("overlay").classList.add("show");
   if (!resume && !Token.yeter()) return Token.kilit($("modal"), { goster, devam: () => showRules(false) });
   const stake = resume && G && G.stake;
+  // Kısa pencere: Token ve Başla üstte/altta hep görünür; isimler ve kurallar açılır kutuda
   $("modal").innerHTML = `<h2>💞 Balayı King</h2>
-    ${ISIM.html([["ben", "Sen", "Senin adın"], [null, "Sadolayn", "Rakibin"]])}
-    <ul class="rules">
+    ${resume ? (stake ? `<div class="tkBox">🪙 Masada <b>${Token.fmt(stake)}</b> Token var; oyunu bitirince sonucunu alırsın.</div>` : "") : '<div id="tkSec"></div><div class="tkNot">Kazanırsan <b>2 katı</b> · berabere biterse iade · kazanandan %1 masa ücreti. Bakiyen bütün kart oyunlarında ortak.</div>'}
+    <details class="mDet"><summary>👥 Oyuncu isimleri</summary>${ISIM.html([["ben", "Sen", "Senin adın"], [null, "Sadolayn", "Rakibin"]])}</details>
+    <details class="mDet"><summary>📖 Kurallar</summary><ul class="rules">
       <li>İki kişilik King. Her oyuncunun önünde <b>10 kapalı kart</b>, üstlerinde <b>10 açık kart</b> ve elinde <b>6 kart</b> olur (26 kart, 26 el).</li>
       <li>Açık kartlar ve elindeki kartlar oynanabilir. Açık kart oynanınca altındaki kapalı kart açılır.</li>
       <li>${DEALS} el oynanır. Her oyuncu sırayla seçer ve her oyunu bir kez seçebilir: <b>♣ ×1, ♦ ×2, ♥ ×3, ♠ ×4, Kozsuz ×5</b>.</li>
       <li>Aldığın her el, oyunun çarpanı kadar puan. En çok puanı toplayan kazanır.</li>
       <li>Renge uymak ve mümkünse yükseltmek zorunlu. Renk yoksa koz atılır. Koz kırılmadan kozla açılmaz.</li>
       <li><b>Token:</b> Oyuna Token koyarak başlarsın. Kazanırsan koyduğunun <b>2 katını</b> alırsın, berabere biterse Token'ın iade edilir. Kazanandan masa ücreti olarak masadaki toplamın %1'i alınır. Bakiyen Batak ve King'le ortak; biterse 1 gün sonra İş Bankası sorusu gelir.</li>
-    </ul>
-    ${resume ? (stake ? `<div class="tkBox">🪙 Masada <b>${Token.fmt(stake)}</b> Token var; oyunu bitirince sonucunu alırsın.</div>` : "") : '<div id="tkSec"></div>'}
-    <button class="btn" id="start">${resume ? "Devam et" : "Başla"}</button>
-    ${resume ? `<button class="btn" id="fresh" style="margin-top:8px;background:transparent;color:var(--muted);border-color:var(--line)">Yeni oyun başlat</button>${stake ? `<p style="font-size:12px;margin:8px 0 0">Yeni oyunda yarım kalan ${Token.fmt(stake)} Token geri gelmez.</p>` : ""}` : ""}`;
+    </ul></details>
+    <div class="tkAlt"><button class="btn" id="start">${resume ? "Devam et" : "Başla"}</button>
+    ${resume ? `<button class="btn" id="fresh" style="margin-top:8px;background:transparent;color:var(--muted);border-color:var(--line)">Yeni oyun başlat</button>${stake ? `<p style="font-size:12px;margin:8px 0 0">Yeni oyunda yarım kalan ${Token.fmt(stake)} Token geri gelmez.</p>` : ""}` : ""}</div>`;
   goster();
   ISIM.bind($("modal"), () => { setNames(); try { renderInfo(); } catch (e) {} });
   if (resume) {
