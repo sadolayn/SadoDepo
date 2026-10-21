@@ -1375,7 +1375,7 @@ function iscepIpHtml() {
   const kart = (x, i) => `<div class="ipk" id="ip${i}"><div class="iph"><i>${x.ic}</i><b>${esc(x.t)}${taze(x) ? '<span class="newtag">YENİ</span>' : ""}</b></div><p>${esc(x.d)}</p><div class="ipn">📍 ${esc(x.n)}</div><div class="ipl"><a href="${x.u}" target="_blank" rel="noopener">${x.src === "uygulama" ? "İşCep uygulamasında · ayrıntı" : (x.u.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr") + "'de ayrıntı"} ↗</a>${x.git ? `<button type="button" class="ipgo" data-camp="${esc(x.git)}">${esc(x.gitAd || x.git)} ›</button>` : ""}</div></div>`;
   const L = IPUCU.map((x, i) => [x, i]).filter(([x]) => !ipSec || x.k === ipSec);
   const bas = ipSec ? `<div class="ipsec"><b>${(IPK.find((c) => c[0] === ipSec) || [])[1] || ""} ${esc((IPK.find((c) => c[0] === ipSec) || [])[2] || "")}</b><span>${L.length} ipucu</span><button type="button" data-ipk="">🌟 Hepsine dön</button></div>` : "";
-  return (ipSec ? `<div class="iphero mini"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in gizli süper güçleri 🚀</b></div>` : `<div class="iphero"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in gizli süper güçleri 🚀</b><span>800'den fazla işlemin içinden en çok “wow!” dedirtenler. Her gün biri öne çıkar.</span></div>`) + `
+  return (ipSec ? `<div class="iphero mini"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in az bilinen süper güçleri 🚀</b></div>` : `<div class="iphero"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in az bilinen süper güçleri 🚀</b><span>800'den fazla işlemin içinden en çok “wow!” dedirtenler. Her gün biri öne çıkar.</span></div>`) + `
     <div class="ipgun"><div class="iph"><i>${g.ic}</i><div><em>${ipTorba ? `İpucu · ${IPUCU.length - ipTorba.length}/${IPUCU.length}` : "Günün ipucu"}</em><b>${esc(g.t)}${taze(g) ? '<span class="newtag">YENİ</span>' : ""}</b></div></div><p>${esc(g.d)}</p><div class="ipn">📍 ${esc(g.n)}</div>
       <div class="ipl"><a href="${g.u}" target="_blank" rel="noopener">Ayrıntı ↗</a>${ipGecmis.length ? `<button type="button" id="ipGeri">◀ Önceki</button>` : ""}<button type="button" id="ipZar">${ipTorba && !ipTorba.length ? "🔁 Hepsini gördün · baştan" : "🎲 Bir tane daha"}</button></div></div>` + bas + `
     ${L.map(([x, i], n) => { const p = n ? L[n - 1][0] : null; let h = "";
@@ -1661,7 +1661,7 @@ function bindQ() {
 }
 function renderSoru() {
   const yS = (typeof ISQ !== "undefined" ? ISQ : []).filter(yeniSoru).length;
-  $("upd").innerHTML = `🔀 ${typeof ISQ !== "undefined" ? ISQ.length : 0} soru her gün karışık gelir, aynı konu art arda gelmez${yS ? `<br>🆕 İşCep'in gizli özellikleri ve Bankamatik · Gişematik'ten <b>${yS} yeni soru</b>` : ""}`;
+  $("upd").innerHTML = `🔀 ${typeof ISQ !== "undefined" ? ISQ.length : 0} soru her gün karışık gelir, aynı konu art arda gelmez${yS ? `<br>🆕 İşCep'in az bilinen özellikleri ve Bankamatik · Gişematik'ten <b>${yS} yeni soru</b>` : ""}`;
   $("list").innerHTML = `<div class="daycard dq" id="dqBox">${qHtml()}</div>`;
   bindQ();
 }

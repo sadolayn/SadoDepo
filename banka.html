@@ -1032,7 +1032,7 @@ try { const v = localStorage.getItem("tk_sig"); if (v) $("t_sig").value = v; } c
 $("ts_copy").addEventListener("click", () => {
   if (!tkSummary) return;
   const done = () => { const b = $("ts_copy"); b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = "📋 Özeti kopyala"), 1500); };
-  if (navigator.clipboard) navigator.clipboard.writeText(tkSummary).then(done, () => prompt("Kopyala:", tkSummary));
+  if (navigator.clipboard) navigator.clipboard.writeText(notEkle(tkSummary)).then(done, () => prompt("Kopyala:", tkSummary));
   else prompt("Kopyala:", tkSummary);
 });
 $("ao_t").addEventListener("input", () => (aoTManual = true));
@@ -1587,10 +1587,13 @@ function vkCalc(pre) { ({ t: calcTK, k2: calcKonut, tc: calcTic })[pre](); vkRen
   $(pre + "_ters").addEventListener("click", (e) => { const b = e.target.closest("button[data-p]"); if (!b) return; $(pre + "_tutar").value = (+b.dataset.p).toLocaleString("tr-TR"); vkCalc(pre); $(pre + "_tutar").scrollIntoView({ behavior: "smooth", block: "center" }); });
   $(pre + "_butce").addEventListener("input", () => vkRender(pre));
 });
+// Banka dışına giden her özetin sonunda aynı uyarı olsun (tek yerden)
+const NOT_OZET = "ℹ️ Tahmini hesaplamadır, resmi belge değildir. Kesin tutar işlem günü bankanızca belirlenir.";
+function notEkle(t) { return !t || String(t).includes(NOT_OZET) ? t : String(t).trimEnd() + "\n\n" + NOT_OZET; }
 // Müşteri özeti: tek tip metin (WhatsApp / e-posta) + kopyala/paylaş düğmeleri
 function ozetMetni(baslik, bolumler, not) {
   const L = "──────────────────";
-  return [baslik, L, ...bolumler.flatMap((b, i) => (i ? [L, ...b] : b)), L, ...(not ? [not] : []), "Bilgi amaçlıdır; kesin tutar işlem günü belirlenir."].join("\n");
+  return [baslik, L, ...bolumler.flatMap((b, i) => (i ? [L, ...b] : b)), L, ...(not ? [not] : []), NOT_OZET].join("\n");
 }
 function ozetBagla(pre, getT) {
   const c = $(pre + "_copy"), sh = $(pre + "_share");
@@ -1598,13 +1601,14 @@ function ozetBagla(pre, getT) {
     const t = getT(); if (!t) return; const o = c.textContent;
     const done = () => { c.textContent = "✅ Kopyalandı"; setTimeout(() => (c.textContent = o), 1500); };
     const fb = () => { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); } catch (e) {} a.remove(); done(); };
-    if (navigator.clipboard) navigator.clipboard.writeText(t).then(done, fb); else fb();
+    if (navigator.clipboard) navigator.clipboard.writeText(notEkle(t)).then(done, fb); else fb();
   });
   if (sh) sh.addEventListener("click", () => shareText(getT()));
 }
 // Paylaş: telefonda paylaşım menüsü (WhatsApp, mail, SMS…); yoksa WhatsApp
 function shareText(txt) {
   if (!txt) return;
+  txt = notEkle(txt);
   if (navigator.share) { navigator.share({ text: txt }).catch(() => {}); return; }
   window.open("https://wa.me/?text=" + encodeURIComponent(txt), "_blank", "noopener");
 }
@@ -1813,7 +1817,7 @@ $("tc_pdf").addEventListener("click", (e) => tcSummary && planPdf(tcPdf, e.curre
 $("tc_copy").addEventListener("click", () => {
   if (!tcSummary) return;
   const done = () => { const b = $("tc_copy"); b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = "📋 Özeti kopyala"), 1500); };
-  if (navigator.clipboard) navigator.clipboard.writeText(tcSummary).then(done, () => prompt("Kopyala:", tcSummary));
+  if (navigator.clipboard) navigator.clipboard.writeText(notEkle(tcSummary)).then(done, () => prompt("Kopyala:", tcSummary));
   else prompt("Kopyala:", tcSummary);
 });
 
@@ -2359,7 +2363,7 @@ $("v_copy").addEventListener("click", () => {
   const kopya = (id, getT) => $(id).addEventListener("click", () => {
     const t = getT(); if (!t) return; const b = $(id), o = b.textContent;
     const done = () => { b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = o), 1500); };
-    if (navigator.clipboard) navigator.clipboard.writeText(t).then(done, () => prompt("Kopyala:", t)); else prompt("Kopyala:", t);
+    if (navigator.clipboard) navigator.clipboard.writeText(notEkle(t)).then(done, () => prompt("Kopyala:", t)); else prompt("Kopyala:", t);
   });
   ozetBagla("e", () => ekOzet); ozetBagla("et", () => tOzet);
   $("e_faiz").addEventListener("input", (e) => { if (e.isTrusted) oranElle = true; });
@@ -2406,7 +2410,7 @@ $("k2_eksbtn").addEventListener("click", () => {
 $("k2s_copy").addEventListener("click", () => {
   if (!k2Summary) return;
   const done = () => { const b = $("k2s_copy"); b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = "📋 Özeti kopyala"), 1500); };
-  if (navigator.clipboard) navigator.clipboard.writeText(k2Summary).then(done, () => prompt("Kopyala:", k2Summary));
+  if (navigator.clipboard) navigator.clipboard.writeText(notEkle(k2Summary)).then(done, () => prompt("Kopyala:", k2Summary));
   else prompt("Kopyala:", k2Summary);
 });
 document.querySelectorAll("#tarim input, #tarim select").forEach((e) => e.addEventListener("input", calcTarim));

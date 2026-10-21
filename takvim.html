@@ -443,6 +443,7 @@
     </div>
     <label id="sTitleL">Başlık</label>
     <input id="sTitle" maxlength="80" autocomplete="off">
+    <p class="note" id="sKvkk" hidden style="margin:6px 0 0">🔒 Müşteri adı, TCKN, telefon ya da firma unvanı yazma; yalnızca konuyu yaz.</p>
     <div class="flds">
       <div id="sDW"><label id="sDL">Tarih</label><input type="date" id="sD"></div>
       <div id="sEW"><label>Bitiş</label><input type="date" id="sE"></div>
@@ -793,8 +794,8 @@ function renderYear() {
 const AKEY = "sado_ajanda1";
 const TYPES = {
   not: { ic: "📝", ad: "Not", c: "var(--not)", ph: "Örn. Kredi dosyasını tamamla", tl: "Başlık" },
-  arama: { ic: "📞", ad: "Müşteri arama", c: "var(--rdv)", ph: "Örn. Ahmet Bey – kart teklifi", tl: "Kişi / konu" },
-  ziyaret: { ic: "🏢", ad: "Firma ziyareti", c: "var(--zyr)", ph: "Örn. ABC Ltd. – POS görüşmesi", tl: "Firma / konu" },
+  arama: { ic: "📞", ad: "Müşteri arama", c: "var(--rdv)", ph: "Örn. Kart teklifi araması", tl: "Konu" },
+  ziyaret: { ic: "🏢", ad: "Firma ziyareti", c: "var(--zyr)", ph: "Örn. POS görüşmesi", tl: "Konu" },
   toplanti: { ic: "👥", ad: "Toplantı", c: "var(--tpl)", ph: "Örn. Haftalık satış toplantısı", tl: "Konu" },
   randevu: { ic: "⏰", ad: "Randevu", c: "var(--rdv)", ph: "", tl: "Konu" },
   izin: { ic: "🏖️", ad: "Yıllık izin", c: "var(--izin)", ph: "Örn. Yaz tatili", tl: "Açıklama" },
@@ -887,6 +888,7 @@ function setType(t) {
   $("sIz").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.k === sK));
   const rng = t === "izin", T = TYPES[rng ? "izin" : t];
   $("sIz").hidden = !rng;
+  $("sKvkk").hidden = !(t === "arama" || t === "ziyaret");
   $("sTitle").placeholder = rng ? (sK === "yillik" ? "Örn. Yaz tatili" : "İsteğe bağlı") : T.ph;
   $("sTitleL").innerHTML = rng ? 'Açıklama <span style="opacity:.6">(isteğe bağlı)</span>' : T.tl;
   $("sDL").textContent = rng ? "Başlangıç" : "Tarih";

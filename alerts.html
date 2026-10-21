@@ -198,9 +198,9 @@
   </div>
 
   <div class="yer" id="yer" hidden>
-    <div class="yerTop"><span class="yerEt">🎟️ İLK 80 KİŞİYE ÖZEL</span><b><em id="yerN">–</em> yer kaldı</b></div>
+    <div class="yerTop"><span class="yerEt">🎟️ SINIRLI KONTENJAN</span><b><em id="yerN">–</em> yer kaldı</b></div>
     <div class="yerBar"><i id="yerBar"></i></div>
-    <small id="yerAlt">Ücretsiz bülten şimdilik ilk 80 aboneyle sınırlı · geç kalma!</small>
+    <small id="yerAlt">Ücretsiz bülten, e-posta gönderim sınırı nedeniyle şimdilik 80 kişiyle sınırlı.</small>
   </div>
   <div id="setupNote" class="msg info">Bülten sistemi kurulum aşamasında. Kelimelerini şimdiden hazırlayabilirsin; önizleme ve abonelik çok yakında açılacak.</div>
 
@@ -245,7 +245,7 @@
     <p><b>Kelimeleri nasıl değiştiririm?</b> Aynı e-postayla yeniden abone ol; onay verince yeni liste geçerli olur.</p>
     <p><b>Nasıl çıkarım?</b> Her e-postanın altında "Abonelikten çık" bağlantısı var, tek tıkla biter.</p>
     <p><b>Telefon bildirimi nasıl çalışır?</b> “Bildirim aç” deyip izin verince telefonun, seçtiğin kelimelerle kaydedilir; e-posta istemez. Android'de Chrome ile hemen çalışır. iPhone'da önce siteyi Safari'den “Ana Ekrana Ekle” yapıp oradan açman gerekir (Apple kuralı). İstediğin an aynı karttan kapatabilirsin.</p>
-    <p><b>Gizlilik:</b> E-posta adresin yalnızca bu bülteni göndermek için saklanır, kimseyle paylaşılmaz. Onay vermeden hiçbir bülten gönderilmez.</p>
+    <p><b>Gizlilik ve KVKK aydınlatma:</b> Bu bülten kişisel bir projedir ve herhangi bir kurumla bağı yoktur. Abone olurken yalnızca e-posta adresin ve seçtiğin kelimeler, telefon bildiriminde ise yalnızca bildirim kaydı ve kelimeler alınır. Bu bilgiler sadece sana haber göndermek için, Google altyapısında saklanır; kimseyle paylaşılmaz, reklam için kullanılmaz. Onay vermeden hiçbir bülten gönderilmez. Abonelikten istediğin an çıkabilirsin; bilgilerinin tamamen silinmesini istersen ana sayfadaki öneri formundan yazman yeterli. 6698 sayılı KVKK'nın 11. maddesindeki hakların saklıdır.</p>
   </div>
 </div>
 
@@ -261,7 +261,7 @@ const ENDPOINT = "https://script.google.com/macros/s/AKfycbzXEzQSVz3T_a16_Uxnnte
     document.getElementById("yerN").textContent = j.left;
     el.hidden = false; setTimeout(() => (document.getElementById("yerBar").style.width = pct + "%"), 80);
     if (j.left === 0) { el.classList.add("dolu"); el.querySelector(".yerTop b").innerHTML = "Tüm yerler doldu"; document.getElementById("yerAlt").textContent = "Şimdilik yeni abone alınamıyor; yer açılınca burada görünecek."; }
-    else if (j.left <= 15) { el.classList.add("az"); document.getElementById("yerAlt").textContent = `Son ${j.left} yer! Kontenjan dolmadan abone ol.`; }
+    else if (j.left <= 15) { el.classList.add("az"); document.getElementById("yerAlt").textContent = `Kontenjanda ${j.left} yer kaldı.`; }
   } catch (e) {}
 })();
 
