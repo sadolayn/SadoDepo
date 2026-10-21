@@ -78,8 +78,23 @@
   .lv button.cur { box-shadow: 0 0 0 2px #fff inset; }
   .lv button:disabled { color: #444; border-color: #262626; cursor: default; }
   .lv button i { position: absolute; right: 3px; top: 1px; font-size: 10px; font-style: normal; }
+  .pz .lbl small { font-size: 14px; }
+  .pyr div { display: flex; justify-content: center; gap: 6px; margin: 6px 0; }
+  .pyr span { width: 56px; height: 46px; border: 1px solid #6a6a6a; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; }
+  /* İpucu için İş Bankası soruları */
+  .qzd { display: flex; justify-content: center; gap: 8px; margin: 2px 0 14px; }
+  .qzd i { width: 13px; height: 13px; border-radius: 50%; border: 1px solid #666; }
+  .qzd i.on { background: var(--ok); border-color: var(--ok); }
+  .qzq { text-align: left; color: var(--ink) !important; font-size: 16.5px !important; }
+  .qzo { display: grid; gap: 7px; }
+  .qzo button { min-height: 46px; padding: 10px 12px; border-radius: 4px; border: 1px solid #3a3a3a; background: #1a1a1a; color: var(--ink); font-weight: 300; font-size: 15px; font-family: inherit; text-align: left; cursor: pointer; }
+  .qzo button.ok { border-color: var(--ok); color: var(--ok); }
+  .qzo button.bad { border-color: var(--bad); color: var(--bad); }
+  .qzm { font-size: 14px; color: var(--dim); margin: 12px 0 2px; }
+  #hint.acik { color: var(--gold); }
   .note { font-size: 13px; color: var(--dim); margin-top: 10px; }
 </style>
+<script src="isq.js"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
@@ -122,58 +137,70 @@ const SEKIL = {
 const tok = (t) => (SEKIL[t] ? SEKIL[t] : `<span>${t}</span>`);
 const ucgen = ([a, b, c]) => `<svg viewBox="0 0 120 110"><text x="22" y="24" text-anchor="middle" font-size="25" font-weight="300" fill="#e6e6e6" font-family="inherit">${a}</text><text x="98" y="24" text-anchor="middle" font-size="25" font-weight="300" fill="#e6e6e6" font-family="inherit">${b}</text><path d="M40 33h40L60 66z" ${STK}/><text x="60" y="96" text-anchor="middle" font-size="25" font-weight="300" fill="#e6e6e6" font-family="inherit">${c}</text></svg>`;
 const izgara = (n) => { const s = 150, c = s / n; let l = ""; for (let i = 1; i < n; i++) l += `<path d="M${i * c} 0V${s}M0 ${i * c}H${s}" ${STK}/>`; return `<svg viewBox="-2 -2 154 154" style="width:170px;height:170px"><rect x="0" y="0" width="${s}" height="${s}" ${STK}/>${l}</svg>`; };
+// 2 satır × 3 sütun dikdörtgen ızgara
+const dikdortgen = () => `<svg viewBox="-2 -2 184 124" style="width:220px;height:auto"><rect x="0" y="0" width="180" height="120" ${STK}/><path d="M60 0V120M120 0V120M0 60H180" ${STK}/></svg>`;
+// Kenarı n parçaya bölünmüş üçgen
+const ucgenIzgara = (n) => {
+  const A = [80, 6], B = [6, 134], C = [154, 134], at = (P, Q, k) => [P[0] + ((Q[0] - P[0]) * k) / n, P[1] + ((Q[1] - P[1]) * k) / n];
+  let l = "";
+  for (let k = 1; k < n; k++) [[A, B, A, C], [B, A, B, C], [C, A, C, B]].forEach(([P, Q, R, S]) => { const u = at(P, Q, k), v = at(R, S, k); l += `<path d="M${u[0].toFixed(1)} ${u[1].toFixed(1)}L${v[0].toFixed(1)} ${v[1].toFixed(1)}" ${STK}/>`; });
+  return `<svg viewBox="0 0 160 140" style="width:210px;height:auto"><path d="M${A}L${B}L${C}z" ${STK}/>${l}</svg>`;
+};
+// Sayı piramidi: her kutu, altındaki iki kutunun toplamı
+const piramit = (rows) => `<div class="pyr">${rows.map((r) => `<div>${r.map((x) => `<span>${x}</span>`).join("")}</div>`).join("")}</div><div class="lbl">Her kutu, altındaki iki kutunun toplamı</div>`;
 
-// ---------- Bilmeceler (kolaydan zora) ----------
-// t: seri | islem | esle | sekil | ucgen | kare | tablo | soru · c: cevap · i: ipucu · a: açıklama
+// ---------- Bilmeceler (zordan daha zora) ----------
+// t: seri | islem | esle | sekil | ucgen | kare | dikdortgen | ucgenSay | piramit | tablo | soru · c: cevap · i: ipucu · a: açıklama
 const SEV = [
-  { t: "seri", p: "3, 6, 9, 12, ?", c: 15, i: "Her seferinde aynı sayı ekleniyor.", a: "Her adımda +3: 12 + 3 = 15" },
-  { t: "seri", p: "5, 10, 20, 40, ?", c: 80, i: "Her sayı bir öncekinin kaç katı?", a: "Her sayı iki katına çıkıyor: 40 × 2 = 80" },
-  { t: "islem", p: "3 + 4 × 2 = ?", c: 11, i: "Önce çarpma, sonra toplama yapılır.", a: "4 × 2 = 8, sonra 3 + 8 = 11" },
-  { t: "esle", p: ["4 = 12", "5 = 15", "8 = 24", "6 = ?"], c: 18, i: "Soldaki sayı hangi sayıyla çarpılıyor?", a: "Her sayı 3 ile çarpılıyor: 6 × 3 = 18" },
-  { t: "seri", p: "20, 17, 14, 11, ?", c: 8, i: "Sayılar azalıyor; her seferinde ne kadar?", a: "Her adımda −3: 11 − 3 = 8" },
-  { t: "sekil", p: [["kare", "+", "kare", "=", "10"], ["kare", "+", "ucgen", "=", "8"], ["ucgen", "=", "?"]], c: 3, i: "Önce karenin değerini bul.", a: "Kare = 5, o zaman üçgen = 8 − 5 = 3" },
-  { t: "islem", p: "10 − 2 × 3 + 4 = ?", c: 8, i: "Çarpma önce; sonra soldan sağa.", a: "2 × 3 = 6 → 10 − 6 + 4 = 8" },
-  { t: "ucgen", p: [[15, 6, 9], [20, 8, 12], [17, 9, "?"]], c: 8, i: "Üstteki iki sayıyla alttaki arasında hangi işlem var?", a: "Alttaki sayı, üstteki iki sayının farkı: 17 − 9 = 8" },
-  { t: "seri", p: "1, 4, 9, 16, 25, ?", c: 36, i: "1×1, 2×2, 3×3…", a: "Kare sayılar: 6 × 6 = 36" },
-  { t: "kare", p: 2, c: 5, i: "Küçük kareleri say, büyük kareyi unutma.", a: "4 küçük kare + 1 büyük kare = 5" },
-  { t: "seri", p: "2, 3, 5, 7, 11, ?", c: 13, i: "Bunlar yalnızca 1'e ve kendisine bölünen sayılar.", a: "Asal sayılar: 11'den sonraki asal 13" },
-  { t: "esle", p: ["12 → 21", "34 → 43", "57 → 75", "68 → ?"], c: 86, i: "Rakamlara bak.", a: "Rakamların yeri değişiyor: 68 → 86" },
-  { t: "sekil", p: [["daire", "+", "daire", "+", "daire", "=", "18"], ["daire", "+", "kare", "=", "10"], ["kare", "×", "daire", "=", "?"]], c: 24, i: "Üç daire 18 ediyorsa bir daire kaç?", a: "Daire = 6, kare = 4 → 4 × 6 = 24" },
-  { t: "esle", p: ["7 = 49", "4 = 16", "9 = 81", "12 = ?"], c: 144, i: "Sayı kendisiyle çarpılıyor.", a: "Karesi alınıyor: 12 × 12 = 144" },
-  { t: "islem", p: "(8 + 4) ÷ 3 × 2 = ?", c: 8, i: "Önce parantez; sonra bölme ve çarpma soldan sağa.", a: "8 + 4 = 12 → 12 ÷ 3 = 4 → 4 × 2 = 8" },
-  { t: "seri", p: "1, 1, 2, 3, 5, 8, ?", c: 13, i: "Son iki sayıya bak.", a: "Her sayı önceki ikisinin toplamı (Fibonacci): 5 + 8 = 13" },
-  { t: "ucgen", p: [[2, 5, 10], [3, 7, 21], [6, 4, "?"]], c: 24, i: "Toplama değil…", a: "Alttaki sayı, üsttekilerin çarpımı: 6 × 4 = 24" },
-  { t: "seri", p: "2, 6, 12, 20, 30, ?", c: 42, i: "Aradaki farklara bak: 4, 6, 8…", a: "Farklar 2'şer artıyor: 30 + 12 = 42" },
-  { t: "esle", p: ["3 = 10", "4 = 17", "5 = 26", "6 = ?"], c: 37, i: "Karesini al, sonra bir şey ekle.", a: "Karesi + 1: 6 × 6 + 1 = 37" },
-  { t: "soru", p: "1 ile 100 arasında kaç tane asal sayı var?", c: 25, i: "Asal Tahmin'deki 1–100 tablosunu hatırla 😉", a: "1–100 arasında 25 asal sayı var; en büyüğü 97" },
-  { t: "sekil", p: [["ucgen", "+", "ucgen", "=", "14"], ["ucgen", "+", "daire", "=", "12"], ["daire", "+", "kare", "=", "9"], ["kare", "=", "?"]], c: 4, i: "Üçgenden başla, sırayla in.", a: "Üçgen = 7, daire = 5, kare = 9 − 5 = 4" },
-  { t: "seri", p: "81, 27, 9, 3, ?", c: 1, i: "Her seferinde bölünüyor.", a: "Her sayı 3'e bölünüyor: 3 ÷ 3 = 1" },
-  { t: "islem", p: "5 + 5 ÷ 5 × 5 − 5 = ?", c: 5, i: "Bölme ve çarpma, toplama ve çıkarmadan önce.", a: "5 ÷ 5 × 5 = 5 → 5 + 5 − 5 = 5" },
-  { t: "tablo", p: [[2, 7, 6], [9, 5, 1], [4, 3, "?"]], c: 8, i: "Her satırın toplamı aynı.", a: "Sihirli kare: her satır, sütun ve köşegen 15 → 15 − 4 − 3 = 8" },
-  { t: "soru", p: "Saat tam 3'te akrep ile yelkovan arasındaki açı kaç derecedir?", c: 90, i: "Saatin tamamı 360 derece, 12 bölüm var.", a: "Her saat aralığı 360 ÷ 12 = 30 derece; 3 aralık × 30 = 90 derece" },
+  { t: "seri", p: "2, 5, 11, 23, 47, ?", c: 95, i: "Her sayıyı ikiyle çarp, sonra bir şey ekle.", a: "Her sayı: önceki × 2 + 1 → 47 × 2 + 1 = 95" },
+  { t: "islem", p: "8 ÷ 2 × (2 + 2) = ?", c: 16, i: "Önce parantez; bölme ve çarpma soldan sağa.", a: "2 + 2 = 4 → 8 ÷ 2 = 4 → 4 × 4 = 16" },
+  { t: "esle", p: ["3 → 8", "5 → 24", "7 → 48", "9 → ?"], c: 80, i: "Sayının karesine bak.", a: "Karesinin 1 eksiği: 9 × 9 − 1 = 80" },
+  { t: "sekil", p: [["kare", "+", "ucgen", "=", "13"], ["kare", "−", "ucgen", "=", "5"], ["kare", "×", "ucgen", "=", "?"]], c: 36, i: "İlk iki satırı alt alta topla.", a: "2 kare = 18 → kare = 9, üçgen = 4 → 9 × 4 = 36" },
+  { t: "seri", p: "7, 10, 8, 11, 9, 12, ?", c: 10, i: "Bir artıyor, bir azalıyor.", a: "+3, −2, +3, −2… → 12 − 2 = 10" },
+  { t: "islem", p: "6 − 6 × 0 + 2 ÷ 2 = ?", c: 7, i: "Sıfırla çarpılan şey sıfır olur.", a: "6 × 0 = 0, 2 ÷ 2 = 1 → 6 − 0 + 1 = 7" },
+  { t: "ucgen", p: [[5, 3, 7], [6, 4, 14], [7, 5, "?"]], c: 23, i: "Çarpımla toplamı karşılaştır.", a: "Çarpım − toplam: 7 × 5 − (7 + 5) = 35 − 12 = 23" },
+  { t: "seri", p: "0, 3, 8, 15, 24, ?", c: 35, i: "1, 4, 9, 16, 25 dizisine benziyor mu?", a: "Kare sayıların 1 eksiği: 6 × 6 − 1 = 35" },
+  { t: "soru", p: "1'den 100'e kadar bütün sayılar yazılırken kaç tane 9 rakamı kullanılır?", c: 20, i: "Birler basamağındaki ve onlar basamağındaki 9'ları ayrı say.", a: "Birler basamağında 10 tane (9, 19 … 99), onlar basamağında 10 tane (90–99) → 20" },
+  { t: "sekil", p: [["daire", "+", "daire", "+", "kare", "=", "20"], ["daire", "+", "kare", "+", "kare", "=", "22"], ["daire", "+", "kare", "=", "?"]], c: 14, i: "İki satırı topla, kaç daire ve kaç kare olur?", a: "Toplayınca 3 daire + 3 kare = 42 → daire + kare = 14" },
+  { t: "seri", p: "1, 2, 4, 7, 11, 16, ?", c: 22, i: "Aradaki farklar: 1, 2, 3, 4…", a: "Farklar birer artıyor: 16 + 6 = 22" },
+  { t: "soru", p: "5 makine 5 dakikada 5 parça üretiyor. 100 makine 100 parçayı kaç dakikada üretir?", c: 5, i: "Bir makine bir parçayı kaç dakikada üretiyor?", a: "Her makine 1 parçayı 5 dakikada üretir; 100 makine aynı anda 100 parça → 5 dakika" },
   { t: "kare", p: 3, c: 14, i: "1×1, 2×2 ve 3×3 kareleri ayrı ayrı say.", a: "9 küçük + 4 orta + 1 büyük = 14 kare" },
-  { t: "seri", p: "1, 3, 6, 10, 15, ?", c: 21, i: "Farklar: 2, 3, 4, 5…", a: "Her seferinde bir fazlası ekleniyor: 15 + 6 = 21" },
-  { t: "seri", p: "2, 4, 8, 14, 22, ?", c: 32, i: "Aradaki farklara bak.", a: "Farklar 2, 4, 6, 8, 10: 22 + 10 = 32" },
-  { t: "seri", p: "1, 10, 2, 20, 3, 30, 4, ?", c: 40, i: "İki ayrı dizi iç içe.", a: "Tek sıralar 1, 2, 3, 4; çift sıralar 10, 20, 30, 40" },
-  { t: "ucgen", p: [[8, 3, 115], [6, 2, 84], [9, 5, "?"]], c: 144, i: "Alttaki sayıyı ikiye böl: 11 | 5 …", a: "Önce toplam, yanına fark yazılıyor: 9 + 5 = 14, 9 − 5 = 4 → 144" },
-  { t: "seri", p: "3, 9, 27, 81, ?", c: 243, i: "Her sayı bir öncekinin kaç katı?", a: "Her adımda × 3: 81 × 3 = 243" },
-  { t: "soru", p: "10. asal sayı kaçtır?", c: 29, i: "2, 3, 5, 7, 11, 13 … diye say.", a: "2, 3, 5, 7, 11, 13, 17, 19, 23, 29 → 10. asal 29" },
-  { t: "sekil", p: [["karo", "×", "karo", "=", "36"], ["karo", "+", "yildiz", "=", "10"], ["yildiz", "×", "yildiz", "−", "karo", "=", "?"]], c: 10, i: "Hangi sayı kendisiyle çarpılınca 36 eder?", a: "Karo = 6, yıldız = 4 → 4 × 4 − 6 = 10" },
-  { t: "esle", p: ["2 = 6", "3 = 12", "4 = 20", "7 = ?"], c: 56, i: "Sayıyı bir fazlasıyla çarp.", a: "n × (n + 1): 7 × 8 = 56" },
-  { t: "ucgen", p: [[4, 6, 52], [3, 5, 34], [2, 7, "?"]], c: 53, i: "Üstteki sayıların kareleri…", a: "Karelerin toplamı: 2 × 2 + 7 × 7 = 4 + 49 = 53" },
-  { t: "seri", p: "1, 2, 6, 24, 120, ?", c: 720, i: "×2, ×3, ×4 …", a: "Her seferinde bir büyük sayıyla çarpılıyor: 120 × 6 = 720" },
-  { t: "islem", p: "2 + 3 × (4 + 6) ÷ 5 = ?", c: 8, i: "Parantez → çarpma ve bölme soldan sağa → toplama.", a: "4 + 6 = 10 → 3 × 10 ÷ 5 = 6 → 2 + 6 = 8" },
+  { t: "esle", p: ["21 → 3", "47 → 11", "385 → 16", "999 → ?"], c: 27, i: "Rakamlarla bir işlem yapılıyor.", a: "Rakamların toplamı: 9 + 9 + 9 = 27" },
+  { t: "islem", p: "1 + 2 + 3 + … + 100 = ?", c: 5050, i: "Baştan ve sondan eşleştir: 1 + 100, 2 + 99…", a: "50 çift, her biri 101 → 50 × 101 = 5050" },
+  { t: "seri", p: "3, 6, 18, 72, ?", c: 360, i: "Çarpan her seferinde değişiyor.", a: "× 2, × 3, × 4, × 5 → 72 × 5 = 360" },
+  { t: "piramit", p: [["30"], ["", ""], ["5", "?", "9"]], c: 8, i: "Ortadaki kutuları harflerle yaz: tepe = 5 + 2 × ? + 9", a: "Tepe = 5 + 2 × ? + 9 = 30 → 2 × ? = 16 → ? = 8" },
+  { t: "soru", p: "Bir salyangoz 10 metrelik kuyunun dibinde. Gündüz 3 m tırmanıyor, gece 2 m kayıyor. Kaçıncı gün kuyudan çıkar?", c: 8, i: "Son gün gece kaymaya fırsat bulamaz.", a: "Her gün net 1 m: 7. gecenin sonunda 7 m'de; 8. gündüz 3 m tırmanıp çıkar" },
+  { t: "ucgen", p: [[7, 3, 40], [9, 4, 65], [8, 5, "?"]], c: 39, i: "Üstteki sayıların karelerine bak.", a: "Karelerin farkı: 8 × 8 − 5 × 5 = 64 − 25 = 39" },
+  { t: "seri", p: "1, 3, 4, 7, 11, 18, ?", c: 29, i: "Fibonacci'ye benziyor.", a: "Her sayı önceki ikisinin toplamı: 11 + 18 = 29" },
+  { t: "soru", p: "Bir baba 36, oğlu 6 yaşında. Kaç yıl sonra babanın yaşı oğlunun yaşının 4 katı olur?", c: 4, i: "x yıl sonra: 36 + x = 4 × (6 + x)", a: "36 + x = 24 + 4x → 12 = 3x → x = 4 (baba 40, oğul 10)" },
+  { t: "esle", p: ["2 → 9", "3 → 28", "4 → 65", "5 → ?"], c: 126, i: "Sayıyı kendisiyle üç kez çarp.", a: "Küpünün 1 fazlası: 5 × 5 × 5 + 1 = 126" },
+  { t: "dikdortgen", c: 18, i: "Yatayda 3, dikeyde 4 çizgi var; her dikdörtgen 2 yatay ve 2 dikey çizgi seçer.", a: "3 yatay çizgiden 2'si (3 yol) × 4 dikey çizgiden 2'si (6 yol) = 18" },
+  { t: "soru", p: "10 kişi birbiriyle birer kez tokalaşıyor. Toplam kaç tokalaşma olur?", c: 45, i: "Her kişi 9 kişiyle tokalaşır ama her tokalaşma iki kez sayılır.", a: "10 × 9 ÷ 2 = 45" },
+  { t: "seri", p: "2, 12, 36, 80, ?", c: 150, i: "1×1×2, 2×2×3 …", a: "n × n × (n + 1): 5 × 5 × 6 = 150" },
+  { t: "sekil", p: [["yildiz", "×", "yildiz", "=", "49"], ["karo", "−", "yildiz", "=", "5"], ["karo", "×", "yildiz", "−", "karo", "=", "?"]], c: 72, i: "Hangi sayı kendisiyle çarpılınca 49 eder?", a: "Yıldız = 7, karo = 12 → 12 × 7 − 12 = 72" },
+  { t: "soru", p: "Bir sınıfta 30 öğrenci var. 18'i futbol, 15'i basketbol oynuyor; 5'i hiçbirini oynamıyor. Kaç öğrenci ikisini de oynuyor?", c: 8, i: "Spor yapan kaç kişi var? 18 + 15 bundan ne kadar fazla?", a: "Spor yapan 25 kişi; 18 + 15 = 33 → 33 − 25 = 8 kişi ikisini de oynuyor" },
+  { t: "soru", p: "Saat 3:30'da akrep ile yelkovan arasındaki dar açı kaç derecedir?", c: 75, i: "Yelkovan 6'da; akrep 3 ile 4'ün tam ortasında.", a: "Yelkovan 180°, akrep 90° + 15° = 105° → 180 − 105 = 75°" },
+  { t: "tablo", p: [[8, "", 6], ["", 5, ""], [4, "?", 2]], c: 9, i: "Her satır, sütun ve köşegenin toplamı aynı. Köşegen 8 + 5 + 2 kaç?", a: "Toplam 15 → üst orta 15 − 8 − 6 = 1 → orta sütun 1 + 5 + ? = 15 → 9" },
+  { t: "ucgenSay", p: 3, c: 13, i: "Hem yukarı bakan hem aşağı bakan üçgenleri say; büyükleri unutma.", a: "Yukarı bakan: 6 küçük + 3 orta + 1 büyük = 10, aşağı bakan 3 → 13" },
+  { t: "soru", p: "Bir kitabın sayfalarını numaralamak için toplam 192 rakam kullanıldı. Kitap kaç sayfadır?", c: 100, i: "1–9 arası 9 rakam, 10–99 arası kaç rakam?", a: "1–9: 9 rakam, 10–99: 180 rakam → 189; kalan 3 rakam 100. sayfa" },
+  { t: "seri", p: "1, 4, 27, 256, ?", c: 3125, i: "1¹, 2², 3³ …", a: "Her sayı kendi kuvveti: 5⁵ = 3125" },
+  { t: "soru", p: "1 ile 50 arasındaki asal sayıların toplamı kaçtır?", c: 328, i: "2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47", a: "15 asal sayının toplamı 328" },
+  { t: "soru", p: "Kenarı 3 cm olan bir küpün dışı boyanıyor, sonra 1 cm'lik küplere kesiliyor. Kaç küpün tam 2 yüzü boyalıdır?", c: 12, i: "Köşeler 3 yüzü, kenar ortaları 2 yüzü boyalı.", a: "Küpün 12 kenarının her birinin ortasında 1 küp → 12" },
+  { t: "soru", p: "İş Bankası 1924'te kuruldu. 1, 9, 2, 4 rakamlarını birer kez kullanarak yazılabilecek en büyük asal sayı hangisidir?", c: 9421, i: "En büyük sayıdan başla, asal mı diye bak.", a: "Akla ilk gelen en büyük sayı 9421, gerçekten de asal 🙂" },
   { t: "kare", p: 4, c: 30, i: "1×1, 2×2, 3×3 ve 4×4 karelerin hepsi.", a: "16 + 9 + 4 + 1 = 30 kare" },
-  { t: "seri", p: "4, 9, 25, 49, 121, ?", c: 169, i: "Bunlar hangi sayıların kareleri? 2, 3, 5, 7, 11 …", a: "Asal sayıların kareleri: 13 × 13 = 169" },
+  { t: "soru", p: "Bir sayı 2'ye, 3'e, 4'e, 5'e ve 6'ya bölündüğünde hep 1 kalıyor. Bu özellikteki 1'den büyük en küçük sayı kaçtır?", c: 61, i: "2, 3, 4, 5 ve 6'ya tam bölünen en küçük sayıyı bul.", a: "En küçük ortak kat 60 → 60 + 1 = 61 (üstelik asal)" },
+  { t: "islem", p: "8² + 15² = ?²", c: 17, i: "3² + 4² = 5² gibi.", a: "64 + 225 = 289 = 17 × 17" },
+  { t: "islem", p: "2¹⁰ − 2⁹ = ?", c: 512, i: "2¹⁰, 2⁹'un iki katı.", a: "2¹⁰ − 2⁹ = 2⁹ × (2 − 1) = 512" },
   { t: "seri", p: "1, 11, 21, 1211, 111221, ?", c: 312211, i: "Bir önceki sayıyı yüksek sesle oku: \"bir tane 1\" → 11 …", a: "Okuyarak say: 111221 = üç 1, iki 2, bir 1 → 312211" },
 ];
 
 // ---------- Durum ----------
-const ST = Object.assign({ i: 0, acik: 0, coz: {} }, oku("bilmeceSt", {}));
+// Bilmeceler değiştiği için yeni kayıt anahtarı. Bilinmeyen bilmecede bir sonrakine geçilmez.
+const ST = Object.assign({ i: 0, acik: 0, coz: {}, ip: {}, isq: {} }, oku("bilmeceSt2", {}));
 if (ST.i > ST.acik) ST.i = ST.acik;
 if (ST.acik >= SEV.length) ST.acik = SEV.length - 1;
 let val = "";
-const kaydet = () => yaz("bilmeceSt", ST);
+const kaydet = () => yaz("bilmeceSt2", ST);
 
 function ciz() {
   const L = SEV[ST.i];
@@ -186,10 +213,14 @@ function ciz() {
   else if (L.t === "sekil") h = L.p.map((r) => `<div class="eq">${r.map(tok).join("")}</div>`).join("");
   else if (L.t === "ucgen") h = `<div class="tri">${L.p.map(ucgen).join("")}</div>`;
   else if (L.t === "kare") h = `${izgara(L.p)}<div class="lbl">Şekilde kaç kare var?</div>`;
-  else if (L.t === "tablo") h = `<table>${L.p.map((r) => `<tr>${r.map((x) => `<td>${x}</td>`).join("")}</tr>`).join("")}</table>`;
+  else if (L.t === "dikdortgen") h = `${dikdortgen()}<div class="lbl">Şekilde kaç dikdörtgen var?<br><small>(kareler de dikdörtgendir)</small></div>`;
+  else if (L.t === "ucgenSay") h = `${ucgenIzgara(L.p)}<div class="lbl">Şekilde kaç üçgen var?</div>`;
+  else if (L.t === "piramit") h = piramit(L.p);
+  else if (L.t === "tablo") h = `<table>${L.p.map((r) => `<tr>${r.map((x) => `<td>${x}</td>`).join("")}</tr>`).join("")}</table><div class="lbl">Her satır, sütun ve köşegenin toplamı aynı</div>`;
   else if (L.t === "soru") h = `<div class="q">${L.p}</div>`;
   $("pz").innerHTML = h;
   $("done").classList.remove("show");
+  $("hint").classList.toggle("acik", !!ST.ip[ST.i]);
   val = ""; goster();
 }
 function goster() { $("val").textContent = val; $("ans").classList.remove("bad"); }
@@ -200,7 +231,7 @@ function tamam() {
   if (!val) return;
   const L = SEV[ST.i];
   if (Number(val) === L.c) {
-    if (!ST.coz[ST.i]) ST.coz[ST.i] = "ok";
+    ST.coz[ST.i] = ST.ip[ST.i] ? "ip" : "ok";
     ST.acik = Math.max(ST.acik, Math.min(ST.i + 1, SEV.length - 1)); kaydet();
     window.Rapor && Rapor.oyun("bilmece", true, `Seviye ${ST.i + 1}`);
     $("exp").textContent = L.a;
@@ -215,26 +246,61 @@ function tamam() {
 }
 function sonraki() {
   if (ST.i >= SEV.length - 1) return bitti();
+  if (!ST.coz[ST.i]) return; // bilinmeden geçilmez
   ST.i++; kaydet(); ciz();
 }
 function pencere(h) { $("box").innerHTML = h; $("ov").classList.add("show"); }
 const kapat = () => $("ov").classList.remove("show");
 $("ov").onclick = (e) => { if (e.target === $("ov")) kapat(); };
+
+// ---------- İpucu: önce 5 İş Bankası sorusunu doğru bil ----------
+const GEREK = 5;
+let deste = [];
+function isqSec() {
+  const pool = typeof ISQ !== "undefined" ? ISQ : [];
+  if (!deste.length) deste = pool.map((_, i) => i).sort(() => Math.random() - 0.5);
+  return pool[deste.pop()];
+}
 function ipucu() {
   const L = SEV[ST.i];
-  pencere(`<h3>💡 İpucu</h3><p>${L.i}</p><button class="btn" id="kp" type="button">Tamam</button><button class="btn gold" id="cv" type="button">Cevabı göster</button>`);
+  if (ST.ip[ST.i] || typeof ISQ === "undefined" || !ISQ.length) return ipucuGoster();
+  isqSor();
+}
+function ipucuGoster() {
+  const L = SEV[ST.i];
+  ST.ip[ST.i] = true; kaydet(); $("hint").classList.add("acik");
+  pencere(`<h3>💡 İpucu</h3><p>${L.i}</p><button class="btn" id="kp" type="button">Tamam</button>`);
   $("kp").onclick = kapat;
-  $("cv").onclick = () => {
-    if (ST.coz[ST.i] !== "ok") ST.coz[ST.i] = "ip";
-    ST.acik = Math.max(ST.acik, Math.min(ST.i + 1, SEV.length - 1)); kaydet();
-    pencere(`<h3>Cevap: ${L.c}</h3><p>${L.a}</p><button class="btn" id="kp" type="button">${ST.i >= SEV.length - 1 ? "Bitir" : "Sonraki seviye ›"}</button>`);
-    $("kp").onclick = () => { kapat(); sonraki(); };
+}
+function isqSor() {
+  const n = ST.isq[ST.i] || 0, q = isqSec();
+  const ord = q[1].map((_, i) => i).sort(() => Math.random() - 0.5), dogru = ord.indexOf(q[2]);
+  pencere(`<h3>💡 İpucu için ${GEREK} İş Bankası sorusu</h3>
+    <div class="qzd">${Array.from({ length: GEREK }, (_, i) => `<i class="${i < n ? "on" : ""}"></i>`).join("")}</div>
+    <p class="qzq"></p><div class="qzo">${ord.map((_, k) => `<button type="button" data-k="${k}"></button>`).join("")}</div>
+    <div class="qzm" id="qzm">${n} / ${GEREK} doğru</div><button class="btn" id="kp" type="button">Vazgeç</button>`);
+  $("box").querySelector(".qzq").textContent = q[0];
+  $("box").querySelectorAll(".qzo button").forEach((b, k) => (b.textContent = q[1][ord[k]]));
+  $("kp").onclick = kapat;
+  $("box").querySelector(".qzo").onclick = (e) => {
+    const b = e.target.closest("button[data-k]"); if (!b || b.disabled) return;
+    const k = +b.dataset.k;
+    $("box").querySelectorAll(".qzo button").forEach((x) => { x.disabled = true; if (+x.dataset.k === dogru) x.classList.add("ok"); });
+    if (k === dogru) {
+      const m = (ST.isq[ST.i] || 0) + 1; ST.isq[ST.i] = m; kaydet();
+      $("qzm").innerHTML = `<b style="color:var(--ok)">Doğru!</b> ${m} / ${GEREK}`;
+      setTimeout(() => (m >= GEREK ? ipucuGoster() : isqSor()), 750);
+    } else {
+      b.classList.add("bad");
+      $("qzm").innerHTML = `<b style="color:var(--bad)">Olmadı</b> · doğrusu yeşil olan`;
+      setTimeout(isqSor, 1500);
+    }
   };
 }
 function seviyeler() {
   const ok = Object.values(ST.coz).filter((x) => x === "ok").length, ip = Object.values(ST.coz).filter((x) => x === "ip").length;
-  pencere(`<h3>Seviyeler</h3><div class="lv">${SEV.map((_, i) => { const c = ST.coz[i]; return `<button type="button" data-i="${i}" class="${c === "ok" ? "ok" : c === "ip" ? "ip" : ""}${i === ST.i ? " cur" : ""}"${i > ST.acik ? " disabled" : ""}>${i + 1}${c === "ip" ? "<i>💡</i>" : ""}</button>`; }).join("")}</div>
-    <div class="note">✓ ${ok} kendin çözdün · 💡 ${ip} ipucuyla · ${SEV.length} seviye</div><button class="btn" id="kp" type="button">Kapat</button>`);
+  pencere(`<h3>Seviyeler</h3><div class="lv">${SEV.map((_, i) => { const c = ST.coz[i]; return `<button type="button" data-i="${i}" class="${c === "ok" ? "ok" : c === "ip" ? "ip" : ""}${i === ST.i ? " cur" : ""}"${i > ST.acik ? " disabled" : ""}>${i + 1}${c === "ip" ? "<i>💡</i>" : i > ST.acik ? "<i>🔒</i>" : ""}</button>`; }).join("")}</div>
+    <div class="note">✓ ${ok} kendin çözdün · 💡 ${ip} ipucuyla · bilinmeyen seviyeden sonrakine geçilmez</div><button class="btn" id="kp" type="button">Kapat</button>`);
   $("box").querySelectorAll("[data-i]").forEach((b) => (b.onclick = () => { ST.i = +b.dataset.i; kaydet(); kapat(); ciz(); }));
   $("kp").onclick = kapat;
 }
