@@ -808,13 +808,34 @@ function icsWeekly() {
   download("gunce-haftalik-hatirlatma.ics", ics, "text/calendar");
   toast("Takvim dosyası indi; açınca her pazartesi 09:00 hatırlatır");
 }
+// Dışarıdan gelen veriyi (karekod bağlantısı ya da yedek dosyası) temizle: yalnızca beklenen biçim kalır,
+// sayfaya kod sızdırılamaz. Sahte bir karekod/bağlantı açılsa bile kalem adı dışında metin taşınamaz.
+function guvenli(G) {
+  if (!G || typeof G !== "object" || !Array.isArray(G.products)) return null;
+  const ID = /^[A-Za-z0-9_-]{1,40}$/, num = (v) => (Number.isFinite(+v) && +v >= 0 ? Math.min(Math.round(+v), 99999) : 0);
+  const products = G.products.filter((p) => p && ID.test(String(p.id))).slice(0, 40)
+    .map((p, i) => ({ id: String(p.id), name: String(p.name ?? "").slice(0, 30), icon: ICONS.includes(p.icon) ? p.icon : ICONS[i % ICONS.length], type: "adet" }));
+  const ok = new Set(products.map((p) => p.id)), targets = {}, days = {}, bal = {};
+  for (const [q, t] of Object.entries(G.targets && typeof G.targets === "object" ? G.targets : {})) {
+    if (!/^\d{4}-Q[1-4]$/.test(q) || !t || typeof t !== "object") continue;
+    const o = (targets[q] = {});
+    for (const [id, v] of Object.entries(t)) if (ok.has(id)) o[id] = num(v); else if (id === "_kopya") o._kopya = 1;
+  }
+  for (const [k, v] of Object.entries(G.days && typeof G.days === "object" ? G.days : {})) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !v || typeof v !== "object") continue;
+    const o = (days[k] = {});
+    for (const [id, n] of Object.entries(v)) if (ok.has(id)) o[id] = num(n);
+  }
+  for (const [id, v] of Object.entries(G.bal && typeof G.bal === "object" ? G.bal : {})) if (ok.has(id) && Number.isFinite(+v)) bal[id] = +v;
+  return { products, targets, days, bal };
+}
 function exportJson() { download(`gunce-yedek-${TK}.json`, JSON.stringify(D, null, 1), "application/json"); toast("Yedek indirildi"); }
 function importJson(file) {
   const r = new FileReader();
   r.onload = () => {
     try {
-      const d = JSON.parse(r.result);
-      if (!d || !Array.isArray(d.products) || typeof d.days !== "object") throw 0;
+      const d = guvenli(JSON.parse(r.result));
+      if (!d) throw 0;
       if (!confirm("Yedek yüklensin mi? Bu cihazdaki mevcut veriler yedektekilerle değiştirilecek.")) return;
       D = { products: d.products, targets: d.targets || {}, days: d.days, bal: d.bal || {}, v3: true }; migrate(); save(); render(); toast("Yedek yüklendi");
     } catch (e) { toast("Bu dosya geçerli bir Günce yedeği değil"); }
@@ -989,10 +1010,11 @@ async function tasiAl() {
   if (!h.startsWith("#tasi=")) return;
   history.replaceState(null, "", location.pathname + location.search);
   let G;
-  try { G = await unpackData(h.slice(6)); if (!G || !Array.isArray(G.products) || typeof G.days !== "object") throw 0; }
+  try { G = guvenli(await unpackData(h.slice(6))); if (!G) throw 0; }
   catch (e) { tasiModal(`<h3>😕 Taşınamadı</h3><p>Karekod okunamadı ya da eksik. Bilgisayarda karekodu yeniden açıp tekrar okut.</p><div class="bt"><button type="button" class="k" data-x>Tamam</button></div>`); return; }
   const mine = Object.keys(D.days).length, gel = Object.keys(G.days).length;
   const m = tasiModal(`<h3>📲 Veriler geldi</h3>
+    <p class="s">🔒 Bu karekodu kendi bilgisayarındaki Günce'den sen mi oluşturdun? Değilse <b>Vazgeç</b>; başkasından gelen karekodla veri alma.</p>
     <p><b>${G.products.length}</b> kalem · <b>${gel}</b> günlük işaretleme.${mine ? ` Bu cihazda da <b>${mine}</b> günlük kayıt var.` : ""}</p>
     ${mine ? `<p class="s">“Birleştir” iki cihazdaki kayıtları bir araya getirir; aynı gün ve kalemde büyük olan sayı kalır.</p>` : ""}
     <div class="bt col">${mine ? `<button type="button" class="k" data-a="b">🔀 Birleştir</button><button type="button" class="c" data-a="y">♻️ Bu cihazdakileri sil, gelenleri koy</button>` : `<button type="button" class="k" data-a="y">✅ Taşı</button>`}<button type="button" class="c" data-x>Vazgeç</button></div>`);

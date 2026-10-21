@@ -116,7 +116,7 @@
         k.innerHTML = '<div class="in"><h3>📱 Telefonunda aç</h3><p>Telefonunun kamerasını karekoda tut; bu sayfa telefonunda açılır.</p>' +
           '<div class="qr">' + q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }) + '</div>' +
           '<div class="ad"></div><div class="bt"><button type="button" class="c">🔗 Adresi kopyala</button><button type="button" class="k">Kapat</button></div>' +
-          '<div class="gv">Karekod yalnızca yukarıdaki adresi içerir. Bu site giriş, şifre ya da kart bilgisi istemez.</div></div>';
+          '<div class="gv">🔒 Okuttuğunda telefonunda çıkan adresin <b style="color:#bbb">sadolayn.github.io/SadoDepo</b> ile başladığını kontrol et. Bu site giriş, şifre ya da kart bilgisi istemez; isteyen bir sayfa açılırsa kapat.</div></div>';
         k.querySelector(".ad").textContent = url.replace(/^https?:\/\//, "");
         var kapat = function () { k.remove(); document.removeEventListener("keydown", esc); };
         var esc = function (e) { if (e.key === "Escape") kapat(); };
