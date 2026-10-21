@@ -40,6 +40,7 @@ FEEDS = {
     ("NTV", "https://www.ntv.com.tr/teknoloji.rss"),
     ("Webtekno", "https://www.webtekno.com/rss.xml"),
     ("ShiftDelete", "https://shiftdelete.net/feed"),
+    ("DonanımHaber", "https://www.donanimhaber.com/rss/tum/"),
     ("TRT Haber", "https://www.trthaber.com/bilim_teknoloji_articles.rss"),
   ],
   "spor": [
