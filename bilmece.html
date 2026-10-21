@@ -21,67 +21,95 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
 <style>
-  /* Sayı Bilmecesi: seviye seviye zorlaşan sade bilmeceler. Bilmeceler bu sayfada (SEV listesi). */
+  /* Sayı Bilmecesi: 80 seviye (1–40 zor, 41–80 Gizli Kural) + İşlem Bulmacası (30). Bilmeceler bu sayfada. */
   :root { --bg: #1c1c1c; --card: #232323; --edge: #2e2e2e; --key: #191919; --ink: #e8e8e8; --dim: #8d8d8d; --ok: #3fc283; --bad: #ef6a4c; --gold: #e0a24f; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); }
   body { font-family: Roboto, "Helvetica Neue", system-ui, -apple-system, "Segoe UI", sans-serif; font-weight: 300; max-width: 480px; margin: 0 auto; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; padding: 0 12px calc(10px + env(safe-area-inset-bottom)); user-select: none; -webkit-user-select: none; }
-  .top { display: flex; align-items: center; gap: 10px; height: 64px; flex: none; }
-  .top a, .top button { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; background: none; border: 0; color: var(--ink); text-decoration: none; cursor: pointer; padding: 0; }
-  .top h1 { flex: 1; margin: 0; font-size: 22px; font-weight: 300; letter-spacing: .3px; }
-  .top h1 small { font-size: 13px; color: var(--dim); margin-left: 6px; }
-  .stage { flex: 1; min-height: 300px; background: var(--card); border: 1px solid var(--edge); border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px 12px; position: relative; overflow: hidden; }
+  .top { display: flex; align-items: center; gap: 10px; height: 62px; flex: none; }
+  .top a, .top > button { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; background: none; border: 0; color: var(--ink); text-decoration: none; cursor: pointer; padding: 0; }
+  .mod { flex: 1; display: flex; justify-content: center; }
+  .mod div { display: inline-flex; border: 1px solid #3a3a3a; border-radius: 4px; overflow: hidden; }
+  .mod button { border: 0; background: none; color: var(--dim); font-family: inherit; font-weight: 300; font-size: 15px; letter-spacing: .5px; padding: 8px 16px; cursor: pointer; }
+  .mod button.on { background: #e8e8e8; color: #1c1c1c; font-weight: 400; }
+  .stage { flex: 1; min-height: 320px; background: var(--card); border: 1px solid var(--edge); border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 34px 10px 18px; position: relative; overflow: hidden; }
+  /* Masada belli belirsiz Sadolayn imzası (diğer oyunlarda olduğu gibi) */
+  .stage::before { content: ""; position: absolute; left: 12%; right: 12%; bottom: 10px; height: 18%; background: url("img/logo.png") center / contain no-repeat; opacity: .04; filter: grayscale(1) brightness(3); pointer-events: none; }
+  .sv { position: absolute; left: 14px; top: 10px; font-size: 14px; color: var(--dim); letter-spacing: .4px; }
+  .sv b { color: var(--ink); font-weight: 400; }
   .stage.shake { animation: shake .35s; }
   @keyframes shake { 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
-  .pz { width: 100%; text-align: center; font-weight: 300; color: #e9e9e9; line-height: 1.2; }
-  .pz .lines div { font-size: 38px; margin: 6px 0; white-space: nowrap; }
-  .pz .q { font-size: 22px; line-height: 1.45; max-width: 300px; }
-  .pz .eq { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 36px; margin: 10px 0; }
-  .pz .eq svg { width: 40px; height: 40px; flex: none; }
+  .pz { width: 100%; text-align: center; font-weight: 300; color: #e9e9e9; line-height: 1.2; position: relative; }
+  .pz .lines div { margin: 6px 0; white-space: nowrap; }
+  .pz .op { display: inline-block; width: .62em; height: .62em; vertical-align: -.02em; margin: 0 .04em; }
+  .pz .q { font-size: 21px; line-height: 1.5; max-width: 320px; margin: 0 auto; }
+  .pz .eq { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 34px; margin: 9px 0; }
+  .pz .eq svg { width: 38px; height: 38px; flex: none; }
+  .pz .eq.uzun { gap: 6px; font-size: 28px; } .pz .eq.uzun svg { width: 31px; height: 31px; }
   .pz .tri { display: flex; justify-content: center; gap: 12px; }
   .pz .tri svg { width: 29%; max-width: 128px; height: auto; }
+  .pz .figs { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 22px; }
+  .pz .figs svg { width: 42%; max-width: 156px; height: auto; }
+  .pz .figs.tek svg { width: 70%; max-width: 230px; }
   .pz table { border-collapse: collapse; margin: 0 auto; }
-  .pz td { width: 64px; height: 64px; border: 1px solid #5a5a5a; font-size: 30px; text-align: center; }
-  .pz .lbl { font-size: 18px; color: var(--dim); margin-top: 14px; }
+  .pz td { width: 62px; height: 62px; border: 1px solid #5a5a5a; font-size: 28px; text-align: center; }
+  .pz .lbl { font-size: 16px; color: var(--dim); margin-top: 14px; line-height: 1.4; }
+  .pz .lbl small { font-size: 13px; }
+  .pyr div { display: flex; justify-content: center; gap: 6px; margin: 6px 0; }
+  .pyr span { width: 54px; height: 44px; border: 1px solid #6a6a6a; display: inline-flex; align-items: center; justify-content: center; font-size: 22px; }
+  /* İşlem Bulmacası ızgarası */
+  .xg { display: grid; grid-template-columns: 44px 24px 44px 24px 44px 24px 50px; grid-template-rows: 44px 22px 44px 22px 44px 22px 44px; gap: 4px; justify-content: center; align-items: center; justify-items: center; }
+  .xg .n, .xg .x, .xg .r { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; font-size: 25px; }
+  .xg .x { border: 1px solid #8a8a8a; background: #1d1d1d; color: #fff; font-family: inherit; font-weight: 300; cursor: pointer; padding: 0; border-radius: 2px; }
+  .xg .x.sel { border: 2px solid #fff; background: #2d2d2d; }
+  .xg .n.ac { color: var(--gold); }
+  .xg .r { color: #c4c4c4; width: 50px; }
+  .xg .r.bad { color: var(--bad); } .xg .r.ok { color: var(--ok); }
+  .xg .o { font-size: 21px; color: #8f8f8f; }
+  @media (max-height: 700px) {
+    .xg { grid-template-columns: 38px 20px 38px 20px 38px 20px 44px; grid-template-rows: 38px 16px 38px 16px 38px 16px 38px; gap: 3px; }
+    .xg .n, .xg .x, .xg .r { width: 38px; height: 38px; font-size: 22px; } .xg .r { width: 44px; }
+    .xg .o { font-size: 18px; }
+    .xg + .lbl { margin-top: 8px; font-size: 14px; }
+  }
   /* Doğru cevap katmanı */
-  .done { position: absolute; inset: 0; background: rgba(28,28,28,.96); display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; gap: 10px; }
+  .done { position: absolute; inset: 0; background: rgba(28,28,28,.97); display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; gap: 10px; z-index: 2; }
   .done.show { display: flex; animation: fade .25s ease-out; }
   @keyframes fade { from { opacity: 0; } }
   .done .ic { width: 64px; height: 64px; border-radius: 50%; border: 1.5px solid var(--ok); color: var(--ok); display: flex; align-items: center; justify-content: center; font-size: 30px; }
   .done h2 { margin: 0; font-weight: 300; font-size: 26px; }
   .done p { margin: 0; color: #bdbdbd; font-size: 16px; line-height: 1.5; max-width: 320px; }
   .done button { margin-top: 10px; min-width: 180px; height: 50px; border-radius: 4px; border: 1px solid #444; background: #191919; color: var(--ink); font-weight: 300; font-size: 18px; font-family: inherit; letter-spacing: 1px; cursor: pointer; }
-  /* Alt panel: cevap, ipucu, tamam ve tuşlar */
+  /* Alt panel */
   .pad { flex: none; margin-top: 10px; background: var(--card); border: 1px solid var(--edge); border-radius: 4px; padding: 8px; display: grid; gap: 7px; }
   .row1 { display: grid; grid-template-columns: 2fr 1fr 2fr; gap: 7px; }
   .ans { height: 52px; background: var(--key); border-radius: 3px; display: flex; align-items: center; padding: 0 6px 0 12px; font-size: 24px; overflow: hidden; }
   .ans span { flex: 1; white-space: nowrap; overflow: hidden; }
-  .ans span:empty::before { content: "Cevap"; color: #555; }
+  .ans span:empty::before { content: "Cevap"; color: #555; font-size: 21px; }
+  .ans.isl span:empty::before { content: "Kutu seç"; font-size: 16px; }
   .ans.bad { box-shadow: inset 0 0 0 1.5px var(--bad); }
   .ans button { width: 36px; height: 36px; border: 0; background: none; color: #bbb; cursor: pointer; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
   .k { height: 52px; border: 0; border-radius: 3px; background: var(--key); color: var(--ink); font-weight: 300; font-size: 22px; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
   .k:active { background: #2a2a2a; }
   .k.ent { font-size: 18px; letter-spacing: 1.5px; }
+  #hint.acik { color: var(--gold); }
   .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
-  /* Pencereler: ipucu ve seviye listesi */
+  /* Pencereler */
   .ov { position: fixed; inset: 0; background: rgba(0,0,0,.72); display: none; overflow-y: auto; padding: 16px; z-index: 20; }
   .ov.show { display: flex; }
   .box { margin: auto; width: 100%; max-width: 380px; max-height: 92vh; max-height: calc(100dvh - 32px); overflow-y: auto; background: var(--card); border: 1px solid var(--edge); border-radius: 6px; padding: 20px; text-align: center; }
-  .box h3 { margin: 0 0 10px; font-weight: 300; font-size: 22px; }
+  .box h3 { margin: 0 0 10px; font-weight: 300; font-size: 21px; }
   .box p { margin: 0 0 14px; color: #c8c8c8; font-size: 16px; line-height: 1.5; }
   .box .btn { display: block; width: 100%; height: 48px; margin-top: 8px; border-radius: 4px; border: 1px solid #444; background: #191919; color: var(--ink); font-weight: 300; font-size: 17px; font-family: inherit; cursor: pointer; }
-  .box .btn.gold { border-color: var(--gold); color: var(--gold); }
   .lv { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 6px 0 4px; }
-  .lv button { aspect-ratio: 1; border-radius: 4px; border: 1px solid #3a3a3a; background: #1a1a1a; color: var(--ink); font-weight: 300; font-size: 18px; font-family: inherit; cursor: pointer; position: relative; }
+  .lv button { aspect-ratio: 1; border-radius: 4px; border: 1px solid #3a3a3a; background: #1a1a1a; color: var(--ink); font-weight: 300; font-size: 17px; font-family: inherit; cursor: pointer; position: relative; }
   .lv button.ok { border-color: var(--ok); color: var(--ok); }
   .lv button.ip { border-color: var(--gold); color: var(--gold); }
   .lv button.cur { box-shadow: 0 0 0 2px #fff inset; }
   .lv button:disabled { color: #444; border-color: #262626; cursor: default; }
   .lv button i { position: absolute; right: 3px; top: 1px; font-size: 10px; font-style: normal; }
-  .pz .lbl small { font-size: 14px; }
-  .pyr div { display: flex; justify-content: center; gap: 6px; margin: 6px 0; }
-  .pyr span { width: 56px; height: 46px; border: 1px solid #6a6a6a; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; }
-  /* İpucu için İş Bankası soruları */
+  .lvh { font-size: 12px; letter-spacing: 1.5px; color: var(--dim); text-align: left; margin: 14px 2px 6px; }
+  .note { font-size: 13px; color: var(--dim); margin-top: 10px; line-height: 1.45; }
   .qzd { display: flex; justify-content: center; gap: 8px; margin: 2px 0 14px; }
   .qzd i { width: 13px; height: 13px; border-radius: 50%; border: 1px solid #666; }
   .qzd i.on { background: var(--ok); border-color: var(--ok); }
@@ -91,8 +119,7 @@
   .qzo button.ok { border-color: var(--ok); color: var(--ok); }
   .qzo button.bad { border-color: var(--bad); color: var(--bad); }
   .qzm { font-size: 14px; color: var(--dim); margin: 12px 0 2px; }
-  #hint.acik { color: var(--gold); }
-  .note { font-size: 13px; color: var(--dim); margin-top: 10px; }
+  .imza { font-size: 13px; color: #777; margin-top: 12px; letter-spacing: .5px; }
 </style>
 <script src="isq.js"></script>
 <script src="pwa.js"></script>
@@ -103,10 +130,11 @@
 <body data-footer="yok">
 <header class="top">
   <a href="oyunlar.html" aria-label="Oyunlar" title="Oyunlar"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M15 4 7 12l8 8"/></svg></a>
-  <h1 id="title">Seviye 1</h1>
+  <div class="mod"><div id="mod"><button type="button" data-m="b">Bilmece</button><button type="button" data-m="i">İşlem</button></div></div>
   <button type="button" id="lvBtn" aria-label="Seviyeler" title="Seviyeler"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3.5" y="3.5" width="17" height="17"/><path d="M12 3.5v17M3.5 12h17"/></svg></button>
 </header>
 <main class="stage" id="stage">
+  <div class="sv" id="sv"></div>
   <div class="pz" id="pz"></div>
   <div class="done" id="done"><div class="ic">✓</div><h2>Doğru!</h2><p id="exp"></p><button type="button" id="next">Sonraki ›</button></div>
 </main>
@@ -127,6 +155,7 @@ const yaz = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catc
 
 // ---------- Çizim yardımcıları ----------
 const STK = 'fill="none" stroke="#d6d6d6" stroke-width="1.3"';
+const TX = (x, y, t, s = 21) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="${s}" font-weight="300" fill="#e8e8e8" font-family="Roboto, system-ui, sans-serif">${t}</text>`;
 const SEKIL = {
   kare: `<svg viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" ${STK}/></svg>`,
   daire: `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" ${STK}/></svg>`,
@@ -134,23 +163,39 @@ const SEKIL = {
   karo: `<svg viewBox="0 0 40 40"><path d="M20 2 38 20 20 38 2 20z" ${STK}/></svg>`,
   yildiz: `<svg viewBox="0 0 40 40"><path d="${(() => { let d = ""; for (let i = 0; i < 10; i++) { const r = i % 2 ? 7.5 : 17, a = -Math.PI / 2 + (i * Math.PI) / 5; d += (i ? "L" : "M") + (20 + r * Math.cos(a)).toFixed(1) + " " + (21 + r * Math.sin(a)).toFixed(1); } return d + "z"; })()}" ${STK}/></svg>`,
 };
+// Gizli işlem sembolleri: şekillerle aynı ince çizgi
+const OPS = (() => { const o = (d) => `<svg class="op" viewBox="0 0 24 24" fill="none" stroke="#e8e8e8" stroke-width="1.5">${d}</svg>`;
+  return { "⊕": o('<circle cx="12" cy="12" r="10"/><path d="M12 6.5v11M6.5 12h11"/>'), "⊞": o('<rect x="2.5" y="2.5" width="19" height="19"/><path d="M12 6.5v11M6.5 12h11"/>'), "⊛": o('<circle cx="12" cy="12" r="10"/><path d="M12 6v12M6.8 9l10.4 6M6.8 15l10.4-6"/>'), "◇": o('<path d="M12 1.5 22.5 12 12 22.5 1.5 12z"/>'), "⋆": o('<path d="M12 3.5l2.5 5.6 6 .6-4.5 4 1.3 6-5.3-3.1-5.3 3.1 1.3-6-4.5-4 6-.6z"/>') }; })();
 const tok = (t) => (SEKIL[t] ? SEKIL[t] : `<span>${t}</span>`);
-const ucgen = ([a, b, c]) => `<svg viewBox="0 0 120 110"><text x="22" y="24" text-anchor="middle" font-size="25" font-weight="300" fill="#e6e6e6" font-family="inherit">${a}</text><text x="98" y="24" text-anchor="middle" font-size="25" font-weight="300" fill="#e6e6e6" font-family="inherit">${b}</text><path d="M40 33h40L60 66z" ${STK}/><text x="60" y="96" text-anchor="middle" font-size="25" font-weight="300" fill="#e6e6e6" font-family="inherit">${c}</text></svg>`;
-const izgara = (n) => { const s = 150, c = s / n; let l = ""; for (let i = 1; i < n; i++) l += `<path d="M${i * c} 0V${s}M0 ${i * c}H${s}" ${STK}/>`; return `<svg viewBox="-2 -2 154 154" style="width:170px;height:170px"><rect x="0" y="0" width="${s}" height="${s}" ${STK}/>${l}</svg>`; };
-// 2 satır × 3 sütun dikdörtgen ızgara
-const dikdortgen = () => `<svg viewBox="-2 -2 184 124" style="width:220px;height:auto"><rect x="0" y="0" width="180" height="120" ${STK}/><path d="M60 0V120M120 0V120M0 60H180" ${STK}/></svg>`;
-// Kenarı n parçaya bölünmüş üçgen
+const ucgen = ([a, b, c]) => `<svg viewBox="0 0 120 110">${TX(22, 24, a, 25)}${TX(98, 24, b, 25)}<path d="M40 33h40L60 66z" ${STK}/>${TX(60, 96, c, 25)}</svg>`;
+const izgara = (n) => { const s = 150, c = s / n; let l = ""; for (let i = 1; i < n; i++) l += `<path d="M${i * c} 0V${s}M0 ${i * c}H${s}" ${STK}/>`; return `<svg viewBox="-2 -2 154 154" style="width:180px;height:180px"><rect x="0" y="0" width="${s}" height="${s}" ${STK}/>${l}</svg>`; };
+const dikdortgen = ([r, c]) => { const W = 60 * c, H = 60 * r; let l = ""; for (let i = 1; i < c; i++) l += `<path d="M${i * 60} 0V${H}" ${STK}/>`; for (let i = 1; i < r; i++) l += `<path d="M0 ${i * 60}H${W}" ${STK}/>`; return `<svg viewBox="-2 -2 ${W + 4} ${H + 4}" style="width:${Math.min(220, 40 * c + 60)}px;height:auto"><rect x="0" y="0" width="${W}" height="${H}" ${STK}/>${l}</svg>`; };
 const ucgenIzgara = (n) => {
   const A = [80, 6], B = [6, 134], C = [154, 134], at = (P, Q, k) => [P[0] + ((Q[0] - P[0]) * k) / n, P[1] + ((Q[1] - P[1]) * k) / n];
   let l = "";
   for (let k = 1; k < n; k++) [[A, B, A, C], [B, A, B, C], [C, A, C, B]].forEach(([P, Q, R, S]) => { const u = at(P, Q, k), v = at(R, S, k); l += `<path d="M${u[0].toFixed(1)} ${u[1].toFixed(1)}L${v[0].toFixed(1)} ${v[1].toFixed(1)}" ${STK}/>`; });
-  return `<svg viewBox="0 0 160 140" style="width:210px;height:auto"><path d="M${A}L${B}L${C}z" ${STK}/>${l}</svg>`;
+  return `<svg viewBox="0 0 160 140" style="width:220px;height:auto"><path d="M${A}L${B}L${C}z" ${STK}/>${l}</svg>`;
 };
-// Sayı piramidi: her kutu, altındaki iki kutunun toplamı
 const piramit = (rows) => `<div class="pyr">${rows.map((r) => `<div>${r.map((x) => `<span>${x}</span>`).join("")}</div>`).join("")}</div><div class="lbl">Her kutu, altındaki iki kutunun toplamı</div>`;
+const merkez = (x, y, v) => `<circle cx="${x}" cy="${y}" r="16" ${STK}/>${TX(x, y + 7, v, 20)}`;
+// Karo: [üst, sağ, alt, sol, orta]
+const karo = ([t, r, b, l, m]) => `<svg viewBox="0 0 140 140"><path d="M70 4 136 70 70 136 4 70z" ${STK}/>${TX(70, 40, t)}${TX(108, 77, r)}${TX(70, 120, b)}${TX(32, 77, l)}${merkez(70, 70, m)}</svg>`;
+// Çember: dilimler saat yönünde (üstten), ortada sonuç
+const cember = ([dil, m]) => {
+  const n = dil.length, cx = 70, cy = 70, R = 64, r0 = 18; let s = `<circle cx="${cx}" cy="${cy}" r="${R}" ${STK}/>`;
+  for (let k = 0; k < n; k++) { const a = ((-90 + (k + 0.5) * (360 / n)) * Math.PI) / 180; s += `<path d="M${(cx + r0 * Math.cos(a)).toFixed(1)} ${(cy + r0 * Math.sin(a)).toFixed(1)}L${(cx + R * Math.cos(a)).toFixed(1)} ${(cy + R * Math.sin(a)).toFixed(1)}" ${STK}/>`; }
+  dil.forEach((v, k) => { const a = ((-90 + k * (360 / n)) * Math.PI) / 180; s += TX(cx + 42 * Math.cos(a), cy + 42 * Math.sin(a) + 7, v, n > 4 ? 19 : 21); });
+  return `<svg viewBox="0 0 140 140">${s}${merkez(cx, cy, m)}</svg>`;
+};
+// Üçgen: [tepe, sol alt, sağ alt, orta]
+const ucgenM = ([t, a, b, m]) => `<svg viewBox="0 0 140 130"><path d="M70 4 136 126H4z" ${STK}/>${TX(70, 46, t)}${TX(32, 116, a)}${TX(108, 116, b)}${merkez(70, 86, m)}</svg>`;
+// Kare: [sol üst, sağ üst, sol alt, sağ alt, orta]
+const kosegen = ([tl, tr, bl, br, m]) => `<svg viewBox="0 0 140 140"><rect x="6" y="6" width="128" height="128" ${STK}/>${TX(34, 42, tl)}${TX(106, 42, tr)}${TX(34, 118, bl)}${TX(106, 118, br)}${merkez(70, 70, m)}</svg>`;
+// Halka: sayılar saat yönünde, en üstten başlar
+const halka = (L) => { const n = L.length, c = 90, R = 66; let s = `<circle cx="${c}" cy="${c}" r="${R}" ${STK}/>`; L.forEach((v, k) => { const a = ((-90 + (k * 360) / n) * Math.PI) / 180, x = c + R * Math.cos(a), y = c + R * Math.sin(a); s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="19" fill="#232323" stroke="#d6d6d6" stroke-width="1.3"/>${TX(x, y + 7, v, String(v).length > 2 ? 16 : 19)}`; }); return `<svg viewBox="0 0 180 180">${s}${TX(c, c + 9, "↻", 26)}</svg>`; };
 
-// ---------- Bilmeceler (zordan daha zora) ----------
-// t: seri | islem | esle | sekil | ucgen | kare | dikdortgen | ucgenSay | piramit | tablo | soru · c: cevap · i: ipucu · a: açıklama
+// ---------- Bilmeceler ----------
+// t: tür · p: bilmece · c: cevap · i: ipucu · a: açıklama
 const SEV = [
   { t: "seri", p: "2, 5, 11, 23, 47, ?", c: 95, i: "Her sayıyı ikiyle çarp, sonra bir şey ekle.", a: "Her sayı: önceki × 2 + 1 → 47 × 2 + 1 = 95" },
   { t: "islem", p: "8 ÷ 2 × (2 + 2) = ?", c: 16, i: "Önce parantez; bölme ve çarpma soldan sağa.", a: "2 + 2 = 4 → 8 ÷ 2 = 4 → 4 × 4 = 16" },
@@ -174,7 +219,7 @@ const SEV = [
   { t: "seri", p: "1, 3, 4, 7, 11, 18, ?", c: 29, i: "Fibonacci'ye benziyor.", a: "Her sayı önceki ikisinin toplamı: 11 + 18 = 29" },
   { t: "soru", p: "Bir baba 36, oğlu 6 yaşında. Kaç yıl sonra babanın yaşı oğlunun yaşının 4 katı olur?", c: 4, i: "x yıl sonra: 36 + x = 4 × (6 + x)", a: "36 + x = 24 + 4x → 12 = 3x → x = 4 (baba 40, oğul 10)" },
   { t: "esle", p: ["2 → 9", "3 → 28", "4 → 65", "5 → ?"], c: 126, i: "Sayıyı kendisiyle üç kez çarp.", a: "Küpünün 1 fazlası: 5 × 5 × 5 + 1 = 126" },
-  { t: "dikdortgen", c: 18, i: "Yatayda 3, dikeyde 4 çizgi var; her dikdörtgen 2 yatay ve 2 dikey çizgi seçer.", a: "3 yatay çizgiden 2'si (3 yol) × 4 dikey çizgiden 2'si (6 yol) = 18" },
+  { t: "dikdortgen", p: [2, 3], c: 18, i: "Yatayda 3, dikeyde 4 çizgi var; her dikdörtgen 2 yatay ve 2 dikey çizgi seçer.", a: "3 yatay çizgiden 2'si (3 yol) × 4 dikey çizgiden 2'si (6 yol) = 18" },
   { t: "soru", p: "10 kişi birbiriyle birer kez tokalaşıyor. Toplam kaç tokalaşma olur?", c: 45, i: "Her kişi 9 kişiyle tokalaşır ama her tokalaşma iki kez sayılır.", a: "10 × 9 ÷ 2 = 45" },
   { t: "seri", p: "2, 12, 36, 80, ?", c: 150, i: "1×1×2, 2×2×3 …", a: "n × n × (n + 1): 5 × 5 × 6 = 150" },
   { t: "sekil", p: [["yildiz", "×", "yildiz", "=", "49"], ["karo", "−", "yildiz", "=", "5"], ["karo", "×", "yildiz", "−", "karo", "=", "?"]], c: 72, i: "Hangi sayı kendisiyle çarpılınca 49 eder?", a: "Yıldız = 7, karo = 12 → 12 × 7 − 12 = 72" },
@@ -192,62 +237,192 @@ const SEV = [
   { t: "islem", p: "8² + 15² = ?²", c: 17, i: "3² + 4² = 5² gibi.", a: "64 + 225 = 289 = 17 × 17" },
   { t: "islem", p: "2¹⁰ − 2⁹ = ?", c: 512, i: "2¹⁰, 2⁹'un iki katı.", a: "2¹⁰ − 2⁹ = 2⁹ × (2 − 1) = 512" },
   { t: "seri", p: "1, 11, 21, 1211, 111221, ?", c: 312211, i: "Bir önceki sayıyı yüksek sesle oku: \"bir tane 1\" → 11 …", a: "Okuyarak say: 111221 = üç 1, iki 2, bir 1 → 312211" },
+  // ---------- 41–80: Gizli Kural ----------
+  { t: "karo", p: [[5, 2, 4, 3, 14], [6, 4, 7, 5, 22], [8, 6, 9, 7, "?"]], c: 30, i: "Üstle altı çarp, sağla solu çarp.", a: "Dikeylerin çarpımı − yataylarınki: 8 × 9 − 6 × 7 = 72 − 42 = 30" },
+  { t: "halka", p: [1, 2, 5, 10, 13, 26, "?"], c: 29, i: "Bir çarp, bir ekle.", a: "Saat yönünde: × 2, + 3, × 2, + 3… → 26 + 3 = 29" },
+  { t: "esle", p: ["246 → 48", "135 → 15", "327 → 42", "459 → ?"], c: 180, i: "Rakamlarla toplama değil…", a: "Rakamların çarpımı: 4 × 5 × 9 = 180" },
+  { t: "cember", p: [[[1, 2, 3, 4], 24], [[2, 5, 4, 1], 36], [[3, 4, 5, 2], "?"]], c: 48, i: "Karşılıklı dilimleri topla.", a: "(üst + alt) × (sağ + sol): (3 + 5) × (4 + 2) = 48" },
+  { t: "esle", p: ["8 ⋆ 2 = 22", "6 ⋆ 3 = 21", "5 ⋆ 4 = 21", "9 ⋆ 5 = ?"], c: 49, i: "Önce çarp, sonra farkı ekle.", a: "a × b + (a − b): 45 + 4 = 49" },
+  { t: "ucgenM", p: [[4, 2, 3, 20], [3, 1, 5, 18], [7, 4, 2, "?"]], c: 42, i: "Alttaki iki köşeyi topla.", a: "(sol alt + sağ alt) × tepe: (4 + 2) × 7 = 42" },
+  { t: "kosegen", p: [[2, 3, 1, 4, 11], [3, 1, 2, 5, 17], [5, 2, 3, 4, "?"]], c: 26, i: "Çapraz köşeler birbirini seviyor.", a: "Çaprazların çarpımları toplamı: 5 × 4 + 2 × 3 = 26" },
+  { t: "esle", p: ["52 → 27", "81 → 63", "73 → 36", "94 → ?"], c: 45, i: "52 ile 25 arasında ne var?", a: "Sayıdan tersi çıkarılıyor: 94 − 49 = 45" },
+  { t: "soru", p: "Ayşe'nin yaşı kardeşinin yaşının 3 katı. 5 yıl sonra 2 katı olacak. Ayşe şimdi kaç yaşında?", c: 15, i: "Kardeş k yaşında: 3k + 5 = 2 × (k + 5)", a: "3k + 5 = 2k + 10 → k = 5 → Ayşe 15 yaşında" },
+  { t: "soru", p: "Türk alfabesinde A&nbsp;=&nbsp;1, B&nbsp;=&nbsp;2, C&nbsp;=&nbsp;3, Ç&nbsp;=&nbsp;4 … diye gidiyor.<br>İŞ&nbsp;=&nbsp;12&nbsp;+&nbsp;23&nbsp;=&nbsp;35 ise<br><b style=\"font-weight:500;letter-spacing:2px\">SADOLAYN</b> = ?", c: 107, i: "Harflerin sırası: S = 22, A = 1, D = 5 …", a: "S22 + A1 + D5 + O18 + L15 + A1 + Y28 + N17 = 107 ✍️" },
+  { t: "cember6", p: [[[3, 5, 1, 9, 7, 11], 12], [[4, 7, 2, 11, 8, "?"], 15]], c: 13, i: "Karşılıklı dilimler ortadaki sayıyla ilgili.", a: "Karşılıklı dilimlerin toplamı ortadaki sayı: 15 − 2 = 13" },
+  { t: "tablo", p: [[3, 4, 25], [5, 12, 169], [6, 8, "?"]], l: "Her satırda aynı kural", c: 100, i: "İlk iki sayının karelerine bak.", a: "a² + b²: 36 + 64 = 100" },
+  { t: "halka", p: [3, 6, 11, 18, 27, "?"], c: 38, i: "1, 4, 9, 16 …'ya bir şey eklenmiş.", a: "n² + 2: 6 × 6 + 2 = 38" },
+  { t: "esle", p: ["9 ◇ 4 = 365", "7 ◇ 2 = 145", "8 ◇ 3 = 245", "6 ◇ 1 = ?"], c: 65, i: "Sonucu ikiye böl: 36 | 5", a: "Çarpım | fark: 6 × 1 = 6, 6 − 1 = 5 → 65" },
+  { t: "karo", p: [[2, 3, 4, 1, 10], [3, 4, 2, 5, 22], [5, 3, 4, 6, "?"]], c: 39, i: "Yan yana köşeleri çarp.", a: "üst × sağ + alt × sol: 5 × 3 + 4 × 6 = 39" },
+  { t: "soru", p: "Bir koşuda sondan 3. olan koşucu, baştan 7. Yarışta kaç kişi koştu?", c: 9, i: "Kendisini iki kez saymamaya dikkat.", a: "Önünde 6, arkasında 2 kişi var → 6 + 1 + 2 = 9" },
+  { t: "soru", p: "Rakamları toplamı 20 olan en küçük üç basamaklı sayı kaçtır?", c: 299, i: "Yüzler basamağı 1 olursa en fazla 1 + 9 + 9 = 19 olur.", a: "Yüzler 2 olmalı, kalan iki rakam 9 + 9 → 299" },
+  { t: "esle", p: ["7 ⊕ 3 = 1021", "6 ⊕ 2 = 812", "5 ⊕ 4 = 920", "9 ⊕ 4 = ?"], c: 1336, i: "Sonucu ikiye böl: 10 | 21", a: "Toplam | çarpım: 9 + 4 = 13, 9 × 4 = 36 → 1336" },
+  { t: "halka", p: [1, 2, 5, 14, 41, "?"], c: 122, i: "Üç katı… ama biraz eksik.", a: "Her sayı: önceki × 3 − 1 → 41 × 3 − 1 = 122" },
+  { t: "piramit", p: [["52"], ["", ""], ["", "", ""], ["2", "?", "3", "5"]], c: 12, i: "Tepe = en alt sıranın 1, 3, 3, 1 katlarının toplamı.", a: "52 = 2 + 3 × ? + 3 × 3 + 5 → 3 × ? = 36 → ? = 12" },
+  { t: "soru", p: "Bir dikdörtgenin çevresi 30 cm, uzun kenarı kısa kenarının 2 katı. Alanı kaç cm²?", c: 50, i: "Kısa kenar k: 2 × (k + 2k) = 30", a: "6k = 30 → k = 5, uzun 10 → alan 5 × 10 = 50" },
+  { t: "esle", p: ["2 ⊞ 3 = 49", "4 ⊞ 1 = 161", "3 ⊞ 5 = 925", "6 ⊞ 2 = ?"], c: 364, i: "4 | 9 = 2² | 3²", a: "Karelerin yan yana yazılışı: 36 | 4 → 364" },
+  { t: "ucgenM", p: [[4, 2, 3, 15], [3, 1, 5, 6], [6, 2, 5, "?"]], c: 47, i: "Çarpımla toplamı karşılaştır.", a: "Köşelerin çarpımı − toplamı: 60 − 13 = 47" },
+  { t: "sekil", p: [["kare", "+", "kare", "+", "ucgen", "=", "23"], ["ucgen", "+", "ucgen", "+", "daire", "=", "19"], ["daire", "+", "daire", "+", "kare", "=", "18"], ["kare", "×", "ucgen", "×", "daire", "=", "?"]], c: 280, i: "Kareye 8 dersen ne olur?", a: "Kare 8, üçgen 7, daire 5 → 8 × 7 × 5 = 280" },
+  { t: "soru", p: "2026 yılı Perşembe günü başladı. 2026'da toplam kaç tane Perşembe var?", c: 53, i: "365 gün = 52 hafta + 1 gün.", a: "52 tam hafta + artan 1 gün de Perşembe → 53" },
+  { t: "soru", p: "Bir buçuk tavuk, bir buçuk günde bir buçuk yumurta yumurtluyor. 6 tavuk 6 günde kaç yumurta yumurtlar?", c: 24, i: "Bir tavuk bir buçuk günde kaç yumurta yumurtlar?", a: "Bir tavuk 1,5 günde 1 yumurta → 6 günde 4 → 6 tavuk × 4 = 24" },
+  { t: "seri", p: "1, 2, 6, 15, 31, ?", c: 56, i: "Aradaki farklara bak: 1, 4, 9 …", a: "Farklar kare sayılar: 31 + 25 = 56" },
+  { t: "kare", p: 5, c: 55, i: "Her boyuttaki kareyi ayrı say: 1×1'den 5×5'e.", a: "25 + 16 + 9 + 4 + 1 = 55" },
+  { t: "dikdortgen", p: [3, 3], c: 36, i: "4 yatay çizgiden 2'sini, 4 dikey çizgiden 2'sini seç.", a: "6 × 6 = 36 dikdörtgen (kareler dahil)" },
+  { t: "seri", p: "7, 49, 169, 256, ?", c: 169, i: "Rakamları topla, sonra…", a: "Rakamlar toplamının karesi: 2 + 5 + 6 = 13 → 13² = 169" },
+  { t: "esle", p: ["5 · 4 · 3 → 2015", "6 · 2 · 4 → 1224", "7 · 3 · 5 → 2135", "8 · 6 · 2 → ?"], c: 4816, i: "İlk sayıyı diğer ikisiyle ayrı ayrı çarp.", a: "8 × 6 = 48, 8 × 2 = 16 → 4816" },
+  { t: "tablo", p: [[1, 2, 9], [2, 3, 35], [3, 4, "?"]], l: "Her satırda aynı kural", c: 91, i: "Karelerin değil, küplerin…", a: "a³ + b³: 27 + 64 = 91" },
+  { t: "soru", p: "İki basamaklı bir sayının rakamları toplamı 9. Rakamlarının yeri değişince sayı 27 büyüyor. Sayı kaç?", c: 36, i: "Rakamların yeri değişince fark 9 × (rakamların farkı) olur.", a: "Rakam farkı 3, toplamı 9 → 3 ve 6 → 36 (63 − 36 = 27)" },
+  { t: "ucgenM", p: [[1, 2, 3, 22], [2, 3, 4, 52], [3, 4, 5, "?"]], c: 94, i: "Köşeleri ikişer ikişer çarp.", a: "İkili çarpımların toplamının 2 katı: 2 × (12 + 20 + 15) = 94" },
+  { t: "soru", p: "Bir saatin akrebi ile yelkovanı bir günde (24 saatte) kaç kez üst üste gelir?", c: 22, i: "12 saatte 12 değil…", a: "12 saatte 11 kez (11:00 ile 1:00 arasında bir kez atlanır) → 24 saatte 22" },
+  { t: "ucgenSay", p: 4, c: 27, i: "Yukarı bakanlar 1+2+3+4… boyutlarında; aşağı bakanları da unutma.", a: "Yukarı bakan 10 + 6 + 3 + 1 = 20, aşağı bakan 6 + 1 = 7 → 27" },
+  { t: "soru", p: "2²⁰²⁶ sayısının birler basamağı kaçtır?", c: 4, i: "2'nin kuvvetlerinin birler basamağı 2, 4, 8, 6 diye döner.", a: "Dörtlü döngü: 2026 ÷ 4 = 506, kalan 2 → döngünün 2. elemanı 4" },
+  { t: "soru", p: "1'den 1000'e kadar bütün sayılar yazılırken toplam kaç rakam kullanılır?", c: 2893, i: "Tek, iki ve üç basamaklıları ayrı say; 1000'i unutma.", a: "9 + 180 + 2700 + 4 = 2893" },
+  { t: "esle", p: ["12 ⊛ 3 = 436", "20 ⊛ 4 = 580", "18 ⊛ 2 = 936", "24 ⊛ 6 = ?"], c: 4144, i: "Sonucu ikiye böl: 4 | 36", a: "Bölüm | çarpım: 24 ÷ 6 = 4, 24 × 6 = 144 → 4144" },
+  { t: "soru", p: "1 ile 100 arasındaki bütün asal sayıların toplamı kaçtır?", c: 1060, i: "25 asal sayı var; 1–50 arasındakilerin toplamı 328'di.", a: "25 asalın toplamı 1060 · Tebrikler, Gizli Kural paketini bitirdin 👑" },
+];
+// İşlem Bulmacası: önceden üretilmiş, her biri tek çözümlü (n: 3×3 rakam, ro/co: satır/sütun işlemleri, g: boş kutular)
+const ISL = [
+  {"n": [5, 5, 6, 1, 2, 2, 8, 2, 2], "ro": [["+", "−"], ["+", "+"], ["−", "+"]], "co": [["−", "+"], ["+", "+"], ["+", "+"]], "g": [3, 5, 7]},
+  {"n": [6, 2, 6, 4, 9, 3, 8, 9, 8], "ro": [["−", "+"], ["+", "−"], ["+", "+"]], "co": [["+", "−"], ["+", "−"], ["+", "−"]], "g": [2, 5, 6]},
+  {"n": [4, 5, 4, 1, 5, 3, 6, 7, 1], "ro": [["−", "+"], ["+", "−"], ["+", "−"]], "co": [["+", "+"], ["−", "+"], ["+", "+"]], "g": [5, 6, 7]},
+  {"n": [4, 7, 4, 7, 4, 4, 9, 5, 4], "ro": [["+", "−"], ["−", "+"], ["+", "+"]], "co": [["+", "−"], ["+", "−"], ["−", "+"]], "g": [3, 5, 8]},
+  {"n": [7, 5, 2, 2, 2, 7, 9, 2, 9], "ro": [["+", "+"], ["−", "+"], ["+", "−"]], "co": [["+", "−"], ["−", "+"], ["−", "+"]], "g": [2, 3, 5, 6]},
+  {"n": [7, 9, 2, 9, 5, 7, 4, 3, 2], "ro": [["−", "+"], ["+", "+"], ["+", "−"]], "co": [["+", "−"], ["−", "+"], ["+", "−"]], "g": [0, 1, 2, 4]},
+  {"n": [8, 2, 6, 1, 2, 9, 7, 2, 5], "ro": [["+", "×"], ["+", "+"], ["+", "+"]], "co": [["−", "×"], ["+", "+"], ["−", "+"]], "g": [1, 2, 4, 8]},
+  {"n": [7, 1, 5, 1, 2, 3, 8, 7, 3], "ro": [["+", "−"], ["+", "+"], ["+", "×"]], "co": [["+", "×"], ["+", "+"], ["+", "×"]], "g": [1, 2, 3, 6]},
+  {"n": [1, 1, 7, 1, 2, 8, 5, 9, 6], "ro": [["−", "+"], ["+", "+"], ["−", "+"]], "co": [["−", "+"], ["+", "+"], ["+", "×"]], "g": [0, 1, 5, 8]},
+  {"n": [3, 2, 5, 7, 5, 3, 5, 4, 4], "ro": [["+", "+"], ["+", "+"], ["+", "×"]], "co": [["−", "+"], ["+", "×"], ["+", "+"]], "g": [0, 2, 4, 8]},
+  {"n": [6, 4, 3, 4, 9, 8, 9, 7, 9], "ro": [["+", "−"], ["+", "×"], ["+", "−"]], "co": [["+", "−"], ["+", "−"], ["×", "+"]], "g": [0, 3, 4, 5, 8]},
+  {"n": [3, 6, 7, 3, 4, 4, 6, 5, 6], "ro": [["+", "×"], ["×", "+"], ["+", "+"]], "co": [["×", "−"], ["−", "+"], ["+", "×"]], "g": [1, 2, 3, 5, 8]},
+  {"n": [5, 4, 1, 7, 2, 9, 3, 9, 7], "ro": [["+", "+"], ["+", "+"], ["+", "×"]], "co": [["+", "+"], ["−", "+"], ["×", "+"]], "g": [1, 2, 3, 4, 7]},
+  {"n": [3, 7, 7, 6, 5, 1, 1, 5, 2], "ro": [["×", "+"], ["−", "−"], ["+", "−"]], "co": [["×", "+"], ["−", "+"], ["×", "×"]], "g": [2, 5, 6, 7, 8]},
+  {"n": [4, 4, 3, 9, 2, 4, 9, 6, 5], "ro": [["×", "−"], ["×", "−"], ["×", "+"]], "co": [["+", "−"], ["×", "+"], ["×", "×"]], "g": [1, 2, 4, 5, 6]},
+  {"n": [7, 3, 5, 6, 3, 8, 2, 3, 4], "ro": [["×", "+"], ["+", "×"], ["+", "−"]], "co": [["×", "+"], ["+", "−"], ["×", "+"]], "g": [2, 3, 4, 5, 7]},
+  {"n": [9, 9, 7, 6, 5, 2, 5, 4, 5], "ro": [["+", "−"], ["+", "+"], ["+", "×"]], "co": [["×", "+"], ["+", "+"], ["+", "×"]], "g": [0, 3, 4, 5, 7]},
+  {"n": [2, 7, 7, 2, 7, 3, 2, 5, 5], "ro": [["+", "−"], ["+", "+"], ["+", "×"]], "co": [["×", "×"], ["+", "+"], ["+", "×"]], "g": [3, 4, 6, 7, 8]},
+  {"n": [6, 3, 1, 1, 3, 4, 7, 8, 6], "ro": [["−", "−"], ["+", "+"], ["×", "+"]], "co": [["+", "×"], ["+", "×"], ["+", "×"]], "g": [0, 1, 2, 5, 6, 8]},
+  {"n": [4, 4, 6, 3, 5, 4, 3, 9, 6], "ro": [["×", "−"], ["×", "×"], ["+", "×"]], "co": [["−", "+"], ["+", "−"], ["−", "+"]], "g": [0, 1, 2, 3, 7, 8]},
+  {"n": [5, 3, 7, 9, 3, 3, 9, 3, 1], "ro": [["−", "+"], ["×", "×"], ["×", "+"]], "co": [["+", "−"], ["×", "−"], ["+", "+"]], "g": [0, 3, 5, 6, 7, 8]},
+  {"n": [7, 4, 6, 4, 6, 1, 7, 6, 1], "ro": [["+", "+"], ["+", "×"], ["×", "×"]], "co": [["×", "−"], ["+", "+"], ["+", "×"]], "g": [0, 1, 5, 6, 7, 8]},
+  {"n": [2, 1, 4, 4, 1, 3, 6, 5, 1], "ro": [["+", "×"], ["+", "+"], ["+", "−"]], "co": [["+", "−"], ["−", "+"], ["−", "×"]], "g": [0, 1, 4, 5, 6, 8]},
+  {"n": [7, 2, 1, 4, 3, 7, 8, 5, 9], "ro": [["+", "×"], ["−", "+"], ["+", "×"]], "co": [["+", "+"], ["+", "×"], ["−", "+"]], "g": [1, 2, 3, 4, 7, 8]},
+  {"n": [4, 1, 8, 2, 8, 4, 2, 6, 1], "ro": [["×", "+"], ["×", "×"], ["×", "−"]], "co": [["×", "×"], ["+", "×"], ["×", "−"]], "g": [1, 2, 3, 4, 5, 8]},
+  {"n": [1, 8, 7, 8, 9, 3, 7, 7, 2], "ro": [["+", "−"], ["+", "−"], ["−", "+"]], "co": [["×", "−"], ["−", "+"], ["×", "−"]], "g": [0, 1, 2, 4, 5, 6, 7]},
+  {"n": [4, 2, 5, 8, 8, 8, 4, 4, 5], "ro": [["−", "+"], ["×", "−"], ["×", "+"]], "co": [["×", "+"], ["+", "×"], ["+", "−"]], "g": [0, 1, 3, 4, 5, 6, 7]},
+  {"n": [3, 2, 1, 4, 9, 6, 8, 4, 3], "ro": [["×", "−"], ["−", "+"], ["+", "×"]], "co": [["+", "+"], ["+", "×"], ["×", "×"]], "g": [2, 3, 4, 5, 6, 7, 8]},
+  {"n": [6, 3, 8, 9, 7, 7, 8, 8, 7], "ro": [["−", "+"], ["+", "−"], ["×", "+"]], "co": [["+", "×"], ["×", "+"], ["×", "+"]], "g": [2, 3, 4, 5, 6, 7, 8]},
+  {"n": [1, 9, 8, 5, 3, 9, 1, 3, 9], "ro": [["−", "+"], ["+", "+"], ["−", "+"]], "co": [["×", "+"], ["−", "−"], ["×", "+"]], "g": [0, 1, 2, 3, 4, 5, 8]}
 ];
 
+
 // ---------- Durum ----------
-// Bilmeceler değiştiği için yeni kayıt anahtarı. Bilinmeyen bilmecede bir sonrakine geçilmez.
-const ST = Object.assign({ i: 0, acik: 0, coz: {}, ip: {}, isq: {} }, oku("bilmeceSt2", {}));
-if (ST.i > ST.acik) ST.i = ST.acik;
-if (ST.acik >= SEV.length) ST.acik = SEV.length - 1;
-let val = "";
+// Bilinmeyen bilmecede bir sonrakine geçilmez. Bilmece ve İşlem ilerlemesi ayrı tutulur.
+const ST = Object.assign({ mod: "b", i: 0, acik: 0, coz: {}, ip: {}, isq: {}, isl: null }, oku("bilmeceSt2", {}));
+if (!ST.isl) ST.isl = { i: 0, acik: 0, coz: {}, ip: {}, isq: {}, ac: {} };
+if (!ST.isl.ac) ST.isl.ac = {};
+const P = () => (ST.mod === "i" ? ST.isl : ST);
+const TOP = () => (ST.mod === "i" ? ISL.length : SEV.length);
+// Eski 40 seviyelik sürümü bitirenler için 41. seviye açılır
+[ST, ST.isl].forEach((p, k) => { const n = k ? ISL.length : SEV.length; if (p.coz[p.acik] && p.acik < n - 1) p.acik++; if (p.acik >= n) p.acik = n - 1; if (p.i > p.acik) p.i = p.acik; });
 const kaydet = () => yaz("bilmeceSt2", ST);
+let val = "", sec = null, dol = {}, kontrol = null;
+
+// İşlem: × önce, sonra + ve − soldan sağa
+const hes = (a, o1, b, o2, c) => { const f = (x, o, y) => (o === "+" ? x + y : o === "−" ? x - y : x * y); return o2 === "×" && o1 !== "×" ? f(a, o1, b * c) : f(f(a, o1, b), o2, c); };
+const denk = (N, L) => [0, 1, 2].map((i) => hes(N[i * 3], L.ro[i][0], N[i * 3 + 1], L.ro[i][1], N[i * 3 + 2])).concat([0, 1, 2].map((j) => hes(N[j], L.co[j][0], N[3 + j], L.co[j][1], N[6 + j])));
 
 function ciz() {
-  const L = SEV[ST.i];
-  $("title").innerHTML = `Seviye ${ST.i + 1}<small>/ ${SEV.length}</small>`;
+  document.querySelectorAll("#mod button").forEach((b) => b.classList.toggle("on", b.dataset.m === ST.mod));
+  $("ans").classList.toggle("isl", ST.mod === "i");
+  $("done").classList.remove("show");
+  $("hint").classList.toggle("acik", !!P().ip[P().i]);
+  const p = P();
+  $("sv").innerHTML = ST.mod === "i" ? `İşlem <b>${p.i + 1}</b> / ${ISL.length}` : `Seviye <b>${p.i + 1}</b> / ${SEV.length}${p.i >= 40 ? " · Gizli Kural" : ""}`;
+  if (ST.mod === "i") { dol = {}; kontrol = null; sec = null; return islemCiz(); }
+  const L = SEV[p.i], W = Math.min(innerWidth, 480) - 60;
   let h = "";
-  if (L.t === "seri" || L.t === "islem") {
-    const fs = Math.min(44, Math.floor((Math.min(innerWidth, 480) - 60) / (L.p.length * 0.52)));
-    h = `<div style="font-size:${fs}px;white-space:nowrap">${L.p}</div>`;
-  } else if (L.t === "esle") h = `<div class="lines">${L.p.map((x) => `<div>${x}</div>`).join("")}</div>`;
-  else if (L.t === "sekil") h = L.p.map((r) => `<div class="eq">${r.map(tok).join("")}</div>`).join("");
+  if (L.t === "seri" || L.t === "islem") h = `<div style="font-size:${Math.min(44, Math.floor(W / (L.p.length * 0.52)))}px;white-space:nowrap">${L.p}</div>`;
+  else if (L.t === "esle") { const m = Math.max(...L.p.map((x) => x.length)); h = `<div class="lines" style="font-size:${Math.min(38, Math.floor(W / (m * 0.55)))}px">${L.p.map((x) => `<div>${x.replace(/[⋆◇⊕⊞⊛]/g, (c) => OPS[c])}</div>`).join("")}</div>`; }
+  else if (L.t === "sekil") h = L.p.map((r) => `<div class="eq${r.length > 5 ? " uzun" : ""}">${r.map(tok).join("")}</div>`).join("");
   else if (L.t === "ucgen") h = `<div class="tri">${L.p.map(ucgen).join("")}</div>`;
   else if (L.t === "kare") h = `${izgara(L.p)}<div class="lbl">Şekilde kaç kare var?</div>`;
-  else if (L.t === "dikdortgen") h = `${dikdortgen()}<div class="lbl">Şekilde kaç dikdörtgen var?<br><small>(kareler de dikdörtgendir)</small></div>`;
+  else if (L.t === "dikdortgen") h = `${dikdortgen(L.p)}<div class="lbl">Şekilde kaç dikdörtgen var?<br><small>(kareler de dikdörtgendir)</small></div>`;
   else if (L.t === "ucgenSay") h = `${ucgenIzgara(L.p)}<div class="lbl">Şekilde kaç üçgen var?</div>`;
   else if (L.t === "piramit") h = piramit(L.p);
-  else if (L.t === "tablo") h = `<table>${L.p.map((r) => `<tr>${r.map((x) => `<td>${x}</td>`).join("")}</tr>`).join("")}</table><div class="lbl">Her satır, sütun ve köşegenin toplamı aynı</div>`;
+  else if (L.t === "tablo") h = `<table>${L.p.map((r) => `<tr>${r.map((x) => `<td>${x}</td>`).join("")}</tr>`).join("")}</table><div class="lbl">${L.l || "Her satır, sütun ve köşegenin toplamı aynı"}</div>`;
+  else if (L.t === "karo" || L.t === "cember" || L.t === "cember6" || L.t === "ucgenM" || L.t === "kosegen") { const f = { karo, cember, cember6: cember, ucgenM, kosegen }[L.t]; h = `<div class="figs">${L.p.map(f).join("")}</div><div class="lbl">Ortadaki sayıyı veren kuralı bul</div>`; }
+  else if (L.t === "halka") h = `<div class="figs tek">${halka(L.p)}</div><div class="lbl">Saat yönünde bir kural var</div>`;
   else if (L.t === "soru") h = `<div class="q">${L.p}</div>`;
   $("pz").innerHTML = h;
-  $("done").classList.remove("show");
-  $("hint").classList.toggle("acik", !!ST.ip[ST.i]);
   val = ""; goster();
 }
+function islemCiz() {
+  const p = P(), L = ISL[p.i], d = denk(L.n, L), ac = p.ac[p.i] || [], gz = L.g.filter((k) => !ac.includes(k));
+  if (sec == null || !gz.includes(sec)) sec = gz.find((k) => !dol[k]) ?? gz[0];
+  let h = '<div class="xg">';
+  for (let R = 0; R < 7; R++) for (let C = 0; C < 7; C++) {
+    let c = "<span></span>";
+    if (R % 2 === 0 && R < 6) {
+      const i = R / 2;
+      if (C % 2 === 0 && C < 6) { const k = i * 3 + C / 2; c = gz.includes(k) ? `<button type="button" class="x${sec === k ? " sel" : ""}" data-x="${k}">${dol[k] || ""}</button>` : `<span class="n${ac.includes(k) ? " ac" : ""}">${L.n[k]}</span>`; }
+      else if (C === 1 || C === 3) c = `<span class="o">${L.ro[i][(C - 1) / 2]}</span>`;
+      else if (C === 5) c = `<span class="o">=</span>`;
+      else c = `<span class="r${kontrol ? (kontrol[i] ? " ok" : " bad") : ""}">${d[i]}</span>`;
+    } else if (R === 1 || R === 3) { if (C % 2 === 0 && C < 6) c = `<span class="o">${L.co[C / 2][(R - 1) / 2]}</span>`; }
+    else if (R === 5) { if (C % 2 === 0 && C < 6) c = `<span class="o">=</span>`; }
+    else if (C % 2 === 0 && C < 6) c = `<span class="r${kontrol ? (kontrol[3 + C / 2] ? " ok" : " bad") : ""}">${d[3 + C / 2]}</span>`;
+    h += c;
+  }
+  $("pz").innerHTML = h + `</div><div class="lbl">Boş kutulara 1–9 arası rakam yaz<br><small>Her satır ve sütun sonucu tutmalı · çarpma önce yapılır</small></div>`;
+  $("pz").querySelectorAll("[data-x]").forEach((b) => (b.onclick = () => { sec = +b.dataset.x; islemCiz(); }));
+  $("val").textContent = sec != null && dol[sec] ? dol[sec] : ""; $("ans").classList.remove("bad");
+}
 function goster() { $("val").textContent = val; $("ans").classList.remove("bad"); }
-function bas(k) { if ($("done").classList.contains("show") || $("ov").classList.contains("show")) return; if (val.length < 7) { val = (val + k).replace(/^0+(?=\d)/, ""); goster(); } }
-function sil() { val = val.slice(0, -1); goster(); }
+const acikMi = () => $("done").classList.contains("show") || $("ov").classList.contains("show");
+function bas(k) {
+  if (acikMi()) return;
+  if (ST.mod === "i") {
+    if (sec == null || k === "0") return;
+    dol[sec] = +k; kontrol = null;
+    const p = P(), L = ISL[p.i], ac = p.ac[p.i] || [], gz = L.g.filter((x) => !ac.includes(x)), sira = gz.indexOf(sec);
+    const sonra = gz.slice(sira + 1).concat(gz.slice(0, sira)).find((x) => !dol[x]);
+    if (sonra != null) sec = sonra;
+    return islemCiz();
+  }
+  if (val.length < 7) { val = (val + k).replace(/^0+(?=\d)/, ""); goster(); }
+}
+function sil() { if (ST.mod === "i") { if (sec != null) { delete dol[sec]; kontrol = null; islemCiz(); } return; } val = val.slice(0, -1); goster(); }
+function salla() { $("ans").classList.add("bad"); const s = $("stage"); s.classList.remove("shake"); void s.offsetWidth; s.classList.add("shake"); try { navigator.vibrate && navigator.vibrate(40); } catch (e) {} }
+function cozuldu(aciklama) {
+  const p = P();
+  p.coz[p.i] = p.ip[p.i] ? "ip" : "ok";
+  p.acik = Math.max(p.acik, Math.min(p.i + 1, TOP() - 1)); kaydet();
+  window.Rapor && Rapor.oyun(ST.mod === "i" ? "islem-bulmacasi" : "bilmece", true, `${ST.mod === "i" ? "İşlem" : "Seviye"} ${p.i + 1}`);
+  $("exp").textContent = aciklama;
+  $("next").textContent = p.i >= TOP() - 1 ? "Bitir" : "Sonraki ›";
+  $("done").classList.add("show");
+}
 function tamam() {
   if ($("done").classList.contains("show")) return sonraki();
-  if (!val) return;
-  const L = SEV[ST.i];
-  if (Number(val) === L.c) {
-    ST.coz[ST.i] = ST.ip[ST.i] ? "ip" : "ok";
-    ST.acik = Math.max(ST.acik, Math.min(ST.i + 1, SEV.length - 1)); kaydet();
-    window.Rapor && Rapor.oyun("bilmece", true, `Seviye ${ST.i + 1}`);
-    $("exp").textContent = L.a;
-    $("next").textContent = ST.i >= SEV.length - 1 ? "Bitir" : "Sonraki ›";
-    $("done").classList.add("show");
-  } else {
-    $("ans").classList.add("bad");
-    const s = $("stage"); s.classList.remove("shake"); void s.offsetWidth; s.classList.add("shake");
-    try { navigator.vibrate && navigator.vibrate(40); } catch (e) {}
-    setTimeout(() => { val = ""; goster(); }, 600);
+  if (acikMi()) return;
+  const p = P();
+  if (ST.mod === "i") {
+    const L = ISL[p.i], ac = p.ac[p.i] || [], gz = L.g.filter((k) => !ac.includes(k));
+    if (gz.some((k) => !dol[k])) { salla(); return; }
+    const M = L.n.map((v, k) => (gz.includes(k) ? dol[k] : v)), d = denk(L.n, L), m = denk(M, L);
+    kontrol = m.map((v, k) => v === d[k]);
+    if (kontrol.every(Boolean)) return cozuldu("Bütün satırlar ve sütunlar tuttu.");
+    islemCiz(); salla(); return;
   }
+  if (!val) return;
+  const L = SEV[p.i];
+  if (Number(val) === L.c) cozuldu(L.a);
+  else { salla(); setTimeout(() => { val = ""; goster(); }, 600); }
 }
 function sonraki() {
-  if (ST.i >= SEV.length - 1) return bitti();
-  if (!ST.coz[ST.i]) return; // bilinmeden geçilmez
-  ST.i++; kaydet(); ciz();
+  const p = P();
+  if (!p.coz[p.i]) return; // bilinmeden geçilmez
+  if (p.i >= TOP() - 1) return bitti();
+  p.i++; kaydet(); ciz();
 }
 function pencere(h) { $("box").innerHTML = h; $("ov").classList.add("show"); }
 const kapat = () => $("ov").classList.remove("show");
@@ -256,24 +431,29 @@ $("ov").onclick = (e) => { if (e.target === $("ov")) kapat(); };
 // ---------- İpucu: önce 5 İş Bankası sorusunu doğru bil ----------
 const GEREK = 5;
 let deste = [];
-function isqSec() {
-  const pool = typeof ISQ !== "undefined" ? ISQ : [];
-  if (!deste.length) deste = pool.map((_, i) => i).sort(() => Math.random() - 0.5);
-  return pool[deste.pop()];
-}
+function isqSec() { const pool = typeof ISQ !== "undefined" ? ISQ : []; if (!deste.length) deste = pool.map((_, i) => i).sort(() => Math.random() - 0.5); return pool[deste.pop()]; }
 function ipucu() {
-  const L = SEV[ST.i];
-  if (ST.ip[ST.i] || typeof ISQ === "undefined" || !ISQ.length) return ipucuGoster();
+  if (acikMi()) return;
+  const p = P();
+  if (ST.mod === "i" && p.ip[p.i]) return pencere(`<h3>💡 İpucu</h3><p>Bu bulmacanın ipucunu kullandın; altın renkli rakam ipucuyla açıldı.</p><button class="btn" id="kp" type="button">Tamam</button>`), ($("kp").onclick = kapat);
+  if (p.ip[p.i] || typeof ISQ === "undefined" || !ISQ.length) return ipucuGoster();
   isqSor();
 }
 function ipucuGoster() {
-  const L = SEV[ST.i];
-  ST.ip[ST.i] = true; kaydet(); $("hint").classList.add("acik");
-  pencere(`<h3>💡 İpucu</h3><p>${L.i}</p><button class="btn" id="kp" type="button">Tamam</button>`);
+  const p = P(); p.ip[p.i] = true; $("hint").classList.add("acik");
+  if (ST.mod === "i") {
+    const L = ISL[p.i], ac = p.ac[p.i] || [], gz = L.g.filter((k) => !ac.includes(k)), k = gz.find((x) => dol[x] !== L.n[x]) ?? gz[0];
+    p.ac[p.i] = ac.concat([k]); delete dol[k]; kaydet(); sec = null;
+    pencere(`<h3>💡 İpucu</h3><p>Bir kutuyu açtım: <b style="color:var(--gold)">${L.n[k]}</b><br>Altın renkle gösterdim.</p><button class="btn" id="kp" type="button">Tamam</button>`);
+    $("kp").onclick = () => { kapat(); islemCiz(); };
+    return;
+  }
+  kaydet();
+  pencere(`<h3>💡 İpucu</h3><p>${SEV[p.i].i}</p><button class="btn" id="kp" type="button">Tamam</button>`);
   $("kp").onclick = kapat;
 }
 function isqSor() {
-  const n = ST.isq[ST.i] || 0, q = isqSec();
+  const p = P(), n = p.isq[p.i] || 0, q = isqSec();
   const ord = q[1].map((_, i) => i).sort(() => Math.random() - 0.5), dogru = ord.indexOf(q[2]);
   pencere(`<h3>💡 İpucu için ${GEREK} İş Bankası sorusu</h3>
     <div class="qzd">${Array.from({ length: GEREK }, (_, i) => `<i class="${i < n ? "on" : ""}"></i>`).join("")}</div>
@@ -284,47 +464,47 @@ function isqSor() {
   $("kp").onclick = kapat;
   $("box").querySelector(".qzo").onclick = (e) => {
     const b = e.target.closest("button[data-k]"); if (!b || b.disabled) return;
-    const k = +b.dataset.k;
     $("box").querySelectorAll(".qzo button").forEach((x) => { x.disabled = true; if (+x.dataset.k === dogru) x.classList.add("ok"); });
-    if (k === dogru) {
-      const m = (ST.isq[ST.i] || 0) + 1; ST.isq[ST.i] = m; kaydet();
+    if (+b.dataset.k === dogru) {
+      const m = (p.isq[p.i] || 0) + 1; p.isq[p.i] = m; kaydet();
       $("qzm").innerHTML = `<b style="color:var(--ok)">Doğru!</b> ${m} / ${GEREK}`;
       setTimeout(() => (m >= GEREK ? ipucuGoster() : isqSor()), 750);
-    } else {
-      b.classList.add("bad");
-      $("qzm").innerHTML = `<b style="color:var(--bad)">Olmadı</b> · doğrusu yeşil olan`;
-      setTimeout(isqSor, 1500);
-    }
+    } else { b.classList.add("bad"); $("qzm").innerHTML = `<b style="color:var(--bad)">Olmadı</b> · doğrusu yeşil olan`; setTimeout(isqSor, 1500); }
   };
 }
 function seviyeler() {
-  const ok = Object.values(ST.coz).filter((x) => x === "ok").length, ip = Object.values(ST.coz).filter((x) => x === "ip").length;
-  pencere(`<h3>Seviyeler</h3><div class="lv">${SEV.map((_, i) => { const c = ST.coz[i]; return `<button type="button" data-i="${i}" class="${c === "ok" ? "ok" : c === "ip" ? "ip" : ""}${i === ST.i ? " cur" : ""}"${i > ST.acik ? " disabled" : ""}>${i + 1}${c === "ip" ? "<i>💡</i>" : i > ST.acik ? "<i>🔒</i>" : ""}</button>`; }).join("")}</div>
-    <div class="note">✓ ${ok} kendin çözdün · 💡 ${ip} ipucuyla · bilinmeyen seviyeden sonrakine geçilmez</div><button class="btn" id="kp" type="button">Kapat</button>`);
-  $("box").querySelectorAll("[data-i]").forEach((b) => (b.onclick = () => { ST.i = +b.dataset.i; kaydet(); kapat(); ciz(); }));
+  const p = P(), n = TOP(), ok = Object.values(p.coz).filter((x) => x === "ok").length, ip = Object.values(p.coz).filter((x) => x === "ip").length;
+  const btn = (i) => { const c = p.coz[i]; return `<button type="button" data-i="${i}" class="${c === "ok" ? "ok" : c === "ip" ? "ip" : ""}${i === p.i ? " cur" : ""}"${i > p.acik ? " disabled" : ""}>${i + 1}${c === "ip" ? "<i>💡</i>" : i > p.acik ? "<i>🔒</i>" : ""}</button>`; };
+  const grup = (a, b, bas) => `${bas ? `<div class="lvh">${bas}</div>` : ""}<div class="lv">${Array.from({ length: b - a }, (_, k) => btn(a + k)).join("")}</div>`;
+  pencere(`<h3>${ST.mod === "i" ? "İşlem Bulmacası" : "Seviyeler"}</h3>${ST.mod === "i" ? grup(0, n) : grup(0, 40, "1 – 40") + grup(40, n, "41 – 80 · GİZLİ KURAL")}
+    <div class="note">✓ ${ok} kendin çözdün · 💡 ${ip} ipucuyla<br>Bilinmeyen seviyeden sonrakine geçilmez</div><button class="btn" id="kp" type="button">Kapat</button>`);
+  $("box").querySelectorAll("[data-i]").forEach((b) => (b.onclick = () => { p.i = +b.dataset.i; kaydet(); kapat(); ciz(); }));
   $("kp").onclick = kapat;
 }
 function bitti() {
-  const ok = Object.values(ST.coz).filter((x) => x === "ok").length;
-  pencere(`<h3>🏆 Hepsini bitirdin!</h3><p>${SEV.length} bilmecenin <b>${ok}</b> tanesini ipucusuz çözdün. Yeni bilmeceler yakında 🙂</p><button class="btn" id="kp" type="button">Seviyelere bak</button>`);
+  const p = P(), ok = Object.values(p.coz).filter((x) => x === "ok").length;
+  pencere(`<h3>🏆 Hepsini bitirdin!</h3><p>${TOP()} ${ST.mod === "i" ? "işlem bulmacasının" : "bilmecenin"} <b>${ok}</b> tanesini ipucusuz çözdün. Yeni paketler yakında 🙂</p>
+    <button class="btn" id="kp" type="button">Seviyelere bak</button>${ST.mod === "i" ? "" : `<button class="btn" id="gec" type="button">İşlem Bulmacası'na geç</button>`}<div class="imza">Bilmeceler ✍️ Sadolayn</div>`);
   $("kp").onclick = seviyeler;
+  if ($("gec")) $("gec").onclick = () => { kapat(); ST.mod = "i"; kaydet(); ciz(); };
 }
 
 // ---------- Tuşlar ----------
 $("keys").innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<button class="k" type="button" data-k="${n}">${n}</button>`).join("");
 $("keys").onclick = (e) => { const b = e.target.closest("[data-k]"); if (b) bas(b.dataset.k); };
 $("del").onclick = sil;
-let basT; $("del").onpointerdown = () => { basT = setTimeout(() => { val = ""; goster(); }, 550); };
+let basT; $("del").onpointerdown = () => { basT = setTimeout(() => { if (ST.mod === "i") { dol = {}; kontrol = null; islemCiz(); } else { val = ""; goster(); } }, 550); };
 ["pointerup", "pointerleave"].forEach((ev) => $("del").addEventListener(ev, () => clearTimeout(basT)));
 $("ent").onclick = tamam;
 $("next").onclick = sonraki;
 $("hint").onclick = ipucu;
 $("lvBtn").onclick = seviyeler;
+document.querySelectorAll("#mod button").forEach((b) => (b.onclick = () => { if (ST.mod === b.dataset.m) return; ST.mod = b.dataset.m; kaydet(); ciz(); }));
 document.addEventListener("keydown", (e) => {
   if ($("ov").classList.contains("show")) { if (e.key === "Escape") kapat(); return; }
   if (/^\d$/.test(e.key)) bas(e.key); else if (e.key === "Backspace") sil(); else if (e.key === "Enter") { e.preventDefault(); tamam(); }
 });
-window.addEventListener("resize", () => { if (!$("done").classList.contains("show")) { const v = val; ciz(); val = v; goster(); } });
+window.addEventListener("resize", () => { if (ST.mod === "b" && !$("done").classList.contains("show")) { const v = val; ciz(); val = v; goster(); } });
 ciz();
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
