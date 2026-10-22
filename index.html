@@ -801,14 +801,16 @@
     return secilen;
   }
   function ciz(haber) {
-    const resmi = YENI.map(([e, ad, not, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("");
-    const hb = haber.map((h) => `<a href="${esc(h.u)}" target="_blank" rel="noopener">📰<b>${esc(h.t)}</b><span class="ysNot">${esc(h.s)}</span></a>`).join("");
+    const resmi = YENI.map(([e, ad, not, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener" data-r="${esc(ad)}">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("");
+    const hb = haber.map((h) => `<a href="${esc(h.u)}" target="_blank" rel="noopener" data-r="haber">📰<b>${esc(h.t)}</b><span class="ysNot">${esc(h.s)}</span></a>`).join("");
     if (!resmi && !hb) return;
     const tur = resmi + hb + `<span class="ysNot ysSon">kaynak: İş Bankası ve haberler ↗</span>`;
     ser.innerHTML = tur + tur; // iki tur yan yana: kesintisiz döngü
     ser.style.setProperty("--sure", Math.max(28, (YENI.length + haber.length * 1.6) * 10) + "s");
     kutu.hidden = false;
   }
+  // Tıklama sayımı: GoatCounter'da yalnızca "bolum-index/yeni-<ürün adı>" sayılır; kim tıkladığı bilinmez
+  ser.addEventListener("click", (e) => { const a = e.target.closest("a[data-r]"); if (a && window.Rapor) Rapor.bolum("yeni-" + a.dataset.r); });
   ciz([]);
   Ortak.json("data/haberler.json").then((d) => { const h = haberSec(d && d.cats && d.cats.isbank); if (h.length) ciz(h); }).catch(() => {});
 })();
