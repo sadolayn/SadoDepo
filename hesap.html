@@ -887,6 +887,7 @@ calcT(); calcA(); calcF();
 
 // ===== Yaklaşan önemli günler: bilanço dönemleri ve TCMB PPK faiz kararları =====
 // PPK tarihleri TCMB'nin yayımladığı takvimden (2027'nin ikinci yarısı henüz açıklanmadı)
+const TCMB_PPK = "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/Merkez+Bankasi+Faiz+Oranlari/Faiz+Oranlari", TCMB_TAKVIM = "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/Para+Politikasi+Kurulu/Toplanti+Takvimi";
 const PPK = ["2026-01-22", "2026-03-12", "2026-04-22", "2026-06-11", "2026-07-23", "2026-09-10", "2026-10-22", "2026-12-10", "2027-01-21", "2027-03-18", "2027-04-22", "2027-06-10"];
 function isGunSay(a, b) { let n = 0; for (let d = addD(a, 1); d <= b; d = addD(d, 1)) if (!isWE(d) && !isHol(d)) n++; return n; }
 const kalan = (g) => (g === 0 ? "Bugün" : g === 1 ? "Yarın" : `${g}`);
@@ -905,9 +906,13 @@ function calcEv() {
     return evRow(x.d, `${x.y} / ${x.q}. çeyrek sonu${x.q === 4 ? " (yıl sonu)" : ""}`, g, i === 0 ? `${isGunSay(today, x.d)} iş günü` : "", i === 0) + (i === 0 ? `<div class="bar" title="Dönemin %${Math.round(done / tot * 100)}'i geçti"><i style="width:${Math.min(100, done / tot * 100)}%"></i></div>` : "");
   }).join("");
   const pp = PPK.map(pD).filter((d) => dd(today, d) >= 0).slice(0, 4);
-  $("evPpk").innerHTML = `<h3>🏦 TCMB faiz kararı (PPK)</h3>` + (pp.length ? pp.map((d, i) => evRow(d, `${d.toLocaleDateString("tr-TR", { month: "long" })} PPK kararı`, dd(today, d), i === 0 ? "14:00" : "", i === 0)).join("") : '<p class="hint">Yeni takvim henüz açıklanmadı.</p>');
+  const pj = window.PPKJ, L = pj && pj.last;
+  const son = L ? `<div class="hint" style="margin:0 0 8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px">📌 Son karar <b>${new Date(L.date + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}</b>: politika faizi <b>%${String(L.rate).replace(".", ",")}</b>${L.change ? ` (${L.change > 0 ? "+" : "−"}${String(Math.abs(L.change)).replace(".", ",")} puan)` : " (değişmedi)"} · <a href="${esc(L.url || TCMB_PPK)}" target="_blank" rel="noopener">karar metni ↗</a></div>` : "";
+  $("evPpk").innerHTML = `<h3>🏦 TCMB faiz kararı (PPK)</h3>` + son + (pp.length ? pp.map((d, i) => evRow(d, `${d.toLocaleDateString("tr-TR", { month: "long" })} PPK kararı`, dd(today, d), i === 0 ? "14:00" : "", i === 0)).join("") : '<p class="hint">Yeni takvim henüz açıklanmadı.</p>') + `<p class="hint" style="margin-top:6px">Kaynak: <a href="${TCMB_TAKVIM}" target="_blank" rel="noopener">TCMB toplantı takvimi ↗</a> · <a href="${TCMB_PPK}" target="_blank" rel="noopener">TCMB faiz oranları ↗</a></p>`;
 }
 calcEv();
+// PPK takvimi ve son karar data/ppk.json'dan (saatlik güncellenir; karar günü 14:01'den itibaren sık kontrol)
+if (window.Ortak && Ortak.json) Ortak.json("data/ppk.json").then((j) => { if (!j) return; window.PPKJ = j; if (Array.isArray(j.meetings) && j.meetings.length) { PPK.length = 0; j.meetings.forEach((x) => PPK.push(x)); } calcEv(); }).catch(() => {});
 ["evBil", "evPpk"].forEach((id) => $(id).addEventListener("click", (e) => { const r = e.target.closest("[data-go]"); if (!r) return; $("tA").value = ymd(today); $("tB").value = r.dataset.go; calcT(); $("tA").closest(".card").scrollIntoView({ behavior: "smooth", block: "start" }); }));
 
 // ===== KDV & ÖTV =====

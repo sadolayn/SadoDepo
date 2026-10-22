@@ -215,6 +215,15 @@ function analyze() {
   out.forEach((s) => { if (!s.l) return; const o = chip[s.main] || { l: 0, n: 0 }; chip[s.main] = { l: Math.max(o.l, s.l), n: o.n || s.n }; });
   TR = { stories: out, byUrl, sec, chip };
 }
+// TCMB PPK kararı: karar gününden itibaren 3 gün Gündem, Ekonomi ve İş Bankası sekmelerinde sabit kart (data/ppk.json)
+let PPKJ = null;
+function ppkKart() {
+  const L = PPKJ && PPKJ.last; if (!L || story || (cat !== "gundem" && cat !== "ekonomi" && cat !== "isbank")) return "";
+  const gun = (Date.now() - new Date(L.date + "T14:00:00+03:00")) / 864e5; if (gun < 0 || gun > 3) return "";
+  const d = new Date(L.date + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+  const dg = L.change ? `${L.change > 0 ? "+" : "−"}${String(Math.abs(L.change)).replace(".", ",")} puan` : "değişmedi";
+  return `<div class="sbar">🏦 <span class="st"><b>TCMB ${d}: politika faizi %${esc(String(L.rate).replace(".", ","))}</b><small>${esc(dg)} · PPK kararı · <a href="${esc(L.url || "https://www.tcmb.gov.tr")}" target="_blank" rel="noopener">karar metni ↗</a></small></span></div>`;
+}
 function trendCards() {
   if (story) { const s = TR.stories.find((x) => x.id === story); return `<div class="sbar">🔥 <span class="st"><b>${esc(s.head)}</b><small>${s.n} haber · ${s.srcN} kaynak · aynı konu</small></span><button id="xStory">Kapat ✕</button></div>`; }
   const cards = [];
@@ -237,7 +246,7 @@ function render() {
   $("cats").innerHTML = CATS.map(([k, n]) => { const h = TR.chip[k]; return `<span class="chip ${k === cat && !story ? "on" : ""} ${h ? "h" + h.l : ""}" data-k="${k}"><i>${CIC[k] || "📰"}</i><span class="cn">${n}</span>${h ? `<span class="bd">${h.n}</span>` : ""}</span>`; }).join("");
   const YZ = D.yazarlar || [], isY = cat === "yazarlar" && !story;
   if (isY && yaz && !YZ.some((y) => y.k === yaz)) yaz = "";
-  $("alert").innerHTML = isY ? `<div class="chips yz">${[["", "Hepsi"], ...YZ.map((y) => [y.k, y.n])].map(([k, n]) => `<span class="chip ${k === yaz ? "on" : ""}" data-y="${k}">${esc(n)}</span>`).join("")}</div>` : trendCards();
+  $("alert").innerHTML = ppkKart() + (isY ? `<div class="chips yz">${[["", "Hepsi"], ...YZ.map((y) => [y.k, y.n])].map(([k, n]) => `<span class="chip ${k === yaz ? "on" : ""}" data-y="${k}">${esc(n)}</span>`).join("")}</div>` : trendCards());
   const st = story && TR.stories.find((x) => x.id === story);
   const items = st ? st.items : isY ? YZ.filter((y) => !yaz || y.k === yaz).flatMap((y) => y.items.map((x) => ({ ...x, a: y.n }))).sort((a, b) => (b.d || "").localeCompare(a.d || "")) : (D.cats[cat] || []);
   const srcs = [...new Set(items.map((x) => x.s))].sort((a, b) => a.localeCompare(b, "tr"));
@@ -266,6 +275,7 @@ $("alert").onclick = (e) => {
 $("cats").onclick = (e) => { const c = e.target.closest(".chip"); if (!c) return; cat = c.dataset.k; story = null; $("src").value = ""; try { localStorage.setItem("haber_cat", cat); } catch (er) {} render(); window.scrollTo(0, 0); };
 $("src").onchange = render;
 $("q").addEventListener("input", render);
+Ortak.json("data/ppk.json").then((j) => { PPKJ = j; if (typeof D !== "undefined" && D) render(); }).catch(() => {});
 Ortak.json("data/haberler.json")
   .then((j) => { D = j; $("upd").textContent = "Son güncelleme: " + new Date(j.updated).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }); analyze(); render(); })
   .catch(() => { Ortak.hata("list", { ne: "Haberler" }); $("upd").textContent = ""; });

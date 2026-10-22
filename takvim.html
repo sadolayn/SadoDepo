@@ -321,6 +321,7 @@
     <div class="card">
       <div class="grid" id="grid"></div>
       <div class="legend"><span class="l1">Resmi tatil</span><span class="l2">Yarım gün</span><span class="l3">Dini gün</span><span class="l4">Hafta sonu</span></div>
+      <div id="ppkAy" style="font-size:12.5px;color:var(--muted);margin:6px 0 0"></div>
       <div class="legend pl"><b>Ajandam:</b><span class="p1">Yıllık izin</span><span class="p2">Diğer izinler</span><span class="p3">Not</span><span class="p4">Arama · ziyaret · toplantı</span></div>
     </div>
     <div class="card"><div class="detail" id="detail">Ayrıntı için bir güne dokun.</div><div id="dItems"></div><button class="addday" id="addDay" type="button">＋ Bu güne ekle</button></div>
@@ -616,6 +617,7 @@ function renderMonth() {
   const mEnd = new Date(y, m + 1, 0, 12), mStart = new Date(y, m, 1, 12);
   $("sKalan").innerHTML = mEnd < today ? "" : `⏳ ${mStart > today ? "Ayın tamamı" : "Bugünden ay sonuna"} (${sayGun(mStart > today ? mStart : today, mEnd).total} gün): ${ozetHTML(sayGun(mStart > today ? mStart : today, mEnd))}`;
   $("sumTitle").textContent = `${MONTHS[m]} ${y} özeti`;
+  ppkAy(y, m);
   $("mList").innerHTML = monthItems.length ? monthItems.map((x) => itemHTML(x)).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmi tatil ya da dini gün yok.</div>';
   const mine = A.items.filter((x) => x.d <= keyOf(mEnd) && (x.e || x.d) >= keyOf(mStart)).sort(byDate);
   if (mine.length) $("mList").innerHTML += `<div class="mgrp" style="color:#c9b4f7">Ajandam · ${MONTHS[m]}</div>` + mine.map((x) => aItemHTML(x)).join("");
@@ -639,7 +641,23 @@ function showDetail(d) {
   $("dItems").innerHTML = mine.map((x) => aItemHTML(x, k)).join("");
 }
 $("dows").innerHTML = DOW.map((d) => `<div class="dow">${d}</div>`).join("");
-$("mtBtn").onclick = () => { view = new Date(today.getFullYear(), today.getMonth(), 1, 12); selected = today; renderMonth(); showDetail(today); };
+$("mtBtn").onclick = () => { view = new Date(today.getFullYear(), today.getMonth(), 1, 12); selected = today; // TCMB PPK toplantıları (data/ppk.json): ay görünümünün altında o ayın karar günü ve linki
+let PPKJ = null;
+const TCMB_TAKVIM = "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/Para+Politikasi+Kurulu/Toplanti+Takvimi";
+function ppkAy(y, m) {
+  const el = $("ppkAy"); if (!el) return;
+  const list = (PPKJ && PPKJ.meetings) || [];
+  const ay = `${y}-${String(m + 1).padStart(2, "0")}-`, g = list.filter((d) => d.startsWith(ay));
+  if (!g.length) { el.innerHTML = ""; return; }
+  const L = PPKJ.last, h = g.map((d) => {
+    const dt = new Date(d + "T12:00:00"), s = dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
+    const k = L && L.date === d ? ` → politika faizi <b>%${String(L.rate).replace(".", ",")}</b> · <a href="${L.url || TCMB_TAKVIM}" target="_blank" rel="noopener">karar metni ↗</a>` : ` 14:00 · <a href="${TCMB_TAKVIM}" target="_blank" rel="noopener">TCMB takvimi ↗</a>`;
+    return `🏦 PPK faiz kararı: <b>${s}</b>${k}`;
+  }).join("<br>");
+  el.innerHTML = h;
+}
+if (window.Ortak && Ortak.json) Ortak.json("data/ppk.json").then((j) => { PPKJ = j; ppkAy(view.getFullYear(), view.getMonth()); }).catch(() => {});
+renderMonth(); showDetail(today); };
 $("prev").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1, 12); renderMonth(); };
 $("next").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1, 12); renderMonth(); };
 
