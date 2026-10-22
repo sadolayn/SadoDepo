@@ -112,6 +112,20 @@
   .day.sel::after { background: #000; }
   .day.fut { opacity: .35; cursor: default; }
   .cal-f { display: flex; gap: 12px; justify-content: center; font-size: 10px; color: var(--muted); margin-top: 4px; }
+  /* Bankacılığı ilgilendiren madde olan gün: sağ üstte küçük mavi sayı */
+  .day.bnk::before { content: attr(data-n); position: absolute; top: -5px; right: -3px; min-width: 13px; height: 13px; padding: 0 3px; box-sizing: border-box; border-radius: 7px; background: #4a63ff; color: #fff; font-size: 9px; font-weight: 800; line-height: 13px; z-index: 1; }
+  .cal-f .lg { display: inline-block; min-width: 12px; height: 12px; border-radius: 6px; background: #4a63ff; color: #fff; font-size: 8.5px; font-weight: 800; line-height: 12px; text-align: center; margin-right: 4px; vertical-align: middle; }
+  /* Haftalık bankacılık uyarısı (takvimin altında) */
+  .hbnk { border: 1px solid rgba(74,99,255,.45); background: linear-gradient(160deg, rgba(74,99,255,.16), rgba(74,99,255,.04)); border-radius: 14px; padding: 11px 12px; margin: 0 0 12px; }
+  .hbnk .hh { font-size: 14px; color: #dfe4ff; }
+  .hbnk .hh b { color: #fff; }
+  .hbnk .hh small { display: block; font-size: 11.5px; color: #9aa3d6; margin-top: 2px; }
+  .hbnk ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 5px; }
+  .hbnk li button { display: flex; gap: 8px; width: 100%; text-align: left; padding: 7px 9px; border-radius: 10px; border: 1px solid rgba(74,99,255,.25); background: rgba(0,0,0,.35); color: var(--ink); font: inherit; font-size: 13px; line-height: 1.4; cursor: pointer; }
+  .hbnk li em { flex: none; font-style: normal; font-size: 11px; font-weight: 800; color: #8fa0ff; min-width: 46px; padding-top: 1px; }
+  .hbnk .hmore { margin-top: 7px; width: 100%; padding: 7px; border-radius: 10px; border: 1px dashed rgba(74,99,255,.45); background: none; color: #a9b5ff; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .hbnk.bos { border-color: var(--line); background: none; padding: 8px 12px; }
+  .hbnk.bos .hh { font-size: 12.5px; color: var(--muted); }
   .cal-f i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 5px; vertical-align: middle; }
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
@@ -146,6 +160,7 @@
   </div>
   <div class="cal" id="cal"></div>
   </div>
+  <div id="haftaBnk"></div>
 
   <div id="content"><div class="empty">Yükleniyor…</div></div>
 </div>
@@ -176,10 +191,42 @@ let calY, calM, selDate = null;
 const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 
 let calCompact = true, calUser = false, weekRef = null;
+// Gün gün "bankacılığı ilgilendirenler" (16 Ekim 2026'dan önceki özetlerde bu bölüm yok → işaretsiz)
+const BNK = {}, bnkYolda = new Set(); let bnkHepsi = false;
+async function bnkYukle(isos) {
+  const eksik = isos.filter((d) => dates.includes(d) && !(d in BNK) && !bnkYolda.has(d));
+  if (!eksik.length) return;
+  eksik.forEach((d) => bnkYolda.add(d));
+  await Promise.all(eksik.map(async (d) => { try { const g = await getJSON(`gazete/${d}.json`); BNK[d] = Array.isArray(g.bankacilik) ? g.bankacilik : null; } catch (e) { BNK[d] = null; } bnkYolda.delete(d); }));
+  renderCal();
+}
+const GUN = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
+function renderHaftaBnk(mon) {
+  const el = $("haftaBnk"); if (!el) return;
+  const today = todayIso();
+  const gunler = [...Array(7)].map((_, i) => { const d = new Date(mon); d.setDate(mon.getDate() + i); return isoOf(d); }).filter((d) => d <= today && dates.includes(d));
+  if (!gunler.length || gunler.some((d) => !(d in BNK))) { el.innerHTML = ""; return; } // yükleniyor ya da özet yok
+  const L = []; gunler.forEach((d) => (BNK[d] || []).forEach((it) => L.push({ d, it })));
+  const bugHafta = isoOf(mon) === (() => { const t = new Date(today + "T12:00:00"); t.setDate(t.getDate() - ((t.getDay() + 6) % 7)); return isoOf(t); })();
+  const ad = bugHafta ? "Bu hafta" : "Bu haftada";
+  if (!L.length) { el.innerHTML = `<div class="hbnk bos"><div class="hh">✓ ${ad} bankacılığı ilgilendiren bir düzenleme yok</div></div>`; return; }
+  el.innerHTML = `<div class="hbnk"><div class="hh">🏦 ${ad} bankacılığı ilgilendiren <b>${L.length}</b> düzenleme<small>Dokun, o günün özetinde aç · takvimdeki mavi sayılar aynı şeyi gösterir</small></div>
+    <ul>${(bnkHepsi ? L : L.slice(0, 3)).map(({ d, it }) => { const t = new Date(d + "T12:00:00"); return `<li><button type="button" data-g="${d}"><em>${GUN[t.getDay()]} ${t.getDate()}</em><span>${esc(it.baslik)}</span></button></li>`; }).join("")}</ul>
+    ${L.length > 3 ? `<button type="button" class="hmore" id="bnkTog">${bnkHepsi ? "Daha az göster ▴" : `+${L.length - 3} düzenleme daha ▾`}</button>` : ""}</div>`;
+  if ($("bnkTog")) $("bnkTog").onclick = () => { bnkHepsi = !bnkHepsi; renderHaftaBnk(mon); };
+  el.querySelectorAll("[data-g]").forEach((b) => (b.onclick = async () => {
+    window.Rapor && Rapor.bolum("haftalik-bankacilik");
+    history.replaceState(null, "", "#" + b.dataset.g);
+    await show(b.dataset.g);
+    const sec = document.querySelector("#content .sec.bnk");
+    if (sec) { const y = sec.getBoundingClientRect().top + window.scrollY - (document.querySelector(".stick").offsetHeight + 8); window.scrollTo({ top: y, behavior: "smooth" }); }
+  }));
+}
 const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 function dayBtn(iso, today, set) {
-  const c = ["day", set.has(iso) ? "has" : "", iso === today ? "today" : "", iso === selDate ? "sel" : "", iso > today ? "fut" : ""].join(" ");
-  return `<button class="${c}" data-d="${iso}" ${iso > today ? "disabled" : ""}>${+iso.slice(8)}</button>`;
+  const n = (BNK[iso] || []).length;
+  const c = ["day", set.has(iso) ? "has" : "", iso === today ? "today" : "", iso === selDate ? "sel" : "", iso > today ? "fut" : "", n ? "bnk" : ""].join(" ");
+  return `<button class="${c}" data-d="${iso}" ${n ? `data-n="${n}" title="${n} bankacılık maddesi"` : ""} ${iso > today ? "disabled" : ""}>${+iso.slice(8)}</button>`;
 }
 function renderWeek() {
   const today = todayIso(), set = new Set(dates);
@@ -193,6 +240,7 @@ function renderWeek() {
   h += ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"].map((w, i) => `<div class="wd ${i > 4 ? "we" : ""}">${w}</div>`).join("");
   h += days.map((d) => dayBtn(isoOf(d), today, set)).join("") + "</div>";
   $("cal").innerHTML = h;
+  renderHaftaBnk(mon); bnkYukle(days.map(isoOf));
   const shift = (n) => { const r = new Date(ref); r.setDate(r.getDate() + n); weekRef = isoOf(r); renderWeek(); };
   $("cprev").onclick = () => shift(-7);
   $("cnext").onclick = () => shift(7);
@@ -210,12 +258,12 @@ function renderCal() {
   h += ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"].map((w, i) => `<div class="wd ${i > 4 ? "we" : ""}">${w}</div>`).join("");
   for (let i = 0; i < lead; i++) h += "<div></div>";
   for (let d = 1; d <= dim; d++) {
-    const iso = `${ym}-${String(d).padStart(2, "0")}`;
-    const c = ["day", set.has(iso) ? "has" : "", iso === today ? "today" : "", iso === selDate ? "sel" : "", iso > today ? "fut" : ""].join(" ");
-    h += `<button class="${c}" data-d="${iso}" ${iso > today ? "disabled" : ""}>${d}</button>`;
+    h += dayBtn(`${ym}-${String(d).padStart(2, "0")}`, today, set);
   }
-  h += `</div><div class="cal-f"><span><i></i>Özet var</span><span>Diğer günler: resmi siteye bağlantı</span></div>`;
+  h += `</div><div class="cal-f"><span><i></i>Özet var</span><span><b class="lg">2</b>Bankacılık maddesi</span><span>Diğer günler: resmi site</span></div>`;
   $("cal").innerHTML = h;
+  { const r = new Date((selDate || today) + "T12:00:00"); r.setDate(r.getDate() - ((r.getDay() + 6) % 7)); renderHaftaBnk(r); }
+  bnkYukle([...Array(dim)].map((_, i) => `${ym}-${String(i + 1).padStart(2, "0")}`));
   $("calTog").onclick = () => { calCompact = true; calUser = false; renderCal(); };
   $("cprev").onclick = () => { calM--; if (calM < 0) { calM = 11; calY--; } renderCal(); };
   $("cnext").onclick = () => { calM++; if (calM > 11) { calM = 0; calY++; } renderCal(); };
