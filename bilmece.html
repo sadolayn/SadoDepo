@@ -93,6 +93,7 @@
   .k:active { background: #2a2a2a; }
   .k.ent { font-size: 18px; letter-spacing: 1.5px; }
   #hint.acik { color: var(--gold); }
+  #hint.kilit { opacity: .4; }
   .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
   /* Pencereler */
   .ov { position: fixed; inset: 0; background: rgba(0,0,0,.72); display: none; overflow-y: auto; padding: 16px; z-index: 20; }
@@ -335,6 +336,7 @@ function ciz() {
   $("ans").classList.toggle("isl", ST.mod === "i");
   $("done").classList.remove("show");
   $("hint").classList.toggle("acik", !!P().ip[P().i]);
+  kilitIsaret();
   const p = P();
   $("sv").innerHTML = ST.mod === "i" ? `İşlem <b>${p.i + 1}</b> / ${ISL.length}` : `Seviye <b>${p.i + 1}</b> / ${SEV.length}${p.i >= 40 ? " · Gizli Kural" : ""}`;
   if (ST.mod === "i") { dol = {}; kontrol = null; sec = null; return islemCiz(); }
@@ -428,19 +430,38 @@ function pencere(h) { $("box").innerHTML = h; $("ov").classList.add("show"); }
 const kapat = () => $("ov").classList.remove("show");
 $("ov").onclick = (e) => { if (e.target === $("ov")) kapat(); };
 
-// ---------- İpucu: önce 5 İş Bankası sorusunu doğru bil ----------
-const GEREK = 5;
-let deste = [];
-function isqSec() { const pool = typeof ISQ !== "undefined" ? ISQ : []; if (!deste.length) deste = pool.map((_, i) => i).sort(() => Math.random() - 0.5); return pool[deste.pop()]; }
+// ---------- İpucu: 5 İş Bankası sorusunu art arda bil ----------
+// Bir yanlışta seri sıfırlanır ve ipucu 1 saat kilitlenir (iki modda ortak).
+// Cevaplanmamış soru kaydedilir: Vazgeç'e basıp ya da sayfayı yenileyip soru değiştirilemez.
+const GEREK = 5, BEKLE = 36e5;
+let deste = [], sayac = null;
+function isqSec() {
+  const pool = typeof ISQ !== "undefined" ? ISQ : [];
+  const bekleyen = ST.ipSoru && pool.find((q) => q[0] === ST.ipSoru);
+  if (bekleyen) return bekleyen;
+  if (!deste.length) deste = pool.map((_, i) => i).sort(() => Math.random() - 0.5);
+  const q = pool[deste.pop()]; ST.ipSoru = q[0]; kaydet(); return q;
+}
+const kilitli = () => (ST.ipKilit || 0) > Date.now();
+function kilitIsaret() { if (ST.ipKilit && !kilitli()) { delete ST.ipKilit; kaydet(); } $("hint").classList.toggle("kilit", kilitli() && !P().ip[P().i]); }
+const sure = (ms) => { const t = Math.max(0, Math.ceil(ms / 1000)), d = Math.floor(t / 60), sn = t % 60; return d ? `${d} dk ${String(sn).padStart(2, "0")} sn` : `${sn} sn`; };
+function kilitEkran(yeni) {
+  pencere(`<h3>⏳ Biraz mola</h3><p>${yeni ? "Seri bozuldu." : "Bir soruyu kaçırmıştın."} İpucu için <b id="kalan" style="color:var(--gold);white-space:nowrap"></b> sonra yeniden dene.</p>
+    <p style="font-size:14.5px;color:var(--dim)">Tekrar denediğinde ${GEREK} soruyu art arda bilmen gerekiyor. Bu arada bilmeceyi kendin çözmeye devam edebilirsin 🙂</p><button class="btn" id="kp" type="button">Tamam</button>`);
+  const tik = () => { if (!$("kalan") || !$("ov").classList.contains("show")) return clearInterval(sayac); if (!kilitli()) { clearInterval(sayac); kilitIsaret(); kapat(); return; } $("kalan").textContent = sure(ST.ipKilit - Date.now()); };
+  clearInterval(sayac); tik(); sayac = setInterval(tik, 1000);
+  $("kp").onclick = kapat;
+}
 function ipucu() {
   if (acikMi()) return;
   const p = P();
   if (ST.mod === "i" && p.ip[p.i]) return pencere(`<h3>💡 İpucu</h3><p>Bu bulmacanın ipucunu kullandın; altın renkli rakam ipucuyla açıldı.</p><button class="btn" id="kp" type="button">Tamam</button>`), ($("kp").onclick = kapat);
   if (p.ip[p.i] || typeof ISQ === "undefined" || !ISQ.length) return ipucuGoster();
+  if (kilitli()) return kilitEkran(false);
   isqSor();
 }
 function ipucuGoster() {
-  const p = P(); p.ip[p.i] = true; $("hint").classList.add("acik");
+  const p = P(); p.ip[p.i] = true; $("hint").classList.add("acik"); kilitIsaret();
   if (ST.mod === "i") {
     const L = ISL[p.i], ac = p.ac[p.i] || [], gz = L.g.filter((k) => !ac.includes(k)), k = gz.find((x) => dol[x] !== L.n[x]) ?? gz[0];
     p.ac[p.i] = ac.concat([k]); delete dol[k]; kaydet(); sec = null;
@@ -455,23 +476,31 @@ function ipucuGoster() {
 function isqSor() {
   const p = P(), n = p.isq[p.i] || 0, q = isqSec();
   const ord = q[1].map((_, i) => i).sort(() => Math.random() - 0.5), dogru = ord.indexOf(q[2]);
-  pencere(`<h3>💡 İpucu için ${GEREK} İş Bankası sorusu</h3>
+  pencere(`<h3>💡 ${GEREK} soruyu art arda bil</h3>
     <div class="qzd">${Array.from({ length: GEREK }, (_, i) => `<i class="${i < n ? "on" : ""}"></i>`).join("")}</div>
     <p class="qzq"></p><div class="qzo">${ord.map((_, k) => `<button type="button" data-k="${k}"></button>`).join("")}</div>
-    <div class="qzm" id="qzm">${n} / ${GEREK} doğru</div><button class="btn" id="kp" type="button">Vazgeç</button>`);
+    <div class="qzm" id="qzm">${n} / ${GEREK} · bir yanlışta seri sıfırlanır, 1 saat beklenir</div><button class="btn" id="kp" type="button">Sonra cevaplarım</button>`);
   $("box").querySelector(".qzq").textContent = q[0];
   $("box").querySelectorAll(".qzo button").forEach((b, k) => (b.textContent = q[1][ord[k]]));
   $("kp").onclick = kapat;
   $("box").querySelector(".qzo").onclick = (e) => {
     const b = e.target.closest("button[data-k]"); if (!b || b.disabled) return;
     $("box").querySelectorAll(".qzo button").forEach((x) => { x.disabled = true; if (+x.dataset.k === dogru) x.classList.add("ok"); });
+    delete ST.ipSoru;
     if (+b.dataset.k === dogru) {
       const m = (p.isq[p.i] || 0) + 1; p.isq[p.i] = m; kaydet();
+      $("box").querySelectorAll(".qzd i")[m - 1].classList.add("on");
       $("qzm").innerHTML = `<b style="color:var(--ok)">Doğru!</b> ${m} / ${GEREK}`;
       setTimeout(() => (m >= GEREK ? ipucuGoster() : isqSor()), 750);
-    } else { b.classList.add("bad"); $("qzm").innerHTML = `<b style="color:var(--bad)">Olmadı</b> · doğrusu yeşil olan`; setTimeout(isqSor, 1500); }
+    } else {
+      b.classList.add("bad"); p.isq[p.i] = 0; ST.ipKilit = Date.now() + BEKLE; kaydet(); kilitIsaret();
+      $("box").querySelectorAll(".qzd i").forEach((x) => x.classList.remove("on"));
+      $("qzm").innerHTML = `<b style="color:var(--bad)">Olmadı</b> · doğrusu yeşil olan<br>Seri sıfırlandı, 1 saat sonra yeniden dene.`;
+      $("kp").textContent = "Tamam"; $("kp").onclick = () => kilitEkran(true);
+    }
   };
 }
+setInterval(kilitIsaret, 15000);
 function seviyeler() {
   const p = P(), n = TOP(), ok = Object.values(p.coz).filter((x) => x === "ok").length, ip = Object.values(p.coz).filter((x) => x === "ip").length;
   const btn = (i) => { const c = p.coz[i]; return `<button type="button" data-i="${i}" class="${c === "ok" ? "ok" : c === "ip" ? "ip" : ""}${i === p.i ? " cur" : ""}"${i > p.acik ? " disabled" : ""}>${i + 1}${c === "ip" ? "<i>💡</i>" : i > p.acik ? "<i>🔒</i>" : ""}</button>`; };
