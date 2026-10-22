@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="tr">
 <head>
-<meta name="theme-color" content="#1c1c1c">
+<meta name="theme-color" content="#000000">
 <meta charset="utf-8">
 <link rel="icon" type="image/png" href="img/icon.png">
 <link rel="apple-touch-icon" href="img/icon.png">
@@ -22,21 +22,23 @@
 <meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
 <style>
   /* Sayı Bilmecesi: 80 seviye (1–40 zor, 41–80 Gizli Kural) + İşlem Bulmacası (30). Bilmeceler bu sayfada. */
-  :root { --bg: #1c1c1c; --card: #232323; --edge: #2e2e2e; --key: #191919; --ink: #e8e8e8; --dim: #8d8d8d; --ok: #3fc283; --bad: #ef6a4c; --gold: #e0a24f; }
+  :root { --bg: #000; --card: #0d0d0d; --edge: #262626; --key: #161616; --ink: #e8e8e8; --dim: #8d8d8d; --ok: #3fc283; --bad: #ef6a4c; --gold: #e0a24f; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); }
   body { font-family: Roboto, "Helvetica Neue", system-ui, -apple-system, "Segoe UI", sans-serif; font-weight: 300; max-width: 480px; margin: 0 auto; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; padding: 0 12px calc(10px + env(safe-area-inset-bottom)); user-select: none; -webkit-user-select: none; }
   .top { display: flex; align-items: center; gap: 10px; height: 62px; flex: none; }
   .top a, .top > button { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; background: none; border: 0; color: var(--ink); text-decoration: none; cursor: pointer; padding: 0; }
   .mod { flex: 1; display: flex; justify-content: center; }
-  .mod div { display: inline-flex; border: 1px solid #3a3a3a; border-radius: 4px; overflow: hidden; }
+  .mod div { display: inline-flex; border: 1px solid #2c2c2c; border-radius: 999px; overflow: hidden; padding: 3px; background: #0d0d0d; }
   .mod button { border: 0; background: none; color: var(--dim); font-family: inherit; font-weight: 300; font-size: 15px; letter-spacing: .5px; padding: 8px 16px; cursor: pointer; }
-  .mod button.on { background: #e8e8e8; color: #1c1c1c; font-weight: 400; }
-  .stage { flex: 1; min-height: 320px; background: var(--card); border: 1px solid var(--edge); border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 34px 10px 18px; position: relative; overflow: hidden; }
+  .mod button { border-radius: 999px; } .mod button.on { background: var(--gold); color: #000; font-weight: 500; }
+  .stage { flex: 1; min-height: 320px; background: var(--card); border: 1px solid var(--edge); border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 44px 10px 18px; position: relative; overflow: hidden; }
   /* Masada belli belirsiz Sadolayn imzası (diğer oyunlarda olduğu gibi) */
   .stage::before { content: ""; position: absolute; left: 12%; right: 12%; bottom: 10px; height: 18%; background: url("img/logo.png") center / contain no-repeat; opacity: .04; filter: grayscale(1) brightness(3); pointer-events: none; }
-  .sv { position: absolute; left: 14px; top: 10px; font-size: 14px; color: var(--dim); letter-spacing: .4px; }
-  .sv b { color: var(--ink); font-weight: 400; }
+  .sv { position: absolute; left: 16px; right: 16px; top: 14px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--dim); letter-spacing: .3px; }
+  .sv .bar { flex: 1; height: 4px; border-radius: 4px; background: #222; overflow: hidden; }
+  .sv .bar i { display: block; height: 100%; width: var(--pr, 0%); background: var(--gold); border-radius: 4px; }
+  .sv b { color: var(--gold); font-weight: 500; }
   .stage.shake { animation: shake .35s; }
   @keyframes shake { 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
   .pz { width: 100%; text-align: center; font-weight: 300; color: #e9e9e9; line-height: 1.2; position: relative; }
@@ -81,20 +83,21 @@
   .done p { margin: 0; color: #bdbdbd; font-size: 16px; line-height: 1.5; max-width: 320px; }
   .done button { margin-top: 10px; min-width: 180px; height: 50px; border-radius: 4px; border: 1px solid #444; background: #191919; color: var(--ink); font-weight: 300; font-size: 18px; font-family: inherit; letter-spacing: 1px; cursor: pointer; }
   /* Alt panel */
-  .pad { flex: none; margin-top: 10px; background: var(--card); border: 1px solid var(--edge); border-radius: 4px; padding: 8px; display: grid; gap: 7px; }
-  .row1 { display: grid; grid-template-columns: 2fr 1fr 2fr; gap: 7px; }
-  .ans { height: 52px; background: var(--key); border-radius: 3px; display: flex; align-items: center; padding: 0 6px 0 12px; font-size: 24px; overflow: hidden; }
+  .pad { flex: none; margin-top: 10px; display: grid; gap: 8px; }
+  .ans { height: 54px; background: transparent; border-bottom: 2px solid var(--gold); display: flex; align-items: center; padding: 0 4px 0 48px; font-size: 30px; overflow: hidden; text-align: center; }
   .ans span { flex: 1; white-space: nowrap; overflow: hidden; }
-  .ans span:empty::before { content: "Cevap"; color: #555; font-size: 21px; }
+  .ans span:empty::before { content: "Cevabın"; color: #555; font-size: 20px; }
   .ans.isl span:empty::before { content: "Kutu seç"; font-size: 16px; }
   .ans.bad { box-shadow: inset 0 0 0 1.5px var(--bad); }
   .ans button { width: 36px; height: 36px; border: 0; background: none; color: #bbb; cursor: pointer; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
-  .k { height: 52px; border: 0; border-radius: 3px; background: var(--key); color: var(--ink); font-weight: 300; font-size: 22px; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
-  .k:active { background: #2a2a2a; }
-  .k.ent { font-size: 18px; letter-spacing: 1.5px; }
-  #hint.acik { color: var(--gold); }
+  .k { height: 50px; border: 1px solid #222; border-radius: 14px; background: var(--key); color: var(--ink); font-weight: 300; font-size: 22px; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+  .k:active { background: #262626; }
+  .k.ent { background: var(--gold); border-color: var(--gold); color: #000; }
+  .k.ent:active { filter: brightness(.85); }
+  #hint { color: var(--gold); }
+  #hint.acik { background: color-mix(in srgb, var(--gold) 22%, #000); }
   #hint.kilit { opacity: .4; }
-  .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+  .keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   /* Pencereler */
   .ov { position: fixed; inset: 0; background: rgba(0,0,0,.72); display: none; overflow-y: auto; padding: 16px; z-index: 20; }
   .ov.show { display: flex; }
@@ -133,7 +136,7 @@
 <header class="top">
   <a href="oyunlar.html" aria-label="Oyunlar" title="Oyunlar"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M15 4 7 12l8 8"/></svg></a>
   <div class="mod"><div id="mod"><button type="button" data-m="b">Bilmece</button><button type="button" data-m="i">İşlem</button></div></div>
-  <button type="button" id="lvBtn" aria-label="Seviyeler" title="Seviyeler"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3.5" y="3.5" width="17" height="17"/><path d="M12 3.5v17M3.5 12h17"/></svg></button>
+  <button type="button" id="lvBtn" aria-label="Seviyeler" title="Seviyeler"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="5" r="1.9"/><circle cx="12" cy="5" r="1.9"/><circle cx="19" cy="5" r="1.9"/><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/><circle cx="5" cy="19" r="1.9"/><circle cx="12" cy="19" r="1.9"/><circle cx="19" cy="19" r="1.9"/></svg></button>
 </header>
 <main class="stage" id="stage">
   <div class="sv" id="sv"></div>
@@ -142,9 +145,9 @@
 </main>
 <section class="pad">
   <div class="row1">
-    <div class="ans" id="ans"><span id="val"></span><button type="button" id="del" aria-label="Sil"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div>
-    <button class="k" type="button" id="hint" aria-label="İpucu"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V17h5v-1.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/><path d="M12 0.5v1.2M3.5 4l.9.9M20.5 4l-.9.9M1.5 11h1.2M21.3 11h1.2"/></svg></button>
-    <button class="k ent" type="button" id="ent">TAMAM</button>
+    <div class="ans" id="ans"><span id="val"></span><button type="button" id="del" aria-label="Sil"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M21 5H9l-6 7 6 7h12z"/><path d="m11 9 6 6m0-6-6 6"/></svg></button></div>
+    <button class="k" type="button" id="hint" aria-label="İpucu"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.3a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.4-2.8 4.2"/><circle cx="12" cy="17.6" r=".6" fill="currentColor"/></svg></button>
+    <button class="k ent" type="button" id="ent" aria-label="Tamam"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12.5 9.5 18 20 6.5"/></svg></button>
   </div>
   <div class="keys" id="keys"></div>
 </section>
@@ -339,7 +342,7 @@ function ciz() {
   $("hint").classList.toggle("acik", !!P().ip[P().i]);
   kilitIsaret();
   const p = P();
-  $("sv").innerHTML = ST.mod === "i" ? `İşlem <b>${p.i + 1}</b> / ${ISL.length}` : `Seviye <b>${p.i + 1}</b> / ${SEV.length}${p.i >= 40 ? " · Gizli Kural" : ""}`;
+  $("sv").innerHTML = `<span>${ST.mod === "i" ? "İşlem" : p.i >= 40 ? "Gizli Kural" : "Bilmece"}</span><span class="bar"><i style="--pr:${((p.i + 1) / TOP()) * 100}%"></i></span><span><b>${p.i + 1}</b> / ${TOP()}</span>`;
   if (ST.mod === "i") { dol = {}; kontrol = null; sec = null; return islemCiz(); }
   const L = SEV[p.i], W = Math.min(innerWidth, 480) - 60;
   let h = "";
@@ -520,7 +523,7 @@ function bitti() {
 }
 
 // ---------- Tuşlar ----------
-$("keys").innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<button class="k" type="button" data-k="${n}">${n}</button>`).join("");
+{ const K = $("keys"), b = (n) => `<button class="k" type="button" data-k="${n}">${n}</button>`; K.innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(b).join(""); K.append($("hint")); K.insertAdjacentHTML("beforeend", b(0)); K.append($("ent")); }
 $("keys").onclick = (e) => { const b = e.target.closest("[data-k]"); if (b) bas(b.dataset.k); };
 $("del").onclick = sil;
 let basT; $("del").onpointerdown = () => { basT = setTimeout(() => { if (ST.mod === "i") { dol = {}; kontrol = null; islemCiz(); } else { val = ""; goster(); } }, 550); };
