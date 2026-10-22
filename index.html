@@ -70,7 +70,8 @@
   .ysSer a { display: inline-flex; align-items: center; padding: 2px 0; font-size: 12.5px; color: #e9dcc0; text-decoration: none; }
   .ysSer a b { color: #f3d38a; font-weight: 700; margin: 0 4px; }
   .ysSer a::after { content: "◆"; margin: 0 12px; color: #6b5222; font-size: 9px; }
-  .ysSer .ysNot { font-size: 11px; color: #8a7a5e; margin-right: 34px; }
+  .ysSer .ysNot { font-size: 11px; color: #8a7a5e; }
+  .ysSer .ysSon { margin-right: 34px; }
   @keyframes ysKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) { .ysSer { animation: none; } .ysYol { overflow-x: auto; -webkit-mask-image: none; mask-image: none; } .ysEt i { animation: none; } }
   /* ===== PPK (TCMB faiz kararı) kayan yazının başında: 2 gün önce uyarı, karar günü 14:15'ten sonra karar ===== */
@@ -763,22 +764,53 @@
 })();
 </script>
 <script>
-// "YENİ" şeridi: yalnızca isbank.com.tr ya da İş Bankası resmi YouTube kanalından teyit edilen yeni ürün ve kampanyalar (haber sitesi başlıkları akıtılmaz). [simge, ad, kısa not, link, son tarih ("" = süresiz)]
-// Kampanyalar son tarihten sonra kendiliğinden düşer. Bilim Fabrikası'nın isbank.com.tr sayfası açılınca link oraya alınacak.
+// "YENİ" şeridi, iki kaynak:
+//  1) YENI: isbank.com.tr ya da İş Bankası resmi YouTube kanalından teyit edilen ürün ve kampanyalar (✓, resmi sayfasına gider)
+//  2) data/haberler.json "isbank" haberleri: banka sitesi geç kalabildiği için. Sadece yeni ürün/hizmet duyuruları alınır
+//     (kullanıma sundu, başlattı, tanıttı…); promosyon, tık tuzağı, büyük harfli, soru-ünlemli başlıklar elenir.
+//     Aynı konudaki haberlerden yalnız biri, teyitli bir ürünle aynı konudaysa hiçbiri gösterilir. En fazla 3 haber, son 7 gün.
 (function () {
+  // [simge, ad, kısa not, link, son tarih ("" = süresiz), haberlerde aynı konuyu yakalayan kelimeler]
   const YENI = [
-    ["🌾", "Çiftçi Kadın İmece Kart", "kadın üreticilere özel", "https://www.isbank.com.tr/is-ticari/ciftci-kadin-imece-kart", ""],
-    ["🔬", "Bilim Fabrikası", "çocuklara ücretsiz bilim platformu", "https://www.youtube.com/watch?v=7ku--fEEUW8", ""],
-    ["🛒", "Market'e 1.000 TL MaxiPuan", "31 Ekim'e kadar", "https://www.isbank.com.tr/kampanyalar/maximumdan-market-alisverislerinize-1000lira-maxipuan-kampanyasi", "2026-10-31"],
-    ["🤝", "Arkadaşını öner", "ikinize de 500 TL MaxiPuan · 31 Ekim'e kadar", "https://www.isbank.com.tr/kampanyalar/is-bankasini-arkadasiniza-onerin-maxipuan-kazanin", "2026-10-31"],
+    ["🌾", "Çiftçi Kadın İmece Kart", "kadın üreticilere özel", "https://www.isbank.com.tr/is-ticari/ciftci-kadin-imece-kart", "", /imece|kadın üretici|üretici kadın|çiftçi kadın|kadınlara/],
+    ["🔬", "Bilim Fabrikası", "çocuklara ücretsiz bilim platformu", "https://www.youtube.com/watch?v=7ku--fEEUW8", "", /bilim fabrika|öğrenme platform|eğitim platform|bilim atölye/],
+    ["🛒", "Market'e 1.000 TL MaxiPuan", "31 Ekim'e kadar", "https://www.isbank.com.tr/kampanyalar/maximumdan-market-alisverislerinize-1000lira-maxipuan-kampanyasi", "2026-10-31", /market/],
+    ["🤝", "Arkadaşını öner", "ikinize de 500 TL MaxiPuan · 31 Ekim'e kadar", "https://www.isbank.com.tr/kampanyalar/is-bankasini-arkadasiniza-onerin-maxipuan-kazanin", "2026-10-31", /arkadaş/],
   ].filter((x) => !x[4] || new Date() <= new Date(x[4] + "T23:59:59"));
   const kutu = document.getElementById("yeniS"), ser = document.getElementById("ysSer");
-  if (!YENI.length) return;
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-  const tur = YENI.map(([e, ad, not, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("") + `<span class="ysNot">kaynak: İş Bankası ↗</span>`;
-  ser.innerHTML = tur + tur; // iki tur yan yana: kesintisiz döngü
-  ser.style.setProperty("--sure", Math.max(28, YENI.length * 10) + "s");
-  kutu.hidden = false;
+  const kucuk = (t) => t.toLocaleLowerCase("tr");
+  const YENILIK = /kullanıma (sun|açıl)|başlat|tanıttı|hayata geçir|devreye (al|gir)|yeni (ürün|hizmet|kart|uygulama|özellik|platform)|dönem\b|lansman|piyasaya sür/;
+  const ELE = /promosyon|maaş|maraton|ne zaman|kaç tl|ne kadar|ucuza|satılık|icra|ihale|hisse|borsa|temettü|faiz oran|şube.*(kapan|açıl)|dolandır|ceza|dava|soruşturma/;
+  const kelimeler = (t) => new Set(kucuk(t).replace(/[^a-zçğıöşü0-9 ]/g, " ").split(/\s+/).filter((w) => w.length > 4 && !/^(bankas|türki|iş|özel)/.test(w)));
+  function haberSec(L) {
+    const hafta = Date.now() - 7 * 864e5, secilen = [], kumeler = [];
+    for (const h of L || []) {
+      const t = String(h.t || "").replace(/\s+-\s+[^-]+$/, "").trim(), k = kucuk(t);
+      if (!t || !h.u || (h.d && new Date(h.d) < hafta)) continue;
+      if (!YENILIK.test(k) || ELE.test(k)) continue;
+      const harf = t.replace(/[^A-Za-zÇĞİÖŞÜçğıöşü]/g, ""), buyuk = harf.replace(/[^A-ZÇĞİÖŞÜ]/g, "").length;
+      if (harf.length && buyuk / harf.length > 0.45) continue; // BÜYÜK HARFLİ başlık
+      if (/[!?]/.test(t)) continue; // ünlemli/sorulu tık tuzağı
+      if (YENI.some((x) => x[5] && x[5].test(k))) continue; // teyitli üründe zaten var
+      const K = kelimeler(t);
+      if (kumeler.some((M) => { let o = 0; K.forEach((w) => M.has(w) && o++); return o >= 2 || o / Math.max(1, Math.min(K.size, M.size)) > 0.4; })) continue;
+      kumeler.push(K); secilen.push({ t, s: h.s || "", u: h.u });
+      if (secilen.length >= 3) break;
+    }
+    return secilen;
+  }
+  function ciz(haber) {
+    const resmi = YENI.map(([e, ad, not, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("");
+    const hb = haber.map((h) => `<a href="${esc(h.u)}" target="_blank" rel="noopener">📰<b>${esc(h.t)}</b><span class="ysNot">${esc(h.s)}</span></a>`).join("");
+    if (!resmi && !hb) return;
+    const tur = resmi + hb + `<span class="ysNot ysSon">kaynak: İş Bankası ve haberler ↗</span>`;
+    ser.innerHTML = tur + tur; // iki tur yan yana: kesintisiz döngü
+    ser.style.setProperty("--sure", Math.max(28, (YENI.length + haber.length * 1.6) * 10) + "s");
+    kutu.hidden = false;
+  }
+  ciz([]);
+  Ortak.json("data/haberler.json").then((d) => { const h = haberSec(d && d.cats && d.cats.isbank); if (h.length) ciz(h); }).catch(() => {});
 })();
 </script>
 </body>
