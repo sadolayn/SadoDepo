@@ -976,10 +976,10 @@ function calcExtra(P, r, g, start) {
   if (!P || !g || !r2) { $("m2_out").textContent = "–"; rows("m2_rows", []); $("m2_note").textContent = ""; }
   else {
     const ours = netFor(P, r, g, start, sMan), theirs = netFor(P, r2, g2, start, sMan), diff = theirs - ours;
-    $("m2_label").textContent = diff > 0 ? "Rakip daha fazla kazandırıyor" : "Bizim teklif daha iyi";
+    $("m2_label").textContent = diff > 0 ? "Rakip daha fazla kazandırıyor" : "Banka teklifi daha iyi";
     $("m2_out").textContent = (diff > 0 ? "+" : "") + tl(diff);
     const list = [
-      [`Bizim net (%${nfx(r * 100)} · ${g} gün)`, tl(ours)],
+      [`Banka net (%${nfx(r * 100)} · ${g} gün)`, tl(ours)],
       [`Rakip net (%${nfx(r2 * 100)} · ${g2} gün)`, tl(theirs)],
       ["Fark (vade başına)", tl(Math.abs(diff)), diff > 0 ? "neg" : "pos"],
       ["Günlük fark", tl(Math.abs(diff) / Math.max(g, g2))],
@@ -2249,7 +2249,7 @@ function calcVergiPlan(today) {
     const L = dayDiff(today, e.d);
     $("v_msg").value = `Sayın müşterimiz,\n${e.n} için son ödeme günü ${fdtw(e.d)} ${e.d.getFullYear()} (${L === 0 ? "bugün" : L + " gün kaldı"}).\n` +
       (n > 1 ? `Vergi ödemenizi kredi kartınızla ${n} taksitte${r ? "" : ", faizsiz olarak"} aylık ${tl(taksit)} şeklinde yapabilirsiniz.\n` : `Ödemenizi şubemizden, internet ve mobil bankacılıktan kolayca yapabilirsiniz.\n`) +
-      `Son günden sonra her ay için %${nfx(GZ_AYLIK)} gecikme zammı uygulanmaktadır.\nBilgi ve işlem için bize ulaşabilirsiniz.`;
+      `Son günden sonra her ay için %${nfx(GZ_AYLIK)} gecikme zammı uygulanmaktadır.\nBilgi ve işlem için şubenize ulaşabilirsiniz.`;
   } else $("v_msg").value = "";
 }
 function renderVergiCal(today, end, all) {
