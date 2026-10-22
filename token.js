@@ -1,10 +1,10 @@
 // Token — Batak, King ve Balayı King'de ortak bakiye. (Solitaire'de Token yok; orada dilek tutulur.)
 // Bakiye "batakMP" anahtarında durur, böylece Batak'taki eski bakiye korunur. 1.000 Token ile başlanır.
-// Oyun başında Token konur; kazanan masa ücreti olarak masadaki toplamın %1'ini öder.
+// Oyun başında Token konur; kazanan oyun payı olarak masadaki toplamın %1'ini öder.
 // Token biterse 1 gün sonra İş Bankası sorusu gelir (isq.js); doğru cevap 1.000 Token kazandırır.
 // Kullanım:
 //   Token.bakiye() · Token.fmt(n) · Token.yeter() · Token.koy(n) → true/false
-//   Token.secici(kok, oyun) → bahis seçicisini kökün içine çizer; .deger() seçili tutarı verir
+//   Token.secici(kok, oyun) → puan seçicisini kökün içine çizer; .deger() seçili tutarı verir
 //   Token.sonuc(oyun, konan, kisi, kat) → ödemeyi yapar (kat: 0 kaybetti, 1 iade, 2/3 kazandı), { pay, fee, durum, html }
 //   Token.kilit(modal, { goster, devam }) → Token bittiyse bekleme ekranı ya da İş Bankası sorusu
 (function () {
@@ -40,12 +40,12 @@
   document.head.appendChild(css);
 
   const secenekler = () => { yukle(); return BAHIS.filter((v) => v <= MP.bal); };
-  // Bahis seçicisi: oyunun son seçtiği tutar hatırlanır
+  // Puan seçicisi: oyunun son seçtiği tutar hatırlanır
   function secici(kok, oyun) {
     const L = secenekler(), son = oku("tokenBahis", {});
     let v = L.includes(son[oyun]) ? son[oyun] : L.includes(100) ? 100 : L[0] || 0;
     kok.innerHTML = `<div class="tkBal"><span>🪙 Bakiyen</span><b>${fmt(MP.bal)} Token</b></div>
-      <div class="tkRow"><span>Masaya koy</span><div class="tkStep"><button type="button" data-d="-1" aria-label="Azalt">‹</button><b></b><button type="button" data-d="1" aria-label="Artır">›</button></div></div>`;
+      <div class="tkRow"><span>Puan koy</span><div class="tkStep"><button type="button" data-d="-1" aria-label="Azalt">‹</button><b></b><button type="button" data-d="1" aria-label="Artır">›</button></div></div>`;
     const b = kok.querySelector(".tkStep b"), [ge, il] = kok.querySelectorAll(".tkStep button");
     const sync = () => { b.textContent = fmt(v); ge.disabled = L.indexOf(v) <= 0; il.disabled = L.indexOf(v) >= L.length - 1; if (api.onChange) api.onChange(v); };
     const api = { deger: () => v, onChange: null, sync };
@@ -59,12 +59,12 @@
     yukle();
     if (!konan) return { pay: 0, fee: 0, durum: "yok", html: "" };
     const masa = konan * kisi, durum = kat > 1 ? "kazandi" : kat === 1 ? "berabere" : "kaybetti";
-    const ucret = Math.max(1, Math.round(masa * FEE)); // masa ücreti: oyunu kim kazanırsa ondan alınır
+    const ucret = Math.max(1, Math.round(masa * FEE)); // oyun payı: oyunu kim kazanırsa ondan alınır
     let pay = konan * kat, fee = 0;
     if (durum === "kazandi") { fee = ucret; pay -= fee; }
     MP.bal += pay; if (MP.bal >= BAHIS[0]) MP.empty = 0; save();
     const K = oku("tokenKasa", {}); K[oyun] = K[oyun] || { oyun: 0, ucret: 0 }; K[oyun].oyun++; K[oyun].ucret += ucret; yaz("tokenKasa", K);
-    const t = durum === "kazandi" ? `🎉 <b>+${fmt(pay)}</b> Token kazandın!<br><small style="opacity:.75">Masa ücreti (%1): −${fmt(fee)} Token</small>`
+    const t = durum === "kazandi" ? `🎉 <b>+${fmt(pay)}</b> Token kazandın!<br><small style="opacity:.75">Oyun payı (%1): −${fmt(fee)} Token</small>`
       : durum === "berabere" ? `Berabere: ${fmt(konan)} Token iade edildi.` : `Bu oyunda ${fmt(konan)} Token kaybettin.`;
     return { pay, fee, ucret, masa, durum, html: `<div class="tkBox">${t}<br>🪙 Bakiye: <b>${fmt(MP.bal)}</b> Token</div>` };
   }

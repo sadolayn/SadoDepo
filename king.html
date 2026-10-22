@@ -1064,7 +1064,7 @@ function showRules(resume) {
   const stake = resume && G && G.stake;
   // Kısa pencere: Token ve Başla üstte/altta hep görünür; isimler ve kurallar açılır kutuda
   $("modal").innerHTML = `<h2>👑 King</h2>
-    ${resume ? (stake ? `<div class="tkBox">🪙 Masada <b>${Token.fmt(stake)}</b> Token var; oyunu bitirince sonucunu alırsın.</div>` : "") : '<div id="tkSec"></div><div class="tkNot">Tek başına birinci olursan <b>3 katı</b> · birincilik paylaşılırsa iade · kazanandan %1 masa ücreti. Bakiyen bütün kart oyunlarında ortak.</div>'}
+    ${resume ? (stake ? `<div class="tkBox">🪙 Ortada <b>${Token.fmt(stake)}</b> Token var; oyunu bitirince sonucunu alırsın.</div>` : "") : '<div id="tkSec"></div><div class="tkNot">Tek başına birinci olursan <b>3 katı</b> · birincilik paylaşılırsa iade · kazanandan %1 oyun payı. Bakiyen bütün kart oyunlarında ortak.</div>'}
     <details class="mDet"><summary>👥 Oyuncu isimleri</summary>${ISIM.html([["ben", "Sen", "Senin adın"], ["sag", "Sadosan", "Sağındaki"], [null, "Sadolayn", "Karşındaki"], ["sol", "Sadocan", "Solundaki"]])}</details>
     <details class="mDet"><summary>📖 Kurallar</summary><ul class="rules">
       <li>20 el oynanır. Her oyuncu sırayla 5 kez oyun seçer: <b>2 koz</b> ve <b>3 ceza</b>. Her ceza oyunda toplam 2 kez oynanabilir.</li>
@@ -1073,7 +1073,7 @@ function showRules(resume) {
       <li><b>Koz:</b> Aldığın her el +50. Her oyuncunun <b>ilk seçimi koz olamaz</b>; ilk turda herkes ceza seçer.</li>
       <li>Renge uymak zorunlu. Koz oyununda renk yoksa koz atılır ve yükseltmek gerekir.</li>
       <li>Ceza oyunlarında renk yoksa ceza kartı varsa onu atmak zorundasın (kupa, kız, erkek, rifki).</li>
-      <li><b>Token:</b> Oyuna Token koyarak başlarsın. Tek başına birinci olursan koyduğunun <b>3 katını</b> alırsın; birinciliği paylaşırsan Token'ın iade edilir. Kazanandan masa ücreti olarak masadaki toplamın %1'i alınır. Bakiyen Batak ve Balayı King'le ortak; biterse 1 gün sonra İş Bankası sorusu gelir.</li>
+      <li><b>Token:</b> Oyuna Token koyarak başlarsın. Tek başına birinci olursan koyduğunun <b>3 katını</b> alırsın; birinciliği paylaşırsan Token'ın iade edilir. Kazanandan oyun payı olarak masadaki toplamın %1'i alınır. Bakiyen Batak ve Balayı King'le ortak; biterse 1 gün sonra İş Bankası sorusu gelir.</li>
     </ul></details>
     <div class="tkAlt"><button class="btn" id="start">${resume ? "Devam et" : "Başla"}</button>
     ${resume ? `<button class="btn" id="fresh" style="margin-top:8px;background:transparent;color:var(--muted);border-color:var(--line)">Yeni oyun başlat</button>${stake ? `<p style="font-size:12px;margin:8px 0 0">Yeni oyunda yarım kalan ${Token.fmt(stake)} Token geri gelmez.</p>` : ""}` : ""}</div>`;
