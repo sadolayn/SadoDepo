@@ -1,6 +1,6 @@
 // Oyunlar sayfası giriş kapısı (oyunsaat.js ile birlikte çalışır)
 // Yoğun saat (hafta içi 08:45–12:30, 13:30–18:00):
-//   bilgisayar → kapalı uyarısı · telefon → İş Bankası sorusu; yanlışta 5 dakika bekleme, doğruysa yoğun saat bitene kadar serbest
+//   bilgisayar → kapalı uyarısı · telefon → İş Bankası sorusu; yanlışta 5 dakika bekleme, her oyun girişinde yeniden sorulur
 // Diğer saatler ve tatiller: arada bir sürpriz soru; bilemeyen de oyuna girer, bekleme yok
 // Oyun sayfasına doğrudan girilirse oyunsaat.js buraya ?oyun=<sayfa> ile yollar; soru kendiliğinden açılır
 (function () {
@@ -106,7 +106,6 @@
     if (st.until > O.simdi() + BEKLE) { st.until = O.simdi() + BEKLE; save(st); } // eski 1 saatlik beklemeler 5 dakikaya iner
     if (O.kapali()) {
       if (O.masaustu()) return showMasa();
-      if (O.gecisVar()) return go(href);
       if (st.until && O.simdi() < st.until) return showLock(href);
       return soru(href, true);
     }

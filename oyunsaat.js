@@ -1,6 +1,6 @@
 // Oyun saatleri. "Yoğun saat": hafta içi 08:45–12:30 ve 13:30–18:00 (resmî tatiller hariç).
 // Yoğun saatte: bilgisayardan oyunlar kapalı; telefondan girişte İş Bankası sorusu (oyunquiz.js), yanlışta 5 dakika bekleme.
-// Doğru cevap, yoğun saat bitene kadar geçerli bir geçiş verir (localStorage "oyunGecis").
+// Doğru cevap tek kullanımlık, 2 dakikalık bir geçiş verir (localStorage "oyunGecis"): her oyun girişinde yeniden sorulur.
 // Saat telefondan değil sunucudan (sayfanın Date başlığı) alınır; cihaz saatini değiştirmek işe yaramaz.
 // Oyun sayfaları: <script src="oyunsaat.js" data-kilit="sayfa">  ·  hesap.html Bulmaca: data-kilit="bulmaca"
 (function () {
@@ -37,8 +37,10 @@
     if (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return false; // iPadOS masaüstü kılığında
     return true;
   }
-  function gecisVar() { try { return +localStorage.getItem(GKEY) > simdi(); } catch (e) { return false; } }
-  function gecisVer() { try { localStorage.setItem(GKEY, String(acilis())); } catch (e) {} }
+  // geçiş: 2 dk ömürlü; cihaz-sunucu saat farkları için birkaç dakika pay
+  function gecisVar() { try { var g = +localStorage.getItem(GKEY), t = simdi(); return g > t - 3 * 60000 && g <= t + 5 * 60000; } catch (e) { return false; } }
+  function gecisVer() { try { localStorage.setItem(GKEY, String(simdi() + 2 * 60000)); } catch (e) {} }
+  function gecisKullan() { var v = gecisVar(); gecisSil(); return v; }
   function gecisSil() { try { localStorage.removeItem(GKEY); } catch (e) {} }
 
   // Sunucu saati: aynı sitedeki bu dosyaya HEAD isteği (service worker GET dışını geçirir)
@@ -101,13 +103,15 @@
         pan.insertBefore(el, pan.firstChild);
       }
     };
+    var izinli = false; // bu açılışta geçiş kullanıldı
+    var saatHazir = false; // telefonda karar sunucu saati gelince verilir
     var durum = ""; // "" serbest · "masa" bilgisayar kilidi · "soru" telefonda soru gerekli
     // Bilgisayar: her saniye bakılır (yoğun saat başlarsa kapanır, bitince açılır)
     // Telefon: yalnızca açılışta bakılır; oynanan oyun yarıda kesilmez
     var bak = function (ilk) {
       var k = kapali(), yeni = "";
       if (k && masaustu()) yeni = "masa";
-      else if (k && !gecisVar() && (ilk || durum === "soru")) yeni = "soru";
+      else if (k && !izinli && saatHazir && (ilk || durum === "soru")) { if (gecisKullan()) izinli = true; else yeni = "soru"; }
       if (yeni !== durum) {
         durum = yeni;
         if (yeni === "masa") koy(masaKutu(mod === "sayfa"));
@@ -118,12 +122,12 @@
       }
       if (durum === "masa" && el) { var cd = el.querySelector(".os-cd"); if (cd) cd.textContent = sure(acilis() - simdi()); }
     };
-    var bas = function () { bak(true); hazir.then(function () { bak(true); }); setInterval(function () { bak(false); }, 1000); };
+    var bas = function () { bak(true); hazir.then(function () { saatHazir = true; bak(true); }); setInterval(function () { bak(false); }, 1000); };
     if (document.body && mod === "sayfa") bas();
     else if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bas);
     else bas();
   }
 
   window.OyunSaat = { kapali: kapali, acilis: acilis, simdi: simdi, hazir: hazir, sure: sure, masaustu: masaustu,
-    gecisVar: gecisVar, gecisVer: gecisVer, gecisSil: gecisSil, masaMetin: MASA_METIN };
+    gecisVar: gecisVar, gecisVer: gecisVer, gecisSil: gecisSil, gecisKullan: gecisKullan, masaMetin: MASA_METIN };
 })();
