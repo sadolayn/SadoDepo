@@ -106,6 +106,7 @@
 <link rel="stylesheet" href="theme.css">
 </head>
 <body data-ses-dugmesi="yok">
+<script src="oyunsaat.js" data-kilit="sayfa"></script>
 <header>
   <a class="home" href="oyunlar.html" title="Oyunlar" aria-label="Oyunlar">🎮</a>
   <h1>💞 Balayı King</h1>
@@ -270,7 +271,7 @@ function botPick(p) {
 function setStatus(t) { $("status").innerHTML = t ? `<span>${t}</span>` : ""; }
 function gameName() { return game ? (GK[game].ad + (game !== "NT" ? " " + game : "") + ` ×${GK[game].x}`) : "–"; }
 function renderInfo() {
-  $("info").innerHTML = `<span style="white-space:nowrap">El: <b>${Math.min(G.round + 1, DEALS)}/${DEALS}</b>${G.stake ? `<small style="font-size:11px"> · 🪙${Token.fmt(G.stake)}</small>` : ""}</span><br>${phase === "play" || phase === "end" ? `<b>${game === "NT" ? "Kozsuz" : "Koz " + game}</b> ×${GK[game].x}` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
+  $("info").innerHTML = `<span style="white-space:nowrap">El: <b>${Math.min(G.round + 1, DEALS)}/${DEALS}</b>${G.stake ? `<small style="font-size:11px"> · ⭐${Token.fmt(G.stake)}</small>` : ""}</span><br>${phase === "play" || phase === "end" ? `<b>${game === "NT" ? "Kozsuz" : "Koz " + game}</b> ×${GK[game].x}` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
   $("scores").innerHTML = G.scores.map((s, p) => `<div>${NAMES[p]}<b class="${s > G.scores[1 - p] ? "pos" : ""}">${s}</b></div>`).join("");
 }
 function renderWho() {
@@ -426,7 +427,7 @@ function endRound() {
   G.history.push({ el: G.round + 1, secen: chooser, oyun: game, tricks: [...tricksWon], deltas });
   G.round++;
   if (G.round >= DEALS && !G.sonuc) {
-    // Token: kazanan koyduğunun 2 katını alır; berabere biterse iade (sayfa kapansa da kaybolmasın diye hemen ödenir)
+    // Yıldız: kazanan koyduğunun 2 katını alır; berabere biterse iade (sayfa kapansa da kaybolmasın diye hemen ödenir)
     const [a, b] = G.scores;
     G.sonuc = Token.sonuc("balayi", G.stake || 0, 2, a > b ? 2 : a === b ? 1 : 0);
   }
@@ -454,13 +455,13 @@ function gameOver() {
   try { localStorage.removeItem("balayiGame"); } catch (e) {}
 }
 function showRules(resume) {
-  // Yeni oyun Token ister (token.js); Token bittiyse bekleme ya da İş Bankası sorusu gelir
+  // Yeni oyun Yıldız ister (token.js); Yıldız bittiyse bekleme ya da İş Bankası sorusu gelir
   const goster = () => $("overlay").classList.add("show");
   if (!resume && !Token.yeter()) return Token.kilit($("modal"), { goster, devam: () => showRules(false) });
   const stake = resume && G && G.stake;
-  // Kısa pencere: Token ve Başla üstte/altta hep görünür; isimler ve kurallar açılır kutuda
+  // Kısa pencere: Yıldız ve Başla üstte/altta hep görünür; isimler ve kurallar açılır kutuda
   $("modal").innerHTML = `<h2>💞 Balayı King</h2>
-    ${resume ? (stake ? `<div class="tkBox">🪙 Ortada <b>${Token.fmt(stake)}</b> Token var; oyunu bitirince sonucunu alırsın.</div>` : "") : '<div id="tkSec"></div><div class="tkNot">Kazanırsan <b>2 katı</b> · berabere biterse iade · kazanandan %1 oyun payı. Bakiyen bütün kart oyunlarında ortak.</div>'}
+    ${resume ? (stake ? `<div class="tkBox">⭐ Ortada <b>${Token.fmt(stake)}</b> Yıldız var; oyunu bitirince sonucunu alırsın.</div>` : "") : '<div id="tkSec"></div><div class="tkNot">Kazanırsan <b>2 katı</b> · berabere biterse iade. Bakiyen bütün kart oyunlarında ortak.</div>'}
     <details class="mDet"><summary>👥 Oyuncu isimleri</summary>${ISIM.html([["ben", "Sen", "Senin adın"], [null, "Sadolayn", "Rakibin"]])}</details>
     <details class="mDet"><summary>📖 Kurallar</summary><ul class="rules">
       <li>İki kişilik King. Her oyuncunun önünde <b>10 kapalı kart</b>, üstlerinde <b>10 açık kart</b> ve elinde <b>6 kart</b> olur (26 kart, 26 el).</li>
@@ -468,10 +469,10 @@ function showRules(resume) {
       <li>${DEALS} el oynanır. Her oyuncu sırayla seçer ve her oyunu bir kez seçebilir: <b>♣ ×1, ♦ ×2, ♥ ×3, ♠ ×4, Kozsuz ×5</b>.</li>
       <li>Aldığın her el, oyunun çarpanı kadar puan. En çok puanı toplayan kazanır.</li>
       <li>Renge uymak ve mümkünse yükseltmek zorunlu. Renk yoksa koz atılır. Koz kırılmadan kozla açılmaz.</li>
-      <li><b>Token:</b> Oyuna Token koyarak başlarsın. Kazanırsan koyduğunun <b>2 katını</b> alırsın, berabere biterse Token'ın iade edilir. Kazanandan oyun payı olarak masadaki toplamın %1'i alınır. Bakiyen Batak ve King'le ortak; biterse 1 gün sonra İş Bankası sorusu gelir.</li>
+      <li><b>Yıldız:</b> Oyuna Yıldız koyarak başlarsın. Kazanırsan koyduğunun <b>2 katını</b> alırsın, berabere biterse Yıldızın iade edilir. Bakiyen Batak ve King'le ortak; biterse 1 gün sonra İş Bankası sorusu gelir.</li>
     </ul></details>
     <div class="tkAlt"><button class="btn" id="start">${resume ? "Devam et" : "Başla"}</button>
-    ${resume ? `<button class="btn" id="fresh" style="margin-top:8px;background:transparent;color:var(--muted);border-color:var(--line)">Yeni oyun başlat</button>${stake ? `<p style="font-size:12px;margin:8px 0 0">Yeni oyunda yarım kalan ${Token.fmt(stake)} Token geri gelmez.</p>` : ""}` : ""}</div>`;
+    ${resume ? `<button class="btn" id="fresh" style="margin-top:8px;background:transparent;color:var(--muted);border-color:var(--line)">Yeni oyun başlat</button>${stake ? `<p style="font-size:12px;margin:8px 0 0">Yeni oyunda yarım kalan ${Token.fmt(stake)} Yıldız geri gelmez.</p>` : ""}` : ""}</div>`;
   goster();
   ISIM.bind($("modal"), () => { setNames(); try { renderInfo(); } catch (e) {} });
   if (resume) {
@@ -480,7 +481,7 @@ function showRules(resume) {
     return;
   }
   const sec = Token.secici($("tkSec"), "balayi");
-  sec.onChange = (v) => ($("start").textContent = `Başla · ${Token.fmt(v)} Token`); sec.sync();
+  sec.onChange = (v) => ($("start").textContent = `Başla · ${Token.fmt(v)} Yıldız`); sec.sync();
   $("start").onclick = () => {
     const v = sec.deger();
     if (!Token.koy(v)) return showRules(false);

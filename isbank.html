@@ -615,7 +615,7 @@ window.ataOyna = function (film, ozelNot, yas) {
 (function () {
   var t = new Date(), md = ("0" + (t.getMonth() + 1)).slice(-2) + "-" + ("0" + t.getDate()).slice(-2), gun = t.getFullYear() + "-" + md;
   var pzt = new Date(t.getFullYear(), t.getMonth(), t.getDate() - ((t.getDay() + 6) % 7)), hafta = pzt.getFullYear() + "-" + (pzt.getMonth() + 1) + "-" + pzt.getDate();
-  var OZEL = { "10-28": "🇹🇷 Cumhuriyet Bayramı arifesi · 29 Ekim'e hazırlanıyoruz", "10-29": "🇹🇷 Cumhuriyet Bayramımız kutlu olsun", "11-10": "🖤 10 Kasım · Saygı ve özlemle anıyoruz", "05-19": "🇹🇷 19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı kutlu olsun", "04-23": "🇹🇷 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı kutlu olsun", "08-30": "🇹🇷 30 Ağustos Zafer Bayramı kutlu olsun", "08-26": "🏛️ İş Bankası " + (t.getFullYear() - 1924) + " yaşında · 26 Ağustos 1924" };
+  var OZEL = { "10-28": "🇹🇷 Cumhuriyet Bayramı arifesi · 29 Ekim'e hazırlanıyoruz", "10-29": "🇹🇷 Cumhuriyet Bayramımız kutlu olsun", "11-10": "🖤 10 Kasım · Saygı ve özlemle anıyoruz", "05-19": "🇹🇷 19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı kutlu olsun", "04-23": "🇹🇷 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı kutlu olsun", "08-30": "🇹🇷 30 Ağustos Zafer Bayramı kutlu olsun", "08-26": "🏛️ 26 Ağustos 1924 · İş Bankası'nın kuruluş yıl dönümü (" + (t.getFullYear() - 1924) + ". yıl)" };
   var goster = false, A = {};
   try { A = JSON.parse(localStorage.getItem("ataIntro2") || "{}"); } catch (e) {}
   if (!A.ilk) goster = true;
@@ -632,7 +632,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   <div class="stick">
   <header>
     <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
-    <h1>🏛️ İş Bankası Gündemi</h1>
+    <h1>🏛️ İş Bankası Gündemi<small style="display:block;font-size:11px;font-weight:400;color:#8a8a8a;margin-top:2px;letter-spacing:.2px">kişisel derleme · resmî değildir</small></h1>
     <span style="width:52px"></span>
   </header>
   <div class="chipbar" id="chipbar"><button type="button" class="longbar" id="subeBar"><span>📊 Finansal bilgiler</span><i>·</i><span>📄 Yatırımcı sunumu</span><em id="subeNew" hidden></em></button><div class="menu" id="chips"></div><div class="nsub" id="nsub" hidden></div><div class="tfil" id="tfil" hidden></div></div>
@@ -660,7 +660,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   </div></div>
 
   <div class="disc">
-    <b>ℹ️ Bu sayfa kişisel bir projedir.</b>
+    <b>ℹ️ Bu sayfa kişisel bir projedir; resmî değildir, Türkiye İş Bankası A.Ş. ile bağı yoktur.</b>
     <p>Bilgiler kamuya açık kaynaklardan özenle derlenir ve düzenli olarak kontrol edilir. Ürün, kampanya ve koşulların en güncel ve kesin hâli için lütfen <a href="https://www.isbank.com.tr" target="_blank" rel="noopener">www.isbank.com.tr</a> ve <a href="https://www.maximum.com.tr" target="_blank" rel="noopener">www.maximum.com.tr</a> adreslerini ziyaret ediniz.</p>
     <small>Seçilmiş haberler ve kampanyalar her sabah, "Güncel" ve "Video" sekmeleri her saat otomatik güncellenir.</small>
   </div>

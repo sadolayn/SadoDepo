@@ -219,6 +219,7 @@
 <link rel="stylesheet" href="theme.css">
 </head>
 <body data-ses-dugmesi="yok">
+<script src="oyunsaat.js" data-kilit="sayfa"></script>
 <header>
   <a href="oyunlar.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Oyunlar" aria-label="Oyunlar">🎮</a>
   <h1>♠ Batak</h1>
@@ -270,23 +271,21 @@ let OPT = { eller: 7, arti3: false, yuk: true, esli: false, bahis: 100, dagilim:
 try { Object.assign(OPT, JSON.parse(localStorage.getItem("batakOpt") || "{}")); } catch (e) {}
 if (!(OPT.eller >= 1 && OPT.eller <= 20)) OPT.eller = 7;
 OPT.arti3 = false; // +3 kuralı yeni ayarlarda yok
-const FEE = 0.01; // %1 oyun payı: her oyunda ortadaki toplam Token'ın %1'i kazanandan düşülür
 // Oyun sayacı: site sahibi kaç oyun oynandığını görebilsin diye oyun özeti Google Form'a gider
 const KASA_FORM = { action: "https://docs.google.com/forms/d/e/1FAIpQLSfeuDkVXo1nk6IZ_9f7uEjXkCUF3M--PUv7cYcBwXPWe6F6gA/formResponse", mesaj: "entry.1123079006", kimden: "entry.1229018588" };
 let KASA = { oyun: 0, ucret: 0 }; try { Object.assign(KASA, JSON.parse(localStorage.getItem("batakKasa") || "{}")); } catch (e) {}
 function kasaBildir(o) {
   window.Rapor && Rapor.oyun("batak", o.sonuc === "Kazandı");
-  KASA.oyun++; KASA.ucret += o.ucret; try { localStorage.setItem("batakKasa", JSON.stringify(KASA)); } catch (e) {}
+  KASA.oyun++; try { localStorage.setItem("batakKasa", JSON.stringify(KASA)); } catch (e) {}
   try {
     const f = new FormData();
-    f.append(KASA_FORM.mesaj, `🎲 BATAK MASA | Token: ${o.token} | Masa: ${o.masa} | Oyun payı: ${o.ucret} | Sonuç: ${o.sonuc} | El: ${o.el} | ${o.esli ? "Eşli" : "Tekli"} | ${o.dag}`);
+    f.append(KASA_FORM.mesaj, `BATAK | Yıldız: ${o.token} | Sonuç: ${o.sonuc} | El: ${o.el} | ${o.esli ? "Eşli" : "Tekli"} | ${o.dag}`);
     f.append(KASA_FORM.kimden, "Batak oyun sayacı");
     fetch(KASA_FORM.action, { method: "POST", mode: "no-cors", body: f }).catch(() => {});
   } catch (e) {}
-  try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: "batak-masa-ucreti-" + o.ucret, title: "Batak masa ücreti", event: true }); } catch (e) {}
 }
-// ---------- Token ----------
-// Ortak Token modülü (token.js): bakiye Batak, King ve Balayı King'de ortak
+// ---------- Yıldız ----------
+// Ortak Yıldız modülü (token.js): bakiye Batak, King ve Balayı King'de ortak
 const MP = Token.MP, mpSave = Token.save, mpFmt = Token.fmt, BAHIS = Token.BAHIS;
 let gameStake = 0;
 // İş Bankası tarihçesi ve ürün soruları (internetten doğrulandı: Küre Ansiklopedi, Diken, isbank.com.tr, Teknoblog)
@@ -446,7 +445,7 @@ function setStatus(t) { $("status").innerHTML = t ? `<span>${t}</span>` : ""; }
 function renderInfo() {
   const k = trump ? `<b style="color:${isRed(trump) ? "var(--red)" : "var(--ink)"}">${trump} ${SUIT_NAMES[trump]}</b>` : "–";
   const i = bidder != null && contract ? `<b>${contract}</b> · ${NAMES[bidder]}` : "–";
-  $("info").innerHTML = `El: <b>${Math.max(1, roundNo)}/${OPT.eller}</b> · Koz: ${k}<br>İhale: ${i}${gameStake ? ` · 🪙 ${mpFmt(gameStake)}` : ""}`;
+  $("info").innerHTML = `El: <b>${Math.max(1, roundNo)}/${OPT.eller}</b> · Koz: ${k}<br>İhale: ${i}${gameStake ? ` · ⭐ ${mpFmt(gameStake)}` : ""}`;
   $("scores").innerHTML = OPT.esli
     ? `<div style="grid-column:span 2">${NAMES[0]} + Sadolayn<b class="${scores[0] < 0 ? "neg" : ""}">${scores[0]}</b></div><div style="grid-column:span 2">${NAMES[1]} + ${NAMES[3]}<b class="${scores[1] < 0 ? "neg" : ""}">${scores[1]}</b></div>`
     : scores.map((s, p) => `<div>${NAMES[p]}<b class="${s < 0 ? "neg" : ""}">${s}</b></div>`).join("");
@@ -680,7 +679,7 @@ function endRound() {
   setStatus("");
 }
 function showLock() {
-  // Token bitti: 1 gün bekleme, sonra İş Bankası sorusu (token.js)
+  // Yıldız bitti: 1 gün bekleme, sonra İş Bankası sorusu (token.js)
   $("modal").classList.remove("ayar");
   Token.kilit($("modal"), { goster: () => $("overlay").classList.add("show"), devam: () => showRules() });
 }
@@ -696,7 +695,7 @@ function gameOver() {
     win = order[0] === 0 ? "🎉 Kazandın!" : `${NAMES[order[0]]} kazandı`;
     rows = order.map((p, i) => `<tr><td style="text-align:left">${["🥇", "🥈", "🥉", "4."][i]} ${NAMES[p]}</td><td><b>${scores[p]}</b></td></tr>`).join("");
   }
-  // Token ödemesi (token.js): tekli birinci 3 katını, eşlide kazanan taraf 2 katını alır; beraberlikte iade
+  // Yıldız ödemesi (token.js): tekli birinci 3 katını, eşlide kazanan taraf 2 katını alır; beraberlikte iade
   let kat;
   if (OPT.esli) { const a = scores[0], b = scores[1]; kat = a > b ? 2 : a === b ? 1 : 0; }
   else { const top = Math.max(...scores), tops = scores.filter((x) => x === top).length; kat = scores[0] === top ? (tops === 1 ? 3 : 1) : 0; }
@@ -718,11 +717,11 @@ function showRules() {
   const seg = (k, opts) => `<div class="seg" data-k="${k}">${opts.map(([v, t]) => `<button type="button" data-v="${v}" class="${String(OPT[k]) === String(v) ? "on" : ""}">${t}</button>`).join("")}</div>`;
   $("modal").classList.add("ayar");
   $("modal").innerHTML = `
-    <div class="ah"><h2>♠ Masa Kur</h2><div class="aw">🎲 Oyun payı %1 · kazanan öder</div><button type="button" class="ax" id="ayarX" aria-label="Kapat">✕</button></div>
-    <div class="abal"><span>🪙 Bakiyen <small style="opacity:.6;font-size:11px">· King ve Balayı'yla ortak</small></span><b>${mpFmt(MP.bal)} Token</b></div>
+    <div class="ah"><h2>♠ Masa Kur</h2><div class="aw">⭐ Kesinti yok · yalnızca oyun içi skor</div><button type="button" class="ax" id="ayarX" aria-label="Kapat">✕</button></div>
+    <div class="abal"><span>⭐ Bakiyen <small style="opacity:.6;font-size:11px">· King ve Balayı'yla ortak</small></span><b>${mpFmt(MP.bal)} Yıldız</b></div>
     <div class="asec"><span>Oyun ayarları</span></div>
     <div class="agrid">
-      <div class="arow"><span>Token</span><div class="step"><button type="button" data-st="bahis" data-d="-1">‹</button><b id="vBahis"></b><button type="button" data-st="bahis" data-d="1">›</button></div></div>
+      <div class="arow"><span>Yıldız</span><div class="step"><button type="button" data-st="bahis" data-d="-1">‹</button><b id="vBahis"></b><button type="button" data-st="bahis" data-d="1">›</button></div></div>
       <div class="arow"><span>El dağılımı</span><div class="step"><button type="button" data-st="dagilim" data-d="-1">‹</button><b id="vDag"></b><button type="button" data-st="dagilim" data-d="1">›</button></div></div>
       <div class="arow"><span>El sayısı</span><div class="step"><button type="button" data-st="eller" data-d="-1">−</button><b id="vEl"></b><button type="button" data-st="eller" data-d="1">+</button></div></div>
       <label class="chk"><input type="checkbox" id="cEsli"><i></i><span>Eşli <small>(Sadolayn eşin)</small></span></label>
@@ -738,12 +737,12 @@ function showRules() {
       <li><b>El dağılımı:</b> Dengeli'de her oyuncuya her renkten 2–5 kart düşer, kozlar herkese benzer sayıda gelir. Rastgele'de kartlar tamamen şansa dağılır; bir oyuncuya çok koz gelebilir.</li>
       <li><b>Puan:</b> ihaleyi tutan, söz verdiği her el için 15, fazla her el için 10 puan alır; tutamayan ihale × 10 eksi yazar. Diğerleri aldıkları her el için 10 puan alır; <b>hiç el alamayan −50</b> yazar.</li>
       <li><b>Eşli:</b> karşındaki oyuncu eşindir, ellerin toplamı sayılır. İhaleyi alan eşinin kartlarını açık görür ve iki eli de o oynar.</li>
-      <li><b>Token:</b> 1.000 Token ile başlarsın. Tekli oyunda birinci olursan koyduğun Token'ın <b>3 katını</b>, eşlide tarafın kazanırsa <b>2 katını</b> alırsın. Berabere biterse Token'ın iade edilir.</li>
-      <li><b>Oyun payı:</b> ortadaki toplam Token'ın <b>%1'i</b> kazanandan düşülür. İstatistik için oyun özeti (Token, sonuç; ad gitmez) site yöneticisine iletilir.</li>
-      <li> Token biterse 1 gün sonra İş Bankası sorusu gelir; doğru cevap 1.000 Token kazandırır. Bakiyen King ve Balayı King'le ortaktır.</li>
+      <li><b>Yıldız:</b> 1.000 Yıldız ile başlarsın. Tekli oyunda birinci olursan koyduğun Yıldızın <b>3 katını</b>, eşlide tarafın kazanırsa <b>2 katını</b> alırsın. Berabere biterse Yıldızın iade edilir.</li>
+      <li>İstatistik için oyun özeti (Yıldız, sonuç; ad gitmez) site sahibine iletilir.</li>
+      <li> Yıldız biterse 1 gün sonra İş Bankası sorusu gelir; doğru cevap 1.000 Yıldız kazandırır. Bakiyen King ve Balayı King'le ortaktır.</li>
     </ul></details>
     <div class="aAlt"><button class="btn abtn" id="start">Başla</button>
-    <div class="kasa">🎲 Bu cihazda: ${KASA.oyun} oyun · toplam oyun payı ${mpFmt(KASA.ucret)} Token</div></div>`;
+    <div class="kasa">Bu cihazda: ${KASA.oyun} oyun</div></div>`;
   $("overlay").classList.add("show");
   ISIM.bind($("modal"), () => { setNames(); if (typeof render === "function") try { render(); } catch (e) {} });
   const DAG = [["dengeli", "Dengeli"], ["rastgele", "Rastgele"]];
@@ -755,7 +754,7 @@ function showRules() {
     $("cEsli").checked = OPT.esli; $("cYuk").checked = OPT.yuk; $("cKoz").checked = OPT.kozBas && OPT.esli; $("cKoz").disabled = !OPT.esli;
     $("kbWrap").classList.toggle("off", !OPT.esli);
     $("dagNote").innerHTML = OPT.dagilim === "dengeli" ? "⚖️ <b>Dengeli:</b> herkese her renkten 2–5 kart; kozlar dengeli dağılır." : "🎲 <b>Rastgele:</b> tam şans; bir oyuncuya 6–7 koz bile gelebilir.";
-    $("start").textContent = `Başla · ${mpFmt(OPT.bahis)} Token`;
+    $("start").textContent = `Başla · ${mpFmt(OPT.bahis)} Yıldız`;
   };
   $("modal").querySelectorAll("[data-st]").forEach((b) => (b.onclick = () => {
     const k = b.dataset.st, d = +b.dataset.d;

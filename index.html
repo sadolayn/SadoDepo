@@ -351,7 +351,7 @@
       const L = ["Hoş geldiniz", "Keyifli gezinmeler", ...(wd ? ["İyi çalışmalar"] : []), ONR];
       el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); else if (/kampanya/i.test(el.textContent)) location.href = "isbank.html#maximum"; });
       // Kampanya hatırlatıcısı: her ayın ilk 5 günü
-      if (new Date().getDate() <= 7) L.splice(1, 0, "📣 Ayın ilk haftası! Kampanyalara bakmayı unutmayın ›");
+      if (new Date().getDate() <= 7) L.splice(1, 0, "📣 Ayın ilk haftası: güncel kampanya derlemesi İş Bankası Gündemi'nde ›");
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       let k = 0;
       setInterval(() => { el.classList.add("fade"); setTimeout(() => { k = (k + 1) % L.length; el.textContent = L[k]; el.style.cursor = L[k] === ONR || /kampanya/i.test(L[k]) ? "pointer" : ""; el.style.color = /kampanya/i.test(L[k]) ? "#e0a24f" : ""; el.classList.remove("fade"); }, 600); }, 4500);
@@ -421,6 +421,7 @@
     <p style="font-size:11.5px;color:#8a8a8a;margin:-4px 0 8px">Yazdıkların yalnızca site sahibine ulaşır (Google Form), kimseyle paylaşılmaz; isim ve iletişim isteğe bağlıdır.</p>
     <textarea id="oneriMsg" maxlength="1500" rows="5" placeholder="Önerin…" required></textarea>
     <input id="oneriKim" maxlength="80" placeholder="Adın ya da iletişim (isteğe bağlı)" autocomplete="off">
+    <p style="font-size:11px;color:#8a8a8a;margin:4px 0 0">⚠️ İş e-postanı, müşteri bilgisi ya da kişisel veri yazma.</p>
     <div class="oneri-act"><button type="button" id="oneriKapat">Vazgeç</button><button type="submit" id="oneriGonder">Gönder</button></div>
     <div class="oneri-msg" id="oneriDurum"></div>
   </form>
@@ -515,7 +516,7 @@
 (function () {
   const $ = (id) => document.getElementById(id);
   const URL_ = "https://sadolayn.github.io/SadoDepo/";
-  const METIN = "Bunu kesinlikle denemelisin!\nBankacılık hesaplamaları, güncel İş Bankası gündemi, döviz-altın, ajanda ve keyifli oyunlar tek yerde.\nSadolayn Alerts ile seçtiğin konunun haberleri her sabah 10:00'da telefonunda. Yerler sınırlı, kaçırma.\nA❤️KLA D💙V🤍M";
+  const METIN = "Bunu kesinlikle denemelisin!\nBankacılık hesaplamaları, güncel İş Bankası gündemi, döviz-altın, ajanda ve keyifli oyunlar tek yerde.\nSadolayn Alerts ile seçtiğin konunun haberleri her sabah 10:00'da telefonunda.\nA❤️KLA D💙V🤍M";
   $("oner").onclick = async () => {
     window.Rapor && Rapor.bolum("arkadasina-oner");
     if (navigator.share) { try { await navigator.share({ title: "SADOLAYN", text: METIN, url: URL_ }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
@@ -605,7 +606,7 @@
   // [bölüm, cümle, son gün (isteğe bağlı)] — son günü geçen cümle kendiliğinden kalkar
   const bugunTR = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);
   const dizi = [
-    ["iscep", "🌍 <b class=\"yn\">YENİ</b>Yurt dışına para göndermek artık <b>dakikalar</b> sürüyor, hem de sabit ücretle. Nasıl mı? <b class=\"gir\">İş Bankası Gündemi › İşCep</b>", "2026-12-31"],
+    ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
     ["iscep", "🚀 İşCep'in <b>az bilinen süper güçleri</b> neler, biliyor musun? Hepsi ve daha fazlası <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde"],
     ["black", "🖤 Peki ya <b>İş Black</b> ve <b>İş Plus</b>? Ayrıcalıkların ayrıntısı <b class=\"gir\">İş Bankası Gündemi › İş Black · İş Plus</b> bölümünde"],
   ];

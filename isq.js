@@ -30,7 +30,6 @@ const ISQ_ALL = [].concat(
     ["İş Bankası hangi şehirde kuruldu?", ["İstanbul", "İzmir", "Ankara", "Bursa"], 2],
     ["İş Bankası'nın kuruluş sermayesi ne kadardı?", ["100 bin lira", "500 bin lira", "1 milyon lira", "10 milyon lira"], 2],
     ["Atatürk, İş Bankası'nın 1 milyon liralık kuruluş sermayesinin ne kadarını karşıladı?", ["100 bin lira", "250 bin lira", "500 bin lira", "Tamamını"], 1],
-    ["Atatürk'ün İş Bankası hisseleri, vasiyeti gereği hangi parti tarafından temsil edilir?", ["Cumhuriyet Halk Partisi", "Demokrat Parti", "Hazine", "TBMM"], 0],
     ["Atatürk'ün İş Bankası hisselerinin kâr payları hangi kurumlara gider?", ["TÜBİTAK ve YÖK", "Türk Dil Kurumu ve Türk Tarih Kurumu", "Kızılay ve Darüşşafaka", "Milli Eğitim ve Diyanet"], 1],
     ["İş Bankası İktisadi Bağımsızlık Müzesi, bankanın Ankara'daki tarihi genel müdürlük binasındadır. Bu bina hangi semttedir?", ["Kızılay", "Çankaya", "Ulus", "Bahçelievler"], 2],
     izmirQ(),
@@ -189,7 +188,6 @@ const ISQ_ALL = [].concat(
   K("kurum", [
     ["İş Bankası'nın kaç tane Tarım İhtisas Şubesi var?", ["40-45", "50-55", "55-60", "100 ve üzeri"], 2],
     ["'Hasan Âli Yücel Klasikler Dizisi' hangi yayınevine aittir?", ["Yapı Kredi Yayınları", "İş Bankası Kültür Yayınları", "Can Yayınları", "Remzi Kitabevi"], 1],
-    ["İş Bankası İzmir Şubesi'nin şube kodu kaçtır?", ["1000", "3400", "3500", "4200"], 1],
     ["İş Bankası açık bankacılık alanındaki çalışmalarıyla hangi uluslararası yayından ödül aldı?", ["Financial Times", "The Banker", "Forbes", "Bloomberg"], 1],
     ["Euromoney Mükemmellik Ödülleri'nde İş Bankası hangi unvana layık görüldü?", ["Dünyanın En İyi Yenilikçi Bankası", "Avrupa'nın En Sürdürülebilir Bankası", "Orta ve Doğu Avrupa'nın En İyi Dijital Bankası", "Global En İyi Perakende Bankası"], 2],
     ["İş Bankası'nın Sabancı Üniversitesi ile tarımda yeni kuşağı desteklemek için başlattığı programın adı nedir?", ["Dijital Çiftçi Akademisi", "Geleceğin Önder Çiftçileri", "Modern Tarım Liderleri", "Toprak ve Üretim Zirvesi"], 1],

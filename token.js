@@ -1,14 +1,14 @@
-// Token — Batak, King ve Balayı King'de ortak bakiye. (Solitaire'de Token yok; orada dilek tutulur.)
-// Bakiye "batakMP" anahtarında durur, böylece Batak'taki eski bakiye korunur. 1.000 Token ile başlanır.
-// Oyun başında Token konur; kazanan oyun payı olarak masadaki toplamın %1'ini öder.
-// Token biterse 1 gün sonra İş Bankası sorusu gelir (isq.js); doğru cevap 1.000 Token kazandırır.
+// Yıldız — Batak, King ve Balayı King'de ortak bakiye. (Solitaire'de Yıldız yok; orada dilek tutulur.)
+// Bakiye "batakMP" anahtarında durur, böylece Batak'taki eski bakiye korunur. 1.000 Yıldız ile başlanır.
+// Oyun başında Yıldız konur; kazanan katını alır (kesinti yok). Yıldız yalnızca oyun içi skordur.
+// Yıldız biterse 1 gün sonra İş Bankası sorusu gelir (isq.js); doğru cevap 1.000 Yıldız kazandırır.
 // Kullanım:
 //   Token.bakiye() · Token.fmt(n) · Token.yeter() · Token.koy(n) → true/false
 //   Token.secici(kok, oyun) → puan seçicisini kökün içine çizer; .deger() seçili tutarı verir
 //   Token.sonuc(oyun, konan, kisi, kat) → ödemeyi yapar (kat: 0 kaybetti, 1 iade, 2/3 kazandı), { pay, fee, durum, html }
-//   Token.kilit(modal, { goster, devam }) → Token bittiyse bekleme ekranı ya da İş Bankası sorusu
+//   Token.kilit(modal, { goster, devam }) → Yıldız bittiyse bekleme ekranı ya da İş Bankası sorusu
 (function () {
-  const KEY = "batakMP", BAHIS = [100, 250, 500, 1000, 2500, 5000, 10000], FEE = 0.01, ODUL = 1000, GUN = 864e5;
+  const KEY = "batakMP", BAHIS = [100, 250, 500, 1000, 2500, 5000, 10000], FEE = 0, ODUL = 1000, GUN = 864e5;
   const MP = { bal: 1000, empty: 0, lastQ: -1 };
   const yukle = () => { try { Object.assign(MP, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {} if (!(MP.bal >= 0)) MP.bal = 0; return MP; };
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(MP)); } catch (e) {} };
@@ -44,8 +44,8 @@
   function secici(kok, oyun) {
     const L = secenekler(), son = oku("tokenBahis", {});
     let v = L.includes(son[oyun]) ? son[oyun] : L.includes(100) ? 100 : L[0] || 0;
-    kok.innerHTML = `<div class="tkBal"><span>🪙 Bakiyen</span><b>${fmt(MP.bal)} Token</b></div>
-      <div class="tkRow"><span>Puan koy</span><div class="tkStep"><button type="button" data-d="-1" aria-label="Azalt">‹</button><b></b><button type="button" data-d="1" aria-label="Artır">›</button></div></div>`;
+    kok.innerHTML = `<div class="tkBal"><span>⭐ Bakiyen</span><b>${fmt(MP.bal)} Yıldız</b></div>
+      <div class="tkRow"><span>Yıldız koy</span><div class="tkStep"><button type="button" data-d="-1" aria-label="Azalt">‹</button><b></b><button type="button" data-d="1" aria-label="Artır">›</button></div></div>`;
     const b = kok.querySelector(".tkStep b"), [ge, il] = kok.querySelectorAll(".tkStep button");
     const sync = () => { b.textContent = fmt(v); ge.disabled = L.indexOf(v) <= 0; il.disabled = L.indexOf(v) >= L.length - 1; if (api.onChange) api.onChange(v); };
     const api = { deger: () => v, onChange: null, sync };
@@ -59,17 +59,14 @@
     yukle();
     if (!konan) return { pay: 0, fee: 0, durum: "yok", html: "" };
     const masa = konan * kisi, durum = kat > 1 ? "kazandi" : kat === 1 ? "berabere" : "kaybetti";
-    const ucret = Math.max(1, Math.round(masa * FEE)); // oyun payı: oyunu kim kazanırsa ondan alınır
-    let pay = konan * kat, fee = 0;
-    if (durum === "kazandi") { fee = ucret; pay -= fee; }
+    const ucret = 0, fee = 0, pay = konan * kat; // kesinti yok
     MP.bal += pay; if (MP.bal >= BAHIS[0]) MP.empty = 0; save();
-    const K = oku("tokenKasa", {}); K[oyun] = K[oyun] || { oyun: 0, ucret: 0 }; K[oyun].oyun++; K[oyun].ucret += ucret; yaz("tokenKasa", K);
-    const t = durum === "kazandi" ? `🎉 <b>+${fmt(pay)}</b> Token kazandın!<br><small style="opacity:.75">Oyun payı (%1): −${fmt(fee)} Token</small>`
-      : durum === "berabere" ? `Berabere: ${fmt(konan)} Token iade edildi.` : `Bu oyunda ${fmt(konan)} Token kaybettin.`;
-    return { pay, fee, ucret, masa, durum, html: `<div class="tkBox">${t}<br>🪙 Bakiye: <b>${fmt(MP.bal)}</b> Token</div>` };
+    const t = durum === "kazandi" ? `🎉 <b>+${fmt(pay)}</b> Yıldız kazandın!`
+      : durum === "berabere" ? `Berabere: ${fmt(konan)} Yıldız iade edildi.` : `Bu oyunda ${fmt(konan)} Yıldız kaybettin.`;
+    return { pay, fee, ucret, masa, durum, html: `<div class="tkBox">${t}<br>⭐ Bakiye: <b>${fmt(MP.bal)}</b> Yıldız</div>` };
   }
   const kasa = (oyun) => (oku("tokenKasa", {})[oyun] || { oyun: 0, ucret: 0 });
-  // Token bittiyse: 1 gün bekleme, sonra İş Bankası sorusu (doğru cevap 1.000 Token)
+  // Yıldız bittiyse: 1 gün bekleme, sonra İş Bankası sorusu (doğru cevap 1.000 Yıldız)
   function kilit(modal, o) {
     o = o || {};
     const goster = o.goster || (() => {}), geri = o.geri || "oyunlar.html";
@@ -78,9 +75,9 @@
     const left = MP.empty + GUN - Date.now();
     if (left > 0) {
       const h = Math.floor(left / 36e5), m = Math.floor((left % 36e5) / 6e4);
-      modal.innerHTML = `<h2>🪙 Token bitti</h2>
-        <p>Yeni Token için <b>${h} saat ${m} dakika</b> sonra gel. Seni İş Bankası tarihçesi ve ürünleriyle ilgili bir soru bekliyor; bilirsen <b>1.000 Token</b> kazanırsın.</p>
-        <p style="font-size:12.5px">Bakiyen Batak, King ve Balayı King'de ortak. Solitaire Token istemez, dilek tutup oynayabilirsin 🌙</p>
+      modal.innerHTML = `<h2>⭐ Yıldız bitti</h2>
+        <p>Yeni Yıldız için <b>${h} saat ${m} dakika</b> sonra gel. Seni İş Bankası tarihçesi ve ürünleriyle ilgili bir soru bekliyor; bilirsen <b>1.000 Yıldız</b> kazanırsın.</p>
+        <p style="font-size:12.5px">Bakiyen Batak, King ve Balayı King'de ortak. Solitaire Yıldız istemez, dilek tutup oynayabilirsin 🌙</p>
         <a class="btn" href="${geri}" style="display:block;text-decoration:none;padding:12px">Oyunlara dön</a>`;
       goster();
       return;
@@ -90,7 +87,7 @@
     let qi; do { qi = Math.floor(Math.random() * pool.length); } while (pool.length > 1 && qi === MP.lastQ);
     const [q, opts0, ok0] = pool[qi];
     const ord = opts0.map((_, i) => i).sort(() => Math.random() - 0.5), ok = ord.indexOf(ok0);
-    modal.innerHTML = `<h2>🏦 İş Bankası Bilgi Yarışması</h2><p>Doğru cevap: <b>1.000 Token</b></p>
+    modal.innerHTML = `<h2>🏦 İş Bankası Bilgi Yarışması</h2><p>Doğru cevap: <b>1.000 Yıldız</b></p>
       <div style="font-weight:700;font-size:16px;margin:4px 0 12px;text-align:left"></div>
       <div class="tkQ">${ord.map((i, n) => `<button type="button" data-i="${n}"></button>`).join("")}</div><div class="tkRes" style="margin-top:12px;font-size:14px"></div>`;
     modal.querySelector("div[style]").textContent = q;
@@ -103,7 +100,7 @@
       const res = modal.querySelector(".tkRes");
       if (+b.dataset.i === ok) {
         MP.bal += ODUL; MP.empty = 0; save();
-        res.innerHTML = `✅ Doğru! <b>1.000 Token</b> hesabına yüklendi.<button class="btn" type="button" style="margin-top:10px">Oyuna devam</button>`;
+        res.innerHTML = `✅ Doğru! <b>1.000 Yıldız</b> hesabına yüklendi.<button class="btn" type="button" style="margin-top:10px">Oyuna devam</button>`;
         res.querySelector("button").onclick = () => { if (o.devam) o.devam(); };
       } else {
         b.classList.add("bad"); MP.empty = Date.now(); save();

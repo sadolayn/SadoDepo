@@ -1,4 +1,4 @@
-// Oyunlar sayfası: oyuna girmeden önce rastgele İş Bankası sorusu (her zaman)
+// Oyunlar sayfası: oyun saatleri dışındaysa kapalı uyarısı (oyunsaat.js), değilse rastgele İş Bankası sorusu
 // Yanlışta 10 dk bekleme, üst üste 3 yanlışta 1 gün kilit
 (function () {
   var KEY = "oyunQuiz", WAIT = 10 * 60 * 1000, DAY = 24 * 60 * 60 * 1000, MAXW = 3;
@@ -53,7 +53,21 @@
     clearInterval(timer); tick(); timer = setInterval(tick, 1000);
     ov.classList.add("on");
   }
+  function showKapali() {
+    var O = window.OyunSaat;
+    box.innerHTML = '<h3>🕹️ Oyunlar şu an kapalı</h3><p class="r">' + O.metin + '</p><div class="m">Açılmasına:</div><div class="cd" id="oqcd"></div><button class="x" type="button">Kapat</button>';
+    box.querySelector(".x").onclick = close;
+    var hedef = O.acilis();
+    var tick = function () {
+      var left = hedef - O.simdi();
+      if (left <= 0) { clearInterval(timer); close(); return; }
+      var el = document.getElementById("oqcd"); if (el) el.textContent = O.sure(left);
+    };
+    clearInterval(timer); tick(); timer = setInterval(tick, 1000);
+    ov.classList.add("on");
+  }
   function ask(href) {
+    if (window.OyunSaat && OyunSaat.kapali()) return showKapali();
     if (st.until && Date.now() < st.until) return showLock(href);
     var pool = (typeof ISQ !== "undefined" ? ISQ : []);
     if (!pool.length) { location.href = href; return; }

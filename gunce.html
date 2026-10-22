@@ -278,7 +278,7 @@
 
   <!-- 3. Günlük işaretleme -->
   <div class="card" id="mark">
-    <h3>✍️ Günlük işaretleme <span class="r">her satış için +</span></h3>
+    <h3>✍️ Günlük işaretleme <span class="r">her adım için +</span></h3>
     <div class="mchips" id="mchips"></div>
     <div class="wkbar"><button type="button" class="nav" id="wkPrev" aria-label="Önceki hafta">‹</button><div class="lbl" id="wkLbl"></div><button type="button" class="nav" id="wkNext" aria-label="Sonraki hafta">›</button><button type="button" class="tdy" id="wkToday">Bugün</button></div>
     <div class="days" id="days"></div>
@@ -300,14 +300,14 @@
 
   <!-- 5. Performans fişi (POS rulosu) -->
   <div class="card posc" id="posCard">
-    <div class="posTop"><h3 style="margin:0">🧾 Performans fişim</h3><span class="note" style="margin:0">Satış yaptıkça fişin uzar ✨</span></div>
+    <div class="posTop"><h3 style="margin:0">🧾 Performans fişim</h3><span class="note" style="margin:0">İşaretledikçe fişin uzar ✨</span></div>
     <div class="posSlot"><div class="posPaper" id="posPaper"></div></div>
     <div class="btns" style="margin-top:12px"><button class="btn pri" id="posPng">🧾 Fişi indir</button><button class="btn" id="posPdf">📄 PDF indir</button></div>
   </div>
 
   <!-- Bilgisayardan açanlara: hedeflerini telefonuna al -->
   <div class="card dev" id="devCard" hidden>
-    <div class="dh"><i>📱</i><div><b>Günce cebinde daha güzel</b><span>Hedeflerini ve işaretlemelerini telefonuna al: satış biter bitmez tek dokunuşla işaretle, gün içinde hedefinin neresinde olduğunu her an gör. Bilgiler yalnızca senin telefonunda durur; kimse göremez, hiçbir yere gönderilmez.</span></div></div>
+    <div class="dh"><i>📱</i><div><b>Günce cebinde daha güzel</b><span>Hedeflerini ve işaretlemelerini telefonuna al: iş biter bitmez tek dokunuşla işaretle, gün içinde hedefinin neresinde olduğunu her an gör. Bilgiler yalnızca senin telefonunda durur; kimse göremez, hiçbir yere gönderilmez.</span></div></div>
     <button type="button" class="btn pri" id="tasiBtn">📲 Hedeflerimi telefonuma al</button>
   </div>
 
@@ -333,7 +333,7 @@
     <p class="sub" id="shSub"></p>
     <div class="thead"><span></span><span>Ürün / kalem</span><span>Çeyrek hedefi</span><span></span></div>
     <div id="tRows"></div>
-    <div class="addrow"><input id="newName" placeholder="+ Yeni kalem ekle (ör. BES, POS)" maxlength="30"><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
+    <div class="addrow"><input id="newName" placeholder="+ Yeni kalem ekle (ör. kitap, spor)" maxlength="30"><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
     <p class="note" style="margin:0 0 6px">İpucu: Hedefin aylık verildiyse 3 ile çarpıp yaz. Hedefi olmayan kalemi boş bırak; yine işaretleyebilirsin ama rapora girmez.</p>
     <div class="foot"><button class="btn" id="tCancel">Vazgeç</button><button class="btn pri" id="tSave">Kaydet</button></div>
   </div>
@@ -534,7 +534,7 @@ function renderHero() {
     </div>
     ${ph === "simdi" ? `<div class="tp">
       <div class="l"><span>⏳ Zaman</span><b>%${plan} geçti</b></div><div class="b"><i style="width:${plan}%;background:var(--plan)"></i></div>
-      <div class="l"><span>📈 Satış</span><b>%${pct} gerçekleşti</b></div><div class="b"><i style="width:${Math.min(100, pct)}%;background:${col(pct >= plan ? 100 : pct + 100 - plan)}"></i></div>
+      <div class="l"><span>📈 İlerleme</span><b>%${pct} gerçekleşti</b></div><div class="b"><i style="width:${Math.min(100, pct)}%;background:${col(pct >= plan ? 100 : pct + 100 - plan)}"></i></div>
     </div>` : ""}
     <div class="tiles">${tiles}</div>
     ${ph === "simdi" ? `<div class="legend"><span><i style="background:var(--accent)"></i>Gerçekleşen</span><span><i style="background:var(--plan)"></i>Bugün olman gereken yer</span></div>` : ""}
@@ -561,7 +561,7 @@ function renderCoach() {
   const list = (arr, k) => arr.filter((x) => x.s[k] > 0).slice(0, 3).map(({ p, s }) => `<b>${s[k]} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(", ").replace(/, ([^,]*)$/, " ve $1");
   let msg;
   if (!open.length) msg = pick(["Tüm hedeflerin tamam! 🏆 Kalan günler bonus.", "Çeyreği şimdiden kapattın 🎉 Fazlası, bir sonraki çeyreğe güzel bir başlangıç demek."]);
-  else if (lastWeek) msg = `🏁 <b>Son düzlük!</b> Çeyreğe ${left} iş günü kaldı. ${list(open, "weekNeed") ? `${list(open, "weekNeed")} ile bitiş çizgisini geçersin.` : ""} Her müşteri görüşmesi şimdi çok değerli.`;
+  else if (lastWeek) msg = `🏁 <b>Son düzlük!</b> Çeyreğe ${left} iş günü kaldı. ${list(open, "weekNeed") ? `${list(open, "weekNeed")} ile bitiş çizgisini geçersin.` : ""} Her gün şimdi çok değerli.`;
   else if (!behind.length) msg = pick([`Harika gidiyorsun! 💪 Çeyreğe <b>${left} iş günü</b> kaldı ve planın önündesin. Bu hafta ${list(open, "weekNeed") || "biraz daha"} yaparsan farkı koruyorsun.`, `Tempo çok iyi 👏 ${left} iş günü kaldı. Bu haftaki ${list(open, "weekNeed") || "küçük adımlar"} seni rahat bitirir.`]);
   else if (O.pct >= O.plan - 15) msg = pick([`Çeyreğe <b>${left} iş günü</b> kaldı, başarabilirsin! Bu hafta ${list(open, "weekNeed")} yaparsan tekrar plana oturursun.`, `Az kaldı, yakındasın! ${left} iş günü var. Bu hafta ${list(open, "weekNeed")} — hepsi bu.`]);
   else msg = pick([`Fark açılmış ama ${left} iş günü az değil. 🎯 Önceliğin <b>${esc(behind[0].p.name.toLocaleLowerCase("tr"))}</b>: bu hafta ${list(open, "weekNeed")} hedefle; her gün küçük bir adım.`, `Zor ama imkânsız değil 💡 Kalan ${left} iş gününde günde ${behind.slice(0, 2).map(({ p, s }) => `<b>${fmt(s.perDay)} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(" ve ")} yetiyor. Bugünden başla.`]);
@@ -639,7 +639,7 @@ function renderEksik() {
     const d = new Date(today); d.setDate(d.getDate() - i);
     if (canPick(d) && isWork(d) && !dayTot(keyOf(d))) L.push(d);
   }
-  $("eksik").innerHTML = L.length ? `<div class="eksik"><span>📌 Son 2 haftada boş görünen iş günleri · satış olduysa dokun, işaretle</span><div class="ch">${L.slice(0, 8).map((d) => `<button type="button" data-k="${keyOf(d)}">${DOW[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}</button>`).join("")}</div></div>` : "";
+  $("eksik").innerHTML = L.length ? `<div class="eksik"><span>📌 Son 2 haftada boş görünen iş günleri · bir şey yaptıysan dokun, işaretle</span><div class="ch">${L.slice(0, 8).map((d) => `<button type="button" data-k="${keyOf(d)}">${DOW[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}</button>`).join("")}</div></div>` : "";
   $("eksik").querySelectorAll("[data-k]").forEach((b) => (b.onclick = () => { const [y, m, d] = b.dataset.k.split("-").map(Number); pickDay(new Date(y, m - 1, d, 12)); $("mark").scrollIntoView({ behavior: "smooth", block: "start" }); }));
 }
 // Bilgisayarda klavye: ← → gün, T bugün (yazı alanındayken ya da pencere açıkken çalışmaz)
@@ -858,9 +858,9 @@ function exportCsv() {
 // ================= Performans fişi (POS rulosu) =================
 const POS_SOZ = {
   tam: ["Hedef tamam! Bu fiş çerçevelik. 🏆", "Sen hedefi tutturmadın, çıtayı yükselttin. Tebrikler! 🥇", "Bu çeyreğin yıldızı belli oldu: sensin ⭐"],
-  yakin: ["Bitiş çizgisi göründü; son düzlükte hız kesme! 🏁", "Az kaldı! Bir iki güzel satış, fişin altına mühür basılır. ✅", "Bu tempoyla hedef cebinde. Devam! 💪"],
-  orta: ["Yarıyı geçtin; her müşteri seni hedefe bir adım daha yaklaştırıyor. 🚀", "İyi gidiyorsun. Bugünün bir satışı yarının rahatlığıdır. 🌱", "Fişin uzadıkça hikâyen güzelleşiyor. 📈"],
-  bas: ["Her büyük çeyrek tek bir satışla başlar. İlk satış seni bekliyor! ☀️", "Bugün atacağın küçük adım, çeyrek sonunun büyük farkı olur. 🌟", "Gülümse, sor, dinle; gerisi gelir. Sen yaparsın! 😊"],
+  yakin: ["Bitiş çizgisi göründü; son düzlükte hız kesme! 🏁", "Az kaldı! Bir iki güzel adım, fişin altına mühür basılır. ✅", "Bu tempoyla hedef cebinde. Devam! 💪"],
+  orta: ["Yarıyı geçtin; her gün seni hedefe bir adım daha yaklaştırıyor. 🚀", "İyi gidiyorsun. Bugünün bir adımı yarının rahatlığıdır. 🌱", "Fişin uzadıkça hikâyen güzelleşiyor. 📈"],
+  bas: ["Her büyük çeyrek tek bir adımla başlar. İlk adım seni bekliyor! ☀️", "Bugün atacağın küçük adım, çeyrek sonunun büyük farkı olur. 🌟", "Küçük adımlar, büyük sonuçlar. Sen yaparsın! 😊"],
   yok: ["Hedeflerini gir, fişin dolmaya başlasın. 🎯"],
 };
 function posData() {

@@ -8,7 +8,7 @@
       Karekod yalnızca sayfanın adresini içerir (lib/qrcode.js, MIT, Kazuhiko Arase). İstemeyen sayfa: <body data-karekod="yok">
 */
 (function () {
-  var FOOTER = 'Copyright © {Y} Sadolayn. All rights reserved.<br><span style="font-size:10.5px;letter-spacing:.3px;color:#555">Tüm hakları saklıdır.</span><br><span style="display:block;max-width:420px;margin:6px auto 0;font-size:12px;line-height:1.5;color:#777">Kişisel bir projedir; Türkiye İş Bankası A.Ş. ile bağı yoktur, bir çalışanın şahsi notlarıdır. İş Bankası, İşCep, Maximum ve benzeri adlar bankanın tescilli markalarıdır. Bilgiler kamuya açık kaynaklardan derlenir; resmi bilgi için <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:#999">isbank.com.tr</a>.</span>';
+  var FOOTER = 'Copyright © {Y} Sadolayn. All rights reserved.<br><span style="font-size:10.5px;letter-spacing:.3px;color:#555">Tüm hakları saklıdır.</span><br><span style="display:block;max-width:420px;margin:6px auto 0;font-size:12px;line-height:1.5;color:#777">Kişisel, bağımsız bir sitedir; Türkiye İş Bankası A.Ş. tarafından hazırlanmamış ve onaylanmamıştır, bankayla resmî bir bağı yoktur. İş Bankası, İşCep, Maximum ve benzeri adlar bankanın tescilli markalarıdır. Bilgiler kamuya açık kaynaklardan derlenir; resmi bilgi için <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:#999">isbank.com.tr</a>.<br>Gizlilik: Ziyaretler ve oyun sonuçları kimlik bilgisi olmadan, anonim olarak sayılır (GoatCounter, Firebase, Google Form). Çerez ya da kişisel veri toplanmaz; formlara yazdıkların yalnızca site sahibine ulaşır.</span>';
 
   var css = document.createElement("style");
   css.textContent =
