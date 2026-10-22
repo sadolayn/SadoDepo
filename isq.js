@@ -200,6 +200,30 @@ const ISQ_ALL = [].concat(
   K("kurum", [
     ["İş Bankası'nın yüzen şubesi İş Vapur hangi limanda hizmete açıldı?", ["Haydarpaşa", "Galataport", "Kadıköy", "Pendik"], 1],
     ["İş Vapur, afet durumunda kaç kişiyi barındırabilecek şekilde tasarlandı?", ["50", "150", "300", "1.000"], 2],
-  ], "2026-10-21")
+  ], "2026-10-21"),
+
+  // --- Çiftçi Kadın İmece Kart (isbank.com.tr/is-ticari/ciftci-kadin-imece-kart, 22 Ekim 2026'da kontrol edildi) ---
+  K("kart", [
+    ["İş Bankası'nın üretici kadınlara özel kartının adı nedir?", ["Çiftçi Kadın İmece Kart", "Toprak Ana Kart", "Bereket Kadın Kart", "Hasat Kart"], 0],
+    ["Çiftçi Kadın İmece Kart'a başvururken üretim hangi belgeyle gösterilebilir?", ["ÇKS, Hayvan Varlık Belgesi ya da Arıcılık Belgesi", "Üniversite diploması", "Ehliyet", "Vergi levhası"], 0],
+    ["Çiftçi Kadın İmece Kart'ta kredinin vadesi hasada göre en fazla ne kadar olabilir?", ["3 ay", "6 ay", "1 yıl", "3 yıl"], 2],
+    ["Çiftçi Kadın İmece Kart'ın limiti İşCep'ten teminatsız olarak kaç TL'ye kadar artırılabilir?", ["250.000 TL", "500.000 TL", "1.000.000 TL", "2.000.000 TL"], 3],
+    ["Çiftçi Kadın İmece Kart'la anlaşmalı işyerlerinde kazanılan puanın adı nedir?", ["İmece Puan", "MaxiPuan", "Bereket Puan", "Hasat Puan"], 0],
+    ["Çiftçi Kadın İmece Kart'la hangi alışverişte İmece Puan kazanılmaz?", ["Mazot", "Tohum", "Gübre", "Yem"], 0],
+    ["Çiftçi Kadın İmece Kart'la TARSİM tarım sigortası kaç ay faizsiz alınabilir?", ["3 ay", "6 ay", "9 ay", "12 ay"], 2],
+    ["İmece Kart'ın geçtiği anlaşmalı işyerleri hangi ücretsiz uygulamadan bulunur?", ["İmeceMobil", "Maximum Mobil", "İşCep Tarım", "Çiftçi Cep"], 0],
+    ["Çiftçi Kadın İmece Kart'a nereden başvurulur?", ["İş Bankası şubelerinden", "Sadece e-Devlet'ten", "Tarım Kredi'den", "Sadece Ziraat Odası'ndan"], 0],
+  ], "2026-10-22"),
+
+  // --- Bilim Fabrikası (İş Bankası'nın 22 Ekim 2026 basın duyurusu; Aksiyon, Ekonomi Politikası vb. haberleri.
+  //     Henüz isbank.com.tr'de sayfası yok, açılınca yeniden kontrol edilecek) ---
+  K("kurum", [
+    ["İş Bankası'nın Ekim 2026'da çocuklar için başlattığı ücretsiz dijital öğrenme platformunun adı nedir?", ["Bilim Fabrikası", "Merak Atölyesi", "Kâşif Akademi", "Deney Kampı"], 0],
+    ["Bilim Fabrikası'nı İş Bankası hangi teknoloji şirketiyle geliştirdi?", ["Imona Technologies", "Softtech", "Turkcell", "Aselsan"], 0],
+    ["Bilim Fabrikası'nda çocukların topladığı puanlar neye eklenir?", ["Seçtikleri şehrin puanına", "Okulun bütçesine", "Velinin MaxiPuan'ına", "Hiçbir yere, sadece eğlence için"], 0],
+    ["Hangisi Bilim Fabrikası'nın konuları arasında yok?", ["Devre tasarımı", "Kimya", "Tarım", "Futbol taktikleri"], 3],
+    ["Bilim Fabrikası'nın öğretmen materyallerine hangi kuruluşun Öğretmen Ağı geri bildirim verdi?", ["Eğitim Reformu Girişimi", "TÜBİTAK", "Türk Eğitim Vakfı", "YÖK"], 0],
+    ["Bilim Fabrikası'nı kullanmak ne kadar?", ["Ücretsiz", "Aylık abonelikle", "Ders başına ücretle", "Yıllık üyelikle"], 0],
+  ], "2026-10-22")
 );
 const ISQ = ISQ_ALL.filter((q) => !q[3] || new Date() <= new Date(q[3] + "T23:59:59"));
