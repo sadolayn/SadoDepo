@@ -1,5 +1,5 @@
 // Oyun saatleri. "Yoğun saat": hafta içi 08:45–12:30 ve 13:30–18:00 (resmî tatiller hariç).
-// Yoğun saatte: bilgisayardan oyunlar kapalı; telefondan girişte İş Bankası sorusu (oyunquiz.js), yanlışta 1 saat bekleme.
+// Yoğun saatte: bilgisayardan oyunlar kapalı; telefondan girişte İş Bankası sorusu (oyunquiz.js), yanlışta 5 dakika bekleme.
 // Doğru cevap, yoğun saat bitene kadar geçerli bir geçiş verir (localStorage "oyunGecis").
 // Saat telefondan değil sunucudan (sayfanın Date başlığı) alınır; cihaz saatini değiştirmek işe yaramaz.
 // Oyun sayfaları: <script src="oyunsaat.js" data-kilit="sayfa">  ·  hesap.html Bulmaca: data-kilit="bulmaca"

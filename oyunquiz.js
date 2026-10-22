@@ -1,10 +1,10 @@
 // Oyunlar sayfası giriş kapısı (oyunsaat.js ile birlikte çalışır)
 // Yoğun saat (hafta içi 08:45–12:30, 13:30–18:00):
-//   bilgisayar → kapalı uyarısı · telefon → İş Bankası sorusu; yanlışta 1 saat bekleme, doğruysa yoğun saat bitene kadar serbest
+//   bilgisayar → kapalı uyarısı · telefon → İş Bankası sorusu; yanlışta 5 dakika bekleme, doğruysa yoğun saat bitene kadar serbest
 // Diğer saatler ve tatiller: arada bir sürpriz soru; bilemeyen de oyuna girer, bekleme yok
 // Oyun sayfasına doğrudan girilirse oyunsaat.js buraya ?oyun=<sayfa> ile yollar; soru kendiliğinden açılır
 (function () {
-  var KEY = "oyunQuiz", BEKLE = 60 * 60 * 1000, SURPRIZ = 1 / 3;
+  var KEY = "oyunQuiz", BEKLE = 5 * 60 * 1000, SURPRIZ = 1 / 3;
   function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
   function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
   var st = load(); st.until = st.until || 0;
@@ -57,13 +57,13 @@
   }
   // Telefon, yoğun saat, yanlış cevaptan sonra
   function showLock(href) {
-    box.innerHTML = '<h3>⏳ Biraz bekle</h3><p class="r">Yanlış cevaptan sonra <b>1 saat</b> beklemen gerekiyor 🙂</p>' +
+    box.innerHTML = '<h3>⏳ Biraz bekle</h3><p class="r">Yanlış cevaptan sonra <b>5 dakika</b> beklemen gerekiyor 🙂</p>' +
       '<div class="m">Yeni soru için:</div><div class="cd" id="oqcd"></div><button class="x" type="button">Kapat</button>';
     box.querySelector(".x").onclick = close;
     geriSay(function () { return Math.min(st.until, O.kapali() ? O.acilis() : 0); }, function () { st.until = 0; save(st); ask(href); });
     ov.classList.add("on");
   }
-  // sert: yoğun saat sorusu (yanlışta 1 saat) · değilse sürpriz soru (yanlışta da girer)
+  // sert: yoğun saat sorusu (yanlışta 5 dakika) · değilse sürpriz soru (yanlışta da girer)
   function soru(href, sert) {
     var pool = (typeof ISQ !== "undefined" ? ISQ : []);
     if (!pool.length) { if (sert) O.gecisVer(); return go(href); }
@@ -72,7 +72,7 @@
     var q = pool[qi], idx = q[1].map(function (_, i) { return i; });
     for (var i = idx.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = idx[i]; idx[i] = idx[j]; idx[j] = t; }
     var bas = sert ? "🔐 Giriş sorusu" : "🎲 Sürpriz soru!";
-    var kural = sert ? "Oyuna girmek için bir İş Bankası sorusunu bil 🙂<br>❌ Yanlışta <b>1 saat</b> sonra tekrar deneyebilirsin."
+    var kural = sert ? "Oyuna girmek için bir İş Bankası sorusunu bil 🙂<br>❌ Yanlışta <b>5 dakika</b> sonra tekrar deneyebilirsin."
       : "Bilirsen ne güzel; bilemezsen de oyun açılıyor 🙂";
     box.innerHTML = "<h3>" + bas + '</h3><p class="r">' + kural + '</p><div class="q"></div><div class="os"></div><div class="m"></div><button class="x" type="button">Vazgeç</button>';
     box.querySelector(".q").textContent = q[0];
@@ -89,7 +89,7 @@
           setTimeout(function () { go(href); }, 700);
         } else if (sert) {
           b.classList.add("no"); st.until = O.simdi() + BEKLE; save(st);
-          msg.textContent = "❌ Yanlış. 1 saat sonra tekrar deneyebilirsin.";
+          msg.textContent = "❌ Yanlış. 5 dakika sonra tekrar deneyebilirsin.";
           setTimeout(function () { showLock(href); }, 1600);
         } else {
           b.classList.add("no");
@@ -103,6 +103,7 @@
     ov.classList.add("on");
   }
   function ask(href) {
+    if (st.until > O.simdi() + BEKLE) { st.until = O.simdi() + BEKLE; save(st); } // eski 1 saatlik beklemeler 5 dakikaya iner
     if (O.kapali()) {
       if (O.masaustu()) return showMasa();
       if (O.gecisVar()) return go(href);
