@@ -1641,14 +1641,14 @@ function factHtml() {
 // --- Sorular: önce güncel kampanyalardan otomatik üretilen sorular, sonra soru havuzu
 const tlFmt = (n) => n.toLocaleString("tr-TR") + " TL";
 function campQs() {
-  const Q = [];
+  const Q = [], rr = gunRng(dayIdx() * 31 + 7);
   camps.forEach((c) => {
     const m = c.baslik.match(/(\d{1,3}(?:\.\d{3})+|\d+)\s?TL/);
     if (m) {
       const v = +m[1].replace(/\./g, ""); if (!v) return;
       const opts = [v, Math.round(v / 2 / 50) * 50 || v / 2, Math.round(v * 2), Math.round(v * 1.5 / 50) * 50].filter((x, i, a) => x > 0 && a.indexOf(x) === i);
       if (opts.length < 3) return;
-      const sh = opts.slice().sort(() => Math.random() - 0.5);
+      const sh = karistir(opts.slice(), rr);
       Q.push({ q: `Güncel Maximum kampanyası: "${c.baslik.replace(m[0], "…")}" — boşluğa hangi tutar gelir?`, o: sh.map(tlFmt), c: sh.indexOf(v), src: "🆕 Güncel kampanyadan" });
     }
   });
@@ -1656,11 +1656,18 @@ function campQs() {
   if (d) {
     const fm = (x) => new Date(x + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
     const alt = [...new Set(camps.map((k) => k.bitis).filter((x) => x !== d.bitis))].slice(0, 3);
-    if (alt.length >= 2) { const o = [d.bitis, ...alt].sort(() => Math.random() - 0.5); Q.push({ q: `"${d.baslik}" kampanyası hangi gün sona eriyor?`, o: o.map(fm), c: o.indexOf(d.bitis), src: "🆕 Güncel kampanyadan" }); }
+    if (alt.length >= 2) { const o = karistir([d.bitis, ...alt], rr); Q.push({ q: `"${d.baslik}" kampanyası hangi gün sona eriyor?`, o: o.map(fm), c: o.indexOf(d.bitis), src: "🆕 Güncel kampanyadan" }); }
   }
-  return Q.sort(() => Math.random() - 0.5).slice(0, 4);
+  return karistir(Q, rr).slice(0, 4);
 }
-let QD = null, qI = 0, qDone = false;
+let QD = null, qI = 0, qDone = false, qBasladi = false;
+// Kaldığı yerden devam: o gün en son hangi sorudaysa sayfa yenilenince oradan sürer (ertesi gün baştan)
+const QPOS = "isbQuizPos";
+function qKonum() {
+  if (qBasladi) return; qBasladi = true;
+  try { const s = JSON.parse(localStorage.getItem(QPOS) || "null"); if (s && s.g === dayIdx()) { const i = deck().findIndex((x) => x.q === s.q); if (i >= 0) qI = i; } } catch (e) {}
+}
+function qKaydet(i) { try { const D = deck(); localStorage.setItem(QPOS, JSON.stringify({ g: dayIdx(), q: D[i % D.length].q })); } catch (e) {} }
 // Güne bağlı rastgele sayı: aynı gün herkes aynı sırayı görür, ertesi gün sıra değişir
 function gunRng(seed) {
   return () => { seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
@@ -1689,6 +1696,9 @@ function deck() {
     const k = D[i].k, p = D.findIndex((x, n) => n > 0 && n < i - 1 && x.k !== k && D[n - 1].k !== k);
     if (p > 0) { D.splice(p, 0, D.splice(i, 1)[0]); i--; }
   }
+  // Son 3 haftada eklenen sorulardan 3 tanesi günün ilk sorularına (2., 5. ve 8. sıra) alınır; her gün başkaları
+  const yeni = D.filter((x) => x.src.startsWith("🆕 Yeni soru")).slice(0, 3);
+  yeni.forEach((x, n) => { D.splice(D.indexOf(x), 1); D.splice(Math.min(1 + n * 3, D.length), 0, x); });
   // Güncel kampanya soruları başlarda, üç soruda bir araya serpiştirilir (Maximum konusu yanına gelmesin)
   const cq = campQs();
   for (let i = 0; cq.length && i <= D.length; i += 3) {
@@ -1702,6 +1712,7 @@ let SC = { d: 0, t: 0, s: 0 }; try { SC = Object.assign(SC, JSON.parse(localStor
 const PRAISE = ["🎉 Tebrikler, doğru!", "👏 Harikasın!", "🌟 Bravo, tam isabet!", "🏆 Bankacı dediğin böyle olur!", "✅ Süper, bildin!", "💯 Mükemmel!"];
 function qHtml() {
   const D = deck(); if (!D.length) return "";
+  qKonum();
   const q = D[qI % D.length];
   return `<h4>❓ Günün sorusu</h4>${q.src ? `<div class="src">${q.src}</div>` : ""}<div class="q">${esc(q.q)}</div><div class="os" id="dqOs">${q.o.map((o, i) => `<button type="button" data-i="${i}">${esc(o)}</button>`).join("")}</div><div class="m" id="dqM">Cevabını seç 👇</div>
     <div class="nav"><span class="score" id="dqSc">${SC.t ? `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""}` : "İlk sorun!"}</span><button type="button" id="dqNext">Sonraki soru ›</button></div>`;
@@ -1715,11 +1726,12 @@ function bindQ() {
     SC.t++; if (ok) { SC.d++; SC.s++; } else SC.s = 0;
     window.Rapor && Rapor.bolum("soru-cevaplandi");
     try { localStorage.setItem("isbQuiz", JSON.stringify(SC)); } catch (er) {}
+    qKaydet(qI + 1); // cevaplanan soru yenileyince tekrar gelmesin
     const m = $("dqM"); m.className = "m congrats";
     m.innerHTML = ok ? `<b style="color:#7ee2a8;font-size:15px">${PRAISE[SC.d % PRAISE.length]}</b>${SC.s >= 3 ? ` <span>Üst üste ${SC.s} doğru! 🔥</span>` : ""}` : `Olmadı 🙂 Doğrusu yeşil olan. Sonrakinde bilirsin!`;
     $("dqSc").innerHTML = `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""}`;
   };
-  $("dqNext").onclick = () => { window.Rapor && Rapor.bolum("soru-sonraki"); qI++; $("dqBox").innerHTML = qHtml(); bindQ(); };
+  $("dqNext").onclick = () => { window.Rapor && Rapor.bolum("soru-sonraki"); qI++; qKaydet(qI); $("dqBox").innerHTML = qHtml(); bindQ(); };
 }
 function renderSoru() {
   const yS = (typeof ISQ !== "undefined" ? ISQ : []).filter(yeniSoru).length;
