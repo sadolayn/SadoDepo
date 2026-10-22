@@ -158,6 +158,8 @@
   .dayinfo b { color: var(--accent); }
   .prod { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid var(--line); }
   .prod:first-child { border-top: 0; }
+  .prod { flex-wrap: wrap; }
+  .kmpW { flex: 0 0 100%; padding-left: 40px; margin-top: -2px; }
   .prod .ic { font-size: 23px; width: 30px; text-align: center; }
   .prod .nm { flex: 1; min-width: 0; }
   .prod .nm b { display: block; font-size: 15px; }
@@ -221,6 +223,25 @@
   .tr input.num { text-align: center; font-weight: 800; font-size: 17px; border-color: #5a4a2c; }
   .tr input.num:focus { outline: 2px solid var(--accent); }
   .tr .tag { margin: 0; }
+  .kilavuz { font-size: 12.5px; line-height: 1.55; color: var(--muted); background: rgba(224,162,79,.06); border: 1px solid #3a2f1c; border-radius: 12px; padding: 10px 12px; margin: 2px 0 10px; }
+  .kilavuz b { color: var(--ink); }
+  .kilavuz ul { margin: 6px 0; padding-left: 18px; }
+  .kilavuz li { margin: 2px 0; }
+  .tr.yeni { animation: yeniSat 1.6s ease-out; border-radius: 12px; }
+  @keyframes yeniSat { 0% { background: rgba(224,162,79,.28); } 100% { background: transparent; } }
+  .tr .hint.ok { color: var(--accent2); font-weight: 700; }
+  /* Kalemin altındaki "müşterine anlatabileceğin kampanyalar" */
+  .kmpB { white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; margin: 6px 0 0; padding: 5px 10px; border-radius: 99px; border: 1px solid #4a3a1e; background: rgba(224,162,79,.08); color: var(--accent2); font-size: 12px; font-weight: 700; cursor: pointer; }
+  .kmpB i { font-style: normal; transition: transform .2s; }
+  .kmpB.ac i { transform: rotate(90deg); }
+  .kmpL { margin: 8px 0 2px; display: grid; gap: 6px; }
+  .kmpL a { display: block; padding: 9px 11px; border-radius: 12px; background: var(--field); border: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: 13px; line-height: 1.4; }
+  .kmpL a small { display: flex; justify-content: space-between; gap: 8px; margin-top: 3px; font-size: 11.5px; color: var(--muted); }
+  .kmpL a small b { color: var(--accent2); font-weight: 700; }
+  .kmpL a small b.son { color: var(--low); }
+  .kmpL .kn { font-size: 11px; color: #6d6658; }
+  .motto { margin: -4px 0 10px; font-size: 13px; color: var(--muted); }
+  .motto b { color: var(--accent2); }
   .addrow select { flex: none; padding: 10px 6px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 14px; }
   .tr input.num::-webkit-inner-spin-button, .tr input.num::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   .tr input.num { -moz-appearance: textfield; }
@@ -286,7 +307,8 @@
 
   <!-- 3. Günlük işaretleme -->
   <div class="card" id="mark">
-    <h3>✍️ Günlük işaretleme <span class="r">her adım için +</span></h3>
+    <h3>✍️ Günlük işaretleme <span class="r" id="seri"></span></h3>
+    <p class="motto">Senin işin sadece bu: <b>her gün yaptığını gir.</b> Gerisini Günce halleder ✨</p>
     <div class="mchips" id="mchips"></div>
     <div class="wkbar"><button type="button" class="nav" id="wkPrev" aria-label="Önceki hafta">‹</button><div class="lbl" id="wkLbl"></div><button type="button" class="nav" id="wkNext" aria-label="Sonraki hafta">›</button><button type="button" class="tdy" id="wkToday">Bugün</button></div>
     <div class="days" id="days"></div>
@@ -342,8 +364,17 @@
     <p class="sub" id="shSub"></p>
     <div class="thead"><span></span><span>Ürün / kalem</span><span>Çeyrek hedefi</span><span></span></div>
     <div id="tRows"></div>
-    <div class="addrow"><input id="newName" placeholder="+ Yeni kalem (ör. mevduat, kredi)" maxlength="30"><select id="newType" aria-label="Kalem türü"><option value="adet">Adet</option><option value="tutar">Tutar (TL)</option><option value="bakiye">Bakiye (TL)</option><option value="ortalama">Ort. bakiye (TL)</option></select><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
-    <p class="note" style="margin:0 0 6px"><b>Adet:</b> sattıkça +1 (kart, hesap…). <b>Tutar:</b> günlük tutarlar toplanır (kredi kullandırım, sigorta primi). <b>Bakiye:</b> çeyrek sonunda ulaşmak istediğin bakiye. <b>Ort. bakiye:</b> çeyrek boyunca günlük ortalama (ör. mevduat). Tutarları "250 bin", "1,5 mn" gibi yazabilirsin. Hedefin aylık verildiyse adet ve tutarda 3 ile çarp. Hedefi olmayan kalemi boş bırak.</p>
+    <div class="addrow"><input id="newName" placeholder="+ Yeni kalem (ör. ek hesap, mevduat)" maxlength="30"><select id="newType" aria-label="Kalem türü"><option value="adet">Adet</option><option value="tutar">Tutar (TL)</option><option value="bakiye">Bakiye (TL)</option><option value="ortalama">Ort. bakiye (TL)</option></select><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
+    <div class="kilavuz">
+      <b>Nasıl eklenir?</b> Kalemin adını yaz → türünü seç → <b>Ekle</b> → sağdaki kutuya çeyrek hedefini yaz → <b>Kaydet</b>.
+      <ul>
+        <li><b>Adet</b> · sattıkça +1 (kredi kartı, ek hesap, fatura talimatı…)</li>
+        <li><b>Tutar</b> · günlük tutarlar toplanır (kullandırılan kredi, sigorta primi)</li>
+        <li><b>Bakiye</b> · çeyrek sonunda ulaşmak istediğin bakiye</li>
+        <li><b>Ort. bakiye</b> · çeyrek boyunca günlük ortalama (ör. mevduat)</li>
+      </ul>
+      Tutarı rakamla yaz, binlik noktaları Günce koyar. Hedefin aylık verildiyse adet ve tutarda 3 ile çarp.
+    </div>
     <div class="foot"><button class="btn" id="tCancel">Vazgeç</button><button class="btn pri" id="tSave">Kaydet</button></div>
   </div>
 </div>
@@ -423,6 +454,15 @@ function parseTL(t) {
   else x = x.replace(",", ".");
   const n = Number(x);
   return Number.isFinite(n) && n >= 0 ? Math.round(n * k * 100) / 100 : null;
+}
+// Yazarken binlik nokta koy: "1250000" → "1.250.000", "1250000,5" → "1.250.000,5" (harf varsa dokunma)
+function canliAyrac(i) {
+  const v = i.value; if (/[a-zçğıöşü]/i.test(v)) return;
+  let t = v.replace(/[^\d,]/g, ""); const k = t.indexOf(",");
+  let tam = k >= 0 ? t.slice(0, k) : t, kes = k >= 0 ? t.slice(k + 1).replace(/,/g, "").slice(0, 2) : null;
+  tam = tam.replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  const yeni = tam + (kes != null ? "," + kes : "");
+  if (yeni !== v) { const sondan = v.length - (i.selectionEnd ?? v.length); i.value = yeni; const pos = Math.max(0, yeni.length - sondan); try { i.setSelectionRange(pos, pos); } catch (e) {} }
 }
 const sayiYaz = (n) => (n == null ? "" : n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }));
 function targets() {
@@ -558,11 +598,11 @@ function renderHero() {
     $("hero").innerHTML = `
       <span class="st mid">Başlayalım</span>
       <div style="font-size:19px;font-weight:800;margin:4px 0 2px">${qName()} hedeflerin henüz yok</div>
-      <div class="big">Hedefini bir kez gir; her gün yaptığını işaretle. Gerisini biz hesaplarız.</div>
+      <div class="big">Senin tek işin: <b>her gün yaptığını girmek.</b> Hesap, plan, takip ve motivasyon Günce'den 💪</div>
       <div class="steps">
         <div class="step"><b class="n">1</b><div><b>Hedeflerini gir</b> — her kalem için çeyrek hedefi (adet, tutar ya da bakiye)</div></div>
-        <div class="step"><b class="n">2</b><div><b>Her gün işaretle</b> — sattıkça + tuşuna bas</div></div>
-        <div class="step"><b class="n">3</b><div><b>Rehberi izle</b> — bugün ve bu hafta kaç adet gerektiğini, hedefi tutma ihtimalini gör</div></div>
+        <div class="step"><b class="n">2</b><div><b>Her gün gir</b> — adetlerde + tuşuna bas, tutar ve bakiyeyi yaz. Birkaç saniye sürer</div></div>
+        <div class="step"><b class="n">3</b><div><b>Gerisini bize bırak</b> — bugün ve bu hafta ne kadar gerektiğini, hedefi tutma ihtimalini Günce söyler 🎯</div></div>
       </div>
       <button class="cta" id="heroT">🎯 Hedeflerimi gir</button>
       <div class="note" style="color:#aab0d6;margin-top:8px">Çeyrekte <b style="color:#fff">${fmt(T.total)}</b> iş günü var${ph === "simdi" ? `, <b style="color:#fff">${fmt(T.left)}</b> tanesi kaldı` : ""}.</div>`;
@@ -693,7 +733,18 @@ function pickDay(dt) {
   if (selDay.getMonth() !== viewMonth) { viewMonth = selDay.getMonth(); renderChips(); renderHeat(); }
   renderDays(); renderProds();
 }
+// Üst üste işaretleme yapılan iş günü sayısı (bugün henüz girilmediyse dünden geriye sayar)
+function seriSay() {
+  let n = 0; const d = new Date(today); if (!dayHas(TK)) d.setDate(d.getDate() - 1);
+  for (let i = 0; i < 120; i++) { if (isWork(d)) { if (!dayHas(keyOf(d))) break; n++; } d.setDate(d.getDate() - 1); }
+  return n;
+}
+function renderSeri() {
+  const el = $("seri"); if (!el) return; const n = seriSay();
+  el.textContent = n >= 2 ? `🔥 ${n} iş günü üst üste` : dayHas(TK) ? "✓ Bugün girildi" : D.products.length ? "Bugün henüz giriş yok" : "";
+}
 function renderDays() {
+  renderSeri();
   const mon = new Date(selDay); mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
   const sun = new Date(mon); sun.setDate(sun.getDate() + 6);
   let html = "";
@@ -748,6 +799,57 @@ if (window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matche
     } else if (e.key === "t" || e.key === "T") { if (canPick(today)) pickDay(new Date(today)); }
   });
 }
+// ================= Müşterine anlatabileceğin kampanyalar =================
+// Kaynak: İş Bankası Gündemi'nin her gün isbank.com.tr / maximum.com.tr ile kontrol edilen kampanya listeleri.
+// Kalemin adındaki kelimeye göre eşleşir (kişi kalemine ne ad verirse versin); eşleşme yoksa hiçbir şey görünmez.
+const KONU = [ // k: kalem adinda aranan, c: kampanya başliğinda aranan (öncelik sirasiyla)
+  { k: /kredi kart|^kart|kart$|maximum/, c: [/ilk kredi kart|kart başvuru|ilk kart/, /kredi kart|maximum kart/, /troy|kart/] },
+  { k: /bankamatik|banka kart|işpay/, c: [/bankamatik kart|ilk imza/, /işpay/] },
+  { k: /talimat|fatura|hgs|ogs/, c: [/fatura talimat/, /talimat|hgs/] },
+  { k: /ek hesap|kmh/, c: [/ek hesap/] },
+  { k: /kredi(?!\s*kart)|ihtiyaç|taşit|konut/, c: [/kredi(?!\s*kart)/, /ek hesap/] },
+  { k: /sigorta|bes\b|bireysel emeklilik|kasko|hayat/, c: [/sigorta|bes\b|bireysel emeklilik|kasko/, /katki pay|anadolu hayat/] },
+  { k: /müşteri|maaş|emekli|promosyon/, c: [/arkadaş|müşteri olmak/, /maaş/, /emekli/] },
+  { k: /mevduat|vadeli|birikim|tasarruf/, c: [/mevduat|vadeli|birikim|tasarruf|hoş geldin/] },
+  { k: /işcep|dijital|mobil/, c: [/işcep/] },
+  { k: /yatirim|hisse|fon\b|borsa/, c: [/hisse|yatirim|\bfon|borsa/] },
+  { k: /\bpos\b|üye işyeri|ticari/, c: [/\bpos\b|üye işyeri/] },
+];
+let KMP = null, kmpAcik = new Set();
+async function kampanyaYukle() {
+  const L = [];
+  try { const b = await Ortak.json("isbank/banka_kampanya.json"); for (const c of b.kategoriler || []) for (const x of c.kampanyalar || []) L.push({ t: x.baslik, o: x.ozet || "", b: x.bitis || "", u: x.url }); } catch (e) {}
+  try { const m = await Ortak.json("isbank/kampanyalar.json"); for (const x of m.kampanyalar || []) L.push({ t: x.baslik, o: x.ozet || "", b: x.bitis || "", u: x.url }); } catch (e) {}
+  const gor = new Set();
+  KMP = L.filter((x) => x.u && /^https:\/\/www\.(isbank|maximum)\.com\.tr\//.test(x.u) && (!x.b || x.b >= TK) && !gor.has(x.u) && gor.add(x.u));
+  renderProds();
+}
+// Kalem adında başka bir banka ya da onun kart markası geçiyorsa İş Bankası kampanyası hiç gösterilmez
+// (ör. "Garanti kredi kartı" kaleminin altına İş Bankası kredi kartı kampanyası düşmesin)
+const BASKA_BANKA = /garanti|bbva|akbank|yap[ii] ?kredi|ziraat|halk ?bank|vak[ii]f|qnb|finansbank|denizbank|\bteb\b|(^|\s)ing(\s|$)|hsbc|şekerbank|odea|fibabanka|alternatif ?bank|anadolubank|kuveyt|albaraka|türkiye finans|enpara|papara|burgan|icbc|emlak ?katilim|aktif ?bank|getir ?finans|colendi|katilim bank|bonus|axess|\bworld\b|paraf|bankkart|cardfinans|başka banka|diğer banka|rakip/;
+const norm = (t) => String(t).toLocaleLowerCase("tr").replace(/ı/g, "i"); // "ING", "YAPI KREDI", "Kredi" hepsi aynı yakalansın
+function kampanyalar(p) {
+  if (!KMP || !KMP.length) return [];
+  const ad = norm(p.name);
+  if (BASKA_BANKA.test(ad)) return [];
+  const K = KONU.filter((x) => x.k.test(ad));
+  if (!K.length) return [];
+  // Yalnızca başlıkta geçen kelimeye bakılır; önce en ilgili grup, sonra bitişi en yakın olan
+  const puan = (x) => { const t = norm(x.t); let best = 99; for (const k of K) k.c.forEach((r, i) => { if (i < best && r.test(t)) best = i; }); return best; };
+  return KMP.map((x) => ({ x, p: puan(x) })).filter((y) => y.p < 99)
+    .sort((a, b) => a.p - b.p || ((a.x.b || "9999") < (b.x.b || "9999") ? -1 : 1)).slice(0, 3).map((y) => y.x);
+}
+function kalanGun(b) {
+  if (!b) return "";
+  const n = Math.round((new Date(b + "T12:00:00") - today) / 864e5);
+  return n <= 0 ? '<b class="son">Bugün son gün</b>' : n === 1 ? '<b class="son">Yarın bitiyor</b>' : n <= 7 ? `<b class="son">⏳ ${n} gün kaldı</b>` : `<b>Son gün: ${new Date(b + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}</b>`;
+}
+function kmpHtml(p) {
+  const L = kampanyalar(p); if (!L.length) return "";
+  const ac = kmpAcik.has(p.id);
+  return `<div class="kmpW"><button type="button" class="kmpB ${ac ? "ac" : ""}" data-kmp="${p.id}">💡 Müşterine anlatabileceğin ${L.length} kampanya <i>›</i></button>
+    ${ac ? `<div class="kmpL">${L.map((x) => `<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t.replace(/[!]+$/, ""))}<small>${kalanGun(x.b)}<span class="kn">${x.u.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr"} ↗</span></small></a>`).join("")}</div>` : ""}</div>`;
+}
 function renderProds() {
   const dd = D.days[keyOf(selDay)] || {}, isT = keyOf(selDay) === TK;
   $("prods").innerHTML = D.products.map((p) => {
@@ -760,15 +862,21 @@ function renderProds() {
         : `Son bakiye ${fmtTL(s.cur)}${s.tgt ? ` / ${fmtTL(s.tgt)}` : ""}`;
       const yer = p.type === "tutar" ? "bugünkü tutar" : "bakiye";
       return `<div class="prod" data-p="${p.id}"><div class="ic">${p.icon}</div><div class="nm"><b>${esc(p.name)}<span class="tag">${TYPES[p.type]}</span></b><span>${info}</span></div>
-        <div class="mny"><input data-v="${p.id}" inputmode="decimal" enterkeyhint="done" placeholder="${yer}" value="${dd[p.id] != null ? sayiYaz(dd[p.id]) : ""}" aria-label="${esc(p.name)} ${yer}"></div></div>`;
+        <div class="mny"><input data-v="${p.id}" inputmode="decimal" enterkeyhint="done" placeholder="${yer}" value="${dd[p.id] != null ? sayiYaz(dd[p.id]) : ""}" aria-label="${esc(p.name)} ${yer}"></div>${kmpHtml(p)}</div>`;
     }
     const info = s.tgt ? `Çeyrek ${s.done}/${s.tgt}${isT && s.ph === "simdi" && s.pct < 100 ? (s.todayNeed ? ` · <i>bugün ${s.todayNeed} daha</i>` : " · <i>bugünkü tamam ✓</i>") : s.pct >= 100 ? " · ✓" : ""}` : `Çeyrek ${s.done} · <i>hedef yok</i>`;
     return `<div class="prod" data-p="${p.id}"><div class="ic">${p.icon}</div><div class="nm"><b>${esc(p.name)}</b><span>${info}</span></div>
-      <div class="cnt"><button data-m="${p.id}" aria-label="Azalt">−</button><span class="v">${dd[p.id] || 0}</span><button class="plus" data-a="${p.id}" aria-label="Artır">+</button></div></div>`;
+      <div class="cnt"><button data-m="${p.id}" aria-label="Azalt">−</button><span class="v">${dd[p.id] || 0}</span><button class="plus" data-a="${p.id}" aria-label="Artır">+</button></div>${kmpHtml(p)}</div>`;
   }).join("") || `<p class="note">Kalem yok. 🎯 Hedefler'den ekle.</p>`;
   $("prods").querySelectorAll("[data-a]").forEach((b) => (b.onclick = () => bump(b.dataset.a, 1)));
   $("prods").querySelectorAll("[data-m]").forEach((b) => (b.onclick = () => bump(b.dataset.m, -1)));
+  $("prods").querySelectorAll("[data-kmp]").forEach((b) => (b.onclick = () => {
+    const id = b.dataset.kmp; if (kmpAcik.has(id)) kmpAcik.delete(id); else { kmpAcik.add(id); window.Rapor && Rapor.bolum("kampanya-ac"); }
+    renderProds();
+  }));
+  $("prods").querySelectorAll(".kmpL a").forEach((a) => a.addEventListener("click", () => window.Rapor && Rapor.bolum("kampanya-tik")));
   $("prods").querySelectorAll("[data-v]").forEach((i) => {
+    i.oninput = () => canliAyrac(i);
     i.onchange = () => setVal(i.dataset.v, i.value);
     i.onkeydown = (e) => { if (e.key === "Enter") i.blur(); };
   });
@@ -858,6 +966,7 @@ function drawRows() {
   $("tRows").querySelectorAll("[data-n]").forEach((i) => (i.oninput = () => { const p = draft.products.find((x) => x.id === i.dataset.n); if (p) p.name = i.value; }));
   $("tRows").querySelectorAll("[data-t]").forEach((i) => (i.oninput = () => {
     const p = draft.products.find((x) => x.id === i.dataset.t); if (!p) return;
+    if (!isAdet(p)) canliAyrac(i);
     const n = isAdet(p) ? Math.max(0, Math.round(Number(i.value) || 0)) : parseTL(i.value) || 0;
     if (n) draft.t[p.id] = n; else delete draft.t[p.id];
     $("tRows").querySelector(`[data-h="${p.id}"]`).innerHTML = (isAdet(p) ? "" : `<span class="tag">${TYPES[p.type]}</span> `) + hint(n, T, p);
@@ -870,7 +979,7 @@ function drawRows() {
 }
 function hint(v, T, p) {
   const n = Number(v) || 0;
-  if (!n) return p && !isAdet(p) ? "Örnek: 250 bin, 1,5 mn · hedef yoksa boş bırak" : "Hedef yoksa boş bırak";
+  if (!n) return p && !isAdet(p) ? "Örnek: 250.000 · hedef yoksa boş bırak" : "Hedef yoksa boş bırak";
   if (p && p.type === "ortalama") return `Çeyrek boyunca ortalama ${fmtTL(n)} bakiye`;
   if (p && p.type === "bakiye") return `Çeyrek sonunda ${fmtTL(n)} bakiye`;
   if (p && p.type === "tutar") return `${fmtTL(n)} · ≈ ayda ${fmtTL(n / 3)} · haftada ${fmtTL((n / T.total) * 5)}`;
@@ -878,27 +987,43 @@ function hint(v, T, p) {
 }
 function closeTargets() { $("sheet").hidden = true; document.body.style.overflow = ""; draft = null; }
 function saveTargets() {
+  if (!draft) return;
+  if ($("newName").value.trim()) addProduct(true); // adı yazıp Ekle'ye basmayı unutanlar için
   draft.products.forEach((p) => (p.name = p.name.trim() || "Kalem"));
   D.products = draft.products;
   D.targets[qKey()] = draft.t;
-  save(); closeTargets(); render();
   const n = Object.keys(draft.t || {}).length;
+  save(); closeTargets(); render();
   toast(n ? `🎯 ${n} hedef kaydedildi. Rehberin hazır!` : "Kaydedildi");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-function addProduct() {
-  const name = $("newName").value.trim(); if (!name) return;
+function addProduct(sessiz) {
+  const name = $("newName").value.trim();
+  if (!name) { if (!sessiz) { toast("Önce kalemin adını yaz"); $("newName").focus(); } return; }
   const id = "u" + Date.now().toString(36);
   const type = TYPES[$("newType").value] ? $("newType").value : "adet";
-  const icon = type === "adet" ? ICONS[draft.products.length % ICONS.length] : type === "tutar" ? "💼" : type === "bakiye" ? "💰" : "📈";
+  const AI = ICONS.filter((x) => !["📈", "💼", "💰"].includes(x)), icon = type === "adet" ? AI[draft.products.filter(isAdet).length % AI.length] : type === "tutar" ? "💼" : type === "bakiye" ? "💰" : "📈";
   draft.products.push({ id, name, icon, type });
   $("newType").value = "adet";
   $("newName").value = ""; drawRows();
-  const f = $("tRows").querySelector(`[data-t="${id}"]`); if (f) f.focus();
+  if (sessiz) return;
+  const row = $("tRows").querySelector(`[data-r="${id}"]`), f = $("tRows").querySelector(`[data-t="${id}"]`), h = $("tRows").querySelector(`[data-h="${id}"]`);
+  if (row) { row.classList.add("yeni"); row.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  if (h) { h.classList.add("ok"); h.textContent = `✓ ${name} eklendi · şimdi sağdaki kutuya çeyrek hedefini yaz, sonra Kaydet`; }
+  if (f) setTimeout(() => f.focus(), 350);
 }
 
 // ================= İşlemler =================
+// Günün ilk girişinde küçük bir kutlama (gün içinde bir kez)
+const ILK = ["Günün ilk adımı atıldı! 💪", "Harika başlangıç! Gerisini Günce takip ediyor ✨", "Bugün de buradasın, işte bu! 🌟", "Bir giriş daha, hedefe bir adım daha 🚀"];
+function ilkGiris(vardi) {
+  if (vardi || keyOf(selDay) !== TK) return false;
+  const n = seriSay();
+  toast(n >= 2 ? `🔥 ${n} iş günü üst üste! ${pick(ILK)}` : pick(ILK));
+  return true;
+}
 function bump(pid, delta) {
+  const vardi = dayHas(TK);
   const dd = dayData(selDay);
   dd[pid] = Math.max(0, (dd[pid] || 0) + delta);
   if (!dd[pid]) delete dd[pid];
@@ -911,6 +1036,8 @@ function bump(pid, delta) {
     else if (keyOf(selDay) === TK && s.todayNeed === 0 && s.ph === "simdi" && s.done < s.tgt && s.todayDone === Math.ceil(s.perDay * s.T.todayWork - 1e-9)) toast(`✅ ${p.name}: bugünkü hedef tamam!`);
   }
   if (delta > 0 && keyOf(selDay) !== TK) toast(`📅 ${selDay.getDate()} ${MONTHS[selDay.getMonth()]}: ${p ? p.name : ""} +1`);
+  if (delta > 0 && !(s.tgt && s.done === s.tgt)) ilkGiris(vardi);
+  renderSeri();
   renderHero(); renderCoach(); renderChips(); renderDays(); renderProds(); renderHeat(); renderProb();
 }
 // Tutar/bakiye kalemine o günün değerini yaz (boş bırakılırsa silinir)
@@ -918,12 +1045,13 @@ function setVal(pid, txt) {
   const p = D.products.find((x) => x.id === pid); if (!p) return;
   const v = parseTL(txt);
   if (v == null && String(txt).trim()) { toast("Tutar anlaşılamadı. Örnek: 250 bin, 1,5 mn, 2.500.000"); renderProds(); return; }
+  const vardi = dayHas(TK);
   const dd = dayData(selDay);
   if (v == null) delete dd[pid]; else dd[pid] = v;
   if (!Object.keys(dd).length) delete D.days[keyOf(selDay)];
   save();
   const gun = keyOf(selDay) === TK ? "Bugün" : `${selDay.getDate()} ${MONTHS[selDay.getMonth()]}`;
-  toast(v == null ? `${p.name}: ${gun} silindi` : `${p.name}: ${gun} ${fmtTL(v)} ✓`);
+  if (v == null || !ilkGiris(vardi)) toast(v == null ? `${p.name}: ${gun} silindi` : `${p.name}: ${gun} ${fmtTL(v)} ✓`);
   const s = stats(p);
   if (v != null && s.tgt && s.pct >= 100 && p.type !== "ortalama") setTimeout(() => toast(`🎉 ${p.name} çeyrek hedefi tamamlandı!`), 1400);
   renderHero(); renderCoach(); renderChips(); renderDays(); renderProds(); renderHeat(); renderProb(); renderPos();
@@ -1185,7 +1313,8 @@ $("nextM").onclick = () => shiftQuarter(1);
 $("openT").onclick = openTargets;
 $("tCancel").onclick = closeTargets;
 $("tSave").onclick = saveTargets;
-$("sheet").onclick = (e) => { if (e.target === $("sheet")) closeTargets(); };
+$("sheet").onclick = (e) => { if (e.target === $("sheet")) saveTargets(); }; // dışarı dokununca yazılanlar kaybolmasın, kaydedilsin
+$("newType").onchange = () => { if ($("newName").value.trim()) addProduct(); }; // ad yazılıysa tür seçilince eklenir
 $("addBtn").onclick = addProduct;
 $("newName").addEventListener("keydown", (e) => { if (e.key === "Enter") addProduct(); });
 $("expJson").onclick = exportJson;
@@ -1201,7 +1330,7 @@ $("resetAll").onclick = () => {
 };
 $("resetM").onclick = () => { if (confirm(`${qName()} (${qRange()}) günlük kayıtları silinsin mi? (Hedefler kalır)`)) { eachQuarterDay((d) => delete D.days[keyOf(d)]); save(); render(); } };
 
-load(); migrate(); save(); render();
+load(); migrate(); save(); render(); kampanyaYukle();
 const PC = window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches;
 $("devCard").hidden = !PC;
 $("tasiBtn").onclick = tasiGoster; $("tasiBtn2").onclick = tasiGoster;
