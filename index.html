@@ -58,6 +58,21 @@
   .kyOge.son b { color: #1a1206; background: linear-gradient(135deg, #f3d38a, #e0a24f); border-radius: 6px; padding: 1px 7px; }
   .kyOge b.gir { color: #1a1206; background: linear-gradient(135deg, #f3d38a, #e0a24f); border-radius: 6px; padding: 1px 7px; margin-left: 6px; }
   @keyframes kyKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  /* ===== En üstte "YENİ" şeridi: İş Bankası'nın yeni ürünleri, resmi sayfasına gider (alerts'teki CANLI şeridi gibi) ===== */
+  .yeniS { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 420px; margin: 0 0 6px; padding: 8px 10px; border-radius: 12px; background: rgba(0,0,0,.55); border: 1px solid #2a2418; box-sizing: border-box; }
+  .yeniS[hidden] { display: none; }
+  .ysEt { flex: none; font-size: 10.5px; font-weight: 800; letter-spacing: 1px; color: #e0a24f; }
+  .ysEt i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #e0a24f; margin-right: 5px; vertical-align: 1px; animation: ysBlip 1.6s infinite; }
+  @keyframes ysBlip { 50% { opacity: .25; } }
+  .ysYol { flex: 1; min-width: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .ysSer { display: inline-flex; white-space: nowrap; will-change: transform; animation: ysKay var(--sure, 40s) linear infinite; }
+  .yeniS:hover .ysSer, .yeniS:active .ysSer, .yeniS:focus-within .ysSer { animation-play-state: paused; }
+  .ysSer a { display: inline-flex; align-items: center; padding: 2px 0; font-size: 12.5px; color: #e9dcc0; text-decoration: none; }
+  .ysSer a b { color: #f3d38a; font-weight: 700; margin: 0 4px; }
+  .ysSer a::after { content: "◆"; margin: 0 12px; color: #6b5222; font-size: 9px; }
+  .ysSer .ysNot { font-size: 11px; color: #8a7a5e; margin-right: 34px; }
+  @keyframes ysKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .ysSer { animation: none; } .ysYol { overflow-x: auto; -webkit-mask-image: none; mask-image: none; } .ysEt i { animation: none; } }
   /* ===== PPK (TCMB faiz kararı) kayan yazının başında: 2 gün önce uyarı, karar günü 14:15'ten sonra karar ===== */
   .kyOge.ppk { color: #fff; }
   .kyOge b.yn { color: #fff; background: #e5383b; border-radius: 6px; padding: 1px 6px; margin: 0 6px 0 0; font-size: 11px; letter-spacing: .5px; }
@@ -212,6 +227,7 @@
 </head>
 <body>
   <header class="top" id="top">
+    <div class="yeniS" id="yeniS" hidden aria-label="İş Bankası'nda yeni ürünler"><span class="ysEt"><i></i>YENİ</span><div class="ysYol"><div class="ysSer" id="ysSer"></div></div></div>
     <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"></h1>
     <div class="hello">
       <div class="clock" aria-label="Saat">
@@ -744,6 +760,25 @@
   Ortak.json("data/ppk.json").then((j) => { J = j; sonCekim = Date.now(); ciz(); }).catch(() => {});
   setInterval(ciz, 30e3);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) ciz(); });
+})();
+</script>
+<script>
+// "YENİ" şeridi: yalnızca isbank.com.tr ya da İş Bankası resmi YouTube kanalından teyit edilen yeni ürün ve kampanyalar (haber sitesi başlıkları akıtılmaz). [simge, ad, kısa not, link, son tarih ("" = süresiz)]
+// Kampanyalar son tarihten sonra kendiliğinden düşer. Bilim Fabrikası'nın isbank.com.tr sayfası açılınca link oraya alınacak.
+(function () {
+  const YENI = [
+    ["🌾", "Çiftçi Kadın İmece Kart", "kadın üreticilere özel", "https://www.isbank.com.tr/is-ticari/ciftci-kadin-imece-kart", ""],
+    ["🔬", "Bilim Fabrikası", "çocuklara ücretsiz bilim platformu", "https://www.youtube.com/watch?v=7ku--fEEUW8", ""],
+    ["🛒", "Market'e 1.000 TL MaxiPuan", "31 Ekim'e kadar", "https://www.isbank.com.tr/kampanyalar/maximumdan-market-alisverislerinize-1000lira-maxipuan-kampanyasi", "2026-10-31"],
+    ["🤝", "Arkadaşını öner", "ikinize de 500 TL MaxiPuan · 31 Ekim'e kadar", "https://www.isbank.com.tr/kampanyalar/is-bankasini-arkadasiniza-onerin-maxipuan-kazanin", "2026-10-31"],
+  ].filter((x) => !x[4] || new Date() <= new Date(x[4] + "T23:59:59"));
+  const kutu = document.getElementById("yeniS"), ser = document.getElementById("ysSer");
+  if (!YENI.length) return;
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const tur = YENI.map(([e, ad, not, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("") + `<span class="ysNot">kaynak: İş Bankası ↗</span>`;
+  ser.innerHTML = tur + tur; // iki tur yan yana: kesintisiz döngü
+  ser.style.setProperty("--sure", Math.max(28, YENI.length * 10) + "s");
+  kutu.hidden = false;
 })();
 </script>
 </body>
