@@ -257,16 +257,24 @@ function preview_(q) {
 /* ---------- Günlük özet ---------- */
 
 function dailyDigest() {
+  // Apps Script tek çalıştırmada en fazla 6 dakika çalışır. Abone ve haber sayısı artınca liste yarıda
+  // kesiliyordu (22 Ekim 2026: 17 aboneden 10'una gitti). Artık ~4,5 dakikada durup 1 dakika sonra
+  // kaldığı yerden devam ediyor; bugün e-posta gönderilmiş aboneler atlanıyor, kimseye iki kez gitmiyor.
+  const t0 = Date.now(), SURE = 4.5 * 60 * 1000;
   const sh = sheet_();
   const data = sh.getDataRange().getValues();
   const dateStr = Utilities.formatDate(new Date(), CFG.TZ, 'd MMMM yyyy');
+  const bugun = Utilities.formatDate(new Date(), CFG.TZ, 'yyyy-MM-dd');
+  const gonderildi = v => v && Utilities.formatDate(new Date(v), CFG.TZ, 'yyyy-MM-dd') === bugun;
   const memo = {};
   const news = kw => (memo[kw] = memo[kw] || fetchNews_(kw));
 
   for (let i = 1; i < data.length; i++) {
     const r = data[i];
     if (r[C.status] !== 'active' || !r[C.keywords]) continue;
+    if (gonderildi(r[C.lastSent])) continue; // bugün zaten gitti (devam çalışması ya da elle yeniden çalıştırma)
     if (MailApp.getRemainingDailyQuota() < 1) continue;
+    if (Date.now() - t0 > SURE) { devamKur_(); Logger.log('Süre doluyor; kalanlar 1 dakika sonra gönderilecek.'); return; }
 
     const kws = String(r[C.keywords]).split(' | ').filter(Boolean);
     const used = {};
@@ -290,7 +298,22 @@ function dailyDigest() {
       Logger.log('Gönderilemedi: ' + r[C.email] + ' — ' + e);
     }
   }
-  try { pushDigest_(news); } catch (e) { Logger.log('Bildirimler gönderilemedi: ' + e); }
+  // Telefon bildirimleri günde bir kez (devam çalışmalarında tekrar gitmesin)
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty('PUSH_GUN') !== bugun) {
+    props.setProperty('PUSH_GUN', bugun);
+    try { pushDigest_(news); } catch (e) { Logger.log('Bildirimler gönderilemedi: ' + e); }
+  }
+}
+
+// Süre dolunca: 1 dakika sonra kaldığı yerden devam eden tek seferlik tetikleyici
+function devamKur_() {
+  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'dailyDigestDevam').forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('dailyDigestDevam').timeBased().after(60 * 1000).create();
+}
+function dailyDigestDevam() {
+  ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'dailyDigestDevam').forEach(t => ScriptApp.deleteTrigger(t));
+  dailyDigest();
 }
 
 
