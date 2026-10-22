@@ -220,17 +220,13 @@ function unsub_(t) {
 
 /* ---------- Haberler ---------- */
 
-function fetchNews_(kw) {
-  const cache = CacheService.getScriptCache();
-  const key = 'n_' + Utilities.base64EncodeWebSafe(Utilities.newBlob(kw.toLocaleLowerCase('tr')).getBytes()).slice(0, 200);
-  const hit = cache.get(key);
-  if (hit) return JSON.parse(hit);
-
-  const url = 'https://news.google.com/rss/search?q=' + encodeURIComponent(kw + ' when:1d') + '&hl=tr&gl=TR&ceid=TR:tr';
+/* Haber çekme. Anahtar kelime başına Google Haberler RSS; sonuç 30 dk önbellekte tutulur. */
+function nKey_(kw) { return 'n_' + Utilities.base64EncodeWebSafe(Utilities.newBlob(kw.toLocaleLowerCase('tr')).getBytes()).slice(0, 200); }
+function nUrl_(kw) { return 'https://news.google.com/rss/search?q=' + encodeURIComponent(kw + ' when:1d') + '&hl=tr&gl=TR&ceid=TR:tr'; }
+function nParse_(res) {
   let items = [];
   try {
-    const res = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
-    if (res.getResponseCode() === 200) {
+    if (res && res.getResponseCode() === 200) {
       const ch = XmlService.parse(res.getContentText()).getRootElement().getChild('channel');
       const limit = Date.now() - 26 * 3600 * 1000;
       items = ch.getChildren('item').map(it => {
@@ -245,8 +241,31 @@ function fetchNews_(kw) {
         .slice(0, 10);
     }
   } catch (e) { items = []; }
-  try { cache.put(key, JSON.stringify(items), 1800); } catch (e) {}
   return items;
+}
+function fetchNews_(kw) {
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get(nKey_(kw));
+  if (hit) return JSON.parse(hit);
+  let items = [];
+  try { items = nParse_(UrlFetchApp.fetch(nUrl_(kw), { muteHttpExceptions: true })); } catch (e) { items = []; }
+  try { cache.put(nKey_(kw), JSON.stringify(items), 1800); } catch (e) {}
+  return items;
+}
+/* Birçok kelimeyi AYNI ANDA çeker (fetchAll), önbelleğe yazar. Sırayla çekmek 6 dakika sınırını aşıyordu (22 Ekim 2026).
+   Dönüş: hepsi bitti mi (süre yetmediyse false; kalanlar bir sonraki çalışmada çekilir). */
+function nToplu_(kws, bitis) {
+  const cache = CacheService.getScriptCache();
+  const need = kws.filter(kw => !cache.get(nKey_(kw)));
+  for (let i = 0; i < need.length; i += 10) {
+    if (Date.now() > bitis) return false;
+    const part = need.slice(i, i + 10);
+    let res = [];
+    try { res = UrlFetchApp.fetchAll(part.map(kw => ({ url: nUrl_(kw), muteHttpExceptions: true }))); }
+    catch (e) { Logger.log('Toplu çekme hatası: ' + e); continue; }
+    res.forEach((r, n) => { try { cache.put(nKey_(part[n]), JSON.stringify(nParse_(r)), 1800); } catch (e) {} });
+  }
+  return true;
 }
 
 function preview_(q) {
@@ -298,12 +317,16 @@ function dailyDigest() {
   const gonderildi = v => v && Utilities.formatDate(new Date(v), CFG.TZ, 'yyyy-MM-dd') === bugun;
   const memo = {};
   const news = kw => (memo[kw] = memo[kw] || fetchNews_(kw));
+  const bekleyen = r => r[C.status] === 'active' && r[C.keywords] && !isIs_(r[C.email]) && !gonderildi(r[C.lastSent]);
+
+  /* Önce bekleyen tüm abonelerin kelimelerini aynı anda çek (önbelleğe); sonra e-postalar hızlı gider */
+  const tum = {};
+  data.slice(1).filter(bekleyen).forEach(r => String(r[C.keywords]).split(' | ').filter(Boolean).forEach(kw => (tum[kw] = 1)));
+  if (!nToplu_(Object.keys(tum), t0 + SURE)) { devamKur_(); Logger.log('Haber çekme sürdü; 1 dakika sonra kaldığı yerden devam.'); return; }
 
   for (let i = 1; i < data.length; i++) {
     const r = data[i];
-    if (r[C.status] !== 'active' || !r[C.keywords]) continue;
-    if (isIs_(r[C.email])) continue; /* iş adreslerine gönderim yok */
-    if (gonderildi(r[C.lastSent])) continue; /* bugün zaten gitti (devam çalışması ya da elle yeniden çalıştırma) */
+    if (!bekleyen(r)) continue; /* bugün zaten gitti (devam çalışması ya da elle yeniden çalıştırma) */
     if (MailApp.getRemainingDailyQuota() < 1) continue;
     if (Date.now() - t0 > SURE) { devamKur_(); Logger.log('Süre doluyor; kalanlar 1 dakika sonra gönderilecek.'); return; }
 
