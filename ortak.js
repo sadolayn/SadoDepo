@@ -89,6 +89,21 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", footer); else footer();
 
+  // Oyunlarda ekranı aşağı çekmek sayfayı yenilemesin (oyun baştan açılmasın).
+  // CSS yetmeyen tarayıcılar için: sayfa en üstteyken aşağı doğru çekme engellenir; kaydırılabilir bir pencerenin içi serbest.
+  if (OYUNLAR.test(SAYFA)) {
+    var st = document.createElement("style"); st.textContent = "html,body{overscroll-behavior-y:none}"; document.head.appendChild(st);
+    var y0 = 0;
+    document.addEventListener("touchstart", function (e) { y0 = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener("touchmove", function (e) {
+      if (e.touches.length !== 1 || window.scrollY > 0 || e.touches[0].clientY - y0 <= 0) return;
+      for (var el = e.target; el && el !== document.body; el = el.parentElement) {
+        if (el.scrollTop > 0 && el.scrollHeight > el.clientHeight) return; // pencere içinde yukarı kaydırma
+      }
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+  }
+
   // Sayfa internetten değil, cihazdaki son kopyadan geldiyse (ağ siteyi engelliyor ya da bağlantı yok) üstte söyle
   if (window.__yedek) {
     var uy = function () {

@@ -71,6 +71,9 @@
   .card.target, .slot.target { box-shadow: 0 0 0 3px #7dffb8, 0 0 18px rgba(125,255,184,.7) !important; }
   .card.ghost { pointer-events: none; box-shadow: 0 0 0 3px var(--accent), 0 10px 24px rgba(0,0,0,.6); transition: none; }
   .card.pop { animation: pop .35s ease-out; }
+  /* Sürükle-bırak: kart parmağı izler; tahtada dokunuş kaydırma yerine sürüklemeye gider */
+  .board { touch-action: none; }
+  .board .card.drag { transition: none !important; box-shadow: 0 0 0 2px var(--accent), 0 14px 28px rgba(0,0,0,.55); cursor: grabbing; }
   @keyframes pop { 40% { transform: scale(1.08); } }
 
   /* Alt araç çubuğu */
@@ -115,7 +118,7 @@
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
 </head>
-<body data-ses-dugmesi="yok">
+<body data-ses-dugmesi="yok" data-footer="yok">
 <script src="oyunsaat.js" data-kilit="sayfa"></script>
 <div class="top">
   <a class="ib" href="oyunlar.html" title="Oyunlar" aria-label="Oyunlar">🎮</a>
@@ -284,6 +287,78 @@ function onCardTap(id, el) {
   const moved = els.get(S.last); if (moved && m.to === "found") { moved.classList.remove("pop"); void moved.offsetWidth; moved.classList.add("pop"); }
   after();
 }
+// ---------- Sürükle-bırak ----------
+// Dokunup bırakmak eskisi gibi kartı en uygun yere gönderir. Parmak 8 pikselden fazla kayarsa kart (tablodaysa
+// altındakilerle birlikte) parmağı izler; bırakılan yer kurala uyuyorsa oraya gider, uymuyorsa yerine döner.
+let DR = null, dragBitti = 0;
+function dragCards(loc) {
+  if (loc.from === "tab") return S.tab[loc.i].slice(loc.k);
+  return [loc.from === "waste" ? lastOf(S.waste) : lastOf(S.found[loc.i])];
+}
+function dropTarget(loc, cards) {
+  const el = els.get(cards[0].id); if (!el) return null;
+  const r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height * 0.35;
+  const card = cards[0], single = cards.length === 1;
+  // Bitiş yığınları
+  if (single) for (let i = 0; i < 4; i++) {
+    if (loc.from === "found" && loc.i === i) continue;
+    const b = els.get("__f" + i).getBoundingClientRect();
+    if (cx > b.left - b.width * 0.25 && cx < b.right + b.width * 0.25 && cy > b.top - b.height * 0.4 && cy < b.bottom + b.height * 0.4 && canFound(card, i)) return { loc, to: "found", i };
+  }
+  // Tablo sütunları: yatayda en yakın sütun
+  let best = null, bd = 1e9;
+  for (let ti = 0; ti < 7; ti++) {
+    if (loc.from === "tab" && loc.i === ti) continue;
+    const b = els.get("__t" + ti).getBoundingClientRect();
+    if (cy < b.top - b.height * 0.5) continue;
+    const d = Math.abs(cx - (b.left + b.width / 2));
+    if (d < b.width * 0.9 && d < bd && canTab(card, ti)) { bd = d; best = { loc, to: "tab", i: ti }; }
+  }
+  return best;
+}
+$("board").addEventListener("pointerdown", (e) => {
+  if (e.button > 0 || autoRunning || DR) return;
+  const el = e.target.closest(".card"); if (!el || !el.dataset.id) return;
+  const id = isNaN(+el.dataset.id) ? el.dataset.id : +el.dataset.id;
+  const loc = locate(id); if (!loc) return;
+  if (loc.from === "tab" && !S.tab[loc.i][loc.k].up) return;
+  DR = { id, loc, x0: e.clientX, y0: e.clientY, pid: e.pointerId, on: false, src: el };
+});
+$("board").addEventListener("pointermove", (e) => {
+  if (!DR || e.pointerId !== DR.pid) return;
+  const dx = e.clientX - DR.x0, dy = e.clientY - DR.y0;
+  if (!DR.on) {
+    if (Math.hypot(dx, dy) < 8) return;
+    DR.on = true; DR.cards = dragCards(DR.loc); DR.els = DR.cards.map((c) => els.get(c.id)).filter(Boolean);
+    DR.els.forEach((el, n) => { el.classList.add("drag"); el.dataset.z = el.style.zIndex; el.style.zIndex = 3000 + n; });
+    try { DR.src.setPointerCapture(e.pointerId); } catch (er) {}
+    clearTimeout(idleT);
+  }
+  e.preventDefault();
+  DR.els.forEach((el) => (el.style.transform = `translate(${dx}px,${dy}px)`));
+});
+function dragBit(e, iptal) {
+  if (!DR || (e && e.pointerId !== DR.pid)) return;
+  const d = DR; DR = null;
+  if (!d.on) return; // dokunma: tıklama olayı kartı en uygun yere götürür
+  dragBitti = Date.now();
+  const m = iptal ? null : dropTarget(d.loc, d.cards);
+  // Kartı bulunduğu görünür yere sabitle, sonra yeni yerine (ya da geri) kaydır
+  d.els.forEach((el) => {
+    const r = el.getBoundingClientRect(), b = $("board").getBoundingClientRect();
+    el.style.transform = ""; el.style.left = r.left - b.left + "px"; el.style.top = r.top - b.top + "px";
+    el.style.zIndex = el.dataset.z || ""; void el.offsetWidth; el.classList.remove("drag");
+  });
+  if (m) {
+    doMove(m); render();
+    const moved = els.get(S.last); if (moved && m.to === "found") { moved.classList.remove("pop"); void moved.offsetWidth; moved.classList.add("pop"); }
+    after();
+  } else { render(); if (!iptal) setTimeout(() => shake(d.src), 220); idle(); }
+}
+$("board").addEventListener("pointerup", (e) => dragBit(e, false));
+$("board").addEventListener("pointercancel", (e) => dragBit(e, true));
+// Sürüklemeden hemen sonra gelen tıklama kartı ikinci kez oynatmasın
+$("board").addEventListener("click", (e) => { if (Date.now() - dragBitti < 400) { e.stopPropagation(); e.preventDefault(); } }, true);
 function after() { checkWin(); checkStuck(); if (OPT.tam && canAutoFinish() && !autoRunning) setTimeout(autoFinish, 350); idle(); }
 function shake(el) { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); }
 function undo() {
@@ -505,6 +580,7 @@ function render() {
       requestAnimationFrame(() => requestAnimationFrame(() => { el.style.transition = `left .32s ${d}ms cubic-bezier(.2,.8,.3,1), top .32s ${d}ms cubic-bezier(.2,.8,.3,1)`; el.style.left = left + "px"; el.style.top = y + "px"; setTimeout(() => (el.style.transition = ""), d + 400); }));
     } else Object.assign(el.style, { left: left + "px", top: y + "px" });
     el.onclick = onTap;
+    el.dataset.id = c.id;
     seen.add(c.id);
   };
   // Deste — kalınlık için birkaç kart hafif kaydırılır
