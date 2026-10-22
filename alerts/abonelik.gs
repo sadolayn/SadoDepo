@@ -49,6 +49,7 @@ function subscribe_(b) {
   const email = String(b.email || '').trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 120)
     return { ok: false, msg: 'Geçerli bir e-posta adresi gir.' };
+  if (isIs_(email)) return { ok: false, msg: 'İş e-posta adresi kabul edilmiyor; kişisel e-posta adresini yaz.' };
   const kws = cleanKeywords_(b.keywords);
   if (!kws.length) return { ok: false, msg: 'En az bir anahtar kelime ekle.' };
 
