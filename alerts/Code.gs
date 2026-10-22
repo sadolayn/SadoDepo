@@ -274,7 +274,7 @@ function isAdresleriniTemizle() {
           to: e, name: CFG.NAME,
           subject: CFG.NAME + ' · iş e-posta adresleri artık kullanılmıyor',
           htmlBody: shell_('<p>Merhaba,</p><p>Sadolayn Alerts kişisel bir hobi projesidir; bu nedenle kurumsal e-posta adreslerine gönderimi sonlandırdık ve bu adresin kaydını sildik.</p>' +
-            '<p>Haber özetini almaya devam etmek istersen <a href="' + CFG.PAGE + '">' + CFG.PAGE + '</a> adresinden <b>kişisel e-posta adresinle</b> yeniden abone olabilirsin.</p><p>İlgin için teşekkürler 🙂</p>', '')
+            '<p>Haber özetini almaya devam etmek istersen <a href="' + CFG.PAGE + '">' + CFG.PAGE + '</a> adresinden <b>kişisel e-posta adresinle</b> yeniden abone olabilirsin; ya da aynı sayfada e-posta vermeden <b>telefon bildirimi</b> açabilirsin.</p><p>İlgin için teşekkürler 🙂</p>', '')
         });
       } catch (err) { Logger.log('Bilgi e-postası gönderilemedi: ' + e + ' — ' + err); }
     }
