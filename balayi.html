@@ -61,7 +61,7 @@
   .pop { animation: pop .18s ease-out; }
   @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-  .status { min-height: 34px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 15px; padding: 4px; }
+  .status { min-height: 44px; /* iki satır: metin uzayınca masa zıplamasın */ display: flex; align-items: center; justify-content: center; text-align: center; font-size: 15px; padding: 4px; }
   .panel { display: none; grid-template-columns: repeat(5, 1fr); gap: 6px; width: 100%; }
   .panel.show { display: grid; }
   .panel button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 7px 2px 6px; border-radius: 12px; border: 1px solid rgba(255,255,255,.25); background: rgba(0,0,0,.45); color: #fff; font: 700 12px system-ui, sans-serif; cursor: pointer; backdrop-filter: blur(3px); }
@@ -338,7 +338,7 @@ function renderTrick(w) {
     $("slot" + t.p).appendChild(el);
   }
 }
-function render() { renderInfo(); renderWho(); renderPiles(); renderHand(); }
+function render() { renderInfo(); renderWho(); renderPiles(); fit(); renderHand(); } // kartlar dizildikten sonra ekrana sığdır
 
 // ---------- El akışı ----------
 function newRound() {

@@ -42,6 +42,8 @@
   .grid.uc button { font-size: 13px; letter-spacing: -.3px; }
   .grid button { aspect-ratio: 1; border-radius: 9px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: 700 15px system-ui, sans-serif; font-variant-numeric: tabular-nums; cursor: pointer; padding: 0; transition: opacity .3s, background .2s, border-color .2s; position: relative; }
   .grid button:active { transform: scale(.94); }
+  /* Kısa ekranda kutular biraz yassılaşır: "Yeni oyun" ve skorlar kaydırmadan görünsün */
+  @media (max-height: 880px) { .grid button { aspect-ratio: 5 / 4; } }
   .grid.ipucu button.asal { color: var(--gold); border-color: #4a3a1c; }
   .grid button.disi { opacity: .16; cursor: default; }
   .grid button.degil { color: #5a5a5a; background: #0a0a0a; }

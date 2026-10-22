@@ -1,6 +1,8 @@
 /* ortak.js — bütün sayfalarda ortak parçalar.
    1) Alt bilgi (footer): metni yalnızca burada değiştir, tüm sayfalarda değişir.
       Alt bilgi istemeyen sayfa: <body data-footer="yok">
+      Oyun sayfalarında (OYUNLAR listesi ya da <body data-footer="kisa">) tek satır: "© Sadolayn · Okuyunuz ›";
+      açıklama dokununca açılır, 15 sn sonra kendiliğinden kapanır (masa küçülmesin diye).
    2) Veri çekme ve hata kartı:
       Ortak.json(url)                 → no-store ile çeker; olmazsa son kaydedilen kopyaya düşer
       Ortak.hata(el, {ne, tekrar})    → tüm sayfalarda aynı görünen "alınamadı" kartı
@@ -59,11 +61,30 @@
     },
   };
 
+  var OYUNLAR = /^(batak|king|balayi|tavla|solitaire|pilot|tahmin|bilmece)$/;
+  var SAYFA = (location.pathname.split("/").pop() || "index.html").replace(/\.html$/, "");
   function footer() {
     if (!document.body || document.body.getAttribute("data-footer") === "yok" || document.querySelector("footer.copyright")) return;
     var f = document.createElement("footer"); f.className = "copyright";
-    f.style.cssText = "width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif";
-    f.innerHTML = FOOTER.replace("{Y}", new Date().getFullYear());
+    var Y = new Date().getFullYear();
+    if (document.body.getAttribute("data-footer") === "kisa" || OYUNLAR.test(SAYFA)) {
+      f.style.cssText = "width:100%;flex:none;text-align:center;font-size:11px;color:#5f5f5f;margin:8px 0 2px;letter-spacing:.4px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif";
+      var metin = FOOTER.replace("{Y}", Y).split("<br>").slice(2).join("<br>");
+      f.innerHTML = "© " + Y + " Sadolayn · Tüm hakları saklıdır · " +
+        '<button type="button" aria-expanded="false" style="background:none;border:0;padding:4px 2px;color:#8a7a5e;font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Okuyunuz ›</button>' +
+        '<div hidden style="margin-top:4px">' + metin + "</div>";
+      var b = f.querySelector("button"), d = f.querySelector("div"), t = null;
+      var kapa = function () { d.hidden = true; b.textContent = "Okuyunuz ›"; b.setAttribute("aria-expanded", "false"); clearTimeout(t); };
+      b.onclick = function () {
+        if (!d.hidden) return kapa();
+        d.hidden = false; b.textContent = "Kapat ✕"; b.setAttribute("aria-expanded", "true");
+        clearTimeout(t); t = setTimeout(kapa, 15000);
+        try { f.scrollIntoView({ block: "end", behavior: "smooth" }); } catch (e) {}
+      };
+    } else {
+      f.style.cssText = "width:100%;text-align:center;font-size:12px;color:#6f6f6f;margin:28px 0 8px;letter-spacing:.5px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif";
+      f.innerHTML = FOOTER.replace("{Y}", Y);
+    }
     document.body.appendChild(f);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", footer); else footer();
