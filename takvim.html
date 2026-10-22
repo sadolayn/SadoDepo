@@ -641,23 +641,7 @@ function showDetail(d) {
   $("dItems").innerHTML = mine.map((x) => aItemHTML(x, k)).join("");
 }
 $("dows").innerHTML = DOW.map((d) => `<div class="dow">${d}</div>`).join("");
-$("mtBtn").onclick = () => { view = new Date(today.getFullYear(), today.getMonth(), 1, 12); selected = today; // TCMB PPK toplantıları (data/ppk.json): ay görünümünün altında o ayın karar günü ve linki
-let PPKJ = null;
-const TCMB_TAKVIM = "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/Para+Politikasi+Kurulu/Toplanti+Takvimi";
-function ppkAy(y, m) {
-  const el = $("ppkAy"); if (!el) return;
-  const list = (PPKJ && PPKJ.meetings) || [];
-  const ay = `${y}-${String(m + 1).padStart(2, "0")}-`, g = list.filter((d) => d.startsWith(ay));
-  if (!g.length) { el.innerHTML = ""; return; }
-  const L = PPKJ.last, h = g.map((d) => {
-    const dt = new Date(d + "T12:00:00"), s = dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
-    const k = L && L.date === d ? ` → politika faizi <b>%${String(L.rate).replace(".", ",")}</b> · <a href="${L.url || TCMB_TAKVIM}" target="_blank" rel="noopener">karar metni ↗</a>` : ` 14:00 · <a href="${TCMB_TAKVIM}" target="_blank" rel="noopener">TCMB takvimi ↗</a>`;
-    return `🏦 PPK faiz kararı: <b>${s}</b>${k}`;
-  }).join("<br>");
-  el.innerHTML = h;
-}
-if (window.Ortak && Ortak.json) Ortak.json("data/ppk.json").then((j) => { PPKJ = j; ppkAy(view.getFullYear(), view.getMonth()); }).catch(() => {});
-renderMonth(); showDetail(today); };
+$("mtBtn").onclick = () => { view = new Date(today.getFullYear(), today.getMonth(), 1, 12); selected = today; renderMonth(); showDetail(today); };
 $("prev").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1, 12); renderMonth(); };
 $("next").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1, 12); renderMonth(); };
 
@@ -1194,6 +1178,22 @@ const endM = new Date(today.getFullYear(), today.getMonth() + 1, 0, 12);
 $("h1b").value = iso(endM);
 $("h2a").value = iso(today);
 selected = today;
+// TCMB PPK toplantıları (data/ppk.json): ay görünümünün altında o ayın karar günü ve linki
+let PPKJ = null;
+const TCMB_TAKVIM = "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/Para+Politikasi+Kurulu/Toplanti+Takvimi";
+function ppkAy(y, m) {
+  const el = $("ppkAy"); if (!el) return;
+  const list = (PPKJ && PPKJ.meetings) || [];
+  const ay = `${y}-${String(m + 1).padStart(2, "0")}-`, g = list.filter((d) => d.startsWith(ay));
+  if (!g.length) { el.innerHTML = ""; return; }
+  const L = PPKJ.last, h = g.map((d) => {
+    const dt = new Date(d + "T12:00:00"), s = dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
+    const k = L && L.date === d ? ` → politika faizi <b>%${String(L.rate).replace(".", ",")}</b> · <a href="${L.url || TCMB_TAKVIM}" target="_blank" rel="noopener">karar metni ↗</a>` : ` 14:00 · <a href="${TCMB_TAKVIM}" target="_blank" rel="noopener">TCMB takvimi ↗</a>`;
+    return `🏦 PPK faiz kararı: <b>${s}</b>${k}`;
+  }).join("<br>");
+  el.innerHTML = h;
+}
+if (window.Ortak && Ortak.json) Ortak.json("data/ppk.json").then((j) => { PPKJ = j; ppkAy(view.getFullYear(), view.getMonth()); }).catch(() => {});
 renderMonth(); showDetail(today); calc1(); calc2(); renderList(); renderYear(); renderAjanda(); setStickH();
 if (location.hash === "#ajanda") document.querySelector('.tabs button[data-tab="ajanda"]').click();
 </script>
