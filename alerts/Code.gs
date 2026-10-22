@@ -137,6 +137,7 @@ function subscribe_(b) {
   const email = String(b.email || '').trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 120)
     return { ok: false, msg: 'Geçerli bir e-posta adresi gir.' };
+  if (isIs_(email)) return { ok: false, msg: 'İş e-posta adresi kabul edilmiyor; kişisel e-posta adresini yaz.' };
   const kws = cleanKeywords_(b.keywords);
   if (!kws.length) return { ok: false, msg: 'En az bir anahtar kelime ekle.' };
 
@@ -254,6 +255,35 @@ function preview_(q) {
   return { ok: true, results: kws.map(kw => ({ kw, items: fetchNews_(kw).slice(0, CFG.PER_KEYWORD) })) };
 }
 
+/* ---------- İş e-posta adresleri ---------- */
+// Kurumsal (@isbank.com.tr) adreslere bülten gönderilmez; yeni kayıt da alınmaz.
+function isIs_(e) { return /@isbank\.com\.tr$/i.test(String(e || '').trim()); }
+
+// TEK SEFERLİK: tablodaki @isbank.com.tr abonelere kısa bir bilgi e-postası gönderir ve onları siler.
+// Apps Script'te bir kez çalıştır (üst menüden isAdresleriniTemizle seç > Çalıştır). Günlük kayıtta kaç kişi silindiği yazar.
+function isAdresleriniTemizle() {
+  const sh = sheet_();
+  const data = sh.getDataRange().getValues();
+  let silinen = 0;
+  for (let i = data.length - 1; i >= 1; i--) {
+    const e = data[i][C.email];
+    if (!isIs_(e)) continue;
+    if (data[i][C.status] === 'active') {
+      try {
+        MailApp.sendEmail({
+          to: e, name: CFG.NAME,
+          subject: CFG.NAME + ' · iş e-posta adresleri artık kullanılmıyor',
+          htmlBody: shell_('<p>Merhaba,</p><p>Sadolayn Alerts kişisel bir hobi projesidir; bu nedenle kurumsal e-posta adreslerine gönderimi sonlandırdık ve bu adresin kaydını sildik.</p>' +
+            '<p>Haber özetini almaya devam etmek istersen <a href="' + CFG.PAGE + '">' + CFG.PAGE + '</a> adresinden <b>kişisel e-posta adresinle</b> yeniden abone olabilirsin.</p><p>İlgin için teşekkürler 🙂</p>', '')
+        });
+      } catch (err) { Logger.log('Bilgi e-postası gönderilemedi: ' + e + ' — ' + err); }
+    }
+    sh.deleteRow(i + 1);
+    silinen++;
+  }
+  Logger.log(silinen + ' iş adresi silindi.');
+}
+
 /* ---------- Günlük özet ---------- */
 
 function dailyDigest() {
@@ -272,6 +302,7 @@ function dailyDigest() {
   for (let i = 1; i < data.length; i++) {
     const r = data[i];
     if (r[C.status] !== 'active' || !r[C.keywords]) continue;
+    if (isIs_(r[C.email])) continue; // iş adreslerine gönderim yok
     if (gonderildi(r[C.lastSent])) continue; // bugün zaten gitti (devam çalışması ya da elle yeniden çalıştırma)
     if (MailApp.getRemainingDailyQuota() < 1) continue;
     if (Date.now() - t0 > SURE) { devamKur_(); Logger.log('Süre doluyor; kalanlar 1 dakika sonra gönderilecek.'); return; }
