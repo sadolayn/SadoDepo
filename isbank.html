@@ -1817,7 +1817,7 @@ function renderList() {
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 <script>
-// Yakınımdaki şubeler: konumu cihazdan al (kurum ağı İstanbul'dan çıktığı için Google tek başına Ataşehir gösteriyordu)
+// Yakınımdaki şubeler: konumu cihazdan al
 (function () {
   const go = (lat, lon) => window.open(`https://www.google.com/maps/search/T%C3%BCrkiye+%C4%B0%C5%9F+Bankas%C4%B1/@${lat},${lon},14z`, "_blank", "noopener");
   const saved = () => { try { const p = (JSON.parse(localStorage.getItem("yakin_v1") || "{}") || {}).place; return p && p.lat ? p : null; } catch (e) { return null; } };

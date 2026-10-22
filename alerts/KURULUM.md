@@ -38,7 +38,7 @@ Bildirimler `dailyDigest` içinde e-postalardan sonra gönderilir. Kayıtlı tel
 3. Kontrol: `…/exec` adresini tarayıcıda aç → `"v":5` görünmeli.
 
 Ne değişir:
-- Onay bağlantısına ikinci kez tıklanırsa (kurumsal e-posta güvenlik sistemleri bağlantıları önceden açabiliyor) "Bağlantı geçersiz" yerine **"Aboneliğin zaten onaylı ✅"** çıkar.
+- Onay bağlantısına ikinci kez tıklanırsa (bazı e-posta sistemleri bağlantıları önceden açabiliyor) "Bağlantı geçersiz" yerine **"Aboneliğin zaten onaylı ✅"** çıkar.
 - Abone olunan cihazda sitede **"📬 Bu cihazdaki aboneliklerin"** kutusu çıkar: onay bekleniyor / aktif / çıkıldı ve son gönderim saati.
   Durum yalnızca e-postadaki bağlantıyı (onay ya da "aboneliğimi bu cihazda göster") açan cihaza verilir; sitede e-posta yazan biri başkasının aboneliğini göremez.
 - Zaten abone olan adres yeniden yazılırsa "zaten abone ✅" denir ve o adrese "bu cihazda göster" bağlantısı gider.

@@ -224,6 +224,7 @@
   <div class="card">
     <label for="email">E-posta adresin</label>
     <input id="email" type="email" placeholder="ornek@mail.com" autocomplete="email" inputmode="email" style="width:100%">
+    <p class="r" style="font-size:12px;color:#8a8a8a;margin:6px 0 0">Lütfen iş e-postanı değil kişisel e-postanı yaz (Gmail, iCloud vb.).</p>
     <div class="actions">
       <button id="preview">👀 Önizle</button>
       <button id="sub" class="main">🔔 Abone ol</button>
@@ -387,6 +388,7 @@ $("preview").onclick = async () => {
 $("sub").onclick = async () => {
   const email = $("email").value.trim();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return show("bad", "Geçerli bir e-posta adresi gir.");
+  if (/@isbank\.com\.tr$/i.test(email)) return show("bad", "İş e-postası kabul edilmiyor; kişisel e-postanı yaz.");
   save();
   const b = $("sub");
   b.disabled = true; b.textContent = "Gönderiliyor…";

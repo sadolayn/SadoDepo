@@ -2,7 +2,7 @@
  * Düzeltme 5 — abonelik.gs (Kod.gs'den SONRA; aynı adlı fonksiyonların yerine bunlar çalışır)
  * Not: Telefonda yapıştırırken satır sonları kaybolsa da çalışır (tek satırlık açıklama işareti kullanılmadı).
  *
- * 1) Onay bağlantısı ikinci kez açılırsa (kurumsal e-posta güvenlik sistemleri bağlantıları önceden açabiliyor)
+ * 1) Onay bağlantısı ikinci kez açılırsa (bazı e-posta sistemleri bağlantıları önceden açabiliyor)
  *    "Bağlantı geçersiz" yerine "Aboneliğin zaten onaylı" çıkar.
  * 2) Zaten abone olan adres yeniden yazılırsa "Az önce e-posta gönderildi" hatası yerine
  *    "Bu adres zaten abone" denir ve o adrese "bu cihazda göster" bağlantısı gönderilir.

@@ -290,7 +290,7 @@ function setPlace(p) {
   if (p) p.v = 2;
   S.place = p; save();
   { const el = $("nobetG"); if (el) { const n = p ? (p.name || "").replace(/^📡\s*/, "").replace(/\s*merkez$/i, "").trim() : ""; const q = "nöbetçi eczane" + (n && n !== "Bulunduğun yer" ? " " + n : ""); el.href = p ? `https://www.google.com/maps/search/${encodeURIComponent(q)}/@${p.lat},${p.lon},14z` : "https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane"; } }
-  $("plabel").innerHTML = p ? `📍 <b>${p.name}</b>` : "Konum seçilmedi";
+  $("plabel").innerHTML = p ? `📍 <b>${esc(p.name)}</b>` : "Konum seçilmedi";
   const fsOpen = $("fs").classList.contains("show");
   if (S.cat) { NOSCROLL = fsOpen || NOSCROLL; openCat(S.cat); NOSCROLL = false; }
   if (p && S.cat && $("fs").classList.contains("show") && fsSrc) { const c = CAT[S.cat]; mapLoad("fs", fsSrc, titleOf(c), gUrlOf(c)); $("fsgm").href = gUrlOf(c); }
@@ -311,7 +311,7 @@ $(QI).addEventListener("input", () => {
         const a = x.address || {};
         const main = a.suburb || a.neighbourhood || a.quarter || a.town || a.village || a.city_district || a.county || a.city || x.name;
         const sub = [a.town || a.county || a.city_district, a.province || a.city || a.state].filter((v, k, arr) => v && v !== main && arr.indexOf(v) === k).join(", ");
-        return `<div data-i="${i}">${main}<small>${sub || x.display_name}</small></div>`;
+        return `<div data-i="${i}">${esc(main)}<small>${esc(sub || x.display_name)}</small></div>`;
       }).join("") : '<div style="color:var(--muted);cursor:default">Sonuç yok</div>';
       $(RI).classList.add("show");
       $(RI).onclick = (e) => {

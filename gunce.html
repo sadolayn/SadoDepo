@@ -302,7 +302,7 @@
   <div class="card posc" id="posCard">
     <div class="posTop"><h3 style="margin:0">🧾 Performans fişim</h3><span class="note" style="margin:0">Satış yaptıkça fişin uzar ✨</span></div>
     <div class="posSlot"><div class="posPaper" id="posPaper"></div></div>
-    <div class="btns" style="margin-top:12px"><button class="btn pri" id="posPng">🧾 Fişi indir / paylaş</button><button class="btn" id="posPdf">📄 PDF indir</button></div>
+    <div class="btns" style="margin-top:12px"><button class="btn pri" id="posPng">🧾 Fişi indir</button><button class="btn" id="posPdf">📄 PDF indir</button></div>
   </div>
 
   <!-- Bilgisayardan açanlara: hedeflerini telefonuna al -->
@@ -350,13 +350,7 @@ const HALF = new Set(["2026-03-19","2026-05-26","2026-10-28","2027-03-08","2027-
 
 // ================= Veri =================
 const KEY = "gunce_v2";
-const DEFAULT_PRODUCTS = [
-  { id: "kk", name: "Kredi kartı", icon: "💳", type: "adet" },
-  { id: "ek", name: "Ek hesap", icon: "🏦", type: "adet" },
-  { id: "ft", name: "Fatura talimatı", icon: "🧾", type: "adet" },
-  { id: "skk", name: "Şirket kredi kartı", icon: "🏢", type: "adet" },
-  { id: "cek", name: "Çek karnesi", icon: "📘", type: "adet" },
-];
+const DEFAULT_PRODUCTS = []; // Hazır liste yok; herkes kendi kalemlerini ekler
 const ICONS = ["📌", "📈", "🛡️", "💼", "📱", "🏠", "🚗", "💰", "🧩", "⭐"];
 let D;
 function load() {
@@ -566,7 +560,7 @@ function renderCoach() {
   const left = fmt(T.left), lastWeek = T.left <= 5;
   const list = (arr, k) => arr.filter((x) => x.s[k] > 0).slice(0, 3).map(({ p, s }) => `<b>${s[k]} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(", ").replace(/, ([^,]*)$/, " ve $1");
   let msg;
-  if (!open.length) msg = pick(["Tüm hedeflerin tamam! 🏆 Kalan günler artık prim için çalışıyor.", "Çeyreği şimdiden kapattın 🎉 Fazlası, bir sonraki çeyreğe güzel bir başlangıç demek."]);
+  if (!open.length) msg = pick(["Tüm hedeflerin tamam! 🏆 Kalan günler bonus.", "Çeyreği şimdiden kapattın 🎉 Fazlası, bir sonraki çeyreğe güzel bir başlangıç demek."]);
   else if (lastWeek) msg = `🏁 <b>Son düzlük!</b> Çeyreğe ${left} iş günü kaldı. ${list(open, "weekNeed") ? `${list(open, "weekNeed")} ile bitiş çizgisini geçersin.` : ""} Her müşteri görüşmesi şimdi çok değerli.`;
   else if (!behind.length) msg = pick([`Harika gidiyorsun! 💪 Çeyreğe <b>${left} iş günü</b> kaldı ve planın önündesin. Bu hafta ${list(open, "weekNeed") || "biraz daha"} yaparsan farkı koruyorsun.`, `Tempo çok iyi 👏 ${left} iş günü kaldı. Bu haftaki ${list(open, "weekNeed") || "küçük adımlar"} seni rahat bitirir.`]);
   else if (O.pct >= O.plan - 15) msg = pick([`Çeyreğe <b>${left} iş günü</b> kaldı, başarabilirsin! Bu hafta ${list(open, "weekNeed")} yaparsan tekrar plana oturursun.`, `Az kaldı, yakındasın! ${left} iş günü var. Bu hafta ${list(open, "weekNeed")} — hepsi bu.`]);
@@ -941,7 +935,6 @@ function posCanvas() {
 }
 $("posPng").onclick = async () => {
   const blob = await new Promise((r) => posCanvas().toBlob(r, "image/png")), ad = `gunce-fis-${qy}-Q${qn + 1}.png`, file = new File([blob], ad, { type: "image/png" });
-  if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title: "Performans fişim" }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = ad; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast("Fiş indirildi");
 };
 const loadJs = (src) => new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
