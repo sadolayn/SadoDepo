@@ -1,0 +1,6 @@
+# Keşif/deneme çıktıları asla depoya girmesin
+kesif*
+*.kesif.*
+ham_*
+*.env
+.env*
