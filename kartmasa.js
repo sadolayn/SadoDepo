@@ -194,7 +194,7 @@
       ${D.hiz === "yok" ? "" : `<label class="opt"><span>⚡ Hızlı oyun<small>Rakipler kartlarını daha çabuk atar</small></span><span class="sw"><input type="checkbox" data-o="hizli"${OPT.hizli ? " checked" : ""}><i></i></span></label>`}
       ${ex.oyun ? ex.oyun() : ""}
       ${tok != null ? `<h4>🪙 TOKEN</h4><div class="kmTok"><span>Bakiyen</span><b>${Token.fmt(tok)} Token</b></div>
-        <p class="kmNot">Bakiyen Batak, King ve Balayı King'de ortak. Biterse 1 gün sonra İş Bankası sorusu gelir; doğru cevap 1.000 Token kazandırır.</p>` : ""}
+        <p class="kmNot">Bakiyen Batak, King ve Balayı King'de ortak. Biterse 3 saat sonra İş Bankası sorusu gelir; doğru cevap 1.000 Yıldız kazandırır.</p>` : ""}
       <h4>KART YÜZÜ <small>· bütün kart oyunlarında</small></h4>
       <div class="kmPrev">${demo.map(html).join("")}</div>
       <div class="kmPrevL">${hz ? `Şu an: <b>${hz[1]}</b>` : "Şu an: <b>Senin stilin</b>"} · ${RENK[OPT.yuz][0]} · ${YAZI[OPT.yazi][0]} · ${KALIN[OPT.kalin][0]} · ${PUNTO[OPT.punto][0]} punto</div>

@@ -1,18 +1,21 @@
 // Yıldız — Batak, King ve Balayı King'de ortak bakiye. (Solitaire'de Yıldız yok; orada dilek tutulur.)
 // Bakiye "batakMP" anahtarında durur, böylece Batak'taki eski bakiye korunur. 1.000 Yıldız ile başlanır.
 // Oyun başında Yıldız konur; kazanan katını alır (kesinti yok). Yıldız yalnızca oyun içi skordur.
-// Yıldız biterse 1 gün sonra İş Bankası sorusu gelir (isq.js); doğru cevap 1.000 Yıldız kazandırır.
+// Yıldız biterse 3 saat sonra İş Bankası sorusu gelir (isq.js); doğru cevap 1.000 Yıldız kazandırır.
 // Kullanım:
 //   Token.bakiye() · Token.fmt(n) · Token.yeter() · Token.koy(n) → true/false
 //   Token.secici(kok, oyun) → puan seçicisini kökün içine çizer; .deger() seçili tutarı verir
 //   Token.sonuc(oyun, konan, kisi, kat) → ödemeyi yapar (kat: 0 kaybetti, 1 iade, 2/3 kazandı), { pay, fee, durum, html }
 //   Token.kilit(modal, { goster, devam }) → Yıldız bittiyse bekleme ekranı ya da İş Bankası sorusu
 (function () {
-  const KEY = "batakMP", BAHIS = [100, 250, 500, 1000, 2500, 5000, 10000], FEE = 0, ODUL = 1000, GUN = 864e5;
+  const KEY = "batakMP", BAHIS = [100, 250, 500, 1000, 2500, 5000, 10000], FEE = 0, ODUL = 1000, BEKLE = 3 * 36e5, HEDIYE = 2000;
   const MP = { bal: 1000, empty: 0, lastQ: -1 };
   const yukle = () => { try { Object.assign(MP, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {} if (!(MP.bal >= 0)) MP.bal = 0; return MP; };
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(MP)); } catch (e) {} };
   yukle();
+  // Bir defalık hediye: 22 Ekim 2026'dan sonra giren herkese 2.000 Yıldız (cihaz başına bir kez)
+  let hediyeVerildi = false;
+  if (!MP.hediye1) { MP.hediye1 = Date.now(); MP.bal += HEDIYE; MP.empty = 0; save(); hediyeVerildi = true; }
   const fmt = (n) => Math.round(n).toLocaleString("tr-TR");
   const oku = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || "null") || d; } catch (e) { return d; } };
   const yaz = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
@@ -66,13 +69,13 @@
     return { pay, fee, ucret, masa, durum, html: `<div class="tkBox">${t}<br>⭐ Bakiye: <b>${fmt(MP.bal)}</b> Yıldız</div>` };
   }
   const kasa = (oyun) => (oku("tokenKasa", {})[oyun] || { oyun: 0, ucret: 0 });
-  // Yıldız bittiyse: 1 gün bekleme, sonra İş Bankası sorusu (doğru cevap 1.000 Yıldız)
+  // Yıldız bittiyse: 3 saat bekleme, sonra İş Bankası sorusu (doğru cevap 1.000 Yıldız)
   function kilit(modal, o) {
     o = o || {};
     const goster = o.goster || (() => {}), geri = o.geri || "oyunlar.html";
     yukle();
     if (!MP.empty) { MP.empty = Date.now(); save(); }
-    const left = MP.empty + GUN - Date.now();
+    const left = MP.empty + BEKLE - Date.now();
     if (left > 0) {
       const h = Math.floor(left / 36e5), m = Math.floor((left % 36e5) / 6e4);
       modal.innerHTML = `<h2>⭐ Yıldız bitti</h2>
@@ -104,9 +107,16 @@
         res.querySelector("button").onclick = () => { if (o.devam) o.devam(); };
       } else {
         b.classList.add("bad"); MP.empty = Date.now(); save();
-        res.innerHTML = `❌ Yanlış. Yarın yeni bir soruyla tekrar dene.<a class="btn" href="${geri}" style="display:block;text-decoration:none;padding:12px;margin-top:10px">Oyunlara dön</a>`;
+        res.innerHTML = `❌ Yanlış. 3 saat sonra yeni bir soruyla tekrar dene.<a class="btn" href="${geri}" style="display:block;text-decoration:none;padding:12px;margin-top:10px">Oyunlara dön</a>`;
       }
     };
+  }
+  if (hediyeVerildi) {
+    const t = () => { const d = document.createElement("div");
+      d.textContent = "🎁 Hediye: 2.000 Yıldız hesabına yüklendi!";
+      d.style.cssText = "position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:9999;padding:12px 18px;border-radius:14px;background:linear-gradient(180deg,#f3cf86,#d9a54a);color:#2a1a05;font:600 15px system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.45);max-width:90vw;text-align:center;transition:opacity .4s";
+      document.body.appendChild(d); setTimeout(() => (d.style.opacity = "0"), 4200); setTimeout(() => d.remove(), 4700); };
+    document.body ? t() : document.addEventListener("DOMContentLoaded", t);
   }
   window.Token = {
     MP, BAHIS, FEE, fmt, save, yukle, secenekler, secici, koy, sonuc, kasa, kilit,

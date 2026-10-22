@@ -209,9 +209,9 @@
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
 </style>
 <script src="cardsound.js?v=3"></script>
-<script src="kartmasa.js?v=2" data-oyun="batak" data-masa="sado"></script>
+<script src="kartmasa.js?v=3" data-oyun="batak" data-masa="sado"></script>
 <script src="isq.js"></script>
-<script src="token.js?v=1"></script>
+<script src="token.js?v=2"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
@@ -679,7 +679,7 @@ function endRound() {
   setStatus("");
 }
 function showLock() {
-  // Yıldız bitti: 1 gün bekleme, sonra İş Bankası sorusu (token.js)
+  // Yıldız bitti: 3 saat bekleme, sonra İş Bankası sorusu (token.js)
   $("modal").classList.remove("ayar");
   Token.kilit($("modal"), { goster: () => $("overlay").classList.add("show"), devam: () => showRules() });
 }
@@ -739,7 +739,7 @@ function showRules() {
       <li><b>Eşli:</b> karşındaki oyuncu eşindir, ellerin toplamı sayılır. İhaleyi alan eşinin kartlarını açık görür ve iki eli de o oynar.</li>
       <li><b>Yıldız:</b> 1.000 Yıldız ile başlarsın. Tekli oyunda birinci olursan koyduğun Yıldızın <b>3 katını</b>, eşlide tarafın kazanırsa <b>2 katını</b> alırsın. Berabere biterse Yıldızın iade edilir.</li>
       <li>İstatistik için oyun özeti (Yıldız, sonuç; ad gitmez) site sahibine iletilir.</li>
-      <li> Yıldız biterse 1 gün sonra İş Bankası sorusu gelir; doğru cevap 1.000 Yıldız kazandırır. Bakiyen King ve Balayı King'le ortaktır.</li>
+      <li> Yıldız biterse 3 saat sonra İş Bankası sorusu gelir; doğru cevap 1.000 Yıldız kazandırır. Bakiyen King ve Balayı King'le ortaktır.</li>
     </ul></details>
     <div class="aAlt"><button class="btn abtn" id="start">Başla</button>
     <div class="kasa">Bu cihazda: ${KASA.oyun} oyun</div></div>`;
