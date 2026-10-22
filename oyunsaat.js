@@ -58,7 +58,7 @@
     var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
     return (h ? h + ":" + p(m) : m) + ":" + p(x);
   }
-  var MASA_METIN = "Bu saatlerde oyunlar yalnızca <b>telefondan</b> açık 📱 Bilgisayardan hafta içi <b>12:30–13:30</b> arası ve <b>18:00</b>'den sonra, hafta sonu ve resmî tatillerde gün boyu oynayabilirsin.";
+  var MASA_METIN = "Hafta içi <b>12:30–13:30</b> arası ve <b>18:00</b>'den sonra açık. Hafta sonu ve resmî tatillerde gün boyu açık 🙂";
   var css = ".os-b{max-width:360px;margin:auto;background:#0d0d0d;border:1px solid #262626;border-radius:18px;padding:22px 18px;color:#f2f2f2;text-align:center;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}" +
     ".os-i{font-size:40px;line-height:1}.os-b h3{margin:8px 0 6px;font-size:19px;color:#e0a24f}.os-b p{margin:0 0 14px;font-size:14px;line-height:1.5;color:#bdbdbd}" +
     ".os-l{font-size:12px;color:#8a8a8a}.os-cd{font-size:32px;font-weight:700;color:#e0a24f;margin:2px 0 14px;font-variant-numeric:tabular-nums}" +
@@ -68,8 +68,8 @@
     "#oyunSaatP{padding:8px 0 16px}";
   function stil() { if (document.getElementById("osCss")) return; var s = document.createElement("style"); s.id = "osCss"; s.textContent = css; document.head.appendChild(s); }
   function masaKutu(geri) {
-    return '<div class="os-b"><div class="os-i">💻</div><h3>Bilgisayardan şu an kapalı</h3><p>' + MASA_METIN + '</p>' +
-      '<div class="os-l">Bilgisayarda açılmasına</div><div class="os-cd">–:––</div>' +
+    return '<div class="os-b"><div class="os-i">🕹️</div><h3>Oyunlar şu an kapalı</h3><p>' + MASA_METIN + '</p>' +
+      '<div class="os-l">Açılmasına</div><div class="os-cd">–:––</div>' +
       (geri ? '<a class="os-a" href="index.html">🏠 Anasayfaya dön</a>' : "") + "</div>";
   }
   function soruKutu(hedef) {

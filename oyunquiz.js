@@ -30,7 +30,8 @@
   document.body.appendChild(ov);
   var box = ov.querySelector(".b"), timer = null;
   ov.addEventListener("click", function (e) { if (e.target === ov) close(); });
-  function close() { ov.classList.remove("on"); clearInterval(timer); }
+  function telAc(goster) { var t = document.getElementById("telAc"); if (t) t.style.visibility = goster ? "" : "hidden"; }
+  function close() { ov.classList.remove("on"); clearInterval(timer); telAc(true); }
   function go(href) { location.href = href; }
   function sure(ms) {
     var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
@@ -48,9 +49,10 @@
 
   // Bilgisayar, yoğun saat
   function showMasa() {
-    box.innerHTML = '<h3>💻 Bilgisayardan şu an kapalı</h3><p class="r">' + O.masaMetin + '</p><div class="m">Bilgisayarda açılmasına:</div><div class="cd" id="oqcd"></div><button class="x" type="button">Kapat</button>';
+    box.innerHTML = '<h3>🕹️ Oyunlar şu an kapalı</h3><p class="r">' + O.masaMetin + '</p><div class="m">Açılmasına:</div><div class="cd" id="oqcd"></div><button class="x" type="button">Kapat</button>';
     box.querySelector(".x").onclick = close;
     geriSay(O.acilis, close);
+    telAc(false);
     ov.classList.add("on");
   }
   // Telefon, yoğun saat, yanlış cevaptan sonra
