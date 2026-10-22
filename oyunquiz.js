@@ -1,19 +1,6 @@
-// Oyunlar sayfası: oyuna girmeden önce rastgele İş Bankası sorusu
-// Mesai saatinde (hafta içi 08:45–18:00, öğle arası 12:30–13:30 hariç, resmî tatil değil): yanlışta 10 dk bekleme, üst üste 3 yanlışta 1 gün kilit
-// Mesai dışında soru sorulmaz; ara sıra (yaklaşık 4'te 1) cezasız bir "hatırlatma sorusu" çıkar
+// Oyunlar sayfası: oyuna girmeden önce rastgele İş Bankası sorusu (her zaman)
+// Yanlışta 10 dk bekleme, üst üste 3 yanlışta 1 gün kilit
 (function () {
-  var TATIL = ["01-01", "04-23", "05-01", "05-19", "07-15", "08-30", "10-29"],
-    DINI = { 2026: ["03-20", "03-21", "03-22", "05-27", "05-28", "05-29", "05-30"], 2027: ["03-09", "03-10", "03-11", "05-16", "05-17", "05-18", "05-19"], 2028: ["02-26", "02-27", "02-28", "05-05", "05-06", "05-07", "05-08"] };
-  function mesai(d) {
-    d = d || new Date();
-    var g = d.getDay(), md = ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2), dk = d.getHours() * 60 + d.getMinutes();
-    if (g === 0 || g === 6) return false;
-    if (TATIL.indexOf(md) >= 0 || (DINI[d.getFullYear()] || []).indexOf(md) >= 0) return false;
-    if (md === "10-28" && dk >= 13 * 60) return false; // 28 Ekim öğleden sonra yarım gün
-    if (dk >= 12 * 60 + 30 && dk < 13 * 60 + 30) return false; // öğle arası
-    return dk >= 8 * 60 + 45 && dk < 18 * 60;
-  }
-  function ogle(d) { d = d || new Date(); var dk = d.getHours() * 60 + d.getMinutes(), g = d.getDay(); return g > 0 && g < 6 && dk >= 12 * 60 + 30 && dk < 13 * 60 + 30; }
   var KEY = "oyunQuiz", WAIT = 10 * 60 * 1000, DAY = 24 * 60 * 60 * 1000, MAXW = 3;
   function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
   function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
@@ -42,7 +29,7 @@
   var box = ov.querySelector(".b"), timer = null;
   ov.addEventListener("click", function (e) { if (e.target === ov) close(); });
   function close() { ov.classList.remove("on"); clearInterval(timer); }
-  var RULES = '<p class="r">Mesai saatindesin ⏰ Oyuna girmek için bir İş Bankası sorusunu bil 🙂 (Mesai: hafta içi 08:45–18:00. Öğle arasında 12:30–13:30 ve mesai dışında soru sorulmaz.)<br>❌ Yanlışta <b>10 dakika</b> sonra tekrar deneyebilirsin.<br>⛔ Üst üste <b>3 yanlışta 1 gün</b> giremezsin.</p>';
+  var RULES = '<p class="r">Oyuna girmek için bir İş Bankası sorusunu bil 🙂<br>❌ Yanlışta <b>10 dakika</b> sonra tekrar deneyebilirsin.<br>⛔ Üst üste <b>3 yanlışta 1 gün</b> giremezsin.</p>';
   function hak() {
     var h = ""; for (var i = 0; i < MAXW; i++) h += "<i" + (i < st.wrong ? ' class="u"' : "") + "></i>";
     return '<div class="hk" title="Kalan hak">' + h + "</div>";
@@ -67,12 +54,6 @@
     ov.classList.add("on");
   }
   function ask(href) {
-    var M = mesai();
-    if (!M) {
-      // Mesai dışı: çoğu zaman doğrudan oyuna; ara sıra hatırlatma sorusu (cezasız)
-      if (Math.random() > 0.25) { location.href = href; return; }
-      return askSoft(href);
-    }
     if (st.until && Date.now() < st.until) return showLock(href);
     var pool = (typeof ISQ !== "undefined" ? ISQ : []);
     if (!pool.length) { location.href = href; return; }
@@ -98,27 +79,6 @@
           msg.textContent = st.wrong >= MAXW ? "❌ Yanlış. 3. yanlış: 1 gün giremezsin." : "❌ Yanlış. 10 dakika sonra tekrar dene. Kalan hak: " + (MAXW - st.wrong);
           setTimeout(function () { showLock(href); }, 1400);
         }
-      };
-      os.appendChild(b);
-    });
-    ov.classList.add("on");
-  }
-  // Mesai dışı hatırlatma sorusu: yanlışta ceza yok, doğru cevap gösterilir ve oyun yine açılır
-  function askSoft(href) {
-    var pool = (typeof ISQ !== "undefined" ? ISQ : []);
-    if (!pool.length) { location.href = href; return; }
-    var q = pool[Math.floor(Math.random() * pool.length)], idx = q[1].map(function (_, i) { return i; });
-    for (var i = idx.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = idx[i]; idx[i] = idx[j]; idx[j] = t; }
-    box.innerHTML = (ogle() ? '<h3>🍽️ Öğle arası · hatırlatma sorusu</h3><p class="r">Öğle arasındasın,' : '<h3>🌙 Mesai dışı · hatırlatma sorusu</h3><p class="r">Mesai dışındasın,') + ' soru zorunlu değil 🙂 Bilgini tazelemek için bir tane soralım; yanlış da olsa oyun açılır.</p><div class="q"></div><div class="os"></div><div class="m"></div><button class="x" type="button">Soruyu geç, oyuna gir ›</button>';
-    box.querySelector(".q").textContent = q[0];
-    box.querySelector(".x").onclick = function () { location.href = href; };
-    var os = box.querySelector(".os"), msg = box.querySelector(".m");
-    idx.forEach(function (oi) {
-      var b = document.createElement("button"); b.type = "button"; b.className = "o"; b.textContent = q[1][oi];
-      b.onclick = function () {
-        os.querySelectorAll(".o").forEach(function (x, k) { x.disabled = true; if (idx[k] === q[2]) x.classList.add("ok"); });
-        if (oi === q[2]) { msg.textContent = "✅ Aferin! Oyun açılıyor…"; setTimeout(function () { location.href = href; }, 900); }
-        else { b.classList.add("no"); msg.textContent = "Doğrusu yeşil olan 👆 Oyun açılıyor…"; setTimeout(function () { location.href = href; }, 2200); }
       };
       os.appendChild(b);
     });
