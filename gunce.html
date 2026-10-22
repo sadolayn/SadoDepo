@@ -168,6 +168,12 @@
   .cnt button.plus { background: var(--accent); border-color: var(--accent); color: #000; }
   .cnt button:active { transform: scale(.94); }
   .cnt .v { min-width: 28px; text-align: center; font-size: 20px; font-weight: 800; }
+  /* Tutar / bakiye kalemleri: +/− yerine tutar kutusu (ör. 250 bin, 1,5 mn) */
+  .mny { width: 128px; flex: none; }
+  .mny input { width: 100%; padding: 10px 8px; border-radius: 12px; border: 1px solid #5a4a2c; background: var(--field); color: var(--ink); font-size: 15px; font-weight: 700; text-align: right; }
+  .mny input:focus { outline: 2px solid var(--accent); }
+  .mny input::placeholder { color: #6d6658; font-weight: 600; }
+  .tag { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .3px; padding: 1px 6px; border-radius: 6px; background: rgba(224,162,79,.14); color: var(--accent2); vertical-align: 2px; margin-left: 4px; }
 
   .heat { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .heat .h { font-size: 10px; color: var(--muted); text-align: center; }
@@ -214,6 +220,8 @@
   .tr input { width: 100%; min-width: 0; padding: 10px; font-size: 15px; background: var(--field); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; }
   .tr input.num { text-align: center; font-weight: 800; font-size: 17px; border-color: #5a4a2c; }
   .tr input.num:focus { outline: 2px solid var(--accent); }
+  .tr .tag { margin: 0; }
+  .addrow select { flex: none; padding: 10px 6px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 14px; }
   .tr input.num::-webkit-inner-spin-button, .tr input.num::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
   .tr input.num { -moz-appearance: textfield; }
   .tr .x { width: 30px; height: 30px; border-radius: 9px; border: 1px solid rgba(239,106,76,.35); background: none; color: var(--low); font-size: 14px; cursor: pointer; }
@@ -292,7 +300,7 @@
   <div class="card">
     <h3 id="heatTitle">Ayın takvimi</h3>
     <div class="heat" id="heat"></div>
-    <p class="note" style="margin:8px 0 0">Kutudaki küçük sayı o gün işlenen toplam adet. Bir güne dokununca o günü düzenlersin.</p>
+    <p class="note" style="margin:8px 0 0">Kutudaki küçük sayı o gün işlenen toplam adet (tutar ve bakiyeler hariç). Bir güne dokununca o günü düzenlersin.</p>
   </div>
 
   <!-- 4. Olasılık raporu -->
@@ -319,12 +327,13 @@
       <button class="btn" id="impJson">⬆️ Yedekten yükle</button>
       <button class="btn" id="tasiBtn2" style="grid-column:1/3">📲 Başka cihaza taşı (karekod)</button>
       <button class="btn danger" id="resetM" style="grid-column:1/3">Bu çeyreğin günlük kayıtlarını sıfırla</button>
+      <button class="btn danger" id="resetAll" style="grid-column:1/3">🗑️ Her şeyi sıfırla (kalem adları dahil)</button>
     </div>
     <input type="file" id="fileIn" accept="application/json,.json" hidden>
     <p class="note" style="margin:10px 0 0">Veriler yalnızca bu cihazda, bu tarayıcıda saklanır; kimse göremez, hiçbir sisteme gönderilmez. Başka cihazda görmek için <b>📲 Başka cihaza taşı</b>'yı kullan. Tarayıcı verilerini silersen kaybolmaması için ara ara yedek indir.</p>
   </div>
 
-  <p class="note warn">🔒 Buraya <b>müşteri bilgisi</b> (ad, TCKN, hesap no vb.) girme; yalnızca adetleri işle. Hesaplar senin girdiğin hedef ve adetlere göre yapılan tahminlerdir.</p>
+  <p class="note warn">🔒 Buraya <b>müşteri bilgisi</b> (ad, TCKN, hesap no vb.) girme; yalnızca adetleri ve tutarları işle. Hesaplar senin girdiğin hedef ve adetlere göre yapılan tahminlerdir.</p>
 </div>
 
 <div class="sheet" id="sheet" hidden>
@@ -333,8 +342,8 @@
     <p class="sub" id="shSub"></p>
     <div class="thead"><span></span><span>Ürün / kalem</span><span>Çeyrek hedefi</span><span></span></div>
     <div id="tRows"></div>
-    <div class="addrow"><input id="newName" placeholder="+ Yeni kalem ekle (ör. kitap, spor)" maxlength="30"><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
-    <p class="note" style="margin:0 0 6px">İpucu: Hedefin aylık verildiyse 3 ile çarpıp yaz. Hedefi olmayan kalemi boş bırak; yine işaretleyebilirsin ama rapora girmez.</p>
+    <div class="addrow"><input id="newName" placeholder="+ Yeni kalem (ör. mevduat, kredi)" maxlength="30"><select id="newType" aria-label="Kalem türü"><option value="adet">Adet</option><option value="tutar">Tutar (TL)</option><option value="bakiye">Bakiye (TL)</option><option value="ortalama">Ort. bakiye (TL)</option></select><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
+    <p class="note" style="margin:0 0 6px"><b>Adet:</b> sattıkça +1 (kart, hesap…). <b>Tutar:</b> günlük tutarlar toplanır (kredi kullandırım, sigorta primi). <b>Bakiye:</b> çeyrek sonunda ulaşmak istediğin bakiye. <b>Ort. bakiye:</b> çeyrek boyunca günlük ortalama (ör. mevduat). Tutarları "250 bin", "1,5 mn" gibi yazabilirsin. Hedefin aylık verildiyse adet ve tutarda 3 ile çarp. Hedefi olmayan kalemi boş bırak.</p>
     <div class="foot"><button class="btn" id="tCancel">Vazgeç</button><button class="btn pri" id="tSave">Kaydet</button></div>
   </div>
 </div>
@@ -363,16 +372,17 @@ function load() {
     } catch (e) {}
   }
 }
+const TYPES = { adet: "Adet", tutar: "Tutar", bakiye: "Bakiye", ortalama: "Ort. bakiye" };
+// Eskiden hazır gelen kalemler: hiç adet ya da hedef girilmediyse bir kez sessizce kaldırılır (kullananlarınki kalır)
+const ESKI_HAZIR = ["kk", "ek", "ft", "skk", "cek"];
 function migrate() {
   D.bal ||= {}; D.targets ||= {}; D.days ||= {};
-  for (const p of D.products) p.type ||= "adet";
+  for (const p of D.products) if (!TYPES[p.type]) p.type = "adet";
   D.v3 = true;
-  const drop = D.products.filter((p) => p.type !== "adet").map((p) => p.id);
-  if (drop.length) {
-    D.products = D.products.filter((p) => p.type === "adet");
-    for (const q of Object.values(D.targets)) for (const id of drop) delete q[id];
-    for (const d of Object.values(D.days)) for (const id of drop) delete d[id];
-    for (const id of drop) delete D.bal[id];
+  if (!D.v4) {
+    const kullanildi = (id) => Object.values(D.days).some((d) => d && d[id]) || Object.values(D.targets).some((t) => t && Number(t[id]) > 0);
+    D.products = D.products.filter((p) => !ESKI_HAZIR.includes(p.id) || kullanildi(p.id));
+    D.v4 = true;
   }
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) { toast("Kaydedilemedi: tarayıcı depolaması kapalı olabilir"); } }
@@ -396,6 +406,25 @@ const isWork = (d) => d.getDay() !== 0 && d.getDay() !== 6 && !HOLIDAYS.has(keyO
 const workVal = (d) => (isWork(d) ? (HALF.has(keyOf(d)) ? 0.5 : 1) : 0);
 const fmt = (n) => (Math.round(n * 10) / 10).toLocaleString("tr-TR");
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// Tür yardımcıları: adet (+/−), tutar (günlük tutarlar toplanır), bakiye (son bakiye), ortalama (çeyrek ortalama bakiyesi)
+const isAdet = (p) => !p.type || p.type === "adet";
+const isBal = (p) => p.type === "bakiye" || p.type === "ortalama";
+const KISA = new Intl.NumberFormat("tr-TR", { notation: "compact", maximumFractionDigits: 1 });
+const fmtTL = (n) => (Math.abs(n) < 1000 ? Math.round(n).toLocaleString("tr-TR") : KISA.format(n).replace(/\s?B$/, " bin")) + " TL";
+const fv = (p, n) => (isAdet(p) ? fmt(Math.round(n * 10) / 10) : fmtTL(n));
+// "250 bin", "1,5 mn", "2.500.000", "3 milyar" → sayı; boşsa null
+function parseTL(t) {
+  let x = String(t || "").toLocaleLowerCase("tr").replace(/tl|₺/g, "").replace(/\s+/g, "");
+  if (!x) return null;
+  let k = 1;
+  const m = x.match(/(milyar|mr|milyon|mn|m|bin|b|k)$/);
+  if (m) { k = /^(milyar|mr)$/.test(m[1]) ? 1e9 : /^(milyon|mn|m)$/.test(m[1]) ? 1e6 : 1e3; x = x.slice(0, -m[1].length); }
+  if (/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(x)) x = x.replace(/\./g, "").replace(",", ".");
+  else x = x.replace(",", ".");
+  const n = Number(x);
+  return Number.isFinite(n) && n >= 0 ? Math.round(n * k * 100) / 100 : null;
+}
+const sayiYaz = (n) => (n == null ? "" : n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }));
 function targets() {
   if (!D.targets[qKey()]) {
     const py = qn === 0 ? qy - 1 : qy, pq = qn === 0 ? 4 : qn;
@@ -428,7 +457,45 @@ function timeInfo() {
 }
 // Normal dağılım kümülatifi
 function Phi(z) { const t = 1 / (1 + 0.2316419 * Math.abs(z)); const d = 0.3989423 * Math.exp(-z * z / 2); const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; }
+// Bakiye kalemleri: girilen bakiye ertesi günlere taşınır (değişene kadar aynı kabul edilir).
+// Çeyrek içindeki ilk girişten önceki günler için: çeyrekten önceki son bakiye, o da yoksa ilk girilen bakiye.
+function balDays(pid) {
+  const qs = keyOf(qStart());
+  let prev = null, prevK = "";
+  for (const [k, v] of Object.entries(D.days)) if (k < qs && k > prevK && v && v[pid] != null) { prevK = k; prev = v[pid]; }
+  const L = []; let cur = prev, ilk = null;
+  eachQuarterDay((d) => { const k = keyOf(d), v = D.days[k]; if (v && v[pid] != null) { cur = v[pid]; if (ilk == null) ilk = cur; } L.push({ k, b: cur }); });
+  const dolgu = prev != null ? prev : ilk;
+  for (const x of L) if (x.b == null) x.b = dolgu;
+  return { L, var: ilk != null || prev != null };
+}
+function statsBal(p) {
+  const T = timeInfo(), ph = phase(), tgt = tgtOf(p.id);
+  const { L, var: veri } = balDays(p.id), N = L.length;
+  const son = ph === "gecmis" ? N : ph === "gelecek" ? 0 : L.filter((x) => x.k <= TK).length;
+  const gecen = L.slice(0, son), sum = gecen.reduce((a, x) => a + (x.b || 0), 0);
+  const cur = son ? gecen[son - 1].b || 0 : 0, bas = L.length ? L[0].b || 0 : 0, kalanGun = N - son;
+  const elapsed = ph === "gecmis" ? T.total : ph === "gelecek" ? 0 : T.past;
+  const timeFrac = T.total ? elapsed / T.total : 0;
+  let done, planNow, forecast, need;
+  if (p.type === "ortalama") {
+    done = son ? sum / son : 0; // bugüne kadarki ortalama
+    planNow = tgt;
+    forecast = N ? (sum + cur * kalanGun) / N : 0; // bakiye böyle kalırsa çeyrek ortalaması
+    need = kalanGun > 0 ? Math.max(0, (tgt * N - sum) / kalanGun) : 0; // kalan günlerde gereken ortalama bakiye
+  } else {
+    done = cur;
+    planNow = bas + (tgt - bas) * timeFrac;
+    forecast = son > 1 ? bas + ((cur - bas) * N) / son : cur;
+    need = Math.max(0, tgt - cur); // hedefe kalan artış
+  }
+  const pct = tgt ? (done / tgt) * 100 : 0;
+  const perDay = p.type === "bakiye" && ph === "simdi" && T.left > 0 ? need / T.left : 0;
+  const todayDone = (D.days[TK] && D.days[TK][p.id]) || 0;
+  return { tgt, done, todayDone, weekDone: 0, before: done, rest: need, perDay, todayNeed: 0, weekNeed: 0, planNow, gap: done - planNow, pct, mu: 0, forecast, prob: null, few: false, T, ph, cur, need, kalanGun, veri, bal: true };
+}
 function stats(p) {
+  if (isBal(p)) return statsBal(p);
   const T = timeInfo(), ph = phase();
   const tgt = tgtOf(p.id), done = quarterTotal(p.id);
   const todayDone = ph === "simdi" ? dayTotal(TK, p.id) : 0;
@@ -493,7 +560,7 @@ function renderHero() {
       <div style="font-size:19px;font-weight:800;margin:4px 0 2px">${qName()} hedeflerin henüz yok</div>
       <div class="big">Hedefini bir kez gir; her gün yaptığını işaretle. Gerisini biz hesaplarız.</div>
       <div class="steps">
-        <div class="step"><b class="n">1</b><div><b>Hedeflerini gir</b> — her ürün için çeyrek hedefi (adet)</div></div>
+        <div class="step"><b class="n">1</b><div><b>Hedeflerini gir</b> — her kalem için çeyrek hedefi (adet, tutar ya da bakiye)</div></div>
         <div class="step"><b class="n">2</b><div><b>Her gün işaretle</b> — sattıkça + tuşuna bas</div></div>
         <div class="step"><b class="n">3</b><div><b>Rehberi izle</b> — bugün ve bu hafta kaç adet gerektiğini, hedefi tutma ihtimalini gör</div></div>
       </div>
@@ -503,18 +570,19 @@ function renderHero() {
     return;
   }
   const pct = Math.round(O.pct), plan = Math.round(O.plan);
+  const zaman = Math.round(T.total ? (T.past / T.total) * 100 : 0);
   const diff = pct - plan;
   const st = ph === "gelecek" ? ["mid", "Çeyrek başlamadı"] : pct >= 100 ? ["ok", "🏆 Tüm hedefler tamam"] : ph === "gecmis" ? [pct >= 90 ? "mid" : "low", "Çeyrek kapandı"] : diff >= 0 ? ["ok", "✓ Planın önündesin"] : diff >= -10 ? ["mid", "≈ Plana yakın"] : ["low", "↓ Planın gerisindesin"];
   const R = 2 * Math.PI * 42;
   const hit = O.L.filter((x) => x.s.pct >= 100).length;
-  const ahead = O.L.reduce((a, x) => a + x.s.gap, 0);
+  const adetL = O.L.filter((x) => isAdet(x.p));
+  const ahead = adetL.reduce((a, x) => a + x.s.gap, 0);
   const tiles = O.L.map(({ p, s }) => {
     const tp = Math.min(100, s.tgt ? (s.planNow / s.tgt) * 100 : 0);
-    const g = Math.round(s.gap);
-    const line = s.pct >= 100 ? "✓ Tamam" : ph !== "simdi" ? `${s.tgt - s.done} eksik` : g >= 0 ? `Planın ${g ? g + " önünde" : "üzerinde"}` : `Plana ${-g} adet geride`;
+    const line = tileLine(p, s, ph);
     return `<div class="tile" data-go="${p.id}"><div class="n">${p.icon} ${esc(p.name)}</div>
-      <div class="v">${s.done}<small> / ${s.tgt}</small><em style="color:${col(s.pct)}">%${Math.round(s.pct)}</em></div>
-      <div class="mini"><i style="width:${Math.min(100, s.pct)}%;background:${col(s.pct)}"></i>${ph === "simdi" ? `<u style="left:calc(${tp}% - 1px)"></u>` : ""}</div>
+      <div class="v">${fv(p, s.done)}<small> / ${fv(p, s.tgt)}</small><em style="color:${col(s.pct)}">%${Math.round(s.pct)}</em></div>
+      <div class="mini"><i style="width:${Math.min(100, s.pct)}%;background:${col(s.pct)}"></i>${ph === "simdi" && p.type !== "ortalama" ? `<u style="left:calc(${tp}% - 1px)"></u>` : ""}</div>
       <div class="s">${line}</div></div>`;
   }).join("");
   $("hero").innerHTML = `
@@ -529,11 +597,11 @@ function renderHero() {
       <div class="big">
         <span class="st ${st[0]}">${st[1]}</span><br>
         Hedefi tutan: <b>${hit} / ${O.L.length}</b> kalem<br>
-        ${ph === "simdi" ? `Kalan: <b>${fmt(T.left)} iş günü</b><br>${Math.round(ahead) >= 0 ? `Plana göre <b>+${Math.round(ahead)}</b> adet` : `Plana yetişmek için <b>${-Math.round(ahead)}</b> adet`}` : ph === "gecmis" ? `Çeyrek <b>${fmt(T.total)}</b> iş günüydü` : `Çeyrekte <b>${fmt(T.total)}</b> iş günü var`}
+        ${ph === "simdi" ? `Kalan: <b>${fmt(T.left)} iş günü</b>${adetL.length ? `<br>${Math.round(ahead) >= 0 ? `Plana göre <b>+${Math.round(ahead)}</b> adet` : `Plana yetişmek için <b>${-Math.round(ahead)}</b> adet`}` : ""}` : ph === "gecmis" ? `Çeyrek <b>${fmt(T.total)}</b> iş günüydü` : `Çeyrekte <b>${fmt(T.total)}</b> iş günü var`}
       </div>
     </div>
     ${ph === "simdi" ? `<div class="tp">
-      <div class="l"><span>⏳ Zaman</span><b>%${plan} geçti</b></div><div class="b"><i style="width:${plan}%;background:var(--plan)"></i></div>
+      <div class="l"><span>⏳ Zaman</span><b>%${zaman} geçti</b></div><div class="b"><i style="width:${zaman}%;background:var(--plan)"></i></div>
       <div class="l"><span>📈 İlerleme</span><b>%${pct} gerçekleşti</b></div><div class="b"><i style="width:${Math.min(100, pct)}%;background:${col(pct >= plan ? 100 : pct + 100 - plan)}"></i></div>
     </div>` : ""}
     <div class="tiles">${tiles}</div>
@@ -541,6 +609,23 @@ function renderHero() {
     ${targets()._kopya ? `<div class="note" style="color:#f2cd61;margin-top:8px">Hedefler geçen çeyrekten aktarıldı. <u id="kopyaFix" style="cursor:pointer">Kontrol et</u></div>` : ""}`;
   $("hero").querySelectorAll("[data-go]").forEach((t) => (t.onclick = () => { const el = document.querySelector(`#prods [data-p="${t.dataset.go}"]`); if (el) { el.scrollIntoView({ behavior: "smooth", block: "center" }); el.animate([{ background: "rgba(224,162,79,.25)" }, { background: "transparent" }], 1200); } }));
   if ($("kopyaFix")) $("kopyaFix").onclick = openTargets;
+}
+// Hedef kutucuğunun alt satırı, türe göre
+function tileLine(p, s, ph) {
+  if (p.type === "ortalama") {
+    if (!s.veri) return "Bakiye girilmedi";
+    if (ph !== "simdi") return s.pct >= 100 ? "✓ Hedefte" : `${fmtTL(s.tgt - s.done)} eksik`;
+    return s.need <= s.cur ? "Bakiyeni koru ✓" : `Kalan günlerde ort. ${fmtTL(s.need)}`;
+  }
+  if (p.type === "bakiye") {
+    if (!s.veri) return "Bakiye girilmedi";
+    return s.pct >= 100 ? "✓ Tamam" : `Hedefe ${fmtTL(s.need)} kaldı`;
+  }
+  const g = isAdet(p) ? Math.round(s.gap) : s.gap;
+  if (s.pct >= 100) return "✓ Tamam";
+  if (ph !== "simdi") return `${fv(p, s.tgt - s.done)} eksik`;
+  if (isAdet(p)) return g >= 0 ? `Planın ${g ? g + " önünde" : "üzerinde"}` : `Plana ${-g} adet geride`;
+  return g >= 0 ? `Planın ${fmtTL(g)} önünde` : `Plana ${fmtTL(-g)} geride`;
 }
 function renderCoach() {
   const O = overall(), T = timeInfo(), ph = phase();
@@ -555,21 +640,24 @@ function renderCoach() {
   el.hidden = false;
   const open = O.L.filter((x) => x.s.pct < 100);
   const behind = open.filter((x) => x.s.gap < -0.5).sort((a, b) => a.s.gap / a.s.tgt - b.s.gap / b.s.tgt);
-  const wkTot = open.reduce((a, x) => a + x.s.weekNeed, 0), tdTot = open.reduce((a, x) => a + x.s.todayNeed, 0);
-  const wkDone = O.L.reduce((a, x) => a + x.s.weekDone, 0);
+  const wkTot = open.filter((x) => isAdet(x.p)).reduce((a, x) => a + x.s.weekNeed, 0), tdTot = open.filter((x) => isAdet(x.p)).reduce((a, x) => a + x.s.todayNeed, 0);
+  const wkDone = O.L.filter((x) => isAdet(x.p)).reduce((a, x) => a + x.s.weekDone, 0);
   const left = fmt(T.left), lastWeek = T.left <= 5;
-  const list = (arr, k) => arr.filter((x) => x.s[k] > 0).slice(0, 3).map(({ p, s }) => `<b>${s[k]} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(", ").replace(/, ([^,]*)$/, " ve $1");
+  const list = (arr, k) => arr.filter((x) => x.s[k] > 0).slice(0, 3).map(({ p, s }) => `<b>${fv(p, s[k])} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(", ").replace(/, ([^,]*)$/, " ve $1");
   let msg;
   if (!open.length) msg = pick(["Tüm hedeflerin tamam! 🏆 Kalan günler bonus.", "Çeyreği şimdiden kapattın 🎉 Fazlası, bir sonraki çeyreğe güzel bir başlangıç demek."]);
   else if (lastWeek) msg = `🏁 <b>Son düzlük!</b> Çeyreğe ${left} iş günü kaldı. ${list(open, "weekNeed") ? `${list(open, "weekNeed")} ile bitiş çizgisini geçersin.` : ""} Her gün şimdi çok değerli.`;
   else if (!behind.length) msg = pick([`Harika gidiyorsun! 💪 Çeyreğe <b>${left} iş günü</b> kaldı ve planın önündesin. Bu hafta ${list(open, "weekNeed") || "biraz daha"} yaparsan farkı koruyorsun.`, `Tempo çok iyi 👏 ${left} iş günü kaldı. Bu haftaki ${list(open, "weekNeed") || "küçük adımlar"} seni rahat bitirir.`]);
   else if (O.pct >= O.plan - 15) msg = pick([`Çeyreğe <b>${left} iş günü</b> kaldı, başarabilirsin! Bu hafta ${list(open, "weekNeed")} yaparsan tekrar plana oturursun.`, `Az kaldı, yakındasın! ${left} iş günü var. Bu hafta ${list(open, "weekNeed")} — hepsi bu.`]);
-  else msg = pick([`Fark açılmış ama ${left} iş günü az değil. 🎯 Önceliğin <b>${esc(behind[0].p.name.toLocaleLowerCase("tr"))}</b>: bu hafta ${list(open, "weekNeed")} hedefle; her gün küçük bir adım.`, `Zor ama imkânsız değil 💡 Kalan ${left} iş gününde günde ${behind.slice(0, 2).map(({ p, s }) => `<b>${fmt(s.perDay)} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(" ve ")} yetiyor. Bugünden başla.`]);
+  else msg = pick([`Fark açılmış ama ${left} iş günü az değil. 🎯 Önceliğin <b>${esc(behind[0].p.name.toLocaleLowerCase("tr"))}</b>: bu hafta ${list(open, "weekNeed")} hedefle; her gün küçük bir adım.`, `Zor ama imkânsız değil 💡 Kalan ${left} iş gününde günde ${behind.slice(0, 2).map(({ p, s }) => `<b>${fv(p, s.perDay)} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(" ve ")} yetiyor. Bugünden başla.`]);
   const isToday = T.todayWork > 0;
   const rows = O.L.map(({ p, s }) => {
-    if (s.pct >= 100) return `<li><span class="ic">${p.icon}</span><div class="tx">${esc(p.name)}<small>Hedef tamam (${s.done}/${s.tgt})</small></div><span class="pill ok">✓</span></li>`;
-    const t = isToday ? (s.todayNeed > 0 ? `Bugün ${s.todayNeed} daha` : `Bugünkü yeter ✓`) : `Sonraki iş günü ${Math.ceil(s.perDay - 1e-9)}`;
-    return `<li><span class="ic">${p.icon}</span><div class="tx">${esc(p.name)}<small>Bu hafta ${s.weekNeed} daha · günde ${fmt(s.perDay)} · kalan ${s.tgt - s.done}</small></div><span class="pill ${isToday && !s.todayNeed ? "ok" : "go"}">${t}</span></li>`;
+    const li = (alt, cls, t) => `<li><span class="ic">${p.icon}</span><div class="tx">${esc(p.name)}<small>${alt}</small></div><span class="pill ${cls}">${t}</span></li>`;
+    if (s.pct >= 100 && p.type !== "ortalama") return li(`Hedef tamam (${fv(p, s.done)} / ${fv(p, s.tgt)})`, "ok", "✓");
+    if (p.type === "ortalama") return !s.veri ? li(`Hedef ortalama ${fmtTL(s.tgt)}`, "go", "Bakiye gir") : li(`Ortalaman ${fmtTL(s.done)} · hedef ${fmtTL(s.tgt)}`, s.need <= s.cur ? "ok" : "go", s.need <= s.cur ? "Koru ✓" : `Ort. ${fmtTL(s.need)} tut`);
+    if (p.type === "bakiye") return !s.veri ? li(`Hedef ${fmtTL(s.tgt)}`, "go", "Bakiye gir") : li(`Bakiye ${fmtTL(s.cur)} · hedef ${fmtTL(s.tgt)}`, "go", `+${fmtTL(s.need)}`);
+    const t = isToday ? (s.todayNeed > 0 ? `Bugün ${fv(p, s.todayNeed)} daha` : `Bugünkü yeter ✓`) : `Sonraki iş günü ${fv(p, isAdet(p) ? Math.ceil(s.perDay - 1e-9) : s.perDay)}`;
+    return li(`Bu hafta ${fv(p, s.weekNeed)} daha · günde ${fv(p, s.perDay)} · kalan ${fv(p, s.tgt - s.done)}`, isToday && !s.todayNeed ? "ok" : "go", t);
   }).join("");
   el.innerHTML = `
     <h3>🧭 Rehberin <span class="r">${today.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })}</span></h3>
@@ -585,7 +673,7 @@ function renderCoach() {
 }
 function renderChips() {
   $("mchips").innerHTML = qMonths().map((m) => {
-    const tot = D.products.reduce((a, p) => a + monthTotal(p.id, m), 0);
+    const tot = D.products.filter(isAdet).reduce((a, p) => a + monthTotal(p.id, m), 0);
     return `<button data-m="${m}" class="${m === viewMonth ? "sel" : ""}">${MONTHS[m]}<small>${tot} adet</small></button>`;
   }).join("");
   $("mchips").querySelectorAll("button").forEach((b) => (b.onclick = () => {
@@ -596,7 +684,9 @@ function renderChips() {
 }
 // Haftalık görünüm: 7 gün tek satırda, ‹ › ile hafta değiştir; bugünden ileri ve çeyrek dışı günler kapalı
 const qStart = () => new Date(qy, qn * 3, 1, 12);
-const dayTot = (k) => { const v = D.days[k]; return v ? Object.values(v).reduce((a, x) => a + (x || 0), 0) : 0; };
+const ADET = () => new Set(D.products.filter(isAdet).map((p) => p.id));
+const dayTot = (k) => { const v = D.days[k], A = ADET(); return v ? Object.entries(v).reduce((a, [id, x]) => a + (A.has(id) ? x || 0 : 0), 0) : 0; };
+const dayHas = (k) => { const v = D.days[k]; return !!v && Object.keys(v).length > 0; };
 const canPick = (dt) => keyOf(dt) >= keyOf(qStart()) && keyOf(dt) <= keyOf(qEnd()) && keyOf(dt) <= TK;
 function pickDay(dt) {
   selDay = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 12);
@@ -610,8 +700,8 @@ function renderDays() {
   for (let i = 0; i < 7; i++) {
     const dt = new Date(mon); dt.setDate(mon.getDate() + i);
     const k = keyOf(dt), t = dayTot(k), ok = canPick(dt), w = isWork(dt);
-    const bos = ok && w && !t && k < TK;
-    html += `<button data-k="${k}" class="${w ? "" : "off"} ${k === TK ? "td" : ""} ${keyOf(selDay) === k ? "sel" : ""} ${bos ? "bos" : ""}" ${ok ? "" : "disabled"}><small>${DOW[dt.getDay()]}</small><b>${dt.getDate()}</b><i>${t ? t : bos ? "–" : ""}</i></button>`;
+    const bos = ok && w && !dayHas(k) && k < TK;
+    html += `<button data-k="${k}" class="${w ? "" : "off"} ${k === TK ? "td" : ""} ${keyOf(selDay) === k ? "sel" : ""} ${bos ? "bos" : ""}" ${ok ? "" : "disabled"}><small>${DOW[dt.getDay()]}</small><b>${dt.getDate()}</b><i>${t ? t : dayHas(k) ? "•" : bos ? "–" : ""}</i></button>`;
   }
   $("days").innerHTML = html;
   $("days").querySelectorAll("button[data-k]").forEach((b) => (b.onclick = () => { const [y, m, d] = b.dataset.k.split("-").map(Number); pickDay(new Date(y, m - 1, d, 12)); }));
@@ -637,7 +727,7 @@ function renderEksik() {
   const L = [];
   for (let i = 1; i <= 14; i++) {
     const d = new Date(today); d.setDate(d.getDate() - i);
-    if (canPick(d) && isWork(d) && !dayTot(keyOf(d))) L.push(d);
+    if (canPick(d) && isWork(d) && !dayHas(keyOf(d))) L.push(d);
   }
   $("eksik").innerHTML = L.length ? `<div class="eksik"><span>📌 Son 2 haftada boş görünen iş günleri · bir şey yaptıysan dokun, işaretle</span><div class="ch">${L.slice(0, 8).map((d) => `<button type="button" data-k="${keyOf(d)}">${DOW[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}</button>`).join("")}</div></div>` : "";
   $("eksik").querySelectorAll("[data-k]").forEach((b) => (b.onclick = () => { const [y, m, d] = b.dataset.k.split("-").map(Number); pickDay(new Date(y, m - 1, d, 12)); $("mark").scrollIntoView({ behavior: "smooth", block: "start" }); }));
@@ -662,19 +752,33 @@ function renderProds() {
   const dd = D.days[keyOf(selDay)] || {}, isT = keyOf(selDay) === TK;
   $("prods").innerHTML = D.products.map((p) => {
     const s = stats(p);
+    if (!isAdet(p)) {
+      const info = p.type === "tutar"
+        ? (s.tgt ? `Çeyrek ${fmtTL(s.done)} / ${fmtTL(s.tgt)}${s.pct >= 100 ? " · ✓" : isT && s.ph === "simdi" && s.todayNeed ? ` · <i>bugün ${fmtTL(s.todayNeed)} daha</i>` : ""}` : `Çeyrek ${fmtTL(s.done)} · <i>hedef yok</i>`)
+        : !s.veri ? `<i>Bakiyeni gir</i>${s.tgt ? ` · hedef ${fmtTL(s.tgt)}` : ""}`
+        : p.type === "ortalama" ? `Ort. ${fmtTL(s.done)}${s.tgt ? ` / ${fmtTL(s.tgt)}` : ""} · son ${fmtTL(s.cur)}`
+        : `Son bakiye ${fmtTL(s.cur)}${s.tgt ? ` / ${fmtTL(s.tgt)}` : ""}`;
+      const yer = p.type === "tutar" ? "bugünkü tutar" : "bakiye";
+      return `<div class="prod" data-p="${p.id}"><div class="ic">${p.icon}</div><div class="nm"><b>${esc(p.name)}<span class="tag">${TYPES[p.type]}</span></b><span>${info}</span></div>
+        <div class="mny"><input data-v="${p.id}" inputmode="decimal" enterkeyhint="done" placeholder="${yer}" value="${dd[p.id] != null ? sayiYaz(dd[p.id]) : ""}" aria-label="${esc(p.name)} ${yer}"></div></div>`;
+    }
     const info = s.tgt ? `Çeyrek ${s.done}/${s.tgt}${isT && s.ph === "simdi" && s.pct < 100 ? (s.todayNeed ? ` · <i>bugün ${s.todayNeed} daha</i>` : " · <i>bugünkü tamam ✓</i>") : s.pct >= 100 ? " · ✓" : ""}` : `Çeyrek ${s.done} · <i>hedef yok</i>`;
     return `<div class="prod" data-p="${p.id}"><div class="ic">${p.icon}</div><div class="nm"><b>${esc(p.name)}</b><span>${info}</span></div>
       <div class="cnt"><button data-m="${p.id}" aria-label="Azalt">−</button><span class="v">${dd[p.id] || 0}</span><button class="plus" data-a="${p.id}" aria-label="Artır">+</button></div></div>`;
   }).join("") || `<p class="note">Kalem yok. 🎯 Hedefler'den ekle.</p>`;
   $("prods").querySelectorAll("[data-a]").forEach((b) => (b.onclick = () => bump(b.dataset.a, 1)));
   $("prods").querySelectorAll("[data-m]").forEach((b) => (b.onclick = () => bump(b.dataset.m, -1)));
+  $("prods").querySelectorAll("[data-v]").forEach((i) => {
+    i.onchange = () => setVal(i.dataset.v, i.value);
+    i.onkeydown = (e) => { if (e.key === "Enter") i.blur(); };
+  });
 }
 function renderHeat() {
   const y = qy, m = viewMonth;
   $("heatTitle").textContent = `🗓️ ${MONTHS[m]} takvimi`;
   const first = new Date(y, m, 1, 12), off = (first.getDay() + 6) % 7, n = new Date(y, m + 1, 0).getDate();
   let max = 1; const tot = {};
-  for (let d = 1; d <= n; d++) { const dv = D.days[keyOf(new Date(y, m, d, 12))] || {}; const s = D.products.reduce((a, p) => a + (dv[p.id] || 0), 0); tot[d] = s; max = Math.max(max, s); }
+  for (let d = 1; d <= n; d++) { const dv = D.days[keyOf(new Date(y, m, d, 12))] || {}; const s = D.products.filter(isAdet).reduce((a, p) => a + (dv[p.id] || 0), 0); tot[d] = s; max = Math.max(max, s); }
   let html = ["P", "S", "Ç", "P", "C", "C", "P"].map((x) => `<div class="h">${x}</div>`).join("");
   for (let i = 0; i < off; i++) html += "<div></div>";
   for (let d = 1; d <= n; d++) {
@@ -702,25 +806,35 @@ function renderProb() {
     <path d="M10 64 A50 50 0 0 1 110 64" fill="none" stroke="${probCol(g)}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${g * A} ${A}"/>
     <text x="60" y="56" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">%${Math.round(g * 100)}</text><text x="60" y="70" text-anchor="middle" font-size="9" fill="#8b91a0">ortalama ihtimal</text></svg>`;
   const list = rows.map(({ p, s }) => {
-    const pr = s.prob ?? 0, mx = Math.max(s.tgt, s.forecast, s.done) * 1.08 || 1;
-    const fcR = Math.round(s.forecast);
-    const d = s.pct >= 100 ? `Hedef tamam: <b>${s.done}</b> / ${s.tgt}`
-      : ph === "gecmis" ? `Gerçekleşen <b>${s.done}</b> / ${s.tgt} · ${s.tgt - s.done} eksik kaldı`
-      : `Şu anki tempo: günde <b>${fmt(s.mu)}</b> → çeyrek sonu tahmini <b>${fcR}</b> (%${Math.round((s.forecast / s.tgt) * 100)}). Hedef için günde <b>${fmt(s.perDay)}</b> gerekli${s.perDay > s.mu + 0.05 ? ` (<span style="color:var(--low)">+${fmt(s.perDay - s.mu)}</span>)` : ` <span style="color:var(--ok)">✓</span>`}.`;
-    return `<div class="pr"><div class="h"><span>${p.icon}</span><b>${esc(p.name)}</b><em style="background:color-mix(in srgb, ${probCol(pr)} 18%, transparent);color:${probCol(pr)}">${s.prob == null ? "veri yok" : `%${Math.round(pr * 100)} · ${probTxt(pr)}`}</em></div>
+    const fr = s.tgt ? s.forecast / s.tgt : 0;
+    const pr = s.bal ? (fr >= 1 ? 0.9 : fr >= 0.9 ? 0.5 : 0.2) : s.prob ?? 0, mx = Math.max(s.tgt, s.forecast, s.done) * 1.08 || 1;
+    const fcR = isAdet(p) ? Math.round(s.forecast) : fmtTL(s.forecast);
+    let d;
+    if (p.type === "ortalama") d = !s.veri ? "Henüz bakiye girilmedi." : ph === "gecmis" ? `Çeyrek ortalaman <b>${fmtTL(s.done)}</b> / ${fmtTL(s.tgt)}`
+      : `Bakiyen <b>${fmtTL(s.cur)}</b>'de kalırsa çeyrek ortalaman <b>${fmtTL(s.forecast)}</b> (%${Math.round(fr * 100)}). ${s.need <= s.cur ? `Hedef tutuyor <span style="color:var(--ok)">✓</span>` : `Hedef için kalan ${s.kalanGun} takvim gününde ortalama <b>${fmtTL(s.need)}</b> bakiye gerekli.`}`;
+    else if (p.type === "bakiye") d = !s.veri ? "Henüz bakiye girilmedi." : s.pct >= 100 ? `Hedef tamam: <b>${fmtTL(s.cur)}</b> / ${fmtTL(s.tgt)}`
+      : `Son bakiye <b>${fmtTL(s.cur)}</b>; bu gidişle çeyrek sonu tahmini <b>${fmtTL(s.forecast)}</b>. Hedefe <b>${fmtTL(s.need)}</b> kaldı.`;
+    else d = s.pct >= 100 ? `Hedef tamam: <b>${fv(p, s.done)}</b> / ${fv(p, s.tgt)}`
+      : ph === "gecmis" ? `Gerçekleşen <b>${fv(p, s.done)}</b> / ${fv(p, s.tgt)} · ${fv(p, s.tgt - s.done)} eksik kaldı`
+      : `Şu anki tempo: günde <b>${fv(p, s.mu)}</b> → çeyrek sonu tahmini <b>${fcR}</b> (%${Math.round(fr * 100)}). Hedef için günde <b>${fv(p, s.perDay)}</b> gerekli${s.perDay > s.mu * 1.0001 + (isAdet(p) ? 0.05 : 0) ? ` (<span style="color:var(--low)">+${fv(p, s.perDay - s.mu)}</span>)` : ` <span style="color:var(--ok)">✓</span>`}.`;
+    const et = s.bal ? (s.veri ? `tahmin %${Math.round(fr * 100)}` : "bakiye yok") : s.prob == null ? "veri yok" : `%${Math.round(pr * 100)} · ${probTxt(pr)}`;
+    return `<div class="pr"><div class="h"><span>${p.icon}</span><b>${esc(p.name)}</b><em style="background:color-mix(in srgb, ${probCol(pr)} 18%, transparent);color:${probCol(pr)}">${et}</em></div>
       <div class="pf"><i class="fc" style="width:${Math.min(100, (s.forecast / mx) * 100)}%;background:${probCol(pr)}"></i><i class="done" style="width:${Math.min(100, (s.done / mx) * 100)}%;background:${probCol(pr)}"></i><u style="left:${(s.tgt / mx) * 100}%"></u></div>
       <div class="d">${d}</div></div>`;
   }).join("");
-  const risk = rows.find((x) => x.s.pct < 100 && x.s.prob != null && x.s.prob < 0.7);
-  const tip = ph !== "simdi" ? "" : risk
-    ? `<div class="tip">🎯 <b>Odak önerisi:</b> En riskli kalem <b>${esc(risk.p.name)}</b> (%${Math.round(risk.s.prob * 100)}). Günlük tempoyu <b>${fmt(risk.s.mu)}</b>'den <b>${fmt(risk.s.perDay)}</b>'e çıkarırsan hedef tutar; bu da kalan ${fmt(T.left)} iş gününde haftada yaklaşık <b>${Math.ceil(risk.s.perDay * 5 - 1e-9)}</b> adet demek.</div>`
+  const risk = rows.find((x) => x.s.pct < 100 && x.s.prob != null && x.s.prob < 0.7 && x.s.perDay > x.s.mu);
+  const dalga = !risk && rows.find((x) => x.s.pct < 100 && x.s.prob != null && x.s.prob < 0.7);
+  const tip = ph !== "simdi" ? "" : dalga
+    ? `<div class="tip">📊 Tempon hedefe yetiyor ama <b>${esc(dalga.p.name)}</b> günden güne çok dalgalanıyor (%${Math.round(dalga.s.prob * 100)}). Her iş günü az da olsa düzenli gitmek ihtimali yükseltir.</div>`
+    : risk
+    ? `<div class="tip">🎯 <b>Odak önerisi:</b> En riskli kalem <b>${esc(risk.p.name)}</b> (%${Math.round(risk.s.prob * 100)}). Günlük tempoyu <b>${fv(risk.p, risk.s.mu)}</b>'den <b>${fv(risk.p, risk.s.perDay)}</b>'e çıkarırsan hedef tutar; bu da kalan ${fmt(T.left)} iş gününde haftada yaklaşık <b>${isAdet(risk.p) ? Math.ceil(risk.s.perDay * 5 - 1e-9) + " adet" : fmtTL(risk.s.perDay * 5)}</b> demek.</div>`
     : `<div class="tip">✨ Bu tempoyla <b>tüm hedeflerin tutuyor</b> görünüyor. Temponu koru, fazlası senin artın.</div>`;
   el.innerHTML = `
     <h3>🔮 Hedef tutma ihtimali <span class="r">${ph === "gecmis" ? "kapanış" : "tempona göre"}</span></h3>
     <div class="sum">${gauge}<div class="t">Tümünü tutturma: <b>%${all == null ? "–" : Math.round(all * 100)}</b><br>Tahmini ort. gerçekleşme: <b>%${Math.round(fcAvg)}</b><br>Kalan: <b>${fmt(ph === "simdi" ? T.left : 0)}</b> iş günü</div></div>
     ${list}
     ${tip}
-    <p class="note" style="margin:10px 0 0">Nasıl hesaplanıyor? Çeyrek başından bu yana her iş günü yaptığın adetlerin ortalaması ve dalgalanması alınır; aynı tempo sürerse kalan günlerde hedefe ulaşma ihtimali hesaplanır. ${few ? "<b style='color:var(--mid)'>Henüz 3 iş gününden az kayıt var; tahmin kaba.</b> " : ""}Çubukta koyu kısım gerçekleşen, açık kısım tahmin, beyaz çizgi hedef.</p>`;
+    <p class="note" style="margin:10px 0 0">Nasıl hesaplanıyor? Adet ve tutarda çeyrek başından bu yana her iş günü yaptıklarının ortalaması ve dalgalanması alınır; aynı tempo sürerse kalan günlerde hedefe ulaşma ihtimali hesaplanır. ${few ? "<b style='color:var(--mid)'>Henüz 3 iş gününden az kayıt var; tahmin kaba.</b> " : ""}Bakiyelerde girdiğin bakiye bir sonraki girişe kadar her gün aynı sayılır; ortalama bakiye takvim günü üzerinden hesaplanır. Çubukta koyu kısım gerçekleşen, açık kısım tahmin, beyaz çizgi hedef.</p>`;
 }
 
 // ================= Hedef penceresi =================
@@ -736,19 +850,32 @@ function openTargets() {
 function drawRows() {
   const T = timeInfo();
   $("tRows").innerHTML = draft.products.map((p) => {
-    const v = draft.t[p.id] || "";
-    return `<div class="tr" data-r="${p.id}"><span class="ic">${p.icon}</span><input value="${esc(p.name)}" data-n="${p.id}" maxlength="30" aria-label="Kalem adı"><input class="num" type="number" inputmode="numeric" min="0" placeholder="adet" value="${v}" data-t="${p.id}" aria-label="${esc(p.name)} çeyrek hedefi"><button class="x" data-x="${p.id}" aria-label="Kaldır">✕</button>
-      <div class="hint" data-h="${p.id}">${hint(v, T)}</div></div>`;
+    const v = draft.t[p.id] || "", a = isAdet(p);
+    const ph = a ? "adet" : p.type === "tutar" ? "TL" : p.type === "bakiye" ? "TL bakiye" : "TL ort.";
+    return `<div class="tr" data-r="${p.id}"><span class="ic">${p.icon}</span><input value="${esc(p.name)}" data-n="${p.id}" maxlength="30" aria-label="Kalem adı"><input class="num" ${a ? 'type="number" inputmode="numeric" min="0"' : 'type="text" inputmode="decimal"'} placeholder="${ph}" value="${a ? v : sayiYaz(v || null)}" data-t="${p.id}" aria-label="${esc(p.name)} çeyrek hedefi"><button class="x" data-x="${p.id}" aria-label="Kaldır">✕</button>
+      <div class="hint" data-h="${p.id}">${a ? "" : `<span class="tag">${TYPES[p.type]}</span> `}${hint(v, T, p)}</div></div>`;
   }).join("");
   $("tRows").querySelectorAll("[data-n]").forEach((i) => (i.oninput = () => { const p = draft.products.find((x) => x.id === i.dataset.n); if (p) p.name = i.value; }));
-  $("tRows").querySelectorAll("[data-t]").forEach((i) => (i.oninput = () => { const n = Math.max(0, Math.round(Number(i.value) || 0)); if (n) draft.t[i.dataset.t] = n; else delete draft.t[i.dataset.t]; $("tRows").querySelector(`[data-h="${i.dataset.t}"]`).textContent = hint(n, T); }));
+  $("tRows").querySelectorAll("[data-t]").forEach((i) => (i.oninput = () => {
+    const p = draft.products.find((x) => x.id === i.dataset.t); if (!p) return;
+    const n = isAdet(p) ? Math.max(0, Math.round(Number(i.value) || 0)) : parseTL(i.value) || 0;
+    if (n) draft.t[p.id] = n; else delete draft.t[p.id];
+    $("tRows").querySelector(`[data-h="${p.id}"]`).innerHTML = (isAdet(p) ? "" : `<span class="tag">${TYPES[p.type]}</span> `) + hint(n, T, p);
+  }));
   $("tRows").querySelectorAll("[data-x]").forEach((b) => (b.onclick = () => {
     const p = draft.products.find((x) => x.id === b.dataset.x);
     if (!p || !confirm(`"${p.name}" listeden kaldırılsın mı? Geçmiş kayıtları yedekte kalır.`)) return;
     draft.products = draft.products.filter((x) => x.id !== p.id); delete draft.t[p.id]; drawRows();
   }));
 }
-function hint(v, T) { const n = Number(v) || 0; return n ? `≈ ayda ${fmt(n / 3)} · haftada ${fmt((n / T.total) * 5)} · günde ${fmt(n / T.total)}` : "Hedef yoksa boş bırak"; }
+function hint(v, T, p) {
+  const n = Number(v) || 0;
+  if (!n) return p && !isAdet(p) ? "Örnek: 250 bin, 1,5 mn · hedef yoksa boş bırak" : "Hedef yoksa boş bırak";
+  if (p && p.type === "ortalama") return `Çeyrek boyunca ortalama ${fmtTL(n)} bakiye`;
+  if (p && p.type === "bakiye") return `Çeyrek sonunda ${fmtTL(n)} bakiye`;
+  if (p && p.type === "tutar") return `${fmtTL(n)} · ≈ ayda ${fmtTL(n / 3)} · haftada ${fmtTL((n / T.total) * 5)}`;
+  return `≈ ayda ${fmt(n / 3)} · haftada ${fmt((n / T.total) * 5)} · günde ${fmt(n / T.total)}`;
+}
 function closeTargets() { $("sheet").hidden = true; document.body.style.overflow = ""; draft = null; }
 function saveTargets() {
   draft.products.forEach((p) => (p.name = p.name.trim() || "Kalem"));
@@ -762,7 +889,10 @@ function saveTargets() {
 function addProduct() {
   const name = $("newName").value.trim(); if (!name) return;
   const id = "u" + Date.now().toString(36);
-  draft.products.push({ id, name, icon: ICONS[draft.products.length % ICONS.length], type: "adet" });
+  const type = TYPES[$("newType").value] ? $("newType").value : "adet";
+  const icon = type === "adet" ? ICONS[draft.products.length % ICONS.length] : type === "tutar" ? "💼" : type === "bakiye" ? "💰" : "📈";
+  draft.products.push({ id, name, icon, type });
+  $("newType").value = "adet";
   $("newName").value = ""; drawRows();
   const f = $("tRows").querySelector(`[data-t="${id}"]`); if (f) f.focus();
 }
@@ -782,6 +912,21 @@ function bump(pid, delta) {
   }
   if (delta > 0 && keyOf(selDay) !== TK) toast(`📅 ${selDay.getDate()} ${MONTHS[selDay.getMonth()]}: ${p ? p.name : ""} +1`);
   renderHero(); renderCoach(); renderChips(); renderDays(); renderProds(); renderHeat(); renderProb();
+}
+// Tutar/bakiye kalemine o günün değerini yaz (boş bırakılırsa silinir)
+function setVal(pid, txt) {
+  const p = D.products.find((x) => x.id === pid); if (!p) return;
+  const v = parseTL(txt);
+  if (v == null && String(txt).trim()) { toast("Tutar anlaşılamadı. Örnek: 250 bin, 1,5 mn, 2.500.000"); renderProds(); return; }
+  const dd = dayData(selDay);
+  if (v == null) delete dd[pid]; else dd[pid] = v;
+  if (!Object.keys(dd).length) delete D.days[keyOf(selDay)];
+  save();
+  const gun = keyOf(selDay) === TK ? "Bugün" : `${selDay.getDate()} ${MONTHS[selDay.getMonth()]}`;
+  toast(v == null ? `${p.name}: ${gun} silindi` : `${p.name}: ${gun} ${fmtTL(v)} ✓`);
+  const s = stats(p);
+  if (v != null && s.tgt && s.pct >= 100 && p.type !== "ortalama") setTimeout(() => toast(`🎉 ${p.name} çeyrek hedefi tamamlandı!`), 1400);
+  renderHero(); renderCoach(); renderChips(); renderDays(); renderProds(); renderHeat(); renderProb(); renderPos();
 }
 function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove("show"), 2200); }
 function download(name, text, type) {
@@ -806,19 +951,22 @@ function icsWeekly() {
 // sayfaya kod sızdırılamaz. Sahte bir karekod/bağlantı açılsa bile kalem adı dışında metin taşınamaz.
 function guvenli(G) {
   if (!G || typeof G !== "object" || !Array.isArray(G.products)) return null;
-  const ID = /^[A-Za-z0-9_-]{1,40}$/, num = (v) => (Number.isFinite(+v) && +v >= 0 ? Math.min(Math.round(+v), 99999) : 0);
+  const ID = /^[A-Za-z0-9_-]{1,40}$/, IKON = [...ICONS, "💼", "💰", "📈"];
   const products = G.products.filter((p) => p && ID.test(String(p.id))).slice(0, 40)
-    .map((p, i) => ({ id: String(p.id), name: String(p.name ?? "").slice(0, 30), icon: ICONS.includes(p.icon) ? p.icon : ICONS[i % ICONS.length], type: "adet" }));
+    .map((p, i) => ({ id: String(p.id), name: String(p.name ?? "").slice(0, 30), icon: IKON.includes(p.icon) ? p.icon : ICONS[i % ICONS.length], type: TYPES[p.type] ? p.type : "adet" }));
   const ok = new Set(products.map((p) => p.id)), targets = {}, days = {}, bal = {};
+  const tip = Object.fromEntries(products.map((p) => [p.id, p.type]));
+  // adet: tam sayı (en çok 99.999); tutar/bakiye: kuruşlu TL (en çok 10 trilyon)
+  const numOf = (id, v) => (!Number.isFinite(+v) || +v < 0 ? 0 : tip[id] === "adet" ? Math.min(Math.round(+v), 99999) : Math.min(Math.round(+v * 100) / 100, 1e13));
   for (const [q, t] of Object.entries(G.targets && typeof G.targets === "object" ? G.targets : {})) {
     if (!/^\d{4}-Q[1-4]$/.test(q) || !t || typeof t !== "object") continue;
     const o = (targets[q] = {});
-    for (const [id, v] of Object.entries(t)) if (ok.has(id)) o[id] = num(v); else if (id === "_kopya") o._kopya = 1;
+    for (const [id, v] of Object.entries(t)) if (ok.has(id)) o[id] = numOf(id, v); else if (id === "_kopya") o._kopya = 1;
   }
   for (const [k, v] of Object.entries(G.days && typeof G.days === "object" ? G.days : {})) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !v || typeof v !== "object") continue;
     const o = (days[k] = {});
-    for (const [id, n] of Object.entries(v)) if (ok.has(id)) o[id] = num(n);
+    for (const [id, n] of Object.entries(v)) if (ok.has(id)) o[id] = numOf(id, n);
   }
   for (const [id, v] of Object.entries(G.bal && typeof G.bal === "object" ? G.bal : {})) if (ok.has(id) && Number.isFinite(+v)) bal[id] = +v;
   return { products, targets, days, bal };
@@ -841,11 +989,12 @@ function exportCsv() {
   eachQuarterDay((dt) => { const v = D.days[keyOf(dt)] || {}; lines.push([`${pad(dt.getDate())}.${pad(dt.getMonth() + 1)}.${dt.getFullYear()}`, DOW[dt.getDay()], ...D.products.map((p) => v[p.id] || 0)]); });
   const S = D.products.map(stats), pc = (x) => String(Math.round(x * 10) / 10).replace(".", ",");
   lines.push([]);
-  lines.push(["Çeyrek gerçekleşen", "", ...S.map((s) => s.done)]);
+  lines.push(["Tür", "", ...D.products.map((p) => TYPES[p.type] || "Adet")]);
+  lines.push(["Çeyrek gerçekleşen (ort. bakiyede ortalama, bakiyede son bakiye)", "", ...S.map((s) => Math.round(s.done * 100) / 100)]);
   lines.push(["Çeyrek hedef", "", ...S.map((s) => s.tgt || "")]);
   lines.push(["Başarı %", "", ...S.map((s) => (s.tgt ? Math.round(s.pct) : ""))]);
   if (phase() === "simdi") {
-    lines.push(["Kalan adet", "", ...S.map((s) => (s.tgt ? Math.max(0, s.tgt - s.done) : ""))]);
+    lines.push(["Kalan", "", ...S.map((s) => (s.tgt ? Math.max(0, s.tgt - s.done) : ""))]);
     lines.push(["Günde gereken", "", ...S.map((s) => (s.tgt ? pc(s.perDay) : ""))]);
     lines.push(["Mevcut günlük tempo", "", ...S.map((s) => pc(s.mu))]);
     lines.push(["Çeyrek sonu tahmini", "", ...S.map((s) => Math.round(s.forecast))]);
@@ -865,10 +1014,11 @@ const POS_SOZ = {
 };
 function posData() {
   const O = overall(), now = new Date();
-  const items = O.L.map(({ p, s }) => ({ ic: p.icon || "📌", ad: p.name, done: s.done, tgt: s.tgt, pct: s.pct, plan: s.tgt ? Math.min(100, (s.planNow / s.tgt) * 100) : 0, today: s.todayDone, kalan: Math.max(0, s.tgt - s.done) }));
-  const todayL = D.products.map((p) => ({ ic: p.icon || "📌", ad: p.name, n: dayTotal(TK, p.id) })).filter((x) => x.n);
+  const items = O.L.map(({ p, s }) => ({ ic: p.icon || "📌", ad: p.name, done: s.done, tgt: s.tgt, pct: s.pct, plan: s.tgt && p.type !== "ortalama" ? Math.min(100, (s.planNow / s.tgt) * 100) : 0, today: s.todayDone, kalan: Math.max(0, s.tgt - s.done),
+    dT: fv(p, s.done), tT: fv(p, s.tgt), kT: fv(p, Math.max(0, s.tgt - s.done)), fT: fv(p, Math.max(0, s.done - s.tgt)), ok: s.pct >= 100 }));
+  const todayL = D.products.filter((p) => p.type !== "bakiye" && p.type !== "ortalama").map((p) => ({ ic: p.icon || "📌", ad: p.name, n: dayTotal(TK, p.id), nT: isAdet(p) ? "x" + dayTotal(TK, p.id) : fmtTL(dayTotal(TK, p.id)) })).filter((x) => x.n);
   const tier = !items.length ? "yok" : O.pct >= 100 ? "tam" : O.pct >= 75 ? "yakin" : O.pct >= 45 ? "orta" : "bas";
-  const tam = items.filter((x) => x.done >= x.tgt).length;
+  const tam = items.filter((x) => x.ok).length;
   return { items, todayL, pct: O.pct, tier, tam, soz: pick(POS_SOZ[tier]), when: `${now.toLocaleDateString("tr-TR")} ${pad(now.getHours())}:${pad(now.getMinutes())}`, fis: `${qy}${qn + 1}-${String(Object.keys(D.days).length).padStart(4, "0")}` };
 }
 const posCol = (pct) => (pct >= 100 ? "#16a065" : pct >= 75 ? "#e0a020" : pct >= 45 ? "#3f7fd6" : "#e0603c");
@@ -881,10 +1031,10 @@ function renderPos() {
     ${P.tier === "tam" ? '<div class="pz-stamp">HEDEF TAMAM ✓</div>' : ""}
     <hr class="pz-hr">
     <div class="pz-h">BUGÜNÜN SATIŞLARI</div>
-    ${P.todayL.length ? P.todayL.map((x) => `<div class="pz-row"><span>${x.ic} ${esc(x.ad)}</span><b>x${x.n}</b></div>`).join("") : '<div class="pz-row" style="color:#999"><span>Bugün henüz kayıt yok</span><span>—</span></div>'}
+    ${P.todayL.length ? P.todayL.map((x) => `<div class="pz-row"><span>${x.ic} ${esc(x.ad)}</span><b>${esc(x.nT)}</b></div>`).join("") : '<div class="pz-row" style="color:#999"><span>Bugün henüz kayıt yok</span><span>—</span></div>'}
     <hr class="pz-hr">
     <div class="pz-h">ÇEYREK HEDEFLERİ</div>
-    ${P.items.length ? P.items.map((x) => `<div class="pz-p" style="--c:${posCol(x.pct)}"><div class="t"><span>${x.ic} ${esc(x.ad)}</span><b>${x.done} / ${x.tgt}</b></div><div class="pz-bar"><i style="width:${Math.min(100, x.pct)}%"></i>${x.plan > 0 && x.plan < 100 ? `<u style="left:${x.plan}%" title="Plan"></u>` : ""}</div>${x.done >= x.tgt ? `<small class="ok">✅ Hedef tamam${x.done > x.tgt ? ` · +${x.done - x.tgt} fazla` : ""}</small>` : `<small>%${Math.round(x.pct)} · kalan ${x.kalan}</small>`}</div>`).join("") : '<div class="pz-row" style="color:#999"><span>Hedef girilmedi</span><span>—</span></div>'}
+    ${P.items.length ? P.items.map((x) => `<div class="pz-p" style="--c:${posCol(x.pct)}"><div class="t"><span>${x.ic} ${esc(x.ad)}</span><b>${esc(x.dT)} / ${esc(x.tT)}</b></div><div class="pz-bar"><i style="width:${Math.min(100, x.pct)}%"></i>${x.plan > 0 && x.plan < 100 ? `<u style="left:${x.plan}%" title="Plan"></u>` : ""}</div>${x.ok ? `<small class="ok">✅ Hedef tamam${x.done > x.tgt ? ` · +${esc(x.fT)} fazla` : ""}</small>` : `<small>%${Math.round(x.pct)} · kalan ${esc(x.kT)}</small>`}</div>`).join("") : '<div class="pz-row" style="color:#999"><span>Hedef girilmedi</span><span>—</span></div>'}
     <hr class="pz-hr">
     <div class="pz-tot">${ring(P.pct)}<div><b>GENEL BAŞARI</b><em>%${Math.round(P.pct)}</em><span style="color:#c9a050">${stars(P.pct)}</span><div class="pz-s">${P.tam}/${P.items.length} hedef tamamlandı</div></div></div>
     <div class="pz-q">“${esc(P.soz)}”</div>
@@ -908,15 +1058,15 @@ function posCanvas() {
   T(`${qName()} · ${qRange()}`, W / 2, 126, mono(18), "#555", "center");
   T(`${P.when} · Fiş no ${P.fis}`, W / 2, 152, mono(16), "#777", "center");
   let y = 176; hr(y); y += 32; T("BUGÜNÜN SATIŞLARI", M, y, mono(15, 1), "#8a8270"); y += 30;
-  if (P.todayL.length) P.todayL.forEach((x) => { T(`${x.ic} ${x.ad}`, M, y, mono(20)); T("x" + x.n, W - M, y, mono(20, 1), "#262626", "right"); y += rowH; });
+  if (P.todayL.length) P.todayL.forEach((x) => { T(`${x.ic} ${x.ad}`, M, y, mono(20)); T(x.nT, W - M, y, mono(20, 1), "#262626", "right"); y += rowH; });
   else { T("Bugün henüz kayıt yok", M, y, mono(20), "#999"); y += rowH; }
   y += 6; hr(y); y += 32; T("ÇEYREK HEDEFLERİ", M, y, mono(15, 1), "#8a8270"); y += 30;
   if (P.items.length) P.items.forEach((x) => {
-    T(`${x.ic} ${x.ad}`, M, y, mono(20)); T(`${x.done} / ${x.tgt}`, W - M, y, mono(20, 1), "#262626", "right"); y += 14;
+    T(`${x.ic} ${x.ad}`, M, y, mono(20)); T(`${x.dT} / ${x.tT}`, W - M, y, mono(20, 1), "#262626", "right"); y += 14;
     const bw = W - M * 2; g.fillStyle = "#ebe4d0"; g.beginPath(); g.roundRect(M, y, bw, 16, 8); g.fill();
     g.fillStyle = posCol(x.pct); g.beginPath(); g.roundRect(M, y, Math.max(16, bw * Math.min(100, x.pct) / 100), 16, 8); g.fill();
     if (x.plan > 0 && x.plan < 100) { g.fillStyle = "rgba(60,60,60,.55)"; g.fillRect(M + bw * x.plan / 100 - 1, y - 3, 2, 22); }
-    y += 38; T(x.done >= x.tgt ? `✓ Hedef tamam${x.done > x.tgt ? ` · +${x.done - x.tgt} fazla` : ""}` : `%${Math.round(x.pct)} · kalan ${x.kalan}`, M, y - 6, mono(15, x.done >= x.tgt), x.done >= x.tgt ? "#16824f" : "#777"); y += 22;
+    y += 38; T(x.ok ? `✓ Hedef tamam${x.done > x.tgt ? ` · +${x.fT} fazla` : ""}` : `%${Math.round(x.pct)} · kalan ${x.kT}`, M, y - 6, mono(15, x.ok), x.ok ? "#16824f" : "#777"); y += 22;
   }); else { T("Hedef girilmedi", M, y, mono(20), "#999"); y += 40; }
   hr(y); y += 20;
   const cx = M + 52, cy = y + 52; g.lineWidth = 14; g.strokeStyle = "#ebe4d0"; g.beginPath(); g.arc(cx, cy, 44, 0, 7); g.stroke();
@@ -1042,6 +1192,13 @@ $("expJson").onclick = exportJson;
 $("impJson").onclick = () => $("fileIn").click();
 $("fileIn").onchange = (e) => { if (e.target.files[0]) importJson(e.target.files[0]); e.target.value = ""; };
 $("expCsv").onclick = exportCsv;
+$("resetAll").onclick = () => {
+  const n = D.products.length, g = Object.keys(D.days).length;
+  if (!confirm(`Günce tamamen sıfırlansın mı?\n\n• ${n} kalemin tamamı, ADLARIYLA birlikte silinir\n• Bütün çeyreklerin hedefleri silinir\n• ${g} günlük işaretlemenin hepsi silinir\n\nBu geri alınamaz. İstersen önce 💾 Yedeği indir.`)) return;
+  if (!confirm("Emin misin? Her şey silinecek ve Günce ilk günkü gibi boş açılacak.")) return;
+  D = { products: [], targets: {}, days: {}, bal: {}, v3: true, v4: true };
+  save(); selDay = new Date(today); render(); window.scrollTo({ top: 0, behavior: "smooth" }); toast("Günce sıfırlandı. 🎯 Hedefler'den kendi kalemlerini ekle");
+};
 $("resetM").onclick = () => { if (confirm(`${qName()} (${qRange()}) günlük kayıtları silinsin mi? (Hedefler kalır)`)) { eachQuarterDay((d) => delete D.days[keyOf(d)]); save(); render(); } };
 
 load(); migrate(); save(); render();
