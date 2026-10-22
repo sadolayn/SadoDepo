@@ -251,6 +251,7 @@
   table.bankplan tr.tot td { background: #3a3414; color: #f4e9a6; font-weight: 700; }
   .tsbtns { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .tsbtns .tscopy { grid-column: auto; }
+  .ornek { display:block; font-size:10.5px; color:#777; margin-top:2px; }
   .tscopy.share { background: var(--accent); color: #000; font-weight: 700; }
   .vkcard h2 { margin-bottom: 4px; }
   .vkres { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(224,162,79,.08); border: 1px solid var(--line); font-size: 14px; line-height: 1.5; }
@@ -331,7 +332,7 @@
       <label>Kullanılan tutar</label>
       <div class="field"><input id="b_tutar" type="text" inputmode="decimal" value="1.000.000"><span class="unit">TL</span></div>
       <div class="two">
-        <div><label>Yıllık faiz</label><div class="field"><input id="b_faiz" type="text" inputmode="decimal" value="51"><span class="unit">%</span></div></div>
+        <div><label>Yıllık faiz</label><div class="field"><input id="b_faiz" type="text" inputmode="decimal" value="51"><span class="unit">%</span></div><small class="ornek">örnek değer · kendi oranını gir</small></div>
         <div><label>Kullanım süresi</label><div class="field"><input id="b_gun" type="text" inputmode="numeric" value="30"><span class="unit">gün</span></div></div>
       </div>
       <div class="two">
@@ -387,7 +388,7 @@
       <label>Vade</label>
       <div class="ekchips" id="et_vadeler"></div>
       <label>Aylık faiz oranı</label>
-      <div class="field"><input id="et_faiz" type="text" inputmode="decimal" value="4,25"><span class="unit">%</span></div>
+      <div class="field"><input id="et_faiz" type="text" inputmode="decimal" value="4,25"><span class="unit">%</span></div><small class="ornek">örnek değer · kendi oranını gir</small>
       <a class="ekkamp" id="et_kamp" hidden target="_blank" rel="noopener"></a>
     </div>
     <div class="card">
@@ -407,7 +408,7 @@
       <label>Anapara</label>
       <div class="field"><input id="m_tutar" type="text" inputmode="decimal" value="500.000"><span class="unit">TL</span></div>
       <div class="two">
-        <div><label>Yıllık brüt faiz</label><div class="field"><input id="m_faiz" type="text" inputmode="decimal" value="39"><span class="unit">%</span></div></div>
+        <div><label>Yıllık brüt faiz</label><div class="field"><input id="m_faiz" type="text" inputmode="decimal" value="39"><span class="unit">%</span></div><small class="ornek">örnek değer · kendi oranını gir</small></div>
         <div><label>Vade</label><div class="field"><input id="m_gun" type="text" inputmode="numeric" value="32"><span class="unit">gün</span></div></div>
       </div>
       <div class="two">
@@ -476,7 +477,7 @@
             <label>Kredi tutarı</label>
       <div class="field"><input id="t_tutar" type="text" inputmode="decimal" value="200.000"><span class="unit">TL</span></div>
       <div class="two">
-        <div><label>Aylık faiz</label><div class="field"><input id="t_faiz" type="text" inputmode="decimal" value="3,90"><span class="unit">%</span></div></div>
+        <div><label>Aylık faiz</label><div class="field"><input id="t_faiz" type="text" inputmode="decimal" value="3,90"><span class="unit">%</span></div><small class="ornek">örnek değer · kendi oranını gir</small></div>
         <div><label>Vade</label><div class="field"><input id="t_vade" type="text" inputmode="numeric" value="24"><span class="unit">ay</span></div></div>
       </div>
       <div class="two">
@@ -572,7 +573,7 @@
       <label>Kredi tutarı</label>
       <div class="field"><input id="k2_tutar" type="text" inputmode="decimal" value="2.500.000"><span class="unit">TL</span></div>
       <div class="two">
-        <div><label>Aylık faiz</label><div class="field"><input id="k2_faiz" type="text" inputmode="decimal" value="3,10"><span class="unit">%</span></div></div>
+        <div><label>Aylık faiz</label><div class="field"><input id="k2_faiz" type="text" inputmode="decimal" value="3,10"><span class="unit">%</span></div><small class="ornek">örnek değer · kendi oranını gir</small></div>
         <div><label>Vade</label><div class="field"><input id="k2_vade" type="text" inputmode="numeric" value="120"><span class="unit">ay</span></div></div>
       </div>
       <div class="two">
@@ -651,7 +652,7 @@
       <label>Kredi tutarı</label>
       <div class="field"><input id="tr_tutar" type="text" inputmode="decimal" value="1.000.000"><span class="unit">TL</span></div>
       <div class="two">
-        <div><label>Yıllık faiz</label><div class="field"><input id="tr_faiz" type="text" inputmode="decimal" value="45"><span class="unit">%</span></div></div>
+        <div><label>Yıllık faiz</label><div class="field"><input id="tr_faiz" type="text" inputmode="decimal" value="45"><span class="unit">%</span></div><small class="ornek">örnek değer · kendi oranını gir</small></div>
         <div><label>Vade</label><div class="field"><input id="tr_vade" type="text" inputmode="numeric" value="12"><span class="unit">ay</span></div></div>
       </div>
       <label>Ödeme şekli</label>
@@ -691,7 +692,7 @@
       <label>Kredi tutarı</label>
       <div class="field"><input id="tc_tutar" type="text" inputmode="decimal" value="150.000"><span class="unit">TL</span></div>
       <div class="two">
-        <div><label>Aylık faiz</label><div class="field"><input id="tc_faiz" type="text" inputmode="decimal" value="4,05"><span class="unit">%</span></div></div>
+        <div><label>Aylık faiz</label><div class="field"><input id="tc_faiz" type="text" inputmode="decimal" value="4,05"><span class="unit">%</span></div><small class="ornek">örnek değer · kendi oranını gir</small></div>
         <div><label>Taksit sayısı</label><div class="field"><input id="tc_vade" type="text" inputmode="numeric" value="36"><span class="unit">ay</span></div></div>
       </div>
       <div class="two">
@@ -752,7 +753,7 @@
       <button type="button" id="c_pdf" class="tscopy pdfbtn">📄 Çek listesi PDF indir</button>
       <pre class="ckprev" id="c_prev" hidden></pre>
       <div class="two">
-        <div><label>Yıllık faiz</label><div class="field"><input id="c_faiz" type="text" inputmode="decimal" value="39"><span class="unit">%</span></div></div>
+        <div><label>Yıllık faiz</label><div class="field"><input id="c_faiz" type="text" inputmode="decimal" value="39"><span class="unit">%</span></div><small class="ornek">örnek değer · kendi oranını gir</small></div>
         <div><label>Kullandırım oranı</label><div class="field"><input id="c_oran" type="text" inputmode="decimal" value="100"><span class="unit">%</span></div></div>
       </div>
       <label>Hesap yöntemi</label>
@@ -2114,7 +2115,7 @@ $("c_isl").value = ymd(new Date());
 // ---------- İş Bankası güncel kredi faiz oranı (data/kredi_oran.json) ----------
 // Varsayılan: isbank.com.tr hesaplama aracındaki örnek (tüketici 200.000 TL / 24 ay; konut ilk konut). Kullanıcı faizi istediği gibi değiştirebilir.
 (function () {
-  let RT = { guncelleme: "2026-10-15", ihtiyac: { 24: 3.90 }, konut: { 120: 3.10 }, link_ihtiyac: "https://www.isbank.com.tr/ihtiyac-kredisi", link_konut: "https://www.isbank.com.tr/ihtiyac-kredisi" };
+  let RT = { guncelleme: "2026-10-15", ihtiyac: { 24: 3.90 }, konut: { 120: 3.10 }, link_ihtiyac: "https://www.isbank.com.tr/ihtiyac-kredisi", link_konut: "https://www.isbank.com.tr/konut-kredisi" };
   const touched = { t: false, k2: false };
   $("t_faiz").addEventListener("input", (e) => { if (e.isTrusted) touched.t = true; });
   $("k2_faiz").addEventListener("input", (e) => { if (e.isTrusted) touched.k2 = true; });
