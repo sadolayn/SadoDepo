@@ -17,14 +17,14 @@ const CFG = {
   NAME: 'Sadolayn Alerts',
   SITE: 'https://sadolayn.github.io/SadoDepo/',
   PAGE: 'https://sadolayn.github.io/SadoDepo/alerts.html',
-  MAX_KEYWORDS: 10,       // abone başına en fazla kelime
-  PER_KEYWORD: 5,         // e-postada kelime başına en fazla haber
-  MAX_SUBS: 80,           // Gmail günlük gönderim kotası (100) için üst sınır
-  DAILY_SIGNUP_LIMIT: 30, // günde en fazla yeni onay e-postası
+  MAX_KEYWORDS: 10,       /* abone başına en fazla kelime */
+  PER_KEYWORD: 5,         /* e-postada kelime başına en fazla haber */
+  MAX_SUBS: 80,           /* Gmail günlük gönderim kotası (100) için üst sınır */
+  DAILY_SIGNUP_LIMIT: 30, /* günde en fazla yeni onay e-postası */
   CONFIRM_COOLDOWN_MIN: 10,
   HOUR: 10,
-  MAX_PUSH: 500,          // en fazla bildirim kayıtlı telefon
-  DAILY_PUSH_SIGNUP: 150, // günde en fazla yeni telefon kaydı
+  MAX_PUSH: 500,          /* en fazla bildirim kayıtlı telefon */
+  DAILY_PUSH_SIGNUP: 150, /* günde en fazla yeni telefon kaydı */
   TZ: 'Europe/Istanbul'
 };
 
@@ -83,7 +83,7 @@ function doGet(e) {
   return json_({ ok: true, name: CFG.NAME });
 }
 
-// Sitedeki "kalan yer" sayacı için: yalnızca sayılar döner, e-posta ya da kelime dönmez
+/* Sitedeki "kalan yer" sayacı için: yalnızca sayılar döner, e-posta ya da kelime dönmez */
 function count_() {
   const c = CacheService.getScriptCache(), k = 'count_v1', hit = c.get(k);
   if (hit) return JSON.parse(hit);
@@ -256,11 +256,11 @@ function preview_(q) {
 }
 
 /* ---------- İş e-posta adresleri ---------- */
-// Kurumsal (@isbank.com.tr) adreslere bülten gönderilmez; yeni kayıt da alınmaz.
+/* Kurumsal (@isbank.com.tr) adreslere bülten gönderilmez; yeni kayıt da alınmaz. */
 function isIs_(e) { return /@isbank\.com\.tr$/i.test(String(e || '').trim()); }
 
-// TEK SEFERLİK: tablodaki @isbank.com.tr abonelere kısa bir bilgi e-postası gönderir ve onları siler.
-// Apps Script'te bir kez çalıştır (üst menüden isAdresleriniTemizle seç > Çalıştır). Günlük kayıtta kaç kişi silindiği yazar.
+/* TEK SEFERLİK: tablodaki @isbank.com.tr abonelere kısa bir bilgi e-postası gönderir ve onları siler. */
+/* Apps Script'te bir kez çalıştır (üst menüden isAdresleriniTemizle seç > Çalıştır). Günlük kayıtta kaç kişi silindiği yazar. */
 function isAdresleriniTemizle() {
   const sh = sheet_();
   const data = sh.getDataRange().getValues();
@@ -287,9 +287,9 @@ function isAdresleriniTemizle() {
 /* ---------- Günlük özet ---------- */
 
 function dailyDigest() {
-  // Apps Script tek çalıştırmada en fazla 6 dakika çalışır. Abone ve haber sayısı artınca liste yarıda
-  // kesiliyordu (22 Ekim 2026: 17 aboneden 10'una gitti). Artık ~4,5 dakikada durup 1 dakika sonra
-  // kaldığı yerden devam ediyor; bugün e-posta gönderilmiş aboneler atlanıyor, kimseye iki kez gitmiyor.
+  /* Apps Script tek çalıştırmada en fazla 6 dakika çalışır. Abone ve haber sayısı artınca liste yarıda */
+  /* kesiliyordu (22 Ekim 2026: 17 aboneden 10'una gitti). Artık ~4,5 dakikada durup 1 dakika sonra */
+  /* kaldığı yerden devam ediyor; bugün e-posta gönderilmiş aboneler atlanıyor, kimseye iki kez gitmiyor. */
   const t0 = Date.now(), SURE = 4.5 * 60 * 1000;
   const sh = sheet_();
   const data = sh.getDataRange().getValues();
@@ -302,8 +302,8 @@ function dailyDigest() {
   for (let i = 1; i < data.length; i++) {
     const r = data[i];
     if (r[C.status] !== 'active' || !r[C.keywords]) continue;
-    if (isIs_(r[C.email])) continue; // iş adreslerine gönderim yok
-    if (gonderildi(r[C.lastSent])) continue; // bugün zaten gitti (devam çalışması ya da elle yeniden çalıştırma)
+    if (isIs_(r[C.email])) continue; /* iş adreslerine gönderim yok */
+    if (gonderildi(r[C.lastSent])) continue; /* bugün zaten gitti (devam çalışması ya da elle yeniden çalıştırma) */
     if (MailApp.getRemainingDailyQuota() < 1) continue;
     if (Date.now() - t0 > SURE) { devamKur_(); Logger.log('Süre doluyor; kalanlar 1 dakika sonra gönderilecek.'); return; }
 
@@ -314,7 +314,7 @@ function dailyDigest() {
       items: news(kw).filter(x => !used[x.link] && (used[x.link] = 1)).slice(0, CFG.PER_KEYWORD)
     }));
     const total = sections.reduce((s, x) => s + x.items.length, 0);
-    if (!total) continue; // Google Alerts gibi: haber yoksa e-posta yok
+    if (!total) continue; /* Google Alerts gibi: haber yoksa e-posta yok */
 
     const unsub = execUrl_() + '?action=unsub&t=' + r[C.utoken];
     try {
@@ -329,7 +329,7 @@ function dailyDigest() {
       Logger.log('Gönderilemedi: ' + r[C.email] + ' — ' + e);
     }
   }
-  // Telefon bildirimleri günde bir kez (devam çalışmalarında tekrar gitmesin)
+  /* Telefon bildirimleri günde bir kez (devam çalışmalarında tekrar gitmesin) */
   const props = PropertiesService.getScriptProperties();
   if (props.getProperty('PUSH_GUN') !== bugun) {
     props.setProperty('PUSH_GUN', bugun);
@@ -337,7 +337,7 @@ function dailyDigest() {
   }
 }
 
-// Süre dolunca: 1 dakika sonra kaldığı yerden devam eden tek seferlik tetikleyici
+/* Süre dolunca: 1 dakika sonra kaldığı yerden devam eden tek seferlik tetikleyici */
 function devamKur_() {
   ScriptApp.getProjectTriggers().filter(t => t.getHandlerFunction() === 'dailyDigestDevam').forEach(t => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger('dailyDigestDevam').timeBased().after(60 * 1000).create();
@@ -428,7 +428,7 @@ function fcmSa_() {
   if (!raw) throw new Error('FCM_SA ayarı yok (Firebase hizmet hesabı JSON).');
   return JSON.parse(raw);
 }
-// Anahtarın satır sonlarını toparla (kopyalama sırasında \\n'ye dönüşmüş olabilir)
+/* Anahtarın satır sonlarını toparla (kopyalama sırasında \\n'ye dönüşmüş olabilir) */
 function pk_(k) {
   k = String(k || '').replace(/\\n/g, '\n');
   const m = k.match(/BEGIN PRIVATE KEY-*([\s\S]*?)-*END PRIVATE KEY/);
@@ -439,8 +439,8 @@ function pk_(k) {
 
 function fcmUrl_() { return 'https://fcm.googleapis.com/v1/projects/' + fcmSa_().project_id + '/messages:send'; }
 
-// Hizmet hesabıyla imzalı JWT → 1 saatlik erişim anahtarı (önbellekte tutulur)
-// E-postadaki görünmez/yanlış karakterleri temizle
+/* Hizmet hesabıyla imzalı JWT → 1 saatlik erişim anahtarı (önbellekte tutulur) */
+/* E-postadaki görünmez/yanlış karakterleri temizle */
 function em_(e) { return String(e || '').normalize('NFKC').replace(/[\u2010-\u2015\u2212]/g, '-').replace(/[^A-Za-z0-9@.\-_]/g, '').toLowerCase(); }
 
 function fcmAccess_() {
@@ -484,7 +484,7 @@ function pushDigest_(news) {
     const used = {};
     const hits = kws.map(kw => ({ kw, items: news(kw).filter(x => !used[x.link] && (used[x.link] = 1)).slice(0, CFG.PER_KEYWORD) })).filter(s => s.items.length);
     const total = hits.reduce((s, x) => s + x.items.length, 0);
-    if (!total) continue; // haber yoksa bildirim yok
+    if (!total) continue; /* haber yoksa bildirim yok */
     let body = hits[0].kw + ': ' + hits[0].items[0].title;
     if (body.length > 120) body = body.slice(0, 117) + '…';
     if (hits.length > 1) body += ' · +' + (hits.length - 1) + ' kelimende daha haber var';
@@ -500,11 +500,11 @@ function pushDigest_(news) {
       else Logger.log('Bildirim hatası ' + code + ': ' + txt.slice(0, 300));
     });
   }
-  gone.sort((a, b) => b - a).forEach(r => sh.deleteRow(r)); // artık geçersiz telefonları temizle
+  gone.sort((a, b) => b - a).forEach(r => sh.deleteRow(r)); /* artık geçersiz telefonları temizle */
   Logger.log('Bildirim: ' + (jobs.length - gone.length) + ' gönderildi, ' + gone.length + ' geçersiz kayıt silindi.');
 }
 
-// Kurulumdan sonra bir kez çalıştır: Firebase bağlantısı tamam mı?
+/* Kurulumdan sonra bir kez çalıştır: Firebase bağlantısı tamam mı? */
 function testPushSetup() {
   const sa = fcmSa_();
   Logger.log('Hizmet hesabı: ' + sa.client_email + ' · proje: ' + sa.project_id);
