@@ -23,10 +23,22 @@ def get(url):
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (compatible; SadolaynBot/1.0)", "Accept-Language": "tr-TR,tr"})
     return urllib.request.urlopen(req, timeout=60).read().decode("utf-8", "replace")
 
+# Banka kendi sitesinde "biz" der; burada üçüncü şahsa çevrilir ki metin banka adına yazılmış gibi okunmasın.
+UCUNCU = [
+    (r"\bBankamızdan\b", "İş Bankası'ndan"), (r"\bBankamıza\b", "İş Bankası'na"), (r"\bBankamızda\b", "İş Bankası'nda"),
+    (r"\bBankamızın\b", "İş Bankası'nın"), (r"\bBankamız\b", "İş Bankası"),
+]
+# "müşterilerimize/şubelerimizden" gibi iyelik ekleri atılır: müşterilere, şubelerden (sayfa zaten İş Bankası kartı)
+def ucuncu(s):
+    for a, b in UCUNCU:
+        s = re.sub(a, b, s, flags=re.I)
+    return re.sub(r"\b(müşteri|şube)(ler)?(?:i?miz)", r"\1\2", s, flags=re.I)
+
 def clean(s):
-    s = re.sub(r"<[^>]+>", " ", s)
-    s = html.unescape(s)
-    return re.sub(r"\s+", " ", s).strip()
+    s = html.unescape(s)              # önce varlıkları aç (&lt;img&gt; gibi gizli etiketler de görünür olsun)
+    s = re.sub(r"<[^>]+>", " ", s)    # sonra etiketleri at
+    s = s.replace("<", "‹").replace(">", "›")
+    return ucuncu(re.sub(r"\s+", " ", s).strip())
 
 items, texts = {}, []
 for u in URLS:
