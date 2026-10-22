@@ -662,7 +662,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   <div class="disc">
     <b>ℹ️ Bu sayfa kişisel bir projedir; resmî değildir, Türkiye İş Bankası A.Ş. ile bağı yoktur.</b>
     <p>Bilgiler kamuya açık kaynaklardan özenle derlenir ve düzenli olarak kontrol edilir. Ürün, kampanya ve koşulların en güncel ve kesin hâli için lütfen <a href="https://www.isbank.com.tr" target="_blank" rel="noopener">www.isbank.com.tr</a> ve <a href="https://www.maximum.com.tr" target="_blank" rel="noopener">www.maximum.com.tr</a> adreslerini ziyaret ediniz.</p>
-    <small>Seçilmiş haberler ve kampanyalar her sabah, "Güncel" ve "Video" sekmeleri her saat otomatik güncellenir.</small>
+    <small>Seçilmiş haberler ve kampanyalar günde iki kez (09:01 ve 14:01), "Güncel" ve "Video" sekmeleri her saat otomatik güncellenir.</small>
   </div>
 </div>
 
@@ -1534,6 +1534,18 @@ function chartsHtml() {
 }
 
 // ===== Banka takvimi =====
+let ppkJ = null; // data/ppk.json: karar açıklanınca takvim ve üstteki şerit kararı gösterir
+const ppkNf = (n) => String(n).replace(".", ",");
+function ppkSatir(d) {
+  const K = ppkJ && ppkJ.last, P = ppkJ && ppkJ.prev;
+  if (K && K.date === d && K.rate != null) {
+    const ch = K.change || 0, yon = ch < 0 ? `${ppkNf(-ch)} puan indirim` : ch > 0 ? `${ppkNf(ch)} puan artış` : "değişiklik yok";
+    return { d, ppk: 1, done: 1, t: `TCMB faiz kararı açıklandı · %${ppkNf(K.rate)}`, a: `${P && P.rate != null ? `Önceki %${ppkNf(P.rate)} · ` : ""}${yon} · gecelik borç verme %${ppkNf(K.lend)}, borçlanma %${ppkNf(K.borrow)}`, c: "#5aa9f0", url: K.url };
+  }
+  const tr = new Date(Date.now() + 3 * 3600e3), bugun = tr.toISOString().slice(0, 10);
+  if (d === bugun && tr.getUTCHours() >= 14) return { d, ppk: 1, t: "TCMB faiz kararı açıklandı", a: "Rakamlar birkaç dakika içinde burada", c: "#5aa9f0" };
+  return { d, ppk: 1, t: "TCMB faiz kararı (PPK)", a: "Saat 14:00'te açıklanır · kredi ve mevduat faizlerini etkiler", c: "#5aa9f0" };
+}
 // Kesin tarihler KAP/TCMB duyurularından; "tahmini" olanlar geçen yılın takvimine göre
 const PPK = ["2026-10-22", "2026-12-10", "2027-01-21", "2027-03-18", "2027-04-22", "2027-06-10"];
 const TK_FIX = [
@@ -1546,7 +1558,7 @@ const dLeft = (d) => Math.round((new Date(d + "T12:00:00") - new Date(new Date()
 const ymdS = (x) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
 function takvim() {
   const now = new Date(), L = [...TK_FIX];
-  PPK.forEach((d) => L.push({ d, t: "TCMB faiz kararı (PPK)", a: "Saat 14:00'te açıklanır · kredi ve mevduat faizlerini etkiler", c: "#5aa9f0" }));
+  PPK.forEach((d) => L.push(ppkSatir(d)));
   for (let y = now.getFullYear(); y <= now.getFullYear() + 1; y++) {
     [["03-31", "1. çeyrek"], ["06-30", "2. çeyrek (yarıyıl)"], ["09-30", "3. çeyrek"], ["12-31", "Yıl sonu"]].forEach(([md, n]) => L.push({ d: `${y}-${md}`, t: `${n} bilanço dönemi kapanışı`, a: "Çeyrek sonu · hedef ve bütçe dönemi", c: "#8a8a8a" }));
     L.push({ d: `${y}-08-26`, t: `İş Bankası ${y - 1924}. kuruluş yıl dönümü 🎂`, a: "26 Ağustos 1924, Ankara", c: "#ef6a4c" });
@@ -1569,8 +1581,8 @@ function renderSoon() {
   if (cat !== "KAP") { $("soon").innerHTML = ""; return; }
   const L = takvim().filter((x) => !x.est && !/bilanço dönemi/.test(x.t)).map((x) => ({ ...x, n: dLeft(x.d) })).filter((x) => x.n >= 0 && x.n <= 7);
   $("soon").innerHTML = L.map((x) => {
-    const dt = new Date(x.d + "T12:00:00"), ppk = /PPK/.test(x.t);
-    return `<button type="button" class="soonbar${x.n <= 1 ? " hot" : ""}" data-go="tk"><div class="n">${x.n === 0 ? "🎯" : x.n}<small>${x.n === 0 ? "bugün" : x.n === 1 ? "yarın" : "gün"}</small></div><div><b>${ppk ? "🏦 " : "📊 "}${esc(x.t)}${x.n <= 1 ? (ppk ? " · saat 14:00" : "") : ""}</b><span>${dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })} · ${esc(x.a)}</span></div></button>`;
+    const dt = new Date(x.d + "T12:00:00"), ppk = !!x.ppk;
+    return `<button type="button" class="soonbar${x.n <= 1 ? " hot" : ""}" data-go="tk"><div class="n">${x.n === 0 ? "🎯" : x.n}<small>${x.n === 0 ? "bugün" : x.n === 1 ? "yarın" : "gün"}</small></div><div><b>${ppk ? "🏦 " : "📊 "}${esc(x.t)}${x.n <= 1 && ppk && !x.done && /PPK/.test(x.t) ? " · saat 14:00" : ""}</b><span>${dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })} · ${esc(x.a)}</span></div></button>`;
   }).join("");
   $("soon").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { cat = "📅 Takvim"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
 }
@@ -1762,7 +1774,7 @@ function renderList() {
   if (cat === "İşCep") return renderIscep();
   if (cat === "Maximum") return renderCamps();
   if (cat === "Şubeler") return renderSubeler();
-  $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "") + " · her sabah";
+  $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "") + " · günde iki kez (09:01, 14:01)";
   const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
   if (!items.length) { $("list").innerHTML = '<div class="empty">Bu kategoride henüz haber yok.</div>'; return; }
   let html = "", last = "";
@@ -1806,6 +1818,7 @@ function renderList() {
     try { blk = await Ortak.json("isbank/black.json"); } catch (e) {}
     try { ipl = await Ortak.json("isbank/isplus.json"); } catch (e) {}
     try { kontrol = (await Ortak.json("isbank/kontrol.json")).son_kontrol; } catch (e) {}
+    try { ppkJ = await Ortak.json("data/ppk.json"); } catch (e) {}
     seenInit();
     // Video sekmesi sonradan eklendi: eski ziyaretçide 1 haftadan eski videolar okunmuş sayılsın
     if (!SEEN._yv) { vids.forEach((x) => { if (!x.d || (Date.now() - new Date(x.d)) / 864e5 > 7) SEEN["y:" + x.u] = 1; }); SEEN._yv = 1; seenSave(); }
