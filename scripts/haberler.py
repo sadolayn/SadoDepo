@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Türk haber sitelerinin RSS akışlarından başlıkları toplar, data/haberler.json yazar.
 Yalnızca başlık, kaynak, saat ve bağlantı saklanır (haber metni/görsel alınmaz)."""
-import json, re, html, urllib.request, datetime as dt, os, sys
+import json, re, html, urllib.request, datetime as dt, os, sys, time
 from email.utils import parsedate_to_datetime
 from concurrent.futures import ThreadPoolExecutor
 import xml.etree.ElementTree as ET
@@ -118,9 +118,22 @@ jobs = [(c, s, u) for c, lst in FEEDS.items() for s, u in lst] + [("okul", s, u)
 EKONOMIM = ("Ekonomim", "https://www.ekonomim.com/rss")
 EKONOMIM_ROUTE = {"gundem": "gundem", "dunya": "dunya", "teknoloji": "teknoloji", "spor": "spor"}  # gerisi (ekonomi, finans, piyasa…) → ekonomi
 jobs += [("_ekonomim", *EKONOMIM)]
-# İş Bankası resmi YouTube kanalı (adres isbank.com.tr alt bilgisindeki bağlantıdan); yeni ürün tanıtımları burada çıkıyor
-ISB_YT = ("İş Bankası YouTube", "https://www.youtube.com/feeds/videos.xml?channel_id=UC8taW8Ljy9xA_tiWy-1OPww")
-jobs += [("_isbvideo", *ISB_YT, dt.timedelta(days=90))]
+# İş Bankası resmi YouTube kanalı (adres isbank.com.tr alt bilgisindeki bağlantıdan); yeni ürün tanıtımları burada çıkıyor.
+# YouTube'un RSS akışı saatlerce "404" dönebiliyor: üç farklı adres birkaç tur denenir, alınamazsa son alınan liste korunur.
+ISB_YT_URLS = [
+  "https://www.youtube.com/feeds/videos.xml?channel_id=UC8taW8Ljy9xA_tiWy-1OPww",
+  "https://www.youtube.com/feeds/videos.xml?playlist_id=UU8taW8Ljy9xA_tiWy-1OPww",
+  "https://www.youtube.com/feeds/videos.xml?user=turkiyeisbankasi",
+]
+def yt_fetch():
+    errs = []
+    for tur in range(3):
+        for u in ISB_YT_URLS:
+            _, _, items, err = fetch(("_isbvideo", "İş Bankası YouTube", u, dt.timedelta(days=365)))
+            if not err and items: return items, None
+            errs.append(err or "boş")
+        time.sleep(4)
+    return [], errs[-1]
 
 # ---------- Yazarlar ----------
 # Yeni yazar eklemek için listeye bir satır ekle: (kısa ad, görünen ad, Google Haberler araması, [ek RSS akışları])
@@ -135,9 +148,21 @@ GNY = lambda q: "https://news.google.com/rss/search?q=" + urllib.parse.quote(q +
 for k, n, q, extra in YAZARLAR:
     jobs += [("_y_" + k, "Google Haberler", GNY(q), YAZAR_AGE)] + [("_y_" + k, s, u, YAZAR_AGE) for s, u in extra]
 with ThreadPoolExecutor(12) as ex:
+    yt = ex.submit(yt_fetch)
     res = list(ex.map(fetch, jobs))
+    yt_items, yt_err = yt.result()
 
-isbvideo = []
+# Videolar: yeni alınanlar + önceki liste (YouTube akışı kapalıyken de eski videolar görünsün)
+try:
+    _eski = json.load(open("data/haberler.json", encoding="utf8"))
+except Exception:
+    _eski = {}
+_vid = {x["u"]: x for x in _eski.get("isbvideo", []) if x.get("u")}
+for x in yt_items: _vid[x["u"]] = x
+_sinir = (NOW - dt.timedelta(days=365)).strftime("%Y-%m-%dT%H:%M:%SZ")
+isbvideo = sorted((x for x in _vid.values() if (x.get("d") or "") >= _sinir), key=lambda x: x.get("d") or "", reverse=True)[:20]
+isbvideo_ok = NOW.strftime("%Y-%m-%dT%H:%M:%SZ") if yt_items else _eski.get("isbvideo_ok")
+if yt_err: print(f"::warning::İş Bankası YouTube alınamadı ({yt_err}); önceki {len(isbvideo)} video korundu")
 norm = lambda t: re.sub(r"[^\wçğıöşü]+", " ", t.lower()).strip()
 cats = {}
 ok_src = {}
@@ -146,8 +171,6 @@ for cat, src, items, err in res:
     else: ok_src.setdefault(cat, []).append(f"{src}:{len(items)}")
     if cat.startswith("_y_"):
         cats.setdefault(cat, []).extend(items); continue
-    if cat == "_isbvideo":
-        isbvideo = sorted(items, key=lambda x: x["d"] or "", reverse=True)[:15]; continue
     if cat == "_ekonomim":
         for x in items:
             seg = urllib.parse.urlparse(x["u"]).path.strip("/").split("/")[0]
@@ -197,7 +220,7 @@ print("::notice::" + " | ".join(f"{c}: {', '.join(v)}" for c, v in ok_src.items(
 total = sum(len(v) for v in cats.values())
 if total < 20: sys.exit(f"::error::Çok az haber ({total})")
 os.makedirs("data", exist_ok=True)
-print(f"::notice::isbvideo: {len(isbvideo)}")
+print(f"::notice::isbvideo: {len(isbvideo)} (yeni alınan {len(yt_items)})")
 print("::notice::yazarlar: " + ", ".join(f"{y['n']}:{len(y['items'])}" for y in yazarlar))
-json.dump({"updated": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"), "cats": cats, "yazarlar": yazarlar, "isbvideo": isbvideo}, open("data/haberler.json", "w"), ensure_ascii=False, separators=(",", ":"))
+json.dump({"updated": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"), "cats": cats, "yazarlar": yazarlar, "isbvideo": isbvideo, "isbvideo_ok": isbvideo_ok}, open("data/haberler.json", "w"), ensure_ascii=False, separators=(",", ":"))
 print("yazıldı", total)
