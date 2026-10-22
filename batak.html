@@ -279,7 +279,7 @@ function kasaBildir(o) {
   KASA.oyun++; KASA.ucret += o.ucret; try { localStorage.setItem("batakKasa", JSON.stringify(KASA)); } catch (e) {}
   try {
     const f = new FormData();
-    f.append(KASA_FORM.mesaj, `🎲 BATAK MASA | Oyuncu: ${o.isim} | Token: ${o.token} | Masa: ${o.masa} | Masa ücreti: ${o.ucret} | Sonuç: ${o.sonuc} | El: ${o.el} | ${o.esli ? "Eşli" : "Tekli"} | ${o.dag}`);
+    f.append(KASA_FORM.mesaj, `🎲 BATAK MASA | Token: ${o.token} | Masa: ${o.masa} | Masa ücreti: ${o.ucret} | Sonuç: ${o.sonuc} | El: ${o.el} | ${o.esli ? "Eşli" : "Tekli"} | ${o.dag}`);
     f.append(KASA_FORM.kimden, "Batak masa kasası");
     fetch(KASA_FORM.action, { method: "POST", mode: "no-cors", body: f }).catch(() => {});
   } catch (e) {}
