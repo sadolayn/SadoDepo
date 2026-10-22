@@ -413,7 +413,7 @@
       </div>
       <label>Tutar</label><div class="field"><input id="fP" inputmode="decimal" value="100.000"><span>TL</span></div>
       <div class="two">
-        <div><label>Yıllık faiz</label><div class="field"><input id="fR" inputmode="decimal" value="" placeholder="Faiz oranını gir"><span>%</span></div></div>
+        <div><label>Yıllık faiz</label><div class="field"><input id="fR" data-hatirla inputmode="decimal" value="" placeholder="Faiz oranını gir"><span>%</span></div></div>
         <div><label>Gün</label><div class="field"><input id="fG" inputmode="numeric" value="30"><span>gün</span></div></div>
       </div>
       <div class="chips" id="fVade"></div>
@@ -1312,5 +1312,6 @@ try { const h = location.hash.slice(1), t = (h && document.querySelector(`#tabs 
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 <script src="yeni.js"></script>
+<script src="faizhatira.js"></script>
 </body>
 </html>
