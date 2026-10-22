@@ -699,8 +699,8 @@
     if (!J) return;
     const t = trNow(), bugun = iso(t), dk = t.getUTCHours() * 60 + t.getUTCMinutes();
     const M = J.meetings || [], L = J.last || {};
-    // Karar: karar günü 14:15'ten ertesi günün sonuna kadar
-    const gec = M.filter((m) => { const k = fark(m, bugun); return (k === 0 && dk >= 855) || k === 1; }).pop();
+    // Karar: karar günü, TCMB rakamları gelir gelmez (en geç 14:15) ertesi günün sonuna kadar
+    const gec = M.filter((m) => { const k = fark(m, bugun); return (k === 0 && (dk >= 855 || (dk >= 840 && L.date === m && L.rate != null))) || k === 1; }).pop(); // karar verisi geldiyse 14:15'i beklemeden
     if (gec) {
       if (L.date === gec && L.rate != null) {
         const c = kararCumlesi(L), url = L.url || "https://www.tcmb.gov.tr/";
@@ -729,9 +729,9 @@
     if (k === 2) { satir = `TCMB PPK faiz kararına <b>2 gün</b> kaldı · ${gunAyHafta(yak)}, saat 14:00`; baslik = "TCMB PPK faiz kararına 2 gün kaldı"; }
     else if (k === 1) { satir = `TCMB PPK faiz kararı <b>yarın</b> · ${gunAyHafta(yak)}, saat 14:00`; baslik = "TCMB PPK faiz kararı yarın"; }
     else if (dk < 840) { satir = `Bugün TCMB PPK günü · faiz kararı saat <b>14:00'te</b>`; baslik = "Bugün TCMB PPK günü"; }
-    else { satir = `TCMB PPK faiz kararı açıklanıyor · ayrıntı <b>14:15'te</b> burada`; baslik = "Faiz kararı açıklanıyor"; bekle(); }
+    else { satir = `TCMB PPK faiz kararı açıklanıyor · ayrıntı <b>birkaç dakika içinde</b> burada`; baslik = "Faiz kararı açıklanıyor"; bekle(); }
     ver(`<b class="uy">⚠️ DİKKAT</b>${satir}`, { uy: true, etiket: "⚠️ DİKKAT · TCMB PPK", baslik,
-      alt: `${gunAyHafta(yak)} · karar saat <b>14:00'te</b>, karar haberi <b>14:15'ten</b> itibaren burada${simdi ? "<br>" + simdi : ""}`,
+      alt: `${gunAyHafta(yak)} · karar saat <b>14:00'te</b>, ayrıntısı açıklanır açıklanmaz burada${simdi ? "<br>" + simdi : ""}`,
       pay: hat, url: "https://www.tcmb.gov.tr/wps/wcm/connect/tr/tcmb+tr/main+menu/duyurular/takvim", urlAd: "TCMB takvimi" });
   }
   // Karar bekleniyorsa 2 dakikada bir yeni veri al
