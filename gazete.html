@@ -124,6 +124,18 @@
   .hbnk li button { display: flex; gap: 8px; width: 100%; text-align: left; padding: 7px 9px; border-radius: 10px; border: 1px solid rgba(74,99,255,.25); background: rgba(0,0,0,.35); color: var(--ink); font: inherit; font-size: 13px; line-height: 1.4; cursor: pointer; }
   .hbnk li em { flex: none; font-style: normal; font-size: 11px; font-weight: 800; color: #8fa0ff; min-width: 46px; padding-top: 1px; }
   .hbnk .hmore { margin-top: 7px; width: 100%; padding: 7px; border-radius: 10px; border: 1px dashed rgba(74,99,255,.45); background: none; color: #a9b5ff; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .yakin { margin-top: 10px; padding: 10px 11px; border-radius: 12px; border: 1px dashed rgba(240,198,74,.45); background: repeating-linear-gradient(135deg, rgba(240,198,74,.05) 0 10px, transparent 10px 20px); }
+  .yk-ust { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .yk-et { font-size: 10.5px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; color: #f0c64a; }
+  .yk-et i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #f0c64a; margin-right: 6px; vertical-align: 1px; animation: ykNabiz 1.6s ease-in-out infinite; }
+  @keyframes ykNabiz { 0%, 100% { box-shadow: 0 0 0 0 rgba(240,198,74,.6); } 50% { box-shadow: 0 0 0 5px rgba(240,198,74,0); } }
+  .yk-ch { display: inline-flex; gap: 5px; }
+  .yk-ch b { font-size: 10.5px; font-weight: 800; letter-spacing: .4px; padding: 2px 7px; border-radius: 6px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); color: #e9e2cf; }
+  .yakin p { margin: 7px 0 8px; font-size: 12.5px; line-height: 1.5; color: #c9c2ae; }
+  .yakin p b { color: #f3dca8; }
+  .yk-b { width: 100%; padding: 8px; border-radius: 10px; border: 1px solid #f0c64a; background: rgba(240,198,74,.12); color: #f3dca8; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .yk-b.ok { border-color: rgba(63,194,131,.5); background: rgba(63,194,131,.1); color: #7ee2a8; cursor: default; }
+  @media (prefers-reduced-motion: reduce) { .yk-et i { animation: none; } }
   .hbnk.bos { border-color: var(--line); background: none; padding: 8px 12px; }
   .hbnk.bos .hh { font-size: 12.5px; color: var(--muted); }
   .cal-f i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 5px; vertical-align: middle; }
@@ -200,19 +212,32 @@ async function bnkYukle(isos) {
   await Promise.all(eksik.map(async (d) => { try { const g = await getJSON(`gazete/${d}.json`); BNK[d] = Array.isArray(g.bankacilik) ? g.bankacilik : null; } catch (e) { BNK[d] = null; } bnkYolda.delete(d); }));
   renderCal();
 }
+// "Yapım aşamasında": BDDK, MASAK, TCMB duyuruları. "Bunu bekliyorum" ilgiyi anonim sayar (kim olduğu bilinmez)
+const YK_KEY = "gazeteYakinda1";
+const yakinda = () => {
+  let ok = false; try { ok = localStorage.getItem(YK_KEY) === "1"; } catch (e) {}
+  return `<div class="yakin"><div class="yk-ust"><span class="yk-et"><i></i>Yapım aşamasında</span><span class="yk-ch"><b>BDDK</b><b>MASAK</b><b>TCMB</b></span></div>
+    <p><b>Yakında bu kutuda:</b> Resmi Gazete'ye düşmeyen kararlar da. Kredi kartı taksit ve yapılandırma kararları, yaptırım listesi güncellemeleri, faiz duyuruları… hepsi tek yerde.</p>
+    <button type="button" class="yk-b ${ok ? "ok" : ""}" id="ykBtn" ${ok ? "disabled" : ""}>${ok ? "✓ Not ettik, teşekkürler! Hazır olunca burada" : "👀 Bunu bekliyorum"}</button></div>`;
+};
+function bindYakinda() {
+  const b = $("ykBtn"); if (!b || b.disabled) return;
+  b.onclick = () => { window.Rapor && Rapor.bolum("yakinda-bddk-masak-tcmb"); try { localStorage.setItem(YK_KEY, "1"); } catch (e) {} b.disabled = true; b.classList.add("ok"); b.textContent = "✓ Not ettik, teşekkürler! Hazır olunca burada"; };
+}
 const GUN = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
 function renderHaftaBnk(mon) {
   const el = $("haftaBnk"); if (!el) return;
   const today = todayIso();
   const gunler = [...Array(7)].map((_, i) => { const d = new Date(mon); d.setDate(mon.getDate() + i); return isoOf(d); }).filter((d) => d <= today && dates.includes(d));
   if (!gunler.length || gunler.some((d) => !(d in BNK))) { el.innerHTML = ""; return; } // yükleniyor ya da özet yok
-  const L = []; gunler.forEach((d) => (BNK[d] || []).forEach((it) => L.push({ d, it })));
+  const L = []; [...gunler].reverse().forEach((d) => (BNK[d] || []).forEach((it) => L.push({ d, it }))); // en yeni gün en üstte
   const bugHafta = isoOf(mon) === (() => { const t = new Date(today + "T12:00:00"); t.setDate(t.getDate() - ((t.getDay() + 6) % 7)); return isoOf(t); })();
   const ad = bugHafta ? "Bu hafta" : "Bu haftada";
-  if (!L.length) { el.innerHTML = `<div class="hbnk bos"><div class="hh">✓ ${ad} bankacılığı ilgilendiren bir düzenleme yok</div></div>`; return; }
+  if (!L.length) { el.innerHTML = `<div class="hbnk bos"><div class="hh">✓ ${ad} bankacılığı ilgilendiren bir düzenleme yok</div></div>${yakinda()}`; bindYakinda(); return; }
   el.innerHTML = `<div class="hbnk"><div class="hh">🏦 ${ad} bankacılığı ilgilendiren <b>${L.length}</b> düzenleme<small>Dokun, o günün özetinde aç · takvimdeki mavi sayılar aynı şeyi gösterir</small></div>
     <ul>${(bnkHepsi ? L : L.slice(0, 3)).map(({ d, it }) => { const t = new Date(d + "T12:00:00"); return `<li><button type="button" data-g="${d}"><em>${GUN[t.getDay()]} ${t.getDate()}</em><span>${esc(it.baslik)}</span></button></li>`; }).join("")}</ul>
-    ${L.length > 3 ? `<button type="button" class="hmore" id="bnkTog">${bnkHepsi ? "Daha az göster ▴" : `+${L.length - 3} düzenleme daha ▾`}</button>` : ""}</div>`;
+    ${L.length > 3 ? `<button type="button" class="hmore" id="bnkTog">${bnkHepsi ? "Daha az göster ▴" : `+${L.length - 3} düzenleme daha ▾`}</button>` : ""}${yakinda()}</div>`;
+  bindYakinda();
   if ($("bnkTog")) $("bnkTog").onclick = () => { bnkHepsi = !bnkHepsi; renderHaftaBnk(mon); };
   el.querySelectorAll("[data-g]").forEach((b) => (b.onclick = async () => {
     window.Rapor && Rapor.bolum("haftalik-bankacilik");
