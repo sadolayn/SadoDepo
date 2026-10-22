@@ -1,14 +1,14 @@
 {
- "updated": "2026-10-20",
+ "updated": "2026-10-22",
  "source": "TCMB Para Politikası Kurulu toplantı takvimi ve kararları",
  "last": {
-  "date": "2026-09-10",
-  "rate": 37,
-  "lend": 40,
-  "borrow": 35.5,
-  "change": 0,
-  "no": "2026-38",
-  "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Duyurular/Basin/2026/DUY2026-38"
+  "date": "2026-10-22",
+  "rate": 36,
+  "lend": 39,
+  "borrow": 34.5,
+  "change": -1,
+  "no": "2026-45",
+  "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Duyurular/Basin/2026/DUY2026-45"
  },
  "meetings": [
   "2026-01-22",
@@ -23,5 +23,11 @@
   "2027-03-18",
   "2027-04-22",
   "2027-06-10"
- ]
+ ],
+ "prev": {
+  "date": "2026-09-10",
+  "rate": 37,
+  "lend": 40,
+  "borrow": 35.5
+ }
 }
