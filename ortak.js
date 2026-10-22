@@ -92,7 +92,11 @@
   // Oyunlarda ekranı aşağı çekmek sayfayı yenilemesin (oyun baştan açılmasın).
   // CSS yetmeyen tarayıcılar için: sayfa en üstteyken aşağı doğru çekme engellenir; kaydırılabilir bir pencerenin içi serbest.
   if (OYUNLAR.test(SAYFA)) {
-    var st = document.createElement("style"); st.textContent = "html,body{overscroll-behavior-y:none}"; document.head.appendChild(st);
+    // Bazı telefon tarayıcıları (ör. Samsung İnternet) 100dvh'i alt çubuk gizliymiş gibi hesaplıyor; oyun açılınca eldeki
+    // kartlar çubuğun altında kalıyordu. Sayfa yüksekliği tarayıcının o an gerçekten gösterdiği alana göre ayarlanır.
+    var st = document.createElement("style"); st.textContent = "html,body{overscroll-behavior-y:none}body{min-height:var(--oyun-h,100dvh)!important}"; document.head.appendChild(st);
+    var hAyarla = function () { document.documentElement.style.setProperty("--oyun-h", Math.round((window.visualViewport && window.visualViewport.height) || window.innerHeight) + "px"); };
+    hAyarla(); window.addEventListener("resize", hAyarla); if (window.visualViewport) window.visualViewport.addEventListener("resize", hAyarla);
     var y0 = 0;
     document.addEventListener("touchstart", function (e) { y0 = e.touches[0].clientY; }, { passive: true });
     document.addEventListener("touchmove", function (e) {

@@ -44,7 +44,7 @@
   .chip { width: 18px; height: 18px; border-radius: 50%; flex: none; box-shadow: inset 0 0 0 2px rgba(0,0,0,.25); }
   /* Tahta yanlardaki boşluğu da kullanır (telefonda ~%4 daha büyük pul) */
   #boardWrap { position: relative; margin: 0 -7px; }
-  #board { width: min(100%, calc((100vh - 250px) * 0.8205)); width: min(100%, calc((100dvh - 250px) * 0.8205)); min-width: 280px; height: auto; display: block; margin: 0 auto; border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,.6); touch-action: none; }
+  #board { width: min(100%, calc((100vh - 250px) * 0.865)); width: min(100%, calc((100dvh - 250px) * 0.865)); min-width: 280px; height: auto; display: block; margin: 0 auto; border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,.6); touch-action: none; }
   .status { text-align: center; min-height: 22px; font-size: 14px; margin: 10px 0 8px; color: #e6e6e6; }
   .status b { color: var(--accent); }
   .ctrls { display: flex; gap: 8px; }
@@ -53,6 +53,14 @@
   .ctrls button:disabled { opacity: .35; cursor: default; }
   .ov { position: fixed; inset: 0; background: rgba(0,0,0,.78); display: none; align-items: center; justify-content: center; z-index: 50; padding: 14px; }
   .ov.show { display: flex; }
+  .tvKural { margin: 0 0 12px; border: 1px solid #4a3523; border-radius: 14px; background: rgba(224,162,79,.06); text-align: left; }
+  .tvKural summary { padding: 11px 14px; font-weight: 700; color: #f3c27c; cursor: pointer; list-style: none; }
+  .tvKural summary::-webkit-details-marker { display: none; }
+  .tvKural summary::after { content: "›"; float: right; transition: transform .2s; }
+  .tvKural[open] summary::after { transform: rotate(90deg); }
+  .tvKural ul { margin: 0; padding: 0 14px 12px 32px; font-size: 13.5px; line-height: 1.55; color: #cfc6b4; }
+  .tvKural li { margin: 4px 0; }
+  .tvKural b { color: #fff; }
   .ov { overflow-y: auto; overscroll-behavior: contain; }
   .modal { width: 100%; max-width: 380px; background: #0f0d0b; border: 1px solid #4a3523; border-radius: 20px; padding: 18px 16px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.7); max-height: 94vh; max-height: calc(100dvh - 28px); overflow: auto; margin: auto; }
   .modal h2 { margin: 0 0 4px; font-family: "Great Vibes", cursive; font-weight: 400; font-size: 40px; color: #e9c98f; }
@@ -102,7 +110,7 @@
   <div class="pl r" id="plA"><b id="scA">0</b><div>Sadolayn<small id="pipA">pip 167</small></div><span class="chip" id="chipA"></span></div>
 </div>
 
-<div id="boardWrap"><svg id="board" viewBox="0 0 640 780" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div id="boardWrap"><svg id="board" viewBox="0 0 640 740" xmlns="http://www.w3.org/2000/svg"></svg></div>
 <div class="status" id="status">Hazır olduğunda başla.</div>
 <div class="ctrls">
   <button id="undoBtn" disabled>↶ Geri al</button>
@@ -125,6 +133,13 @@
 </div></div>
 
 <div class="ov" id="desenOv"><div class="modal">
+  <details class="tvKural"><summary>📖 Oyunun kuralları</summary><ul>
+    <li>Pullarını tahtanın etrafında dolaştırıp kendi evine (son çeyrek) topla, sonra dışarı çıkar. Pullarını ilk çıkaran oyunu kazanır.</li>
+    <li>Zarın ikisini de oynamak zorunlusun; <b>çift</b> atınca dört kez oynarsın.</li>
+    <li>Rakibin tek pulunun olduğu yere gelirsen o pul <b>kırılır</b>, kenara çıkar; kırık pulu olan önce onu oyuna sokmalı. İki ya da daha fazla pulun olan yere (kapı) rakip giremez.</li>
+    <li><b>Mars</b> (rakip hiç pul toplamadan bitirmek) 2 puan, normal galibiyet 1 puan. Seçtiğin sayıda puana ilk ulaşan maçı kazanır.</li>
+    <li><b>Nasıl oynanır:</b> zarlara dokun ya da çift tıkla · pulu sürükle ya da dokun, yeşil yerlere gider · pula çift dokununca büyük zarla ilerler · ↶ Geri al hamleni geri alır.</li>
+  </ul></details>
   <h2 style="font-size:34px">Tahta deseni</h2>
   <p>Dokun, tahta hemen değişsin. Oyun kaldığı yerden devam eder.</p>
   <div class="desenler" id="desenler2"></div>
@@ -315,7 +330,7 @@ const aiColor = () => (COLORS[OPT.col].light ? (OPT.col === "agac" ? "maun" : "m
 let S, dice = [], rem = [], played = [], legal = [], turnStart = null, phase = "idle", sel = null, score = [0, 0], gameNo = 1, starter = 0;
 
 // ---------- Geometri ----------
-const W = 640, H = 780, FR = 13, FRR = 30, BAR = 42; // FR: dış çerçeve (inceltildi, haneler büyüdü)
+const W = 640, H = 740, FR = 13, FRR = 30, BAR = 42; // FR: dış çerçeve (inceltildi, haneler büyüdü)
 const HW = (W - FR - FRR - BAR) / 2, PW = HW / 6, R = PW * 0.49, TRI = (H - 2 * FR) * 0.33;
 const xL = FR, xR = FR + HW + BAR;
 function ptCol(i) { // nokta → {x merkez, top}
@@ -487,7 +502,7 @@ function render() {
   for (let k = 0; k < S.off[0]; k++) el("rect", { x: ox - 11, y: H - FR - 6 - k * 9 - 7, width: 22, height: 7, rx: 2, fill: COLORS[hc].base, stroke: COLORS[hc].dark, "stroke-width": 0.8 }, g);
   for (let k = 0; k < S.off[1]; k++) el("rect", { x: ox - 11, y: FR + 6 + k * 9, width: 22, height: 7, rx: 2, fill: COLORS[ac].base, stroke: COLORS[ac].dark, "stroke-width": 0.8 }, g);
   // zarlar: benim zarım sağ yarıda, Sadolayn'ınki sol yarıda
-  const DS = 34, dyy = H / 2;
+  const DS = 46, dyy = H / 2; // zarlar büyük (eskiden 34)
   const pair = (cx, faces, rolling, act, dim, label, up, offs) => {
     if (!faces || !faces.length) return;
     const dbl = faces.length === 2 && faces[0] === faces[1];
@@ -498,11 +513,11 @@ function render() {
       const u1 = act && !rolling && !dbl && !rem.includes(faces[1]);
       const allUsed = act && dbl && rem.length === 0;
       const q0 = o(0), q1 = o(1);
-      dieSVG(g, cx - 23 + q0.x, dyy + 2 + q0.y, faces[0], DS, u0 || allUsed || dim, rolling, q0.r);
-      dieSVG(g, cx + 23 + q1.x, dyy - 2 + q1.y, faces[1], DS, u1 || allUsed || dim, rolling, q1.r);
-      if (act && dbl && !rolling && rem.length) el("text", { x: cx + 58, y: dyy + 5, "text-anchor": "middle", "font-size": 14, "font-weight": 800, fill: tema().lbl || "#f3d19a" }, g).textContent = `×${rem.length}`;
+      dieSVG(g, cx - 31 + q0.x, dyy + 2 + q0.y, faces[0], DS, u0 || allUsed || dim, rolling, q0.r);
+      dieSVG(g, cx + 31 + q1.x, dyy - 2 + q1.y, faces[1], DS, u1 || allUsed || dim, rolling, q1.r);
+      if (act && dbl && !rolling && rem.length) el("text", { x: cx + 76, y: dyy + 6, "text-anchor": "middle", "font-size": 17, "font-weight": 800, fill: tema().lbl || "#f3d19a" }, g).textContent = `×${rem.length}`;
     }
-    if (label && !offs) el("text", { x: cx, y: up ? dyy - 25 : dyy + 33, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: tema().lbl || "#f3d19a", opacity: 0.9 }, g).textContent = label;
+    if (label && !offs) el("text", { x: cx, y: up ? dyy - 33 : dyy + 42, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: tema().lbl || "#f3d19a", opacity: 0.9 }, g).textContent = label;
   };
   let lf = null, rf = null, lroll = false, rroll = false, lact = false, ract = false, ldim = false, loffs = null, roffs = null;
   const rolling2 = rollingFaces || (cock && cock.faces);

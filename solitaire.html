@@ -111,7 +111,7 @@
   .rec b { display: block; font-size: 18px; } .rec span { font-size: 11px; color: #8a8a8a; }
 </style>
 <script src="cardsound.js?v=3"></script>
-<script src="kartmasa.js?v=3" data-oyun="solitaire" data-masa="yesil" data-duzen="ust" data-hiz="yok" data-tema="1"></script>
+<script src="kartmasa.js?v=4" data-oyun="solitaire" data-masa="yesil" data-duzen="ust" data-hiz="yok" data-tema="1"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
@@ -145,6 +145,17 @@
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 
 <script>
+// Kurallar: ⚙️ Ayarlar'ın en üstünde
+const KURAL = () => `<ul class="rules">
+  <li><b>Amaç:</b> 52 kartın hepsini dört bitiş yığınına, her renk kendi yığınında <b>As'tan Papaz'a</b> dizmek.</li>
+  <li>Masada kartlar büyükten küçüğe, <b>kırmızı-siyah sırayla</b> dizilir (ör. siyah 8'in üstüne kırmızı 7).</li>
+  <li>Boş sütuna yalnızca <b>Papaz</b> (ya da Papazla başlayan bir dizi) konur.</li>
+  <li>Desteye dokununca kart açılır (ayardan 1 ya da 3 kart). Deste bitince açılan kartlar geri döner.</li>
+  <li><b>Oynamak:</b> karta dokun, en uygun yere gitsin; ya da sürükleyip istediğin yere bırak. Altında kart varsa hepsi birlikte taşınır.</li>
+  <li><b>Puan:</b> bitiş yığınına +10, desteden masaya +5, kapalı kart açmak +5, bitişten geri almak −15. Tek kart açmada desteyi her çevirişte −20.</li>
+  <li>Takılırsan 💡 İpucu bir hamle gösterir, ↩️ Geri al hamleni geri alır.</li>
+</ul>`;
+if (window.KartMasa) KartMasa.kurallar = KURAL;
 const SUITS = ["♠", "♥", "♣", "♦"];
 const RANK = { 1: "A", 11: "J", 12: "Q", 13: "K" };
 const isRed = (s) => s === "♥" || s === "♦";

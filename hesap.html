@@ -87,7 +87,7 @@
   .warn.ok { background: rgba(63,194,131,.08); border-color: #1f4d36; color: #9ff0c8; }
   /* ===== Eski tip masa hesap makinesi ===== */
   .calcbox { position: sticky; top: var(--sh, 120px); z-index: 20; background: #000; padding-bottom: 8px; }
-  .calc { margin: 0 auto; max-width: 340px; border-radius: 20px; padding: 10px 11px 12px;
+  .calc { margin: 0 auto; max-width: 440px; border-radius: 20px; padding: 10px 11px 12px;
     background: linear-gradient(160deg, #3a3631, #26231f 55%, #1c1a17); border: 1px solid #4a4540;
     box-shadow: 0 10px 30px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08); }
   .brand { display: flex; justify-content: space-between; align-items: center; margin: 0 2px 5px; }
@@ -104,7 +104,7 @@
   .bed { background: #221d19; border-radius: 12px; padding: 8px 8px 11px; box-shadow: inset 0 3px 8px rgba(0,0,0,.7), inset 0 -1px 0 rgba(255,255,255,.05); }
   .keys { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px 7px; }
   .k { --c1: #f3ead6; --c2: #d9c9a6; --sk: #b9a47c; --sh: #6f5f42; --tx: #3a2e1e;
-    position: relative; isolation: isolate; height: 42px; border: none; border-radius: 8px; font: inherit; font-size: 23px; font-weight: 900; cursor: pointer; user-select: none; touch-action: manipulation;
+    position: relative; isolation: isolate; height: var(--kh, 42px); border: none; border-radius: 8px; font: inherit; font-size: 23px; font-weight: 900; cursor: pointer; user-select: none; touch-action: manipulation;
     color: var(--tx); background: linear-gradient(180deg, var(--c2), var(--sk));
     box-shadow: 0 4px 0 var(--sh), 0 6px 8px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -2px 0 rgba(0,0,0,.18);
     text-shadow: 0 1px 0 rgba(255,255,255,.35); transition: transform .05s, box-shadow .05s; }
@@ -252,7 +252,7 @@
 
   /* ===== ŞERİTLİ (yazıcılı ofis makinesi) ===== */
   #calc[data-skin="seritli"].on { display: flex; flex-direction: column; }
-  #calc[data-skin="seritli"] .rulobox { order: 1; z-index: 3; padding-top: 12px; margin: 0 auto -18px; width: 100%; max-width: 340px; }
+  #calc[data-skin="seritli"] .rulobox { order: 1; z-index: 3; padding-top: 12px; margin: 0 auto -18px; width: 100%; max-width: 440px; }
   #calc[data-skin="seritli"] .calcbox { order: 2; position: static; z-index: auto; background: none; padding-bottom: 0; }
   #calc[data-skin="seritli"] .tapebar { order: 3; }
   #calc[data-skin="seritli"] .smart { order: 4; }
@@ -266,15 +266,16 @@
   #calc[data-skin="seritli"] .tape { max-width: 78%; margin: 0 auto; border-radius: 0; background: #fdfcf8; color: #1d1d1d; padding: 16px 14px 18px;
     box-shadow: 0 0 0 1px #e6e2d8, 0 6px 16px rgba(0,0,0,.45);
     background-image: linear-gradient(90deg, rgba(0,0,0,.035), transparent 6%, transparent 94%, rgba(0,0,0,.035));
-    height: max(150px, calc(100vh - var(--sh, 120px) - var(--ch, 330px) - 96px)); height: max(150px, calc(100dvh - var(--sh, 120px) - var(--ch, 330px) - 96px));
+    min-height: 0; height: clamp(80px, 15vh, 150px); height: clamp(80px, 15dvh, 150px); /* rulo kısa; ekranın kalanını makine doldurur */
     -webkit-mask-image: linear-gradient(transparent, #000 12%); mask-image: linear-gradient(transparent, #000 12%); }
+  @media (max-height: 760px) { #calc[data-skin="seritli"] .tape { height: 62px; padding-top: 10px; } } /* kısa ekranda rulo daha da kısa */
   #calc[data-skin="seritli"] .tape div span:first-child { color: #555; }
   #calc[data-skin="seritli"] .tape div.t { border-top-color: #9a9a9a; }
   #calc[data-skin="seritli"] .tape div.c { color: #c0262d; }
   #calc[data-skin="seritli"] .tape div.yeni { animation: basil .3s steps(5, end) both; }
   @keyframes basil { from { clip-path: inset(0 100% 0 0); transform: translateY(5px); } to { clip-path: inset(0 0 0 0); transform: none; } }
   /* gövde */
-  #calc[data-skin="seritli"] .calc { max-width: 340px; padding-top: 26px; border-radius: 16px 16px 20px 20px;
+  #calc[data-skin="seritli"] .calc { max-width: 440px; padding-top: 26px; border-radius: 16px 16px 20px 20px;
     background: linear-gradient(172deg, #f6f5f1 0%, #e4e2db 45%, #d3d0c7 100%); border: 1px solid #b9b5aa;
     box-shadow: 0 18px 40px rgba(0,0,0,.75), 0 0 0 1px #0b0a09, 0 0 24px rgba(224,162,79,.14), inset 0 1px 0 #fff, inset 0 -2px 0 rgba(0,0,0,.08); }
   #calc[data-skin="seritli"] .calc::before { background: repeating-linear-gradient(90deg, rgba(0,0,0,.012) 0 1px, transparent 1px 3px); }
@@ -569,13 +570,26 @@ $("tabs").addEventListener("click", (e) => {
   try { localStorage.setItem("hesapTab", b.dataset.t); } catch (e) {}
   window.Rapor && Rapor.bolum(b.dataset.t);
   if (b.dataset.t === "cetvel") drawRuler();
-  if (b.dataset.t === "calc") setTimeout(setSH, 0);
+  if (b.dataset.t === "calc") setTimeout(makineBoyut, 0);
   if (b.dataset.t !== "mesafe" && typeof camStop === "function" && mStream) camStop();
   window.scrollTo({ top: 0 });
 });
 // Yapışkan üst bölüm yüksekliği (makine onun altında sabit kalır)
 const setSH = () => { const R = document.documentElement.style; R.setProperty("--sh", document.querySelector(".stick").offsetHeight + "px"); const c = document.querySelector(".calcbox"); if (c && c.offsetHeight) R.setProperty("--ch", c.offsetHeight + "px"); };
 setSH(); window.addEventListener("resize", setSH);
+// Hesap makinesi tam ekran: tuşlar büyüyerek makine ekranın altına kadar uzanır (6 tuş sırası)
+function makineBoyut() {
+  const P = $("calc"); if (!P || !P.classList.contains("on")) return;
+  const R = document.documentElement.style; R.setProperty("--kh", "42px");
+  const vh = window.visualViewport ? visualViewport.height : innerHeight;
+  const kutu = P.querySelector(".calcbox"), bar = P.querySelector(".tapebar");
+  const kAlt = kutu.getBoundingClientRect().bottom + window.scrollY, bAlt = bar ? bar.getBoundingClientRect().bottom + window.scrollY : kAlt;
+  let bos = vh - bAlt - 10; // önce rulo düğmeleri de sığsın
+  if (bos < 0) bos = Math.min(0, vh - kAlt - 6); // sığmıyorsa en azından makine ekrana sığsın
+  R.setProperty("--kh", Math.round(Math.max(34, Math.min(74, 42 + bos / 6))) + "px");
+  setSH();
+}
+window.addEventListener("resize", () => { clearTimeout(makineBoyut.t); makineBoyut.t = setTimeout(makineBoyut, 120); });
 // Eski hesap makinesi tuş sesi (plastik "tık")
 let SND = true; try { SND = localStorage.getItem("hesapSes") !== "0"; } catch (e) {}
 let AC = null;
@@ -685,7 +699,7 @@ function skinUygula(s) {
   skin = s; $("calc").dataset.skin = s; $("mdl").textContent = SKIN[s];
   $("skinPop").querySelectorAll("button[data-s]").forEach((b) => b.classList.toggle("on", b.dataset.s === s));
   try { localStorage.setItem("hesapGorunum", s); } catch (e) {}
-  setTimeout(() => { setSH(); const t = $("tape"); t.scrollTop = t.scrollHeight; }, 0);
+  setTimeout(() => { makineBoyut(); const t = $("tape"); t.scrollTop = t.scrollHeight; }, 0);
 }
 skinUygula(skin);
 $("skinB").onclick = (e) => { e.stopPropagation(); $("skinPop").hidden = !$("skinPop").hidden; };
@@ -1312,7 +1326,9 @@ rlRender();
 $("bmMine").addEventListener("input", () => { $("bmMine").value = $("bmMine").value.replace(/\D/g, "").slice(0, BM.n); });
 $("bmAgain").onclick = () => { $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; };
 $("bmQuit").onclick = () => { if (BM.over || confirm("Oyun bırakılsın mı?")) { if (!BM.over) bmEnd("🏳️ Oyunu bıraktın", `Sadolayn'ın sayısı <b>${BM.ai}</b> idi.`); $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; } };
-try { const h = location.hash.slice(1), t = (h && document.querySelector(`#tabs [data-t="${h}"]`)) ? h : localStorage.getItem("hesapTab"); if (t && $(t)) document.querySelector(`#tabs [data-t="${t}"]`).click(); } catch (e) {}
+// Açılışta her zaman hesap makinesi; adreste sekme yazılıysa (ör. hesap.html#faiz) o sekme açılır
+try { const h = location.hash.slice(1), t = h && document.querySelector(`#tabs [data-t="${h}"]`) ? h : "calc"; document.querySelector(`#tabs [data-t="${t}"]`).click(); } catch (e) {}
+setTimeout(makineBoyut, 60); if (document.fonts && document.fonts.ready) document.fonts.ready.then(makineBoyut);
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>

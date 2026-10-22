@@ -123,6 +123,8 @@
   .panel button.suit { font-size: 26px; padding: 6px 16px; }
   .panel button.suit.red { color: var(--red); }
 
+  /* Kısa ekranda (tarayıcı çubukları açıkken) masa biraz küçülür, eldeki kartlar hep görünür */
+  @media (max-height: 760px) { .table { min-height: 250px; } }
   .hand {
     display: flex; justify-content: center;
     padding: 14px 0 4px; min-height: 90px;
@@ -209,7 +211,7 @@
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
 </style>
 <script src="cardsound.js?v=3"></script>
-<script src="kartmasa.js?v=3" data-oyun="batak" data-masa="sado"></script>
+<script src="kartmasa.js?v=4" data-oyun="batak" data-masa="sado"></script>
 <script src="isq.js"></script>
 <script src="token.js?v=2"></script>
 <script src="pwa.js"></script>
@@ -251,6 +253,19 @@
 </div>
 
 <script>
+// Kurallar: başlangıç penceresinde ve ⚙️ Ayarlar'da aynı metin
+const KURAL = () => `<ul class="rules">
+      <li>En yüksek ihaleyi veren kozu seçer ve ilk kartı açar (en az <b>4</b>, eşlide en az <b>7</b>). Koz oynanmadan kozla el açılamaz; eşlide <b>Kozla başlanabilir</b> açıksa açılabilir.</li>
+      <li><b>Yükseltme zorunlu:</b> yerdeki rengi atarken büyüğünü atmak zorundasın. Kapalıysa renge uyman yeter; yalnızca <b>koz</b> yükseltilir.</li>
+      <li>O renk yoksa koz atmalısın (yükseltebiliyorsan yükselt).</li>
+      <li><b>El dağılımı:</b> Dengeli'de her oyuncuya her renkten 2–5 kart düşer, kozlar herkese benzer sayıda gelir. Rastgele'de kartlar tamamen şansa dağılır; bir oyuncuya çok koz gelebilir.</li>
+      <li><b>Puan:</b> ihaleyi tutan, söz verdiği her el için 15, fazla her el için 10 puan alır; tutamayan ihale × 10 eksi yazar. Diğerleri aldıkları her el için 10 puan alır; <b>hiç el alamayan −50</b> yazar.</li>
+      <li><b>Eşli:</b> karşındaki oyuncu eşindir, ellerin toplamı sayılır. İhaleyi alan eşinin kartlarını açık görür ve iki eli de o oynar.</li>
+      <li><b>Yıldız:</b> 1.000 Yıldız ile başlarsın. Tekli oyunda birinci olursan koyduğun Yıldızın <b>3 katını</b>, eşlide tarafın kazanırsa <b>2 katını</b> alırsın. Berabere biterse Yıldızın iade edilir.</li>
+      <li>İstatistik için oyun özeti (Yıldız, sonuç; ad gitmez) site sahibine iletilir.</li>
+      <li> Yıldız biterse 3 saat sonra İş Bankası sorusu gelir; doğru cevap 1.000 Yıldız kazandırır. Bakiyen King ve Balayı King'le ortaktır.</li>
+    </ul>`;
+if (window.KartMasa) KartMasa.kurallar = KURAL;
 const SUITS = ["♠", "♥", "♣", "♦"];
 const SUIT_NAMES = { "♠": "Maça", "♥": "Kupa", "♣": "Sinek", "♦": "Karo" };
 const RANKS = { 11: "J", 12: "Q", 13: "K", 14: "A" };
@@ -730,17 +745,7 @@ function showRules() {
     </div>
     <div class="ahint" id="dagNote"></div>
     <details class="adet"><summary>👥 Oyuncu isimleri</summary>${ISIM.html([["ben", "Sen", "Senin adın"], ["sag", "Sadosan", "Sağındaki"], [null, "Sadolayn", "Karşındaki"], ["sol", "Sadocan", "Solundaki"]])}</details>
-    <details class="adet"><summary>📖 Kurallar</summary><ul class="rules">
-      <li>En yüksek ihaleyi veren kozu seçer ve ilk kartı açar (en az <b>4</b>, eşlide en az <b>7</b>). Koz oynanmadan kozla el açılamaz; eşlide <b>Kozla başlanabilir</b> açıksa açılabilir.</li>
-      <li><b>Yükseltme zorunlu:</b> yerdeki rengi atarken büyüğünü atmak zorundasın. Kapalıysa renge uyman yeter; yalnızca <b>koz</b> yükseltilir.</li>
-      <li>O renk yoksa koz atmalısın (yükseltebiliyorsan yükselt).</li>
-      <li><b>El dağılımı:</b> Dengeli'de her oyuncuya her renkten 2–5 kart düşer, kozlar herkese benzer sayıda gelir. Rastgele'de kartlar tamamen şansa dağılır; bir oyuncuya çok koz gelebilir.</li>
-      <li><b>Puan:</b> ihaleyi tutan, söz verdiği her el için 15, fazla her el için 10 puan alır; tutamayan ihale × 10 eksi yazar. Diğerleri aldıkları her el için 10 puan alır; <b>hiç el alamayan −50</b> yazar.</li>
-      <li><b>Eşli:</b> karşındaki oyuncu eşindir, ellerin toplamı sayılır. İhaleyi alan eşinin kartlarını açık görür ve iki eli de o oynar.</li>
-      <li><b>Yıldız:</b> 1.000 Yıldız ile başlarsın. Tekli oyunda birinci olursan koyduğun Yıldızın <b>3 katını</b>, eşlide tarafın kazanırsa <b>2 katını</b> alırsın. Berabere biterse Yıldızın iade edilir.</li>
-      <li>İstatistik için oyun özeti (Yıldız, sonuç; ad gitmez) site sahibine iletilir.</li>
-      <li> Yıldız biterse 3 saat sonra İş Bankası sorusu gelir; doğru cevap 1.000 Yıldız kazandırır. Bakiyen King ve Balayı King'le ortaktır.</li>
-    </ul></details>
+    <details class="adet"><summary>📖 Kurallar</summary>${KURAL()}</details>
     <div class="aAlt"><button class="btn abtn" id="start">Başla</button>
     <div class="kasa">Bu cihazda: ${KASA.oyun} oyun</div></div>`;
   $("overlay").classList.add("show");

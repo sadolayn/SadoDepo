@@ -15,6 +15,7 @@
 //   KartMasa.ayarlar()                      → ayarlar penceresi; id="ayarBtn" düğmesi kendiliğinden bağlanır
 //   KartMasa.ekstra = { oyun: () => html, alt: () => html, bagla: (kok) => {} } → sayfaya özel bölümler
 //   KartMasa.onChange                       → görünüm değişince çağrılır
+//   KartMasa.kurallar = () => html          → ⚙️ Ayarlar'ın en üstünde açılır "📖 Oyunun kuralları" bölümü
 (function () {
   const S = document.currentScript, D = (S && S.dataset) || {};
   const OYUN = D.oyun || (location.pathname.match(/([\w-]+)\.html$/) || [0, "kart"])[1];
@@ -119,6 +120,15 @@
 .kmSeg button.on { background: #e0a24f; color: #1a1205; }
 .kmTok { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 14px; background: linear-gradient(90deg, rgba(240,198,116,.16), rgba(240,198,116,.05)); border: 1px solid rgba(240,198,116,.3); font-size: 14px; color: #eadcc6; }
 .kmTok b { font-size: 17px; color: #ffe2a6; }
+.kmKural { margin: 2px 0 6px; border: 1px solid #4a3a1e; border-radius: 14px; background: rgba(224,162,79,.06); }
+.kmKural summary { padding: 11px 14px; font-weight: 700; color: #f3c27c; cursor: pointer; list-style: none; }
+.kmKural summary::-webkit-details-marker { display: none; }
+.kmKural summary::after { content: "›"; float: right; transition: transform .2s; }
+.kmKural[open] summary::after { transform: rotate(90deg); }
+.kmKuralIc { padding: 0 14px 10px; }
+.kmKuralIc ul { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.55; color: #cfc6b4; text-align: left; }
+.kmKuralIc li { margin: 4px 0; }
+.kmKuralIc b { color: #fff; }
 .kmNot { margin: 6px 2px 0; font-size: 12px; color: #8a8a8a; line-height: 1.45; }
 .kmPrev { display: flex; justify-content: center; gap: 8px; padding: 14px 8px 12px; border-radius: 16px; --cw: 58px;
   background: radial-gradient(120% 100% at 50% 20%, color-mix(in srgb, var(--masa) 82%, #fff), var(--masa) 65%, color-mix(in srgb, var(--masa), #000 30%)); }
@@ -189,11 +199,12 @@
     const tok = window.Token && Token.bakiye ? Token.bakiye() : null;
     sheet.innerHTML = `<div class="in">
       <h2>⚙️ Ayarlar <button data-x aria-label="Kapat">✕</button></h2>
+      ${typeof KartMasa.kurallar === "function" ? `<details class="kmKural"${KartMasa.kuralAcik ? " open" : ""}><summary>📖 Oyunun kuralları</summary><div class="kmKuralIc">${KartMasa.kurallar()}</div></details>` : ""}
       <h4>OYUN</h4>
       <label class="opt"><span>🔊 Kart sesleri</span><span class="sw"><input type="checkbox" data-o="ses"${muted ? "" : " checked"}><i></i></span></label>
       ${D.hiz === "yok" ? "" : `<label class="opt"><span>⚡ Hızlı oyun<small>Rakipler kartlarını daha çabuk atar</small></span><span class="sw"><input type="checkbox" data-o="hizli"${OPT.hizli ? " checked" : ""}><i></i></span></label>`}
       ${ex.oyun ? ex.oyun() : ""}
-      ${tok != null ? `<h4>🪙 TOKEN</h4><div class="kmTok"><span>Bakiyen</span><b>${Token.fmt(tok)} Token</b></div>
+      ${tok != null ? `<h4>⭐ YILDIZ</h4><div class="kmTok"><span>Bakiyen</span><b>${Token.fmt(tok)} Yıldız</b></div>
         <p class="kmNot">Bakiyen Batak, King ve Balayı King'de ortak. Biterse 3 saat sonra İş Bankası sorusu gelir; doğru cevap 1.000 Yıldız kazandırır.</p>` : ""}
       <h4>KART YÜZÜ <small>· bütün kart oyunlarında</small></h4>
       <div class="kmPrev">${demo.map(html).join("")}</div>
@@ -220,6 +231,7 @@
     sheet.querySelectorAll("[data-seg] button").forEach((b) => (b.onclick = () => { OPT[b.parentNode.dataset.seg] = b.dataset.v; changed(); }));
     sheet.querySelectorAll("[data-masa]").forEach((b) => (b.onclick = () => { OPT.masalar[OYUN] = b.dataset.masa; changed(); }));
     sheet.querySelectorAll("[data-arka]").forEach((b) => (b.onclick = () => { OPT.arka = b.dataset.arka; changed(); }));
+    const kd = sheet.querySelector(".kmKural"); if (kd) kd.ontoggle = () => { KartMasa.kuralAcik = kd.open; };
     if (ex.bagla) ex.bagla(sheet);
     sheet.hidden = false;
     if (kay) sheet.querySelector(".in").scrollTop = kay;
