@@ -305,6 +305,8 @@
     <span style="width:52px"></span>
   </header>
 
+  <p class="note" style="margin:0 0 10px;font-size:12px;opacity:.75">ℹ️ Kişisel hesap yardımcısıdır; resmi teklif ya da bağlayıcı bilgi değildir. Kesin oran ve koşullar için şubeye ya da <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:var(--accent)">isbank.com.tr</a>'ye bakın.</p>
+
   <div class="tabs">
     <div class="tlab">👤 Bireysel</div>
     <button data-tab="mev" data-yeni="mevozet|2026-10-20|•"><i>💰</i><span>Vadeli<br>Mevduat</span></button>
@@ -993,7 +995,7 @@ function calcExtra(P, r, g, start) {
       list.push([`Aynı ${g} günde gereken oran`, "%" + nfx(Math.ceil(rNeed * 10000) / 100)]);
       if (dNeed) list.push([`%${nfx(r * 100)} ile gereken vade`, `${dNeed} gün (+${dNeed - g})`, "total"]);
       note = dNeed
-        ? `Örnek: ${g} gün yerine ${dNeed} gün seçilirse bizim oranla net ${tl(netFor(P, r, dNeed, start, sMan))} kazanılır; rakibin ${g2} günlük getirisine ulaşılır (para ${dNeed - g2} gün daha bankada kalır). Fark ${tl(diff)} — müşteri için banka değiştirmeye değip değmeyeceğini bu tutar belirler.`
+        ? `Örnek: ${g} gün yerine ${dNeed} gün seçilirse banka oranıyla net ${tl(netFor(P, r, dNeed, start, sMan))} kazanılır; rakibin ${g2} günlük getirisine ulaşılır (para ${dNeed - g2} gün daha bankada kalır). Fark ${tl(diff)} — müşteri için banka değiştirmeye değip değmeyeceğini bu tutar belirler.`
         : "";
     }
     rows("m2_rows", list);

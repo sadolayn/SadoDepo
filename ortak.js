@@ -8,7 +8,7 @@
       Karekod yalnızca sayfanın adresini içerir (lib/qrcode.js, MIT, Kazuhiko Arase). İstemeyen sayfa: <body data-karekod="yok">
 */
 (function () {
-  var FOOTER = 'Copyright © {Y} Sadolayn. All rights reserved.<br><span style="font-size:10.5px;letter-spacing:.3px;color:#555">Tüm hakları saklıdır.</span><br><span style="font-size:10.5px;color:#555">Kişisel bir projedir; herhangi bir bankayla resmi bağı yoktur. Bilgiler kamuya açık kaynaklardan derlenir.</span>';
+  var FOOTER = 'Copyright © {Y} Sadolayn. All rights reserved.<br><span style="font-size:10.5px;letter-spacing:.3px;color:#555">Tüm hakları saklıdır.</span><br><span style="font-size:10.5px;color:#555">Kişisel bir projedir; herhangi bir bankayla resmi bağı yoktur. Bilgiler kamuya açık kaynaklardan derlenir; resmi bilgi için isbank.com.tr.</span>';
 
   var css = document.createElement("style");
   css.textContent =
