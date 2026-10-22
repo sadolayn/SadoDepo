@@ -887,7 +887,7 @@ calcT(); calcA(); calcF();
 
 // ===== Yaklaşan önemli günler: bilanço dönemleri ve TCMB PPK faiz kararları =====
 // PPK tarihleri TCMB'nin yayımladığı takvimden (2027'nin ikinci yarısı henüz açıklanmadı)
-const TCMB_PPK = "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/Merkez+Bankasi+Faiz+Oranlari/Faiz+Oranlari", TCMB_TAKVIM = "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/Para+Politikasi+Kurulu/Toplanti+Takvimi";
+const TCMB_PPK = "https://www.tcmb.gov.tr/wps/wcm/connect/tr/tcmb+tr/main+menu/temel+faaliyetler/para+politikasi/merkez+bankasi+faiz+oranlari/faiz-oranlari", TCMB_TAKVIM = "https://www.tcmb.gov.tr/wps/wcm/connect/tr/tcmb+tr/main+menu/duyurular/takvim";
 const PPK = ["2026-01-22", "2026-03-12", "2026-04-22", "2026-06-11", "2026-07-23", "2026-09-10", "2026-10-22", "2026-12-10", "2027-01-21", "2027-03-18", "2027-04-22", "2027-06-10"];
 function isGunSay(a, b) { let n = 0; for (let d = addD(a, 1); d <= b; d = addD(d, 1)) if (!isWE(d) && !isHol(d)) n++; return n; }
 const kalan = (g) => (g === 0 ? "Bugün" : g === 1 ? "Yarın" : `${g}`);
