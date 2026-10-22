@@ -162,7 +162,7 @@ const ISQ_ALL = [].concat(
     ["Çevrim içi çalışan modern Bankamatik'ler ve banka kartları hangi yıl hizmete girdi?", ["1980", "1987", "1995", "2001"], 1],
     ["İş Bankası'nın yurt dışındaki ilk Bankamatik'i hangi şehirde kuruldu?", ["Londra", "Erbil", "Batum", "Bağdat"], 1],
     ["İşCep ile Bankamatik'i birleştiren hizmetin adı nedir?", ["İşCepmatik", "CepATM", "MaxiMatik", "Gişematik"], 0],
-    // Gişematik limitleri isbank.com.tr'de yayımlı değil; şube içi bilgiyle teyit edildi (21 Ekim 2026)
+    // Gişematik limitleri henüz isbank.com.tr'de yayımlı değil; eklenince kaynak linki konacak (Ekim 2026)
     ["İş Bankası Gişematik'ten tek seferde en fazla kaç TL para çekilebilir?", ["20.000 TL", "50.000 TL", "120.000 TL", "250.000 TL"], 2],
     ["İş Bankası Gişematik'e tek seferde en fazla kaç TL para yatırılabilir?", ["100.000 TL", "250.000 TL", "500.000 TL", "1.000.000 TL"], 2],
   ]),
