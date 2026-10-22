@@ -1027,14 +1027,15 @@ function calcExtra(P, r, g, start) {
   const startQ = quarterEnds(start, 1)[0];
   const covers = dayDiff(startQ, end) > 0;
   const minDays = dayDiff(start, startQ) + 1;
-  const nextP = (PPK.meetings || []).map((x) => new Date(x + "T12:00:00")).filter((d) => dayDiff(today, d) >= 0);
-  const inVade = (PPK.meetings || []).map((x) => new Date(x + "T12:00:00")).filter((d) => dayDiff(start, d) >= 0 && dayDiff(d, end) > 0);
   const L = PPK.last || {};
+  const acik = (PPK.meetings || []).filter((x) => x !== L.date); // bugünkü karar açıklandıysa artık "sonraki" değil
+  const nextP = acik.map((x) => new Date(x + "T12:00:00")).filter((d) => dayDiff(today, d) >= 0);
+  const inVade = acik.map((x) => new Date(x + "T12:00:00")).filter((d) => dayDiff(start, d) >= 0 && dayDiff(d, end) > 0);
   const r3 = [
     ["Sonraki bilanço", `${fdtw(nextQ)} · <b>${dayDiff(today, nextQ)} gün</b>`],
     ...qs.slice(1).map((d) => ["", `${fdt(d)} · ${dayDiff(today, d)} gün`]),
     ["Bilanço kapsamı", covers ? `✅ Evet · ${fdt(startQ)}` : `❌ Hayır · en az <b>${minDays} gün</b>`, covers ? "pos" : "neg"],
-    ["Politika faizi", L.rate != null ? `%${nfx(L.rate)} <span style="color:var(--muted)">· ${fdt(new Date(L.date + "T12:00:00"))}</span>` : "–"],
+    ["Politika faizi", L.rate != null ? `%${nfx(L.rate)}${L.change ? ` <span style="color:${L.change < 0 ? "var(--ok,#3fc283)" : "var(--bad,#e0473a)"}">(${L.change > 0 ? "+" : "−"}${nfx(Math.abs(L.change))} puan)</span>` : ""} <span style="color:var(--muted)">· ${fdt(new Date(L.date + "T12:00:00"))}</span>${L.url ? ` · <a href="${L.url}" target="_blank" rel="noopener" style="color:var(--accent)">karar ↗</a>` : ""}` : "–"],
     ["Sonraki PPK", nextP[0] ? `${fdtw(nextP[0])} · <b>${dayDiff(today, nextP[0]) ? dayDiff(today, nextP[0]) + " gün" : "bugün"}</b>` : "Takvim açıklanmadı"],
     ["Vade içinde PPK", inVade.length ? `⚠️ ${inVade.map((d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "short" })).join(" · ")}` : "Yok", "wrapv"],
   ];
@@ -1042,7 +1043,9 @@ function calcExtra(P, r, g, start) {
   $("m3_note").textContent = (inVade.length ? "Vade süresince faiz kararı açıklanacak: vade sonunda yenileme oranı değişebilir. " : "") +
     `Bilanço günleri çeyrek sonlarıdır (31 Mart, 30 Haziran, 30 Eylül, 31 Aralık); mevduatın bilanço gününü kapsaması için vade sonu bu tarihten sonraya düşmelidir.`;
   $("m3_ppk").innerHTML = (PPK.meetings || []).map((x) => { const d = new Date(x + "T12:00:00"), k = dayDiff(today, d);
-    return `<div style="${k < 0 ? "opacity:.45" : ""}"><span>${fdtw(d)} ${d.getFullYear()}</span><span>${k < 0 ? "yapıldı" : k === 0 ? "bugün" : k + " gün"}</span></div>`; }).join("");
+    const son = L.date === x && L.rate != null ? ` · %${nfx(L.rate)}${L.url ? ` <a href="${L.url}" target="_blank" rel="noopener" style="color:var(--accent)">↗</a>` : ""}` : "";
+    return `<div style="${k < 0 && !son ? "opacity:.45" : ""}"><span>${fdtw(d)} ${d.getFullYear()}</span><span>${k < 0 ? "yapıldı" : k === 0 ? "bugün" : k + " gün"}${son}</span></div>`; }).join("") +
+    `<div><span style="color:var(--muted)">Kaynak</span><span><a href="https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/Para+Politikasi+Kurulu/Toplanti+Takvimi" target="_blank" rel="noopener" style="color:var(--accent)">TCMB toplantı takvimi ↗</a></span></div>`;
 }
 let m2GunManual = false;
 
