@@ -1410,7 +1410,9 @@ function iscepIpHtml() {
     <p class="ipkon">🔄 İpuçları haftada bir isbank.com.tr ile karşılaştırılıp güncellenir${IPJ && IPJ.kontrol ? " · son kontrol: " + new Date(IPJ.kontrol + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : ""}. Uygulamada farklı görürsen İşCep'teki adı geçerlidir.</p>`;
 }
 function bindIscep() {
+  const ay = $("list").querySelector(".ipgun .ipl a"); if (ay) ay.addEventListener("click", () => window.Rapor && Rapor.bolum("ipucu-ayrinti"));
   const z = $("ipZar"); if (z) z.onclick = () => {
+    window.Rapor && Rapor.bolum("ipucu-bir-tane-daha");
     // Torba usulü: karıştırılmış sırayla gelir, hepsi görülmeden hiçbiri tekrar çıkmaz
     if (!ipTorba || !ipTorba.length) { ipTorba = IPUCU.map((_, i) => i).filter((i) => i !== ipGun); for (let i = ipTorba.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ipTorba[i], ipTorba[j]] = [ipTorba[j], ipTorba[i]]; } }
     ipGecmis.push(ipGun); if (ipGecmis.length > 100) ipGecmis.shift(); ipGun = ipTorba.pop(); renderIscep();
@@ -1711,12 +1713,13 @@ function bindQ() {
     os.querySelectorAll("button").forEach((x) => { x.disabled = true; if (+x.dataset.i === q.c) x.classList.add("ok"); });
     if (!ok) b.classList.add("no");
     SC.t++; if (ok) { SC.d++; SC.s++; } else SC.s = 0;
+    window.Rapor && Rapor.bolum("soru-cevaplandi");
     try { localStorage.setItem("isbQuiz", JSON.stringify(SC)); } catch (er) {}
     const m = $("dqM"); m.className = "m congrats";
     m.innerHTML = ok ? `<b style="color:#7ee2a8;font-size:15px">${PRAISE[SC.d % PRAISE.length]}</b>${SC.s >= 3 ? ` <span>Üst üste ${SC.s} doğru! 🔥</span>` : ""}` : `Olmadı 🙂 Doğrusu yeşil olan. Sonrakinde bilirsin!`;
     $("dqSc").innerHTML = `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""}`;
   };
-  $("dqNext").onclick = () => { qI++; $("dqBox").innerHTML = qHtml(); bindQ(); };
+  $("dqNext").onclick = () => { window.Rapor && Rapor.bolum("soru-sonraki"); qI++; $("dqBox").innerHTML = qHtml(); bindQ(); };
 }
 function renderSoru() {
   const yS = (typeof ISQ !== "undefined" ? ISQ : []).filter(yeniSoru).length;
