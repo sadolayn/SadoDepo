@@ -266,9 +266,11 @@
   #calc[data-skin="seritli"] .tape { max-width: 78%; margin: 0 auto; border-radius: 0; background: #fdfcf8; color: #1d1d1d; padding: 16px 14px 18px;
     box-shadow: 0 0 0 1px #e6e2d8, 0 6px 16px rgba(0,0,0,.45);
     background-image: linear-gradient(90deg, rgba(0,0,0,.035), transparent 6%, transparent 94%, rgba(0,0,0,.035));
-    min-height: 0; height: clamp(80px, 15vh, 150px); height: clamp(80px, 15dvh, 150px); /* rulo kısa; ekranın kalanını makine doldurur */
+    min-height: 0; height: clamp(150px, 26vh, 280px); height: clamp(150px, 26dvh, 280px); cursor: pointer; transition: height .35s ease; /* rulo: dokununca uzar/kısalır */
     -webkit-mask-image: linear-gradient(transparent, #000 12%); mask-image: linear-gradient(transparent, #000 12%); }
-  @media (max-height: 760px) { #calc[data-skin="seritli"] .tape { height: 62px; padding-top: 10px; } } /* kısa ekranda rulo daha da kısa */
+  @media (max-height: 760px) { #calc[data-skin="seritli"] .tape { height: 120px; padding-top: 10px; } } /* kısa ekranda rulo biraz kısa */
+  #calc[data-skin="seritli"] .tape { display: flex; flex-direction: column; } #calc[data-skin="seritli"] .tape #tapeIn { margin-top: auto; } /* son satır yazıcı ağzına yakın, eskiler yukarı kayar */
+  #calc[data-skin="seritli"].rulouzun .tape { height: clamp(280px, 50vh, 560px) !important; height: clamp(280px, 50dvh, 560px) !important; } /* uzun rulo: dokununca */
   #calc[data-skin="seritli"] .tape div span:first-child { color: #555; }
   #calc[data-skin="seritli"] .tape div.t { border-top-color: #9a9a9a; }
   #calc[data-skin="seritli"] .tape div.c { color: #c0262d; }
@@ -691,6 +693,9 @@ document.addEventListener("keydown", (e) => {
 });
 $("tClear").onclick = () => { tapeL.length = 0; $("tapeIn").innerHTML = '<span class="e">— rulo boş —</span>'; };
 // Rakam girilince rulo ekranda değilse sayfa kayar, rulonun son satırı makinenin altında görünür
+// Ruloya dokununca uzar / kısalır; tercih hatırlanır
+try { if (localStorage.getItem("hesapRulo") === "uzun") $("calc").classList.add("rulouzun"); } catch (e) {}
+$("tape").addEventListener("click", () => { const u = $("calc").classList.toggle("rulouzun"); try { localStorage.setItem("hesapRulo", u ? "uzun" : "kisa"); } catch (e) {} setTimeout(() => { makineBoyut(); const el = $("tape"); el.scrollTop = el.scrollHeight; }, 380); });
 function ruloGoster() { const r = $("tape").getBoundingClientRect(), alt = window.innerHeight, ust = document.querySelector(".stick").offsetHeight; if (r.bottom > alt + 2) window.scrollBy({ top: r.bottom - alt + 6, behavior: "smooth" }); else if (r.top < ust - 2) window.scrollBy({ top: r.top - ust - 6, behavior: "smooth" }); }
 // ===== Görünüm: Şeritli (varsayılan) · Klasik · Pastel =====
 const SKIN = { seritli: "SL-12P", klasik: "SL-12", pastel: "SL-12 ♡" };
