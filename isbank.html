@@ -453,6 +453,19 @@
   .chipbar .tfil.mtiles.ipm { border-color: #1f3f6b; background: linear-gradient(135deg, rgba(63,140,255,.14), rgba(63,140,255,.02)); }
   .tfil.mtiles button.mt[style*="span 12"] { gap: 2px; padding: 3px 1px; } .tfil.mtiles button.mt[style*="span 12"] i { font-size: 11px; } .tfil.mtiles button.mt[style*="span 12"] span { letter-spacing: -.3px; }
   .tfil.mtiles button.mt em.y, .otiles .ot em.y { font-size: 8px; letter-spacing: .3px; background: #3fc283; color: #000; }
+  /* ===== Mobil ferahlatma (23.10.2026): alt filtreler tek sıra, yana kayar; yazı 12 px; rozet içeride ===== */
+  .chipbar .tfil.mtiles { display: flex !important; flex-wrap: nowrap; gap: 6px; overflow-x: auto; overflow-y: hidden; padding: 6px; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .chipbar .tfil.mtiles::-webkit-scrollbar { display: none; }
+  .chipbar .tfil.mtiles button.mt, .chipbar .tfil.mtiles button.mt[style*="span 12"] { flex: 0 0 auto; flex-direction: row; gap: 5px; min-height: 38px; padding: 6px 11px; font-size: 12px; scroll-snap-align: start; }
+  .chipbar .tfil.mtiles button.mt i, .chipbar .tfil.mtiles button.mt[style*="span 12"] i { font-size: 15px; }
+  .chipbar .tfil.mtiles button.mt span, .chipbar .tfil.mtiles.ipm button.mt.uzun span { white-space: nowrap; font-size: 12px; line-height: 1.2; letter-spacing: 0; text-align: left; max-width: none; overflow: visible; }
+  .chipbar .tfil.mtiles button.mt em { position: static; margin-left: 2px; min-width: 18px; height: 18px; line-height: 18px; font-size: 10.5px; box-shadow: none; }
+  .chipbar .tfil.mtiles button.mt em.y { font-size: 9px; padding: 0 5px; }
+  /* Sayfa aşağı kaydırılınca üst blok incelir: alt başlık ve finansal şerit gizlenir, menü geri gelir */
+  .stick.stuck h1 small, .stick.stuck .longbar { display: none !important; }
+  .chipbar .tfil.mtiles { -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+  .stick.stuck header { margin-bottom: 6px; }
+  .menu button { font-size: 11px; }
   /* Öne çıkan: başlık kutucukları */
   .otiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 0 0 12px; }
   .otiles .ot { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-width: 0; padding: 9px 2px 7px; border-radius: 12px; border: 1px solid #2c2c2c; background: linear-gradient(160deg, #1b1b1b, #0e0e0e); color: #eee; font: 600 11px system-ui, sans-serif; cursor: pointer; }
@@ -1844,6 +1857,10 @@ function renderList() {
 })();
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+// Yana kayan alt filtrede seçili kutucuk görünür kalsın (sayfa dikey kaymaz)
+(function(){var cb=document.getElementById("chipbar");if(!cb)return;var f=function(){cb.querySelectorAll(".tfil.mtiles").forEach(function(r){var on=r.querySelector(".mt.on");if(!on)return;var x=on.offsetLeft-(r.clientWidth-on.offsetWidth)/2;r.scrollTo({left:Math.max(0,x),behavior:"smooth"});});};new MutationObserver(f).observe(cb,{childList:true,subtree:true});f();})();
+</script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 <script>
 // Yakınımdaki şubeler: konumu cihazdan al

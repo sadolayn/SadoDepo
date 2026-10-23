@@ -102,6 +102,18 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", etiketle); else etiketle();
 
+  // Uzun sayfalarda sağ altta "yukarı" düğmesi: 1,5 ekran aşağı inince belirir; oyun sayfalarında yok
+  function yukari() {
+    if (!document.body || OYUNLAR.test(SAYFA) || document.body.getAttribute("data-footer") === "yok" || document.getElementById("ortakYukari")) return;
+    var b = document.createElement("button"); b.type = "button"; b.id = "ortakYukari"; b.setAttribute("aria-label", "Sayfanın başına dön"); b.textContent = "↑";
+    b.style.cssText = "position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:80;width:44px;height:44px;border-radius:50%;border:1px solid #5a4320;background:rgba(12,12,12,.92);color:#e0a24f;font:700 20px/1 system-ui,sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.6);cursor:pointer;opacity:0;transform:translateY(12px);transition:opacity .25s,transform .25s;pointer-events:none";
+    b.onclick = function () { window.scrollTo({ top: 0, behavior: "smooth" }); };
+    document.body.appendChild(b);
+    var f = function () { var on = window.scrollY > innerHeight * 1.5 && document.body.scrollHeight > innerHeight * 2.5; b.style.opacity = on ? "1" : "0"; b.style.transform = on ? "none" : "translateY(12px)"; b.style.pointerEvents = on ? "auto" : "none"; };
+    window.addEventListener("scroll", f, { passive: true }); f();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", yukari); else yukari();
+
   // Oyunlarda ekranı aşağı çekmek sayfayı yenilemesin (oyun baştan açılmasın).
   // CSS yetmeyen tarayıcılar için: sayfa en üstteyken aşağı doğru çekme engellenir; kaydırılabilir bir pencerenin içi serbest.
   if (OYUNLAR.test(SAYFA)) {
