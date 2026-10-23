@@ -198,6 +198,13 @@
   .pf i.done { border-radius: 99px 0 0 99px; }
   .pf i.fc { opacity: .35; }
   .pf u { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; }
+  .nasil { margin-top: 10px; } .nasil summary { font-size: 12.5px; color: var(--muted); cursor: pointer; } .nasil summary::marker { color: var(--accent); }
+  .k3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 6px; }
+  .k3 div { background: var(--field); border: 1px solid var(--line); border-radius: 10px; padding: 7px 8px; min-width: 0; }
+  .k3 span { display: block; font-size: 10.5px; color: var(--muted); line-height: 1.2; }
+  .k3 b { display: block; font-size: 13.5px; margin-top: 2px; overflow-wrap: anywhere; } .k3 b i { display: block; font-style: normal; font-size: 10.5px; color: var(--muted); font-weight: 400; }
+  .k3 div.ok { border-color: color-mix(in srgb, var(--ok) 55%, transparent); } .k3 div.ok b { color: var(--ok); }
+  .k3 div.low { border-color: color-mix(in srgb, var(--low) 55%, transparent); } .k3 div.low b { color: var(--low); }
   .pr .d { font-size: 12px; color: var(--muted); line-height: 1.5; }
   .pr .d b { color: var(--ink); }
   .tip { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--card2); font-size: 13px; line-height: 1.5; }
@@ -265,6 +272,7 @@
   .pz-s { font-size: 12px; color: #555; line-height: 1.5; } .pz-hr { border: none; border-top: 1px dashed #bdb5a0; margin: 10px 0; }
   .pz-h { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8a8270; margin-bottom: 4px; }
   .pz-row { display: flex; justify-content: space-between; font-size: 14px; line-height: 1.6; } .pz-row b { font-weight: 700; }
+  .pz-g { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; white-space: nowrap; margin: 10px 0 2px; padding-bottom: 2px; border-bottom: 1px solid #d9d2bf; font-size: 11px; letter-spacing: 1.2px; font-weight: 700; color: #6b5a30; } .pz-g small { font-weight: 400; letter-spacing: 0; color: #9a917f; text-transform: none; font-size: 10.5px; }
   .pz-p { margin: 8px 0 10px; } .pz-p .t { display: flex; justify-content: space-between; font-size: 14px; } .pz-p .t b { font-weight: 700; }
   .pz-bar { position: relative; height: 12px; border-radius: 6px; background: #ebe4d0; overflow: hidden; margin-top: 4px; }
   .pz-bar i { position: absolute; inset: 0 auto 0 0; border-radius: 6px; background: var(--c); animation: pzGrow 1.2s .5s cubic-bezier(.2,.8,.2,1) both; }
@@ -917,32 +925,34 @@ function renderProb() {
     const fr = s.tgt ? s.forecast / s.tgt : 0;
     const pr = s.bal ? (fr >= 1 ? 0.9 : fr >= 0.9 ? 0.5 : 0.2) : s.prob ?? 0, mx = Math.max(s.tgt, s.forecast, s.done) * 1.08 || 1;
     const fcR = isAdet(p) ? Math.round(s.forecast) : fmtTL(s.forecast);
+    // Üç kutu: Şu an · Tahmin · Gerekli (türe göre etiketler); düz yazı yerine
+    const K = (a, b, c, cls) => `<div class="k3"><div><span>${a[0]}</span><b>${a[1]}</b></div><div><span>${b[0]}</span><b>${b[1]}</b></div><div class="${cls || ""}"><span>${c[0]}</span><b>${c[1]}</b></div></div>`;
     let d;
-    if (p.type === "ortalama") d = !s.veri ? "Henüz bakiye girilmedi." : ph === "gecmis" ? `Çeyrek ortalaman <b>${fmtTL(s.done)}</b> / ${fmtTL(s.tgt)}`
-      : `Bakiyen <b>${fmtTL(s.cur)}</b>'de kalırsa çeyrek ortalaman <b>${fmtTL(s.forecast)}</b> (%${Math.round(fr * 100)}). ${s.need <= s.cur ? `Hedef tutuyor <span style="color:var(--ok)">✓</span>` : `Hedef için kalan ${s.kalanGun} takvim gününde ortalama <b>${fmtTL(s.need)}</b> bakiye gerekli.`}`;
-    else if (p.type === "bakiye") d = !s.veri ? "Henüz bakiye girilmedi." : s.pct >= 100 ? `Hedef tamam: <b>${fmtTL(s.cur)}</b> / ${fmtTL(s.tgt)}`
-      : `Son bakiye <b>${fmtTL(s.cur)}</b>; bu gidişle çeyrek sonu tahmini <b>${fmtTL(s.forecast)}</b>. Hedefe <b>${fmtTL(s.need)}</b> kaldı.`;
-    else d = s.pct >= 100 ? `Hedef tamam: <b>${fv(p, s.done)}</b> / ${fv(p, s.tgt)}`
-      : ph === "gecmis" ? `Gerçekleşen <b>${fv(p, s.done)}</b> / ${fv(p, s.tgt)} · ${fv(p, s.tgt - s.done)} eksik kaldı`
-      : `Şu anki tempo: günde <b>${fv(p, s.mu)}</b> → çeyrek sonu tahmini <b>${fcR}</b> (%${Math.round(fr * 100)}). Hedef için günde <b>${fv(p, s.perDay)}</b> gerekli${s.perDay > s.mu * 1.0001 + (isAdet(p) ? 0.05 : 0) ? ` (<span style="color:var(--low)">+${fv(p, s.perDay - s.mu)}</span>)` : ` <span style="color:var(--ok)">✓</span>`}.`;
+    if (p.type === "ortalama") d = !s.veri ? '<div class="d">Henüz bakiye girilmedi.</div>' : ph === "gecmis" ? K(["Çeyrek ort.", fmtTL(s.done)], ["Hedef", fmtTL(s.tgt)], ["Sonuç", `%${Math.round(fr * 100)}`])
+      : K(["Son bakiye", fmtTL(s.cur)], ["Ort. tahmini", `${fmtTL(s.forecast)}<i>%${Math.round(fr * 100)}</i>`], s.need <= s.cur ? ["Gerekli ort.", "Tutuyor ✓"] : ["Gerekli ort.", `${fmtTL(s.need)}<i>${s.kalanGun} takvim günü</i>`], s.need <= s.cur ? "ok" : "low");
+    else if (p.type === "bakiye") d = !s.veri ? '<div class="d">Henüz bakiye girilmedi.</div>' : s.pct >= 100 ? K(["Son bakiye", fmtTL(s.cur)], ["Hedef", fmtTL(s.tgt)], ["Sonuç", "Tamam ✓"], "ok")
+      : K(["Son bakiye", fmtTL(s.cur)], ["Çeyrek sonu tahmini", fmtTL(s.forecast)], ["Hedefe kalan", fmtTL(s.need)], "low");
+    else d = s.pct >= 100 ? K(["Gerçekleşen", fv(p, s.done)], ["Hedef", fv(p, s.tgt)], ["Sonuç", "Tamam ✓"], "ok")
+      : ph === "gecmis" ? K(["Gerçekleşen", fv(p, s.done)], ["Hedef", fv(p, s.tgt)], ["Eksik", fv(p, s.tgt - s.done)], "low")
+      : K(["Tempo · gün", fv(p, s.mu)], ["Çeyrek sonu tahmini", `${fcR}<i>%${Math.round(fr * 100)}</i>`], s.perDay > s.mu * 1.0001 + (isAdet(p) ? 0.05 : 0) ? ["Gerekli · gün", `${fv(p, s.perDay)}<i>+${fv(p, s.perDay - s.mu)}</i>`] : ["Gerekli · gün", `${fv(p, s.perDay)}<i>yetiyor ✓</i>`], s.perDay > s.mu * 1.0001 + (isAdet(p) ? 0.05 : 0) ? "low" : "ok");
     const et = s.bal ? (s.veri ? `tahmin %${Math.round(fr * 100)}` : "bakiye yok") : s.prob == null ? "veri yok" : `%${Math.round(pr * 100)} · ${probTxt(pr)}`;
     return `<div class="pr"><div class="h"><span>${p.icon}</span><b>${esc(p.name)}</b><em style="background:color-mix(in srgb, ${probCol(pr)} 18%, transparent);color:${probCol(pr)}">${et}</em></div>
       <div class="pf"><i class="fc" style="width:${Math.min(100, (s.forecast / mx) * 100)}%;background:${probCol(pr)}"></i><i class="done" style="width:${Math.min(100, (s.done / mx) * 100)}%;background:${probCol(pr)}"></i><u style="left:${(s.tgt / mx) * 100}%"></u></div>
-      <div class="d">${d}</div></div>`;
+      ${d}</div>`;
   }).join("");
   const risk = rows.find((x) => x.s.pct < 100 && x.s.prob != null && x.s.prob < 0.7 && x.s.perDay > x.s.mu);
   const dalga = !risk && rows.find((x) => x.s.pct < 100 && x.s.prob != null && x.s.prob < 0.7);
   const tip = ph !== "simdi" ? "" : dalga
-    ? `<div class="tip">📊 Tempon hedefe yetiyor ama <b>${esc(dalga.p.name)}</b> günden güne çok dalgalanıyor (%${Math.round(dalga.s.prob * 100)}). Her iş günü az da olsa düzenli gitmek ihtimali yükseltir.</div>`
+    ? `<div class="tip">📊 <b>${esc(dalga.p.name)}</b> tempo olarak yetiyor ama dalgalı (ihtimal %${Math.round(dalga.s.prob * 100)}). Her iş günü düzenli küçük adım, ihtimali yükseltir.</div>`
     : risk
-    ? `<div class="tip">🎯 <b>Odak önerisi:</b> En riskli kalem <b>${esc(risk.p.name)}</b> (%${Math.round(risk.s.prob * 100)}). Günlük tempoyu <b>${fv(risk.p, risk.s.mu)}</b>'den <b>${fv(risk.p, risk.s.perDay)}</b>'e çıkarırsan hedef tutar; bu da kalan ${fmt(T.left)} iş gününde haftada yaklaşık <b>${isAdet(risk.p) ? Math.ceil(risk.s.perDay * 5 - 1e-9) + " adet" : fmtTL(risk.s.perDay * 5)}</b> demek.</div>`
+    ? `<div class="tip">🎯 <b>Odak: ${esc(risk.p.name)}</b> (ihtimal %${Math.round(risk.s.prob * 100)}). Günde <b>${fv(risk.p, risk.s.mu)}</b> → <b>${fv(risk.p, risk.s.perDay)}</b> yaparsan tutar; haftada yaklaşık <b>${isAdet(risk.p) ? Math.ceil(risk.s.perDay * 5 - 1e-9) + " adet" : fmtTL(risk.s.perDay * 5)}</b>.</div>`
     : `<div class="tip">✨ Bu tempoyla <b>tüm hedeflerin tutuyor</b> görünüyor. Temponu koru, fazlası senin artın.</div>`;
   el.innerHTML = `
     <h3>🔮 Hedef tutma ihtimali <span class="r">${ph === "gecmis" ? "kapanış" : "tempona göre"}</span></h3>
     <div class="sum">${gauge}<div class="t">Tümünü tutturma: <b>%${all == null ? "–" : Math.round(all * 100)}</b><br>Tahmini ort. gerçekleşme: <b>%${Math.round(fcAvg)}</b><br>Kalan: <b>${fmt(ph === "simdi" ? T.left : 0)}</b> iş günü</div></div>
     ${list}
     ${tip}
-    <p class="note" style="margin:10px 0 0">Nasıl hesaplanıyor? Adet ve tutarda çeyrek başından bu yana her iş günü yaptıklarının ortalaması ve dalgalanması alınır; aynı tempo sürerse kalan günlerde hedefe ulaşma ihtimali hesaplanır. ${few ? "<b style='color:var(--mid)'>Henüz 3 iş gününden az kayıt var; tahmin kaba.</b> " : ""}Bakiyelerde girdiğin bakiye bir sonraki girişe kadar her gün aynı sayılır; ortalama bakiye takvim günü üzerinden hesaplanır. Çubukta koyu kısım gerçekleşen, açık kısım tahmin, beyaz çizgi hedef.</p>`;
+    <details class="nasil"><summary>Nasıl hesaplanıyor?</summary><p class="note" style="margin:6px 0 0">Adet ve tutarda çeyrek başından bu yana her iş günü yaptıklarının ortalaması ve dalgalanması alınır; aynı tempo sürerse kalan günlerde hedefe ulaşma ihtimali hesaplanır. ${few ? "<b style='color:var(--mid)'>Henüz 3 iş gününden az kayıt var; tahmin kaba.</b> " : ""}Bakiyelerde girdiğin bakiye bir sonraki girişe kadar her gün aynı sayılır; ortalama bakiye takvim günü üzerinden hesaplanır. Çubukta koyu kısım gerçekleşen, açık kısım tahmin, beyaz çizgi hedef.</p></details>`;
 }
 
 // ================= Hedef penceresi =================
@@ -1140,9 +1150,13 @@ const POS_SOZ = {
   bas: ["Her büyük çeyrek tek bir adımla başlar. İlk adım seni bekliyor! ☀️", "Bugün atacağın küçük adım, çeyrek sonunun büyük farkı olur. 🌟", "Küçük adımlar, büyük sonuçlar. Sen yaparsın! 😊"],
   yok: ["Hedeflerini gir, fişin dolmaya başlasın. 🎯"],
 };
+const TUR_AD = { adet: "ADET", tutar: "TUTAR", bakiye: "BAKİYE", ortalama: "ORT. BAKİYE" }, TUR_SIRA = ["adet", "tutar", "bakiye", "ortalama"];
+const TUR_ACIK = { adet: "çeyrek toplamı · adet", tutar: "çeyrek toplamı · TL", bakiye: "son bakiye", ortalama: "çeyrek ortalaması" };
+// Fişte kalemler türe göre gruplanır: ADET / TUTAR / BAKİYE / ORT. BAKİYE
+const turGrup = (items) => TUR_SIRA.map((t) => ({ t, ad: TUR_AD[t], acik: TUR_ACIK[t], L: items.filter((x) => x.type === t) })).filter((g) => g.L.length);
 function posData() {
   const O = overall(), now = new Date();
-  const items = O.L.map(({ p, s }) => ({ ic: p.icon || "📌", ad: p.name, done: s.done, tgt: s.tgt, pct: s.pct, plan: s.tgt && p.type !== "ortalama" ? Math.min(100, (s.planNow / s.tgt) * 100) : 0, today: s.todayDone, kalan: Math.max(0, s.tgt - s.done),
+  const items = O.L.map(({ p, s }) => ({ ic: p.icon || "📌", ad: p.name, type: p.type, tur: TUR_AD[p.type] || "", done: s.done, tgt: s.tgt, pct: s.pct, plan: s.tgt && p.type !== "ortalama" ? Math.min(100, (s.planNow / s.tgt) * 100) : 0, today: s.todayDone, kalan: Math.max(0, s.tgt - s.done),
     dT: fv(p, s.done), tT: fv(p, s.tgt), kT: fv(p, Math.max(0, s.tgt - s.done)), fT: fv(p, Math.max(0, s.done - s.tgt)), ok: s.pct >= 100 }));
   const todayL = D.products.filter((p) => p.type !== "bakiye" && p.type !== "ortalama").map((p) => ({ ic: p.icon || "📌", ad: p.name, n: dayTotal(TK, p.id), nT: isAdet(p) ? "x" + dayTotal(TK, p.id) : fmtTL(dayTotal(TK, p.id)) })).filter((x) => x.n);
   const tier = !items.length ? "yok" : O.pct >= 100 ? "tam" : O.pct >= 75 ? "yakin" : O.pct >= 45 ? "orta" : "bas";
@@ -1162,7 +1176,7 @@ function renderPos() {
     ${P.todayL.length ? P.todayL.map((x) => `<div class="pz-row"><span>${x.ic} ${esc(x.ad)}</span><b>${esc(x.nT)}</b></div>`).join("") : '<div class="pz-row" style="color:#999"><span>Bugün henüz kayıt yok</span><span>—</span></div>'}
     <hr class="pz-hr">
     <div class="pz-h">ÇEYREK HEDEFLERİ</div>
-    ${P.items.length ? P.items.map((x) => `<div class="pz-p" style="--c:${posCol(x.pct)}"><div class="t"><span>${x.ic} ${esc(x.ad)}</span><b>${esc(x.dT)} / ${esc(x.tT)}</b></div><div class="pz-bar"><i style="width:${Math.min(100, x.pct)}%"></i>${x.plan > 0 && x.plan < 100 ? `<u style="left:${x.plan}%" title="Plan"></u>` : ""}</div>${x.ok ? `<small class="ok">✅ Hedef tamam${x.done > x.tgt ? ` · +${esc(x.fT)} fazla` : ""}</small>` : `<small>%${Math.round(x.pct)} · kalan ${esc(x.kT)}</small>`}</div>`).join("") : '<div class="pz-row" style="color:#999"><span>Hedef girilmedi</span><span>—</span></div>'}
+    ${P.items.length ? turGrup(P.items).map((g) => `<div class="pz-g"><span>${g.ad}</span><small>${g.acik}</small></div>` + g.L.map((x) => `<div class="pz-p" style="--c:${posCol(x.pct)}"><div class="t"><span>${x.ic} ${esc(x.ad)}</span><b>${esc(x.dT)} / ${esc(x.tT)}</b></div><div class="pz-bar"><i style="width:${Math.min(100, x.pct)}%"></i>${x.plan > 0 && x.plan < 100 ? `<u style="left:${x.plan}%" title="Plan"></u>` : ""}</div>${x.ok ? `<small class="ok">✅ Hedef tamam${x.done > x.tgt ? ` · +${esc(x.fT)} fazla` : ""}</small>` : `<small>%${Math.round(x.pct)} · kalan ${esc(x.kT)}</small>`}</div>`).join("")).join("") : '<div class="pz-row" style="color:#999"><span>Hedef girilmedi</span><span>—</span></div>'}
     <hr class="pz-hr">
     <div class="pz-tot">${ring(P.pct)}<div><b>GENEL BAŞARI</b><em>%${Math.round(P.pct)}</em><span style="color:#c9a050">${stars(P.pct)}</span><div class="pz-s">${P.tam}/${P.items.length} hedef tamamlandı</div></div></div>
     <div class="pz-q">“${esc(P.soz)}”</div>
@@ -1174,7 +1188,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prot
 // Fişi görsele çiz (indirme ve PDF için)
 function posCanvas() {
   const P = posData(), W = 640, M = 40, rowH = 30, n = P.todayL.length || 1, k = P.items.length || 1;
-  const H = 210 + n * rowH + 60 + k * 74 + 60 + 130 + 120 + 120;
+  const GR = turGrup(P.items), H = 210 + n * rowH + 60 + k * 74 + GR.length * 34 + 60 + 130 + 120 + 120;
   const c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d");
   g.fillStyle = "#fbf7ec"; g.fillRect(0, 0, W, H);
   g.fillStyle = "#fff"; for (let x = 7; x < W; x += 14) { g.beginPath(); g.arc(x, H, 6, 0, 7); g.fill(); }
@@ -1189,13 +1203,13 @@ function posCanvas() {
   if (P.todayL.length) P.todayL.forEach((x) => { T(`${x.ic} ${x.ad}`, M, y, mono(20)); T(x.nT, W - M, y, mono(20, 1), "#262626", "right"); y += rowH; });
   else { T("Bugün henüz kayıt yok", M, y, mono(20), "#999"); y += rowH; }
   y += 6; hr(y); y += 32; T("ÇEYREK HEDEFLERİ", M, y, mono(15, 1), "#8a8270"); y += 30;
-  if (P.items.length) P.items.forEach((x) => {
+  if (P.items.length) GR.forEach((gr) => { T(gr.ad, M, y, mono(14, 1), "#6b5a30"); T(gr.acik, W - M, y, mono(12), "#9a917f", "right"); g.strokeStyle = "#d9d2bf"; g.beginPath(); g.moveTo(M, y + 6); g.lineTo(W - M, y + 6); g.stroke(); y += 34; gr.L.forEach((x) => {
     T(`${x.ic} ${x.ad}`, M, y, mono(20)); T(`${x.dT} / ${x.tT}`, W - M, y, mono(20, 1), "#262626", "right"); y += 14;
     const bw = W - M * 2; g.fillStyle = "#ebe4d0"; g.beginPath(); g.roundRect(M, y, bw, 16, 8); g.fill();
     g.fillStyle = posCol(x.pct); g.beginPath(); g.roundRect(M, y, Math.max(16, bw * Math.min(100, x.pct) / 100), 16, 8); g.fill();
     if (x.plan > 0 && x.plan < 100) { g.fillStyle = "rgba(60,60,60,.55)"; g.fillRect(M + bw * x.plan / 100 - 1, y - 3, 2, 22); }
     y += 38; T(x.ok ? `✓ Hedef tamam${x.done > x.tgt ? ` · +${x.fT} fazla` : ""}` : `%${Math.round(x.pct)} · kalan ${x.kT}`, M, y - 6, mono(15, x.ok), x.ok ? "#16824f" : "#777"); y += 22;
-  }); else { T("Hedef girilmedi", M, y, mono(20), "#999"); y += 40; }
+  }); }); else { T("Hedef girilmedi", M, y, mono(20), "#999"); y += 40; }
   hr(y); y += 20;
   const cx = M + 52, cy = y + 52; g.lineWidth = 14; g.strokeStyle = "#ebe4d0"; g.beginPath(); g.arc(cx, cy, 44, 0, 7); g.stroke();
   g.strokeStyle = posCol(P.pct); g.lineCap = "round"; g.beginPath(); g.arc(cx, cy, 44, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(100, P.pct) / 100); g.stroke(); g.lineCap = "butt";
