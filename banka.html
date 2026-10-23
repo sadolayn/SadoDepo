@@ -588,7 +588,7 @@
   <section class="panel" id="tasit">
     <div class="card">
       <h2>🚗 Taşıt Kredisi</h2>
-      <p class="hint">Araç değerini gir; vade sınırı, en yüksek kredi ve peşinat kendiliğinden çıkar. Faiz oranını İşCep'teki hesaplamadan bakıp yaz.</p>
+      <p class="hint">Araç değerini gir; vade sınırı, en yüksek kredi ve peşinat kendiliğinden çıkar. Faiz oranını yaz.</p>
       <label>Araç</label>
       <div class="seg"><button type="button" id="ta_sifir" class="on">🆕 Sıfır km</button><button type="button" id="ta_ikinci">🔁 İkinci el</button></div>
       <label id="ta_degerlab">Anahtar teslim fatura değeri</label>
@@ -612,7 +612,7 @@
         <div><label>İlk taksit tarihi</label><input id="ta_ilk" type="date" style="color-scheme:dark"></div>
       </div>
       <p class="hint" id="ta_dnote" style="margin-top:6px">İlk taksit tarihi kullandırımdan en az 5, en fazla 90 gün sonra olmalı.</p>
-      <div class="fyMsg ic" data-fymsg="ta_faiz" hidden>✍️ <b>Faiz oranını gir</b>, hesap burada görünsün.<small>Oran İşCep'teki hesaplama ekranında yazar (ör. "Hayat Sigortalı · Faiz Oranı"); hesap bilgi amaçlıdır.</small></div>
+      <div class="fyMsg ic" data-fymsg="ta_faiz" hidden>✍️ <b>Faiz oranını gir</b>, hesap burada görünsün.<small>Oran müşteriye ve kampanyaya göre değişir; hesap bilgi amaçlıdır.</small></div>
       <div class="tsum" data-fy="ta_faiz">
         <div class="tswarn" id="ta_warn" hidden></div>
         <div class="ts main"><span>Aylık taksit</span><b id="ta_s_taksit">–</b><i id="ta_s_ilk"></i></div>
@@ -622,7 +622,7 @@
         <div class="ts"><span>Hesaba geçecek</span><b id="ta_s_net">–</b></div>
         <div class="tsbtns"><button type="button" id="ta_copy" class="tscopy">📋 Özeti kopyala</button></div>
       </div>
-      <p class="hint">ℹ️ Hayat sigortası primi ve taşınır rehin tesis ücreti (İşCep'te ayrıca gösterilir) bu hesaba dahil değildir; kasko zorunludur. Kesin tutarlar İşCep'te.</p>
+      <p class="hint">ℹ️ Hayat sigortası primi ve rehin tesis ücreti bu hesaba dahil değildir; kasko zorunludur. Kesin tutarlar işlem günü bankanızca belirlenir.</p>
     </div>
     <div class="card">
       <h2>📏 Vade ve kredi sınırları</h2>
