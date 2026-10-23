@@ -114,6 +114,23 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", yukari); else yukari();
 
+  // Hangi bölüm gerçekten kullanılıyor? Bir kutu/bölümün içine ilk dokunuşta (düğme, giriş, seçim) o bölümün başlığı
+  // anonim olarak GoatCounter'a "bolum-<sayfa>/<başlık>" diye sayılır; sayfa açılışında bir kez, kimlik ve çerez yok.
+  function kullanimSayimi() {
+    if (OYUNLAR.test(SAYFA) || !window.Rapor) return;
+    var f = function (e) {
+      var t = e.target.closest ? e.target.closest("button, a, input, select, textarea, summary, [role=button], [role=tab]") : null;
+      if (!t) return;
+      var kap = t.closest("[data-rapor], section, article, details, .card, .box, .kutu, .panel");
+      var ad = kap ? (kap.getAttribute("data-rapor") || ((kap.querySelector("h2, h3, summary, .t, .baslik") || {}).textContent || "")) : "";
+      ad = ad.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F]/gu, "").replace(/\s+/g, " ").trim().slice(0, 30);
+      if (ad) Rapor.bolum(ad);
+    };
+    document.addEventListener("click", f, true);
+    document.addEventListener("change", f, true);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", kullanimSayimi); else kullanimSayimi();
+
   // Oyunlarda ekranı aşağı çekmek sayfayı yenilemesin (oyun baştan açılmasın).
   // CSS yetmeyen tarayıcılar için: sayfa en üstteyken aşağı doğru çekme engellenir; kaydırılabilir bir pencerenin içi serbest.
   if (OYUNLAR.test(SAYFA)) {
