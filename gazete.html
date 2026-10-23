@@ -224,9 +224,9 @@ async function bnkYukle(isos) {
 const YK_KEY = "gazeteYakinda1";
 const yakinda = () => {
   let ok = false; try { ok = localStorage.getItem(YK_KEY) === "1"; } catch (e) {}
-  return `<div class="yakin"><div class="yk-ust"><span class="yk-et"><i></i>Yapım aşamasında</span><span class="yk-ch"><b>BDDK</b><b>MASAK</b><b>TCMB</b></span></div>
+  return `<div class="yakin"><div class="yk-ust"><span class="yk-et"><i></i>Yapım aşamasında</span><span class="yk-ch"><b>BDDK</b><b>MASAK</b><b>TCMB</b><b>Ticaret Bak.</b></span></div>
     <div class="yk-on"><span class="et">ÖNEMLİ</span><b>15 Ekim 2026 · Resmi Gazete 33401:</b> perakende taksit kuralları değişti. Genel <b>12 ay taksit tavanı</b> yönetmelikten çıktı; konut dışı taksitli satışlarda vade ve sınırları artık <b>Ticaret Bakanlığı</b> belirliyor (BDDK kararlarıyla uyumlu). İlk adım: sıfır cep telefonunda 12 ay taksit sınırı <b>20 bin → 40 bin TL</b> (üstü 3 ay), yenilenmiş telefonda tutar sınırı olmadan 12 ay. Diğer ürünlerde değişiklik yok.<span class="not">Kaynak: <a href="https://ticaret.gov.tr/haberler/ticaret-bakanligindan-bddk-kararlariyla-uyumlu-yeni-duzenleme-15-10-2026" target="_blank" rel="noopener">Ticaret Bakanlığı duyurusu ↗</a> · <a href="#2026-10-15" data-gun="2026-10-15">o günün özeti</a></span></div>
-    <p><b>Yakında bu kutuda:</b> Resmi Gazete'ye düşmeyen kararlar da. Kredi kartı taksit ve yapılandırma kararları, yaptırım listesi güncellemeleri, faiz duyuruları… hepsi tek yerde.</p>
+    <p><b>Yakında bu kutuda:</b> Resmi Gazete'ye düşmeyen kararlar da. Kredi kartı taksit ve yapılandırma kararları, yaptırım listesi güncellemeleri, faiz duyuruları… hepsi tek yerde. 15 Ekim 2026 tarihli Resmi Gazete'deki yönetmelik değişikliğine istinaden taksit vadelerini ve sınırlarını belirleme yetkisi <b>Ticaret Bakanlığı</b>'na geçtiği için Bakanlığın taksit duyuruları da buraya eklenecek.</p>
     <button type="button" class="yk-b ${ok ? "ok" : ""}" id="ykBtn" ${ok ? "disabled" : ""}>${ok ? "✓ Not ettik, teşekkürler! Hazır olunca burada" : "👀 Bunu bekliyorum"}</button></div>`;
 };
 let ykGeldi = false;
