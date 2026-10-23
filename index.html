@@ -73,13 +73,16 @@
   .ysSer .ysNot { font-size: 11px; color: #8a7a5e; }
   .ysSer .ysSon { margin-right: 34px; }
   @keyframes ysKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) { .ysSer { animation: none; } .ysYol { overflow-x: auto; -webkit-mask-image: none; mask-image: none; } .ysEt i { animation: none; } }
+  /* Bilgisayarda "animasyonları azalt" açıksa da üst şerit kaysın (alttaki kayan yazı gibi), sadece biraz yavaş */
+  @media (prefers-reduced-motion: reduce) { .ysSer { animation-duration: calc(var(--sure, 40s) * 1.5); } .ysEt i { animation: none; } }
   /* ===== PPK (TCMB faiz kararı) kayan yazının başında: 2 gün önce uyarı, karar günü 14:15'ten sonra karar ===== */
   .kyOge.ppk { color: #fff; }
   .kyOge b.yn { color: #fff; background: #e5383b; border-radius: 6px; padding: 1px 6px; margin: 0 6px 0 0; font-size: 11px; letter-spacing: .5px; }
   .kyOge b.uy { color: #1a0a05; background: #ef8a5d; border-radius: 6px; padding: 1px 7px; margin: 0 6px 0 0; font-size: 11.5px; letter-spacing: .5px; }
   .kyOge b.tc { color: #0b1220; background: #cfd8e6; border-radius: 6px; padding: 1px 7px; margin: 0 6px 0 0; font-size: 11.5px; letter-spacing: .5px; }
   .kyOge.ppk::after { color: #8a3d22; }
+  .kyOge.onem { color: #fff; font-weight: 700; }
+  .kyOge.onem::after { color: #8a3d22; }
   /* Dokununca açılan küçük pencere: karar ayrıntısı + paylaş */
   .ppkSh { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; padding: 16px; }
   .ppkSh[hidden] { display: none; }
@@ -624,7 +627,9 @@
   // Sade: iki cümle, ikisi de dokununca ilgili bölüme açılır
   // [bölüm, cümle, son gün (isteğe bağlı)] — son günü geçen cümle kendiliğinden kalkar
   const bugunTR = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);
+  // Önemli duyuru (ÖNEMLİ rozeti, PPK satırından hemen sonra): Resmi Gazete sayfasındaki "yapım aşamasında" kutusuna gider
   const dizi = [
+    ["gazete.html?yakinda", "<b class=\"yn\">ÖNEMLİ</b>📜 Resmi Gazete (15 Ekim): taksit yetkisi artık <b>Ticaret Bakanlığı</b>'nda · sıfır telefonda 12 ay taksit sınırı <b>40 bin TL</b> oldu <b class=\"gir\">Ayrıntı</b>", "2026-11-30", "onem"],
     ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
     ["iscep", "🚀 İşCep'in <b>az bilinen süper güçleri</b> neler, biliyor musun? Hepsi ve daha fazlası <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde"],
     ["black", "🖤 Peki ya <b>İş Black</b> ve <b>İş Plus</b>? Ayrıcalıkların ayrıntısı <b class=\"gir\">İş Bankası Gündemi › İş Black · İş Plus</b> bölümünde"],
@@ -634,7 +639,7 @@
   let ppk = null;
   function ciz() {
     const tek = (ppk ? `<span class="kyOge ppk" data-h="ppk">${ppk.html}</span>` : "") +
-      dizi.filter((d) => !d[2] || bugunTR <= d[2]).map(([h, x]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}" data-h="${h}">${x}</span>`).join("");
+      dizi.filter((d) => !d[2] || bugunTR <= d[2]).map(([h, x, , k]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}${k ? " " + k : ""}" data-h="${h}">${x}</span>`).join("");
     ser.innerHTML = tek + tek; // iki kopya: kesintisiz döngü
     kutu.hidden = false;
     requestAnimationFrame(() => { const w = ser.scrollWidth / 2; ser.style.setProperty("--sure", Math.max(25, Math.round(w / 55)) + "s"); });
@@ -645,6 +650,7 @@
     const o = e.target.closest(".kyOge"); const h = o ? o.dataset.h : "iscep";
     e.preventDefault();
     if (h === "ppk") { ppk && ppk.tap && ppk.tap(); return; }
+    if (h.includes(".html")) { window.Rapor && Rapor.bolum("kayan-gazete-yakinda"); location.href = h; return; }
     window.Rapor && Rapor.bolum("kayan-" + h); location.href = "isbank.html#" + h;
   });
 })();
