@@ -282,7 +282,7 @@ const wait = (ms) => KartMasa.wait(ms);
 let scores = [0, 0, 0, 0];
 let dealer = 3;
 // Oyun ayarları
-let OPT = { eller: 7, arti3: false, yuk: true, esli: false, bahis: 100, dagilim: "dengeli", kozBas: false };
+let OPT = { eller: 7, arti3: false, yuk: true, esli: false, yildiz: 100, dagilim: "dengeli", kozBas: false };
 try { Object.assign(OPT, JSON.parse(localStorage.getItem("batakOpt") || "{}")); } catch (e) {}
 if (!(OPT.eller >= 1 && OPT.eller <= 20)) OPT.eller = 7;
 OPT.arti3 = false; // +3 kuralı yeni ayarlarda yok
@@ -301,7 +301,7 @@ function kasaBildir(o) {
 }
 // ---------- Yıldız ----------
 // Ortak Yıldız modülü (token.js): bakiye Batak, King ve Balayı King'de ortak
-const MP = Token.MP, mpSave = Token.save, mpFmt = Token.fmt, BAHIS = Token.BAHIS;
+const MP = Token.MP, mpSave = Token.save, mpFmt = Token.fmt, KADEMELER = Token.KADEMELER;
 let gameStake = 0;
 // İş Bankası tarihçesi ve ürün soruları (internetten doğrulandı: Küre Ansiklopedi, Diken, isbank.com.tr, Teknoblog)
 // 4. alan: son geçerlilik tarihi (kampanya soruları kampanya bitince sorulmaz)
@@ -727,8 +727,8 @@ function gameOver() {
 // ---------- Başlangıç ----------
 function showRules() {
   Token.yukle();
-  if (MP.bal < BAHIS[0]) return showLock();
-  if (OPT.bahis > MP.bal) OPT.bahis = [...BAHIS].reverse().find((v) => v <= MP.bal);
+  if (MP.bal < KADEMELER[0]) return showLock();
+  if (OPT.yildiz > MP.bal) OPT.yildiz = [...KADEMELER].reverse().find((v) => v <= MP.bal);
   const seg = (k, opts) => `<div class="seg" data-k="${k}">${opts.map(([v, t]) => `<button type="button" data-v="${v}" class="${String(OPT[k]) === String(v) ? "on" : ""}">${t}</button>`).join("")}</div>`;
   $("modal").classList.add("ayar");
   $("modal").innerHTML = `
@@ -736,7 +736,7 @@ function showRules() {
     <div class="abal"><span>⭐ Bakiyen <small style="opacity:.6;font-size:11px">· King ve Balayı'yla ortak</small></span><b>${mpFmt(MP.bal)} Yıldız</b></div>
     <div class="asec"><span>Oyun ayarları</span></div>
     <div class="agrid">
-      <div class="arow"><span>Yıldız</span><div class="step"><button type="button" data-st="bahis" data-d="-1">‹</button><b id="vBahis"></b><button type="button" data-st="bahis" data-d="1">›</button></div></div>
+      <div class="arow"><span>Yıldız</span><div class="step"><button type="button" data-st="yildiz" data-d="-1">‹</button><b id="vYildiz"></b><button type="button" data-st="yildiz" data-d="1">›</button></div></div>
       <div class="arow"><span>El dağılımı</span><div class="step"><button type="button" data-st="dagilim" data-d="-1">‹</button><b id="vDag"></b><button type="button" data-st="dagilim" data-d="1">›</button></div></div>
       <div class="arow"><span>El sayısı</span><div class="step"><button type="button" data-st="eller" data-d="-1">−</button><b id="vEl"></b><button type="button" data-st="eller" data-d="1">+</button></div></div>
       <label class="chk"><input type="checkbox" id="cEsli"><i></i><span>Eşli <small>(Sadolayn eşin)</small></span></label>
@@ -751,19 +751,19 @@ function showRules() {
   $("overlay").classList.add("show");
   ISIM.bind($("modal"), () => { setNames(); if (typeof render === "function") try { render(); } catch (e) {} });
   const DAG = [["dengeli", "Dengeli"], ["rastgele", "Rastgele"]];
-  const okB = () => BAHIS.filter((v) => v <= MP.bal);
+  const okB = () => KADEMELER.filter((v) => v <= MP.bal);
   const syncOpt = () => {
-    $("vBahis").textContent = mpFmt(OPT.bahis);
+    $("vYildiz").textContent = mpFmt(OPT.yildiz);
     $("vDag").textContent = (DAG.find((x) => x[0] === OPT.dagilim) || DAG[0])[1];
     $("vEl").textContent = OPT.eller;
     $("cEsli").checked = OPT.esli; $("cYuk").checked = OPT.yuk; $("cKoz").checked = OPT.kozBas && OPT.esli; $("cKoz").disabled = !OPT.esli;
     $("kbWrap").classList.toggle("off", !OPT.esli);
     $("dagNote").innerHTML = OPT.dagilim === "dengeli" ? "⚖️ <b>Dengeli:</b> herkese her renkten 2–5 kart; kozlar dengeli dağılır." : "🎲 <b>Rastgele:</b> tam şans; bir oyuncuya 6–7 koz bile gelebilir.";
-    $("start").textContent = `Başla · ${mpFmt(OPT.bahis)} Yıldız`;
+    $("start").textContent = `Başla · ${mpFmt(OPT.yildiz)} Yıldız`;
   };
   $("modal").querySelectorAll("[data-st]").forEach((b) => (b.onclick = () => {
     const k = b.dataset.st, d = +b.dataset.d;
-    if (k === "bahis") { const L = okB(), i = L.indexOf(OPT.bahis); OPT.bahis = L[Math.max(0, Math.min(L.length - 1, (i < 0 ? 0 : i) + d))]; }
+    if (k === "yildiz") { const L = okB(), i = L.indexOf(OPT.yildiz); OPT.yildiz = L[Math.max(0, Math.min(L.length - 1, (i < 0 ? 0 : i) + d))]; }
     if (k === "eller") OPT.eller = Math.max(1, Math.min(20, OPT.eller + d));
     if (k === "dagilim") { const i = DAG.findIndex((x) => x[0] === OPT.dagilim); OPT.dagilim = DAG[(i + d + DAG.length) % DAG.length][0]; }
     syncOpt();
@@ -774,8 +774,8 @@ function showRules() {
   $("ayarX").onclick = () => { if (phase && phase !== "idle" && hands) { $("overlay").classList.remove("show"); $("modal").classList.remove("ayar"); } else location.href = "oyunlar.html"; };
   syncOpt();
   $("start").onclick = () => {
-    if (!Token.koy(OPT.bahis)) return showRules();
-    gameStake = OPT.bahis;
+    if (!Token.koy(OPT.yildiz)) return showRules();
+    gameStake = OPT.yildiz;
     try { localStorage.setItem("batakOpt", JSON.stringify(OPT)); } catch (e) {}
     scores = [0, 0, 0, 0]; roundNo = 0; saveScores();
     $("overlay").classList.remove("show"); $("modal").classList.remove("ayar"); newRound();

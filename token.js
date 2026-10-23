@@ -8,7 +8,7 @@
 //   Token.sonuc(oyun, konan, kisi, kat) → ödemeyi yapar (kat: 0 kaybetti, 1 iade, 2/3 kazandı), { pay, fee, durum, html }
 //   Token.kilit(modal, { goster, devam }) → Yıldız bittiyse bekleme ekranı ya da İş Bankası sorusu
 (function () {
-  const KEY = "batakMP", BAHIS = [100, 250, 500, 1000, 2500, 5000, 10000], FEE = 0, ODUL = 1000, BEKLE = 3 * 36e5, HEDIYE = 2000;
+  const KEY = "batakMP", KADEMELER = [100, 250, 500, 1000, 2500, 5000, 10000], FEE = 0, ODUL = 1000, BEKLE = 3 * 36e5, HEDIYE = 2000;
   const MP = { bal: 1000, empty: 0, lastQ: -1 };
   const yukle = () => { try { Object.assign(MP, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) {} if (!(MP.bal >= 0)) MP.bal = 0; return MP; };
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(MP)); } catch (e) {} };
@@ -42,17 +42,17 @@
 `;
   document.head.appendChild(css);
 
-  const secenekler = () => { yukle(); return BAHIS.filter((v) => v <= MP.bal); };
+  const secenekler = () => { yukle(); return KADEMELER.filter((v) => v <= MP.bal); };
   // Puan seçicisi: oyunun son seçtiği tutar hatırlanır
   function secici(kok, oyun) {
-    const L = secenekler(), son = oku("tokenBahis", {});
+    const L = secenekler(), son = oku("tokenYildiz", {});
     let v = L.includes(son[oyun]) ? son[oyun] : L.includes(100) ? 100 : L[0] || 0;
     kok.innerHTML = `<div class="tkBal"><span>⭐ Bakiyen</span><b>${fmt(MP.bal)} Yıldız</b></div>
       <div class="tkRow"><span>Yıldız koy</span><div class="tkStep"><button type="button" data-d="-1" aria-label="Azalt">‹</button><b></b><button type="button" data-d="1" aria-label="Artır">›</button></div></div>`;
     const b = kok.querySelector(".tkStep b"), [ge, il] = kok.querySelectorAll(".tkStep button");
     const sync = () => { b.textContent = fmt(v); ge.disabled = L.indexOf(v) <= 0; il.disabled = L.indexOf(v) >= L.length - 1; if (api.onChange) api.onChange(v); };
     const api = { deger: () => v, onChange: null, sync };
-    kok.querySelectorAll(".tkStep button").forEach((x) => (x.onclick = () => { const i = L.indexOf(v); v = L[Math.max(0, Math.min(L.length - 1, i + +x.dataset.d))]; son[oyun] = v; yaz("tokenBahis", son); sync(); }));
+    kok.querySelectorAll(".tkStep button").forEach((x) => (x.onclick = () => { const i = L.indexOf(v); v = L[Math.max(0, Math.min(L.length - 1, i + +x.dataset.d))]; son[oyun] = v; yaz("tokenYildiz", son); sync(); }));
     sync();
     return api;
   }
@@ -63,7 +63,7 @@
     if (!konan) return { pay: 0, fee: 0, durum: "yok", html: "" };
     const masa = konan * kisi, durum = kat > 1 ? "kazandi" : kat === 1 ? "berabere" : "kaybetti";
     const ucret = 0, fee = 0, pay = konan * kat; // kesinti yok
-    MP.bal += pay; if (MP.bal >= BAHIS[0]) MP.empty = 0; save();
+    MP.bal += pay; if (MP.bal >= KADEMELER[0]) MP.empty = 0; save();
     const t = durum === "kazandi" ? `🎉 <b>+${fmt(pay)}</b> Yıldız kazandın!`
       : durum === "berabere" ? `Berabere: ${fmt(konan)} Yıldız iade edildi.` : `Bu oyunda ${fmt(konan)} Yıldız kaybettin.`;
     return { pay, fee, ucret, masa, durum, html: `<div class="tkBox">${t}<br>⭐ Bakiye: <b>${fmt(MP.bal)}</b> Yıldız</div>` };
@@ -119,8 +119,8 @@
     document.body ? t() : document.addEventListener("DOMContentLoaded", t);
   }
   window.Token = {
-    MP, BAHIS, FEE, fmt, save, yukle, secenekler, secici, koy, sonuc, kasa, kilit,
+    MP, KADEMELER, FEE, fmt, save, yukle, secenekler, secici, koy, sonuc, kasa, kilit,
     bakiye: () => yukle().bal,
-    yeter: () => yukle().bal >= BAHIS[0],
+    yeter: () => yukle().bal >= KADEMELER[0],
   };
 })();
