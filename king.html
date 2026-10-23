@@ -85,21 +85,22 @@
     padding: 5px 8px;
     font-size: 12px;
     text-align: center;
-    min-width: 78px;
+    min-width: 64px;
     transition: border-color .2s, box-shadow .2s;
   }
   .seat .nm { font-weight: 700; font-size: 13px; }
   .seat .bd { color: var(--muted); }
-  .seat .mini { display: flex; align-items: center; justify-content: center; gap: 1px; margin-top: 2px; }
-  .seat .mini i { width: 4px; }
+  .seat .mini { display: flex; flex-direction: column; align-items: center; gap: 1px; margin-top: 2px; }
+  .seat .mini span { display: flex; gap: 1px; }
+  .seat .bd { line-height: 1.3; white-space: nowrap; }
   .seat .kc { display: inline-flex; align-items: center; gap: 3px; color: var(--ink); }
   .seat .kc .kb { width: 10px; height: 14px; border-radius: 2px; border-width: 1px; }
   .seat .kc .kb::after { inset: 1px; }
   .seat.turn { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(224,162,79,.35); }
   .seat.bidder .nm::after { content: " 👑"; }
   .seat-n { top: 8px; left: 50%; transform: translateX(-50%); }
-  .seat-w { left: 6px; top: calc(50% - var(--cw) * .725 - 8px); transform: translateY(-100%); }
-  .seat-e { right: 6px; top: calc(50% - var(--cw) * .725 - 8px); transform: translateY(-100%); }
+  .seat-w { left: 6px; top: 50%; transform: translateY(-50%); }
+  .seat-e { right: 6px; top: 50%; transform: translateY(-50%); }
   .seat-s { bottom: 8px; left: 50%; transform: translateX(-50%); }
 
   .slot { position: absolute; width: var(--cw); height: calc(var(--cw) * 1.45); }
@@ -130,14 +131,18 @@
   .panel button.suit { font-size: 26px; padding: 6px 16px; }
   .panel button.suit.red { color: var(--red); }
 
-  .hand { --cw: 58px; position: relative; height: calc(var(--cw) * 1.45 + 16px); }
+  .hand { --cw: 58px; position: relative; height: calc(var(--cw) * 1.45 + var(--cw) * .3 + 16px); }
   .hand .card:not(:last-child) .s2 { display: none; }
   .hand .card .r { left: 4%; }
   .hand .card .r.ten { transform: scaleX(calc(.64 * var(--kx, 1))); letter-spacing: -3px; }
-  .hand .card { position: absolute; top: 12px; transition: transform .12s, filter .12s, left .2s; cursor: pointer; }
-  .hand .card.ok { transform: translateY(-10px); box-shadow: 0 0 0 2px var(--accent), 0 6px 12px rgba(0,0,0,.45); }
+  /* Yelpaze: kartlar alttaki bir noktanın çevresinde dönerek oval dizilir; ortadakiler yukarıda, kenardakiler aşağıda */
+  .hand { touch-action: none; }
+  .hand .card { position: absolute; top: 12px; transform-origin: 50% 115%; transform: rotate(var(--rot, 0deg)); transition: transform .12s, filter .12s, left .2s, top .2s; cursor: pointer; }
+  .hand .card.ok { transform: rotate(var(--rot, 0deg)) translateY(-10px); box-shadow: 0 0 0 2px var(--accent), 0 6px 12px rgba(0,0,0,.45); }
   .hand .card.no { filter: brightness(.5); cursor: default; }
-  .hand .card.ok:active { transform: translateY(-16px); }
+  /* Parmağın altındaki kart: büyür ve kalkar; bırakınca atılır */
+  .hand .card.sec { transform: rotate(var(--rot, 0deg)) translateY(-26px) scale(1.1); z-index: 40; box-shadow: 0 0 0 3px var(--accent), 0 12px 22px rgba(0,0,0,.6); }
+  .hand .card.no.sec { transform: rotate(var(--rot, 0deg)) translateY(-6px); box-shadow: 0 0 0 2px var(--red); }
 
   .overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,.8);
@@ -772,7 +777,7 @@ function miniSyms(p) {
   const t = (on) => `<svg viewBox="0 0 20 18" width="14" height="13"><polygon points="10,1.5 18.5,16.5 1.5,16.5" fill="${on ? "#e0473a" : "none"}" stroke="${on ? "#e0473a" : "rgba(255,255,255,.55)"}" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
   const c = (h) => { const tr = h ? (h.trump || h.oyun.replace("Koz ", "")) : ""; const red = tr === "♥" || tr === "♦";
     return `<svg viewBox="0 0 18 18" width="13" height="13"><circle cx="9" cy="9" r="7.5" fill="${h ? "#e0a24f" : "none"}" stroke="${h ? "#e0a24f" : "rgba(255,255,255,.55)"}" stroke-width="1.8"/>${h ? `<text x="9" y="13" text-anchor="middle" font-size="10" fill="${red ? "#b3261e" : "#000"}">${tr}</text>` : ""}</svg>`; };
-  return `<div class="mini">${[0, 1, 2].map((i) => t(i < nc)).join("")}<i></i>${[0, 1].map((i) => c(kz[i])).join("")}</div>`;
+  return `<div class="mini"><span>${[0, 1, 2].map((i) => t(i < nc)).join("")}</span><span>${[0, 1].map((i) => c(kz[i])).join("")}</span></div>`; // üstte 3 ceza, altta 2 koz
 }
 function renderSeats() {
   for (let p = 0; p < 4; p++) {
@@ -784,7 +789,7 @@ function renderSeats() {
       else bd = `${CEZALAR[contract].kisa}: ${taken[p]}`;
     }
     const kc = p && hands && hands[p] && hands[p].length ? `<span class="kc"><i class="kb"></i>${hands[p].length}</span>` : "";
-    el.innerHTML = `<div class="nm">${NAMES[p]}</div>${miniSyms(p)}${bd || kc ? `<div class="bd">${kc}${bd && kc ? " · " : ""}${bd}</div>` : ""}`;
+    el.innerHTML = `<div class="nm">${NAMES[p]}</div>${miniSyms(p)}${kc ? `<div class="bd">${kc}</div>` : ""}${bd ? `<div class="bd">${bd}</div>` : ""}`;
     el.classList.toggle("turn", turn === p && phase === "play");
     el.classList.toggle("bidder", p === chooser && phase !== "idle");
   }
@@ -806,18 +811,54 @@ function renderHand() {
   const n = hands[0].length, W = h.clientWidth;
   const cw = Math.max(46, Math.min(64, Math.floor(W * 0.17)));
   h.style.setProperty("--cw", cw + "px");
-  const step = n > 1 ? Math.min(cw * 0.72, (W - cw) / (n - 1)) : 0;
+  const maxA = Math.min(12, n), kavis = cw * 0.25;
+  const pay = cw * (0.08 + 1.67 * Math.sin((maxA * Math.PI) / 180)); // dönen kenar kartlar ekrandan taşmasın
+  const step = n > 1 ? Math.min(cw * 0.72, (W - cw - pay * 2) / (n - 1)) : 0;
   const x0 = (W - (cw + step * (n - 1))) / 2;
+  EL = { x0, step, n, cw, els: [], ok, myTurn };
   hands[0].forEach((c, i) => {
     const el = cardEl(c);
+    const t = n > 1 ? (i / (n - 1)) * 2 - 1 : 0; // -1 (sol) … 1 (sağ)
     el.style.left = Math.round(x0 + i * step) + "px";
-    if (myTurn) {
-      if (ok.has(id(c))) { el.classList.add("ok"); el.onclick = () => humanPlay(c); }
-      else el.classList.add("no");
-    }
+    el.style.top = Math.round(12 + kavis * t * t) + "px";
+    el.style.setProperty("--rot", (t * maxA).toFixed(1) + "deg");
+    if (myTurn) el.classList.add(ok.has(id(c)) ? "ok" : "no");
+    EL.els.push({ el, c });
     h.appendChild(el);
   });
 }
+// Kart atma: parmağın altındaki kart kalkar; kaydırınca seçim yandaki karta geçer; bırakınca atılır.
+// Parmağı elin altına çekip bırakırsan vazgeçilir. Fareyle tıklamak da aynı şekilde çalışır.
+let EL = null, BAS = null;
+function elIdx(x) {
+  if (!EL || !EL.n) return -1;
+  const r = $("hand").getBoundingClientRect(), rx = x - r.left - EL.x0;
+  return Math.max(0, Math.min(EL.n - 1, Math.floor(rx / (EL.step || EL.cw))));
+}
+function elSec(i) {
+  if (!EL) return;
+  EL.els.forEach((o, k) => o.el.classList.toggle("sec", k === i));
+}
+$("hand").addEventListener("pointerdown", (e) => {
+  if (!EL || !EL.n || e.button > 0) return;
+  BAS = { pid: e.pointerId, i: elIdx(e.clientX) };
+  try { $("hand").setPointerCapture(e.pointerId); } catch (er) {}
+  elSec(BAS.i); e.preventDefault();
+});
+$("hand").addEventListener("pointermove", (e) => {
+  if (!BAS || e.pointerId !== BAS.pid) return;
+  const i = elIdx(e.clientX); if (i !== BAS.i) { BAS.i = i; elSec(i); if (navigator.vibrate) try { navigator.vibrate(5); } catch (er) {} }
+});
+function elBirak(e, iptal) {
+  if (!BAS || e.pointerId !== BAS.pid) return;
+  const b = BAS; BAS = null; elSec(-1);
+  const r = $("hand").getBoundingClientRect();
+  if (iptal || e.clientY > r.bottom + 10) return; // aşağı çekip bırakınca vazgeç
+  const o = EL && EL.els[b.i]; if (!o || !EL.myTurn) return;
+  if (EL.ok.has(id(o.c))) humanPlay(o.c); else { o.el.animate([{ transform: `rotate(var(--rot)) translateX(-4px)` }, { transform: `rotate(var(--rot)) translateX(4px)` }, { transform: `rotate(var(--rot))` }], { duration: 220 }); }
+}
+$("hand").addEventListener("pointerup", (e) => elBirak(e, false));
+$("hand").addEventListener("pointercancel", (e) => elBirak(e, true));
 // Masadaki kart boyu masanın genişliğine göre
 function fitTable() { const t = $("table"); t.style.setProperty("--cw", Math.max(44, Math.min(62, Math.floor(t.clientWidth * 0.16))) + "px"); }
 let fitT; window.addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(() => { fitTable(); if (hands && hands[0]) renderHand(); }, 120); });

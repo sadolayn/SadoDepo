@@ -135,6 +135,13 @@
   .hand .card.ok { transform: translateY(-10px); }
   .hand .card.no { opacity: .4; cursor: default; }
   .hand .card.ok:active { transform: translateY(-16px); }
+  /* Kendi elin: yelpaze (oval) diziliş; parmağın altındaki kart kalkar, bırakınca atılır */
+  .hand.yelpaze { display: block; position: relative; padding: 0; min-height: 0; height: calc(var(--cw) * 1.45 + var(--cw) * .3 + 18px); touch-action: none; }
+  .hand.yelpaze .card { position: absolute; margin-left: 0; top: 12px; transform-origin: 50% 115%; transform: rotate(var(--rot, 0deg)); transition: transform .12s, opacity .12s, left .2s, top .2s; }
+  .hand.yelpaze .card.ok { transform: rotate(var(--rot, 0deg)) translateY(-10px); }
+  .hand.yelpaze .card.ok:active { transform: rotate(var(--rot, 0deg)) translateY(-10px); }
+  .hand.yelpaze .card.sec { transform: rotate(var(--rot, 0deg)) translateY(-26px) scale(1.1); z-index: 40; box-shadow: 0 0 0 3px var(--accent), 0 12px 22px rgba(0,0,0,.6); }
+  .hand.yelpaze .card.no.sec { transform: rotate(var(--rot, 0deg)) translateY(-6px); box-shadow: 0 0 0 2px var(--red); }
 
   .overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,.8);
@@ -493,6 +500,7 @@ function handInto(elId, p) {
   h.innerHTML = "";
   const myTurn = phase === "play" && turn === p && humanCtl(p) && !busy;
   const ok = myTurn ? new Set(legal(hands[p]).map(id)) : null;
+  if (elId === "hand") return yelpaze(h, p, myTurn, ok);
   for (const c of hands[p]) {
     const el = cardEl(c);
     if (myTurn) {
@@ -502,6 +510,52 @@ function handInto(elId, p) {
     h.appendChild(el);
   }
 }
+// Kendi elin yelpaze şeklinde; kart atma: bas → kart kalkar, kaydır → seçim kayar, bırak → atılır (aşağı çekip bırakmak vazgeçer)
+let EL = null, BAS = null;
+function yelpaze(h, p, myTurn, ok) {
+  h.classList.add("yelpaze");
+  const L = hands[p], n = L.length, W = h.clientWidth;
+  const cw = parseFloat(getComputedStyle(h).getPropertyValue("--cw")) || 56;
+  const maxA = Math.min(12, n), kavis = cw * 0.25;
+  const pay = cw * (0.08 + 1.67 * Math.sin((maxA * Math.PI) / 180));
+  const step = n > 1 ? Math.min(cw * 0.72, (W - cw - pay * 2) / (n - 1)) : 0;
+  const x0 = (W - (cw + step * (n - 1))) / 2;
+  EL = { x0, step, n, cw, els: [], ok, myTurn, p };
+  L.forEach((c, i) => {
+    const el = cardEl(c), t = n > 1 ? (i / (n - 1)) * 2 - 1 : 0;
+    el.style.left = Math.round(x0 + i * step) + "px";
+    el.style.top = Math.round(12 + kavis * t * t) + "px";
+    el.style.setProperty("--rot", (t * maxA).toFixed(1) + "deg");
+    if (myTurn) el.classList.add(ok.has(id(c)) ? "ok" : "no");
+    EL.els.push({ el, c }); h.appendChild(el);
+  });
+}
+function elIdx(x) {
+  if (!EL || !EL.n) return -1;
+  const r = $("hand").getBoundingClientRect();
+  return Math.max(0, Math.min(EL.n - 1, Math.floor((x - r.left - EL.x0) / (EL.step || EL.cw))));
+}
+const elSec = (i) => EL && EL.els.forEach((o, k) => o.el.classList.toggle("sec", k === i));
+$("hand").addEventListener("pointerdown", (e) => {
+  if (!EL || !EL.n || e.button > 0) return;
+  BAS = { pid: e.pointerId, i: elIdx(e.clientX) };
+  try { $("hand").setPointerCapture(e.pointerId); } catch (er) {}
+  elSec(BAS.i); e.preventDefault();
+});
+$("hand").addEventListener("pointermove", (e) => {
+  if (!BAS || e.pointerId !== BAS.pid) return;
+  const i = elIdx(e.clientX); if (i !== BAS.i) { BAS.i = i; elSec(i); if (navigator.vibrate) try { navigator.vibrate(5); } catch (er) {} }
+});
+function elBirak(e, iptal) {
+  if (!BAS || e.pointerId !== BAS.pid) return;
+  const b = BAS; BAS = null; elSec(-1);
+  if (iptal || e.clientY > $("hand").getBoundingClientRect().bottom + 10) return;
+  const o = EL && EL.els[b.i]; if (!o || !EL.myTurn) return;
+  if (EL.ok.has(id(o.c))) humanPlay(o.c, EL.p);
+  else o.el.animate([{ transform: "rotate(var(--rot)) translateX(-4px)" }, { transform: "rotate(var(--rot)) translateX(4px)" }, { transform: "rotate(var(--rot))" }], { duration: 220 });
+}
+$("hand").addEventListener("pointerup", (e) => elBirak(e, false));
+$("hand").addEventListener("pointercancel", (e) => elBirak(e, true));
 function renderHand() {
   handInto("hand", 0);
   const showP = OPT.esli && bidder === 0 && phase === "play";
