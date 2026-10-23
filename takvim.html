@@ -46,7 +46,7 @@
   header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   header a { color: var(--muted); text-decoration: none; font-size: 14px; }
   header h1 { margin: 0; font-size: 20px; }
-  .tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px; margin-bottom: 12px; }
+  .tabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 5px; margin-bottom: 12px; }
   .tabs button { border: none; background: transparent; color: var(--muted); padding: 10px 2px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
   .tabs button.active { background: var(--accent); color: #000; }
   .panel { display: none; } .panel.active { display: block; }
@@ -156,6 +156,9 @@
   /* ---------- Ajanda ---------- */
   header h1 .amp { color: var(--accent); font-family: Georgia, serif; font-style: italic; font-weight: 400; }
   .tabs button[data-tab="ajanda"]:not(.active) { color: #c9b4f7; }
+  .tabs button[data-tab="vergi"]:not(.active) { color: #ffb3aa; } .tabs button { position: relative; }
+  .day .pm u.vb { background: #e0a24f; } .day .pm u.vt { background: #4a7dff; }
+  .legend .pv1::before { background: #e0a24f; } .legend .pv2::before { background: #4a7dff; }
   .day.iz { box-shadow: inset 0 -5px 0 var(--izin); }
   .day.iz0 { box-shadow: inset 0 -5px 0 rgba(167,123,243,.3); }
   .day.dg { box-shadow: inset 0 -5px 0 var(--dgr); }
@@ -270,6 +273,8 @@
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
+<script src="vergi.js"></script>
+<script src="yeni.js"></script>
 <link rel="stylesheet" href="theme.css">
 </head>
 <body>
@@ -287,6 +292,7 @@
     <button data-tab="ajanda">Ajanda</button>
     <button data-tab="hesap">İş günü</button>
     <button data-tab="liste">Liste</button>
+    <button data-tab="vergi" data-yeni="vergitk|2026-10-23|•">Vergi</button>
   </div>
   <div class="sh on" data-sh="ay">
     <div class="mhead">
@@ -323,6 +329,7 @@
       <div class="legend"><span class="l1">Resmi tatil</span><span class="l2">Yarım gün</span><span class="l3">Dini gün</span><span class="l4">Hafta sonu</span></div>
       <div id="ppkAy" style="font-size:12.5px;color:var(--muted);margin:6px 0 0"></div>
       <div class="legend pl"><b>Ajandam:</b><span class="p1">Yıllık izin</span><span class="p2">Diğer izinler</span><span class="p3">Not</span><span class="p4">Arama · ziyaret · toplantı</span></div>
+      <div class="legend pl"><b>Vergi:</b><span class="pv1">Bireysel son gün</span><span class="pv2">Ticari son gün</span></div>
     </div>
     <div class="card"><div class="detail" id="detail">Ayrıntı için bir güne dokun.</div><div id="dItems"></div><button class="addday" id="addDay" type="button">＋ Bu güne ekle</button></div>
     <div class="card">
@@ -416,6 +423,7 @@
   </section>
 
   <!-- Liste -->
+  <section class="panel" id="vergi"></section>
   <section class="panel" id="liste">
     <div class="card"><div class="list" id="yList"></div></div>
     <p class="note">Resmi tatiller 2429 sayılı Kanun'a göre; bayram tarihleri Diyanet takvimine göre. Hükümetin ayrıca ilan edebileceği idari izinler bu listede yer almaz.</p>
@@ -636,6 +644,8 @@ function showDetail(d) {
   if (i.recs.length) txt += i.recs.map((r) => r.name + (r.type === "yarim" ? " (öğleden sonra tatil)" : "")).join("<br>") + "<br>";
   txt += i.we ? "Hafta sonu" : i.full ? "Resmi tatil — iş günü değil" : i.half ? "Yarım iş günü" : "İş günü";
   if (!inRange(d)) txt += "<br><span style='color:var(--muted);font-size:12px'>Bu yıl için bayram tarihleri yüklenmedi.</span>";
+  const vg = vergiGun(d);
+  if (vg.length) txt += `<div style="margin-top:6px;font-size:13px">${vg.map((e) => `${e.ic} <b style="color:${e.c === "b" && !e.both ? "#e0a24f" : "#8fb0ff"}">${e.n}</b> — son gün`).join("<br>")}<br><a href="#vergi" onclick="document.querySelector('.tabs button[data-tab=vergi]').click();return false" style="color:var(--accent);font-size:12px">Vergi sekmesinde ödeme planı →</a></div>`;
   $("detail").innerHTML = txt;
   const k = keyOf(d), mine = A.items.filter((x) => x.d <= k && (x.e || x.d) >= k).sort(byDate);
   $("dItems").innerHTML = mine.map((x) => aItemHTML(x, k)).join("");
@@ -849,6 +859,16 @@ function izinYil(y) {
   return { hak, dev, top: hak + dev, kul, pln, kal: hak + dev - kul - pln, diger, aylik };
 }
 // Takvim hücresi: izin alt çizgi, not ve işler sağ üstte nokta (resmi tatil renklerinden ayrı)
+// Vergi takvimi (vergi.js): o gün son günü olan vergiler
+let VG_CACHE = null;
+function vergiGun(d) {
+  if (!window.Vergi) return [];
+  const y = d.getFullYear();
+  if (!VG_CACHE || VG_CACHE.y !== y) VG_CACHE = { y, map: {} , list: Vergi.events(new Date(y - 1, 11, 1, 12), new Date(y + 1, 1, 1, 12)) };
+  const k = keyOf(d);
+  if (!(k in VG_CACHE.map)) VG_CACHE.map[k] = VG_CACHE.list.filter((e) => keyOf(e.d) === k);
+  return VG_CACHE.map[k];
+}
 function dayMarks(dt, i) {
   const k = keyOf(dt), cls = [];
   let n = false, w = false;
@@ -859,7 +879,8 @@ function dayMarks(dt, i) {
     else if (WORK.has(x.t)) w = true; else n = true;
   }
   const iz = cls.includes("iz") ? ["iz"] : cls.includes("dg") ? ["dg"] : cls.includes("iz0") ? ["iz0"] : cls.includes("dg0") ? ["dg0"] : [];
-  return { cls: iz, dots: n || w ? `<span class="pm">${n ? "<u class='n'></u>" : ""}${w ? "<u class='r'></u>" : ""}</span>` : "" };
+  const vg = vergiGun(dt), vb = vg.some((e) => e.c === "b" || e.both), vt = vg.some((e) => e.c === "t" || e.both);
+  return { cls: iz, dots: n || w || vb || vt ? `<span class="pm">${n ? "<u class='n'></u>" : ""}${w ? "<u class='r'></u>" : ""}${vb ? "<u class='vb'></u>" : ""}${vt ? "<u class='vt'></u>" : ""}</span>` : "" };
 }
 function aItemHTML(x, onDay) {
   const T = TYPES[x.t] || TYPES.not, rng = isRange(x), past = (x.e || x.d) < keyOf(today);
@@ -1195,7 +1216,9 @@ function ppkAy(y, m) {
 }
 if (window.Ortak && Ortak.json) Ortak.json("data/ppk.json").then((j) => { PPKJ = j; ppkAy(view.getFullYear(), view.getMonth()); }).catch(() => {});
 renderMonth(); showDetail(today); calc1(); calc2(); renderList(); renderYear(); renderAjanda(); setStickH();
+if (window.Vergi) Vergi.init({ el: $("vergi"), dayInfo: (d) => { const i = info(d); return { we: i.we, hol: i.full, half: i.half, name: (i.recs.find((r) => r.type !== "dini") || {}).name || "" }; } });
 if (location.hash === "#ajanda") document.querySelector('.tabs button[data-tab="ajanda"]').click();
+if (location.hash === "#vergi") document.querySelector('.tabs button[data-tab="vergi"]').click();
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
