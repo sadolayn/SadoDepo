@@ -4,8 +4,8 @@
   "https://www.isbank.com.tr/is-black"
  ],
  "kontrol": "2026-10-23",
- "degisim": "2026-10-22",
- "hash": "6e06022f31d444c6",
+ "degisim": "2026-10-23",
+ "hash": "ae778f0c51bc9582",
  "kampanyalar": [
   {
    "baslik": "İş’te Maaş’a Özel (2)",
@@ -206,6 +206,11 @@
    "baslik": "Detaylı Bilgi",
    "url": "https://www.isbank.com.tr/kampanyalar/biletcomda-ucak-biletlerinde-ve-transfer-hizmetlerinde-indirim",
    "ilk": "2000-01-01"
+  },
+  {
+   "baslik": "Detaylı Bilgi",
+   "url": "https://www.isbank.com.tr/kampanyalar/avantajli-hisse-senedi-komisyon-oranlari-ayricaligi",
+   "ilk": "2026-10-23"
   },
   {
    "baslik": "Detaylı Bilgi",
@@ -430,6 +435,7 @@
   "/kampanyalar/secili-kuafor-harcamalarina-ozel-indirim": "2000-01-01",
   "/kampanyalar/is-black-kultur-ve-sanat-harcamalarinizda-indirim-ayricaliklari": "2000-01-01",
   "/kampanyalar/swissotel-the-bosphorusda-secili-mekan-ve-etkinliklerde-indirim-ayricaligi": "2000-01-01",
-  "/kampanyalar/is-black-plus-kart-sahiplerine-secili-kahve-dukkanlarinda-indirim-ayricaligi": "2000-01-01"
+  "/kampanyalar/is-black-plus-kart-sahiplerine-secili-kahve-dukkanlarinda-indirim-ayricaligi": "2000-01-01",
+  "/kampanyalar/avantajli-hisse-senedi-komisyon-oranlari-ayricaligi": "2026-10-23"
  }
 }
