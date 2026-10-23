@@ -32,10 +32,19 @@ jobs:
       - name: Haberler
         run: python scripts/haberler.py
         continue-on-error: true
+      # isbank.com.tr'ye giden adımlar her saat değil, günde iki pencerede çalışır (İstanbul 09-10 ve 14-15).
+      - name: Banka sitesi penceresi mi?
+        id: pencere
+        run: |
+          H=$(TZ=Europe/Istanbul date +%H)
+          case "$H" in 09|10|14|15) echo "acik=1" >> "$GITHUB_OUTPUT" ;; *) echo "acik=0" >> "$GITHUB_OUTPUT" ;; esac
+          echo "İstanbul saati $H"
       - name: İş Bankası resmi finansal veriler
+        if: steps.pencere.outputs.acik == '1'
         run: pip install -q openpyxl && python scripts/isbank_finans.py
         continue-on-error: true
-      - name: İş Black ayrıcalıkları (günlük kontrol)
+      - name: İş Black ayrıcalıkları (günde iki kez)
+        if: steps.pencere.outputs.acik == '1'
         run: python scripts/isbank_black.py
         continue-on-error: true
       - name: Piyasa (kur ve maden)
