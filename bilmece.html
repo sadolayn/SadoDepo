@@ -213,46 +213,46 @@ const halka = (L) => { const n = L.length, c = 90, R = 66; let s = `<circle cx="
 // ---------- Bilmeceler ----------
 // t: tür · p: bilmece · c: cevap · i: ipucu · a: açıklama
 const SEV = [
-  { t: "seri", p: "2, 5, 11, 23, 47, ?", c: 95, i: "Her sayıyı ikiyle çarp, sonra bir şey ekle.", a: "Her sayı: önceki × 2 + 1 → 47 × 2 + 1 = 95" },
-  { t: "islem", p: "(1 − ½) × (1 − ⅓) × (1 − ¼) × … × (1 − 1/100) = 1 / ?", c: 100, i: "Her parantezi kesir olarak yaz: ½ × ⅔ × ¾ …", a: "½ × ⅔ × ¾ × … × 99/100 → paylar ve paydalar birbirini götürür, geriye 1/100 kalır" },
-  { t: "esle", p: ["3 → 8", "5 → 24", "7 → 48", "9 → ?"], c: 80, i: "Sayının karesine bak.", a: "Karesinin 1 eksiği: 9 × 9 − 1 = 80" },
-  { t: "sekil", p: [["kare", "+", "ucgen", "=", "13"], ["kare", "−", "ucgen", "=", "5"], ["kare", "×", "ucgen", "=", "?"]], c: 36, i: "İlk iki satırı alt alta topla.", a: "2 kare = 18 → kare = 9, üçgen = 4 → 9 × 4 = 36" },
-  { t: "seri", p: "7, 10, 8, 11, 9, 12, ?", c: 10, i: "Bir artıyor, bir azalıyor.", a: "+3, −2, +3, −2… → 12 − 2 = 10" },
-  { t: "soru", p: "1 × 2 × 3 × … × 25 sayısının sonunda kaç tane 0 var?", c: 6, i: "Her 0 bir 2 × 5 ikilisinden gelir. 2 bol, 5'leri say.", a: "5, 10, 15, 20 birer tane 5 verir, 25 = 5 × 5 iki tane → toplam 6 sıfır" },
-  { t: "ucgen", p: [[5, 3, 7], [6, 4, 14], [7, 5, "?"]], c: 23, i: "Çarpımla toplamı karşılaştır.", a: "Çarpım − toplam: 7 × 5 − (7 + 5) = 35 − 12 = 23" },
-  { t: "seri", p: "0, 3, 8, 15, 24, ?", c: 35, i: "1, 4, 9, 16, 25 dizisine benziyor mu?", a: "Kare sayıların 1 eksiği: 6 × 6 − 1 = 35" },
-  { t: "soru", p: "1'den 100'e kadar bütün sayılar yazılırken kaç tane 9 rakamı kullanılır?", c: 20, i: "Birler basamağındaki ve onlar basamağındaki 9'ları ayrı say.", a: "Birler basamağında 10 tane (9, 19 … 99), onlar basamağında 10 tane (90–99) → 20" },
-  { t: "sekil", p: [["daire", "+", "daire", "+", "kare", "=", "20"], ["daire", "+", "kare", "+", "kare", "=", "22"], ["daire", "+", "kare", "=", "?"]], c: 14, i: "İki satırı topla, kaç daire ve kaç kare olur?", a: "Toplayınca 3 daire + 3 kare = 42 → daire + kare = 14" },
-  { t: "seri", p: "1, 2, 4, 7, 11, 16, ?", c: 22, i: "Aradaki farklar: 1, 2, 3, 4…", a: "Farklar birer artıyor: 16 + 6 = 22" },
-  { t: "soru", p: "5 makine 5 dakikada 5 parça üretiyor. 100 makine 100 parçayı kaç dakikada üretir?", c: 5, i: "Bir makine bir parçayı kaç dakikada üretiyor?", a: "Her makine 1 parçayı 5 dakikada üretir; 100 makine aynı anda 100 parça → 5 dakika" },
-  { t: "kare", p: 3, c: 14, i: "1×1, 2×2 ve 3×3 kareleri ayrı ayrı say.", a: "9 küçük + 4 orta + 1 büyük = 14 kare" },
-  { t: "esle", p: ["21 → 3", "47 → 11", "385 → 16", "999 → ?"], c: 27, i: "Rakamlarla bir işlem yapılıyor.", a: "Rakamların toplamı: 9 + 9 + 9 = 27" },
-  { t: "islem", p: "1 + 2 + 3 + … + 100 = ?", c: 5050, i: "Baştan ve sondan eşleştir: 1 + 100, 2 + 99…", a: "50 çift, her biri 101 → 50 × 101 = 5050" },
-  { t: "seri", p: "3, 6, 18, 72, ?", c: 360, i: "Çarpan her seferinde değişiyor.", a: "× 2, × 3, × 4, × 5 → 72 × 5 = 360" },
-  { t: "piramit", p: [["30"], ["", ""], ["5", "?", "9"]], c: 8, i: "Ortadaki kutuları harflerle yaz: tepe = 5 + 2 × ? + 9", a: "Tepe = 5 + 2 × ? + 9 = 30 → 2 × ? = 16 → ? = 8" },
-  { t: "soru", p: "Bir salyangoz 10 metrelik kuyunun dibinde. Gündüz 3 m tırmanıyor, gece 2 m kayıyor. Kaçıncı gün kuyudan çıkar?", c: 8, i: "Son gün gece kaymaya fırsat bulamaz.", a: "Her gün net 1 m: 7. gecenin sonunda 7 m'de; 8. gündüz 3 m tırmanıp çıkar" },
-  { t: "ucgen", p: [[7, 3, 40], [9, 4, 65], [8, 5, "?"]], c: 39, i: "Üstteki sayıların karelerine bak.", a: "Karelerin farkı: 8 × 8 − 5 × 5 = 64 − 25 = 39" },
-  { t: "seri", p: "1, 3, 4, 7, 11, 18, ?", c: 29, i: "Fibonacci'ye benziyor.", a: "Her sayı önceki ikisinin toplamı: 11 + 18 = 29" },
-  { t: "soru", p: "Bir baba 36, oğlu 6 yaşında. Kaç yıl sonra babanın yaşı oğlunun yaşının 4 katı olur?", c: 4, i: "x yıl sonra: 36 + x = 4 × (6 + x)", a: "36 + x = 24 + 4x → 12 = 3x → x = 4 (baba 40, oğul 10)" },
-  { t: "esle", p: ["2 → 9", "3 → 28", "4 → 65", "5 → ?"], c: 126, i: "Sayıyı kendisiyle üç kez çarp.", a: "Küpünün 1 fazlası: 5 × 5 × 5 + 1 = 126" },
-  { t: "dikdortgen", p: [2, 3], c: 18, i: "Yatayda 3, dikeyde 4 çizgi var; her dikdörtgen 2 yatay ve 2 dikey çizgi seçer.", a: "3 yatay çizgiden 2'si (3 yol) × 4 dikey çizgiden 2'si (6 yol) = 18" },
-  { t: "soru", p: "10 kişi birbiriyle birer kez tokalaşıyor. Toplam kaç tokalaşma olur?", c: 45, i: "Her kişi 9 kişiyle tokalaşır ama her tokalaşma iki kez sayılır.", a: "10 × 9 ÷ 2 = 45" },
-  { t: "seri", p: "2, 12, 36, 80, ?", c: 150, i: "1×1×2, 2×2×3 …", a: "n × n × (n + 1): 5 × 5 × 6 = 150" },
-  { t: "sekil", p: [["yildiz", "×", "yildiz", "=", "49"], ["karo", "−", "yildiz", "=", "5"], ["karo", "×", "yildiz", "−", "karo", "=", "?"]], c: 72, i: "Hangi sayı kendisiyle çarpılınca 49 eder?", a: "Yıldız = 7, karo = 12 → 12 × 7 − 12 = 72" },
-  { t: "soru", p: "Bir sınıfta 30 öğrenci var. 18'i futbol, 15'i basketbol oynuyor; 5'i hiçbirini oynamıyor. Kaç öğrenci ikisini de oynuyor?", c: 8, i: "Spor yapan kaç kişi var? 18 + 15 bundan ne kadar fazla?", a: "Spor yapan 25 kişi; 18 + 15 = 33 → 33 − 25 = 8 kişi ikisini de oynuyor" },
-  { t: "soru", p: "Saat 3:30'da akrep ile yelkovan arasındaki dar açı kaç derecedir?", c: 75, i: "Yelkovan 6'da; akrep 3 ile 4'ün tam ortasında.", a: "Yelkovan 180°, akrep 90° + 15° = 105° → 180 − 105 = 75°" },
-  { t: "tablo", p: [[8, "", 6], ["", 5, ""], [4, "?", 2]], c: 9, i: "Her satır, sütun ve köşegenin toplamı aynı. Köşegen 8 + 5 + 2 kaç?", a: "Toplam 15 → üst orta 15 − 8 − 6 = 1 → orta sütun 1 + 5 + ? = 15 → 9" },
-  { t: "ucgenSay", p: 3, c: 13, i: "Hem yukarı bakan hem aşağı bakan üçgenleri say; büyükleri unutma.", a: "Yukarı bakan: 6 küçük + 3 orta + 1 büyük = 10, aşağı bakan 3 → 13" },
-  { t: "soru", p: "Bir kitabın sayfalarını numaralamak için toplam 192 rakam kullanıldı. Kitap kaç sayfadır?", c: 100, i: "1–9 arası 9 rakam, 10–99 arası kaç rakam?", a: "1–9: 9 rakam, 10–99: 180 rakam → 189; kalan 3 rakam 100. sayfa" },
-  { t: "seri", p: "1, 4, 27, 256, ?", c: 3125, i: "1¹, 2², 3³ …", a: "Her sayı kendi kuvveti: 5⁵ = 3125" },
-  { t: "soru", p: "1 ile 50 arasındaki asal sayıların toplamı kaçtır?", c: 328, i: "2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47", a: "15 asal sayının toplamı 328" },
-  { t: "soru", p: "Kenarı 3 cm olan bir küpün dışı boyanıyor, sonra 1 cm'lik küplere kesiliyor. Kaç küpün tam 2 yüzü boyalıdır?", c: 12, i: "Köşeler 3 yüzü, kenar ortaları 2 yüzü boyalı.", a: "Küpün 12 kenarının her birinin ortasında 1 küp → 12" },
-  { t: "soru", p: "İş Bankası 1924'te kuruldu. 1, 9, 2, 4 rakamlarını birer kez kullanarak yazılabilecek en büyük asal sayı hangisidir?", c: 9421, i: "En büyük sayıdan başla, asal mı diye bak.", a: "Akla ilk gelen en büyük sayı 9421, gerçekten de asal 🙂" },
-  { t: "kare", p: 4, c: 30, i: "1×1, 2×2, 3×3 ve 4×4 karelerin hepsi.", a: "16 + 9 + 4 + 1 = 30 kare" },
-  { t: "soru", p: "Bir sayı 2'ye, 3'e, 4'e, 5'e ve 6'ya bölündüğünde hep 1 kalıyor. Bu özellikteki 1'den büyük en küçük sayı kaçtır?", c: 61, i: "2, 3, 4, 5 ve 6'ya tam bölünen en küçük sayıyı bul.", a: "En küçük ortak kat 60 → 60 + 1 = 61 (üstelik asal)" },
-  { t: "islem", p: "8² + 15² = ?²", c: 17, i: "3² + 4² = 5² gibi.", a: "64 + 225 = 289 = 17 × 17" },
-  { t: "islem", p: "2¹⁰ − 2⁹ = ?", c: 512, i: "2¹⁰, 2⁹'un iki katı.", a: "2¹⁰ − 2⁹ = 2⁹ × (2 − 1) = 512" },
-  { t: "seri", p: "1, 11, 21, 1211, 111221, ?", c: 312211, i: "Bir önceki sayıyı yüksek sesle oku: \"bir tane 1\" → 11 …", a: "Okuyarak say: 111221 = üç 1, iki 2, bir 1 → 312211" },
+  { t: "seri", p: "3, 4, 8, 17, 33, 58, ?", c: 94, i: "Ardışık farklara bak: 1, 4, 9 …", a: "Farklar kare sayılar: 1, 4, 9, 16, 25, 36 → 58 + 36 = 94" },
+  { t: "esle", p: ["23 → 30", "34 → 84", "45 → 180", "56 → ?"], c: 330, i: "Rakamları hem topla hem çarp.", a: "(Rakam toplamı) × (rakam çarpımı): 11 × 30 = 330" },
+  { t: "sekil", p: [["kare", "+", "daire", "−", "ucgen", "=", "12"], ["daire", "×", "ucgen", "−", "kare", "=", "19"], ["ucgen", "×", "ucgen", "+", "kare", "=", "25"], ["kare", "×", "daire", "−", "ucgen", "×", "ucgen", "=", "?"]], c: 47, i: "İlk satırdan kareyi çek, diğerlerine koy.", a: "Kare = 9, daire = 7, üçgen = 4 → 63 − 16 = 47" },
+  { t: "seri", p: "2, 3, 7, 22, 89, 446, ?", c: 2677, i: "Çarpan her adımda bir artıyor, sonra hep aynı şey ekleniyor.", a: "× 1 + 1, × 2 + 1, × 3 + 1 … → 446 × 6 + 1 = 2677" },
+  { t: "soru", p: "1'den 1000'e kadar kaç sayının rakamları toplamı tam 10'dur?", c: 63, i: "Tek basamaklılar olmaz. İki basamaklıları, sonra üç basamaklıları ayrı say.", a: "İki basamaklı 9 (19, 28 … 91) + üç basamaklı 54 = 63" },
+  { t: "ucgen", p: [[7, 3, 43], [9, 5, 61], [8, 6, 34], [10, 4, "?"]], c: 88, i: "Karelerin farkına bak, sonra bir şey ekle.", a: "a² − b² + b: 100 − 16 + 4 = 88" },
+  { t: "soru", p: "1'den 2026'ya kadar bütün sayılar yan yana yazılıyor: 123456789101112… Toplam kaç rakam kullanılır?", c: 6997, i: "Tek, iki, üç ve dört basamaklıları ayrı ayrı hesapla.", a: "9 + 180 + 2700 + 1027 × 4 = 6997" },
+  { t: "seri", p: "1, 2, 3, 7, 10, 71, 81, ?", c: 5752, i: "Her sayı önceki ikisinden çıkıyor: bir toplama, bir çarpma…", a: "Sırayla: önceki ikisinin toplamı, sonra çarpımının 1 fazlası → 81 × 71 + 1 = 5752" },
+  { t: "soru", p: "Rakamları soldan sağa doğru kesin olarak büyüyen (ör. 147, 389) kaç tane üç basamaklı sayı vardır?", c: 84, i: "1–9 arasından 3 farklı rakam seç; sıralamanın tek bir yolu var.", a: "9 rakamdan 3'ünü seçmek: 9 × 8 × 7 ÷ 6 = 84" },
+  { t: "karo", p: [[6, 2, 4, 3, 20], [7, 5, 3, 2, 15], [9, 4, 5, 6, "?"]], c: 25, i: "Karşılıklı köşeleri çarp, sonra dikey farkı ekle.", a: "üst × alt − sağ × sol + (üst − alt): 45 − 24 + 4 = 25" },
+  { t: "soru", p: "Toplamı 20 olan pozitif tam sayılar seçiyorsun (kaç tane istersen). Bunların çarpımı en fazla kaç olabilir?", c: 1458, i: "Büyük sayılar değil, küçük parçalar kazandırır. 3 en verimli parça.", a: "3 × 3 × 3 × 3 × 3 × 3 × 2 = 1458" },
+  { t: "seri", p: "3, 8, 24, 48, 120, 168, ?", c: 288, i: "Her sayıya 1 ekle; ne görüyorsun?", a: "Asal sayıların karesinin 1 eksiği: 17 × 17 − 1 = 288" },
+  { t: "soru", p: "<b style=\"font-weight:500;letter-spacing:2px\">SADOLAYN</b> kelimesinin 8 harfinin hepsi kullanılarak kaç farklı dizilim yazılabilir?", c: 20160, i: "8 harfin 8! dizilimi var ama iki A yer değiştirince aynı kelime çıkıyor.", a: "8! ÷ 2 = 40320 ÷ 2 = 20160" },
+  { t: "soru", p: "7<sup>2026</sup> sayısının son iki basamağı nedir?", c: 49, i: "7⁴ = 2401; son iki basamağı 01.", a: "2026 = 4 × 506 + 2 → 7²⁰²⁶ sonu 7² ile aynı: 49" },
+  { t: "piramit", p: [["40"], ["", ""], ["", "", ""], ["4", "?", "2", "9"]], c: 7, i: "Tepe = en alttakilerin 1, 3, 3, 1 katlarının toplamı.", a: "40 = 4 + 3 × ? + 6 + 9 → 3 × ? = 21 → ? = 7" },
+  { t: "soru", p: "Rakamlarının çarpımının tam 2 katına eşit olan iki basamaklı sayı kaçtır?", c: 36, i: "10a + b = 2ab; b'nin çift olması gerek.", a: "36 = 2 × (3 × 6). Başka böyle bir sayı yok." },
+  { t: "halka", p: [5, 10, 7, 14, 11, 22, "?"], c: 19, i: "İki işlem sırayla tekrar ediyor.", a: "× 2, − 3, × 2, − 3 … → 22 − 3 = 19" },
+  { t: "soru", p: "Bir saat her saatte 3 dakika ileri gidiyor. Gece 12'de doğru ayarlandı. En az kaç saat sonra yine doğru saati gösterir? (12 saatlik kadran)", c: 240, i: "Tekrar doğru görünmesi için tam 12 saat (720 dk) ileri kaçmalı.", a: "720 ÷ 3 = 240 saat (10 gün)" },
+  { t: "tablo", p: [[2, 3, 19], [4, 1, 21], [5, 6, "?"]], l: "Her satırda aynı kural", c: 91, i: "(a + b)²'den bir şey çıkıyor.", a: "a² + ab + b²: 25 + 30 + 36 = 91" },
+  { t: "islem", p: "2026 × 2026 − 2025 × 2027 = ?", c: 1, i: "2025 × 2027'yi (2026 − 1) × (2026 + 1) diye yaz.", a: "(2026 − 1)(2026 + 1) = 2026² − 1 → sonuç 1" },
+  { t: "soru", p: "Sadolayn'ın kumbarasındaki para 3'e bölününce 2, 5'e bölününce 3, 7'ye bölününce 4 kalıyor ve 11'e tam bölünüyor. 1000'den az. Kumbarada kaç lira var?", c: 473, i: "Önce 3, 5, 7 koşullarını sağlayan en küçük sayıyı bul; sonra 105'er ekle.", a: "53, 158, 263 … dizisinde 11'e bölünen: 473" },
+  { t: "kosegen", p: [[5, 2, 1, 3, 55], [6, 3, 2, 4, 75], [7, 1, 4, 5, "?"]], c: 119, i: "Çaprazları topla, sonra karelerine bak.", a: "(sol üst + sağ alt)² − (sağ üst + sol alt)²: 144 − 25 = 119" },
+  { t: "seri", p: "1, 3, 8, 33, 164, 985, ?", c: 6894, i: "Çarpan 2, 3, 4… ve bir artı bir eksi.", a: "× 2 + 1, × 3 − 1, × 4 + 1, × 5 − 1 … → 985 × 7 − 1 = 6894" },
+  { t: "soru", p: "Kenar uzunlukları tam sayı ve çevresi 30 cm olan kaç farklı üçgen vardır? (Aynı kenarlar farklı sırada sayılmaz.)", c: 19, i: "a ≤ b ≤ c ve a + b > c; en uzun kenar 15'ten kısa olmalı.", a: "En uzun kenar 10, 11, 12, 13, 14 olabilir: 1 + 2 + 4 + 5 + 7 = 19" },
+  { t: "esle", p: ["7 ⊞ 3 = 4010", "6 ⊞ 2 = 328", "9 ⊞ 4 = 6513", "8 ⊞ 5 = ?"], c: 3913, i: "Sonucu ikiye ayır: 40 | 10", a: "Karelerin farkı | toplam: 64 − 25 = 39, 8 + 5 = 13 → 3913" },
+  { t: "soru", p: "Ali, Veli ve Efe'nin yaşları toplamı 72. Ali, Veli'den ne kadar büyükse Veli de Efe'den o kadar büyük. Ali'nin yaşı Efe'nin yaşının 2 katından 6 fazla. Efe kaç yaşında?", c: 14, i: "Yaşlar eşit aralıklı: Veli tam ortada, yani 72 ÷ 3.", a: "Veli 24 → Ali + Efe = 48, Ali = 2 × Efe + 6 → Efe = 14" },
+  { t: "ucgenM", p: [[5, 2, 3, 19], [7, 4, 6, 25], [9, 8, 5, "?"]], c: 41, i: "Tepe kendiyle çarpılıyor.", a: "tepe² − sol × sağ: 81 − 40 = 41" },
+  { t: "soru", p: "1'den 2026'ya kadar (2026 dahil) kaç sayı 3'e, 5'e ya da 7'ye bölünür?", c: 1100, i: "Ekle-çıkar: 3'e, 5'e, 7'ye bölünenleri topla; ikişer ortak olanları çıkar; üçünün ortağını geri ekle.", a: "675 + 405 + 289 − 135 − 96 − 57 + 19 = 1100" },
+  { t: "cember", p: [[[2, 3, 4, 1], 18], [[3, 5, 2, 2], 25], [[4, 6, 3, 5], "?"]], c: 51, i: "Komşu dilimleri ikişer ikişer çarp; bir de karşılıklı olanlar var.", a: "üst×sağ + alt×sol + üst×alt: 24 + 15 + 12 = 51" },
+  { t: "soru", p: "2'nin kuvvetleri yazılıyor: 2, 4, 8, 16, 32 … 20 basamaklı ilk sayı 2'nin kaçıncı kuvvetidir?", c: 64, i: "2¹⁰ = 1024 ≈ 10³. 20 basamaklı demek en az 10¹⁹.", a: "2⁶³ ≈ 9,2 × 10¹⁸ (19 basamak), 2⁶⁴ ≈ 1,8 × 10¹⁹ → 64" },
+  { t: "soru", p: "Dijital bir saat 00:00'dan 23:59'a kadar her dakikayı gösteriyor. Bunlardan kaçında akrep ile yelkovan arasında tam 90° vardır? (Yalnızca tam dakikalar)", c: 4, i: "Akrep her dakika yarım derece kayar. Açı = |30 × saat − 5,5 × dakika|. Bu tam 90 ya da 270 olabiliyor mu?", a: "Gün boyunca yalnızca 4 dakikada tam dik açı oluşur (03:00, 09:00, 15:00, 21:00 dahil)" },
+  { t: "soru", p: "Son rakamı 6 olan bir sayının 6'sını en başa taşıyınca sayı tam 4 katına çıkıyor. Bu özellikteki en küçük sayı kaç?", c: 153846, i: "Sayıyı 4'le çarpıp son rakamı bir sonraki adıma taşıyarak sağdan sola kur: 6 × 4 = 24 → yeni son rakam 4 …", a: "153846 × 4 = 615384" },
+  { t: "soru", p: "12 basamaklı bir merdiveni her adımda 1, 2 ya da 3 basamak çıkarak kaç farklı şekilde çıkabilirsin?", c: 927, i: "n. basamağa gelmenin yolu = (n−1) + (n−2) + (n−3) basamağa gelme yolları.", a: "1, 1, 2, 4, 7, 13, 24, 44, 81, 149, 274, 504, 927" },
+  { t: "tablo", p: [[3, 2, 17], [4, 3, 145], [5, 2, 57], [6, 2, "?"]], l: "Her satırda aynı kural", c: 100, i: "Sayılar birbirinin üssü oluyor.", a: "aᵇ + bᵃ: 6² + 2⁶ = 36 + 64 = 100" },
+  { t: "sekil", p: [["kare", "+", "daire", "+", "ucgen", "=", "19"], ["daire", "×", "yildiz", "+", "kare", "=", "18"], ["ucgen", "+", "kare", "−", "yildiz", "×", "yildiz", "=", "6"], ["kare", "×", "daire", "−", "ucgen", "=", "15"], ["kare", "×", "ucgen", "+", "daire", "×", "yildiz", "=", "?"]], c: 66, i: "İlk iki satırdaki kareyi eşitle; yıldıza 3 dersen ne olur?", a: "Kare 6, daire 4, üçgen 9, yıldız 3 → 54 + 12 = 66" },
+  { t: "soru", p: "Üç basamaklı bir sayıdan, rakamları ters çevrilmiş hâlini çıkarınca 594 kalıyor. Rakamları toplamı 17, ortadaki rakamı 7. Sayı kaç?", c: 872, i: "abc − cba = 99 × (a − c). 594 ÷ 99 = ?", a: "a − c = 6, a + c = 10 → a = 8, c = 2 → 872" },
+  { t: "soru", p: "Bir havuzu A musluğu 6 saatte, B musluğu 10 saatte dolduruyor. C gideri dolu havuzu 15 saatte boşaltıyor. Üçü birden açılınca boş havuz kaç saatte dolar?", c: 5, i: "Bir saatte havuzun ne kadarı doluyor? 1/6 + 1/10 − 1/15", a: "5/30 + 3/30 − 2/30 = 6/30 = 1/5 → 5 saat" },
+  { t: "soru", p: "Dört basamaklı sayıların kaç tanesinde en az bir tane 7 rakamı vardır?", c: 3168, i: "Tersinden say: hiç 7 olmayanları bul, toplamdan çıkar.", a: "9000 − 8 × 9 × 9 × 9 = 9000 − 5832 = 3168" },
+  { t: "seri", p: "1, 2, 4, 8, 16, 23, 28, ?", c: 38, i: "İkiye katlamıyor! 16'dan 23'e nasıl gidildi? 1 + 6 = 7", a: "Her sayıya kendi rakamları toplamı ekleniyor: 28 + 2 + 8 = 38" },
+  { t: "soru", p: "1'den 9'a kadar bütün rakamları birer kez kullanarak <b>üç basamaklı + üç basamaklı = üç basamaklı</b> bir toplama yazıyorsun. Sonuç en fazla kaç olabilir?", c: 981, i: "Rakamlar toplamı 45; elde sayısı işin anahtarı. Sonucun rakamları toplamı 45'in yarısına yakın olmalı.", a: "Örnek: 235 + 746 = 981 → en büyük sonuç 981" },
   // ---------- 41–80: Gizli Kural ----------
   { t: "karo", p: [[5, 2, 4, 3, 14], [6, 4, 7, 5, 22], [8, 6, 9, 7, "?"]], c: 30, i: "Üstle altı çarp, sağla solu çarp.", a: "Dikeylerin çarpımı − yataylarınki: 8 × 9 − 6 × 7 = 72 − 42 = 30" },
   { t: "halka", p: [1, 2, 5, 10, 13, 26, "?"], c: 29, i: "Bir çarp, bir ekle.", a: "Saat yönünde: × 2, + 3, × 2, + 3… → 26 + 3 = 29" },
@@ -335,6 +335,7 @@ const ISL = [
 const ST = Object.assign({ mod: "b", i: 0, acik: 0, coz: {}, ip: {}, isq: {}, isl: null }, oku("bilmeceSt2", {}));
 if (!ST.isl) ST.isl = { i: 0, acik: 0, coz: {}, ip: {}, isq: {}, ac: {} };
 if (!ST.isl.ac) ST.isl.ac = {};
+if (ST.v !== 2) { for (let k = 0; k < 40; k++) { delete ST.coz[k]; delete ST.ip[k]; delete ST.isq[k]; } ST.v = 2; } // 23.10.2026: 1–40 yeni, zor bilmeceler
 if (ST.isl.v !== 2) ST.isl = { i: 0, acik: 0, coz: {}, ip: {}, isq: {}, ac: {}, v: 2 }; // 23.10.2026: yeni, daha zor 30 bulmaca
 const P = () => (ST.mod === "i" ? ST.isl : ST);
 const TOP = () => (ST.mod === "i" ? ISL.length : SEV.length);
@@ -554,18 +555,27 @@ function isqSor() {
   };
 }
 setInterval(kilitIsaret, 15000);
+// Sadolayn IQ (eğlence amaçlı): ipucusuz çözüm tam puan, ipuculu yarım puan
+function iq() {
+  const say = (p, v) => Object.values(p.coz).filter((x) => x === v).length;
+  const ok = say(ST, "ok") + say(ST.isl, "ok"), ip = say(ST, "ip") + say(ST.isl, "ip");
+  if (ok + ip < 3) return "";
+  const n = Math.round(85 + (75 * (ok + ip / 2)) / (SEV.length + ISL.length));
+  const ad = n >= 145 ? "Einstein bile kıskanır 🤯" : n >= 130 ? "Dahi sınırında 🧠" : n >= 115 ? "Keskin zekâ ⚡" : n >= 100 ? "Isınıyor 🔥" : "Daha yeni başladın 🙂";
+  return `<div class="note" style="margin:0 0 10px"><b style="font-size:17px;color:var(--gold, #e0a24f)">🧠 Sadolayn IQ: ${n}</b><br>${ad} · <small>eğlence amaçlı</small></div>`;
+}
 function seviyeler() {
   const p = P(), n = TOP(), ok = Object.values(p.coz).filter((x) => x === "ok").length, ip = Object.values(p.coz).filter((x) => x === "ip").length;
   const btn = (i) => { const c = p.coz[i]; return `<button type="button" data-i="${i}" class="${c === "ok" ? "ok" : c === "ip" ? "ip" : ""}${i === p.i ? " cur" : ""}"${i > p.acik ? " disabled" : ""}>${i + 1}${c === "ip" ? "<i>💡</i>" : i > p.acik ? "<i>🔒</i>" : ""}</button>`; };
   const grup = (a, b, bas) => `${bas ? `<div class="lvh">${bas}</div>` : ""}<div class="lv">${Array.from({ length: b - a }, (_, k) => btn(a + k)).join("")}</div>`;
-  pencere(`<h3>${ST.mod === "i" ? "İşlem Bulmacası" : "Seviyeler"}</h3>${ST.mod === "i" ? grup(0, n) : grup(0, 40, "1 – 40") + grup(40, n, "41 – 80 · GİZLİ KURAL")}
+  pencere(`<h3>${ST.mod === "i" ? "İşlem Bulmacası" : "Seviyeler"}</h3>${iq()}${ST.mod === "i" ? grup(0, n) : grup(0, 40, "1 – 40") + grup(40, n, "41 – 80 · GİZLİ KURAL")}
     <div class="note">✓ ${ok} kendin çözdün · 💡 ${ip} ipucuyla<br>Bilinmeyen seviyeden sonrakine geçilmez</div><button class="btn" id="kp" type="button">Kapat</button>`);
   $("box").querySelectorAll("[data-i]").forEach((b) => (b.onclick = () => { p.i = +b.dataset.i; kaydet(); kapat(); ciz(); }));
   $("kp").onclick = kapat;
 }
 function bitti() {
   const p = P(), ok = Object.values(p.coz).filter((x) => x === "ok").length;
-  pencere(`<h3>🏆 Hepsini bitirdin!</h3><p>${TOP()} ${ST.mod === "i" ? "işlem bulmacasının" : "bilmecenin"} <b>${ok}</b> tanesini ipucusuz çözdün. Yeni paketler yakında 🙂</p>
+  pencere(`<h3>🏆 Hepsini bitirdin!</h3><p>${TOP()} ${ST.mod === "i" ? "işlem bulmacasının" : "bilmecenin"} <b>${ok}</b> tanesini ipucusuz çözdün. Yeni paketler yakında 🙂</p>${iq()}
     <button class="btn" id="kp" type="button">Seviyelere bak</button>${ST.mod === "i" ? "" : `<button class="btn" id="gec" type="button">İşlem Bulmacası'na geç</button>`}<div class="imza">Bilmeceler ✍️ Sadolayn</div>`);
   $("kp").onclick = seviyeler;
   if ($("gec")) $("gec").onclick = () => { kapat(); ST.mod = "i"; kaydet(); ciz(); };
