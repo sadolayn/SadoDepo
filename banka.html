@@ -303,6 +303,17 @@
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .stick > :last-child { margin-bottom: 0; }
+  /* Aşağı kaydırınca menü tek satıra iner: seçili hesap + "Menü" düğmesi; dokununca tam menü açılır */
+  .mini { display: none; align-items: center; gap: 10px; }
+  .mini .ev { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 11px; background: #161616; border: 1px solid #e0a24f; font-size: 19px; text-decoration: none; flex: 0 0 38px; }
+  .mini .cur { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mini .cur i { font-style: normal; font-size: 22px; }
+  .mini button { flex: 0 0 auto; padding: 9px 13px; border-radius: 11px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 13.5px; font-weight: 700; }
+  .stick.stuck { padding-top: 7px; padding-bottom: 7px; }
+  .stick.stuck .mini { display: flex; }
+  .stick.stuck:not(.open) header, .stick.stuck:not(.open) > .note, .stick.stuck:not(.open) .tabs { display: none; }
+  .stick.stuck.open .tabs { margin-top: 10px; }
+  .stick.stuck.open header, .stick.stuck.open > .note { display: none; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -314,6 +325,7 @@
 <body>
 <div class="wrap">
   <div class="stick">
+  <div class="mini"><a class="ev" href="index.html" aria-label="Ana sayfa">🏠</a><div class="cur" id="miniCur"></div><button type="button" id="miniBtn">Menü ▾</button></div>
   <header>
     <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
     <h1>🏦 Bankacılık</h1>
@@ -2560,12 +2572,15 @@ fyKontrol();
 ozetBagla("b", () => bchOzet); ozetBagla("mv", () => mevOzet); ozetBagla("k", () => kkOzet); ozetBagla("tr", () => trOzet);
 $("tr_pdf").addEventListener("click", (e) => trPdf && planPdf(trPdf, e.currentTarget));
 // ---------- Sekmeler ----------
+function miniGuncelle() { const a = document.querySelector(".tabs button.active"); if (!a) return; $("miniCur").innerHTML = `<i>${a.querySelector("i").textContent}</i><span>${a.querySelector("span").innerHTML.replace(/<br\s*\/?>/gi, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ")}</span>`; }
+$("miniBtn").addEventListener("click", () => { const st = document.querySelector(".stick"), o = st.classList.toggle("open"); $("miniBtn").textContent = o ? "Kapat ▴" : "Menü ▾"; });
 document.querySelectorAll(".tabs button").forEach((b) => {
   b.addEventListener("click", () => {
     document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
     document.querySelectorAll(".panel").forEach((x) => x.classList.remove("active"));
     b.classList.add("active");
     $(b.dataset.tab).classList.add("active");
+    miniGuncelle(); const stk = document.querySelector(".stick"); if (stk.classList.contains("open")) { stk.classList.remove("open"); $("miniBtn").textContent = "Menü ▾"; window.scrollTo({ top: 60, behavior: "instant" }); }
     try { localStorage.setItem("bankaTab", b.dataset.tab); } catch (e) {}
   });
 });
@@ -2573,6 +2588,7 @@ try {
   const t = (location.hash.slice(1) && document.querySelector(`.tabs button[data-tab="${location.hash.slice(1)}"]`)) ? location.hash.slice(1) : localStorage.getItem("bankaTab");
   if (t) document.querySelector(`.tabs button[data-tab="${t}"]`)?.click();
 } catch (e) {}
+miniGuncelle();
 
 document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventListener("input", calcBCH));
 (function () { const t = new Date(); $("t_bas").value = ymd(t); })();
@@ -2602,7 +2618,7 @@ document.querySelectorAll("#tasit input").forEach((e) => e.addEventListener("inp
 calcBCH(); calcMev(); calcTK(); calcKK(); calcKonut(); calcTarim(); calcTic(); calcTasit(); calcCek(); calcVergi(); ["t", "k2", "tc", "ta"].forEach(vkRender);
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
-<script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();
+<script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){var st=window.scrollY>4;s.classList.toggle("stuck",st);if(!st){s.classList.remove("open");document.getElementById("miniBtn").textContent="Menü ▾";}};window.addEventListener("scroll",f,{passive:true});f();
 var h=function(){document.documentElement.style.setProperty("--stickH",s.offsetHeight+"px")};h();window.addEventListener("resize",h);if(window.ResizeObserver)new ResizeObserver(h).observe(s);})();</script>
 <script src="faizhatira.js"></script>
 </body>
