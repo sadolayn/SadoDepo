@@ -28,7 +28,7 @@
   :root { --bg:#000; --card:#0d0d0d; --ink:#f2f2f2; --muted:#8a8a8a; --accent:#e0a24f; --red:#e0473a; --win:#3fc283; --line:#262626; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); }
-  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 100vh; max-width: 900px; margin: 0 auto; padding: 10px 10px 16px; user-select: none; -webkit-user-select: none; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 100vh; min-height: 100dvh; max-width: 900px; margin: 0 auto; padding: 10px 10px 16px; display: flex; flex-direction: column; user-select: none; -webkit-user-select: none; }
   header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
   header h1 { margin: 0; font-size: 20px; }
   header .hbtn { width: 42px; height: 42px; flex-basis: 42px; font-size: 19px; }
@@ -44,7 +44,7 @@
   .chip { width: 18px; height: 18px; border-radius: 50%; flex: none; box-shadow: inset 0 0 0 2px rgba(0,0,0,.25); }
   /* Tahta yanlardaki boşluğu da kullanır (telefonda ~%4 daha büyük pul) */
   #boardWrap { position: relative; margin: 0 -7px; }
-  #board { width: min(100%, calc((100vh - 250px) * 1.1429)); width: min(100%, calc((100dvh - 250px) * 1.1429)); min-width: 280px; height: auto; display: block; margin: 0 auto; border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,.6); touch-action: none; }
+  #board { width: min(100%, calc((100vh - 250px) * 1)); width: min(100%, calc((100dvh - 250px) * 1)); min-width: 280px; height: auto; display: block; margin: 0 auto; border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,.6); touch-action: none; }
   .status { text-align: center; min-height: 22px; font-size: 14px; margin: 10px 0 8px; color: #e6e6e6; }
   .status b { color: var(--accent); }
   .ctrls { display: flex; gap: 8px; }
@@ -88,6 +88,7 @@
   @keyframes shake { 0%,100% { transform: translate(0,0) rotate(0); } 25% { transform: translate(-3px,2px) rotate(-12deg); } 50% { transform: translate(3px,-2px) rotate(10deg); } 75% { transform: translate(-2px,-1px) rotate(-6deg); } }
   .rolling { animation: shake .12s linear infinite; transform-box: fill-box; transform-origin: center; }
   .footer { text-align: center; font-size: 11px; color: #555; margin-top: 12px; }
+  body > header { margin-top: auto; } body > .footer { margin-bottom: auto; } /* oyun alanı dikeyde ortalı */
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -110,7 +111,7 @@
   <div class="pl r" id="plA"><b id="scA">0</b><div>Sadolayn<small id="pipA">pip 167</small></div><span class="chip" id="chipA"></span></div>
 </div>
 
-<div id="boardWrap"><svg id="board" viewBox="0 0 640 560" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div id="boardWrap"><svg id="board" viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg"></svg></div>
 <div class="status" id="status">Hazır olduğunda başla.</div>
 <div class="ctrls">
   <button id="undoBtn" disabled>↶ Geri al</button>
@@ -330,7 +331,7 @@ const aiColor = () => (COLORS[OPT.col].light ? (OPT.col === "agac" ? "maun" : "m
 let S, dice = [], rem = [], played = [], legal = [], turnStart = null, phase = "idle", sel = null, score = [0, 0], gameNo = 1, starter = 0;
 
 // ---------- Geometri ----------
-const W = 640, H = 560, FR = 6, FRR = 22, BAR = 30; // boy kısaldı, çerçeveler inceldi → pullar büyüdü
+const W = 640, H = 640, FR = 6, FRR = 22, BAR = 30; // boy kısaldı, çerçeveler inceldi → pullar büyüdü
 const HW = (W - FR - FRR - BAR) / 2, PW = HW / 6, R = PW * 0.5, TRI = (H - 2 * FR) * 0.36;
 const xL = FR, xR = FR + HW + BAR;
 function ptCol(i) { // nokta → {x merkez, top}
@@ -479,6 +480,7 @@ function dieSVG(g, x, y, v, s, used, roll, rot) {
 
 let rollingFaces = null, rollWho = "h", aiLast = [], openShow = null, diceOffs = null, cock = null;
 function render() {
+  if (phase === "roll") kaydet("roll"); else if (phase === "human" && turnStart && dice.length === 2) kaydet("human", turnStart);
   const g = $("dyn"); g.innerHTML = "";
   const hc = OPT.col, ac = aiColor();
   const tset = new Set(sel !== null && phase === "human" ? chainsFrom(sel).keys() : []);
@@ -616,6 +618,30 @@ updSndBtn();
 let autoT = null;
 function autoRoll(ms = 1700) { clearTimeout(autoT); autoT = setTimeout(() => { if (phase === "roll" || phase === "opening") humanRoll(); }, ms); }
 
+// ---------- Kaldığın yerden devam (sayfadan çıkınca oyun kaybolmasın) ----------
+const KAYIT = "tavlaKayit";
+function kaydet(ph, st) {
+  try { localStorage.setItem(KAYIT, JSON.stringify({ ph, S: st || S, dice: ph === "human" ? dice : [], score, gameNo, starter, n: OPT.n, t: Date.now() })); } catch (e) {}
+}
+function kayitSil() { try { localStorage.removeItem(KAYIT); } catch (e) {} }
+function devamEt() {
+  let k = null; try { k = JSON.parse(localStorage.getItem(KAYIT) || "null"); } catch (e) {}
+  if (!k || !k.S || !k.S.b || Date.now() - (k.t || 0) > 7 * 864e5) return false; // 7 günden eskiyse yeni maç
+  OPT.n = k.n || OPT.n; score = k.score || [0, 0]; gameNo = k.gameNo || 1; starter = k.starter || 0;
+  dice = []; rem = []; played = []; legal = []; sel = null; aiLast = []; openShow = null; cock = null;
+  S = clone(k.S);
+  if (k.ph === "over") { newGame(); return true; }
+  if (k.ph === "human" && k.dice && k.dice.length === 2) {
+    dice = k.dice.slice(); turnStart = clone(S); rem = diceOf(dice[0], dice[1]); legal = genMoves(S, rem, false);
+    phase = "human"; if (S.bar[0] > 0) sel = 25;
+    render(); status(`Kaldığın yerden devam · Zar: <b>${dice[0]} · ${dice[1]}</b> — pulunu seç`);
+    if (!legal.length || !legal[0].seq.length) setTimeout(endHumanTurn, 1300);
+    return true;
+  }
+  if (k.ph === "ai") { phase = "ai"; render(); status("Kaldığın yerden devam — Sadolayn oynuyor"); setTimeout(aiTurn, 900); return true; }
+  phase = "roll"; render(); status("Kaldığın yerden devam — sıra sende, zarlara dokun"); return true;
+}
+
 // ---------- İnsan hamlesi ----------
 function legalNext() {
   const k = played.length; const out = [];
@@ -699,7 +725,7 @@ function undo() {
   S = clone(turnStart); played = []; rem = diceOf(dice[0], dice[1]); sel = null;
   render(); status(`Zar: <b>${dice[0]} · ${dice[1]}</b> — pulunu seç`);
 }
-function endHumanTurn() { if (phase !== "human") return; phase = "ai"; render(); setTimeout(aiTurn, 500); }
+function endHumanTurn() { if (phase !== "human") return; phase = "ai"; kaydet("ai"); render(); setTimeout(aiTurn, 500); }
 
 // ---------- Zar ----------
 const rnd = () => 1 + Math.floor(Math.random() * 6);
@@ -755,7 +781,7 @@ function openingRoll() {
     starter = a > b ? 0 : 1;
     render();
     status(`${ISIM.ben()} <b>${a}</b> · Sadolayn <b>${b}</b> — ${starter === 0 ? "<b>sen başlıyorsun</b>" : "<b>Sadolayn başlıyor</b>"}`);
-    setTimeout(() => { dice = []; openShow = null; if (starter === 0) { phase = "roll"; render(); status("Sen başlıyorsun — zarlara dokun ya da bekle"); autoRoll(); } else { phase = "ai"; render(); aiTurn(); } }, 1400);
+    setTimeout(() => { dice = []; openShow = null; if (starter === 0) { phase = "roll"; render(); status("Sen başlıyorsun — zarlara dokun ya da bekle"); autoRoll(); } else { phase = "ai"; kaydet("ai"); render(); aiTurn(); } }, 1400);
   });
 }
 
@@ -807,6 +833,7 @@ function gameOver(w) {
   const pts = mars ? 2 : 1;
   score[w] += pts; render(); (w === 0 ? sfx.win : sfx.lose)();
   const matchOver = score[w] >= OPT.n;
+  if (matchOver) kayitSil(); else kaydet("over");
   window.Rapor && Rapor.oyun("tavla", w === 0);
   $("endIco").textContent = w === 0 ? (mars ? "🔥" : "🏆") : (mars ? "😵" : "🎲");
   $("endTitle").textContent = matchOver ? (w === 0 ? "Maçı kazandın!" : "Maçı Sadolayn aldı") : (w === 0 ? (mars ? "Mars ettin!" : "Oyunu kazandın") : (mars ? "Sadolayn mars etti" : "Sadolayn kazandı"));
@@ -820,7 +847,7 @@ function newGame() {
   gameNo = score[0] + score[1] === 0 ? 1 : gameNo + 1;
   phase = "opening"; render(); status("Başlangıç zarı: büyük atan başlar"); autoRoll(900);
 }
-function newMatch() { score = [0, 0]; gameNo = 0; newGame(); gameNo = 1; render(); }
+function newMatch() { kayitSil(); turnStart = null; score = [0, 0]; gameNo = 0; newGame(); gameNo = 1; render(); }
 
 // ---------- Seçenekler ----------
 function openOptions() {
@@ -908,9 +935,10 @@ SVG.addEventListener("pointercancel", () => { drag = null; $("drag").innerHTML =
 drawStatic();
 $("nmH").textContent = ISIM.ben();
 S = startPos(); render();
+const devam = devamEt();
 function tick() { const t = $("clockT"); if (!t) return; const d = new Date(), p = (n) => String(n).padStart(2, "0"); t.textContent = `${p(d.getHours())}:${p(d.getMinutes())}`; $("clockS").textContent = p(d.getSeconds()); $("barDate").textContent = `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()}`; $("barDay").textContent = d.toLocaleDateString("tr-TR", { weekday: "long" }).toLocaleUpperCase("tr-TR"); }
 tick(); setInterval(tick, 1000);
-openOptions();
+if (!devam) openOptions();
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawStatic(); render(); tick(); });
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
