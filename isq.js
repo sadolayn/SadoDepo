@@ -162,7 +162,7 @@ const ISQ_ALL = [].concat(
     ["İş Bankası'nın yurt dışındaki ilk Bankamatik'i hangi şehirde kuruldu?", ["Londra", "Erbil", "Batum", "Bağdat"], 1],
     ["İşCep ile Bankamatik'i birleştiren hizmetin adı nedir?", ["İşCepmatik", "CepATM", "MaxiMatik", "Gişematik"], 0],
     // Gişematik limitleri henüz isbank.com.tr'de yayımlı değil; eklenince kaynak linki konacak (Ekim 2026)
-    ["İş Bankası Gişematik'ten tek seferde en fazla kaç TL para çekilebilir?", ["20.000 TL", "50.000 TL", "120.000 TL", "250.000 TL"], 2],
+    ["İş Bankası Gişematik'ten tek seferde en fazla kaç TL para çekilebilir?", ["20.000 TL", "50.000 TL", "120.000 TL", "250.000 TL"], 2, "2026-10-22"],
     ["İş Bankası Gişematik'e tek seferde en fazla kaç TL para yatırılabilir?", ["100.000 TL", "250.000 TL", "500.000 TL", "1.000.000 TL"], 2],
   ]),
   // --- Bankamatik ve Gişematik: yeni sorular (21 Ekim 2026; isbank.com.tr/bankamatik ve İş Vapur duyurusu) ---
@@ -180,8 +180,8 @@ const ISQ_ALL = [].concat(
     ["Akıllı saatle Bankamatik'ten para çekerken kart şifresi nereye girilir?", ["Bankamatik'in tuş takımına", "Saatin ekranına", "Telefona", "Şifre gerekmez"], 1],
     ["Kartı yanında olmayan müşteri Bankamatik'ten nasıl para çeker?", ["TCKN'sini tuşlayarak", "Bankamatik ekranındaki karekodu İşCep'le okutarak", "Parmak iziyle", "Para çekemez"], 1],
     ["İş Bankası Gişematik cihazları nerede bulunur?", ["Sokaktaki Bankamatik noktalarında", "Şube içinde", "Sadece AVM'lerde", "Sadece havalimanlarında"], 1],
-    ["Şube içindeki Gişematik'ten tek seferde çekilebilen tutar, Bankamatik'teki günlük ücretsiz çekim limitinin kaç katıdır?", ["2 katı", "4 katı", "6 katı", "10 katı"], 2],
-    ["Gişematik'e tek seferde yatırılabilen tutar, Gişematik'ten çekilebilen tutardan ne kadar fazladır?", ["80.000 TL", "250.000 TL", "380.000 TL", "500.000 TL"], 2],
+    ["Şube içindeki Gişematik'ten tek seferde çekilebilen tutar, Bankamatik'teki günlük ücretsiz çekim limitinin kaç katıdır?", ["2 katı", "4 katı", "6 katı", "10 katı"], 2, "2026-10-22"],
+    ["Gişematik'e tek seferde yatırılabilen tutar, Gişematik'ten çekilebilen tutardan ne kadar fazladır?", ["80.000 TL", "250.000 TL", "380.000 TL", "500.000 TL"], 2, "2026-10-22"],
   ], "2026-10-21"),
 
   // --- Ödüller, iştirakler ve kurum ---
