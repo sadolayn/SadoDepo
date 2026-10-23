@@ -620,6 +620,7 @@
       <p class="hint">Araç değerini gir; vade sınırı, en yüksek kredi ve peşinat kendiliğinden çıkar. Faiz oranını yaz.</p>
       <label>Araç</label>
       <div class="seg"><button type="button" id="ta_sifir" class="on">🆕 Sıfır km</button><button type="button" id="ta_ikinci">🔁 İkinci el</button></div>
+      <label class="chk" style="display:flex;align-items:center;gap:10px;margin:10px 0 2px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:rgba(90,209,201,.06);cursor:pointer"><input type="checkbox" id="ta_elek" style="width:20px;height:20px;accent-color:#5ad1c9;margin:0"><span style="color:var(--ink);font-size:14px"><b>⚡ Türkiye'de üretilen elektrikli araç</b> (Togg)<br><small style="color:var(--muted)">BDDK 12.03.2025 kararı: sınırlar 7,5 milyon TL'ye kadar, daha geniş</small></span></label>
       <label id="ta_degerlab">Anahtar teslim fatura değeri</label>
       <div class="field"><input id="ta_deger" type="text" inputmode="decimal" value="1.250.000"><span class="unit">TL</span></div>
       <p class="hint" id="ta_degerhint" style="margin:6px 0 0">Proforma/asıl faturadaki anahtar teslim bedeli; modifikasyon tutarları dahil edilmez.</p>
@@ -654,10 +655,10 @@
       <p class="hint">ℹ️ Hayat sigortası primi ve rehin tesis ücreti bu hesaba dahil değildir; kasko zorunludur. Kesin tutarlar işlem günü bankanızca belirlenir.</p>
     </div>
     <div class="card">
-      <h2>📏 Vade ve kredi sınırları</h2>
+      <h2 id="ta_tabh">📏 Vade ve kredi sınırları</h2>
       <p class="hint">Araç değerine göre azami vade ve kredilendirme oranı. Senin dilimin işaretli.</p>
       <table class="ltvtab" id="ta_tab"></table>
-      <p class="hint" style="margin-top:8px">Kaynak: BDDK, Bankaların Kredi İşlemlerine İlişkin Yönetmelik (12/A) · <a href="https://www.isbank.com.tr/aninda-tasit-kredisi" target="_blank" rel="noopener" style="color:var(--accent)">isbank.com.tr/aninda-tasit-kredisi</a>. Sıfırda fatura, ikinci elde kasko değeri esas alınır.</p>
+      <p class="hint" id="ta_tabnot" style="margin-top:8px"></p>
     </div>
     <div class="card" data-fy="ta_faiz">
       <div class="big"><span>Aylık taksit</span><b id="ta_out">–</b></div>
@@ -1638,11 +1639,15 @@ function tcCore(P, r, n, bsmv, kkdf, bas, ilk) {
 // ---------- Taşıt kredisi ----------
 // BDDK (Bankaların Kredi İşlemlerine İlişkin Yönetmelik 12/A) ve isbank.com.tr/aninda-tasit-kredisi: araç değerine göre azami vade ve kredilendirme oranı.
 // Sıfırda anahtar teslim fatura değeri, ikinci elde kasko değeri esas alınır; ikinci elde tavan noter satış bedelini aşamaz.
-const TA_DILIM = [[400000, 48, 0.70], [800000, 36, 0.50], [1200000, 24, 0.30], [2000000, 12, 0.20]];
+const TA_DILIM_G = [[400000, 48, 0.70], [800000, 36, 0.50], [1200000, 24, 0.30], [2000000, 12, 0.20]];
+// Türkiye'de üretilen elektrikli araçlar (Togg): BDDK Kurul Kararı 12.03.2025 "Taşıt Kredilerine İlişkin Sınırların Değiştirilmesi"
+const TA_DILIM_E = [[2500000, 48, 0.70], [5000000, 36, 0.50], [6500000, 24, 0.30], [7500000, 12, 0.20]];
+let TA_DILIM = TA_DILIM_G;
+const taElek = () => !!$("ta_elek").checked;
 const taDilim = (v) => TA_DILIM.find((d) => v <= d[0]) || null;
 const taN = (n) => n.toLocaleString("tr-TR");
-const taDilimAd = (i) => (i === 0 ? "400.000 TL'ye kadar" : `${taN(TA_DILIM[i - 1][0] + 1)} – ${taN(TA_DILIM[i][0])} TL`);
-let taIkinci = false, taTutarManual = false, taIlkManual = false, taSummary = "", taPdf = null, taLastMax = null;
+const taDilimAd = (i) => (i === 0 ? `${taN(TA_DILIM[0][0])} TL'ye kadar` : `${taN(TA_DILIM[i - 1][0] + 1)} – ${taN(TA_DILIM[i][0])} TL`);
+let taIkinci = false, taTutarManual = false, taVadeManual = false, taIlkManual = false, taSummary = "", taPdf = null, taLastMax = null;
 const taDeger = () => num("ta_deger");
 function taTavan() {
   const v = taDeger(), d = taDilim(v); if (!v || !d) return null;
@@ -1652,10 +1657,12 @@ function taTavan() {
   return { d, max, kisit, noter };
 }
 function taDilimBox() {
+  TA_DILIM = taElek() ? TA_DILIM_E : TA_DILIM_G;
   const v = taDeger(), t = taTavan(), box = $("ta_dilim");
   box.classList.remove("kotu");
   if (!v) { box.innerHTML = "Araç değerini gir."; return; }
-  if (!t) { box.classList.add("kotu"); box.innerHTML = `<b>${tl(v)}</b> değerindeki araç için taşıt kredisi kullandırılmaz (üst sınır 2.000.000 TL).`; return; }
+  const ust = TA_DILIM[TA_DILIM.length - 1][0];
+  if (!t) { box.classList.add("kotu"); box.innerHTML = `<b>${tl(v)}</b> değerindeki araç için taşıt kredisi kullandırılmaz (üst sınır ${taN(ust)} TL${taElek() ? "" : "; yerli elektrikli araçta 7,5 milyon TL"}).`; $("ta_tab").innerHTML = ""; return; }
   const i = TA_DILIM.indexOf(t.d);
   const pes = Math.max(0, (taIkinci && t.noter > 0 ? t.noter : v) - t.max);
   box.innerHTML = `<b>${taDilimAd(i)}</b> dilimindesin → en fazla <b>${t.d[1]} ay</b>, ${taIkinci ? "kasko değerinin" : "aracın"} <b>%${Math.round(t.d[2] * 100)}</b>'${({ 0.2: "si", 0.3: "u", 0.5: "si", 0.7: "i" })[t.d[2]]} kadar kredi` +
@@ -1664,7 +1671,11 @@ function taDilimBox() {
     `En az peşinat: <b>${tl(pes)}</b>`;
   $("ta_tab").innerHTML = "<tr><th>Araç değeri</th><th>Azami vade</th><th>Kredi payı</th></tr>" +
     TA_DILIM.map((d, j) => `<tr class="${j === i ? "on" : ""}"><td>${taDilimAd(j)}</td><td>${d[1]} ay</td><td>%${Math.round(d[2] * 100)}</td></tr>`).join("") +
-    `<tr class="lim"><td>2.000.000 TL üzeri</td><td colspan="2">kredi kullandırılmaz</td></tr>`;
+    `<tr class="lim"><td>${taN(ust)} TL üzeri</td><td colspan="2">kredi kullandırılmaz</td></tr>`;
+  $("ta_tabh").textContent = taElek() ? "📏 Vade ve kredi sınırları · ⚡ yerli elektrikli" : "📏 Vade ve kredi sınırları";
+  $("ta_tabnot").innerHTML = taElek()
+    ? `Kaynak: BDDK Kurul Kararı 12.03.2025 (Türkiye'de üretilen elektrikli taşıtlar) · <a href="https://www.isbank.com.tr/kampanyalar/togga-ozel-tasit-kredisi-isbankasinda" target="_blank" rel="noopener" style="color:var(--accent)">isbank.com.tr Togg'a özel taşıt kredisi</a>. Fatura değeri esas alınır.`
+    : `Kaynak: BDDK, Bankaların Kredi İşlemlerine İlişkin Yönetmelik (12/A) · <a href="https://www.isbank.com.tr/aninda-tasit-kredisi" target="_blank" rel="noopener" style="color:var(--accent)">isbank.com.tr/aninda-tasit-kredisi</a>. Sıfırda fatura, ikinci elde kasko değeri esas alınır.`;
 }
 const taMaxVade = () => { const t = taTavan(); return t ? t.d[1] : 0; };
 function taCore(P, r, n, bas, ilk) { return tkCore(P, r, n, 0.15, 0.15, bas, ilk); }
@@ -1675,7 +1686,7 @@ function calcTasit() {
   taLastMax = t ? t.max : null;
   const maxV = taMaxVade();
   $("ta_vadelab").textContent = maxV ? `(en çok ${maxV})` : "";
-  if (maxV && (!num("ta_vade") || num("ta_vade") > maxV)) $("ta_vade").value = maxV;
+  if (maxV && (!taVadeManual || !num("ta_vade") || num("ta_vade") > maxV)) $("ta_vade").value = maxV;
   const P = num("ta_tutar"), r = num("ta_faiz") / 100, n = Math.max(1, Math.round(num("ta_vade"))), bsmv = 0.15, kkdf = 0.15;
   const bas = pDate($("ta_bas").value) || new Date();
   if (!$("ta_bas").value) $("ta_bas").value = ymd(bas);
@@ -1720,11 +1731,12 @@ function calcTasit() {
   $("ta_plan").innerHTML = planHead + plan.map((x, j) => planRow(x, j + 1)).join("") + planTot(plan);
   taPdf = { tur: "Taşıt Kredisi", bas, P, r, n, bsmv, kkdf, tF, tV: tB, tFo: tK, top: toplam, T: taksit, rows: plan.map((x) => ({ d: x.d, a: x.ana, f: x.f, fo: x.kk, v: x.bs, t: x.t, b: x.bal })) };
   taSummary = krediOzet({ tur: `Taşıt Kredisi (${taIkinci ? "ikinci el" : "sıfır km"})`, P, n, r, taksit, plan, bsmv, kkdf, tF, tB, tK, toplam, d0: plan[0].d, d1: plan[plan.length - 1].d, tek }) +
-    `\n\nAraç ${taIkinci ? "kasko" : "fatura"} değeri: ${tl(taDeger())}${t ? ` · Kredi tavanı: ${tl(t.max)} · Azami vade: ${t.d[1]} ay` : ""}`;
+    `\n\nAraç ${taIkinci ? "kasko" : "fatura"} değeri: ${tl(taDeger())}${taElek() ? " · Türkiye'de üretilen elektrikli araç (BDDK 12.03.2025 sınırları)" : ""}${t ? ` · Kredi tavanı: ${tl(t.max)} · Azami vade: ${t.d[1]} ay` : ""}`;
 }
 $("ta_sifir").addEventListener("click", () => { taIkinci = false; $("ta_sifir").classList.add("on"); $("ta_ikinci").classList.remove("on"); $("ta_ikinciwrap").hidden = true; $("ta_degerlab").textContent = "Anahtar teslim fatura değeri"; $("ta_degerhint").hidden = false; calcTasit(); });
 $("ta_ikinci").addEventListener("click", () => { taIkinci = true; $("ta_ikinci").classList.add("on"); $("ta_sifir").classList.remove("on"); $("ta_ikinciwrap").hidden = false; $("ta_degerlab").textContent = "Kasko değeri (TSB listesi)"; $("ta_degerhint").hidden = true; calcTasit(); });
 $("ta_tutar").addEventListener("input", () => (taTutarManual = true));
+$("ta_vade").addEventListener("input", () => (taVadeManual = true));
 $("ta_ilk").addEventListener("input", () => (taIlkManual = true));
 ozetBagla("ta", () => taSummary);
 $("ta_pdf").addEventListener("click", (e) => taSummary && planPdf(taPdf, e.currentTarget));
@@ -1734,7 +1746,7 @@ $("ta_pdf").addEventListener("click", (e) => taSummary && planPdf(taPdf, e.curre
 // Resmi Gazete özetleri (gazete/*.json, son 45 gün) taranır; kredi yönetmeliğine ya da ilgili ürüne değinen bir madde varsa
 // ilgili hesabın başında "dikkat" uyarısı çıkar. Baremler elle güncellenir; uyarı yalnızca "kontrol et" der.
 const YON_IZLE = {
-  ta_yon: ["taşıt kredi", "araç kredi", "kredi işlemlerine ilişkin yönetmelik", "kredilendirme oran", "bankaların kredi işlemleri"],
+  ta_yon: ["taşıt kredi", "araç kredi", "kredi işlemlerine ilişkin yönetmelik", "kredilendirme oran", "bankaların kredi işlemleri", "elektrik motorlu taşıt", "elektrikli araç kredi"],
 };
 (async function () {
   let idx = []; try { idx = await Ortak.json("gazete/index.json"); } catch (e) { return; }
