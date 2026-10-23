@@ -583,8 +583,10 @@
         "Açılan listede aşağı kaydır, <b>Ana Ekrana Ekle</b>'yi seç <span class='ik'>➕</span>",
         "Sağ üstteki <b>Ekle</b>'ye dokun. Hepsi bu! 🎉"]
       : t === "chrome" ? [
+        // Chrome 150 (Temmuz 2026) "Ana ekrana ekle"nin adını "Yükle ve kısayol oluştur" yaptı; eski sürümlerde eski ad durur
         "Sağ üstteki <b>⋮</b> (üç nokta) menüsüne dokun<br><small>Görmüyorsan ekranı parmağınla hafifçe aşağı çek; üst çubuk belirir.</small>",
-        "<b>Ana ekrana ekle</b>'yi seç",
+        "Menüde <b>Yükle ve kısayol oluştur</b>'u seç<br><small>Yer imleri, Geçmiş… satırlarının biraz altındadır; görmüyorsan menüyü aşağı kaydır. Eski Chrome'larda adı <b>Ana ekrana ekle</b>'dir.</small>",
+        "Açılan pencerede <b>Yükle</b>'ye ya da <b>Kısayol oluştur</b>'a dokun",
         "<b>Ekle</b>'ye dokun. Hepsi bu! 🎉"]
       : t === "samsung" ? [
         "Ekranı parmağınla <b>hafifçe aşağı çek</b> 👇<br><small>Sayfayı aşağı kaydırınca tarayıcı alttaki çubuğu gizler; biraz geri çekince çubuk geri gelir.</small>",
@@ -593,7 +595,7 @@
         "<b>Ekle</b>'ye dokun. Hepsi bu! 🎉"]
       : [
         "Tarayıcının menüsünü aç: sağ üstte ya da sağ altta <b>⋮</b> veya <b>≡</b><br><small>Görmüyorsan ekranı parmağınla hafifçe aşağı çek; çubuk belirir.</small>",
-        "<b>Ana ekrana ekle</b> ya da <b>Sayfa ekle → Ana ekran</b>'ı seç",
+        "<b>Ana ekrana ekle</b>, <b>Yükle ve kısayol oluştur</b> ya da <b>Sayfa ekle → Ana ekran</b>'ı seç",
         "<b>Ekle</b>'ye dokun. Hepsi bu! 🎉"];
     y.innerHTML = `<div class="kyB"><b>📲 Sadolayn'ı ana ekrana ekle</b><button class="kyX" aria-label="Kapat">✕</button></div>
       <div class="kyN">Bu bir uyarı değil, küçük bir yol tarifi 😊 Telefonuna uygulama yüklenmez; sitenin kısayolu ana ekrana gelir, tek dokunuşla açarsın.</div>
