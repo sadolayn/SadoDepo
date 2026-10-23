@@ -61,13 +61,13 @@
   /* ===== En üstte "YENİ" şeridi: İş Bankası'nın yeni ürünleri, resmi sayfasına gider (alerts'teki CANLI şeridi gibi) ===== */
   .yeniS { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 420px; margin: 0 0 6px; padding: 8px 10px; border-radius: 12px; background: rgba(0,0,0,.55); border: 1px solid #2a2418; box-sizing: border-box; }
   .yeniS[hidden] { display: none; }
-  .ysEt { flex: none; font-size: 10.5px; font-weight: 800; letter-spacing: 1px; color: #e0a24f; }
+  .ysEt { flex: none; font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #e0a24f; }
   .ysEt i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #e0a24f; margin-right: 5px; vertical-align: 1px; animation: ysBlip 1.6s infinite; }
   @keyframes ysBlip { 50% { opacity: .25; } }
   .ysYol { flex: 1; min-width: 0; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
   .ysSer { display: inline-flex; white-space: nowrap; will-change: transform; animation: ysKay var(--sure, 40s) linear infinite; }
   .yeniS:hover .ysSer, .yeniS:active .ysSer, .yeniS:focus-within .ysSer { animation-play-state: paused; }
-  .ysSer a { display: inline-flex; align-items: center; padding: 2px 0; font-size: 12.5px; color: #e9dcc0; text-decoration: none; }
+  .ysSer a { display: inline-flex; align-items: center; padding: 5px 0; font-size: 12.5px; color: #e9dcc0; text-decoration: none; }
   .ysSer a b { color: #f3d38a; font-weight: 700; margin: 0 4px; }
   .ysSer a::after { content: "◆"; margin: 0 12px; color: #6b5222; font-size: 9px; }
   .ysSer .ysNot { font-size: 11px; color: #8a7a5e; }
@@ -118,9 +118,9 @@
   .dig.off .nc i { opacity: .25; box-shadow: none; }
   .datec { cursor: pointer; }
   .datec { justify-self: center; width: 60px; border-radius: 12px; overflow: hidden; border: 1px solid #5a4320; background: #0f0f0f; text-align: center; box-shadow: 0 2px 10px rgba(224,162,79,.14); }
-  .datec .m { background: linear-gradient(180deg, #e8b05d, #c98a35); color: #1a1205; font-size: 10.5px; font-weight: 800; letter-spacing: 1.5px; padding: 3px 0 2px; }
+  .datec .m { background: linear-gradient(180deg, #e8b05d, #c98a35); color: #1a1205; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; padding: 3px 0 2px; }
   .datec .d { font-size: 27px; font-weight: 800; line-height: 1.05; padding-top: 4px; color: #f6e7cc; font-variant-numeric: tabular-nums; }
-  .datec .w { font-size: 10.5px; color: var(--accent); padding: 1px 0 6px; font-weight: 600; }
+  .datec .w { font-size: 11px; color: var(--accent); padding: 1px 0 6px; font-weight: 600; }
   .bar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 10;
     display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px;

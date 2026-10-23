@@ -31,7 +31,7 @@
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -14px 12px; padding: 10px 14px 8px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .tabs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
-  .tabs button { border: none; background: transparent; color: var(--muted); padding: 7px 1px; border-radius: 10px; font: inherit; font-size: 10px; font-weight: 600; cursor: pointer; line-height: 1.2; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .tabs button { border: none; background: transparent; color: var(--muted); padding: 7px 1px; border-radius: 10px; font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; line-height: 1.2; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .tabs button b { display: block; font-size: 18px; margin-bottom: 2px; }
   .tabs button.on { background: var(--accent); color: #000; }
   .panel { display: none; } .panel.on { display: block; }
@@ -237,7 +237,8 @@
   .bed { background: linear-gradient(180deg, #1c1814, #241f1a); box-shadow: inset 0 3px 10px rgba(0,0,0,.8), inset 0 -1px 0 rgba(255,255,255,.06), 0 1px 0 rgba(255,255,255,.05); }
   /* ===== Görünüm seçici ===== */
   .brand { position: relative; }
-  .brb { display: inline-flex; gap: 2px; }
+  .brb { display: inline-flex; gap: 4px; }
+  .brb button { min-width: 28px; min-height: 28px; padding: 2px 4px; }
   .prt { display: none; }
   .skinpop { position: absolute; z-index: 40; top: 40px; right: 12px; width: 190px; background: #141414; border: 1px solid #3a3a3a; border-radius: 14px; padding: 8px; box-shadow: 0 14px 30px rgba(0,0,0,.7); display: grid; gap: 6px; }
   .skinpop[hidden] { display: none; }

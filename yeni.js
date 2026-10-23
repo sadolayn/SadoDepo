@@ -6,7 +6,7 @@
   var KEY = "yeniGoruldu", GUN = 21;
   var S = {}; try { S = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
   var css = document.createElement("style");
-  css.textContent = ".yeniB{display:inline-block;margin-left:7px;padding:1px 6px;border-radius:6px;background:#e5383b;color:#fff;font-size:10px;font-weight:800;letter-spacing:.5px;vertical-align:2px;line-height:1.5;animation:yeniP 1.8s ease-in-out infinite}" +
+  css.textContent = ".yeniB{display:inline-block;margin-left:7px;padding:1px 6px;border-radius:6px;background:#e5383b;color:#fff;font-size:11px;font-weight:800;letter-spacing:.5px;vertical-align:2px;line-height:1.5;animation:yeniP 1.8s ease-in-out infinite}" +
     ".yeniB.up{background:#2f7de1}.yeniD{position:absolute;top:4px;right:6px;width:9px;height:9px;border-radius:50%;background:#e5383b;box-shadow:0 0 0 2px #000;animation:yeniP 1.8s ease-in-out infinite}" +
     "@keyframes yeniP{50%{opacity:.65}}";
   document.head.appendChild(css);
