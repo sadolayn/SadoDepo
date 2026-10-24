@@ -315,7 +315,7 @@
   @keyframes nb { 50% { transform: scale(1.12); } }
   /* Menü: Bankacılık'taki renkli kutucuk dili */
   .menu button { --c: #e0a24f; --d: #2a2010; --t: #f3dca8; grid-column: span 4; height: 54px; border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 38%, #000), var(--d)); color: var(--t); font-weight: 700; }
-  .menu button:nth-child(n+6) { grid-column: span 5; }
+  .menu button, .menu button:nth-child(n+6) { grid-column: span 5; }
   .menu button span { font-size: 11px; overflow: visible; } .menu button span small { font-size: 11px; font-weight: 600; opacity: .85; }
   .menu button.active { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
   .menu button.hasnew { border-color: #d32f2f; }
@@ -645,6 +645,22 @@
   .altkutu.chipbar .tfil[hidden], .altkutu.chipbar .nsub[hidden] { display: none !important; }
   .altkutu button em, .altkutu button b { flex: 0 0 auto; }
   .ccal .leg { flex-wrap: wrap; row-gap: 4px; } .ccal .leg span { white-space: nowrap; }
+  /* İki etiketli satır (Maximum: Kampanyalar · Rehber; Haberler: Kaynak · Tür) */
+  .altkutu .tfil.iki, .altkutu .nsub:has(.tsat) { display: block !important; }
+  .altkutu .tsat { display: flex; align-items: flex-start; gap: 6px; margin-top: 5px; }
+  .altkutu .tsat .tlab { flex: 0 0 74px; padding-top: 11px; font-size: 11px; font-weight: 800; letter-spacing: .3px; color: var(--c, #e0a24f); white-space: nowrap; }
+  .altkutu .tsat .tgrid { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 5px; }
+  .altkutu .tsat.rehber { margin-top: 7px; padding-top: 7px; border-top: 1px dashed color-mix(in srgb, var(--c, #e0a24f) 35%, #000); }
+  .altkutu .tsat.rehber button.mt:not(.on) { background: #0b0b0b !important; border-color: #2a2a2a !important; color: #cfcfcf; }
+  .altkutu.dar:not(.acik) .tsat:not(:has(.on)), .altkutu.dar:not(.acik) .tsat .tlab { display: none !important; }
+  .altkutu.dar:not(.acik) .tsat .tgrid { grid-template-columns: 1fr; }
+  @media (max-width: 360px) { .altkutu .tsat { flex-direction: column; gap: 2px; } .altkutu .tsat .tlab { flex: none; padding-top: 0; } }
+  /* Etiket satırın üstünde, düğmeler tam genişlikte eşit sütunlarda */
+  .altkutu .tsat { flex-direction: column; gap: 3px; }
+  .altkutu .tsat .tlab { flex: none; padding: 0 2px; font-size: 11px; }
+  .altkutu .tsat .tgrid { width: 100%; grid-template-columns: repeat(auto-fit, minmax(78px, 1fr)); }
+  .altkutu .tsat.rehber .tgrid { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
+  .altkutu .tfil.iki .tsat:not(.rehber) .tgrid { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -717,7 +733,7 @@ window.ataOyna = function (film, ozelNot, yas) {
     <h1>🏛️ İş Bankası Gündemi<small style="display:block;font-size:11px;font-weight:400;color:#8a8a8a;margin-top:2px;letter-spacing:.2px">kişisel derleme · resmî değildir</small></h1>
     <span style="width:52px"></span>
   </header>
-  <div class="chipbar" id="chipbar"><button type="button" class="longbar" id="subeBar"><span>📊 Finansal bilgiler</span><i>·</i><span>📄 Yatırımcı sunumu</span><em id="subeNew" hidden></em></button><div class="menu" id="chips"></div></div>
+  <div class="chipbar" id="chipbar"><button type="button" class="longbar" id="subeBar"><span>📊 Finansal bilgiler</span><i>·</i><span>📅 Finansal takvim</span><i>·</i><span>📄 Sunum</span><em id="subeNew" hidden></em></button><div class="menu" id="chips"></div></div>
   </div>
   <div id="altIz" aria-hidden="true"></div>
   <div class="chipbar altkutu" id="altkutu" hidden><div class="altbas" id="altbas"></div><div class="nsub" id="nsub" hidden></div><div class="tfil" id="tfil" hidden></div></div>
@@ -774,7 +790,7 @@ const CATS = [
 ];
 const LBL = { "Maximum": "Maximum<br>Maximiles", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<small>Güncel · KAP</small>" };
 // Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Video, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
-const MENU = [["Tarihçe", "🏛️"], ["İşCep", "📲"], ["Black", "🖤"], ["Maximum", "💳"], ["Kampanya", "🎁"], ["Şubeler", "📍"], ["📅 Takvim", "📅"], ["Haberler", "📰"], ["Soru", "❓"]];
+const MENU = [["Maximum", "💳"], ["Kampanya", "🎁"], ["İşCep", "📲"], ["Haberler", "📰"], ["Black", "🖤"], ["Şubeler", "📍"], ["Tarihçe", "🏛️"], ["Soru", "❓"]];
 const NEWS = ["Tümü", "📰 Güncel", "🎬 Video", "Haber", "Ürün", "Dijital", "KAP"];
 const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "🎬 Video": "🎬 Video", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
 let lastNews = "Tümü"; try { lastNews = localStorage.getItem("isbankNews") || "Tümü"; } catch (e) {}
@@ -783,6 +799,8 @@ const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
 let bkamp = null, blk = null, fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null, vids = [], vidsOk = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
+let finSec = "veri"; // Finansal bilgiler alt başlığı: veri · takvim · sunum
+if (cat === "📅 Takvim") { cat = "Finans"; finSec = "takvim"; }
 if (location.hash === "#maximum") cat = "Maximum"; // ana sayfadaki kampanya hatırlatıcısından gelince
 let ayr = "black", ipl = null; try { ayr = localStorage.getItem("isbankAyr") || "black"; } catch (e) {}
 if (location.hash === "#isplus") { cat = "Black"; ayr = "plus"; }
@@ -842,7 +860,8 @@ function renderChips() {
   }).join("");
   $("chips").querySelectorAll("button").forEach((b) => (b.onclick = () => go(b.dataset.k === "Haberler" ? (NEWS.includes(lastNews) ? lastNews : "Tümü") : b.dataset.k)));
   $("nsub").hidden = !inNews;
-  $("nsub").innerHTML = inNews ? NEWS.map((k) => { const u = k === cat ? 0 : unseen(k).length; return `<button type="button" data-n="${k}" class="${k === cat ? "on" : ""}">${NLBL[k]}${u ? `<b>${u > 9 ? "9+" : u}</b>` : ""}</button>`; }).join("") : "";
+  const nb = (k) => { const u = k === cat ? 0 : unseen(k).length; return `<button type="button" data-n="${k}" class="${k === cat ? "on" : ""}">${NLBL[k]}${u ? `<b>${u > 9 ? "9+" : u}</b>` : ""}</button>`; };
+  $("nsub").innerHTML = inNews ? `<div class="tsat"><span class="tlab">📡 Kaynak</span><div class="tgrid">${["Tümü", "📰 Güncel", "🎬 Video"].map(nb).join("")}</div></div><div class="tsat"><span class="tlab">🏷️ Tür</span><div class="tgrid">${["Haber", "Ürün", "Dijital", "KAP"].map(nb).join("")}</div></div>` : "";
   $("nsub").querySelectorAll("[data-n]").forEach((b) => (b.onclick = () => go(b.dataset.n)));
   altGuncelle();
 }
@@ -1233,17 +1252,20 @@ function campCard(k) {
 function renderCamps() {
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
   if (!camps.length) { $("list").innerHTML = '<div class="empty">Şu an listelenen kampanya yok.</div>'; return; }
-  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "📅 Takvim", "✈️ Maximiles", "🛒 Pazarama", "📲 Kartsız öde"];
+  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "⏳ Kampanya takvimi", "✈️ Maximiles", "🛒 Pazarama", "📲 Kartsız öde"];
+  if (campTur === "📅 Takvim") campTur = "⏳ Kampanya takvimi";
   if (!turs.includes(campTur) && !SP.includes(campTur)) campTur = "Tümü";
-  const TI = { "⭐ Öne çıkan": ["⭐", "Öne çıkan", "#f0c64a"], "📅 Takvim": ["📅", "Takvim", "#ef5a5a"], "✈️ Maximiles": ["✈️", "Maximiles", "#5aa9f0"], "🛒 Pazarama": ["🛒", "Pazarama", "#ff8a3d"], "📲 Kartsız öde": ["📲", "Kartsız öde", "#3fbfd6"], "Tümü": ["💳", "Tümü", "#ff4fa3"], MaxiPuan: ["🪙", "MaxiPuan", "#e0a24f"], "İndirim": ["🏷️", "İndirim", "#3fc283"], Puan: ["🎯", "Puan", "#b48cf0"], Taksit: ["📆", "Taksit", "#3fbfd6"] };
+  const TI = { "⭐ Öne çıkan": ["⭐", "Öne çıkan", "#f0c64a"], "⏳ Kampanya takvimi": ["⏳", "Kampanya takvimi", "#ef5a5a"], "✈️ Maximiles": ["✈️", "Maximiles", "#5aa9f0"], "🛒 Pazarama": ["🛒", "Pazarama", "#ff8a3d"], "📲 Kartsız öde": ["📲", "Kartsız öde", "#3fbfd6"], "Tümü": ["💳", "Tümü", "#ff4fa3"], MaxiPuan: ["🪙", "MaxiPuan", "#e0a24f"], "İndirim": ["🏷️", "İndirim", "#3fc283"], Puan: ["🎯", "Puan", "#b48cf0"], Taksit: ["📆", "Taksit", "#3fbfd6"] };
   // 60 sütunlu ızgara: üst sırada özel sekmeler, alt sırada kampanya türleri eşit genişlikte
   const tile = (t, cnt, span) => { const [ic, ad, c] = TI[t] || ["🎁", t, "#9aa0a6"]; const yeni = t === "📲 Kartsız öde" && new Date() < new Date("2026-11-03");
     return `<button data-t="${esc(t)}" class="mt${t === campTur ? " on" : ""}" style="--c:${c};grid-column:span ${span}"><i>${ic}</i><span>${esc(ad)}</span>${cnt != null ? `<em>${cnt}</em>` : yeni ? `<em class="y">YENİ</em>` : ""}</button>`; };
-  $("tfil").innerHTML = SP.map((t) => tile(t, null, 60 / SP.length)).join("") + turs.map((t) => tile(t, t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length, 60 / Math.min(6, turs.length) | 0)).join("");
-  $("tfil").className = "tfil mtiles";
+  // Üst satır: kampanya listesini süzer (en çok bakılan) · alt satır: rehber sayfaları
+  $("tfil").innerHTML = `<div class="tsat"><span class="tlab">🎁 Kampanyalar</span><div class="tgrid">${turs.map((t) => tile(t, t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length, 12)).join("")}</div></div>`
+    + `<div class="tsat rehber"><span class="tlab">🧭 Rehber</span><div class="tgrid">${SP.map((t) => tile(t, null, 12)).join("")}</div></div>`;
+  $("tfil").className = "tfil mtiles iki";
   $("tfil").hidden = false;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); icerigeKay(); };
-  if (campTur === "📅 Takvim") { $("list").innerHTML = campCal(); bindCal(); return; }
+  if (campTur === "⏳ Kampanya takvimi") { $("list").innerHTML = campCal(); bindCal(); return; }
   if (SP.includes(campTur)) { if (campTur === "🛒 Pazarama") { $("list").innerHTML = pazHtml(); bindPaz(); return; } $("list").innerHTML = campTur === "✈️ Maximiles" ? milesHtml() : campTur === "📲 Kartsız öde" ? odeHtml() : oneHtml(); bindSpecial(); return; }
   const vis = camps.filter((k) => campTur === "Tümü" || k.tur === campTur);
   const urg = vis.filter((k) => daysLeft(k.bitis) <= 3);
@@ -1253,7 +1275,7 @@ function renderCamps() {
   html += `<button type="button" class="calgit" id="calGit">📅 Kampanya takvimi · biten günler ve ay başı hatırlatması ›</button>`;
   html += `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm kampanyalar ve katılım koşulları ↗</a>`;
   $("list").innerHTML = html;
-  const takvimeGit = () => { campTur = "📅 Takvim"; renderCamps(); icerigeKay(); };
+  const takvimeGit = () => { campTur = "⏳ Kampanya takvimi"; renderCamps(); icerigeKay(); };
   const tk = $("jTick"); if (tk) tk.onclick = takvimeGit;
   $("calGit").onclick = takvimeGit;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); icerigeKay(); };
@@ -1437,6 +1459,11 @@ const ILK = [
   { ad: "İstanbul Şubesi (Yenicami)", g: "20", ay: "Şub", y: 1928, c: "#3fc283", a: "1892 yapımı eski Postane binasında açıldı. 1950'lerde Yenicami Şubesi oldu; 14 Kasım 2007'den beri İş Bankası Müzesi." },
 ];
 function renderFinans() {
+  const t = $("tfil");
+  t.className = "tfil sekme"; t.hidden = false;
+  t.innerHTML = [["veri", "📊", "Mali veriler"], ["takvim", "📅", "Finansal takvim"], ["sunum", "📄", "Yatırımcı sunumu"]].map(([k, ic, ad]) => altSekme("data-fs", k, ic, ad, null, finSec === k)).join("");
+  t.onclick = (e) => { const b = e.target.closest("button[data-fs]"); if (!b) return; finSec = b.dataset.fs; renderFinans(); if (finSec === "sunum" && $("sunumBox")) bolumeKay($("sunumBox")); else icerigeKay(); };
+  if (finSec === "takvim") return renderTakvim();
   $("upd").textContent = fin ? "Veri dönemi: " + pLabel(fin.periods[fin.periods.length - 1]) + " · banka 3 ayda bir açıklar" : "";
   $("list").innerHTML = yatHtml() + (subeler ? `<a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(subeler.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(subeler.kaynak)} ↗</a>` + (subeler.ekKaynaklar || []).map((k) => `<a class="maxlink" style="border-color:var(--line);color:var(--muted);font-weight:400;font-size:13px" href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.ad)} ↗</a>`).join("") : "");
   bindYt();
@@ -1543,7 +1570,7 @@ function yatHtml() {
       <div id="ytTable">${ytTable(ytSel)}</div>`;
   }
   if (y) {
-    h += `<div class="facts" style="margin-top:12px"><ul>${y.paylar.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
+    h += `<div class="day" id="sunumBox" style="margin-top:22px">📄 Yatırımcı sunumu</div><div class="facts" style="margin-top:6px"><ul>${y.paylar.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
       <a class="maxlink" href="${esc(y.pdf)}" target="_blank" rel="noopener">📄 Yatırımcı sunumunu aç (PDF) ↗</a>
       <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(y.ir)}" target="_blank" rel="noopener">Yatırımcı ilişkileri sayfası ↗</a>`;
   }
@@ -1776,7 +1803,7 @@ function renderSoon() {
     const dt = new Date(x.d + "T12:00:00"), ppk = !!x.ppk;
     return `<button type="button" class="soonbar${x.n <= 1 ? " hot" : ""}" data-go="tk"><div class="n">${x.n === 0 ? "🎯" : x.n}<small>${x.n === 0 ? "bugün" : x.n === 1 ? "yarın" : "gün"}</small></div><div><b>${ppk ? "🏦 " : "📊 "}${esc(x.t)}${x.n <= 1 && ppk && !x.done && /PPK/.test(x.t) ? " · saat 14:00" : ""}</b><span>${dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })} · ${esc(x.a)}</span></div></button>`;
   }).join("");
-  $("soon").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { cat = "📅 Takvim"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); icerigeKay(); }));
+  $("soon").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { cat = "Finans"; finSec = "takvim"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); icerigeKay(); }));
 }
 
 // ===== Sayfa sonu: Günün sorusu + Banka tarihinden (dokundukça yenisi) =====
@@ -2004,6 +2031,7 @@ function renderList() {
       const c = await Ortak.json("isbank/kampanyalar.json");
       campUpd = c.guncelleme || null;
       camps = (c.kampanyalar || []).filter((k) => daysLeft(k.bitis) >= 1).sort((a, b) => a.bitis.localeCompare(b.bitis));
+      camps.forEach((k) => { if (k.tur === "Puan") k.tur = "MaxiPuan"; });
     } catch (e) {}
     try {
       iscep = await Ortak.json("isbank/iscep.json");
