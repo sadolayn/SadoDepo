@@ -667,6 +667,7 @@
   /* Kampanyalar: kategori düğmeleri daha sıkı (isbank'ta 20'den fazla kategori var) */
   .altkutu .tsat .tgrid.kat { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
   .altkutu .tsat .tgrid.kat button { min-height: 34px !important; font-size: 11.5px !important; padding: 4px 5px !important; }
+  .altkutu .tsat button.kac { border-style: dashed !important; color: var(--c, #e0a24f) !important; background: transparent !important; font-weight: 800; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -1258,7 +1259,7 @@ function campCard(k) {
     </div>`;
 }
 // ===== Kampanyalar: isbank.com.tr ve maximum.com.tr (bireysel + ticari), günde iki kez otomatik =====
-let KH = null, kKay = "isbank", kSeg = "bireysel", kKat = "";
+let KH = null, kKay = "isbank", kSeg = "bireysel", kKat = "", kKatAcik = false;
 try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kKat = k.kat || ""; } catch (e) {}
 const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, kat: kKat })); } catch (e) {} };
 // Maximum kampanyaları sitede tür bilgisi olmadan gelir: başlık ve açıklamadaki kelimelere göre gruplanır
@@ -1267,7 +1268,7 @@ const MX_NERE = [["Market", "🛒", /market|migros|carrefour|a101|şok|bim|getir
   ["Giyim", "👗", /giyim|ayakkab|zara|mavi|koton|lc ?waikiki|defacto|boyner|moda|kozmetik|forever|marks|spencer|aksesuar|optik/i], ["Elektronik", "📱", /elektronik|teknosa|media ?markt|vatan|apple|samsung|telefon|beyaz eşya|arçelik|vestel|beko|bosch/i],
   ["Seyahat", "🏖️", /otel|tatil|seyahat|uçak|uçuş|thy|pegasus|ets|jolly|\btur\b|turizm|havalimanı/i], ["Ev & Mobilya", "🛋️", /mobilya|dekorasyon|ikea|koçtaş|bauhaus|ev tekstil|halı/i],
   ["Online", "🌐", /online|internet|e-ticaret|trendyol|hepsiburada|pazarama|amazon|n11|\.com/i], ["Eğitim", "🎓", /eğitim|okul|kırtasiye|kurs|üniversite/i]];
-const kGrup = (k, L) => (L.find(([, , re]) => re.test(k.baslik + " " + k.ozet)) || [])[0] || "Diğer";
+const kGrup = (k, L) => (L.find(([, , re]) => re && re.test(k.baslik + " " + (k.ozet || ""))) || [])[0] || "Diğer";
 function kKart(k, etiket, renk) {
   const n = daysLeft(k.bitis), u = n <= 3, yeni = k.ilk && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
   const left = n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
@@ -1292,7 +1293,10 @@ function renderKampanyalar() {
   if (kKay === "isbank" && V) {
     const K = V.kategoriler.filter((c) => c.kampanyalar.length);
     if (kKat && !K.some((c) => c.slug === kKat)) kKat = "";
-    katSatir = `<div class="tsat"><span class="tlab">🗂️ Kategori</span><div class="tgrid kat">${sb("data-kk", "", "📋", "Tümü", sayi(V), !kKat)}${K.map((c) => sb("data-kk", c.slug, "", c.ad.replace(/ Kampanyaları$/, ""), c.adet, kKat === c.slug)).join("")}</div></div>`;
+    // Kategoriler kapalı başlar (20'den fazla): seçili olan + "Kategoriler ▾"; dokununca hepsi açılır
+    const sec = K.find((c) => c.slug === kKat);
+    katSatir = `<div class="tsat"><span class="tlab">🗂️ Kategori</span><div class="tgrid">${sec ? sb("data-kk", sec.slug, "📂", sec.ad.replace(/ Kampanyaları$/, ""), sec.adet, true) : sb("data-kk", "", "📋", "Tümü", sayi(V), true)}<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Kapat" : `🗂️ Kategoriler (${K.length}) ▾`}</button></div>`
+      + (kKatAcik ? `<div class="tgrid kat" style="margin-top:5px">${sb("data-kk", "", "📋", "Tümü", sayi(V), !kKat)}${K.map((c) => sb("data-kk", c.slug, "", c.ad.replace(/ Kampanyaları$/, ""), c.adet, kKat === c.slug)).join("")}</div>` : "") + `</div>`;
     (kKat ? K.filter((c) => c.slug === kKat) : K).forEach((c) => c.kampanyalar.forEach((k) => liste.push([k, c.ad.replace(/ Kampanyaları$/, "")])));
   } else if (kKay === "maximum" && V) {
     const L = V.kampanyalar, sayG = (G, ad) => L.filter((k) => kGrup(k, G) === ad).length;
@@ -1308,7 +1312,9 @@ function renderKampanyalar() {
     + `<div class="tsat"><span class="tlab">👥 Müşteri</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", kKay === "maximiles" ? null : sayi(segV(kKay, "bireysel")), kSeg === "bireysel")}${sb("data-sg", "ticari", "🏢", "Ticari", kKay === "maximiles" ? null : sayi(segV(kKay, "ticari")), kSeg === "ticari")}</div></div>` + katSatir;
   t.onclick = (e) => {
     const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.kac) { kKatAcik = !kKatAcik; renderKampanyalar(); return; }
     if (b.dataset.ky) { kKay = b.dataset.ky; kKat = ""; } else if (b.dataset.sg) { kSeg = b.dataset.sg; kKat = ""; } else if (b.dataset.kk != null) kKat = b.dataset.kk; else return;
+    kKatAcik = false;
     kKaydet(); renderKampanyalar(); icerigeKay();
   };
   if (kKay === "maximiles") {
