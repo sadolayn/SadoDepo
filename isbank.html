@@ -645,7 +645,7 @@
   .csuz { display: grid; gap: 6px; margin: 10px 0 8px; } .csuz > div { display: flex; gap: 5px; flex-wrap: wrap; }
   .csuz button { flex: 1 1 auto; min-height: 34px; padding: 4px 8px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--kc) 40%, #000); background: #0d0d0d; color: #e6e6e6; font: inherit; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
   .csuz button b { min-width: 18px; padding: 0 5px; border-radius: 9px; background: rgba(255,255,255,.12); font-size: 11px; line-height: 18px; }
-  .csuz button.on { background: var(--kc); border-color: var(--kc); color: #000; } .csuz button.on b { background: rgba(0,0,0,.25); }
+  .csuz button.on { background: var(--kz, var(--kc)); border-color: var(--kc); color: var(--ky, #000); } .csuz button.on b { background: rgba(0,0,0,.25); }
   .hst { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 4px 0 10px; }
   .hst .hg { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 0; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--kc) 25%, #000); background: #0d0d0d; color: #8f8f8f; font: inherit; }
   .hst .hg small { font-size: 10px; } .hst .hg b { font-size: 15px; color: #e6e6e6; } .hst .hg em { font-style: normal; font-size: 11px; font-weight: 800; }
@@ -705,7 +705,17 @@
   .altkutu #tfil.kamp button { display: flex !important; flex-direction: column !important; align-items: center; justify-content: center; gap: 1px !important; line-height: 1.15; }
   .altkutu #tfil.kamp button > b { white-space: nowrap; }
   .altkutu #tfil.kamp button[data-nere="Tarım"]:not(.on), .altkutu #tfil.kamp button[data-kim="Çiftçi & Tarım"]:not(.on) { border-color: #5fbf4a !important; color: #c9f2b8 !important; background: #0c1a08 !important; }
-  .altkutu #tfil.kamp button.on { background: var(--kk) !important; border-color: var(--kk) !important; color: #000 !important; }
+  .altkutu #tfil.kamp button.on { background: var(--kz, var(--kk)) !important; border-color: var(--kk) !important; color: var(--ky, #000) !important; }
+  /* Kampanyalar alt kutusu: başlık ortada, her satırın adı iki yanı çizgili ayraç olarak ortada */
+  .altkutu.kampk:not(.dar) .altbas { justify-content: center; font-size: 13px; }
+  .altkutu #tfil.kamp .tsat { display: block !important; margin-top: 10px; }
+  .altkutu #tfil.kamp .tsat .tlab { display: flex !important; align-items: center; gap: 8px; padding: 0 0 6px !important; font-size: 12.5px !important; letter-spacing: .4px; color: var(--kk) !important; white-space: nowrap; }
+  .altkutu #tfil.kamp .tsat .tlab::before, .altkutu #tfil.kamp .tsat .tlab::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--kk) 70%, transparent)); }
+  .altkutu #tfil.kamp .tsat .tlab::after { background: linear-gradient(90deg, color-mix(in srgb, var(--kk) 70%, transparent), transparent); }
+  .altkutu.dar:not(.acik) #tfil.kamp .tsat .tlab { display: none !important; }
+  .altkutu.dar:not(.acik) #tfil.kamp button.hep { display: none !important; }
+  .altkutu.dar:not(.acik) #tfil.kamp .tsat.kgr:not(:has(.on:not(.hep))) { display: none !important; }
+  .altkutu.dar:not(.acik) #tfil.kamp .tsat { margin-top: 0; }
   .altkutu #tfil.kamp button .ka { display: inline-flex; align-items: center; justify-content: center; gap: 3px; text-align: center; }
   .altkutu #tfil.kamp button > b { background: none !important; padding: 0 !important; min-width: 0 !important; font-size: 10.5px !important; font-weight: 600; opacity: .8; line-height: 1.2 !important; }
   .altkutu.dar:not(.acik) #tfil.kamp button { flex-direction: row !important; gap: 5px !important; }
@@ -935,6 +945,7 @@ function altGuncelle() {
   const ad = a ? (a === $("subeBar") ? "📊 Finansal bilgiler" : `${a.querySelector("i").textContent} ${a.querySelector("span").innerHTML.replace(/<br\s*\/?>|<small>/gi, " ").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim()}`) : "İş Bankası Gündemi";
   $("iminiCur").innerHTML = esc(ad); $("imini").style.setProperty("--c", c);
   const k = $("altkutu"), var1 = !$("nsub").hidden && $("nsub").innerHTML.trim(), var2 = !$("tfil").hidden && $("tfil").innerHTML.trim();
+  k.classList.toggle("kampk", cat === "Maximum");
   k.hidden = !(var1 || var2);
   if (!k.hidden && a) {
     k.style.setProperty("--c", c);
@@ -1293,7 +1304,7 @@ function campCal() {
   const bar = ilkHafta
     ? `<div class="appr hot"><div class="lbl"><span>🎯 İlk hafta</span><b>${7 - d + 1} gün kaldı</b></div><div class="track"><i style="width:${Math.round(d / 7 * 100)}%"></i><em style="left:${Math.round(d / 7 * 100)}%"></em></div><div class="ends"><span>1 ${ayAd}</span><span>7 ${ayAd}</span></div></div>`
     : `<div class="appr"><div class="lbl"><span>⏳ ${nextAy} başına yaklaşıyor</span><b>${kalan} gün</b></div><div class="track"><i style="width:${pct}%"></i><em style="left:${pct}%"></em></div><div class="ends"><span>bugün ${d} ${ayAd}</span><span>1 ${nextAy} 🎯</span></div></div>`;
-  return `<div class="ccal${ilkHafta ? " hot" : ""}" id="ccal" style="--kc:${calKay === "hepsi" ? "#e0a24f" : K_KAY[calKay][3]}">
+  return `<div class="ccal${ilkHafta ? " hot" : ""}" id="ccal" style="--kc:${calKay === "hepsi" ? "#e0a24f" : K_KAY[calKay][3]};--kz:${calKay === "hepsi" ? "#e0a24f" : K_KAY[calKay][4]};--ky:${calKay === "hepsi" ? "#000" : K_KAY[calKay][5]}">
       <div class="cyap"><div class="ctop"><div class="cl">${msg.replace(/<span>[\s\S]*<\/span>$/, "")}</div><button type="button" id="jIcs" class="cadd" title="Her ayın 1'inde hatırlatma">📅 Takvime ekle</button></div>
       ${bar}</div>
       <p class="caciklama">${(msg.match(/<span>([\s\S]*)<\/span>$/) || [, ""])[1]}</p>
@@ -1340,13 +1351,15 @@ function campCard(k) {
 let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kKim = "", kOne = false, kKatAcik = false;
 try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kNe = k.ne || ""; kNere = k.nere || ""; kKim = k.kim || ""; kOne = !!k.one; } catch (e) {}
 const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, ne: kNe, nere: kNere, kim: kKim, one: kOne })); } catch (e) {} };
-// Renkler: İş Bankası bu sayfanın (İş Bankası Gündemi) altın rengi, Maximum pembe, Maximiles mavi
-const K_KAY = { isbank: ["🏦", "İş Bankası", "isbank.com.tr", "#e0a24f"], maximum: ["💳", "Maximum", "maximum.com.tr", "#ff4fa3"], maximiles: ["✈️", "Maximiles", "maximiles.com.tr", "#4a9be8"] };
+// Renkler: İş Bankası lacivert (ana sayfadaki İş Bankası Gündemi kartı gibi), Maximum pembe, Maximiles mavi
+// [ikon, ad, alan adı, vurgu rengi, seçili düğme zemini, seçili düğme yazısı]
+const K_KAY = { isbank: ["🏦", "İş Bankası", "isbank.com.tr", "#5b6cf0", "linear-gradient(160deg, #34449e, #1c2560)", "#fff"],
+  maximum: ["💳", "Maximum", "maximum.com.tr", "#ff4fa3", "#ff4fa3", "#000"], maximiles: ["✈️", "Maximiles", "maximiles.com.tr", "#4a9be8", "#4a9be8", "#000"] };
 const K_GRUP = { ne: [["MaxiMil", "✈️"], ["MaxiPuan", "🪙"], ["Faiz & Kredi", "🏦"], ["İndirim", "🏷️"], ["Taksit", "📆"], ["Ayrıcalık", "✨"]],
   nere: [["Tarım", "🌾"], ["Pati", "🐾"], ["Ödeme & Fatura", "🧾"], ["Eğitim & Kitap", "🎓"], ["Araç & Akaryakıt", "🚗"], ["Market & Yemek", "🛒"], ["Seyahat", "🏖️"], ["Giyim & Kozmetik", "👗"], ["Elektronik & Beyaz Eşya", "📱"], ["Ev & Yaşam", "🛋️"], ["Eğlence & Spor", "🎭"], ["Online Alışveriş", "🌐"], ["Bankacılık", "🏦"], ["Genel", "✨"]] };
 // Kimin için: İş Bankası'nın kendi kategorileri önce (İşte Maaşa Özel, Emeklilere Özel, İş Black...), yoksa başlıktaki ifade
 const K_KIM = { bireysel: [["İş Black · Plus", "🖤", /is-black|plus/, /(?<!friday\s)black(?!\s*friday)|iş\s*plus|\bplus\s*(?:kart|müşteri)|private/i], ["Emekli", "👴", /emeklilere/, /emekli(?!lik)/i], ["Maaş müşterisi", "💼", /maas/, /maaş/i]],
-  ticari: [["Çiftçi & Tarım", "🌾", /ciftci|tarim/, /çiftçi|tarım|imece|traktör|hasat|\btmo\b/i], ["Startup", "🚀", /startup/, /startup|girişimci/i], ["Turizmci", "🏨", /turizmci/, /turizmci|otel işlet|acente/i], ["Esnaf", "🏪", /esnaf/, /esnaf/i], ["Yeni müşteri", "🆕", /yeni-ticari/, /yeni ticari kart müşteri/i]] };
+  ticari: [["Çiftçi & Tarım", "🌾", /ciftci|tarim/, /çiftçi|tarım|imece|traktör|hasat|\btmo\b/i], ["Startup", "🚀", /startup/, /startup|girişimci/i], ["Turizmci", "🏨", /turizmci/, /turizmci|otel işlet|acente/i], ["Dış ticaret · İhracat", "🌍", /ihracat|dis-ticaret/, /ihracat|ihracatçı|\btim\b|dış ticaret|akreditif|ithalat/i], ["Esnaf · POS", "🏪", /esnaf|pos-yazarkasa/, /esnaf|\bpos\b|yazarkasa|ökc|üye işyeri/i], ["Yeni müşteri", "🆕", /yeni-ticari/, /yeni ticari kart müşteri/i]] };
 const K_HERKES = ["Herkes", "👥"];
 function kKimBul(k, seg, sluglar) {
   const t = (k.baslik + " " + (k.ozet || "")).replace(/İ/g, "i").replace(/I/g, "ı");
@@ -1420,7 +1433,7 @@ function renderKampanyalar() {
   const t = $("tfil");
   t.className = "tfil mtiles iki sekmeli kamp";
   t.hidden = false;
-  t.style.setProperty("--kk", renk);
+  t.style.setProperty("--kk", renk); t.style.setProperty("--kz", K_KAY[kKay][4]); t.style.setProperty("--ky", K_KAY[kKay][5]);
   t.innerHTML = `<div class="tsat uc"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
     + `<div class="tsat uc"><span class="tlab">👥 Müşteri</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
     + (L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, ad, n, kKim === ad)).join("")}</div></div>` : "")
