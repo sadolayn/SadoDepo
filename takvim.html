@@ -126,7 +126,7 @@
   .yearsel { display: flex; gap: 6px; margin-bottom: 8px; }
   .yearsel button { flex: 1; padding: 9px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-weight: 600; cursor: pointer; }
   .yearsel button.active { background: var(--accent); color: #000; border-color: var(--accent); }
-  .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -16px 12px; padding: 10px 16px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
+  .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -14px 12px; padding: 10px 14px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .stick > :last-child { margin-bottom: 0; }
   .stick .tabs { margin-bottom: 8px; }
@@ -268,6 +268,8 @@
   @keyframes pzStamp { from { transform: rotate(-8deg) scale(2.2); opacity: 0; } }
   .pz-bc { height: 34px; margin: 12px auto 4px; width: 75%; background: repeating-linear-gradient(90deg, #262626 0 2px, transparent 2px 4px, #262626 4px 5px, transparent 5px 8px, #262626 8px 11px, transparent 11px 12px); }
   .pz-warn { margin-top: 8px; font-size: 10.5px; color: #8a8270; text-align: center; letter-spacing: .3px; }
+  /* "karar metni ↗" gibi küçük bağlantılar parmakla kolay tutulsun */
+  #ppkAy a { display: inline-block; padding: 5px 0; margin: -5px 0; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>

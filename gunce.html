@@ -270,7 +270,7 @@
   @media (prefers-reduced-motion: reduce) { .posPaper { animation: none; } }
   .pz-c { text-align: center; } .pz-logo { font-family: Georgia, serif; font-style: italic; font-weight: 700; font-size: 26px; letter-spacing: 2px; color: #a8741c; }
   .pz-s { font-size: 12px; color: #555; line-height: 1.5; } .pz-hr { border: none; border-top: 1px dashed #bdb5a0; margin: 10px 0; }
-  .pz-h { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #8a8270; margin-bottom: 4px; }
+  .pz-h { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #6b6458; margin-bottom: 4px; }
   .pz-row { display: flex; justify-content: space-between; font-size: 14px; line-height: 1.6; } .pz-row b { font-weight: 700; }
   .pz-g { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; white-space: nowrap; margin: 10px 0 2px; padding-bottom: 2px; border-bottom: 1px solid #d9d2bf; font-size: 11px; letter-spacing: 1.2px; font-weight: 700; color: #6b5a30; } .pz-g small { font-weight: 400; letter-spacing: 0; color: #9a917f; text-transform: none; font-size: 10.5px; }
   .pz-p { margin: 8px 0 10px; } .pz-p .t { display: flex; justify-content: space-between; font-size: 14px; } .pz-p .t b { font-weight: 700; }
@@ -1173,10 +1173,10 @@ function renderPos() {
     ${P.tier === "tam" ? '<div class="pz-stamp">HEDEF TAMAM ✓</div>' : ""}
     <hr class="pz-hr">
     <div class="pz-h">BUGÜNÜN SATIŞLARI</div>
-    ${P.todayL.length ? P.todayL.map((x) => `<div class="pz-row"><span>${x.ic} ${esc(x.ad)}</span><b>${esc(x.nT)}</b></div>`).join("") : '<div class="pz-row" style="color:#999"><span>Bugün henüz kayıt yok</span><span>—</span></div>'}
+    ${P.todayL.length ? P.todayL.map((x) => `<div class="pz-row"><span>${x.ic} ${esc(x.ad)}</span><b>${esc(x.nT)}</b></div>`).join("") : '<div class="pz-row" style="color:#6b6458"><span>Bugün henüz kayıt yok</span><span>—</span></div>'}
     <hr class="pz-hr">
     <div class="pz-h">ÇEYREK HEDEFLERİ</div>
-    ${P.items.length ? turGrup(P.items).map((g) => `<div class="pz-g"><span>${g.ad}</span><small>${g.acik}</small></div>` + g.L.map((x) => `<div class="pz-p" style="--c:${posCol(x.pct)}"><div class="t"><span>${x.ic} ${esc(x.ad)}</span><b>${esc(x.dT)} / ${esc(x.tT)}</b></div><div class="pz-bar"><i style="width:${Math.min(100, x.pct)}%"></i>${x.plan > 0 && x.plan < 100 ? `<u style="left:${x.plan}%" title="Plan"></u>` : ""}</div>${x.ok ? `<small class="ok">✅ Hedef tamam${x.done > x.tgt ? ` · +${esc(x.fT)} fazla` : ""}</small>` : `<small>%${Math.round(x.pct)} · kalan ${esc(x.kT)}</small>`}</div>`).join("")).join("") : '<div class="pz-row" style="color:#999"><span>Hedef girilmedi</span><span>—</span></div>'}
+    ${P.items.length ? turGrup(P.items).map((g) => `<div class="pz-g"><span>${g.ad}</span><small>${g.acik}</small></div>` + g.L.map((x) => `<div class="pz-p" style="--c:${posCol(x.pct)}"><div class="t"><span>${x.ic} ${esc(x.ad)}</span><b>${esc(x.dT)} / ${esc(x.tT)}</b></div><div class="pz-bar"><i style="width:${Math.min(100, x.pct)}%"></i>${x.plan > 0 && x.plan < 100 ? `<u style="left:${x.plan}%" title="Plan"></u>` : ""}</div>${x.ok ? `<small class="ok">✅ Hedef tamam${x.done > x.tgt ? ` · +${esc(x.fT)} fazla` : ""}</small>` : `<small>%${Math.round(x.pct)} · kalan ${esc(x.kT)}</small>`}</div>`).join("")).join("") : '<div class="pz-row" style="color:#6b6458"><span>Hedef girilmedi</span><span>—</span></div>'}
     <hr class="pz-hr">
     <div class="pz-tot">${ring(P.pct)}<div><b>GENEL BAŞARI</b><em>%${Math.round(P.pct)}</em><span style="color:#c9a050">${stars(P.pct)}</span><div class="pz-s">${P.tam}/${P.items.length} hedef tamamlandı</div></div></div>
     <div class="pz-q">“${esc(P.soz)}”</div>

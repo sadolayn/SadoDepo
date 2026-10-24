@@ -24,7 +24,7 @@
     html(list) {
       return `<div class="isimBox">${list.map(([k, def, lb]) => k
         ? `<div>${lb}<input data-isim="${k}" maxlength="${MAX}" placeholder="${def}" value="${clean(D[k])}" autocomplete="off" spellcheck="false"></div>`
-        : `<div>${lb}<span class="fix">${def}</span></div>`).join("")}</div><small style="display:block;font-size:11px;color:#6f6a62;margin-bottom:4px">İsimler en fazla ${MAX} karakter · tüm oyunlarda hatırlanır</small>`;
+        : `<div>${lb}<span class="fix">${def}</span></div>`).join("")}</div><small style="display:block;font-size:11px;color:#8a8a8a;margin-bottom:4px">İsimler en fazla ${MAX} karakter · tüm oyunlarda hatırlanır</small>`;
     },
     /** Alanları kaydetmeye bağla */
     bind(root, onChange) {

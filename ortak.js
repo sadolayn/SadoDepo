@@ -10,7 +10,7 @@
       Karekod yalnızca sayfanın adresini içerir (lib/qrcode.js, MIT, Kazuhiko Arase). İstemeyen sayfa: <body data-karekod="yok">
 */
 (function () {
-  var FOOTER = 'Copyright © {Y} Sadolayn. All rights reserved.<br><span style="font-size:11.5px;letter-spacing:.3px;color:#8a8a8a">Tüm hakları saklıdır.</span><br><span style="display:block;max-width:420px;margin:6px auto 0;font-size:12px;line-height:1.5;color:#9a9a9a">Kişisel bir sitedir; Türkiye İş Bankası A.Ş. ile bağı yoktur, banka tarafından hazırlanmamıştır. Banka adları ilgili kurumun tescilli markasıdır; resmi bilgi için <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:#b5b5b5">isbank.com.tr</a>.<br>Ziyaretler isimsiz sayılır, kişisel veri toplanmaz. Ana sayfadaki "Önerileriniz ve görüşleriniz" formuna yazdıkların yalnızca site sahibine ulaşır.</span>';
+  var FOOTER = 'Copyright © {Y} Sadolayn. All rights reserved.<br><span style="font-size:11.5px;letter-spacing:.3px;color:#8a8a8a">Tüm hakları saklıdır.</span><br><span style="display:block;max-width:420px;margin:6px auto 0;font-size:12px;line-height:1.5;color:#9a9a9a">Kişisel bir sitedir; Türkiye İş Bankası A.Ş. ile bağı yoktur, banka tarafından hazırlanmamıştır. Banka adları ilgili kurumun tescilli markasıdır; resmi bilgi için <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:#b5b5b5;display:inline-block;padding:5px 2px;margin:-5px 0">isbank.com.tr</a>.<br>Ziyaretler isimsiz sayılır, kişisel veri toplanmaz. Ana sayfadaki "Önerileriniz ve görüşleriniz" formuna yazdıkların yalnızca site sahibine ulaşır.</span>';
 
   var css = document.createElement("style");
   css.textContent =
@@ -71,7 +71,7 @@
       f.style.cssText = "width:100%;flex:none;text-align:center;font-size:11.5px;color:#8a8a8a;margin:8px 0 2px;letter-spacing:.4px;font-family:system-ui,-apple-system,'Segoe UI',sans-serif";
       var metin = FOOTER.replace("{Y}", Y).split("<br>").slice(2).join("<br>");
       f.innerHTML = "© " + Y + " Sadolayn · Tüm hakları saklıdır · " +
-        '<button type="button" aria-expanded="false" style="background:none;border:0;padding:4px 2px;color:#8a7a5e;font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Okuyunuz ›</button>' +
+        '<button type="button" aria-expanded="false" style="background:none;border:0;padding:6px 4px;min-height:28px;color:#8a7a5e;font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Okuyunuz ›</button>' +
         '<div hidden style="margin-top:4px">' + metin + "</div>";
       var b = f.querySelector("button"), d = f.querySelector("div"), t = null;
       var kapa = function () { d.hidden = true; b.textContent = "Okuyunuz ›"; b.setAttribute("aria-expanded", "false"); clearTimeout(t); };

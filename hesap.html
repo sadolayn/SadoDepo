@@ -31,7 +31,7 @@
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -14px 12px; padding: 10px 14px 8px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
   .tabs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
-  .tabs button { border: none; background: transparent; color: var(--muted); padding: 7px 1px; border-radius: 10px; font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; line-height: 1.2; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .tabs button { border: none; background: transparent; color: var(--muted); padding: 7px 1px; border-radius: 10px; font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; line-height: 1.2; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .tabs button b { display: block; font-size: 18px; margin-bottom: 2px; }
   .tabs button.on { background: var(--accent); color: #000; }
   .panel { display: none; } .panel.on { display: block; }
@@ -65,7 +65,7 @@
   .evr:first-of-type { border-top: none; }
   .evr small { grid-column: 1; color: var(--muted); font-size: 11.5px; }
   .evr b { grid-row: span 2; text-align: right; font-size: 20px; font-variant-numeric: tabular-nums; color: var(--ink); }
-  .evr b em { display: block; font-style: normal; font-size: 10.5px; color: var(--muted); font-weight: 500; }
+  .evr b em { display: block; font-style: normal; font-size: 11px; color: var(--muted); font-weight: 500; }
   .evr.next b { color: var(--accent); }
   .bar { grid-column: 1 / -1; height: 4px; border-radius: 4px; background: var(--field); overflow: hidden; margin-top: 4px; } .bar i { display: block; height: 100%; background: var(--accent); }
   .rate { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
@@ -220,7 +220,7 @@
   .gr.win b { color: var(--accent); }
   /* ===== Renkli menü kutucukları ===== */
   #tabs { gap: 4px; padding: 5px; }
-  #tabs button { --c: #e0a24f; position: relative; overflow: visible; padding: 6px 1px 5px; border-radius: 11px; border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 36%, #000), color-mix(in srgb, var(--c) 10%, #060606)); color: color-mix(in srgb, var(--c) 35%, #fff); font-weight: 700; transition: transform .12s; }
+  #tabs button { --c: #e0a24f; position: relative; overflow: visible; padding: 6px 1px 5px; border-radius: 11px; border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 36%, #000), color-mix(in srgb, var(--c) 10%, #060606)); color: color-mix(in srgb, var(--c) 35%, #fff); font-weight: 700; letter-spacing: -.3px; transition: transform .12s; }
   #tabs button:active { transform: scale(.95); }
   #tabs button.on { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 45%, transparent); }
   #tabs [data-t="calc"] { --c: #e0a24f; } #tabs [data-t="cetvel"] { --c: #3fbfd6; } #tabs [data-t="mesafe"] { --c: #5aa9f0; } #tabs [data-t="faiz"] { --c: #3fc283; }
@@ -285,7 +285,7 @@
   #calc[data-skin="seritli"] .brand b { background: linear-gradient(90deg, #6b4a14, #a87a2a 45%, #5e4110); -webkit-background-clip: text; background-clip: text; color: transparent; }
   #calc[data-skin="seritli"] .brand i { color: #6f6b61; font-weight: 700; }
   #calc[data-skin="seritli"] .solar { display: none; }
-  #calc[data-skin="seritli"] .prt { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; color: #6f6b61; }
+  #calc[data-skin="seritli"] .prt { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: #6f6b61; }
   .led { width: 8px; height: 8px; border-radius: 50%; background: #2c7a5c; box-shadow: inset 0 1px 1px rgba(0,0,0,.4); transition: background .1s, box-shadow .1s; }
   #calc.basiyor .led { background: #7dffc0; box-shadow: 0 0 8px #3fe39a, 0 0 2px #fff; }
   #calc[data-skin="seritli"] .lcd { background: linear-gradient(180deg, #0a100e, #121b18 60%, #0d1412); border: 3px solid #2a2a2a; color: #6dffd8; box-shadow: inset 0 3px 10px rgba(0,0,0,.8), 0 1px 0 #fff; }
