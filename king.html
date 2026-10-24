@@ -235,6 +235,7 @@
 <script src="kartmasa.js?v=4" data-oyun="king"></script>
 <script src="isq.js"></script>
 <script src="token.js?v=2"></script>
+<script src="kingai.js?v=1"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
@@ -459,280 +460,20 @@ function legal(hand) {
 }
 
 // ---------- Bilgisayar ----------
-function kozEstimate(hand) {
-  let best = { s: SUITS[0], est: -1 };
-  for (const t of SUITS) {
-    let est = 0;
-    for (const s of SUITS) {
-      const cs = hand.filter((c) => c.s === s);
-      const has = (r) => cs.some((c) => c.r === r);
-      if (has(14)) est += 1;
-      if (has(13)) est += cs.length >= 2 ? 0.75 : 0.2;
-      if (has(12)) est += cs.length >= 3 ? 0.4 : 0;
-      if (s === t) est += Math.max(0, cs.length - 3) * 0.9;
-      if (s !== t && cs.length <= 1) est += hand.filter((c) => c.s === t).length >= 3 ? 0.6 : 0;
-    }
-    if (est > best.est) best = { s: t, est };
-  }
-  return best;
-}
-function cezaRisk(hand, k) {
-  const by = (s) => hand.filter((c) => c.s === s);
-  const low = (cs) => cs.filter((c) => c.r <= 7).length;
-  let r = 0;
-  if (k === "el") r = hand.filter((c) => c.r >= 12).length * 1.2 + hand.filter((c) => c.r === 14).length;
-  if (k === "kupa") { const h = by("♥"); r = h.filter((c) => c.r >= 10).length * 1.5 - low(h) * 0.5 + 1; }
-  if (k === "erkek") r = hand.filter((c) => c.r === 13 || c.r === 11).reduce((a, c) => a + (by(c.s).length <= 2 ? 2 : 1), 0);
-  if (k === "kiz") r = hand.filter((c) => c.r === 12).reduce((a, c) => a + (by(c.s).length <= 3 ? 2.2 : 1), 0);
-  if (k === "rifki") { const h = by("♥"); const kh = h.some((c) => c.r === 13); r = kh ? (h.length <= 3 ? 5 : 2.5) : (h.length <= 1 ? 1.5 : 0.5); }
-  if (k === "son") r = hand.filter((c) => c.r >= 13).length * 0.6 + 1;
-  return r * CEZALAR[k].puan / 100;
-}
-function botChoose(p) {
-  const av = available(p);
-  const hand = hands[p];
-  const kz = kozEstimate(hand);
-  if (av.includes("koz") && (av.length === 1 || kz.est >= 4.6)) return { ct: "koz", trump: kz.s };
-  const cz = av.filter((x) => x !== "koz");
-  if (!cz.length) return { ct: "koz", trump: kz.s };
-  cz.sort((a, b) => cezaRisk(hand, a) - cezaRisk(hand, b));
-  return { ct: cz[0] };
-}
-function isBoss(c, hand) {
-  for (let r = c.r + 1; r <= 14; r++) {
-    const k = c.s + r;
-    if (!played.has(k) && !hand.some((h) => id(h) === k)) return false;
-  }
-  return true;
-}
-// Henüz oynanmamış ve bu oyuncunun elinde olmayan kartlar
-function outstanding(hand, suit) {
-  const out = [];
-  for (let r = 2; r <= 14; r++) {
-    const k = suit + r;
-    if (!played.has(k) && !hand.some((h) => id(h) === k) && !trick.some((t) => id(t.card) === k)) out.push(r);
-  }
-  return out;
-}
-function playersAfter(p) {
-  const out = [];
-  for (let i = trick.length + 1; i < 4; i++) out.push((p + (i - trick.length)) % 4);
-  return out;
-}
-function botPick(p) {
-  const hand = hands[p];
-  const L = legal(hand);
-  if (L.length === 1) return L[0];
-  const trickNo = 14 - hand.length; // 1..13
-
-  // ---------- KOZ ----------
-  if (contract === "koz") {
-    const lowest = (cs) => [...cs].sort((a, b) => (a.s === trump) - (b.s === trump) || a.r - b.r)[0];
-    const myTrumps = hand.filter((c) => c.s === trump).length;
-    const outTrumps = outstanding(hand, trump).length;
-    if (trick.length === 0) {
-      // Rakiplerde koz kalmadıysa her büyük kart kazanır
-      const boss = L.filter((c) => isBoss(c, hand) && c.s !== trump && (outTrumps === 0 || !opponents(p).some((o) => voids[o][c.s])));
-      if (boss.length) return boss.sort((a, b) => b.r - a.r)[0];
-      const trumpsOk = L.filter((c) => c.s === trump);
-      if (trumpsOk.length && myTrumps >= outTrumps && outTrumps > 0) {
-        const tb = trumpsOk.filter((c) => isBoss(c, hand));
-        return (tb.length ? tb : trumpsOk).sort((a, b) => b.r - a.r)[0];
-      }
-      // Kısa renkten aç (koz kesmek için boşluk yarat), yoksa en düşük
-      const side = L.filter((c) => c.s !== trump);
-      if (side.length && myTrumps > 0) {
-        const len = (s) => hand.filter((c) => c.s === s).length;
-        const short = [...side].sort((a, b) => len(a.s) - len(b.s) || a.r - b.r);
-        if (len(short[0].s) <= 2 && short[0].r < 12) return short[0];
-      }
-      return lowest(L);
-    }
-    const best = trickWinner(trick).card;
-    const led = trick[0].card.s;
-    const win = L.filter((c) => beats(c, best)).sort((a, b) => (a.s === trump) - (b.s === trump) || a.r - b.r);
-    if (win.length) {
-      if (trick.length === 3) return win[0];
-      const after = playersAfter(p);
-      // Arkadakiler kesebilir mi / yükseltebilir mi?
-      const safe = win.filter((c) => {
-        if (c.s === trump) return outstanding(hand, trump).filter((r) => r > c.r).length === 0 || after.every((o) => voids[o][trump]);
-        const higher = outstanding(hand, c.s).filter((r) => r > c.r).length;
-        const canRuff = after.some((o) => voids[o][c.s] && !voids[o][trump]) && outTrumps > 0;
-        return higher === 0 && !canRuff;
-      });
-      if (safe.length) return safe[0];
-      // Garanti değil: renk kartıysa en yükseğiyle dene, kozsa en düşük kazananla
-      const nonTrump = win.filter((c) => c.s !== trump);
-      if (nonTrump.length) return nonTrump[nonTrump.length - 1];
-      return win[0];
-    }
-    return lowest(L);
-  }
-
-  // ---------- CEZA ----------
-  const pen = (c) => isPenaltyCard(c);
-  // Son iki: ilk 11 elde büyük kartlardan kurtul (el almanın cezası yok)
-  if (contract === "son" && trickNo <= 11) {
-    if (trick.length === 0) return [...L].sort((a, b) => b.r - a.r)[0];
-    const best = trickWinner(trick).card;
-    const win = L.filter((c) => beats(c, best));
-    if (win.length) return win.sort((a, b) => b.r - a.r)[0];
-    return [...L].sort((a, b) => b.r - a.r)[0];
-  }
-  const opps = opponents(p);
-  if (trick.length === 0) {
-    // Kazanma ihtimali en düşük kartla aç
-    let bestC = null, bestScore = Infinity;
-    for (const c of L) {
-      const out = outstanding(hand, c.s);
-      if (!out.length) { // bu renkte kimsede kart yok: kesin alırsın
-        const sc = 1000 + c.r;
-        if (sc < bestScore) { bestScore = sc; bestC = c; }
-        continue;
-      }
-      const lower = out.filter((r) => r < c.r).length;
-      const higher = out.length - lower;
-      let sc = (higher === 0 ? 500 : 0) + (lower / out.length) * 100;
-      sc += opps.filter((o) => voids[o][c.s]).length * 40; // boş olan ceza kartı atar
-      if (pen(c)) sc += 200;
-      // Kız/erkek almaz: o rengin cezası dışarıdaysa ve sende büyük kart varsa açma
-      if (contract === "kiz" && out.includes(12) && c.r > 12) sc += 300;
-      if (contract === "erkek" && (out.includes(13) || out.includes(11)) && c.r > 11) sc += 150;
-      if (contract === "rifki" && c.s === "♥" && c.r === 14 && out.includes(13)) sc += 400;
-      sc += c.r * 0.5;
-      if (sc < bestScore) { bestScore = sc; bestC = c; }
-    }
-    return bestC;
-  }
-  const led = trick[0].card.s;
-  const best = trickWinner(trick).card;
-  const loses = L.filter((c) => !beats(c, best));
-  const danger = (c) => {
-    let d = (pen(c) ? 200 : 0) + c.r;
-    const out = outstanding(hand, c.s);
-    if (out.filter((r) => r < c.r).length >= 2) d += 20; // ileride ele girme riski yüksek
-    if (hand.filter((h) => h.s === c.s).length === 1 && c.r >= 11) d += 15; // tek kalmış büyük kart
-    return d;
-  };
-  if (loses.length) {
-    if (loses.some((c) => c.s === led)) {
-      // Renge uyuyorsan: kaybeden en büyük kartı bırak
-      return [...loses].sort((a, b) => (pen(b) - pen(a)) || b.r - a.r)[0];
-    }
-    return [...loses].sort((a, b) => danger(b) - danger(a))[0];
-  }
-  // Tüm kartlar kazanıyor
-  const after = playersAfter(p);
-  const canBeOvertaken = (c) => after.some((o) => !voids[o][led]) && outstanding(hand, led).some((r) => r > c.r);
-  const nonPen = L.filter((c) => !pen(c));
-  if (trick.length === 3 || !L.some(canBeOvertaken)) {
-    // Eli zaten alacaksın: en büyük, cezasız kartı harca
-    const pool = nonPen.length ? nonPen : L;
-    return [...pool].sort((a, b) => b.r - a.r)[0];
-  }
-  // Arkadan biri büyük atabilir: en küçükle dene
-  return [...(nonPen.length ? nonPen : L)].sort((a, b) => a.r - b.r)[0];
-}
-const opponents = (p) => [0, 1, 2, 3].filter((x) => x !== p);
-
-// ---------- Zor seviye: Monte Carlo (bilinmeyen kartlar rastgele dağıtılıp oyun sonuna kadar oynatılır) ----------
-// Botlar kendi puanını artırmaya ve aynı anda oyuncunun (Sen) puanını düşürmeye çalışır.
+// Rakipler kingai.js ile "düşünür": görmedikleri kartları ipuçlarına uyarak (kim hangi rengi bitirdi, kim hangi
+// kartı atmak zorundayken atmadı) yüzlerce kez dağıtıp her kartı elin sonuna kadar dener, en iyisini oynar.
+// Botlar kendi puanını artırmaya ve aynı anda oyuncunun (Sen) puanını düşürmeye çalışır. Sadolayn daha uzun düşünür.
 const GANG = 0.6;
-function snap() {
-  return { hands: hands.map((h) => h.slice()), trick: trick.map((t) => ({ p: t.p, card: t.card })), tricksWon: tricksWon.slice(), taken: taken.slice(),
-    played: new Set(played), voids: voids.map((v) => ({ ...v })), trumpBroken, heartsBroken, contract, trump, turn };
-}
-function restore(S) {
-  hands = S.hands.map((h) => h.slice()); trick = S.trick.map((t) => ({ ...t })); tricksWon = S.tricksWon.slice(); taken = S.taken.slice();
-  played = new Set(S.played); voids = S.voids.map((v) => ({ ...v })); trumpBroken = S.trumpBroken; heartsBroken = S.heartsBroken;
-  contract = S.contract; trump = S.trump; turn = S.turn;
-}
-// p'nin bakış açısından diğer elleri yeniden dağıt (renk boşlukları dikkate alınır)
-function determinize(p) {
-  const known = new Set(hands[p].map(id));
-  const pool = [];
-  for (const o of [0, 1, 2, 3]) if (o !== p) for (const c of hands[o]) pool.push(c);
-  const need = [0, 1, 2, 3].map((o) => (o === p ? 0 : hands[o].length));
-  for (let tries = 0; tries < 30; tries++) {
-    const d = pool.slice();
-    for (let i = d.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [d[i], d[j]] = [d[j], d[i]]; }
-    const out = [[], [], [], []]; let ok = true;
-    // önce boşluk kısıtı en çok olan oyuncuya kart ver
-    const order = [0, 1, 2, 3].filter((o) => o !== p).sort((a, b) => Object.keys(voids[b]).length - Object.keys(voids[a]).length);
-    for (const o of order) {
-      for (let i = 0; i < d.length && out[o].length < need[o]; ) {
-        if (tries < 25 && voids[o][d[i].s]) { i++; continue; }
-        out[o].push(d.splice(i, 1)[0]);
-      }
-      if (out[o].length < need[o]) { ok = false; break; }
-    }
-    if (ok) { for (const o of order) hands[o] = out[o]; return; }
-  }
-}
-function simPlay(p, c) {
-  hands[p] = hands[p].filter((x) => id(x) !== id(c));
-  if (trick.length && c.s !== trick[0].card.s) voids[p][trick[0].card.s] = true;
-  trick.push({ p, card: c });
-  played.add(id(c));
-  if (contract === "koz" && c.s === trump) trumpBroken = true;
-  if (c.s === "♥") heartsBroken = true;
-  if (trick.length < 4) { turn = (p + 1) % 4; return false; }
-  const w = trickWinner(trick).p;
-  const trickNo = 13 - hands[0].length;
-  tricksWon[w]++;
-  if (contract !== "koz") taken[w] += penaltyOf(contract, trick.map((t) => t.card), trickNo);
-  trick = []; turn = w;
-  return handOver();
-}
-function rollout() { let guard = 60; while (guard-- > 0) { if (simPlay(turn, botPick(turn))) break; } }
-const roundScore = (q) => (contract === "koz" ? tricksWon[q] * 50 : -taken[q] * CEZALAR[contract].puan);
-const objective = (p) => roundScore(p) - (p !== 0 ? GANG * roundScore(0) : 0);
-function mcPick(p) {
-  const L = legal(hands[p]);
-  if (L.length === 1) return L[0];
-  const S0 = snap();
-  const tot = L.map(() => 0), cnt = L.map(() => 0);
-  const t0 = performance.now();
-  let it = 0;
-  while (it < 400 && (it < L.length * 10 || performance.now() - t0 < 260)) {
-    const i = it % L.length;
-    restore(S0); determinize(p);
-    if (!simPlay(p, L[i])) rollout();
-    tot[i] += objective(p); cnt[i]++;
-    it++;
-  }
-  restore(S0);
-  let bi = 0; for (let i = 1; i < L.length; i++) if (tot[i] / cnt[i] > tot[bi] / cnt[bi]) bi = i;
-  return L[bi];
-}
-// Oyun seçimi: her seçeneği simüle et, "adil pay"a göre en kârlısını seç
-function mcChoose(p) {
-  const av = available(p);
-  const opts = [];
-  for (const k of av) if (k === "koz") for (const t of SUITS) opts.push({ ct: "koz", trump: t }); else opts.push({ ct: k });
-  if (opts.length === 1) return opts[0];
-  const S0 = snap();
-  const fair = (o) => (o.ct === "koz" ? 13 * 50 / 4 : -CEZA_TOPLAM[o.ct] / 4);
-  let best = null, bestV = -Infinity;
-  const per = Math.max(10, Math.floor(260 / opts.length));
-  for (const o of opts) {
-    let sum = 0;
-    for (let n = 0; n < per; n++) {
-      restore(S0); determinize(p);
-      contract = o.ct; trump = o.trump || null; trumpBroken = false; heartsBroken = false;
-      trick = []; tricksWon = [0, 0, 0, 0]; taken = [0, 0, 0, 0]; played = new Set(); voids = [{}, {}, {}, {}]; turn = p;
-      rollout();
-      const f = fair(o);
-      sum += (roundScore(p) - f) - (p !== 0 ? GANG * (roundScore(0) - f) : 0);
-    }
-    // kozu erken harcamamak için küçük bir ceza (sonda zorunlu kalmasın diye dengelenir)
-    let v = sum / per;
-    if (o.ct === "koz") { const left = 5 - G.kozCount[p] - G.cezaCount[p]; v -= left > 2 ? 40 : 0; }
-    if (v > bestV) { bestV = v; best = o; }
-  }
-  restore(S0);
-  return best;
+let kInfo = KingAI.newInfo();
+const kUtil = (sc, x) => sc[x] - (x !== 0 ? GANG * sc[0] : 0);
+const kState = () => ({ h: hands, trick: trick.map((t) => ({ p: t.p, card: t.card })), ct: contract, T: trump, tb: trumpBroken, hb: heartsBroken, played, v: voids, tw: tricksWon, tk: taken, turn });
+const aiPick = (p) => KingAI.pick(kState(), p, kInfo, kUtil, { ms: p === 2 ? 700 : 350 });
+function aiChoose(p) {
+  const opts = [], left = 5 - G.kozCount[p] - G.cezaCount[p];
+  // kozu erken harcamamak için küçük bir ceza (sonda zorunlu kalmasın diye dengelenir)
+  for (const k of available(p)) if (k === "koz") for (const t of SUITS) opts.push({ ct: "koz", T: t, bonus: left > 2 ? -40 : 0 }); else opts.push({ ct: k });
+  const o = KingAI.choose(hands[p], p, opts, kUtil, { n: p === 2 ? 120 : 70 });
+  return { ct: o.ct, trump: o.T };
 }
 
 // ---------- Ekran ----------
@@ -874,7 +615,7 @@ function newRound() {
   hands = [0, 1, 2, 3].map((i) => d.slice(i * 13, i * 13 + 13));
   hands.forEach(sortHand);
   trick = []; tricksWon = [0, 0, 0, 0]; taken = [0, 0, 0, 0]; played = new Set(); takenBy = {};
-  voids = [{}, {}, {}, {}];
+  voids = [{}, {}, {}, {}]; kInfo = KingAI.newInfo();
   contract = null; trump = null; trumpBroken = false; heartsBroken = false;
   phase = "choose"; turn = -1;
   if (window.CardSfx) CardSfx.deal(13);
@@ -883,7 +624,7 @@ function newRound() {
   else {
     setStatus(`${NAMES[chooser]} oyun seçiyor…`);
     const rid = ++roundId;
-    setTimeout(() => { if (rid !== roundId || phase !== "choose") return; const c = mcChoose(chooser); startPlay(c.ct, c.trump); }, 900 * KartMasa.hiz());
+    setTimeout(() => { if (rid !== roundId || phase !== "choose") return; const c = aiChoose(chooser); startPlay(c.ct, c.trump); }, 900 * KartMasa.hiz());
   }
 }
 function showChoosePanel() {
@@ -944,9 +685,12 @@ async function playTurn() {
     if (trick.length) setStatus(`${NAMES[turn]} oynuyor…`);
     renderHand();
     const me = turn;
-    await wait(380);
+    await wait(60); // "oynuyor…" yazısı görünsün, sonra düşünsün
     if (phase !== "play" || turn !== me || me <= 0 || !hands[me]) return;
-    playCard(turn, mcPick(turn));
+    const t0 = performance.now(), c = aiPick(me);
+    await wait(Math.max(80, 320 - (performance.now() - t0)));
+    if (phase !== "play" || turn !== me) return;
+    playCard(me, c);
   }
 }
 function humanPlay(c) {
@@ -960,6 +704,7 @@ function handOver() {
 }
 async function playCard(p, c) {
   if (window.CardSfx) CardSfx.play();
+  KingAI.observe(kInfo, p, c, kState());
   hands[p] = hands[p].filter((x) => id(x) !== id(c));
   if (trick.length && c.s !== trick[0].card.s) voids[p][trick[0].card.s] = true;
   trick.push({ p, card: c, fresh: true });

@@ -99,6 +99,7 @@
 <script src="kartmasa.js?v=4" data-oyun="balayi"></script>
 <script src="isq.js"></script>
 <script src="token.js?v=2"></script>
+<script src="balayiai.js?v=1"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
@@ -211,71 +212,12 @@ function legal(p) {
 }
 
 // ---------- Bilgisayar ----------
-function known(p) { return playable(p); }
-function outstanding(p, suit) {
-  const mine = new Set(known(p).map(id));
-  const out = [];
-  for (let r = 2; r <= 14; r++) { const k = suit + r; if (!played.has(k) && !mine.has(k) && !trick.some((t) => id(t.card) === k)) out.push(r); }
-  return out;
-}
-function strength(cards, t) {
-  let e = 0;
-  for (const s of SUITS) {
-    const cs = cards.filter((c) => c.s === s);
-    for (const c of cs) {
-      if (t && s === t) e += 0.55 + (c.r - 2) / 24;
-      else if (c.r === 14) e += 0.95;
-      else if (c.r === 13) e += cs.length >= 2 ? 0.55 : 0.3;
-      else if (c.r === 12) e += cs.length >= 3 ? 0.3 : 0.1;
-      else if (c.r === 11 && !t) e += 0.12;
-    }
-    if (!t && cs.length >= 5) e += (cs.length - 4) * 0.35;
-    if (t && s !== t && cs.length <= 1) e += Math.min(cards.filter((c) => c.s === t).length, 3) * 0.15;
-  }
-  return e;
-}
-function botChoose(p) {
-  const av = GAMES.filter((g) => !G.used[p].includes(g.k));
-  const me = known(p), opp = tops(1 - p);
-  let best = null;
-  for (const g of av) {
-    const t = g.k === "NT" ? null : g.k;
-    const a = strength(me, t), b = strength(opp, t) * 1.6;
-    const share = a / Math.max(0.1, a + b);
-    const v = (share - 0.5) * g.x;
-    if (!best || v > best.v) best = { g, v };
-  }
-  return best.g.k;
-}
-function isBoss(p, c) { return outstanding(p, c.s).every((r) => r < c.r); }
-function botPick(p) {
-  const L = legal(p);
-  if (L.length === 1) return L[0];
-  const inPile = new Set(tops(p).map(id));
-  // eşitlikte masadaki kartı tercih et (altındaki kart açılır)
-  const pref = (a, b) => (inPile.has(id(b)) - inPile.has(id(a)));
-  const opp = 1 - p;
-  const oppTrumps = trump ? outstanding(p, trump).length : 0;
-  if (!trick.length) {
-    const boss = L.filter((c) => c.s !== trump && isBoss(p, c) && (!trump || oppTrumps === 0 || !voids[opp][c.s]));
-    if (boss.length) return boss.sort((a, b) => b.r - a.r || pref(a, b))[0];
-    if (trump) {
-      const myTr = L.filter((c) => c.s === trump);
-      const allMy = known(p).filter((c) => c.s === trump).length;
-      if (myTr.length && allMy >= oppTrumps && oppTrumps > 0) {
-        const tb = myTr.filter((c) => isBoss(p, c));
-        return (tb.length ? tb : myTr).sort((a, b) => b.r - a.r)[0];
-      }
-    }
-    const side = L.filter((c) => c.s !== trump);
-    const pool = side.length ? side : L;
-    return [...pool].sort((a, b) => a.r - b.r || pref(a, b))[0];
-  }
-  const lead = trick[0].card;
-  const win = L.filter((c) => beats(c, lead)).sort((a, b) => (a.s === trump) - (b.s === trump) || a.r - b.r || pref(a, b));
-  if (win.length) return win[0];
-  return [...L].sort((a, b) => (a.s === trump) - (b.s === trump) || a.r - b.r || pref(a, b))[0];
-}
+// Sadolayn balayiai.js ile "düşünür": görmediği kartları (senin elin ve kapalı kartlar) ipuçlarına uyarak
+// yüzlerce kez dağıtıp her kartı elin sonuna kadar dener; oyun seçerken de her oyunu çarpanıyla tartar.
+let bInfo = BalayiAI.newInfo();
+const bState = () => ({ h: hands, pl: piles, trick: trick.map((t) => ({ p: t.p, card: t.card })), T: trump, tb: trumpBroken, played, tw: tricksWon, turn, v: voids });
+const botPick = (p) => BalayiAI.pick(bState(), p, bInfo, { ms: 650 });
+const botChoose = (p) => BalayiAI.choose(bState(), p, bInfo, GAMES.filter((g) => !G.used[p].includes(g.k)), { n: 150 });
 
 // ---------- Ekran ----------
 function setStatus(t) { $("status").innerHTML = t ? `<span>${t}</span>` : ""; }
@@ -364,7 +306,7 @@ function newRound() {
   for (const p of [0, 1]) for (let i = 0; i < 10; i++) piles[p][i].push(d[k++]);
   hands = [d.slice(40, 46), d.slice(46, 52)];
   hands.forEach(sortHand);
-  trick = []; tricksWon = [0, 0]; played = new Set(); voids = [{}, {}];
+  trick = []; tricksWon = [0, 0]; played = new Set(); voids = [{}, {}]; bInfo = BalayiAI.newInfo();
   game = null; trump = null; trumpBroken = false;
   phase = "choose"; turn = -1;
   if (window.CardSfx) CardSfx.deal(13);
@@ -399,11 +341,20 @@ async function startPlay(k) {
 async function playTurn() {
   renderWho();
   if (turn === 0) { setStatus(trick.length ? "Sıra sende." : "Sıra sende, bir kart aç."); renderPiles(); renderHand(); }
-  else { renderPiles(); renderHand(); await wait(650); playCard(1, botPick(1)); }
+  else if (turn === 1) {
+    // Sıra gerçekten Sadolayn'daysa ve bu arada değişmediyse oyna (duyuru sırasında hızlı kart atılırsa çift oynamasın)
+    const ok = () => phase === "play" && turn === 1 && !busy;
+    renderPiles(); renderHand(); await wait(60);
+    if (!ok()) return;
+    const t0 = performance.now(), c = botPick(1);
+    await wait(Math.max(100, 590 - (performance.now() - t0)));
+    if (ok()) playCard(1, c);
+  }
 }
 function humanPlay(c) { if (phase === "play" && turn === 0 && !busy) playCard(0, c); }
 async function playCard(p, c) {
   if (window.CardSfx) CardSfx.play();
+  BalayiAI.observe(bInfo, p, c, bState());
   const hi = hands[p].findIndex((x) => id(x) === id(c));
   if (hi >= 0) hands[p].splice(hi, 1);
   else {
