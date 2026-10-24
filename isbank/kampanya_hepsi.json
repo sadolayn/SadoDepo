@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-10-25T00:52",
+ "guncelleme": "2026-10-25T01:15",
  "isbank": {
   "bireysel": {
    "toplam": 191,
@@ -28,7 +28,8 @@
        "ne": "Ayrıcalık",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Bireysel Emeklilik ve Sigorta",
@@ -72,7 +73,8 @@
        "ne": "Taksit",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Emeklilere Özel",
@@ -143,7 +145,8 @@
        "ne": "MaxiPuan",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Diğer Kampanyalar",
@@ -223,7 +226,8 @@
        "ne": "Faiz & Kredi",
        "nere": "Giyim & Kozmetik"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "İş Black Ayrıcalıkları",
@@ -392,17 +396,9 @@
        "ilk": "2000-01-01",
        "ne": "İndirim",
        "nere": "Seyahat"
-      },
-      {
-       "baslik": "> İş Black Ayrıcalıkları",
-       "bitis": "",
-       "ozet": "",
-       "url": "https://www.isbank.com.tr/kampanyalar/is-black-ayricaliklari",
-       "ilk": "2026-10-25",
-       "ne": "Ayrıcalık",
-       "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Fatura Kampanyaları",
@@ -419,7 +415,8 @@
        "ne": "MaxiPuan",
        "nere": "Ödeme & Fatura"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Seyahat Kampanyaları",
@@ -454,7 +451,8 @@
        "ne": "İndirim",
        "nere": "Seyahat"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Turizm Kampanyaları",
@@ -516,7 +514,8 @@
        "ne": "İndirim",
        "nere": "Seyahat"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Otomotiv Kampanyaları",
@@ -605,7 +604,8 @@
        "ne": "Taksit",
        "nere": "Araç & Akaryakıt"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Giyim-Aksesuar Kampanyaları",
@@ -774,17 +774,9 @@
        "ilk": "2000-01-01",
        "ne": "MaxiPuan",
        "nere": "Giyim & Kozmetik"
-      },
-      {
-       "baslik": "> Giyim-Aksesuar Kampanyaları",
-       "bitis": "",
-       "ozet": "",
-       "url": "https://www.isbank.com.tr/kampanyalar/giyim-aksesuar-kampanyalari",
-       "ilk": "2026-10-25",
-       "ne": "Ayrıcalık",
-       "nere": "Giyim & Kozmetik"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Gıda-Market Kampanyaları",
@@ -873,7 +865,8 @@
        "ne": "MaxiPuan",
        "nere": "Market & Yemek"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Eğitim-Kırtasiye Kampanyaları",
@@ -896,6 +889,15 @@
        "ozet": "1-31 Ekim 2026 tarihleri arasında ekli listede yer alan seçili okullardan yapacağınız 50.000 TL üzeri peşin harcamalarınızı İşCep’ten veya Maximum Mobil’den 3 aya kadar faizsiz sonradan taksitlendirme fırsatı sizi bekliy",
        "url": "https://www.isbank.com.tr/kampanyalar/egitim-odemelerinizde-secili-okullarda-faizsiz-taksit-firsati",
        "ilk": "2000-01-01",
+       "ne": "Taksit",
+       "nere": "Eğitim & Kitap"
+      },
+      {
+       "baslik": "Toyzz Shop’ta Peşin Fiyatına 5 Taksit Fırsatı!",
+       "bitis": "2027-01-05",
+       "ozet": "Maximum Kart’ınız ile Toyzz Shop mağazalarından ve www.toyzzshop.com adresinden yapacağınız alışverişlerinizde peşin fiyatına 5 taksit fırsatı!",
+       "url": "https://www.isbank.com.tr/kampanyalar/toyzz-shopta-taksit-firsati",
+       "ilk": "2026-10-25",
        "ne": "Taksit",
        "nere": "Eğitim & Kitap"
       },
@@ -944,7 +946,8 @@
        "ne": "Ayrıcalık",
        "nere": "Eğitim & Kitap"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Dekorasyon-Mobilya Kampanyaları",
@@ -1033,7 +1036,8 @@
        "ne": "Taksit",
        "nere": "Ev & Yaşam"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Araç Kiralama Kampanyaları",
@@ -1104,7 +1108,8 @@
        "ne": "İndirim",
        "nere": "Araç & Akaryakıt"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Akaryakıt Kampanyaları",
@@ -1157,7 +1162,8 @@
        "ne": "MaxiPuan",
        "nere": "Araç & Akaryakıt"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Beyaz Eşya Kampanyaları",
@@ -1201,7 +1207,8 @@
        "ne": "İndirim",
        "nere": "Elektronik & Beyaz Eşya"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "İşCep Kampanyaları",
@@ -1290,7 +1297,8 @@
        "ne": "İndirim",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Bankamatik Kartı Kampanyaları",
@@ -1316,7 +1324,8 @@
        "ne": "Faiz & Kredi",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Maximum Kart Kampanyaları",
@@ -1360,7 +1369,8 @@
        "ne": "İndirim",
        "nere": "Eğlence & Spor"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Bireysel Kredi Kampanyaları",
@@ -1395,7 +1405,8 @@
        "ne": "Faiz & Kredi",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "E-Ticaret Kampanyaları",
@@ -1493,7 +1504,8 @@
        "ne": "İndirim",
        "nere": "Online Alışveriş"
       }
-     ]
+     ],
+     "biten": 0
     }
    ]
   },
@@ -1605,7 +1617,8 @@
        "ne": "İndirim",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Yeni Ticari Kredi Kartı Kampanyaları",
@@ -1631,7 +1644,8 @@
        "ne": "Taksit",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Diğer Kampanyalar",
@@ -1658,6 +1672,24 @@
        "nere": "Bankacılık"
       },
       {
+       "baslik": "Eczacılara 3'lü Kazanç Paketi",
+       "bitis": "2026-11-02",
+       "ozet": "Eczacı müşterilerimiz bankacılık hizmetlerinde İş Bankası’yla çalışarak kazançlı çıkıyor; Eczacıya 3’lü kazanç paketi ile ücretsiz havale/EFT ve masrafsız çek karnesi ayrıcalıklarından yararlanıyor.",
+       "url": "https://www.isbank.com.tr/kampanyalar/eczacilara-3lu-kazanc-paketi",
+       "ilk": "2026-10-25",
+       "ne": "İndirim",
+       "nere": "Bankacılık"
+      },
+      {
+       "baslik": "SGK ödemesini Bankamıza getiren Eczacı Müşterilerimize Özel MaxiPuan Kampanyası",
+       "bitis": "2026-11-02",
+       "ozet": "SGK ödemelerini Bankamız aracılığıyla alan eczacı müşterilerimiz, 6.500 TL’ye varan MaxiPuan kazanma ayrıcalığından yararlanıyor.",
+       "url": "https://www.isbank.com.tr/kampanyalar/sgk-odemesi-getiren-eczaciya-maxipuan",
+       "ilk": "2026-10-25",
+       "ne": "MaxiPuan",
+       "nere": "Ödeme & Fatura"
+      },
+      {
        "baslik": "Esnaf ve KOBİ Yeni Müşterilerimize Özel Hoş Geldin Paketi",
        "bitis": "2026-12-31",
        "ozet": "Esnaf ve KOBİ Yeni Müşterilerimize Özel Hoş Geldin Paketi İş Bankası’ndan yeni müşteri olan KOBİ’lere 5.000.000 TL’ye varan uygun faizli finansman ve 13.000 TL’ye varan MaxiPuan!",
@@ -1665,26 +1697,9 @@
        "ilk": "2000-01-01",
        "ne": "MaxiPuan",
        "nere": "Bankacılık"
-      },
-      {
-       "baslik": "Eczacılara 3'lü Kazanç Paketi Bitiş Tarihi: 2.11.2026 Eczacı müşterilerimiz bankacılık hizmetlerinde İş Bankası’yla çalışarak kazançlı çıkıyor; Eczacıya 3’lü ka",
-       "bitis": "",
-       "ozet": "",
-       "url": "https://www.isbank.com.tr/kampanyalar/eczacilara-3lu-kazanc-paketi",
-       "ilk": "2026-10-25",
-       "ne": "Ayrıcalık",
-       "nere": "Bankacılık"
-      },
-      {
-       "baslik": "SGK ödemesini Bankamıza getiren Eczacı Müşterilerimize Özel MaxiPuan Kampanyası Bitiş Tarihi: 2.11.2026 SGK ödemelerini Bankamız aracılığıyla alan eczacı müşter",
-       "bitis": "",
-       "ozet": "",
-       "url": "https://www.isbank.com.tr/kampanyalar/sgk-odemesi-getiren-eczaciya-maxipuan",
-       "ilk": "2026-10-25",
-       "ne": "MaxiPuan",
-       "nere": "Ödeme & Fatura"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Turizmcilere Özel Kampanyalar",
@@ -1719,7 +1734,8 @@
        "ne": "Ayrıcalık",
        "nere": "Seyahat"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Esnaf Kampanyaları",
@@ -1736,7 +1752,8 @@
        "ne": "İndirim",
        "nere": "Market & Yemek"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Turizmcilere Özel Kredi Kampanyaları",
@@ -1780,7 +1797,8 @@
        "ne": "Faiz & Kredi",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Çevreye Duyarlı Kredi Kampanyaları",
@@ -1842,7 +1860,8 @@
        "ne": "Ayrıcalık",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Taşıt Kredisi Kampanyaları",
@@ -1868,7 +1887,8 @@
        "ne": "Faiz & Kredi",
        "nere": "Araç & Akaryakıt"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Maximiles Business Startup Kampanyaları",
@@ -1967,6 +1987,15 @@
        "nere": "Bankacılık"
       },
       {
+       "baslik": "Maximiles Business Startup Kredi Kartı İle Webrazzi Etkinlik Biletlerinde %50'ye Varan İndirim!",
+       "bitis": "2026-12-09",
+       "ozet": "Maximiles Business Startup Kredi Kartı ile Webrazzi Etkinliklerinde %50’ye Varan İndirim!",
+       "url": "https://www.isbank.com.tr/kampanyalar/startup-kredi-karti-ile-webrazzi-biletleri-indirimli",
+       "ilk": "2026-10-25",
+       "ne": "MaxiMil",
+       "nere": "Eğlence & Spor"
+      },
+      {
        "baslik": "Maximiles Business Startup Kart ile Salesforce Ödemelerinize %30'a Varan İndirim Ayrıcalığı!",
        "bitis": "2027-12-31",
        "ozet": "Teknoloji Girişimlerine Özel! Maximiles Business Startup Kartınız ile Kofana Digital üzerinden yapacağınız Salesforce Starter ve Salesforce Pro Suite lisans ödemelerinde %30' varan indirim ayrıcalığı!",
@@ -1992,17 +2021,9 @@
        "ilk": "2000-01-01",
        "ne": "MaxiMil",
        "nere": "Bankacılık"
-      },
-      {
-       "baslik": "Maximiles Business Startup Kredi Kartı İle Webrazzi Etkinlik Biletlerinde %50'ye Varan İndirim! Bitiş Tarihi: 9.12.2026 Maximiles Business Startup Kredi Kartı i",
-       "bitis": "",
-       "ozet": "",
-       "url": "https://www.isbank.com.tr/kampanyalar/startup-kredi-karti-ile-webrazzi-biletleri-indirimli",
-       "ilk": "2026-10-25",
-       "ne": "MaxiMil",
-       "nere": "Eğlence & Spor"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Çiftçi ve Tarım Bankacılığı Kampanyaları",
@@ -2127,7 +2148,8 @@
        "ne": "MaxiPuan",
        "nere": "Tarım"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "İşCep Kampanyaları",
@@ -2144,7 +2166,8 @@
        "ne": "İndirim",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Bankamatik Kartı Kampanyaları",
@@ -2161,7 +2184,8 @@
        "ne": "MaxiPuan",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "POS/Yazarkasa/ÖKC Kampanyaları",
@@ -2187,7 +2211,8 @@
        "ne": "İndirim",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "E-Ticaret Kampanyaları",
@@ -2267,7 +2292,8 @@
        "ne": "MaxiPuan",
        "nere": "Online Alışveriş"
       }
-     ]
+     ],
+     "biten": 0
     },
     {
      "ad": "Ticari Kredi Kampanyaları",
@@ -2329,7 +2355,8 @@
        "ne": "Faiz & Kredi",
        "nere": "Bankacılık"
       }
-     ]
+     ],
+     "biten": 0
     }
    ]
   }
