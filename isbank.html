@@ -1294,7 +1294,8 @@ function kListe(kay, seg) {
   const v = KH && KH[kay] && KH[kay][seg];
   if (!v) return null;
   const ham = v.kategoriler ? v.kategoriler.flatMap((c) => c.kampanyalar) : v.kampanyalar || [], gor = new Set();
-  return ham.filter((k) => !gor.has(k.url) && gor.add(k.url)).map((k) => ({ ...k, ne: k.ne || "Ayrıcalık", nere: k.nere || "Genel" }));
+  // Bitiş günü geçen kampanya, bir sonraki toplamayı beklemeden listeden düşer
+  return ham.filter((k) => !(k.bitis && daysLeft(k.bitis) < 0) && !gor.has(k.url) && gor.add(k.url)).map((k) => ({ ...k, ne: k.ne || "Ayrıcalık", nere: k.nere || "Genel" }));
 }
 function kKart(k, renk) {
   const n = k.bitis ? daysLeft(k.bitis) : null, u = n != null && n <= 3, yeni = k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
