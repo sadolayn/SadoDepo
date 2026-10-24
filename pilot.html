@@ -65,7 +65,7 @@
   <canvas id="c" width="360" height="560"></canvas>
   <div class="overlay" id="ov"><div class="box" id="box"></div></div>
 </div>
-<div class="tip">Parmağını sağa sola kaydırarak uç · ateş otomatik · yakıt depoları vurulamaz, üzerinden geç<br><span style="opacity:.6">Sürüm 4 · motor sesi yok</span></div>
+<div class="tip">Parmağını sağa sola kaydırarak uç · ateş otomatik · depo üstündeyken zaman yavaşlar, yakıtın tam dolar<br><span style="opacity:.6">Sürüm 5 · motor sesi yok</span></div>
 
 <script>
 const cv = document.getElementById("c");
@@ -147,7 +147,7 @@ function spawnOn(s) {
 
 // ---------- Oyun ----------
 function newGame() {
-  st = { river: newRiver(), objs: [], bullets: [], booms: [], dist: 0, speed: 2, px: W / 2, fuel: 100, score: 0, lives: 3, dead: 0, cool: 0, over: false, lowFuelBeep: 0, checkpoint: 0 };
+  st = { river: newRiver(), objs: [], bullets: [], booms: [], dist: 0, speed: 2, px: W / 2, fuel: 100, score: 0, lives: 3, dead: 0, cool: 0, over: false, lowFuelBeep: 0, checkpoint: 0, ts: 1, refuel: false, fullFlash: 0, slowT: 1 };
   // Ekranı başlangıçta doldur (dünya koordinatı: y yukarı doğru azalır)
   for (let y = H; y > -SEG * 4; y -= SEG) st.river.segs.unshift(genSeg(st.river, y));
   st.river.segs.sort((a, b) => a.y - b.y);
@@ -159,7 +159,7 @@ function respawn() {
   const spans = s ? waterSpans(s) : [[W / 2 - 40, W / 2 + 40]];
   const big = spans.sort((a, b) => (b[1] - b[0]) - (a[1] - a[0]))[0];
   st.px = (big[0] + big[1]) / 2;
-  st.fuel = 100; st.speed = 2; st.dead = 0;
+  st.fuel = 100; st.speed = 2; st.dead = 0; st.ts = 1; st.refuel = false;
 }
 function hud() {
   $("score").textContent = st.score;
@@ -193,8 +193,11 @@ function step() {
   if (keys.ArrowUp) target += 1.4;
   if (keys.ArrowDown) target -= 0.9;
   st.speed += (target - st.speed) * 0.08;
-  st.dist += st.speed;
-  st.cam = (st.cam ?? 0) - st.speed;
+  // Ağır çekim ikmal: deponun üstündeyken ve depo dolmadıysa dünya yavaşlar (ts: zaman hızı), dolunca hız geri gelir
+  st.ts += ((st.refuel && st.fuel < 100 ? st.slowT : 1) - st.ts) * 0.25;
+  const ts = st.ts;
+  st.dist += st.speed * ts;
+  st.cam = (st.cam ?? 0) - st.speed * ts;
   // Nehri üret
   const segs = st.river.segs;
   while (segs[0].y > st.cam - SEG * 3) { const s = genSeg(st.river, segs[0].y - SEG); segs.unshift(s); spawnOn(s); }
@@ -216,26 +219,26 @@ function step() {
     if (!inWater && !s.bridge) return crash();
   }
   // Yakıt
-  st.fuel -= 0.045 * st.speed;
-  let refuel = false;
+  st.fuel -= 0.045 * st.speed * ts;
+  let refuel = false, refuelObj = null;
   // Ateş
-  st.cool--;
+  st.cool -= ts;
   if (st.cool <= 0 && (touchX != null || keys[" "] || autoFire)) {
     st.bullets.push({ x: st.px - 1.5, y: st.cam + PLANE_Y - 16, w: 3, h: 12 });
     st.cool = 9;
     sfxShoot();
   }
-  for (const b of st.bullets) b.y -= 9 + st.speed;
+  for (const b of st.bullets) b.y -= (9 + st.speed) * ts;
   st.bullets = st.bullets.filter((b) => b.y > st.cam - 20 && !b.hit);
   // Nesneler
   for (const o of st.objs) {
     if (o.dead) continue;
     if (o.vx) {
-      o.x += o.vx;
+      o.x += o.vx * ts;
       if (o.free) { if (o.x < -60 || o.x > W + 60) o.dead = true; }
       else if (o.x < o.lo + 2 || o.x + o.w > o.hi - 2) o.vx *= -1;
     }
-    if (o.t === "heli") o.ph += 0.6;
+    if (o.t === "heli") o.ph += 0.6 * ts;
     for (const b of st.bullets) {
       if (o.t === "fuel") break; // yakıt depoları vurulamaz, mermi üstünden geçer
       if (!b.hit && overlap(b, o)) {
@@ -249,23 +252,28 @@ function step() {
     }
     if (o.dead) continue;
     if (overlap(plane, o)) {
-      if (o.t === "fuel") refuel = true;
+      if (o.t === "fuel") { refuel = true; refuelObj = o; }
       else { o.dead = true; st.booms.push({ x: o.x + o.w / 2, y: o.y + o.h / 2, r: 0 }); return crash(); }
     }
   }
   st.objs = st.objs.filter((o) => !o.dead && o.y < st.cam + H + 50);
+  st.refuel = refuel;
   if (refuel) {
     const wasFull = st.fuel >= 100;
-    st.fuel = Math.min(100, st.fuel + 0.9);
+    st.fuel = Math.min(100, st.fuel + 1.8);
     if (frame % 6 === 0 && !wasFull) sfxRefuel(st.fuel);
-    if (!wasFull && st.fuel >= 100) sfxFull();
+    if (!wasFull && st.fuel >= 100) { sfxFull(); st.fullFlash = 70; }
+    // Depo bitmeden yakıt dolsun diye ne kadar yavaşlanacağı: kalan depo boyu ÷ dolması gereken kare sayısı
+    const kalan = plane.y + plane.h - refuelObj.y, gerek = (100 - st.fuel) / 1.8;
+    st.slowT = gerek > 0 ? Math.max(0.05, Math.min(1, (kalan * 0.7) / gerek / st.speed)) : 1;
   }
+  if (st.fullFlash > 0) st.fullFlash--;
   if (st.fuel < 25 && frame % 50 === 0) sfxLowFuel();
   setEngine(true, st.speed);
   if (st.fuel <= 0) { st.fuel = 0; hud(); return crash(); }
   updateBooms();
 }
-function updateBooms() { for (const b of st.booms) b.r += 1.6; st.booms = st.booms.filter((b) => b.r < (b.big ? 40 : 24)); }
+function updateBooms() { for (const b of st.booms) b.r += 1.6 * (st.dead ? 1 : st.ts); st.booms = st.booms.filter((b) => b.r < (b.big ? 40 : 24)); }
 
 // ---------- Çizim ----------
 function draw() {
@@ -332,8 +340,27 @@ function draw() {
     ctx.fillStyle = `rgba(255,${160 - b.r * 3},40,${1 - b.r / (b.big ? 40 : 24)})`;
     ctx.beginPath(); ctx.arc(b.x, y, b.r, 0, 7); ctx.fill();
   }
+  // Ağır çekim ikmal: kenarlarda hafif mavi gölge ve dolum yazısı
+  const slow = 1 - st.ts;
+  if (slow > 0.05 && !st.dead) {
+    const g = ctx.createRadialGradient(W / 2, H / 2, H * 0.3, W / 2, H / 2, H * 0.75);
+    g.addColorStop(0, "rgba(10,30,60,0)"); g.addColorStop(1, `rgba(10,30,60,${0.55 * slow})`);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = Math.min(1, slow * 1.4);
+    ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillRect(W / 2 - 92, 14, 184, 30);
+    ctx.fillStyle = "#3fc283"; ctx.fillRect(W / 2 - 88, 38, 176 * Math.min(1, st.fuel / 100), 3);
+    ctx.fillStyle = "#fff"; ctx.font = "bold 15px system-ui"; ctx.textAlign = "center";
+    ctx.fillText(`⛽ YAKIT ALINIYOR %${Math.floor(st.fuel)}`, W / 2, 34);
+    ctx.globalAlpha = 1;
+  } else if (st.fullFlash > 0 && !st.dead) {
+    ctx.globalAlpha = Math.min(1, st.fullFlash / 20);
+    ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillRect(W / 2 - 70, 14, 140, 30);
+    ctx.fillStyle = "#3fc283"; ctx.font = "bold 15px system-ui"; ctx.textAlign = "center";
+    ctx.fillText("✅ DEPO DOLU", W / 2, 34);
+    ctx.globalAlpha = 1;
+  }
   // Düşük yakıt uyarısı
-  if (st.fuel < 25 && !st.dead && Math.floor(Date.now() / 300) % 2) {
+  if (st.fuel < 25 && !st.dead && slow <= 0.05 && Math.floor(Date.now() / 300) % 2) {
     ctx.fillStyle = "rgba(239,106,76,.9)"; ctx.font = "bold 16px system-ui"; ctx.textAlign = "center"; ctx.fillText("YAKIT AZ!", W / 2, 30);
   }
 }
@@ -444,7 +471,7 @@ window.addEventListener("keydown", (e) => { keys[e.key] = true; if (e.key === " 
 window.addEventListener("keyup", (e) => { keys[e.key] = false; if (e.key === " ") autoFire = false; });
 
 newGame(); st.cam = 0; draw();
-showBox(`<h2>✈️ UçUç</h2><p>Nehrin üzerinde uç, kıyılara çarpma.<br>Gemileri, helikopterleri, jetleri ve köprüleri vur.<br>Yakıtın bitmeden <b>YKT</b> depolarının üzerinden geç<br>(depolar vurulamaz, merak etme 😉).<br><br>En iyi puan: <b>${best}</b></p><button class="btn" id="go">Uçuşa başla</button>`);
+showBox(`<h2>✈️ UçUç</h2><p>Nehrin üzerinde uç, kıyılara çarpma.<br>Gemileri, helikopterleri, jetleri ve köprüleri vur.<br>Yakıtın bitmeden <b>YKT</b> depolarının üzerinden geç:<br>üstündeyken zaman yavaşlar, depon tam dolar ⛽<br>(depolar vurulamaz, merak etme 😉).<br><br>En iyi puan: <b>${best}</b></p><button class="btn" id="go">Uçuşa başla</button>`);
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
