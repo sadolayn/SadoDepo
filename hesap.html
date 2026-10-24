@@ -156,7 +156,7 @@
   .guide small { display: block; font-weight: 500; font-size: 12px; color: #ffd27a; margin-top: 2px; }
   .lvl { position: absolute; left: 50%; top: calc(50% + 44px); transform: translateX(-50%); font-size: 11.5px; color: #fff; background: rgba(0,0,0,.55); border-radius: 8px; padding: 3px 8px; pointer-events: none; white-space: nowrap; }
   /* ===== Cetvel ===== */
-  .ruler-wrap { position: relative; min-height: 420px; margin: 0 -14px; overflow: clip; display: flex; flex-direction: column; justify-content: flex-end; touch-action: pan-y; }
+  .ruler-wrap { position: relative; min-height: 0; margin: 0 -14px; overflow: clip; display: flex; flex-direction: column; justify-content: flex-end; touch-action: pan-y; }
   #ruler { position: absolute; left: 0; top: 0; }
   #rulerR { position: absolute; right: 0; top: 0; }
   .rbot { position: sticky; bottom: 0; z-index: 2; height: 58px; }
@@ -339,7 +339,7 @@
     </header>
     <div class="tabs" id="tabs">
       <button data-t="calc" class="on"><b>🧮</b>Makine</button>
-      <button data-t="cetvel" data-yeni="cetvel2|2026-10-17|•"><b>📏</b>Cetvel</button>
+      <button data-t="cetvel" data-yeni="cetvel3|2026-10-24|•"><b>📏</b>Cetvel</button>
       <button data-t="mesafe" data-yeni="t-mesafe|2026-10-17|•"><b>📐</b>Mesafe</button>
       <button data-t="faiz" data-yeni="t-faiz|2026-10-17|•"><b>💵</b>Faiz</button>
       <button data-t="tarih" data-yeni="t-tarih|2026-10-17|•"><b>📆</b>Tarih</button>
@@ -497,7 +497,7 @@
     <div class="ruler-wrap" id="rwrap">
       <canvas id="ruler"></canvas>
       <canvas id="rulerR"></canvas>
-      <div class="rinfo"><span id="rDev"></span><b id="rLen">–</b><b class="h" id="rLenH"></b>Sağ ve sol cetvelin üst ucu 0, alttakinin sol ucu 0'dır. Ekrana dokununca o noktaya kadar ölçer; alttaki cetvelde yatay ölçer. 15 cm'nin devamı için aşağı kaydır.</div>
+      <div class="rinfo"><span id="rDev"></span><b id="rLen">–</b><b class="h" id="rLenH"></b>Sağ ve sol cetvelin üst ucu 0, alttakinin sol ucu 0'dır. Ekrana dokununca o noktaya kadar ölçer; alttaki cetvelde yatay ölçer. Cetvel boyu ekranına göre ayarlanır.</div>
       <div class="rline" id="rLine" hidden></div><div class="rtag" id="rTag" hidden></div>
       <div class="rbot" id="rbot"><div class="rtag h" id="rTagH" hidden></div><canvas id="rulerB"></canvas></div>
     </div>
@@ -1058,7 +1058,13 @@ const DEF = matchMedia("(pointer: coarse)").matches ? 6.3 : 96 / 25.4;
 let ppm = DEF; try { const s = +localStorage.getItem("cetvelPPM"); if (s > 1) ppm = s; } catch (e) {}
 let mark = null, markX = null, rLock = false;
 try { rLock = localStorage.getItem("cetvelKilit") === "1"; } catch (e) {}
-const RLEN = 150; // cetvel boyu: 15 cm
+// Cetvel boyu ekrana göre: sayfa kaydırmadan tamamı görünsün (en az 5, en çok 15 cm)
+let RLEN = 150;
+function rFit() {
+  const w = $("rwrap"), top = w.getBoundingClientRect().top + window.scrollY;
+  const bos = (window.innerHeight || document.documentElement.clientHeight) - top - 70 - 8;
+  RLEN = Math.max(50, Math.min(150, Math.floor(bos / ppm)));
+}
 function rCanvas(c, W, H) { const dpr = window.devicePixelRatio || 1; c.width = W * dpr; c.height = H * dpr; c.style.width = W + "px"; c.style.height = H + "px"; const g = c.getContext("2d"); g.scale(dpr, dpr); return g; }
 // Dikey cetvel; side: "L" (çizgiler soldan) ya da "R" (çizgiler sağdan)
 function drawVert(c, H, side) {
@@ -1088,7 +1094,9 @@ function drawHoriz(c, W) {
   if (markX !== null) { g.strokeStyle = "#ef4a3a"; g.lineWidth = 2; g.beginPath(); g.moveTo(markX, 0); g.lineTo(markX, H); g.stroke(); }
 }
 function drawRuler() {
+  rFit();
   const w = $("rwrap"), H = Math.ceil(RLEN * ppm) + 70;
+  if (mark !== null) mark = Math.min(mark, RLEN * ppm);
   w.style.height = H + "px";
   drawVert($("ruler"), H, "L"); drawVert($("rulerR"), H, "R"); drawHoriz($("rulerB"), w.clientWidth);
   const ayarli = Math.abs(ppm - DEF) >= .001;
