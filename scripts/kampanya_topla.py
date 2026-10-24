@@ -82,8 +82,10 @@ def max_kartlar(body):
         metinler = [x for x in metinler if x and not re.match(r"(?i)^(detaylı bilgi|maximum kart.?a başvur|başvur|son \d+ gün)", x)]
         if not metinler:
             continue
+        # Kartın bağlantısı "Son N Gün" şeridinden ÖNCE gelir (görselin bağlantısı): önceki karttan bu şeride kadarki son kampanya bağlantısı
+        once = b[(yer[i - 1].end() if i else max(0, m.start() - 6000)): m.start()]
         link = None
-        for h in re.findall(r'href="([^"#]+)"', parca):
+        for h in reversed(re.findall(r'href="([^"#]+)"', once)):
             if "kampanya" in h.lower() and not re.search(r"/kampanyalar/(bireysel|ticari)/?$", h, re.I):
                 link = h if h.startswith("http") else KOK_M + h
                 break
