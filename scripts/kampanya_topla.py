@@ -165,28 +165,38 @@ def isb_tarayici(urls):
         with sync_playwright() as p:
             b = p.chromium.launch()
             pg = b.new_page(user_agent=UA["User-Agent"], locale="tr-TR", viewport={"width": 1280, "height": 900})
-            dugme = re.compile(r"daha fazla|devamını gör|tümünü gör|daha çok", re.I)
-            for url in urls:
+            dugme = re.compile(r"daha\s*fazla|devamını|tümünü|daha\s*çok|göster|yükle", re.I)
+            for i, url in enumerate(urls):
+                ilk = son = basilan = 0
                 try:
                     pg.goto(url, wait_until="networkidle", timeout=90000)
-                    pg.wait_for_timeout(1500)
-                    once = -1
+                    pg.wait_for_timeout(2000)
+                    say = lambda: pg.eval_on_selector_all("a[href*='/kampanyalar/']", "e => e.length")
+                    ilk = son = say()
                     for _ in range(40):
-                        n = pg.eval_on_selector_all("a[href*='/kampanyalar/']", "e => e.length")
-                        if n == once:
+                        n = say()
+                        pg.evaluate("window.scrollTo(0, document.body.scrollHeight)")  # kaydırınca kendiliğinden yükleniyorsa
+                        pg.wait_for_timeout(1500)
+                        if say() > n:
+                            continue
+                        adaylar = [x for x in pg.get_by_role("button", name=dugme).all() + pg.get_by_role("link", name=dugme).all() + pg.get_by_text(dugme).all() if x.is_visible()]
+                        adaylar = [x for x in adaylar if not re.search(r"kampanyalar/?$|geçmiş", (x.get_attribute("href") or "") + (x.inner_text() or ""), re.I)]
+                        if not adaylar:
                             break
-                        once = n
-                        d = pg.get_by_role("button", name=dugme)
-                        if not d.count():
-                            d = pg.get_by_role("link", name=dugme)
-                        gorunen = [x for x in d.all() if x.is_visible()]
-                        if not gorunen:
+                        adaylar[-1].scroll_into_view_if_needed()
+                        adaylar[-1].click()
+                        basilan += 1
+                        pg.wait_for_timeout(2500)
+                        if pg.url.split("#")[0] != url.split("#")[0]:  # başka sayfaya gittiyse geri dön, dur
+                            pg.go_back(wait_until="networkidle")
                             break
-                        gorunen[0].click()
-                        pg.wait_for_timeout(1800)
+                        if say() <= n:
+                            break
+                    son = say()
                     out[url] = pg.content()
-                except Exception:
-                    continue
+                except Exception as e:
+                    print(f"  tarayıcı {i + 1}: hata {type(e).__name__}")
+                print(f"  tarayıcı {i + 1}: bağlantı {ilk} → {son}, düğmeye basılan {basilan}")
             b.close()
     except Exception:
         pass
