@@ -593,6 +593,16 @@
   .altbas span { color: #8a8a8a; font-weight: 600; }
   .altkutu .nsub, .altkutu .tfil { margin-top: 4px !important; }
   .chipbar .tfil[hidden], .chipbar .nsub[hidden], .altkutu[hidden] { display: none !important; }
+  /* Alt başlıklar ekranda: yana kaydırma yok, satıra sığmayan alta geçer */
+  .altkutu .tfil.mtiles { display: flex !important; flex-wrap: wrap !important; overflow: visible !important; -webkit-mask-image: none !important; mask-image: none !important; padding: 0 !important; border: 0 !important; background: none !important; gap: 5px !important; }
+  .altkutu .tfil.mtiles button.mt, .altkutu .tfil.mtiles button.mt[style*="span 12"] { flex: 1 1 auto !important; min-height: 34px !important; padding: 5px 9px !important; justify-content: center; }
+  .altkutu .tfil.mtiles button.mt span, .altkutu .tfil.mtiles.ipm button.mt.uzun span { font-size: 12px !important; }
+  .altkutu .tfil.sekme { display: flex; flex-wrap: wrap; gap: 5px; }
+  .altkutu .tfil.sekme button { flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 34px; padding: 5px 10px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--c, #e0a24f) 45%, #000); background: color-mix(in srgb, var(--c, #e0a24f) 10%, #050505); color: #eee; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .altkutu .tfil.sekme button i { font-style: normal; font-size: 14px; }
+  .altkutu .tfil.sekme button b { min-width: 18px; padding: 0 5px; border-radius: 9px; background: rgba(255,255,255,.12); font-size: 11px; line-height: 18px; text-align: center; }
+  .altkutu .tfil.sekme button.on { background: var(--c, #e0a24f); border-color: var(--c, #e0a24f); color: #000; }
+  .altkutu .tfil.sekme button.on b { background: rgba(0,0,0,.2); }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -811,6 +821,13 @@ function altGuncelle() {
 // Alt başlık satırları sonradan dolabilir (ör. İşCep ipuçları veriyle gelir): değişince kutuyu güncelle
 (function () { let bekle = 0; const mo = new MutationObserver(() => { if (bekle) return; bekle = requestAnimationFrame(() => { bekle = 0; altGuncelle(); }); });
   ["nsub", "tfil"].forEach((id) => mo.observe($(id), { attributes: true, attributeFilter: ["hidden", "class"], childList: true })); })();
+// Alt başlık kutusunda düz sekme düğmeleri (Şubeler, Banka Kampanya)
+const altSekme = (attr, v, ic, ad, n, on) => `<button type="button" ${attr}="${esc(v)}" class="${on ? "on" : ""}"><i>${ic}</i>${esc(ad)}${n != null ? `<b>${n}</b>` : ""}</button>`;
+// Bir bölüme kay: üstteki ince çubuk ve alt başlık kutusu onu örtmesin
+function bolumeKay(el) {
+  const h = $("imini").offsetHeight + ($("altkutu").hidden ? 0 : $("altkutu").offsetHeight) + 8;
+  window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - h), behavior: "smooth" });
+}
 // Kaleme dokununca: kalemler yukarı kayar, içerik (varsa alt başlıklarla) çubuğun hemen altına gelir
 let ilkCizim = true;
 function icerigeKay() {
@@ -1002,16 +1019,24 @@ function blackHtml() {
     </details>`;
 }
 // ===== Kampanyalar: kredi kartı dışındaki banka kampanyaları (isbank.com.tr, her gün kontrol) =====
+let bkSec = ""; try { bkSec = localStorage.getItem("isbankBk") || ""; } catch (e) {}
 function renderBankaKamp() {
   const fd = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
   $("upd").innerHTML = `🔄 İş Bankası kampanyaları her gün kontrol edilir${bkamp ? ` · son kontrol <b>${fd(bkamp.kontrol)}</b>` : ""}`;
-  const K = (bkamp && bkamp.kategoriler) || [];
+  const K0 = (bkamp && bkamp.kategoriler) || [];
+  if (bkSec && !K0.some((c) => c.ad === bkSec)) bkSec = "";
+  const t = $("tfil");
+  t.className = "tfil sekme";
+  t.innerHTML = altSekme("data-bk", "", "🎁", "Tümü", K0.reduce((a, c) => a + c.kampanyalar.length, 0), !bkSec) + K0.map((c) => altSekme("data-bk", c.ad, c.ic, c.ad, c.kampanyalar.length, bkSec === c.ad)).join("");
+  t.hidden = !K0.length;
+  t.onclick = (e) => { const b = e.target.closest("button[data-bk]"); if (!b) return; bkSec = b.dataset.bk; try { localStorage.setItem("isbankBk", bkSec); } catch (er) {} renderBankaKamp(); icerigeKay(); };
+  const K = bkSec ? K0.filter((c) => c.ad === bkSec) : K0;
   const sabit = `<div class="bkhero"><b>🎁 Bankacılık kampanyaları</b><span>Kartla harcama dışındaki fırsatlar: maaş, emeklilik, kredi, sigorta, para transferi ve fatura.</span></div>
     <div class="bkgrid">
       <div class="bkc"><i>💸</i><b>Havale · EFT · FAST</b><span>İşCep ve İnternet Şubesi'nden 7/24 FAST ile anında para gönder. İş Black müşterilerine havale, EFT ve FAST ücretsiz.</span></div>
       <div class="bkc"><i>💰</i><b>Maksimum Vadeli Hesap</b><span>Birikimine vadeli faiz; İş Black'te +%1, Black Plus'ta +%3 ek faiz.</span></div>
     </div>`;
-  $("list").innerHTML = sabit + K.map((c) => `<div class="bkcat">
+  $("list").innerHTML = (bkSec ? "" : sabit) + K.map((c) => `<div class="bkcat">
       <a class="bkh" href="${esc(c.url)}" target="_blank" rel="noopener"><i>${c.ic}</i><b>${esc(c.ad)}</b>${c.adet != null ? `<em>${c.adet} kampanya</em>` : ""}<small>↗</small></a>
       ${c.kampanyalar.map((x) => `<a class="bkit" href="${esc(x.url)}" target="_blank" rel="noopener">${isNew("b:" + x.url) ? '<span class="newtag">YENİ</span> ' : ""}<b>${esc(x.baslik)}</b>${x.ozet ? `<span>${esc(x.ozet)}</span>` : ""}${x.bitis ? `<small>Bitiş: ${fd(x.bitis)}</small>` : ""}</a>`).join("")}
     </div>`).join("") + `<a class="maxlink" href="https://www.isbank.com.tr/kampanyalar" target="_blank" rel="noopener">İş Bankası'nın tüm kampanyaları ↗</a>`;
@@ -1162,7 +1187,7 @@ function renderSubeler() {
   $("upd").textContent = "Veri dönemi: " + d.donem + " · banka bu verileri 3 ayda bir açıklar";
   const T = (ic, ad, v, alt) => `<div class="sn"><i>${ic}</i><b>${v}</b><span>${ad}</span>${alt ? `<small>${alt}</small>` : ""}</div>`;
   $("list").innerHTML = `
-    <div class="snet">
+    <div class="snet" id="agBox">
       <div class="snh"><span>📊 İş Bankası şube ağı</span><em>${esc(d.donem)}</em></div>
       <div class="snhero"><small>Toplam müşteri</small><b>${esc(d.musteri)}</b><span>${esc(d.musteriDonem)}</span></div>
       <div class="sng">
@@ -1174,12 +1199,6 @@ function renderSubeler() {
         ${T("📱", "İşCep müşterisi", esc(d.iscep), esc(d.iscepDonem))}
       </div>
     </div>
-    <div class="otiles sjump">
-      <button type="button" class="ot" data-sj="sfBox"><i>📍</i><span>En yakın şube</span></button>
-      <button type="button" class="ot" data-sj="sfBox" data-sm="g"><i>🗺️</i><span>Haritada</span></button>
-      <button type="button" class="ot" data-sj="ilkBox"><i>🏛️</i><span>İlk şubeler</span></button>
-      <button type="button" class="ot" data-sj="notBox"><i>💡</i><span>Bunları biliyor musun?</span></button>
-    </div>
     <div id="sfBox">${sfHtml()}</div>
     <div class="day" id="ilkBox" style="margin-top:18px">🏛️ İlk şubeler</div>
     ${ILK.map((x) => `<div class="tk" style="--c:${x.c}"><div class="dt"><b>${x.g}</b><span>${x.ay}</span></div><div class="tt"><b>${x.ad}</b><span>${x.a}</span></div><div class="kl" style="font-size:16px">${x.y}<small>${new Date().getFullYear() - x.y} yıl</small></div></div>`).join("")}
@@ -1187,11 +1206,17 @@ function renderSubeler() {
     <div class="day" id="notBox" style="margin-top:18px">💡 Bunları biliyor musun?</div>
     <div class="facts"><ul>${(d.notlar || []).map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
     <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(d.kaynak)} ↗</a>`;
-  $("list").querySelectorAll("[data-sj]").forEach((b) => (b.onclick = () => {
+  const t = $("tfil");
+  t.className = "tfil sekme";
+  t.innerHTML = [["agBox", "", "📊", "Şube ağı"], ["sfBox", "", "📍", "En yakın şube"], ["sfBox", "g", "🗺️", "Haritada"], ["ilkBox", "", "🏛️", "İlk şubeler"], ["notBox", "", "💡", "Bunları biliyor musun?"]]
+    .map(([id, sm, ic, ad], i) => `<button type="button" data-sj="${id}"${sm ? ` data-sm="${sm}"` : ""} class="${i ? "" : "on"}"><i>${ic}</i>${ad}</button>`).join("");
+  t.hidden = false;
+  t.onclick = null;
+  t.querySelectorAll("[data-sj]").forEach((b) => (b.onclick = () => {
+    t.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
     if (b.dataset.sm && SF.mode !== b.dataset.sm) { SF.mode = b.dataset.sm; sfSave(); document.querySelectorAll(".sft button").forEach((x) => x.classList.toggle("on", x.dataset.m === SF.mode)); sfLoad(); }
     else if (b.dataset.sj === "sfBox" && !b.dataset.sm && SF.mode !== "l") { SF.mode = "l"; sfSave(); document.querySelectorAll(".sft button").forEach((x) => x.classList.toggle("on", x.dataset.m === SF.mode)); sfLoad(); }
-    const t = $(b.dataset.sj), st = document.querySelector(".chipbar"), h = st ? st.getBoundingClientRect().bottom : 0;
-    window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - h - 8, behavior: "smooth" });
+    bolumeKay($(b.dataset.sj));
   }));
   sfBind();
 }
