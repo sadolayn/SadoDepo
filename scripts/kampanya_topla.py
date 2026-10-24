@@ -51,6 +51,9 @@ NE_DIGER = ("Ayrıcalık", "✨")
 
 # Nerede — sıra önemli (dar ve kesin olanlar önce)
 NERE = [
+    # Tarım ilk sırada: çiftçi kampanyaları (İmece Kart, traktör, hasat, sulama...) hiçbir zaman başka gruba karışmasın
+    ("Tarım",               "🌾", _r(r"tarım", r"çiftçi", r"zirai", r"tohum", r"gübre", r"traktör", r"hayvancılık", r"besici", r"sulama", r"hasat",
+                                  r"imece", r"\btmo\b", r"elüs", r"ürün senedi")),
     ("Pati",                "🐾", _r(r"\bpati\b", r"royal canin", r"veteriner", r"petshop")),
     ("Ödeme & Fatura",      "🧾", _r(r"vergi", r"harç", r"fatura", r"igdaş", r"sağlık", r"eczane", r"bağış", r"katkı pay", r"\bsgk\b", r"tema vakf", r"aidat", r"\bmtv\b", r"farmazon")),
     ("Eğitim & Kitap",      "🎓", _r(r"eğitim", r"okul", r"kırtasiye", r"kitap", r"penguen", r"iş kültür", r"kurs\b")),
@@ -82,6 +85,7 @@ NERE_DIGER = ("Genel", "✨")
 
 # isbank.com.tr kategori adresinden kesin "nere" ipucu (anahtar kelimeden önce gelir)
 SLUG_NERE = {
+    "ciftci-ve-tarim-bankaciligi-kampanyalari": "Tarım",
     "gida-market-kampanyalari": "Market & Yemek", "akaryakit-kampanyalari": "Araç & Akaryakıt", "otomotiv-kampanyalari": "Araç & Akaryakıt",
     "arac-kiralama-kampanyalari": "Araç & Akaryakıt", "giyim-aksesuar-kampanyalari": "Giyim & Kozmetik", "seyahat-kampanyalari": "Seyahat",
     "turizm-kampanyalari": "Seyahat", "egitim-kirtasiye-kampanyalari": "Eğitim & Kitap", "dekorasyon-mobilya-kampanyalari": "Ev & Yaşam",
