@@ -1206,10 +1206,15 @@ function miniCal(y, m, today, ends) {
 }
 function campCal() {
   // Kampanyaların bitiş günleri: takvimde kırmızı nokta + sayı; güne dokununca o gün bitenler
-  const ends = {}; camps.forEach((k) => { if (k.bitis && daysLeft(k.bitis) >= 0) (ends[k.bitis] = ends[k.bitis] || []).push(k); });
+  // Yeni veri varsa: İş Bankası ve Maximum bireysel kampanyalarının hepsi (aynı başlık bir kez); yoksa eski liste
+  const kaynakli = KH && KH.isbank ? (() => { const o = [], g = new Set(); const ekle = (k, et, renk) => { const a = k.baslik.toLocaleLowerCase("tr"); if (!g.has(a)) { g.add(a); o.push(Object.assign({}, k, { _et: et, _renk: renk })); } };
+      ((KH.maximum || {}).bireysel || { kampanyalar: [] }).kampanyalar.forEach((k) => ekle(k, "Maximum", "#ff4fa3"));
+      ((KH.isbank || {}).bireysel || { kategoriler: [] }).kategoriler.forEach((c) => c.kampanyalar.forEach((k) => ekle(k, c.ad.replace(/ Kampanyaları$/, ""), "#3fc283"))); return o; })() : null;
+  const kart = (k) => (k._et ? kKart(k, k._et, k._renk) : campCard(k));
+  const ends = {}; (kaynakli || camps).forEach((k) => { if (k.bitis && daysLeft(k.bitis) >= 0) (ends[k.bitis] = ends[k.bitis] || []).push(k); });
   const gAd = (g) => new Date(g + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
-  const secili = calGun && ends[calGun] ? `<div class="calgun" id="calGunList"><div class="cgh">🔴 ${gAd(calGun)} biten kampanyalar<button type="button" data-g="${calGun}" onclick="calGun=null;$('list').innerHTML=campCal();bindCal()">✕</button></div>${ends[calGun].map(campCard).join("")}</div>` : `<p class="calipucu">👆 Kırmızı noktalı güne dokun: o gün biten kampanyalar görünsün.</p>`;
-  const sirali = camps.filter((k) => k.bitis && daysLeft(k.bitis) >= 0).sort((a, b) => a.bitis.localeCompare(b.bitis)).slice(0, 8);
+  const secili = calGun && ends[calGun] ? `<div class="calgun" id="calGunList"><div class="cgh">🔴 ${gAd(calGun)} biten kampanyalar<button type="button" data-g="${calGun}" onclick="calGun=null;$('list').innerHTML=campCal();bindCal()">✕</button></div>${ends[calGun].map(kart).join("")}</div>` : `<p class="calipucu">👆 Kırmızı noktalı güne dokun: o gün biten kampanyalar görünsün.</p>`;
+  const sirali = (kaynakli || camps).filter((k) => k.bitis && daysLeft(k.bitis) >= 0).sort((a, b) => a.bitis.localeCompare(b.bitis)).slice(0, 8);
   const yakinda = sirali.length ? `<div class="calyak"><b>⏳ Yakında bitenler</b>${sirali.map((k) => { const n = daysLeft(k.bitis); return `<div class="cy${n <= 3 ? " acil" : ""}"><em>${n <= 0 ? "Bugün" : n === 1 ? "Yarın" : n + " gün"}</em><span>${esc(k.baslik)}</span><small>${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></div>`; }).join("")}</div>` : "";
   const t = new Date(), y = t.getFullYear(), m = t.getMonth(), d = t.getDate(), last = new Date(y, m + 1, 0).getDate();
   const ayAd = t.toLocaleDateString("tr-TR", { month: "long" }), nextAy = new Date(y, m + 1, 1).toLocaleDateString("tr-TR", { month: "long" });
@@ -2129,7 +2134,7 @@ function renderList() {
       live = (h.cats && h.cats.isbank) || []; liveUpd = h.updated || null;
       vids = h.isbvideo || []; vidsOk = h.isbvideo_ok || null;
     } catch (e) {}
-    if (!CATS.some((c) => c[0] === cat)) cat = "Tümü";
+    if (!CATS.some((c) => c[0] === cat) && !MENU.some((m) => m[0] === cat) && cat !== "Finans") cat = "Tümü";
     try { fin = await Ortak.json("isbank/finans.json"); } catch (e) {}
     try { yat = await Ortak.json("isbank/yatirimci.json"); } catch (e) {}
     try { bkamp = await Ortak.json("isbank/banka_kampanya.json"); } catch (e) {}
