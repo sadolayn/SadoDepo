@@ -363,6 +363,14 @@ for kaynak, fn in [("isbank", isbank), ("maximum", maximum), ("maximiles", maxim
         if not yeni or (onceki and adet(yeni) < 0.5 * adet(onceki)):
             print(f"::warning::{kaynak}/{seg}: okunan {adet(yeni)} (önceki {adet(onceki)}, HTTP {DURUM.get(KOK[kaynak].split('/')[2], '-')}) — eski liste korundu")
             yeni = onceki
+        # Maximiles listesi tarayıcıda her seferinde aynı eksiksizlikte yüklenmeyebilir:
+        # bu turda görünmeyen ama bitiş günü gelmemiş kampanya korunur (sayı oynamasın, geri gelen "yeni" sanılmasın)
+        if kaynak == "maximiles" and yeni and onceki and yeni is not onceki:
+            var = {k["url"] for k in yeni["kampanyalar"]}
+            kalan = [k for k in onceki.get("kampanyalar", []) if k["url"] not in var and k.get("bitis") and k["bitis"] >= bugun.isoformat()]
+            if kalan:
+                yeni["kampanyalar"] += kalan
+                yeni["toplam"] = len(yeni["kampanyalar"])
         veri[kaynak][seg] = yeni
         if yeni:
             print(f"{kaynak}/{seg}: sitede {yeni['toplam']}, okunan {adet(yeni)}" + (f", kategori {len(yeni['kategoriler'])}" if "kategoriler" in yeni else ""))
