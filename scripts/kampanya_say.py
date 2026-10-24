@@ -37,23 +37,24 @@ def kategoriler(body, kok):
         out.append((href if href.startswith("http") else kok + href, mm.group(1), int(mm.group(2))))
     return out
 
-print("=== isbank.com.tr ===")
-for ad, url in [("bireysel", "https://www.isbank.com.tr/kampanyalar"), ("ticari", "https://www.isbank.com.tr/kampanyalar/ticari"), ("ticari-2", "https://www.isbank.com.tr/ticari/kampanyalar")]:
-    st, body = get(url)
-    cats = kategoriler(body, "https://www.isbank.com.tr") if body else []
-    print(f"[{ad}] {url.replace('https://www.isbank.com.tr', '')} -> HTTP {st}, kategori bağlantısı: {len(cats)}, kartlar(güncel/geçmiş): {kart_say(body) if body else '-'}")
-    for href, cad, n in cats:
-        st2, b2 = get(href)
-        g, p = kart_say(b2) if b2 else (0, 0)
-        yol = href.replace("https://www.isbank.com.tr", "")
-        print(f"   {cad[:40]:40s} site:{n:4d}  okunan güncel:{g:4d}  geçmiş:{p:3d}  {'✓' if g == n else '≠'}  {yol}  HTTP {st2}")
-
-print("=== maximum.com.tr ===")
-for ad, url in [("bireysel", "https://www.maximum.com.tr/kampanyalar/bireysel"), ("ticari", "https://www.maximum.com.tr/kampanyalar/ticari")]:
-    st, body = get(url)
-    b = temiz(body)
-    linkler = len(set(re.findall(r'href="(/kampanyalar/[^"#?]+)"', b)))
-    sonx = len(re.findall(r"Son\s+\d+\s+G[üu]n", b))
-    sayi = re.search(r"Kampanya\s+Sayısı\s*\(\s*(\d+)\s*\)", b)
-    json_var = "evet" if re.search(r"__NEXT_DATA__|application/json|window\.__", body) else "hayır"
-    print(f"[{ad}] HTTP {st}, sayfa boyu {len(body)//1024} KB, kampanya bağlantısı: {linkler}, 'Son X Gün': {sonx}, 'Kampanya Sayısı': {sayi.group(1) if sayi else '-'}, gömülü veri: {json_var}")
+print("=== 2. tur: isbank.com.tr Ticari sekmesi ve sayfa geçişi ===")
+st, ana = get("https://www.isbank.com.tr/kampanyalar")
+# Ticari sekmesine giden bağlantılar (yalnızca adres yolu basılır)
+yollar = sorted(set(re.findall(r'href="(/[^"#]*ticari[^"#]*)"', ana, flags=re.I)))
+print("ana sayfada 'ticari' geçen bağlantı yolları:", len(yollar))
+for y in yollar[:40]:
+    print("   ", y)
+# Sayfa geçişi: 18'den fazla kampanyalı kategoride olası 2. sayfa biçimleri
+kat = "https://www.isbank.com.tr/kampanyalar/giyim-aksesuar-kampanyalari"
+st, b1 = get(kat)
+ilk = set(re.findall(r'href="(/kampanyalar/[^"#?]+)"', b1))
+sayfa_link = sorted(set(re.findall(r'href="([^"#]*(?:page|sayfa|pageIndex|p=)[^"#]*)"', b1, flags=re.I)))
+print("kategori sayfasındaki sayfa bağlantıları:", sayfa_link[:10])
+for ek in ["?page=2", "?sayfa=2", "?pageIndex=2", "?p=2", "/2", "?pg=2", "?currentPage=2"]:
+    st2, b2 = get(kat + ek)
+    g, _ = kart_say(b2) if b2 else (0, 0)
+    yeni_l = set(re.findall(r'href="(/kampanyalar/[^"#?]+)"', b2)) - ilk if b2 else set()
+    print(f"   {ek:16s} HTTP {st2}  güncel kart: {g:3d}  ilk sayfada olmayan bağlantı: {len(yeni_l)}")
+# Sayfada "daha fazla" düğmesi ya da veri adresi ipucu (yalnızca var/yok)
+for ipucu in ["Daha Fazla", "Devamını", "loadMore", "LoadMore", "api/", "GetCampaign", "data-page", "data-total"]:
+    print(f"   ipucu '{ipucu}': {'var' if ipucu.lower() in b1.lower() else 'yok'}")
