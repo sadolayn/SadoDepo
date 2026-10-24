@@ -497,7 +497,7 @@
     <div class="ruler-wrap" id="rwrap">
       <canvas id="ruler"></canvas>
       <canvas id="rulerR"></canvas>
-      <div class="rinfo"><span id="rDev"></span><b id="rLen">–</b><b class="h" id="rLenH"></b>Sağ ve sol cetvelin üst ucu 0, alttakinin sol ucu 0'dır. Ekrana dokununca o noktaya kadar ölçer; alttaki cetvelde yatay ölçer. Cetvel boyu ekranına göre ayarlanır.</div>
+      <div class="rinfo"><span id="rDev"></span><b id="rLen">–</b><b class="h" id="rLenH"></b>Sağ ve sol cetvelin üst ucu 0, alttakinin sol ucu 0'dır. Ekrana dokununca o noktaya kadar ölçer; alttaki cetvelde yatay ölçer. Cetvel boyu 10 cm.</div>
       <div class="rline" id="rLine" hidden></div><div class="rtag" id="rTag" hidden></div>
       <div class="rbot" id="rbot"><div class="rtag h" id="rTagH" hidden></div><canvas id="rulerB"></canvas></div>
     </div>
@@ -1058,13 +1058,7 @@ const DEF = matchMedia("(pointer: coarse)").matches ? 6.3 : 96 / 25.4;
 let ppm = DEF; try { const s = +localStorage.getItem("cetvelPPM"); if (s > 1) ppm = s; } catch (e) {}
 let mark = null, markX = null, rLock = false;
 try { rLock = localStorage.getItem("cetvelKilit") === "1"; } catch (e) {}
-// Cetvel boyu ekrana göre: sayfa kaydırmadan tamamı görünsün (en az 5, en çok 15 cm)
-let RLEN = 150;
-function rFit() {
-  const w = $("rwrap"), top = w.getBoundingClientRect().top + window.scrollY;
-  const bos = (window.innerHeight || document.documentElement.clientHeight) - top - 70 - 8;
-  RLEN = Math.max(50, Math.min(150, Math.floor(bos / ppm)));
-}
+const RLEN = 100; // cetvel boyu: 10 cm
 function rCanvas(c, W, H) { const dpr = window.devicePixelRatio || 1; c.width = W * dpr; c.height = H * dpr; c.style.width = W + "px"; c.style.height = H + "px"; const g = c.getContext("2d"); g.scale(dpr, dpr); return g; }
 // Dikey cetvel; side: "L" (çizgiler soldan) ya da "R" (çizgiler sağdan)
 function drawVert(c, H, side) {
@@ -1094,7 +1088,6 @@ function drawHoriz(c, W) {
   if (markX !== null) { g.strokeStyle = "#ef4a3a"; g.lineWidth = 2; g.beginPath(); g.moveTo(markX, 0); g.lineTo(markX, H); g.stroke(); }
 }
 function drawRuler() {
-  rFit();
   const w = $("rwrap"), H = Math.ceil(RLEN * ppm) + 70;
   if (mark !== null) mark = Math.min(mark, RLEN * ppm);
   w.style.height = H + "px";
