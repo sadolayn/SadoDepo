@@ -221,6 +221,7 @@
 <script src="kartmasa.js?v=4" data-oyun="batak" data-masa="sado"></script>
 <script src="isq.js"></script>
 <script src="token.js?v=2"></script>
+<script src="batakai.js?v=1"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
@@ -400,65 +401,15 @@ function legal(hand) {
 }
 
 // ---------- Bilgisayar ----------
-function estimate(hand) {
-  let est = 0, longest = 0;
-  for (const s of SUITS) {
-    const cs = hand.filter((c) => c.s === s);
-    const len = cs.length;
-    const has = (r) => cs.some((c) => c.r === r);
-    if (has(14)) est += 1;
-    if (has(13)) est += len >= 2 ? 0.8 : 0.2;
-    if (has(12)) est += len >= 3 ? 0.5 : 0;
-    if (has(11)) est += len >= 4 ? 0.3 : 0;
-    longest = Math.max(longest, len);
-  }
-  if (longest > 4) est += (longest - 4) * 0.9;
-  return est;
-}
-function botChooseTrump(hand) {
-  let best = SUITS[0], bestScore = -1;
-  for (const s of SUITS) {
-    const cs = hand.filter((c) => c.s === s);
-    const sc = cs.length * 2 + cs.reduce((a, c) => a + Math.max(0, c.r - 10), 0);
-    if (sc > bestScore) { bestScore = sc; best = s; }
-  }
-  return best;
-}
-function isBoss(c, hand) {
-  for (let r = c.r + 1; r <= 14; r++) {
-    const k = c.s + r;
-    if (!played.has(k) && !hand.some((h) => id(h) === k)) return false;
-  }
-  return true;
-}
-function lowest(cards) {
-  return [...cards].sort((a, b) => (a.s === trump) - (b.s === trump) || a.r - b.r)[0];
-}
+// Rakipler batakai.js ile "düşünür": görmedikleri kartları ipuçlarına uyarak yüzlerce kez dağıtıp
+// her kartı elin sonuna kadar dener, ortalamada en iyisini oynar. İhalede elini dört koz için ölçer.
+const AIO = () => ({ esli: OPT.esli, yuk: OPT.yuk, kozBas: OPT.kozBas });
+let aiInfo = BatakAI.newInfo(), aiEv = {};
+const bidEv = (p) => aiEv[p] || (aiEv[p] = BatakAI.bidEval(hands[p], p, AIO(), OPT.dagilim === "dengeli", 60));
 function botPick(p) {
-  const hand = hands[p];
-  const L = legal(hand);
-  if (trick.length === 0) {
-    const bosses = L.filter((c) => isBoss(c, hand));
-    const nonTrumpBoss = bosses.filter((c) => c.s !== trump);
-    if (nonTrumpBoss.length) return nonTrumpBoss[0];
-    if (bosses.length && p === bidder) return bosses[0];
-    return lowest(L);
-  }
-  const led = trick[0].card.s;
-  const bw = trickWinner(trick), best = bw.card;
-  const winning = L.filter((c) => beats(c, best, led));
-  const losing = L.filter((c) => !beats(c, best, led));
-  // +3 kuralı: ihale tarafı zaten ihale+2'ye ulaştıysa el almaktan kaçın
-  if (A3() && sameSide(p, bidder) && sideTricks(bidder) >= contract + 2 && losing.length) return [...losing].sort((a, b) => b.r - a.r)[0];
-  // Eşli: eli ortak alıyorsa ve garantiyse üstüne çıkma
-  if (OPT.esli && bw.p === partner(p) && losing.length && (trick.length === 3 || isBoss(best, hand) || best.s === trump)) return lowest(losing);
-  if (winning.length) {
-    const asc = [...winning].sort((a, b) => a.r - b.r);
-    if (trick.length === 3) return asc[0];
-    const boss = asc.find((c) => isBoss(c, hand));
-    return boss || asc[asc.length - 1];
-  }
-  return lowest(L);
+  // Eşlide ihaleyi alan, eşinin elini de gördüğü için iki eli birlikte hesaba katar
+  const known = OPT.esli && bidder != null && sameSide(p, bidder) ? [p, partner(p)] : [p];
+  return BatakAI.pick({ x: p, hands, known, counts: hands.map((h) => h.length), trick, T: trump, broken: trumpBroken, played, tk: tricks, b: bidder, k: contract, voids: aiInfo.voids, caps: aiInfo.caps, o: AIO(), ms: 300 });
 }
 
 // ---------- Ekran ----------
@@ -576,6 +527,7 @@ function newRound() {
   highBid = 0; highBidder = -1;
   bidder = null; contract = 0; trump = null; trumpBroken = false;
   trick = []; tricks = [0, 0, 0, 0]; played = new Set();
+  aiInfo = BatakAI.newInfo(); aiEv = {};
   phase = "bid";
   turn = (dealer + 1) % 4;
   if (window.CardSfx) CardSfx.deal(13);
@@ -601,7 +553,7 @@ async function bidTurn() {
   } else {
     setStatus(`${NAMES[turn]} düşünüyor…`);
     await wait(750);
-    const want = Math.floor(estimate(hands[turn]) + (OPT.esli ? 3.2 : 0));
+    const want = BatakAI.bidLimit(bidEv(turn), turn, AIO(), MINB());
     const min = Math.max(MINB(), highBid + 1);
     doBid(turn, want >= min && min <= 13 ? min : "pas");
   }
@@ -650,7 +602,7 @@ async function endBidding() {
     render();
   } else {
     render();
-    const t = botChooseTrump(hands[bidder]);
+    const t = BatakAI.bestTrump(bidEv(bidder), bidder, contract, AIO());
     setStatus(`${NAMES[bidder]} ihaleyi <b>${contract}</b> ile aldı, koz <b>${t} ${SUIT_NAMES[t]}</b>.`);
     await wait(1500);
     startPlay(t);
@@ -674,8 +626,10 @@ async function playTurn() {
   } else {
     setStatus(turn === 0 ? "İhale eşinde: Sadolayn senin kartını oynuyor…" : `${NAMES[turn]} oynuyor…`);
     renderHand();
-    await wait(650);
-    playCard(turn, botPick(turn));
+    await wait(60); // "oynuyor…" yazısı görünsün, sonra düşünsün
+    const t0 = performance.now(), c = botPick(turn);
+    await wait(Math.max(150, 590 - (performance.now() - t0)));
+    playCard(turn, c);
   }
 }
 function humanPlay(c, p = 0) {
@@ -684,6 +638,7 @@ function humanPlay(c, p = 0) {
 }
 async function playCard(p, c) {
   if (window.CardSfx) CardSfx.play();
+  BatakAI.observe(aiInfo, p, c, trick, trump, trumpBroken, AIO());
   hands[p] = hands[p].filter((x) => id(x) !== id(c));
   trick.push({ p, card: c, fresh: true });
   played.add(id(c));
