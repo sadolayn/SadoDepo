@@ -118,23 +118,23 @@
   .jnote { font-size: 11.5px; color: var(--muted); margin: -2px 0 10px; line-height: 1.45; }
   .jbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .jbtns button { padding: 10px 6px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #000; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
-  .jtick { display: block; width: 100%; margin: 0 0 10px; padding: 7px 0; border-radius: 99px; border: 1px solid #7a2a52; background: linear-gradient(90deg, rgba(255,45,149,.16), rgba(255,45,149,.06)); color: #ffd1e8; font-size: 12.5px; font-weight: 600; cursor: pointer; overflow: hidden; }
+  .jtick { display: block; width: 100%; margin: 0 0 10px; padding: 7px 0; border-radius: 99px; border: 1px solid #6b4a1e; background: linear-gradient(90deg, rgba(224,162,79,.16), rgba(224,162,79,.06)); color: #ffe6c2; font-size: 12.5px; font-weight: 600; cursor: pointer; overflow: hidden; }
   .jtick .jt-w { display: block; overflow: hidden; -webkit-mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
   .jtick .jt-r { display: inline-block; white-space: nowrap; animation: jtk 26s linear infinite; }
   @keyframes jtk { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   .jtick:hover .jt-r { animation-play-state: paused; }
   @media (prefers-reduced-motion: reduce) { .jtick .jt-r { animation-duration: 40s; } }
-  .ccal { margin-top: 14px !important; background: linear-gradient(135deg, rgba(255,45,149,.10), rgba(255,45,149,.02)); border: 1px solid #5a1f3e; border-radius: 16px; padding: 12px; margin-bottom: 10px; }
-  .ccal.hot { background: linear-gradient(135deg, rgba(255,45,149,.26), rgba(255,45,149,.05)); border-color: #ff5aab; box-shadow: 0 6px 22px rgba(255,45,149,.18); }
+  .ccal { margin-top: 14px !important; background: linear-gradient(135deg, color-mix(in srgb, var(--kc) 10%, transparent), color-mix(in srgb, var(--kc) 2%, transparent)); border: 1px solid color-mix(in srgb, var(--kc) 40%, #000); border-radius: 16px; padding: 12px; margin-bottom: 10px; }
+  .ccal.hot { background: linear-gradient(135deg, color-mix(in srgb, var(--kc) 26%, transparent), color-mix(in srgb, var(--kc) 5%, transparent)); border-color: var(--kc); box-shadow: 0 6px 22px color-mix(in srgb, var(--kc) 18%, transparent); }
   .ctop { display: flex; gap: 10px; align-items: flex-start; }
-  .ctop .cl { flex: 1; min-width: 0; } .ctop .cl > b { display: block; font-size: 14.5px; color: #fff; } .ctop .cl > span { display: block; font-size: 12.5px; color: #f1d6e4; line-height: 1.45; margin-top: 3px; }
-  .cadd { flex: none; padding: 6px 9px; border-radius: 10px; border: 1px solid #ff5aab; background: rgba(255,45,149,.08); color: #ff9fd0; font: inherit; font-size: 11px; font-weight: 700; line-height: 1.25; cursor: pointer; text-align: center; }
-  .appr { margin: 12px 0 10px; } .appr .lbl { display: flex; justify-content: space-between; font-size: 12px; color: #f1d6e4; } .appr .lbl b { color: #fff; }
-  .appr .track { position: relative; height: 10px; border-radius: 6px; background: #2a1520; margin: 6px 0 4px; overflow: visible; }
-  .appr .track i { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, #7a2a52, #ff2d95); }
-  .appr .track em { position: absolute; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px #ff2d95, 0 0 12px rgba(255,45,149,.8); }
-  .appr .ends { display: flex; justify-content: space-between; font-size: 11px; color: #c9a8b8; }
-  .appr.hot .track i { background: linear-gradient(90deg, #ff2d95, #ff9fd0); }
+  .ctop .cl { flex: 1; min-width: 0; } .ctop .cl > b { display: block; font-size: 14.5px; color: #fff; } .ctop .cl > span { display: block; font-size: 12.5px; color: #e6e6e6; line-height: 1.45; margin-top: 3px; }
+  .cadd { flex: none; padding: 6px 9px; border-radius: 10px; border: 1px solid var(--kc); background: color-mix(in srgb, var(--kc) 8%, transparent); color: color-mix(in srgb, var(--kc) 55%, #fff); font: inherit; font-size: 11px; font-weight: 700; line-height: 1.25; cursor: pointer; text-align: center; }
+  .appr { margin: 12px 0 10px; } .appr .lbl { display: flex; justify-content: space-between; font-size: 12px; color: #e6e6e6; } .appr .lbl b { color: #fff; }
+  .appr .track { position: relative; height: 10px; border-radius: 6px; background: #222; margin: 6px 0 4px; overflow: visible; }
+  .appr .track i { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, color-mix(in srgb, var(--kc) 40%, #000), var(--kc)); }
+  .appr .track em { position: absolute; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px var(--kc), 0 0 12px color-mix(in srgb, var(--kc) 80%, transparent); }
+  .appr .ends { display: flex; justify-content: space-between; font-size: 11px; color: #bdbdbd; }
+  .appr.hot .track i { background: linear-gradient(90deg, var(--kc), color-mix(in srgb, var(--kc) 55%, #fff)); }
   .cals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .mc .cm { text-align: center; font-size: 11.5px; font-weight: 800; color: #ffb3d9; text-transform: capitalize; margin-bottom: 3px; }
   .mc .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
@@ -143,8 +143,8 @@
   .mc .grid i.p { color: #5a4d53; }
   .mc .grid i.k { background: rgba(255,45,149,.75); color: #fff; font-weight: 800; } .mc .grid i.k.p { background: rgba(255,45,149,.25); color: #d9a3bf; }
   .mc .grid i.now { outline: 2px solid #fff; outline-offset: -1px; color: #fff; font-weight: 800; background: #3a1a2c; } .mc .grid i.k.now { background: #ff2d95; }
-  .ccal .leg { display: flex; gap: 14px; justify-content: center; margin-top: 6px; font-size: 11px; color: #c9a8b8; }
-  .ccal .leg i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; } .ccal .leg i.k { background: #ff2d95; } .ccal .leg i.nw { border: 2px solid #fff; width: 7px; height: 7px; }
+  .ccal .leg { display: flex; gap: 14px; justify-content: center; margin-top: 6px; font-size: 11px; color: #bdbdbd; }
+  .ccal .leg i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; } .ccal .leg i.k { background: var(--kc); } .ccal .leg i.nw { border: 2px solid #fff; width: 7px; height: 7px; }
   .ccal .jhow { margin-top: 8px; } .ccal .jhow summary { font-size: 12.5px; }
   .jbtns.one { grid-template-columns: 1fr; margin-top: 10px; }
   .aybasi { margin-bottom: 10px; padding: 12px 14px; border-radius: 14px; background: linear-gradient(135deg, #ff2d95, #9b0050); color: #fff; box-shadow: 0 6px 20px rgba(255,45,149,.25); animation: cg .6s ease; }
@@ -324,8 +324,8 @@
   .menu button.hasnew { border-color: #d32f2f; }
   .menu button[data-k="Tarihçe"]  { --c: #e0a24f; --d: #2a1d0a; --t: #f3dca8; }
   .menu button[data-k="Black"]    { --c: #c9a050; --d: #0a0a0a; --t: #f3dca8; }
-  .menu button[data-k="Maximum"]  { --c: #ff2d95; --d: #b0005c; --t: #fff; background: linear-gradient(160deg, #ff2d95, #b0005c); border-color: #ff5aab; }
-  .menu button[data-k="Maximum"].active { background: linear-gradient(160deg, #ffd1e8, #ff6fb5); color: #5a0030; border-color: #fff; }
+  .menu button[data-k="Maximum"]  { --c: #e0a24f; --d: #6b4410; --t: #fff; background: linear-gradient(160deg, #e9b25c, #8a5a14); border-color: #f0c47a; }
+  .menu button[data-k="Maximum"].active { background: linear-gradient(160deg, #fff0cf, #e9b25c); color: #3a2405; border-color: #fff; }
   .menu button[data-k="Maximum"] span, .menu button[data-k="Black"] span { font-size: 11px; line-height: 1.15; letter-spacing: -.2px; }
   .menu button[data-k="Black"] i { filter: drop-shadow(0 0 2px rgba(243,220,168,.9)); }
   .menu button[data-k="Kampanya"] { --c: #3fc283; --d: #0b2a1d; --t: #c9f5de; }
@@ -443,7 +443,7 @@
   .pzSteps ol { margin: 0; padding-left: 20px; } .pzSteps li { font-size: 13.5px; color: #ddd; margin-bottom: 6px; line-height: 1.45; } .pzSteps small { display: block; margin-top: 6px; font-size: 12px; color: var(--muted); line-height: 1.45; }
   .pzSrc { margin-top: 10px; text-align: center; font-size: 12px; } .pzSrc a { color: #ffb37a; text-decoration: none; }
   /* Maximum alt menüsü: renkli kutucuklar */
-  .chipbar .tfil.mtiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-top: 6px; padding: 5px; border-radius: 14px; border: 1px solid #5a1f3e; background: linear-gradient(135deg, rgba(255,45,149,.12), rgba(255,45,149,.02)); }
+  .chipbar .tfil.mtiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-top: 6px; padding: 5px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--c, #e0a24f) 40%, #000); background: linear-gradient(135deg, color-mix(in srgb, var(--c, #e0a24f) 12%, transparent), color-mix(in srgb, var(--c, #e0a24f) 2%, transparent)); }
   .tfil.mtiles button.mt { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; min-width: 0; min-height: 36px; padding: 3px 2px; border-radius: 9px;
     border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 36%, #000), color-mix(in srgb, var(--c) 10%, #050505)); color: color-mix(in srgb, var(--c) 35%, #fff); font-size: 9.5px; font-weight: 700; line-height: 1.1; flex-direction: row; gap: 4px; }
   .tfil.mtiles button.mt i { font-style: normal; font-size: 13px; line-height: 1; }
@@ -637,22 +637,22 @@
   .mc .grid i.b.sec { background: #ef3b3b; }
   .ccal .leg i.bt { border: 1.5px solid #ff5a5a; width: 7px; height: 7px; }
   .csuz { display: grid; gap: 6px; margin: 10px 0 8px; } .csuz > div { display: flex; gap: 5px; flex-wrap: wrap; }
-  .csuz button { flex: 1 1 auto; min-height: 34px; padding: 4px 8px; border-radius: 999px; border: 1px solid #5a2a46; background: #14070f; color: #f1d6e4; font: inherit; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+  .csuz button { flex: 1 1 auto; min-height: 34px; padding: 4px 8px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--kc) 40%, #000); background: #0d0d0d; color: #e6e6e6; font: inherit; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
   .csuz button b { min-width: 18px; padding: 0 5px; border-radius: 9px; background: rgba(255,255,255,.12); font-size: 11px; line-height: 18px; }
-  .csuz button.on { background: #ff2d95; border-color: #ff2d95; color: #fff; } .csuz button.on b { background: rgba(0,0,0,.25); }
+  .csuz button.on { background: var(--kc); border-color: var(--kc); color: #000; } .csuz button.on b { background: rgba(0,0,0,.25); }
   .hst { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 4px 0 10px; }
-  .hst .hg { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 0; border-radius: 10px; border: 1px solid #3a1a2c; background: #0e050a; color: #9b8290; font: inherit; }
-  .hst .hg small { font-size: 10px; } .hst .hg b { font-size: 15px; color: #e8d3de; } .hst .hg em { font-style: normal; font-size: 11px; font-weight: 800; }
+  .hst .hg { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 0; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--kc) 25%, #000); background: #0d0d0d; color: #8f8f8f; font: inherit; }
+  .hst .hg small { font-size: 10px; } .hst .hg b { font-size: 15px; color: #e6e6e6; } .hst .hg em { font-style: normal; font-size: 11px; font-weight: 800; }
   .hst .hg.var { border-color: #ef3b3b; background: #200a0a; color: #ffb3b3; } .hst .hg.var em { color: #fff; background: #ef3b3b; border-radius: 8px; padding: 0 6px; }
   .hst .hg.on { background: #ef3b3b; } .hst .hg.on b, .hst .hg.on small { color: #fff; }
   .bc { margin-top: 2px; } .bch { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .bch b { font-size: 16px; color: #ff6fb5; text-transform: capitalize; }
-  .bch button { width: 38px; height: 34px; border-radius: 10px; border: 1px solid #5a2a46; background: #14070f; color: #fff; font: inherit; font-size: 18px; } .bch button:disabled { opacity: .3; }
+  .bch b { font-size: 16px; color: var(--kc); text-transform: capitalize; }
+  .bch button { width: 38px; height: 34px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--kc) 40%, #000); background: #0d0d0d; color: #fff; font: inherit; font-size: 18px; } .bch button:disabled { opacity: .3; }
   .bcg { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-  .bcg i { position: relative; font-style: normal; min-height: 46px; border-radius: 9px; background: #0e050a; border: 1px solid #241019; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 4px; color: #cdb8c3; }
-  .bcg i.h { min-height: 0; background: none; border: 0; padding: 0 0 2px; color: #8a6f7d; font-size: 10px; font-weight: 700; } .bcg i.bos { background: none; border: 0; }
+  .bcg i { position: relative; font-style: normal; min-height: 46px; border-radius: 9px; background: #0d0d0d; border: 1px solid #222; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 4px; color: #bdbdbd; }
+  .bcg i.h { min-height: 0; background: none; border: 0; padding: 0 0 2px; color: #8f8f8f; font-size: 10px; font-weight: 700; } .bcg i.bos { background: none; border: 0; }
   .bcg i b { font-size: 13px; font-weight: 700; } .bcg i.p { opacity: .4; }
-  .bcg i.ih { background: rgba(255,45,149,.22); border-color: rgba(255,45,149,.55); }
+  .bcg i.ih { background: color-mix(in srgb, var(--kc) 22%, transparent); border-color: color-mix(in srgb, var(--kc) 55%, transparent); }
   .bcg i.now { border: 2px solid #fff; } .bcg i.now b { color: #fff; }
   .bcg i.b { cursor: pointer; } .bcg i.sec { background: #ef3b3b; border-color: #ef3b3b; } .bcg i.sec b { color: #fff; }
   .bcg i u { margin-top: 3px; min-width: 22px; padding: 0 5px; border-radius: 8px; font-size: 11px; line-height: 17px; text-decoration: none; font-weight: 800; color: #fff; text-align: center; background: #8a3fd1; }
@@ -661,14 +661,14 @@
   .ccal .leg i.yn { background: #3fc283; border-radius: 50%; }
   .ccal .leg { display: grid !important; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: 4px 6px; font-size: 10.5px; }
   .ccal .leg i.bt { background: #ef3b3b; border: 0; width: 9px; height: 9px; } .ccal .leg span { white-space: nowrap !important; display: inline-flex; align-items: center; }
-  .calgun .cgh small { display: block; font-size: 11px; font-weight: 600; color: #c9a8b8; margin-top: 2px; }
+  .calgun .cgh small { display: block; font-size: 11px; font-weight: 600; color: #bdbdbd; margin-top: 2px; }
   a.cy { text-decoration: none; color: inherit; }
-  .calipucu { margin: 8px 0 0; text-align: center; font-size: 12px; color: #c9a8b8; }
+  .calipucu { margin: 8px 0 0; text-align: center; font-size: 12px; color: #bdbdbd; }
   .calgun { margin-top: 10px; } .calgun .cgh { display: flex; align-items: center; justify-content: space-between; font-weight: 800; font-size: 13px; color: #ffb3b3; margin-bottom: 6px; }
   .calgun .cgh button { width: 30px; height: 30px; border-radius: 9px; border: 1px solid #5a2a2a; background: #1a0a0a; color: #fff; font: inherit; }
   .calyak { margin-top: 12px; padding-top: 10px; border-top: 1px dashed #4a2a3a; } .calyak > b { display: block; font-size: 13px; color: #ffd0e6; margin-bottom: 6px; }
-  .calyak .cy { display: grid; grid-template-columns: 58px 1fr auto; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid #241820; font-size: 12.5px; }
-  .calyak .cy em { font-style: normal; font-weight: 800; color: #ffb3d9; text-align: center; padding: 2px 0; border-radius: 7px; background: rgba(255,45,149,.12); }
+  .calyak .cy { display: grid; grid-template-columns: 58px 1fr auto; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid #222; font-size: 12.5px; }
+  .calyak .cy em { font-style: normal; font-weight: 800; color: color-mix(in srgb, var(--kc) 55%, #fff); text-align: center; padding: 2px 0; border-radius: 7px; background: color-mix(in srgb, var(--kc) 12%, transparent); }
   .calyak .cy.acil em { color: #fff; background: #d32f2f; } .calyak .cy span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .calyak .cy small { color: #9a8a92; }
   .calgit { display: block; width: 100%; margin: 10px 0; padding: 12px; border-radius: 12px; border: 1px solid #ef5a5a; background: rgba(239,90,90,.08); color: #ffc9c9; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
   /* Gizli alt satır her zaman gizli kalsın (görünüm kuralları "gizle"yi ezmesin) */
@@ -696,6 +696,12 @@
   .altkutu .tsat .tgrid.kat button { min-height: 34px !important; font-size: 11.5px !important; padding: 4px 5px !important; }
   .altkutu .tfil.iki .tsat.kgr .tgrid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
   .altkutu .tsat.kgr button { font-size: 11.5px !important; min-height: 36px !important; }
+  .altkutu #tfil.kamp button { display: flex !important; flex-direction: column !important; align-items: center; justify-content: center; gap: 1px !important; line-height: 1.15; }
+  .altkutu #tfil.kamp button > b { white-space: nowrap; }
+  .altkutu #tfil.kamp button.on { background: var(--kk) !important; border-color: var(--kk) !important; color: #000 !important; }
+  .altkutu #tfil.kamp button .ka { display: inline-flex; align-items: center; justify-content: center; gap: 3px; text-align: center; }
+  .altkutu #tfil.kamp button > b { background: none !important; padding: 0 !important; min-width: 0 !important; font-size: 10.5px !important; font-weight: 600; opacity: .8; line-height: 1.2 !important; }
+  .altkutu.dar:not(.acik) #tfil.kamp button { flex-direction: row !important; gap: 5px !important; }
   .altkutu .tfil.iki .tsat.uc .tgrid { grid-template-columns: repeat(3, 1fr); }
   .altkutu .tsat.uc button { font-size: 12px !important; padding: 4px 3px !important; }
   .altkutu.dar:not(.acik) #tfil.iki.kamp { display: flex !important; flex-wrap: wrap !important; gap: 5px !important; }
@@ -917,7 +923,8 @@ function renderChips() {
 // Seçili kalem: ince çubukta adı, alt başlıklar kalemin renginde "▼ … altında" kutusunda
 function altGuncelle() {
   const a = $("chips").querySelector("button.active") || ($("subeBar").classList.contains("active") ? $("subeBar") : null);
-  const c = a && a !== $("subeBar") ? getComputedStyle(a).getPropertyValue("--c").trim() || "#e0a24f" : "#5d7cff";
+  let c = a && a !== $("subeBar") ? getComputedStyle(a).getPropertyValue("--c").trim() || "#e0a24f" : "#5d7cff";
+  if (cat === "Maximum" && KH && KH.isbank) c = K_KAY[kKay][3]; // Kampanyalar: seçili kaynağın rengi
   const ad = a ? (a === $("subeBar") ? "📊 Finansal bilgiler" : `${a.querySelector("i").textContent} ${a.querySelector("span").innerHTML.replace(/<br\s*\/?>|<small>/gi, " ").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim()}`) : "İş Bankası Gündemi";
   $("iminiCur").innerHTML = esc(ad); $("imini").style.setProperty("--c", c);
   const k = $("altkutu"), var1 = !$("nsub").hidden && $("nsub").innerHTML.trim(), var2 = !$("tfil").hidden && $("tfil").innerHTML.trim();
@@ -1276,7 +1283,7 @@ function campCal() {
   const bar = ilkHafta
     ? `<div class="appr hot"><div class="lbl"><span>🎯 İlk hafta</span><b>${7 - d + 1} gün kaldı</b></div><div class="track"><i style="width:${Math.round(d / 7 * 100)}%"></i><em style="left:${Math.round(d / 7 * 100)}%"></em></div><div class="ends"><span>1 ${ayAd}</span><span>7 ${ayAd}</span></div></div>`
     : `<div class="appr"><div class="lbl"><span>⏳ ${nextAy} başına yaklaşıyor</span><b>${kalan} gün</b></div><div class="track"><i style="width:${pct}%"></i><em style="left:${pct}%"></em></div><div class="ends"><span>bugün ${d} ${ayAd}</span><span>1 ${nextAy} 🎯</span></div></div>`;
-  return `<div class="ccal${ilkHafta ? " hot" : ""}" id="ccal">
+  return `<div class="ccal${ilkHafta ? " hot" : ""}" id="ccal" style="--kc:${calKay === "hepsi" ? "#e0a24f" : K_KAY[calKay][3]}">
       <div class="ctop"><div class="cl">${msg}</div><button type="button" id="jIcs" class="cadd" title="Her ayın 1'inde hatırlatma">📅 Ay başını<br>takvime ekle</button></div>
       ${bar}
       ${suz}
@@ -1317,12 +1324,22 @@ function campCard(k) {
 // ===== Kampanyalar: isbank.com.tr, maximum.com.tr ve maximiles.com.tr (bireysel + ticari), günde iki kez otomatik =====
 // Her kampanya tek bir "ne kazanırım" ve tek bir "nerede" grubundadır (sınıflandırma veri toplanırken yapılır): toplamlar her zaman tutar.
 // Süzgeçler "ve" ile birleşir: bir satırdaki sayılar öbür satırdaki seçime göre hesaplanır (dal dal daralır).
-let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kOne = false, kKatAcik = false;
-try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kNe = k.ne || ""; kNere = k.nere || ""; kOne = !!k.one; } catch (e) {}
-const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, ne: kNe, nere: kNere, one: kOne })); } catch (e) {} };
-const K_KAY = { isbank: ["🏦", "İş Bankası", "isbank.com.tr", "#3fc283"], maximum: ["💳", "Maximum", "maximum.com.tr", "#ff4fa3"], maximiles: ["✈️", "Maximiles", "maximiles.com.tr", "#35b8d6"] };
+let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kKim = "", kOne = false, kKatAcik = false;
+try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kNe = k.ne || ""; kNere = k.nere || ""; kKim = k.kim || ""; kOne = !!k.one; } catch (e) {}
+const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, ne: kNe, nere: kNere, kim: kKim, one: kOne })); } catch (e) {} };
+// Renkler: İş Bankası bu sayfanın (İş Bankası Gündemi) altın rengi, Maximum pembe, Maximiles mavi
+const K_KAY = { isbank: ["🏦", "İş Bankası", "isbank.com.tr", "#e0a24f"], maximum: ["💳", "Maximum", "maximum.com.tr", "#ff4fa3"], maximiles: ["✈️", "Maximiles", "maximiles.com.tr", "#4a9be8"] };
 const K_GRUP = { ne: [["MaxiMil", "✈️"], ["MaxiPuan", "🪙"], ["Faiz & Kredi", "🏦"], ["İndirim", "🏷️"], ["Taksit", "📆"], ["Ayrıcalık", "✨"]],
   nere: [["Pati", "🐾"], ["Ödeme & Fatura", "🧾"], ["Eğitim & Kitap", "🎓"], ["Araç & Akaryakıt", "🚗"], ["Market & Yemek", "🛒"], ["Seyahat", "🏖️"], ["Giyim & Kozmetik", "👗"], ["Elektronik & Beyaz Eşya", "📱"], ["Ev & Yaşam", "🛋️"], ["Eğlence & Spor", "🎭"], ["Online Alışveriş", "🌐"], ["Bankacılık", "🏦"], ["Genel", "✨"]] };
+// Kimin için: İş Bankası'nın kendi kategorileri önce (İşte Maaşa Özel, Emeklilere Özel, İş Black...), yoksa başlıktaki ifade
+const K_KIM = { bireysel: [["İş Black · Plus", "🖤", /is-black|plus/, /(?<!friday\s)black(?!\s*friday)|iş\s*plus|\bplus\s*(?:kart|müşteri)|private/i], ["Emekli", "👴", /emeklilere/, /emekli(?!lik)/i], ["Maaş müşterisi", "💼", /maas/, /maaş/i]],
+  ticari: [["Çiftçi & Tarım", "🌾", /ciftci|tarim/, /çiftçi|tarım/i], ["Startup", "🚀", /startup/, /startup|girişimci/i], ["Turizmci", "🏨", /turizmci/, /turizmci|otel işlet|acente/i], ["Esnaf", "🏪", /esnaf/, /esnaf/i], ["Yeni müşteri", "🆕", /yeni-ticari/, /yeni ticari kart müşteri/i]] };
+const K_HERKES = ["Herkes", "👥"];
+function kKimBul(k, seg, sluglar) {
+  const t = (k.baslik + " " + (k.ozet || "")).replace(/İ/g, "i").replace(/I/g, "ı");
+  const G = K_KIM[seg] || [];
+  return (G.find((g) => sluglar.some((x) => g[2].test(x))) || G.find((g) => g[3].test(t)) || K_HERKES)[0];
+}
 const kGr = (tip) => (KH && KH.gruplar && KH.gruplar[tip] ? KH.gruplar[tip].map((g) => [g.ad, g.ikon]) : K_GRUP[tip]);
 const kIkon = (tip, ad) => (kGr(tip).find((g) => g[0] === ad) || [, "✨"])[1];
 const kKisa = (ad) => ad.replace(" & Beyaz Eşya", "").replace(" Alışveriş", "");
@@ -1330,9 +1347,10 @@ const kKisa = (ad) => ad.replace(" & Beyaz Eşya", "").replace(" Alışveriş", 
 function kListe(kay, seg) {
   const v = KH && KH[kay] && KH[kay][seg];
   if (!v) return null;
-  const ham = v.kategoriler ? v.kategoriler.flatMap((c) => c.kampanyalar) : v.kampanyalar || [], gor = new Set();
+  const ham = v.kategoriler ? v.kategoriler.flatMap((c) => c.kampanyalar) : v.kampanyalar || [], gor = new Set(), sl = {};
+  if (v.kategoriler) v.kategoriler.forEach((c) => c.kampanyalar.forEach((k) => (sl[k.url] = sl[k.url] || []).push(c.slug)));
   // Bitiş günü geçen kampanya, bir sonraki toplamayı beklemeden listeden düşer
-  return ham.filter((k) => !(k.bitis && daysLeft(k.bitis) < 0) && !gor.has(k.url) && gor.add(k.url)).map((k) => ({ ...k, ne: k.ne || "Ayrıcalık", nere: k.nere || "Genel" }));
+  return ham.filter((k) => !(k.bitis && daysLeft(k.bitis) < 0) && !gor.has(k.url) && gor.add(k.url)).map((k) => ({ ...k, ne: k.ne || "Ayrıcalık", nere: k.nere || "Genel", kim: kKimBul(k, seg, sl[k.url] || []) }));
 }
 function kKart(k, renk) {
   const n = k.bitis ? daysLeft(k.bitis) : null, u = n != null && n <= 3, yeni = k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
@@ -1371,32 +1389,39 @@ function renderKampanyalar() {
   if (!KH || !KH.isbank) return renderCamps(); // veri gelene kadar eski düzen
   const fd = (t) => new Date(t).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   $("upd").innerHTML = `🔄 isbank.com.tr, maximum.com.tr ve maximiles.com.tr'den günde iki kez (09:01 · 14:01) kendiliğinden alınır · son: <b>${fd(KH.guncelleme)}</b>`;
-  const sb = (attr, v, ic, ad, n, on, cls) => `<button type="button" ${attr}="${esc(v)}" class="${on ? "on" : ""}${cls ? " " + cls : ""}"><i>${ic}</i>${esc(ad)}${n != null ? `<b>${n}</b>` : ""}</button>`;
+  const sb = (attr, v, ic, ad, n, on, cls) => `<button type="button" ${attr}="${esc(v)}" class="${on ? "on" : ""}${cls ? " " + cls : ""}"><span class="ka"><i>${ic}</i>${esc(ad)}</span>${n != null ? `<b>${n} adet</b>` : ""}</button>`;
   const say = (kay, seg) => { const l = kListe(kay, seg); return l ? l.length : null; };
   const L = kListe(kKay, kSeg) || [], [, kayAd, kayDom, renk] = K_KAY[kKay];
   const GN = kGr("ne"), GR = kGr("nere");
   if (kNe && !GN.some((g) => g[0] === kNe)) kNe = "";
   if (kNere && !GR.some((g) => g[0] === kNere)) kNere = "";
   // Dal dal: "ne" sayıları seçili "nere"ye göre, "nere" sayıları seçili "ne"ye göre
-  const neT = L.filter((k) => !kNere || k.nere === kNere), nereT = L.filter((k) => !kNe || k.ne === kNe);
+  const GK = [...(K_KIM[kSeg] || []).map((g) => [g[0], g[1]]), K_HERKES];
+  if (kKim && !GK.some((g) => g[0] === kKim)) kKim = "";
+  const uy = (k, x) => (x === "ne" || !kNe || k.ne === kNe) && (x === "nere" || !kNere || k.nere === kNere) && (x === "kim" || !kKim || k.kim === kKim);
+  const neT = L.filter((k) => uy(k, "ne")), nereT = L.filter((k) => uy(k, "nere")), kimT = L.filter((k) => uy(k, "kim"));
+  const kimS = GK.map(([ad, ic]) => [ad, ic, kimT.filter((k) => k.kim === ad).length]).filter((g) => g[2] || g[0] === kKim);
   const neS = GN.map(([ad, ic]) => [ad, ic, neT.filter((k) => k.ne === ad).length]).filter((g) => g[2] || g[0] === kNe).sort((a, b) => b[2] - a[2]);
   const nereS = GR.map(([ad, ic]) => [ad, ic, nereT.filter((k) => k.nere === ad).length]).filter((g) => g[2] || g[0] === kNere).sort((a, b) => b[2] - a[2]);
   const ILK = 7, nereGor = kKatAcik || nereS.length <= ILK + 1 ? nereS : nereS.slice(0, ILK).concat(nereS.slice(ILK).filter((g) => g[0] === kNere));
   const t = $("tfil");
   t.className = "tfil mtiles iki sekmeli kamp";
   t.hidden = false;
+  t.style.setProperty("--kk", renk);
   t.innerHTML = `<div class="tsat uc"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
     + `<div class="tsat uc"><span class="tlab">👥 Müşteri</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
+    + (L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, ad, n, kKim === ad)).join("")}</div></div>` : "")
     + (L.length && !kOne ? `<div class="tsat kgr"><span class="tlab">💰 Ne kazanırım</span><div class="tgrid">${sb("data-ne", "", "📋", "Hepsi", neT.length, !kNe, "hep")}${neS.map(([ad, ic, n]) => sb("data-ne", ad, ic, ad, n, kNe === ad)).join("")}</div></div>`
       + `<div class="tsat kgr"><span class="tlab">🛍️ Nerede</span><div class="tgrid">${sb("data-nere", "", "📋", "Hepsi", nereT.length, !kNere, "hep")}${nereGor.map(([ad, ic, n]) => sb("data-nere", ad, ic, kKisa(ad), n, kNere === ad)).join("")}${nereGor.length < nereS.length || kKatAcik ? `<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Daha az" : `▾ ${nereS.length - nereGor.length} grup daha`}</button>` : ""}</div></div>` : "");
   t.onclick = (e) => {
     const b = e.target.closest("button"); if (!b) return;
     if (b.dataset.kac) { kKatAcik = !kKatAcik; renderKampanyalar(); return; }
-    if (b.dataset.ky) { kKay = b.dataset.ky; kNe = kNere = ""; kOne = kKatAcik = false; }
-    else if (b.dataset.sg) { kSeg = b.dataset.sg; kNe = kNere = ""; kOne = kKatAcik = false; }
+    if (b.dataset.ky) { kKay = b.dataset.ky; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
+    else if (b.dataset.sg) { kSeg = b.dataset.sg; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
     else if (b.dataset.one) kOne = !kOne;
     else if (b.dataset.ne != null) kNe = kNe === b.dataset.ne ? "" : b.dataset.ne;
     else if (b.dataset.nere != null) kNere = kNere === b.dataset.nere ? "" : b.dataset.nere;
+    else if (b.dataset.kim != null) kKim = kKim === b.dataset.kim ? "" : b.dataset.kim;
     else return;
     kKaydet(); renderKampanyalar(); icerigeKay();
   };
@@ -1406,12 +1431,12 @@ function renderKampanyalar() {
     return;
   }
   if (kOne) { $("list").innerHTML = kOneHtml(L, renk) + tumLink; bindSpecial(); return; }
-  const liste = L.filter((k) => (!kNe || k.ne === kNe) && (!kNere || k.nere === kNere)).sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
+  const liste = L.filter((k) => uy(k, "")).sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
   // Sağlama: her satırın grupları toplanınca "Hepsi"ye eşit (gruplar birbirini dışlar)
   const top = (S) => S.reduce((a, g) => a + g[2], 0), es = (S, T) => `${S.filter((g) => g[2]).map((g) => g[2]).join(" + ")} = <b>${top(S)}</b> ${top(S) === T.length ? "✓" : "✗"}`;
-  const yol = [kayAd, kSeg === "ticari" ? "Ticari" : "Bireysel", kNe && kIkon("ne", kNe) + " " + kNe, kNere && kIkon("nere", kNere) + " " + kKisa(kNere)].filter(Boolean).join(" › ");
+  const yol = [kayAd, kSeg === "ticari" ? "Ticari" : "Bireysel", kNe && kIkon("ne", kNe) + " " + kNe, kNere && kIkon("nere", kNere) + " " + kKisa(kNere), kKim && (GK.find((g) => g[0] === kKim) || K_HERKES)[1] + " " + kKim].filter(Boolean).join(" › ");
   const sag = `<div class="ksag"><div class="kyol">${esc(yol)} <b>${liste.length}</b></div>`
-    + `<div>✓ <b>Sağlama</b> · 💰 ${es(neS, neT)} &nbsp;·&nbsp; 🛍️ ${es(nereS, nereT)}</div></div>`;
+    + `<div>✓ <b>Sağlama</b> · 💰 ${es(neS, neT)} &nbsp;·&nbsp; 🛍️ ${es(nereS, nereT)}${kimS.some((g) => g[0] !== "Herkes" && g[2]) ? ` &nbsp;·&nbsp; 🎯 ${es(kimS, kimT)}` : ""}</div></div>`;
   const acil = liste.filter((k) => k.bitis && daysLeft(k.bitis) <= 3).length;
   const kayp = KH[kKay][kSeg].toplam - L.length;
   $("list").innerHTML = sag + (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
