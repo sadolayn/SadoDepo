@@ -1,0 +1,32 @@
+# Kampanyalar: isbank.com.tr ve maximum.com.tr (bireysel + ticari), günde iki kez (İstanbul 09:01 ve 14:01)
+# Yalnızca işlenmiş alanlar isbank/kampanya_hepsi.json'a yazılır; kayda yalnızca sayılar basılır
+name: Kampanyalar
+on:
+  schedule:
+    - cron: "1 6,11 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: kampanya
+  cancel-in-progress: false
+jobs:
+  topla:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Kampanyaları topla
+        run: python scripts/kampanya_topla.py
+      - name: Commit
+        run: |
+          git config user.name "sadolayn-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add isbank/kampanya_hepsi.json
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Kampanyalar güncellendi"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          exit 1
