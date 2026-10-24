@@ -603,6 +603,13 @@
   .altkutu .tfil.sekme button b { min-width: 18px; padding: 0 5px; border-radius: 9px; background: rgba(255,255,255,.12); font-size: 11px; line-height: 18px; text-align: center; }
   .altkutu .tfil.sekme button.on { background: var(--c, #e0a24f); border-color: var(--c, #e0a24f); color: #000; }
   .altkutu .tfil.sekme button.on b { background: rgba(0,0,0,.2); }
+  /* Uzun alt başlık kutusu kaydırınca tek satır: yalnızca seçili başlık + "Değiştir"; dokununca hepsi açılır */
+  .altkutu.dar:not(.acik) #nsub button:not(.on), .altkutu.dar:not(.acik) #tfil button:not(.on) { display: none !important; }
+  .altkutu.dar:not(.acik) { padding-bottom: 6px; cursor: pointer; }
+  .altkutu.dar:not(.acik) #nsub, .altkutu.dar:not(.acik) #tfil { pointer-events: none; }
+  .altkutu.dar .altbas::after { content: "Değiştir ▾"; margin-left: auto; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--c, #e0a24f); color: var(--c, #e0a24f); font-size: 11.5px; font-weight: 800; }
+  .altkutu.dar.acik .altbas::after { content: "Kapat ▴"; }
+  .altkutu.dar:not(.acik) #nsub, .altkutu.dar:not(.acik) #tfil { flex-wrap: nowrap !important; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -677,6 +684,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   </header>
   <div class="chipbar" id="chipbar"><button type="button" class="longbar" id="subeBar"><span>📊 Finansal bilgiler</span><i>·</i><span>📄 Yatırımcı sunumu</span><em id="subeNew" hidden></em></button><div class="menu" id="chips"></div></div>
   </div>
+  <div id="altIz" aria-hidden="true"></div>
   <div class="chipbar altkutu" id="altkutu" hidden><div class="altbas" id="altbas"></div><div class="nsub" id="nsub" hidden></div><div class="tfil" id="tfil" hidden></div></div>
   <div id="soon"></div>
   <div class="upd" id="upd"></div>
@@ -828,6 +836,35 @@ function bolumeKay(el) {
   const h = $("imini").offsetHeight + ($("altkutu").hidden ? 0 : $("altkutu").offsetHeight) + 8;
   window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - h), behavior: "smooth" });
 }
+// Kaydırma: alt başlık kutusu yapışınca (ve 1 satırdan uzunsa) tek satıra iner; Şubeler'de kaydırdıkça doğru başlık yanar
+(function () {
+  const k = $("altkutu"), iz = $("altIz");
+  const say = () => [...k.querySelectorAll("#nsub button, #tfil button")].filter((b) => b.offsetParent || k.classList.contains("dar")).length;
+  let dar = false;
+  function kontrol() {
+    if (k.hidden) { if (dar) { dar = false; k.classList.remove("dar", "acik"); } return; }
+    const ust = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--iminiH")) || 0;
+    const yapisik = iz.getBoundingClientRect().top < ust - 4, uzun = say() > 4;
+    if ((yapisik && uzun) !== dar) { dar = yapisik && uzun; k.classList.toggle("dar", dar); if (!dar) k.classList.remove("acik"); }
+    if (cat === "Şubeler") subeIz();
+  }
+  function subeIz() {
+    const t = $("tfil"), sinir = $("imini").offsetHeight + k.offsetHeight + 30; let akt = "agBox";
+    ["agBox", "sfBox", "ilkBox", "notBox"].forEach((id) => { const el = $(id); if (el && el.getBoundingClientRect().top <= sinir) akt = id; });
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4 && $("notBox")) akt = "notBox";
+    const hedef = [...t.querySelectorAll("button[data-sj]")].find((b) => b.dataset.sj === akt && !b.dataset.sm);
+    if (hedef && !hedef.classList.contains("on") && !subeKayiyor) t.querySelectorAll("button").forEach((b) => b.classList.toggle("on", b === hedef));
+  }
+  window.addEventListener("scroll", kontrol, { passive: true }); window.addEventListener("resize", kontrol);
+  // Dar kutuya dokununca aç; açıkken bir başlık seçilince yine daralır
+  k.addEventListener("click", (e) => {
+    if (!k.classList.contains("dar")) return;
+    if (!k.classList.contains("acik")) { k.classList.add("acik"); e.stopPropagation(); return; }
+    if (e.target.closest(".altbas")) k.classList.remove("acik");
+    else if (e.target.closest("button")) setTimeout(() => k.classList.remove("acik"), 0);
+  }, true);
+})();
+let subeKayiyor = 0;
 // Kaleme dokununca: kalemler yukarı kayar, içerik (varsa alt başlıklarla) çubuğun hemen altına gelir
 let ilkCizim = true;
 function icerigeKay() {
@@ -1214,6 +1251,7 @@ function renderSubeler() {
   t.onclick = null;
   t.querySelectorAll("[data-sj]").forEach((b) => (b.onclick = () => {
     t.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+    clearTimeout(subeKayiyor); subeKayiyor = setTimeout(() => (subeKayiyor = 0), 900);
     if (b.dataset.sm && SF.mode !== b.dataset.sm) { SF.mode = b.dataset.sm; sfSave(); document.querySelectorAll(".sft button").forEach((x) => x.classList.toggle("on", x.dataset.m === SF.mode)); sfLoad(); }
     else if (b.dataset.sj === "sfBox" && !b.dataset.sm && SF.mode !== "l") { SF.mode = "l"; sfSave(); document.querySelectorAll(".sft button").forEach((x) => x.classList.toggle("on", x.dataset.m === SF.mode)); sfLoad(); }
     bolumeKay($(b.dataset.sj));
@@ -1465,6 +1503,7 @@ async function ipYukle() {
   if (IPJ) return;
   try { IPJ = await Ortak.json("isbank/iscep_ipucu.json"); IPK = IPJ.kategoriler.map((x) => [x.k, x.ic, x.ad]); IPUCU = IPJ.ipuclari; } catch (e) { IPJ = { ipuclari: [] }; }
 }
+let ipHepsi = false; // İşCep "Hepsi": önce öne çıkan 10 ipucu, istenirse tamamı
 let ipSec = null, ipGun = null, ipGecmis = [], ipTorba = null; // ipTorba: bu turda henüz çıkmamış ipuçları (hepsi bitmeden tekrar yok)
 const IPC = { ayar: "#3f8cff", para: "#3fc283", maxi: "#b48cf0", kolay: "#f0c64a", arac: "#ef5a5a", ev: "#ef8a4c", aile: "#ff4fa3", seyahat: "#5aa9f0", yatirim: "#a8c94a" };
 // İşCep başlıkları: Maximum'daki gibi menünün hemen altında, yapışkan alanda
@@ -1473,7 +1512,7 @@ function ipTiles() {
   const tile = (k, ic, ad, c, n) => `<button type="button" data-ipk="${k}" class="mt${(ipSec || "") === k ? " on" : ""}${ad.length > 12 ? " uzun" : ""}" style="--c:${c};grid-column:span 12"><i>${ic}</i><span>${esc(ad)}</span>${n != null ? `<em>${n}</em>` : ""}</button>`;
   t.innerHTML = tile("", "🌟", "Hepsi", "#e0a24f", IPUCU.length) + IPK.map(([k, ic, ad]) => tile(k, ic, ad, IPC[k] || "#9aa0a6", IPUCU.filter((x) => x.k === k).length)).join("");
   t.className = "tfil mtiles ipm"; t.hidden = false;
-  t.onclick = (e) => { const b = e.target.closest("button[data-ipk]"); if (!b) return; ipSec = b.dataset.ipk || null; renderIscep(); icerigeKay(); };
+  t.onclick = (e) => { const b = e.target.closest("button[data-ipk]"); if (!b) return; ipSec = b.dataset.ipk || null; ipHepsi = false; renderIscep(); icerigeKay(); };
 }
 function iscepIpHtml() {
   const day = Math.floor(Date.now() / 864e5);
@@ -1483,16 +1522,28 @@ function iscepIpHtml() {
   if (ipGun == null) { const yi = IPUCU.findIndex(taze); ipGun = yi >= 0 ? yi : day % IPUCU.length; }
   const g = IPUCU[ipGun];
   const kart = (x, i) => `<div class="ipk" id="ip${i}"><div class="iph"><i>${x.ic}</i><b>${esc(x.t)}${taze(x) ? '<span class="newtag">YENİ</span>' : ""}</b></div><p>${esc(x.d)}</p><div class="ipn">📍 ${esc(x.n)}</div><div class="ipl"><a href="${x.u}" target="_blank" rel="noopener">${x.src === "uygulama" ? "İşCep uygulamasında · ayrıntı" : (x.u.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr") + "'de ayrıntı"} ↗</a>${x.git ? `<button type="button" class="ipgo" data-camp="${esc(x.git)}">${esc(x.gitAd || x.git)} ›</button>` : ""}</div></div>`;
-  const L = IPUCU.map((x, i) => [x, i]).filter(([x]) => !ipSec || x.k === ipSec);
+  const L0 = IPUCU.map((x, i) => [x, i]).filter(([x]) => !ipSec || x.k === ipSec);
+  // Kısa liste: yeni eklenenler önce, sonra her kategoriden sırayla birer ipucu (günün ipucu hariç), en çok 10
+  const kisa = !ipSec && !ipHepsi && L0.length > 12;
+  let L = L0;
+  if (kisa) {
+    const havuz = L0.filter(([, i]) => i !== ipGun), sec = havuz.filter(([x]) => taze(x)).slice(0, 10), gruplar = {};
+    havuz.forEach((e) => { if (!sec.includes(e)) (gruplar[e[0].k] = gruplar[e[0].k] || []).push(e); });
+    for (let tur = 0; sec.length < 10 && Object.values(gruplar).some((g) => g.length > tur); tur++)
+      for (const [k] of IPK) { const g = gruplar[k]; if (g && g[tur] && sec.length < 10) sec.push(g[tur]); }
+    L = sec.sort((a, b) => a[1] - b[1]);
+  }
+  const tamami = kisa ? `<div class="ipgr">⭐ Öne çıkan ${L.length} ipucu</div>` : "";
+  const dahaFazla = kisa ? `<button type="button" class="more" id="ipHepsi" style="display:block;width:100%;margin:6px 0 14px">📋 Tüm ipuçlarını göster (${L0.length})</button>` : "";
   const bas = ipSec ? `<div class="ipsec"><b>${(IPK.find((c) => c[0] === ipSec) || [])[1] || ""} ${esc((IPK.find((c) => c[0] === ipSec) || [])[2] || "")}</b><span>${L.length} ipucu</span><button type="button" data-ipk="">🌟 Hepsine dön</button></div>` : "";
   return (ipSec ? `<div class="iphero mini"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in az bilinen süper güçleri 🚀</b></div>` : `<div class="iphero"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in az bilinen süper güçleri 🚀</b><span>800'den fazla işlemin içinden en çok “wow!” dedirtenler. Her gün biri öne çıkar.</span></div>`) + `
     <div class="ipgun"><div class="iph"><i>${g.ic}</i><div><em>${ipTorba ? `İpucu · ${IPUCU.length - ipTorba.length}/${IPUCU.length}` : "Günün ipucu"}</em><b>${esc(g.t)}${taze(g) ? '<span class="newtag">YENİ</span>' : ""}</b></div></div><p>${esc(g.d)}</p><div class="ipn">📍 ${esc(g.n)}</div>
       <div class="ipl"><a href="${g.u}" target="_blank" rel="noopener">Ayrıntı ↗</a>${ipGecmis.length ? `<button type="button" id="ipGeri">◀ Önceki</button>` : ""}<button type="button" id="ipZar">${ipTorba && !ipTorba.length ? "🔁 Hepsini gördün · baştan" : "🎲 Bir tane daha"}</button></div></div>` + bas + `
-    ${L.map(([x, i], n) => { const p = n ? L[n - 1][0] : null; let h = "";
+    ${tamami}${L.map(([x, i], n) => { const p = n ? L[n - 1][0] : null; let h = "";
       if (x.k === "ayar" && (!p || p.k !== "ayar")) h += `<div class="ipay"><b>⚙️ Bir kez ayarla, hep kullan</b><span>Bunlar İşCep'te <b>bir kez</b> açılır, sonra her gün kendiliğinden çalışır. Çoğu <b>Profil ve Ayarlar</b> menüsünde, kartla ilgili olanlar <b>Kartlar</b> menüsünde.</span></div>`;
       if (x.g && (!p || p.g !== x.g)) h += `<div class="ipgr">${esc(x.g)}</div>`;
       return h + kart(x, i); }).join("")}
-    <p class="ipkon">🔄 İpuçları haftada bir isbank.com.tr ile karşılaştırılıp güncellenir${IPJ && IPJ.kontrol ? " · son kontrol: " + new Date(IPJ.kontrol + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : ""}. Uygulamada farklı görürsen İşCep'teki adı geçerlidir.</p>`;
+    ${dahaFazla}<p class="ipkon">🔄 İpuçları haftada bir isbank.com.tr ile karşılaştırılıp güncellenir${IPJ && IPJ.kontrol ? " · son kontrol: " + new Date(IPJ.kontrol + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : ""}. Uygulamada farklı görürsen İşCep'teki adı geçerlidir.</p>`;
 }
 function bindIscep() {
   const ay = $("list").querySelector(".ipgun .ipl a"); if (ay) ay.addEventListener("click", () => window.Rapor && Rapor.bolum("ipucu-ayrinti"));
@@ -1502,8 +1553,9 @@ function bindIscep() {
     if (!ipTorba || !ipTorba.length) { ipTorba = IPUCU.map((_, i) => i).filter((i) => i !== ipGun); for (let i = ipTorba.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ipTorba[i], ipTorba[j]] = [ipTorba[j], ipTorba[i]]; } }
     ipGecmis.push(ipGun); if (ipGecmis.length > 100) ipGecmis.shift(); ipGun = ipTorba.pop(); renderIscep();
   };
+  const hp = $("ipHepsi"); if (hp) hp.onclick = () => { ipHepsi = true; renderIscep(); };
   const gr = $("ipGeri"); if (gr) gr.onclick = () => { if (ipGecmis.length) { ipGun = ipGecmis.pop(); renderIscep(); } };
-  $("list").querySelectorAll("[data-ipk]").forEach((b) => (b.onclick = () => { ipSec = b.dataset.ipk || null; renderIscep(); icerigeKay(); }));
+  $("list").querySelectorAll("[data-ipk]").forEach((b) => (b.onclick = () => { ipSec = b.dataset.ipk || null; ipHepsi = false; renderIscep(); icerigeKay(); }));
   ipTiles();
   $("list").querySelectorAll("[data-camp]").forEach((b) => (b.onclick = () => { cat = "Maximum"; campTur = b.dataset.camp; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); window.scrollTo({ top: 0 }); }));
 }
