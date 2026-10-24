@@ -577,6 +577,22 @@
   .ataIntro.film .aiSahne { margin-bottom: 0; }
   .aiImza { position: absolute; left: 18px; bottom: max(22px, env(safe-area-inset-bottom)); font-family: Georgia, serif; font-style: italic; font-size: 13px; letter-spacing: 2px; color: #6b5a3a; opacity: 0; animation: aiFade 1.5s 1s forwards; }
   .ataIntro.film.sahnede .aiQ { display: none; }
+  /* ===== Menü düzeni (Bankacılık'taki mantık) =====
+     Kalemler sayfayla kayar; kaleme dokununca içerik öne gelir, üstte ince çubuk "seçili kalem · Menü" kalır.
+     Seçili kalemin alt başlıkları kalemin rengindeki kutuda, kaydırınca çubuğun altında yapışık durur. */
+  .stick { position: static !important; box-shadow: none !important; }
+  .imini { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; align-items: center; gap: 10px; padding: 7px 16px; background: rgba(0,0,0,.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid #222; transform: translateY(-110%); transition: transform .28s ease; }
+  .imini.on { transform: translateY(0); }
+  .imini .ev { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex: 0 0 38px; border-radius: 11px; background: #161616; border: 1px solid #e0a24f; font-size: 19px; text-decoration: none; }
+  .imini .cur { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--c, #fff); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .imini .cur i { font-style: normal; font-size: 21px; }
+  .imini button { flex: 0 0 auto; padding: 9px 13px; border-radius: 11px; border: 1px solid var(--line); background: #161616; color: #fff; font: inherit; font-size: 13.5px; font-weight: 700; }
+  .altkutu { position: sticky; top: var(--iminiH, 0px); z-index: 20; margin: -4px 0 12px; padding: 8px 8px 6px; border-radius: 14px; background: #070707; border: 1px solid color-mix(in srgb, var(--c, #e0a24f) 55%, #000); border-top: 3px solid var(--c, #e0a24f); box-shadow: 0 8px 18px rgba(0,0,0,.6); }
+  .altkutu::before { content: ""; position: absolute; top: -10px; left: var(--ok, 50%); width: 14px; height: 14px; margin-left: -7px; background: var(--c, #e0a24f); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+  .altbas { display: flex; align-items: center; gap: 6px; margin: 0 2px 2px; font-size: 12px; font-weight: 800; letter-spacing: .3px; color: var(--c, #e0a24f); }
+  .altbas span { color: #8a8a8a; font-weight: 600; }
+  .altkutu .nsub, .altkutu .tfil { margin-top: 4px !important; }
+  .chipbar .tfil[hidden], .chipbar .nsub[hidden], .altkutu[hidden] { display: none !important; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -641,6 +657,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   ataOyna(false, OZEL[md], md === "11-10");
 })();
 </script>
+<div class="imini" id="imini"><a class="ev" href="index.html" aria-label="Ana sayfa">🏠</a><div class="cur" id="iminiCur"></div><button type="button" id="iminiBtn">Menü ▴</button></div>
 <div class="wrap">
   <div class="stick">
   <header>
@@ -648,8 +665,9 @@ window.ataOyna = function (film, ozelNot, yas) {
     <h1>🏛️ İş Bankası Gündemi<small style="display:block;font-size:11px;font-weight:400;color:#8a8a8a;margin-top:2px;letter-spacing:.2px">kişisel derleme · resmî değildir</small></h1>
     <span style="width:52px"></span>
   </header>
-  <div class="chipbar" id="chipbar"><button type="button" class="longbar" id="subeBar"><span>📊 Finansal bilgiler</span><i>·</i><span>📄 Yatırımcı sunumu</span><em id="subeNew" hidden></em></button><div class="menu" id="chips"></div><div class="nsub" id="nsub" hidden></div><div class="tfil" id="tfil" hidden></div></div>
+  <div class="chipbar" id="chipbar"><button type="button" class="longbar" id="subeBar"><span>📊 Finansal bilgiler</span><i>·</i><span>📄 Yatırımcı sunumu</span><em id="subeNew" hidden></em></button><div class="menu" id="chips"></div></div>
   </div>
+  <div class="chipbar altkutu" id="altkutu" hidden><div class="altbas" id="altbas"></div><div class="nsub" id="nsub" hidden></div><div class="tfil" id="tfil" hidden></div></div>
   <div id="soon"></div>
   <div class="upd" id="upd"></div>
   <div id="list"><div class="kb" aria-hidden="true">
@@ -760,8 +778,8 @@ function renderChips() {
   const su = unseen("Finans").length;
   $("subeBar").classList.toggle("active", cat === "Finans");
   $("subeNew").hidden = !(su && cat !== "Finans"); $("subeNew").textContent = su;
-  $("subeBar").onclick = () => { cat = cat === "Finans" ? "Tümü" : "Finans"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const go = (k) => { cat = k; if (NEWS.includes(k)) { lastNews = k; try { localStorage.setItem("isbankNews", k); } catch (e) {} } try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  $("subeBar").onclick = () => { cat = cat === "Finans" ? "Tümü" : "Finans"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); icerigeKay(); };
+  const go = (k) => { cat = k; if (NEWS.includes(k)) { lastNews = k; try { localStorage.setItem("isbankNews", k); } catch (e) {} } try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); icerigeKay(); };
   const inNews = NEWS.includes(cat);
   const nU = unseen("Tümü").length + unseen("📰 Güncel").length + unseen("🎬 Video").length;
   $("chips").innerHTML = MENU.map(([k, ic]) => {
@@ -773,6 +791,35 @@ function renderChips() {
   $("nsub").hidden = !inNews;
   $("nsub").innerHTML = inNews ? NEWS.map((k) => { const u = k === cat ? 0 : unseen(k).length; return `<button type="button" data-n="${k}" class="${k === cat ? "on" : ""}">${NLBL[k]}${u ? `<b>${u > 9 ? "9+" : u}</b>` : ""}</button>`; }).join("") : "";
   $("nsub").querySelectorAll("[data-n]").forEach((b) => (b.onclick = () => go(b.dataset.n)));
+  altGuncelle();
+}
+// Seçili kalem: ince çubukta adı, alt başlıklar kalemin renginde "▼ … altında" kutusunda
+function altGuncelle() {
+  const a = $("chips").querySelector("button.active") || ($("subeBar").classList.contains("active") ? $("subeBar") : null);
+  const c = a && a !== $("subeBar") ? getComputedStyle(a).getPropertyValue("--c").trim() || "#e0a24f" : "#5d7cff";
+  const ad = a ? (a === $("subeBar") ? "📊 Finansal bilgiler" : `${a.querySelector("i").textContent} ${a.querySelector("span").innerHTML.replace(/<br\s*\/?>|<small>/gi, " ").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim()}`) : "İş Bankası Gündemi";
+  $("iminiCur").innerHTML = esc(ad); $("imini").style.setProperty("--c", c);
+  const k = $("altkutu"), var1 = !$("nsub").hidden && $("nsub").innerHTML.trim(), var2 = !$("tfil").hidden && $("tfil").innerHTML.trim();
+  k.hidden = !(var1 || var2);
+  if (!k.hidden && a) {
+    k.style.setProperty("--c", c);
+    $("altbas").innerHTML = `▼ ${esc(ad)} <span>· alt başlıklar</span>`;
+    const r = a.getBoundingClientRect(), kr = k.getBoundingClientRect();
+    k.style.setProperty("--ok", Math.max(16, Math.min(kr.width - 16, r.left + r.width / 2 - kr.left)) + "px");
+  }
+}
+// Alt başlık satırları sonradan dolabilir (ör. İşCep ipuçları veriyle gelir): değişince kutuyu güncelle
+(function () { let bekle = 0; const mo = new MutationObserver(() => { if (bekle) return; bekle = requestAnimationFrame(() => { bekle = 0; altGuncelle(); }); });
+  ["nsub", "tfil"].forEach((id) => mo.observe($(id), { attributes: true, attributeFilter: ["hidden", "class"], childList: true })); })();
+// Kaleme dokununca: kalemler yukarı kayar, içerik (varsa alt başlıklarla) çubuğun hemen altına gelir
+let ilkCizim = true;
+function icerigeKay() {
+  if (ilkCizim) return;
+  requestAnimationFrame(() => {
+    altGuncelle();
+    const st = document.querySelector(".stick"), top = st.getBoundingClientRect().bottom + window.scrollY - 58;
+    window.scrollTo({ top: Math.max(0, top), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  });
 }
 
 function daysLeft(d) {
@@ -881,7 +928,7 @@ function ayrSecHtml() {
   const t = $("tfil");
   t.className = "tfil aysec"; t.hidden = false;
   t.innerHTML = `<button type="button" data-ayr="black" class="${ayr !== "plus" ? "on" : ""}">🖤 İş Black<small>varlığa göre</small></button><button type="button" data-ayr="plus" class="p ${ayr === "plus" ? "on" : ""}">💠 İş Plus<small>İşCep ve kart kullanımına göre</small></button>`;
-  t.onclick = (e) => { const b = e.target.closest("[data-ayr]"); if (!b) return; ayr = b.dataset.ayr; try { localStorage.setItem("isbankAyr", ayr); } catch (x) {} renderList(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  t.onclick = (e) => { const b = e.target.closest("[data-ayr]"); if (!b) return; ayr = b.dataset.ayr; try { localStorage.setItem("isbankAyr", ayr); } catch (x) {} renderList(); icerigeKay(); };
   return "";
 }
 function isplusHtml() {
@@ -1015,7 +1062,7 @@ function milesHtml() {
 }
 function bindSpecial() {
   $("list").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { const t = $(b.dataset.go); if (!t) return; const st = document.querySelector(".chipbar"), h = st ? st.getBoundingClientRect().bottom : 0; window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - h - 8, behavior: "smooth" }); t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); }));
-  $("list").querySelectorAll("[data-tur]").forEach((b) => (b.onclick = () => { campTur = b.dataset.tur; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
+  $("list").querySelectorAll("[data-tur]").forEach((b) => (b.onclick = () => { campTur = b.dataset.tur; renderCamps(); icerigeKay(); }));
   $("list").querySelectorAll("[data-cat]").forEach((b) => (b.onclick = () => { cat = b.dataset.cat; renderList(); renderChips(); window.scrollTo({ top: 0 }); })); }
 // Kampanya takvimi: bu ay + gelecek ay; her ayın ilk haftası renkli, bugün işaretli, ay başına geri sayım
 function miniCal(y, m, today) {
@@ -1088,7 +1135,7 @@ function renderCamps() {
   $("tfil").innerHTML = SP.map((t) => tile(t, null, 60 / SP.length)).join("") + turs.map((t) => tile(t, t === "Tümü" ? camps.length : camps.filter((k) => k.tur === t).length, 60 / Math.min(6, turs.length) | 0)).join("");
   $("tfil").className = "tfil mtiles";
   $("tfil").hidden = false;
-  $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); icerigeKay(); };
   if (SP.includes(campTur)) { if (campTur === "🛒 Pazarama") { $("list").innerHTML = pazHtml(); bindPaz(); return; } $("list").innerHTML = campTur === "✈️ Maximiles" ? milesHtml() : campTur === "📲 Kartsız öde" ? odeHtml() : oneHtml(); bindSpecial(); return; }
   const vis = camps.filter((k) => campTur === "Tümü" || k.tur === campTur);
   const urg = vis.filter((k) => daysLeft(k.bitis) <= 3);
@@ -1099,7 +1146,7 @@ function renderCamps() {
   html += campCal();
   $("list").innerHTML = html;
   const tk = $("jTick"); if (tk) tk.onclick = () => { const st = document.querySelector(".stick, header.sticky, .top"), h = st && getComputedStyle(st).position === "sticky" ? st.offsetHeight : 0; window.scrollTo({ top: $("ccal").getBoundingClientRect().top + scrollY - h - 10, behavior: "smooth" }); };
-  $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); icerigeKay(); };
   $("jIcs").onclick = icsReminder;
 }
 
@@ -1401,7 +1448,7 @@ function ipTiles() {
   const tile = (k, ic, ad, c, n) => `<button type="button" data-ipk="${k}" class="mt${(ipSec || "") === k ? " on" : ""}${ad.length > 12 ? " uzun" : ""}" style="--c:${c};grid-column:span 12"><i>${ic}</i><span>${esc(ad)}</span>${n != null ? `<em>${n}</em>` : ""}</button>`;
   t.innerHTML = tile("", "🌟", "Hepsi", "#e0a24f", IPUCU.length) + IPK.map(([k, ic, ad]) => tile(k, ic, ad, IPC[k] || "#9aa0a6", IPUCU.filter((x) => x.k === k).length)).join("");
   t.className = "tfil mtiles ipm"; t.hidden = false;
-  t.onclick = (e) => { const b = e.target.closest("button[data-ipk]"); if (!b) return; ipSec = b.dataset.ipk || null; renderIscep(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  t.onclick = (e) => { const b = e.target.closest("button[data-ipk]"); if (!b) return; ipSec = b.dataset.ipk || null; renderIscep(); icerigeKay(); };
 }
 function iscepIpHtml() {
   const day = Math.floor(Date.now() / 864e5);
@@ -1431,7 +1478,7 @@ function bindIscep() {
     ipGecmis.push(ipGun); if (ipGecmis.length > 100) ipGecmis.shift(); ipGun = ipTorba.pop(); renderIscep();
   };
   const gr = $("ipGeri"); if (gr) gr.onclick = () => { if (ipGecmis.length) { ipGun = ipGecmis.pop(); renderIscep(); } };
-  $("list").querySelectorAll("[data-ipk]").forEach((b) => (b.onclick = () => { ipSec = b.dataset.ipk || null; renderIscep(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
+  $("list").querySelectorAll("[data-ipk]").forEach((b) => (b.onclick = () => { ipSec = b.dataset.ipk || null; renderIscep(); icerigeKay(); }));
   ipTiles();
   $("list").querySelectorAll("[data-camp]").forEach((b) => (b.onclick = () => { cat = "Maximum"; campTur = b.dataset.camp; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); window.scrollTo({ top: 0 }); }));
 }
@@ -1477,7 +1524,7 @@ function renderSum() {
     </div>
     <div class="foot">${esc(d.donem)} · ${f(d.ulke)} ülkede yurt dışı şube<a href="#" id="toSube">Şube ve kasa ›</a></div>
   </div>`;
-  $("toSube").onclick = (e) => { e.preventDefault(); cat = "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (er) {} renderChips(); renderList(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  $("toSube").onclick = (e) => { e.preventDefault(); cat = "Şubeler"; try { localStorage.setItem("isbankCat", cat); } catch (er) {} renderChips(); renderList(); icerigeKay(); };
 }
 function agoTxt(iso) {
   const m = Math.max(0, Math.round((Date.now() - new Date(iso)) / 60000));
@@ -1599,7 +1646,7 @@ function renderSoon() {
     const dt = new Date(x.d + "T12:00:00"), ppk = !!x.ppk;
     return `<button type="button" class="soonbar${x.n <= 1 ? " hot" : ""}" data-go="tk"><div class="n">${x.n === 0 ? "🎯" : x.n}<small>${x.n === 0 ? "bugün" : x.n === 1 ? "yarın" : "gün"}</small></div><div><b>${ppk ? "🏦 " : "📊 "}${esc(x.t)}${x.n <= 1 && ppk && !x.done && /PPK/.test(x.t) ? " · saat 14:00" : ""}</b><span>${dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })} · ${esc(x.a)}</span></div></button>`;
   }).join("");
-  $("soon").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { cat = "📅 Takvim"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); window.scrollTo({ top: 0, behavior: "smooth" }); }));
+  $("soon").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { cat = "📅 Takvim"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); icerigeKay(); }));
 }
 
 // ===== Sayfa sonu: Günün sorusu + Banka tarihinden (dokundukça yenisi) =====
@@ -1850,7 +1897,7 @@ function renderList() {
     seenInit();
     // Video sekmesi sonradan eklendi: eski ziyaretçide 1 haftadan eski videolar okunmuş sayılsın
     if (!SEEN._yv) { vids.forEach((x) => { if (!x.d || (Date.now() - new Date(x.d)) / 864e5 > 7) SEEN["y:" + x.u] = 1; }); SEEN._yv = 1; seenSave(); }
-    renderList(); renderChips();
+    renderList(); renderChips(); ilkCizim = false;
   } catch (e) {
     Ortak.hata("list", { ne: "İş Bankası gündemi" });
   }
@@ -1859,9 +1906,18 @@ function renderList() {
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>
 // Yana kayan alt filtrede seçili kutucuk görünür kalsın (sayfa dikey kaymaz)
-(function(){var cb=document.getElementById("chipbar");if(!cb)return;var f=function(){cb.querySelectorAll(".tfil.mtiles").forEach(function(r){var on=r.querySelector(".mt.on");if(!on)return;var x=on.offsetLeft-(r.clientWidth-on.offsetWidth)/2;r.scrollTo({left:Math.max(0,x),behavior:"smooth"});});};new MutationObserver(f).observe(cb,{childList:true,subtree:true});f();})();
+(function(){var cb=document.getElementById("altkutu");if(!cb)return;var f=function(){cb.querySelectorAll(".tfil.mtiles").forEach(function(r){var on=r.querySelector(".mt.on");if(!on)return;var x=on.offsetLeft-(r.clientWidth-on.offsetWidth)/2;r.scrollTo({left:Math.max(0,x),behavior:"smooth"});});};new MutationObserver(f).observe(cb,{childList:true,subtree:true});f();})();
 </script>
-<script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
+<script>
+// İnce çubuk: kalemler gözden çıkınca üstten süzülür; "Menü ▴" kalemlere geri götürür
+(function () {
+  var s = document.querySelector(".stick"), m = document.getElementById("imini"); if (!s || !m) return; var on = false;
+  var f = function () { var yeni = s.getBoundingClientRect().bottom < 60; if (yeni !== on) { on = yeni; m.classList.toggle("on", on); }
+    document.documentElement.style.setProperty("--iminiH", on ? m.offsetHeight + "px" : "0px"); };
+  window.addEventListener("scroll", f, { passive: true }); window.addEventListener("resize", f); f();
+  document.getElementById("iminiBtn").onclick = function () { window.scrollTo({ top: 0, behavior: "smooth" }); };
+})();
+</script>
 <script>
 // Yakınımdaki şubeler: konumu cihazdan al
 (function () {
