@@ -19,6 +19,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Tarayıcı (Maximiles listesi sayfada sonradan yükleniyor)
+        continue-on-error: true
+        run: pip install -q playwright && python -m playwright install --with-deps chromium > /dev/null
       - name: Kampanyaları topla
         run: python scripts/kampanya_topla.py
       - name: Commit

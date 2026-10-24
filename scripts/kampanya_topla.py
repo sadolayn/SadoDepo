@@ -180,42 +180,132 @@ def maximum(segment):
     say = re.search(r"Kampanya\s+Sayısı\s*\(\s*(\d+)\s*\)", temiz(body))
     return {"toplam": int(say.group(1)) if say else len(lst), "kampanyalar": lst}
 
-# ---------- maximiles.com.tr (maximum.com.tr ile aynı altyapı) ----------
+# ---------- maximiles.com.tr ----------
+# Liste sayfası kampanyaları tarayıcıda sonradan yükler; Bireysel/Ticari sekmeleri aynı adreste.
+# 1) Kampanya adresleri toplanır: sayfanın kendisinden ve (kuruluysa) gerçek bir tarayıcıyla, iki sekmede ayrı ayrı.
+# 2) Her kampanyanın kendi sayfasından yalnızca başlık, kısa açıklama ve bitiş tarihi alınır.
 KOK_X = "https://www.maximiles.com.tr"
+X_ADRES = re.compile(r"^https?://www\.maximiles\.com\.tr/kampanyalar/([a-z0-9-]+)/?$", re.I)
+X_SEKME = {"bireysel", "ticari", "bireysel-kampanyalar", "ticari-kampanyalar"}
+AYLAR = {a: i + 1 for i, a in enumerate(["ocak", "şubat", "mart", "nisan", "mayıs", "haziran", "temmuz", "ağustos", "eylül", "ekim", "kasım", "aralık"])}
 
-def genel_kartlar(body, kok):
-    """Yedek okuyucu: 'Son N Gün' şeridi yoksa kampanya detay bağlantılarını ve başlıklarını alır (bitiş bilinmez)."""
-    out, gor = [], set()
-    for m in re.finditer(r'(?is)<a[^>]+href="([^"#?]*/kampanyalar/[^"#?]+)"[^>]*>(.*?)</a>', temiz(body)):
-        href, ic = m.group(1), metin(m.group(2))
-        if re.search(r"/kampanyalar/(bireysel|ticari)(-kampanyalar)?/?$", href, re.I) or len(ic) < 15 or re.match(r"(?i)^(detaylı bilgi|tüm kampanya)", ic):
+def x_norm(h):
+    h = html.unescape(h).split("#")[0].split("?")[0]
+    if not h.startswith("http"):
+        h = KOK_X + "/" + h.lstrip("/")
+    m = X_ADRES.match(h)
+    return f"{KOK_X}/kampanyalar/{m.group(1).lower()}" if m and m.group(1).lower() not in X_SEKME else None
+
+def x_tarayici():
+    """Gerçek tarayıcıyla iki sekmede görünen kampanya adresleri: (bireysel, ticari) ya da kurulu değilse None."""
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception:
+        return None
+    gor = "els => els.filter(e => e.offsetParent !== null).map(e => e.href)"
+    try:
+        with sync_playwright() as p:
+            b = p.chromium.launch()
+            pg = b.new_page(user_agent=UA["User-Agent"], locale="tr-TR", viewport={"width": 1280, "height": 900})
+            pg.goto(KOK_X + "/kampanyalar", wait_until="networkidle", timeout=90000)
+            pg.wait_for_timeout(2500)
+            def topla():
+                for _ in range(40):  # "Daha fazla" düğmesi varsa liste bitene kadar
+                    d = pg.get_by_role("button", name=re.compile(r"daha fazla|devamını gör|tümünü gör", re.I))
+                    if not d.count() or not d.first.is_visible():
+                        break
+                    d.first.click()
+                    pg.wait_for_timeout(1500)
+                for _ in range(12):
+                    pg.evaluate("window.scrollBy(0, document.body.scrollHeight)")
+                    pg.wait_for_timeout(400)
+                return {x for x in map(x_norm, pg.eval_on_selector_all("a[href*='kampanyalar/']", gor)) if x}
+            bir = topla()
+            # "Ticari Kampanyalar" yazısı menüde de olabilir: listeyi gerçekten değiştiren ilk dokunuş sekmedir
+            tic = set()
+            for sek in pg.get_by_text(re.compile(r"^\s*Ticari\s+Kampanyalar\s*$")).all():
+                try:
+                    if not sek.is_visible():
+                        continue
+                    once = pg.url
+                    sek.click(timeout=5000)
+                    pg.wait_for_timeout(3000)
+                    t = topla()
+                    if t and t != bir:
+                        tic = t
+                        break
+                    if pg.url != once:
+                        pg.goto(KOK_X + "/kampanyalar", wait_until="networkidle", timeout=90000)
+                        pg.wait_for_timeout(2500)
+                except Exception:
+                    continue
+            b.close()
+            return bir - tic if tic else bir, tic - bir
+    except Exception:
+        return None
+
+def x_tarih(t):
+    """Sayfadaki tarihlerden bugünden sonraki en geç olanı (bitiş) döndürür."""
+    adaylar = []
+    for g, a, y in re.findall(r"\b(\d{1,2})[./](\d{1,2})[./](20\d{2})\b", t):
+        adaylar.append((int(y), int(a), int(g)))
+    for g, a, y in re.findall(r"\b(\d{1,2})\s+(ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık)\s+(20\d{2})\b", t.lower()):
+        adaylar.append((int(y), AYLAR[a], int(g)))
+    iyi = []
+    for y, a, g in adaylar:
+        try:
+            d = dt.date(y, a, g)
+        except ValueError:
             continue
-        url = href if href.startswith("http") else kok + href
-        if url in gor:
+        if bugun <= d <= bugun + dt.timedelta(days=400):
+            iyi.append(d)
+    return max(iyi).isoformat() if iyi else ""
+
+def x_detay(url):
+    b = get(url)
+    if not b:
+        return None
+    t = temiz(b)
+    h1 = re.search(r"(?is)<h1[^>]*>(.*?)</h1>", t)
+    baslik = metin(h1.group(1)) if h1 else ""
+    if not baslik:
+        og = re.search(r'(?i)<meta[^>]+property="og:title"[^>]+content="([^"]+)"', b)
+        baslik = re.sub(r"\s*[|–-]\s*Maximiles.*$", "", html.unescape(og.group(1))).strip() if og else ""
+    if len(baslik) < 8:
+        return None
+    ac = re.search(r'(?i)<meta[^>]+name="description"[^>]+content="([^"]*)"', b)
+    ozet = re.sub(r"\s+", " ", html.unescape(ac.group(1))).strip() if ac else ""
+    if ozet.lower().startswith(baslik.lower()[:30]):
+        ozet = ""
+    ticari = bool(re.search(r"Kampanyalar\s*(?:[›>/»]\s*)?Ticari\s+Kampanyalar", metin(t)))
+    return {"baslik": baslik[:160], "bitis": x_tarih(metin(t)), "ozet": ozet[:220], "url": url}, ticari
+
+X_HEPSI = None
+
+def x_hepsi():
+    global X_HEPSI
+    if X_HEPSI is not None:
+        return X_HEPSI
+    X_HEPSI = {}
+    ana = get(KOK_X + "/kampanyalar")
+    duz = {x for x in map(x_norm, re.findall(r'href=["\']([^"\']*kampanyalar/[a-z0-9-]+/?)["\']', ana, re.I)) if x}
+    tr = x_tarayici()
+    bir_t, tic_t = tr if tr else (set(), set())
+    print(f"maximiles: sayfada {len(duz)} bağlantı, tarayıcıda {len(bir_t)} bireysel + {len(tic_t)} ticari" + ("" if tr else " (tarayıcı yok)"))
+    for url in sorted(duz | bir_t | tic_t):
+        r = x_detay(url)
+        if not r:
             continue
-        gor.add(url)
-        out.append({"baslik": ic[:160], "bitis": "", "ozet": "", "url": url})
-    return out
+        k, ticari_iz = r
+        if url in tic_t: seg = "ticari"
+        elif url in bir_t: seg = "bireysel"
+        else: seg = "ticari" if ticari_iz or re.search(r"ticari|business|işyeri|kobi|şirket", url + " " + k["baslik"], re.I) else "bireysel"
+        X_HEPSI.setdefault(seg, []).append(k)
+    return X_HEPSI
 
 def maximiles(segment):
-    ana = get(KOK_X + "/kampanyalar")
-    if not ana:
-        return None
-    adresler = [KOK_X + "/kampanyalar/" + segment, KOK_X + "/kampanyalar/" + segment + "-kampanyalar"]
-    # Sekme adresi sayfadaki bağlantılardan bulunur (kayda yazılmaz)
-    for h in re.findall(r'href="([^"#?]*/kampanyalar/[a-z-]*' + segment + r'[a-z-]*)/?"', ana, re.I):
-        adresler.insert(0, h if h.startswith("http") else KOK_X + h)
-    if segment == "bireysel":
-        adresler.append(KOK_X + "/kampanyalar")
-    for u in dict.fromkeys(adresler):
-        body = ana if u == KOK_X + "/kampanyalar" else get(u)
-        if not body:
-            continue
-        lst = max_kartlar(body, KOK_X) or genel_kartlar(body, KOK_X)
-        if lst:
-            say = re.search(r"Kampanya\s+Sayısı\s*\(\s*(\d+)\s*\)", temiz(body))
-            return {"toplam": int(say.group(1)) if say else len(lst), "kampanyalar": lst}
-    return None
+    lst = x_hepsi().get(segment, [])
+    return {"toplam": len(lst), "kampanyalar": lst} if lst else None
 
 # ---------- Birleştir, sigorta, kaydet ----------
 eski = {}
