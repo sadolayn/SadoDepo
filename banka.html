@@ -2467,11 +2467,16 @@ $("menuOv").addEventListener("click", () => menuAc(false));
 $("menuPan").addEventListener("click", (e) => {
   const b = e.target.closest("button[data-tab]"); if (!b) return;
   menuAc(false); document.querySelector(`.stick .tabs button[data-tab="${b.dataset.tab}"]`).click();
-  const top = document.querySelector(".stick").getBoundingClientRect().bottom + window.scrollY + 2;
-  window.scrollTo({ top, behavior: "smooth" });
+  formaKay();
 });
+// Hesap seçilince form ekrana gelsin: büyük menü yukarı kayar, üstte ince "Menü ▾" çubuğu kalır, ilk giriş kutusu hemen görünür
+function formaKay() {
+  const top = document.querySelector(".stick").getBoundingClientRect().bottom + window.scrollY - 34;
+  window.scrollTo({ top: Math.max(0, top), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}
 document.querySelectorAll(".tabs button").forEach((b) => {
-  b.addEventListener("click", () => {
+  b.addEventListener("click", (e) => {
+    if (e.isTrusted && b.closest(".stick")) setTimeout(formaKay, 30);
     document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
     document.querySelectorAll(".panel").forEach((x) => x.classList.remove("active"));
     b.classList.add("active");
