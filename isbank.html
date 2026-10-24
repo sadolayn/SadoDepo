@@ -315,7 +315,10 @@
   @keyframes nb { 50% { transform: scale(1.12); } }
   /* Menü: Bankacılık'taki renkli kutucuk dili */
   .menu button { --c: #e0a24f; --d: #2a2010; --t: #f3dca8; grid-column: span 4; height: 54px; border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 38%, #000), var(--d)); color: var(--t); font-weight: 700; }
-  .menu button, .menu button:nth-child(n+6) { grid-column: span 5; }
+  .menu button, .menu button:nth-child(n+6) { grid-column: span 4; }
+  .menu button[data-k="KTakvim"] { --c: #ef5a5a; --d: #2e0a0a; --t: #ffd0d0; }
+  .menu button[data-k="Pazarama"] { --c: #ff8a3d; --d: #2e1405; --t: #ffd9bf; }
+  .menu button[data-k="Kartsiz"] { --c: #3fbfd6; --d: #04232a; --t: #c6f0f7; }
   .menu button span { font-size: 11px; overflow: visible; } .menu button span small { font-size: 11px; font-weight: 600; opacity: .85; }
   .menu button.active { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
   .menu button.hasnew { border-color: #d32f2f; }
@@ -661,6 +664,9 @@
   .altkutu .tsat .tgrid { width: 100%; grid-template-columns: repeat(auto-fit, minmax(78px, 1fr)); }
   .altkutu .tsat.rehber .tgrid { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
   .altkutu .tfil.iki .tsat:not(.rehber) .tgrid { grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); }
+  /* Kampanyalar: kategori düğmeleri daha sıkı (isbank'ta 20'den fazla kategori var) */
+  .altkutu .tsat .tgrid.kat { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+  .altkutu .tsat .tgrid.kat button { min-height: 34px !important; font-size: 11.5px !important; padding: 4px 5px !important; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -788,9 +794,9 @@ const CATS = [
   ["Soru", "#e0a24f", "❓"],
   ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "Maximum": "Maximum<br>Maximiles", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<small>Güncel · KAP</small>" };
+const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Kartsız<br>öde", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<small>Güncel · KAP</small>" };
 // Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Video, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
-const MENU = [["Maximum", "💳"], ["Kampanya", "🎁"], ["İşCep", "📲"], ["Haberler", "📰"], ["Black", "🖤"], ["Şubeler", "📍"], ["Tarihçe", "🏛️"], ["Soru", "❓"]];
+const MENU = [["Tarihçe", "🏛️"], ["Maximum", "🎁"], ["İşCep", "📲"], ["Haberler", "📰"], ["Black", "🖤"], ["Şubeler", "📍"], ["Soru", "❓"], ["KTakvim", "⏳"], ["Pazarama", "🛒"], ["Kartsiz", "📲"]];
 const NEWS = ["Tümü", "📰 Güncel", "🎬 Video", "Haber", "Ürün", "Dijital", "KAP"];
 const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "🎬 Video": "🎬 Video", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
 let lastNews = "Tümü"; try { lastNews = localStorage.getItem("isbankNews") || "Tümü"; } catch (e) {}
@@ -801,6 +807,7 @@ let bkamp = null, blk = null, fin = null, yat = null, kontrol = null, iscep = nu
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
 let finSec = "veri"; // Finansal bilgiler alt başlığı: veri · takvim · sunum
 if (cat === "📅 Takvim") { cat = "Finans"; finSec = "takvim"; }
+if (cat === "Kampanya") { cat = "Maximum"; try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); localStorage.setItem("isbankKamp", JSON.stringify({ ...k, kay: "isbank" })); } catch (e) {} } // eski Banka Kampanya → Kampanyalar › İş Bankası
 if (location.hash === "#maximum") cat = "Maximum"; // ana sayfadaki kampanya hatırlatıcısından gelince
 let ayr = "black", ipl = null; try { ayr = localStorage.getItem("isbankAyr") || "black"; } catch (e) {}
 if (location.hash === "#isplus") { cat = "Black"; ayr = "plus"; }
@@ -1178,7 +1185,8 @@ function milesHtml() {
 }
 function bindSpecial() {
   $("list").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { const t = $(b.dataset.go); if (!t) return; const st = document.querySelector(".chipbar"), h = st ? st.getBoundingClientRect().bottom : 0; window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - h - 8, behavior: "smooth" }); t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); }));
-  $("list").querySelectorAll("[data-tur]").forEach((b) => (b.onclick = () => { campTur = b.dataset.tur; renderCamps(); icerigeKay(); }));
+  const ANA = { "📲 Kartsız öde": "Kartsiz", "🛒 Pazarama": "Pazarama", "⏳ Kampanya takvimi": "KTakvim" }; // ana menüye çıkan rehber sayfaları
+  $("list").querySelectorAll("[data-tur]").forEach((b) => (b.onclick = () => { const t = b.dataset.tur; if (ANA[t]) { cat = ANA[t]; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); } else { campTur = t; renderCamps(); } icerigeKay(); }));
   $("list").querySelectorAll("[data-cat]").forEach((b) => (b.onclick = () => { cat = b.dataset.cat; renderList(); renderChips(); window.scrollTo({ top: 0 }); })); }
 // Kampanya takvimi: bu ay + gelecek ay; her ayın ilk haftası renkli, bugün işaretli, ay başına geri sayım
 function miniCal(y, m, today, ends) {
@@ -1249,11 +1257,79 @@ function campCard(k) {
       <div class="cfoot"><span>Bitiş: ${bit}</span>${k.url ? `<a class="clink" href="${esc(k.url)}" target="_blank" rel="noopener">${k.url.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr"}'de koşullar ↗</a>` : ""}</div>
     </div>`;
 }
+// ===== Kampanyalar: isbank.com.tr ve maximum.com.tr (bireysel + ticari), günde iki kez otomatik =====
+let KH = null, kKay = "isbank", kSeg = "bireysel", kKat = "";
+try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kKat = k.kat || ""; } catch (e) {}
+const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, kat: kKat })); } catch (e) {} };
+// Maximum kampanyaları sitede tür bilgisi olmadan gelir: başlık ve açıklamadaki kelimelere göre gruplanır
+const MX_NE = [["MaxiPuan", "🪙", /maxipuan|puan/i], ["Taksit", "📆", /taksit|vade farks/i], ["İndirim", "🏷️", /indirim|%\s?\d|\d\s?%/i], ["MaxiMil", "✈️", /maximil|\bmil\b|mil kazan/i]];
+const MX_NERE = [["Market", "🛒", /market|migros|carrefour|a101|şok|bim|getir|gıda|yemek|restoran|kafe|yeme/i], ["Akaryakıt", "⛽", /akaryak|opet|shell|petrol|bp\b|total|aytemiz|otomotiv|araç|oto\b|lastik|kiralama/i],
+  ["Giyim", "👗", /giyim|ayakkab|zara|mavi|koton|lc ?waikiki|defacto|boyner|moda|kozmetik|forever|marks|spencer|aksesuar|optik/i], ["Elektronik", "📱", /elektronik|teknosa|media ?markt|vatan|apple|samsung|telefon|beyaz eşya|arçelik|vestel|beko|bosch/i],
+  ["Seyahat", "🏖️", /otel|tatil|seyahat|uçak|uçuş|thy|pegasus|ets|jolly|\btur\b|turizm|havalimanı/i], ["Ev & Mobilya", "🛋️", /mobilya|dekorasyon|ikea|koçtaş|bauhaus|ev tekstil|halı/i],
+  ["Online", "🌐", /online|internet|e-ticaret|trendyol|hepsiburada|pazarama|amazon|n11|\.com/i], ["Eğitim", "🎓", /eğitim|okul|kırtasiye|kurs|üniversite/i]];
+const kGrup = (k, L) => (L.find(([, , re]) => re.test(k.baslik + " " + k.ozet)) || [])[0] || "Diğer";
+function kKart(k, etiket, renk) {
+  const n = daysLeft(k.bitis), u = n <= 3, yeni = k.ilk && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
+  const left = n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
+  const bit = new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+  const kay = k.url.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr";
+  return `<div class="camp${u ? " urgent" : ""}" style="--c:${renk}">
+      <div class="top"><span class="tag">${esc(etiket)}${yeni ? '<span class="newtag">YENİ</span>' : ""}</span><span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}">${left}</span></div>
+      <b>${esc(k.baslik)}</b>${k.ozet ? `<p>${esc(k.ozet)}</p>` : ""}
+      <div class="cfoot"><span>Bitiş: ${bit}</span><a class="clink" href="${esc(k.url)}" target="_blank" rel="noopener">${kay}'de koşullar ↗</a></div>
+    </div>`;
+}
+function renderKampanyalar() {
+  if (!KH || !KH.isbank) return renderCamps(); // veri gelene kadar eski düzen
+  const fd = (t) => new Date(t).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  $("upd").innerHTML = `🔄 isbank.com.tr ve maximum.com.tr'den günde iki kez (09:01 · 14:01) kendiliğinden alınır · son: <b>${fd(KH.guncelleme)}</b>`;
+  const segV = (kay, seg) => (KH[kay] || {})[seg];
+  const sayi = (v) => (v ? (v.kategoriler ? v.kategoriler.reduce((a, c) => a + c.kampanyalar.length, 0) : v.kampanyalar.length) : 0);
+  const sb = (attr, v, ic, ad, n, on) => `<button type="button" ${attr}="${esc(v)}" class="${on ? "on" : ""}"><i>${ic}</i>${esc(ad)}${n != null ? `<b>${n}</b>` : ""}</button>`;
+  const V = segV(kKay, kSeg);
+  // Kategoriler: isbank sitenin kendi kategorileri; maximum "ne kazanırım" ve "nerede" grupları
+  let katSatir = "", liste = [];
+  if (kKay === "isbank" && V) {
+    const K = V.kategoriler.filter((c) => c.kampanyalar.length);
+    if (kKat && !K.some((c) => c.slug === kKat)) kKat = "";
+    katSatir = `<div class="tsat"><span class="tlab">🗂️ Kategori</span><div class="tgrid kat">${sb("data-kk", "", "📋", "Tümü", sayi(V), !kKat)}${K.map((c) => sb("data-kk", c.slug, "", c.ad.replace(/ Kampanyaları$/, ""), c.adet, kKat === c.slug)).join("")}</div></div>`;
+    (kKat ? K.filter((c) => c.slug === kKat) : K).forEach((c) => c.kampanyalar.forEach((k) => liste.push([k, c.ad.replace(/ Kampanyaları$/, "")])));
+  } else if (kKay === "maximum" && V) {
+    const L = V.kampanyalar, sayG = (G, ad) => L.filter((k) => kGrup(k, G) === ad).length;
+    const satir = (lab, G, pre) => `<div class="tsat"><span class="tlab">${lab}</span><div class="tgrid">${G.map(([ad, ic]) => [ad, ic, sayG(G, ad)]).filter((x) => x[2]).map(([ad, ic, n]) => sb("data-kk", pre + ad, ic, ad, n, kKat === pre + ad)).join("")}</div></div>`;
+    katSatir = `<div class="tsat"><span class="tlab">🎁 Kampanyalar</span><div class="tgrid">${sb("data-kk", "", "💳", "Tümü", L.length, !kKat)}${kSeg === "bireysel" ? sb("data-kk", "rehber:one", "⭐", "Öne çıkan", null, kKat === "rehber:one") : ""}</div></div>` + satir("💰 Ne kazanırım", MX_NE, "ne:") + satir("🛍️ Nerede", [...MX_NERE, ["Diğer", "✨"]], "nere:");
+    const [tip, ad] = kKat.split(":");
+    L.forEach((k) => { const g1 = kGrup(k, MX_NE), g2 = kGrup(k, MX_NERE); if (!kKat || (tip === "ne" && g1 === ad) || (tip === "nere" && g2 === ad)) liste.push([k, g1 !== "Diğer" ? g1 : g2]); });
+  }
+  const t = $("tfil");
+  t.className = "tfil mtiles iki sekmeli";
+  t.hidden = false;
+  t.innerHTML = `<div class="tsat"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${sb("data-ky", "isbank", "🏦", "İş Bankası", sayi(segV("isbank", kSeg)), kKay === "isbank")}${sb("data-ky", "maximum", "💳", "Maximum", sayi(segV("maximum", kSeg)), kKay === "maximum")}${sb("data-ky", "maximiles", "✈️", "Maximiles", null, kKay === "maximiles")}</div></div>`
+    + `<div class="tsat"><span class="tlab">👥 Müşteri</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", kKay === "maximiles" ? null : sayi(segV(kKay, "bireysel")), kSeg === "bireysel")}${sb("data-sg", "ticari", "🏢", "Ticari", kKay === "maximiles" ? null : sayi(segV(kKay, "ticari")), kSeg === "ticari")}</div></div>` + katSatir;
+  t.onclick = (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.ky) { kKay = b.dataset.ky; kKat = ""; } else if (b.dataset.sg) { kSeg = b.dataset.sg; kKat = ""; } else if (b.dataset.kk != null) kKat = b.dataset.kk; else return;
+    kKaydet(); renderKampanyalar(); icerigeKay();
+  };
+  if (kKay === "maximiles") {
+    $("list").innerHTML = (kSeg === "ticari" ? `<div class="bkhero"><b>✈️ Maximiles Business</b><span>Ticari Maximiles kampanyaları İş Bankası'nın Ticari bölümünde: <a href="https://www.isbank.com.tr/kampanyalar?v=ticari" target="_blank" rel="noopener" style="color:var(--accent)">isbank.com.tr ↗</a></span></div>` : "")
+      + milesHtml() + `<p class="note" style="text-align:center">✈️ maximiles.com.tr kampanyaları da yakında burada, aynı düzende.</p>`;
+    return;
+  }
+  if (kKat === "rehber:one") { $("list").innerHTML = oneHtml(); bindSpecial(); return; }
+  liste.sort((a, b) => a[0].bitis.localeCompare(b[0].bitis));
+  const renk = kKay === "maximum" ? "#ff4fa3" : "#3fc283";
+  const acil = liste.filter(([k]) => daysLeft(k.bitis) <= 3).length;
+  $("list").innerHTML = (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
+    + (liste.length ? liste.map(([k, et]) => kKart(k, et, renk)).join("") : '<div class="empty">Bu seçimde şu an kampanya yok.</div>')
+    + (kKay === "isbank" && kKat ? (() => { const c = V.kategoriler.find((x) => x.slug === kKat); return c && c.adet > c.kampanyalar.length ? `<a class="maxlink" href="${esc(c.url)}" target="_blank" rel="noopener">Bu kategoride ${c.adet - c.kampanyalar.length} kampanya daha var · isbank.com.tr'de gör ↗</a>` : ""; })() : "")
+    + `<a class="maxlink" href="${kKay === "maximum" ? "https://www.maximum.com.tr/kampanyalar/" + kSeg : "https://www.isbank.com.tr/kampanyalar" + (kSeg === "ticari" ? "?v=ticari" : "")}" target="_blank" rel="noopener">Tüm kampanyalar · ${kKay === "maximum" ? "maximum.com.tr" : "isbank.com.tr"} ↗</a>`;
+}
 function renderCamps() {
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
   if (!camps.length) { $("list").innerHTML = '<div class="empty">Şu an listelenen kampanya yok.</div>'; return; }
-  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "⏳ Kampanya takvimi", "✈️ Maximiles", "🛒 Pazarama", "📲 Kartsız öde"];
-  if (campTur === "📅 Takvim") campTur = "⏳ Kampanya takvimi";
+  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "✈️ Maximiles"]; // Kampanya takvimi, Pazarama, Kartsız öde ana menüde
+  if (["📅 Takvim", "⏳ Kampanya takvimi", "🛒 Pazarama", "📲 Kartsız öde"].includes(campTur)) campTur = "Tümü";
   if (!turs.includes(campTur) && !SP.includes(campTur)) campTur = "Tümü";
   const TI = { "⭐ Öne çıkan": ["⭐", "Öne çıkan", "#f0c64a"], "⏳ Kampanya takvimi": ["⏳", "Kampanya takvimi", "#ef5a5a"], "✈️ Maximiles": ["✈️", "Maximiles", "#5aa9f0"], "🛒 Pazarama": ["🛒", "Pazarama", "#ff8a3d"], "📲 Kartsız öde": ["📲", "Kartsız öde", "#3fbfd6"], "Tümü": ["💳", "Tümü", "#ff4fa3"], MaxiPuan: ["🪙", "MaxiPuan", "#e0a24f"], "İndirim": ["🏷️", "İndirim", "#3fc283"], Puan: ["🎯", "Puan", "#b48cf0"], Taksit: ["📆", "Taksit", "#3fbfd6"] };
   // 60 sütunlu ızgara: üst sırada özel sekmeler, alt sırada kampanya türleri eşit genişlikte
@@ -1275,7 +1351,7 @@ function renderCamps() {
   html += `<button type="button" class="calgit" id="calGit">📅 Kampanya takvimi · biten günler ve ay başı hatırlatması ›</button>`;
   html += `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm kampanyalar ve katılım koşulları ↗</a>`;
   $("list").innerHTML = html;
-  const takvimeGit = () => { campTur = "⏳ Kampanya takvimi"; renderCamps(); icerigeKay(); };
+  const takvimeGit = () => { cat = "KTakvim"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); icerigeKay(); };
   const tk = $("jTick"); if (tk) tk.onclick = takvimeGit;
   $("calGit").onclick = takvimeGit;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); icerigeKay(); };
@@ -2004,7 +2080,10 @@ function renderList() {
   if (cat === "Soru") return renderSoru();
   if (cat === "Tarihçe") return renderTarihce();
   if (cat === "İşCep") return renderIscep();
-  if (cat === "Maximum") return renderCamps();
+  if (cat === "Maximum") return renderKampanyalar();
+  if (cat === "KTakvim") { $("upd").textContent = "Kampanya bitiş günleri her gün kendiliğinden güncellenir"; $("list").innerHTML = campCal(); bindCal(); return; }
+  if (cat === "Pazarama") { $("upd").textContent = "MaxiPuan ve MaxiMil Pazarama'da 1 puan = 1 TL"; $("list").innerHTML = pazHtml(); bindPaz(); return; }
+  if (cat === "Kartsiz") { $("upd").textContent = "Kartsız ödemeye özel kampanyalar"; $("list").innerHTML = odeHtml(); bindSpecial(); return; }
   if (cat === "Şubeler") return renderSubeler();
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "") + " · günde iki kez (09:01, 14:01)";
   const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
@@ -2048,6 +2127,7 @@ function renderList() {
     try { fin = await Ortak.json("isbank/finans.json"); } catch (e) {}
     try { yat = await Ortak.json("isbank/yatirimci.json"); } catch (e) {}
     try { bkamp = await Ortak.json("isbank/banka_kampanya.json"); } catch (e) {}
+    try { KH = await Ortak.json("isbank/kampanya_hepsi.json"); } catch (e) {}
     try { blk = await Ortak.json("isbank/black.json"); } catch (e) {}
     try { ipl = await Ortak.json("isbank/isplus.json"); } catch (e) {}
     try { kontrol = (await Ortak.json("isbank/kontrol.json")).son_kontrol; } catch (e) {}
