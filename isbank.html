@@ -636,6 +636,33 @@
   .mc .grid i.b u { position: absolute; top: -5px; right: -3px; min-width: 13px; height: 13px; padding: 0 2px; border-radius: 7px; background: #ef3b3b; color: #fff; font-size: 9px; line-height: 13px; text-decoration: none; font-weight: 800; }
   .mc .grid i.b.sec { background: #ef3b3b; }
   .ccal .leg i.bt { border: 1.5px solid #ff5a5a; width: 7px; height: 7px; }
+  .csuz { display: grid; gap: 6px; margin: 10px 0 8px; } .csuz > div { display: flex; gap: 5px; flex-wrap: wrap; }
+  .csuz button { flex: 1 1 auto; min-height: 34px; padding: 4px 8px; border-radius: 999px; border: 1px solid #5a2a46; background: #14070f; color: #f1d6e4; font: inherit; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+  .csuz button b { min-width: 18px; padding: 0 5px; border-radius: 9px; background: rgba(255,255,255,.12); font-size: 11px; line-height: 18px; }
+  .csuz button.on { background: #ff2d95; border-color: #ff2d95; color: #fff; } .csuz button.on b { background: rgba(0,0,0,.25); }
+  .hst { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 4px 0 10px; }
+  .hst .hg { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 0; border-radius: 10px; border: 1px solid #3a1a2c; background: #0e050a; color: #9b8290; font: inherit; }
+  .hst .hg small { font-size: 10px; } .hst .hg b { font-size: 15px; color: #e8d3de; } .hst .hg em { font-style: normal; font-size: 11px; font-weight: 800; }
+  .hst .hg.var { border-color: #ef3b3b; background: #200a0a; color: #ffb3b3; } .hst .hg.var em { color: #fff; background: #ef3b3b; border-radius: 8px; padding: 0 6px; }
+  .hst .hg.on { background: #ef3b3b; } .hst .hg.on b, .hst .hg.on small { color: #fff; }
+  .bc { margin-top: 2px; } .bch { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .bch b { font-size: 16px; color: #ff6fb5; text-transform: capitalize; }
+  .bch button { width: 38px; height: 34px; border-radius: 10px; border: 1px solid #5a2a46; background: #14070f; color: #fff; font: inherit; font-size: 18px; } .bch button:disabled { opacity: .3; }
+  .bcg { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .bcg i { position: relative; font-style: normal; min-height: 46px; border-radius: 9px; background: #0e050a; border: 1px solid #241019; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 4px; color: #cdb8c3; }
+  .bcg i.h { min-height: 0; background: none; border: 0; padding: 0 0 2px; color: #8a6f7d; font-size: 10px; font-weight: 700; } .bcg i.bos { background: none; border: 0; }
+  .bcg i b { font-size: 13px; font-weight: 700; } .bcg i.p { opacity: .4; }
+  .bcg i.ih { background: rgba(255,45,149,.22); border-color: rgba(255,45,149,.55); }
+  .bcg i.now { border: 2px solid #fff; } .bcg i.now b { color: #fff; }
+  .bcg i.b { cursor: pointer; } .bcg i.sec { background: #ef3b3b; border-color: #ef3b3b; } .bcg i.sec b { color: #fff; }
+  .bcg i u { margin-top: 3px; min-width: 22px; padding: 0 5px; border-radius: 8px; font-size: 11px; line-height: 17px; text-decoration: none; font-weight: 800; color: #fff; text-align: center; background: #8a3fd1; }
+  .bcg i u.r { background: #ef3b3b; } .bcg i u.o { background: #e07a1f; } .bcg i.sec u { background: rgba(0,0,0,.3); }
+  .bcg i s { position: absolute; top: 2px; right: 4px; text-decoration: none; color: #3fc283; font-size: 9px; }
+  .ccal .leg i.yn { background: #3fc283; border-radius: 50%; }
+  .ccal .leg { display: grid !important; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: 4px 6px; font-size: 10.5px; }
+  .ccal .leg i.bt { background: #ef3b3b; border: 0; width: 9px; height: 9px; } .ccal .leg span { white-space: nowrap !important; display: inline-flex; align-items: center; }
+  .calgun .cgh small { display: block; font-size: 11px; font-weight: 600; color: #c9a8b8; margin-top: 2px; }
+  a.cy { text-decoration: none; color: inherit; }
   .calipucu { margin: 8px 0 0; text-align: center; font-size: 12px; color: #c9a8b8; }
   .calgun { margin-top: 10px; } .calgun .cgh { display: flex; align-items: center; justify-content: space-between; font-weight: 800; font-size: 13px; color: #ffb3b3; margin-bottom: 6px; }
   .calgun .cgh button { width: 30px; height: 30px; border-radius: 9px; border: 1px solid #5a2a2a; background: #1a0a0a; color: #fff; font: inherit; }
@@ -1203,33 +1230,41 @@ function bindSpecial() {
   const ANA = { "📲 Kartsız öde": "Kartsiz", "🛒 Pazarama": "Pazarama", "⏳ Kampanya takvimi": "KTakvim" }; // ana menüye çıkan rehber sayfaları
   $("list").querySelectorAll("[data-tur]").forEach((b) => (b.onclick = () => { const t = b.dataset.tur; if (ANA[t]) { cat = ANA[t]; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); } else { campTur = t; renderCamps(); } icerigeKay(); }));
   $("list").querySelectorAll("[data-cat]").forEach((b) => (b.onclick = () => { cat = b.dataset.cat; renderList(); renderChips(); window.scrollTo({ top: 0 }); })); }
-// Kampanya takvimi: bu ay + gelecek ay; her ayın ilk haftası renkli, bugün işaretli, ay başına geri sayım
-function miniCal(y, m, today, ends) {
-  ends = ends || {};
+// Büyük takvim: her gün kutusunda o gün biten kampanya sayısı (renk: kalan güne göre), yeni gelenler için yeşil nokta,
+// ayın ilk haftası (kampanyalara katılma zamanı) pembe zeminli
+function bigCal(y, m, today, ends, yeni) {
   const last = new Date(y, m + 1, 0).getDate(), first = (new Date(y, m, 1).getDay() + 6) % 7;
   const ad = new Date(y, m, 1).toLocaleDateString("tr-TR", { month: "long", year: "numeric" });
+  const bugun0 = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   let c = ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"].map((x) => `<i class="h">${x}</i>`).join("");
-  for (let i = 0; i < first; i++) c += "<i></i>";
+  for (let i = 0; i < first; i++) c += "<i class='bos'></i>";
   for (let k = 1; k <= last; k++) {
-    const dt = new Date(y, m, k), past = dt < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const now = dt.toDateString() === today.toDateString();
-    const g = `${y}-${String(m + 1).padStart(2, "0")}-${String(k).padStart(2, "0")}`, n = (ends[g] || []).length;
-    c += `<i class="${k <= 7 ? "k" : ""}${now ? " now" : ""}${past && !now ? " p" : ""}${n ? " b" : ""}${calGun === g ? " sec" : ""}"${n ? ` data-g="${g}"` : ""}>${k}${n ? `<u>${n}</u>` : ""}</i>`;
+    const gd = new Date(y, m, k), past = gd < bugun0, now = gd.getTime() === bugun0.getTime();
+    const g = `${y}-${String(m + 1).padStart(2, "0")}-${String(k).padStart(2, "0")}`, n = (ends[g] || []).length, nw = yeni[g] || 0;
+    const dl = n ? daysLeft(g) : 99, isi = dl <= 3 ? "r" : dl <= 7 ? "o" : "m";
+    c += `<i class="${k <= 7 ? "ih" : ""}${now ? " now" : ""}${past && !now ? " p" : ""}${n ? " b" : ""}${calGun === g ? " sec" : ""}"${n ? ` data-g="${g}"` : ""}><b>${k}</b>${n ? `<u class="${isi}">${n}</u>` : ""}${nw ? `<s>●</s>` : ""}</i>`;
   }
-  return `<div class="mc"><div class="cm">${ad}</div><div class="grid">${c}</div></div>`;
+  return `<div class="bc"><div class="bch"><button type="button" data-ay="-1"${calAy <= 0 ? " disabled" : ""}>‹</button><b>${ad}</b><button type="button" data-ay="1"${calAy >= 3 ? " disabled" : ""}>›</button></div><div class="bcg">${c}</div></div>`;
 }
 function campCal() {
-  // Kampanyaların bitiş günleri: takvimde kırmızı nokta + sayı; güne dokununca o gün bitenler
-  // Yeni veri varsa: İş Bankası ve Maximum bireysel kampanyalarının hepsi (aynı başlık bir kez); yoksa eski liste
-  const kaynakli = KH && KH.isbank ? (() => { const o = [], g = new Set(); const ekle = (k, et, renk) => { const a = k.baslik.toLocaleLowerCase("tr"); if (!g.has(a)) { g.add(a); o.push(Object.assign({}, k, { _et: et, _renk: renk })); } };
-      ((KH.maximum || {}).bireysel || { kampanyalar: [] }).kampanyalar.forEach((k) => ekle(k, "Maximum", "#ff4fa3"));
-      ((KH.isbank || {}).bireysel || { kategoriler: [] }).kategoriler.forEach((c) => c.kampanyalar.forEach((k) => ekle(k, c.ad.replace(/ Kampanyaları$/, ""), "#3fc283"))); return o; })() : null;
-  const kart = (k) => (k._et ? kKart(k, k._et, k._renk) : campCard(k));
-  const ends = {}; (kaynakli || camps).forEach((k) => { if (k.bitis && daysLeft(k.bitis) >= 0) (ends[k.bitis] = ends[k.bitis] || []).push(k); });
+  // Kampanyaların bitiş günleri: üç kaynaktan (İş Bankası, Maximum, Maximiles), seçilen müşteri bölümü; aynı başlık bir kez
+  const KAYS = calKay === "hepsi" ? Object.keys(K_KAY) : [calKay];
+  const kaynakli = KH && KH.isbank ? (() => { const o = [], g = new Set();
+      KAYS.forEach((kay) => (kListe(kay, calSeg) || []).forEach((k) => { const a = k.baslik.toLocaleLowerCase("tr"); if (!g.has(a)) { g.add(a); o.push({ ...k, _kay: kay }); } })); return o; })() : null;
+  const kart = (k) => (k._kay ? kKart(k, K_KAY[k._kay][3]) : campCard(k));
+  const ends = {}, yeni = {}; (kaynakli || camps).forEach((k) => { if (k.bitis && daysLeft(k.bitis) >= 0) (ends[k.bitis] = ends[k.bitis] || []).push(k); if (k.ilk && k.ilk > "2000-01-01") yeni[k.ilk] = (yeni[k.ilk] || 0) + 1; });
   const gAd = (g) => new Date(g + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
-  const secili = calGun && ends[calGun] ? `<div class="calgun" id="calGunList"><div class="cgh">🔴 ${gAd(calGun)} biten kampanyalar<button type="button" data-g="${calGun}" onclick="calGun=null;$('list').innerHTML=campCal();bindCal()">✕</button></div>${ends[calGun].map(kart).join("")}</div>` : `<p class="calipucu">👆 Kırmızı noktalı güne dokun: o gün biten kampanyalar görünsün.</p>`;
+  // Seçilen gün: kaynaklara göre sağlama ile
+  const sagla = (L) => { const say = Object.keys(K_KAY).map((k) => [k, L.filter((x) => x._kay === k).length]).filter((x) => x[1]); return say.length > 1 ? ` <small>${L.length} = ${say.map(([k, n]) => K_KAY[k][0] + " " + n).join(" + ")} ✓</small>` : ""; };
+  const secili = calGun && ends[calGun] ? `<div class="calgun" id="calGunList"><div class="cgh"><span>🔴 ${gAd(calGun)} biten <b>${ends[calGun].length}</b> kampanya${sagla(ends[calGun])}</span><button type="button" id="calKapat">✕</button></div>${ends[calGun].map(kart).join("")}</div>` : `<p class="calipucu">👆 Sayılı güne dokun: o gün biten kampanyalar açılsın.</p>`;
   const sirali = (kaynakli || camps).filter((k) => k.bitis && daysLeft(k.bitis) >= 0).sort((a, b) => a.bitis.localeCompare(b.bitis)).slice(0, 8);
-  const yakinda = sirali.length ? `<div class="calyak"><b>⏳ Yakında bitenler</b>${sirali.map((k) => { const n = daysLeft(k.bitis); return `<div class="cy${n <= 3 ? " acil" : ""}"><em>${n <= 0 ? "Bugün" : n === 1 ? "Yarın" : n + " gün"}</em><span>${esc(k.baslik)}</span><small>${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></div>`; }).join("")}</div>` : "";
+  const yakinda = sirali.length ? `<div class="calyak"><b>⏳ Yakında bitenler</b>${sirali.map((k) => { const n = daysLeft(k.bitis); return `<a class="cy${n <= 3 ? " acil" : ""}" href="${esc(k.url || "#")}" target="_blank" rel="noopener"><em>${n <= 1 ? "Son gün" : n + " gün"}</em><span>${esc(k.baslik)}</span><small>${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></a>`; }).join("")}</div>` : "";
+  // Önümüzdeki 7 gün şeridi
+  const t0 = new Date(), hafta = [...Array(7)].map((_, i) => { const x = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate() + i); const g = `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
+    return `<button type="button" class="hg${(ends[g] || []).length ? " var" : ""}${calGun === g ? " on" : ""}"${(ends[g] || []).length ? ` data-g="${g}"` : " disabled"}><small>${i === 0 ? "Bugün" : i === 1 ? "Yarın" : x.toLocaleDateString("tr-TR", { weekday: "short" })}</small><b>${x.getDate()}</b><em>${(ends[g] || []).length || "–"}</em></button>`; }).join("");
+  const aktif = (kay) => (kListe(kay, calSeg) || []).filter((k) => k.bitis).length;
+  const suz = KH && KH.isbank ? `<div class="csuz"><div>${[["hepsi", "📋", "Hepsi"], ...Object.entries(K_KAY).map(([k, v]) => [k, v[0], v[1]])].map(([k, ic, ad]) => `<button type="button" data-ck="${k}" class="${calKay === k ? "on" : ""}">${ic} ${ad}${k !== "hepsi" ? `<b>${aktif(k)}</b>` : ""}</button>`).join("")}</div>`
+    + `<div>${[["bireysel", "👤 Bireysel"], ["ticari", "🏢 Ticari"]].map(([k, ad]) => `<button type="button" data-cs="${k}" class="${calSeg === k ? "on" : ""}">${ad}</button>`).join("")}</div></div>` : "";
   const t = new Date(), y = t.getFullYear(), m = t.getMonth(), d = t.getDate(), last = new Date(y, m + 1, 0).getDate();
   const ayAd = t.toLocaleDateString("tr-TR", { month: "long" }), nextAy = new Date(y, m + 1, 1).toLocaleDateString("tr-TR", { month: "long" });
   const ilkHafta = d <= 7, kalan = last - d + 1;
@@ -1244,8 +1279,10 @@ function campCal() {
   return `<div class="ccal${ilkHafta ? " hot" : ""}" id="ccal">
       <div class="ctop"><div class="cl">${msg}</div><button type="button" id="jIcs" class="cadd" title="Her ayın 1'inde hatırlatma">📅 Ay başını<br>takvime ekle</button></div>
       ${bar}
-      <div class="cals">${miniCal(y, m, t, ends)}${miniCal(m === 11 ? y + 1 : y, (m + 1) % 12, t, ends)}</div>
-      <div class="leg"><span><i class="k"></i>Ayın ilk haftası</span><span><i class="bt"></i>Kampanya bitişi</span><span><i class="nw"></i>Bugün</span></div>
+      ${suz}
+      <div class="hst">${hafta}</div>
+      ${(() => { const b = new Date(y, m + calAy, 1); return bigCal(b.getFullYear(), b.getMonth(), t, ends, yeni); })()}
+      <div class="leg"><span><i class="k"></i>İlk hafta: katıl</span><span><i class="bt"></i>Biten kampanya</span><span><i class="yn"></i>Yeni gelen</span><span><i class="nw"></i>Bugün</span></div>
       ${secili}
       ${yakinda}
       <details class="jhow"><summary>📲 Kampanyalara nasıl katılırım?</summary>
@@ -1413,10 +1450,14 @@ function renderCamps() {
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); icerigeKay(); };
 }
 // Takvimde bir güne dokununca o gün biten kampanyalar
-let calGun = null;
+let calGun = null, calAy = 0, calKay = "hepsi", calSeg = "bireysel";
 function bindCal() {
   $("jIcs").onclick = icsReminder;
-  $("list").querySelectorAll(".mc .grid i[data-g]").forEach((c) => (c.onclick = () => { calGun = calGun === c.dataset.g ? null : c.dataset.g; $("list").innerHTML = campCal(); bindCal(); const g = $("calGunList"); if (g && calGun) g.scrollIntoView({ behavior: "smooth", block: "nearest" }); }));
+  const yeniden = (kay) => { $("list").innerHTML = campCal(); bindCal(); const g = $("calGunList"); if (g && calGun && kay) g.scrollIntoView({ behavior: "smooth", block: "start" }); };
+  $("list").querySelectorAll(".bcg i[data-g], .hst button[data-g]").forEach((c) => (c.onclick = () => { calGun = calGun === c.dataset.g ? null : c.dataset.g; yeniden(true); }));
+  $("list").querySelectorAll(".bch button[data-ay]").forEach((b) => (b.onclick = () => { calAy = Math.max(0, Math.min(3, calAy + +b.dataset.ay)); yeniden(); }));
+  $("list").querySelectorAll(".csuz button").forEach((b) => (b.onclick = () => { if (b.dataset.ck) calKay = b.dataset.ck; else calSeg = b.dataset.cs; calGun = null; yeniden(); }));
+  const k = $("calKapat"); if (k) k.onclick = () => { calGun = null; yeniden(); };
 }
 
 function renderSubeler() {
