@@ -118,10 +118,11 @@ def isb_kategoriler(body):
         out.append((href if href.startswith("http") else KOK_I + href, mm.group(1).strip(), int(mm.group(2))))
     return out
 
-def isb_kartlar(body):
-    """Kategori sayfasındaki güncel kampanya kartları ('Geçmiş Kampanyalar' sonrası alınmaz)."""
+def isb_kartlar(body, adet=None):
+    """Kategori sayfasındaki güncel kampanya kartları ('Geçmiş Kampanyalar' sonrası alınmaz).
+    Bitiş tarihi yazmayan kartlar da alınır; ama sayfadaki adetten fazlası çıkarsa (menü bağlantısı karışmış demektir) yalnızca tarihli olanlar kalır."""
     guncel = re.split(r"Geçmiş\s+Kampanyalar", temiz(body), maxsplit=1)[0]
-    out, gor = [], set()
+    out, gor, tarihsiz = [], set(), []
     for m in re.finditer(r'(?is)<a[^>]+href="(/kampanyalar/[^"#?]+)"[^>]*>(.*?)</a>', guncel):
         href, ic = m.group(1).replace("//", "/"), metin(m.group(2))
         slug = href.rstrip("/").split("/")[-1]
@@ -129,10 +130,56 @@ def isb_kartlar(body):
             continue
         mt = re.match(r"(.*?)\s*Bitiş Tarihi:\s*(\d{2})\.(\d{2})\.(\d{4})\s*(.*)", ic)
         if not mt:
+            if len(ic) >= 20 and not re.match(r"(?i)^(tüm kampanya|detaylı bilgi|geçmiş kampanya)", ic):
+                gor.add(slug)
+                tarihsiz.append({"baslik": re.sub(r"\s*Detaylı Bilgi\s*>?\s*$", "", ic)[:160], "bitis": "", "ozet": "", "url": KOK_I + href})
             continue
         gor.add(slug)
         out.append({"baslik": mt.group(1).strip()[:160], "bitis": f"{mt.group(4)}-{mt.group(3)}-{mt.group(2)}",
                     "ozet": re.sub(r"\s*Detaylı Bilgi\s*>?\s*$", "", mt.group(5)).strip()[:220], "url": KOK_I + href})
+    if tarihsiz and (adet is None or len(out) + len(tarihsiz) <= adet):
+        out += tarihsiz
+    return out
+
+def isb_tarayici(urls):
+    """Sayfada 'Daha Fazla' ile açılan kampanyalar için: gerçek tarayıcıda düğmeye liste bitene kadar basılır.
+    Dönüş: {adres: sayfanın son hâli}; tarayıcı yoksa boş."""
+    if not urls:
+        return {}
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception:
+        return {}
+    out = {}
+    try:
+        with sync_playwright() as p:
+            b = p.chromium.launch()
+            pg = b.new_page(user_agent=UA["User-Agent"], locale="tr-TR", viewport={"width": 1280, "height": 900})
+            dugme = re.compile(r"daha fazla|devamını gör|tümünü gör|daha çok", re.I)
+            for url in urls:
+                try:
+                    pg.goto(url, wait_until="networkidle", timeout=90000)
+                    pg.wait_for_timeout(1500)
+                    once = -1
+                    for _ in range(40):
+                        n = pg.eval_on_selector_all("a[href*='/kampanyalar/']", "e => e.length")
+                        if n == once:
+                            break
+                        once = n
+                        d = pg.get_by_role("button", name=dugme)
+                        if not d.count():
+                            d = pg.get_by_role("link", name=dugme)
+                        gorunen = [x for x in d.all() if x.is_visible()]
+                        if not gorunen:
+                            break
+                        gorunen[0].click()
+                        pg.wait_for_timeout(1800)
+                    out[url] = pg.content()
+                except Exception:
+                    continue
+            b.close()
+    except Exception:
+        pass
     return out
 
 def isbank(segment):
@@ -141,9 +188,18 @@ def isbank(segment):
         return None
     kats = []
     for url, ad, adet in isb_kategoriler(ana):
-        lst = isb_kartlar(get(url))
+        lst = isb_kartlar(get(url), adet)
         slug = url.split("?")[0].rstrip("/").split("/")[-1]
         kats.append({"ad": ad, "slug": slug, "adet": adet, "url": url, "kampanyalar": lst})
+    # Eksik kalan kategoriler ("Daha Fazla" ile açılanlar) tarayıcıyla tamamlanır
+    eksik = [k for k in kats if len(k["kampanyalar"]) < k["adet"]]
+    tam = isb_tarayici([k["url"] for k in eksik])
+    for k in eksik:
+        if k["url"] in tam:
+            lst = isb_kartlar(tam[k["url"]], k["adet"])
+            if len(lst) > len(k["kampanyalar"]):
+                k["kampanyalar"] = lst
+    print(f"isbank/{segment}: eksik kategori {len(eksik)}, tarayıcıyla tamamlanan {sum(1 for k in eksik if len(k['kampanyalar']) >= k['adet'])}")
     return {"toplam": sum(k["adet"] for k in kats), "kategoriler": kats}
 
 # ---------- maximum.com.tr ----------
