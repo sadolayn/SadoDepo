@@ -727,6 +727,25 @@
   .altkutu.dar:not(.acik) #tfil.kamp button.on { flex: 1 1 auto !important; width: auto !important; min-height: 32px !important; }
   .altkutu.dar:not(.acik) .tsat button.hep { display: none !important; }
   .altkutu.dar:not(.acik) .tsat.kgr:not(:has(.on:not(.hep))) { display: none !important; }
+  .karac { display: grid; gap: 7px; margin: 0 0 10px; }
+  .kara { display: flex; align-items: center; gap: 6px; padding: 0 6px 0 12px; border-radius: 14px; border: 1px solid #3a3a3a; background: #0d0d0d; }
+  .kara:focus-within { border-color: #e0a24f; } .kara i { font-style: normal; }
+  .kara input { flex: 1; min-width: 0; height: 44px; border: 0; background: none; color: #fff; font: inherit; font-size: 15px; outline: none; }
+  .kara input::-webkit-search-cancel-button { display: none; }
+  .kara button { width: 34px; height: 34px; border-radius: 10px; border: 0; background: #222; color: #ddd; font: inherit; }
+  #kSihirBtn { min-height: 42px; border-radius: 14px; border: 1px dashed #3fc283; background: #08140d; color: #bff0d2; font: inherit; font-size: 14px; font-weight: 700; }
+  #kSihirBtn.on { border-style: solid; background: #3fc283; color: #000; }
+  .ksih { margin: 0 0 10px; padding: 12px; border-radius: 14px; border: 1px solid #23402f; background: #070f0a; }
+  .ksih .ksh { font-weight: 800; font-size: 15px; color: #fff; margin-bottom: 6px; } .ksih .ksh small { display: block; font-weight: 500; font-size: 12px; color: #9fbfab; margin-top: 2px; }
+  .ksih > b { display: block; margin: 10px 0 5px; font-size: 12.5px; color: #3fc283; } .ksih > b small { color: #8a8a8a; font-weight: 500; }
+  .kshs { display: flex; flex-wrap: wrap; gap: 5px; }
+  .kshs button { min-height: 34px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2c4a37; background: #0d0d0d; color: #ddd; font: inherit; font-size: 12.5px; }
+  .kshs button.on { background: #3fc283; border-color: #3fc283; color: #000; font-weight: 700; }
+  .kdag { display: block; margin-top: 2px; font-size: 11.5px; color: #aaa; }
+  .camp .kkop { margin-top: 8px; width: 100%; min-height: 36px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--c, #e0a24f) 45%, #222); background: color-mix(in srgb, var(--c, #e0a24f) 8%, #0a0a0a); color: #eee; font: inherit; font-size: 13px; font-weight: 600; }
+  .camp .kkop:active { transform: scale(.98); }
+  #kTost { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px); opacity: 0; z-index: 99; padding: 10px 16px; border-radius: 999px; background: #3fc283; color: #000; font-weight: 700; font-size: 13.5px; box-shadow: 0 8px 20px rgba(0,0,0,.5); transition: .25s; pointer-events: none; }
+  #kTost.goster { opacity: 1; transform: translate(-50%, 0); }
   .ksag { margin: 0 0 10px; padding: 8px 11px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--kk, #e0a24f) 45%, #000); background: color-mix(in srgb, var(--kk, #e0a24f) 8%, #050505); }
   .ksag .kyol { font-size: 13px; color: #fff; font-weight: 700; }
   .ksag .kyol b { color: var(--kk, #e0a24f); }
@@ -860,7 +879,7 @@ const CATS = [
   ["Soru", "#e0a24f", "❓"],
   ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Kartsız<br>öde", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<small>Güncel · KAP</small>" };
+const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Ödeme<small>Kartsız · POS</small>", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<small>Güncel · KAP</small>" };
 // Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Video, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
 const MENU = [["Tarihçe", "🏛️"], ["Maximum", "🎁"], ["İşCep", "📲"], ["Haberler", "📰"], ["Black", "🖤"], ["Şubeler", "📍"], ["Soru", "❓"], ["KTakvim", "⏳"], ["Pazarama", "🛒"], ["Kartsiz", "📲"]];
 const NEWS = ["Tümü", "📰 Güncel", "🎬 Video", "Haber", "Ürün", "Dijital", "KAP"];
@@ -1102,6 +1121,36 @@ function odeHtml() {
       ${o.u ? `<a class="olink" href="${o.u}" target="_blank" rel="noopener">Ayrıntılar · ${o.ua} ↗</a>` : ""}</div>`; }).join("")}</div>
     <a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Yeni kartsız ödeme kampanyaları · maximum.com.tr ↗</a>
     <div class="pay-tip">🔒 Kartın, telefonun ya da MaxSticker'ın kaybolursa İşCep'ten hemen geçici olarak kapatabilirsin.</div>`;
+}
+// ===== POS rehberi: işyeri hangi POS'u seçmeli, sık karışan konular (genel bilgi; koşullar bankaya göre değişir) =====
+let odeSec = "kartsiz";
+try { odeSec = localStorage.getItem("isbankOde") || "kartsiz"; } catch (e) {}
+const POS = [
+  { ic: "🧾", ad: "Yazarkasa POS (ÖKC)", k: "Dükkanda", kim: "Dükkanında perakende satış yapanlar", p: "Hem yazarkasa fişi keser hem kartla ödeme alır; tek cihazda yazarkasa + POS. Fiş kesmek zorunda olan perakende işyerleri için ana cihaz budur.", n: "Fiş ve kart işlemi aynı cihazda olduğu için gün sonu ve muhasebe kolaylaşır." },
+  { ic: "🛵", ad: "Mobil ÖKC", k: "Gezerek", kim: "Kurye, kapıda ödeme, pazar, servis", p: "Kendi SIM'i (4G) ile çalışan, taşınabilir yazarkasa POS. Masaya, kapıya, sahaya gider; fişi orada keser.", n: "Paket servis ve kapıda ödeme alan işletmelerin ilk tercihi." },
+  { ic: "📱", ad: "Telefonla POS (SoftPOS)", k: "Telefonla", kim: "Yeni başlayan, az işlem yapan, serbest çalışan", p: "NFC'li Android telefona kurulan uygulamayla temassız kart, telefon ve saat ödemesi alınır; ek cihaz gerekmez.", n: "Fiş kesme zorunluluğun varsa yazarkasanın yerine geçmez; fişi ayrıca düzenlemen gerekir (muhasebecine danış)." },
+  { ic: "🌐", ad: "Sanal POS", k: "İnternette", kim: "Kendi e-ticaret sitesi olanlar", p: "Sitendeki ödeme sayfasında kartla ödeme alırsın; 3D Secure ile müşteri telefonuna gelen kodla onaylar.", n: "Taksit, iade ve iptal işlemleri banka ekranından yapılır." },
+  { ic: "🔗", ad: "Linkle ödeme", k: "Linkle", kim: "WhatsApp, Instagram, telefonla satış yapanlar", p: "Sitesi olmayan işletme müşteriye bir ödeme bağlantısı gönderir, müşteri kartıyla o bağlantıdan öder.", n: "Uzaktan satışta en pratik yol; para sanal POS gibi hesaba geçer." },
+  { ic: "🔳", ad: "Karekodla tahsilat", k: "Karekod", kim: "Hızlı ödeme isteyen her işletme", p: "Cihaz ya da kasadaki TR Karekod'u müşteri telefonundan okutur, kartı ya da hesabıyla öder.", n: "Kart çıkarmadan, dokunmadan ödeme; müşteri tarafında da kampanyalara sayılabiliyor (Kartsız öde sekmesine bak)." },
+];
+const POS_SSS = [
+  ["ÖKC ile POS arasındaki fark ne?", "POS yalnızca kartla ödeme alır. ÖKC (yeni nesil yazarkasa) fiş de keser ve Gelir İdaresi'ne bağlıdır. Fiş kesmek zorunda olan perakende işyeri için doğru cihaz yazarkasa POS'tur."],
+  ["Para hesabıma ne zaman geçer? (bloke / valör)", "Kartla alınan para hemen ya da anlaşılan gün sayısı sonra hesaba geçer. Erken geçmesi (blokesiz) genelde daha yüksek komisyonla olur. Oran ve gün sayısı işyeri anlaşmasına göre değişir."],
+  ["İptal mi, iade mi?", "Gün sonu alınmadan, aynı gün → <b>iptal</b>: işlem müşterinin kartına hiç yansımaz. Gün sonundan sonra → <b>iade</b>: tutar birkaç iş günü içinde karta döner. Kısmi iade de yapılabilir."],
+  ["Gün sonu nedir, almazsam ne olur?", "Günün kart işlemlerini kapatıp bankaya gönderir. Çoğu cihaz gece kendiliğinden alır; alınmazsa para hesaba geç geçebilir."],
+  ["Taksitli satış her sektörde olur mu?", "Hayır. Akaryakıt, gıda, telekom gibi bazı sektörlerde kredi kartına taksit yasal olarak yok ya da sınırlı; diğerlerinde azami taksit sayısı sektöre göre değişir. Taksit arttıkça işyeri komisyonu da artar."],
+  ["Müşteri harcamaya itiraz ederse? (ters ibraz)", "Banka işyerinden belge ister: slip, fiş/fatura, teslim tutanağı. Bu belgeleri bir süre sakla; uzaktan satışta 3D Secure ile alınan ödeme itirazda işyerini korur."],
+  ["Temassızda neden şifre sordu?", "Temassız ödemede belirli bir tutarın üstünde şifre istenir; bu sınır kural gereği, cihaz arızası değil."],
+];
+function posHtml() {
+  const P = KH && KH.isbank ? kTumu("ticari").filter((k) => /esnaf|pos/i.test(k.kim) || /\bpos\b|yazarkasa|ökc|üye işyeri/i.test(k.baslik)) : [];
+  return `<div class="pay-hero" style="--c:#3fbfd6"><b>🏪 İşyerin için hangi POS?</b><span>Nerede satış yaptığını seç, sana uyan yolu gör. Sık karışan konular (iptal-iade, bloke, taksit, gün sonu) en altta tek tek.</span></div>
+    <div class="otiles six">${POS.map((o, i) => `<button type="button" class="ot" data-go="pos${i}"><i>${o.ic}</i><span>${o.k}</span></button>`).join("")}</div>
+    <div class="pay-grid">${POS.map((o, i) => `<div class="pay" id="pos${i}"><div class="ph"><i>${o.ic}</i><div><b>${o.ad}</b><small>👤 ${o.kim}</small></div></div><p>${o.p}</p><div class="pn">💡 ${o.n}</div></div>`).join("")}</div>
+    ${P.length ? `<div class="ohead" style="margin-top:14px">🎁 Güncel POS ve esnaf kampanyaları<span>Kampanyalar bölümünden, kendiliğinden</span></div>${P.map((k) => kKart(k, K_KAY[k._kay][3])).join("")}` : ""}
+    <div class="ohead" style="margin-top:14px">❓ Sık karışanlar<span>Başlığa dokun, açılsın</span></div>
+    ${POS_SSS.map(([q, a]) => `<details class="ipdet"><summary>${q}</summary><p>${a}</p></details>`).join("")}
+    <div class="pay-tip">ℹ️ Genel bilgilendirmedir. Cihaz, komisyon, bloke süresi ve taksit koşulları işyeri anlaşmasına göre değişir; kesin bilgi için şubene ya da isbank.com.tr'ye danış.</div>`;
 }
 // ===== Black: İş Black programı (2 kademe) + Maximiles Black kart =====
 // Kaynak: isbank.com.tr duyurusu (23.01.2026), maximiles.com.tr Maximiles Black sayfası, İş Bankası lounge kampanya sayfası
@@ -1388,8 +1437,16 @@ function kKart(k, renk) {
       <div class="top"><span class="tag">${kIkon("ne", k.ne)} ${esc(k.ne)} · ${kIkon("nere", k.nere)} ${esc(kKisa(k.nere))}${yeni ? '<span class="newtag">YENİ</span>' : ""}</span>${left ? `<span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}">${left}</span>` : ""}</div>
       <b>${esc(k.baslik)}</b>${k.ozet ? `<p>${esc(k.ozet)}</p>` : ""}
       <div class="cfoot"><span>${bit ? "Bitiş: " + bit : ""}</span><a class="clink" href="${esc(k.url)}" target="_blank" rel="noopener">${kay}'de koşullar ↗</a></div>
+      <button type="button" class="kkop" data-kop="${esc(k.baslik + (bit ? " · son gün " + bit : "") + "\n" + k.url)}">🔗 Linki kopyala</button>
     </div>`;
 }
+// Linki kopyala: başlık + son gün + bağlantı panoya; WhatsApp, SMS, e-postaya yapıştırılır
+function kKopyala(metin) {
+  const bitti = () => { let t = $("kTost"); if (!t) { t = document.createElement("div"); t.id = "kTost"; document.body.appendChild(t); } t.textContent = "✓ Link kopyalandı, istediğin yere yapıştır"; t.className = "goster"; clearTimeout(kKopyala.z); kKopyala.z = setTimeout(() => (t.className = ""), 2200); };
+  const eski = () => { const a = document.createElement("textarea"); a.value = metin; a.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); } catch (e) {} a.remove(); bitti(); };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(metin).then(bitti, eski); else eski();
+}
+document.addEventListener("click", (e) => { const b = e.target.closest(".kkop"); if (b) kKopyala(b.dataset.kop); });
 // ⭐ Öne çıkan: elle seçilmiş değil, verinin kendisinden — biten, yeni gelen, en çok kazandıran, en uzun taksit, en yüksek indirim
 function kOneHtml(L, renk) {
   const sayi = (x) => +String(x).replace(/\./g, "").replace(",", ".");
@@ -1457,16 +1514,59 @@ function renderKampanyalar() {
     $("list").innerHTML = kKay === "maximiles" ? milesHtml() + `<p class="note" style="text-align:center">✈️ maximiles.com.tr kampanyaları bir sonraki otomatik toplamada (09:01 · 14:01) burada, aynı düzende.</p>` : '<div class="empty">Bu bölümde şu an kampanya yok.</div>' + tumLink;
     return;
   }
-  if (kOne) { $("list").innerHTML = kOneHtml(L, renk) + tumLink; bindSpecial(); return; }
+  // Üstte arama kutusu ve öneri sihirbazı; arama ya da sihirbaz açıkken süzgeçlerin yerine onların sonucu görünür
+  const ust = `<div class="karac"><div class="kara"><i>🔎</i><input id="kAra" type="search" enterkeyhint="search" placeholder="Kampanya ara: Migros, lastik, okul…" value="${esc(kAra)}" autocomplete="off"><button type="button" id="kAraSil"${kAra ? "" : " hidden"}>✕</button></div>`
+    + `<button type="button" id="kSihirBtn" class="${kSih.acik ? "on" : ""}">🧭 Müşterime ne önereyim?</button></div>`;
+  let govde = () => "";
+  const bagla = () => {
+    const i = $("kAra"), sil = $("kAraSil");
+    i.oninput = () => { kAra = i.value; sil.hidden = !kAra; $("kGovde").innerHTML = kAra.trim() ? kAraHtml() : kSih.acik ? kSihHtml() : govde(); };
+    sil.onclick = () => { kAra = ""; i.value = ""; sil.hidden = true; $("kGovde").innerHTML = kSih.acik ? kSihHtml() : govde(); i.focus(); };
+    $("kSihirBtn").onclick = () => { kSih.acik = !kSih.acik; kAra = ""; renderKampanyalar(); if (kSih.acik) icerigeKay(); };
+    $("kGovde").onclick = (e) => { const b = e.target.closest("[data-sh]"); if (!b) return; const [a, v] = b.dataset.sh.split(":"); if (a === "nere") kSih.nere = kSih.nere.includes(v) ? kSih.nere.filter((x) => x !== v) : [...kSih.nere, v]; else kSih[a] = kSih[a] === v ? "" : v; if (a === "seg") kSih.kim = ""; $("kGovde").innerHTML = kSihHtml(); };
+  };
+  const yaz = (h) => { $("list").innerHTML = ust + `<div id="kGovde">${kAra.trim() ? kAraHtml() : kSih.acik ? kSihHtml() : h}</div>`; bagla(); };
+  if (kOne) { govde = () => kOneHtml(L, renk) + tumLink; yaz(govde()); bindSpecial(); return; }
   const liste = L.filter((k) => uy(k, "")).sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
   const yol = [kayAd, kSeg === "ticari" ? "Ticari" : "Bireysel", kNe && kIkon("ne", kNe) + " " + kNe, kNere && kIkon("nere", kNere) + " " + kKisa(kNere), kKim && (GK.find((g) => g[0] === kKim) || K_HERKES)[1] + " " + kKim].filter(Boolean).join(" › ");
   const sag = `<div class="ksag" style="--kk:${renk}"><div class="kyol">${esc(yol)} · <b>${liste.length} adet</b></div>`
     + `</div>`;
   const acil = liste.filter((k) => k.bitis && daysLeft(k.bitis) <= 3).length;
   const V0 = KH[kKay][kSeg], kayp = V0.toplam - L.length, biten = (V0.kategoriler || []).reduce((a, c) => a + (c.biten || 0), 0);
-  $("list").innerHTML = sag + (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
+  govde = () => sag + (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
     + (liste.length ? liste.map((k) => kKart(k, renk)).join("") : '<div class="empty">Bu seçimde şu an kampanya yok.</div>')
     + (kayp > 0 && !kNe && !kNere && !kKim ? `<p class="note" style="text-align:center">${kayDom}'de ${V0.toplam} yazıyor: ${kKay === "isbank" || (biten && biten >= kayp) ? `<b>${L.length} güncel</b> + ${kayp} süresi bitmiş kampanya. Sitedeki sayılara "Bu Kampanya Sona Ermiştir" yazan eski kampanyalar da dahil; burada yalnızca güncel olanlar var.` : `${kayp} tanesi buraya henüz gelmiyor.`}</p>` : "") + tumLink;
+  yaz(govde());
+}
+// Arama: üç kaynakta, bireysel ve ticaride birden; başlık, açıklama ve gruplarda geçen her kampanya
+let kAra = "";
+const kKucuk = (t) => (t || "").toLocaleLowerCase("tr").replace(/[’'`]/g, "");
+function kTumu(seg) { return Object.keys(K_KAY).flatMap((kay) => (seg ? [seg] : ["bireysel", "ticari"]).flatMap((sg) => (kListe(kay, sg) || []).map((k) => ({ ...k, _kay: kay, _seg: sg })))); }
+function kAraHtml() {
+  const q = kKucuk(kAra.trim()).split(/\s+/).filter(Boolean);
+  const L = kTumu().filter((k) => { const t = kKucuk(`${k.baslik} ${k.ozet || ""} ${k.ne} ${k.nere} ${k.kim}`); return q.every((w) => t.includes(w)); })
+    .sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
+  const say = Object.keys(K_KAY).map((k) => [k, L.filter((x) => x._kay === k).length]).filter((x) => x[1]);
+  return `<div class="ksag" style="--kk:#e0a24f"><div class="kyol">🔎 "${esc(kAra.trim())}" · <b>${L.length} adet</b></div>${say.length ? `<small class="kdag">${say.map(([k, n]) => K_KAY[k][0] + " " + K_KAY[k][1] + " " + n).join(" · ")} · bireysel ve ticari birlikte</small>` : ""}</div>`
+    + (L.length ? L.slice(0, 60).map((k) => kKart(k, K_KAY[k._kay][3])).join("") + (L.length > 60 ? `<p class="note" style="text-align:center">İlk 60 sonuç gösteriliyor; aramayı daralt.</p>` : "") : '<div class="empty">Bu aramayla eşleşen güncel kampanya yok. Marka ya da ürün adıyla dene: "lastik", "okul", "Migros".</div>');
+}
+// 🧭 Öneri sihirbazı: müşteri tipi, kimlik, ilgi alanı ve beklentiye göre üç kaynaktan sıralı kısa liste
+let kSih = { acik: false, seg: "bireysel", kim: "", nere: [], ne: "" };
+function kSihHtml() {
+  const S = kSih, sec = (a, v, ic, ad, on) => `<button type="button" data-sh="${a}:${esc(v)}" class="${on ? "on" : ""}">${ic} ${esc(ad)}</button>`;
+  const KIM = (K_KIM[S.seg] || []).map((g) => [g[0], g[1]]);
+  const NERE = kGr("nere").filter((g) => !["Genel", "Bankacılık"].includes(g[0]));
+  const L = kTumu(S.seg).filter((k) => (k.kim === "Herkes" || k.kim === S.kim) && (!S.nere.length || S.nere.includes(k.nere)))
+    .map((k) => ({ k, p: (S.kim && k.kim === S.kim ? 4 : 0) + (S.nere.includes(k.nere) ? 3 : 0) + (S.ne && k.ne === S.ne ? 2 : 0) }))
+    .sort((a, b) => b.p - a.p || (a.k.bitis || "9").localeCompare(b.k.bitis || "9"));
+  const ilk = L.slice(0, 15);
+  return `<div class="ksih"><div class="ksh">🧭 Müşterime ne önereyim?<small>Seç, liste anında oluşsun. Üç kaynaktan (İş Bankası, Maximum, Maximiles) en uygunları üstte.</small></div>
+      <b>1 · Müşteri</b><div class="kshs">${sec("seg", "bireysel", "👤", "Bireysel", S.seg === "bireysel")}${sec("seg", "ticari", "🏢", "Ticari", S.seg === "ticari")}</div>
+      <b>2 · Kimdir?</b><div class="kshs">${KIM.map(([ad, ic]) => sec("kim", ad, ic, ad, S.kim === ad)).join("")}${sec("kim", "", "👥", "Hiçbiri / bilmiyorum", !S.kim)}</div>
+      <b>3 · Nerede harcıyor? <small>(birden çok seçilebilir)</small></b><div class="kshs">${NERE.map(([ad, ic]) => sec("nere", ad, ic, kKisa(ad), S.nere.includes(ad))).join("")}</div>
+      <b>4 · Ne kazanmak ister?</b><div class="kshs">${kGr("ne").filter((g) => g[0] !== "Ayrıcalık").map(([ad, ic]) => sec("ne", ad, ic, ad, S.ne === ad)).join("")}${sec("ne", "", "✨", "Fark etmez", !S.ne)}</div></div>`
+    + `<div class="ksag" style="--kk:#3fc283"><div class="kyol">🎯 Önerilen · <b>${L.length} adet</b>${L.length > 15 ? " · ilk 15'i aşağıda" : ""}</div></div>`
+    + (ilk.length ? ilk.map(({ k }) => kKart(k, K_KAY[k._kay][3])).join("") : '<div class="empty">Bu seçimle eşleşen güncel kampanya yok; bir seçimi kaldırmayı dene.</div>');
 }
 function renderCamps() {
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
@@ -2230,7 +2330,14 @@ function renderList() {
   if (cat === "Maximum") return renderKampanyalar();
   if (cat === "KTakvim") { $("upd").textContent = "Kampanya bitiş günleri her gün kendiliğinden güncellenir"; $("list").innerHTML = campCal(); bindCal(); return; }
   if (cat === "Pazarama") { $("upd").textContent = "MaxiPuan ve MaxiMil Pazarama'da 1 puan = 1 TL"; $("list").innerHTML = pazHtml(); bindPaz(); return; }
-  if (cat === "Kartsiz") { $("upd").textContent = "Kartsız ödemeye özel kampanyalar"; $("list").innerHTML = odeHtml(); bindSpecial(); return; }
+  if (cat === "Kartsiz") {
+    // İki sekme: müşteri için Kartsız öde, işyeri için POS rehberi (seçim menünün altında, yapışkan alanda)
+    const t = $("tfil"); t.className = "tfil aysec"; t.hidden = false;
+    t.innerHTML = `<button type="button" data-od="kartsiz" class="${odeSec !== "pos" ? "on" : ""}">📲 Kartsız öde<small>müşteri için</small></button><button type="button" data-od="pos" class="p ${odeSec === "pos" ? "on" : ""}">🏪 POS rehberi<small>işyeri için</small></button>`;
+    t.onclick = (e) => { const b = e.target.closest("[data-od]"); if (!b) return; odeSec = b.dataset.od; try { localStorage.setItem("isbankOde", odeSec); } catch (x) {} renderList(); icerigeKay(); };
+    $("upd").textContent = odeSec === "pos" ? "İşyerinden kartla ödeme almanın yolları · genel bilgi" : "Kartsız ödemeye özel kampanyalar";
+    $("list").innerHTML = odeSec === "pos" ? posHtml() : odeHtml(); bindSpecial(); return;
+  }
   if (cat === "Şubeler") return renderSubeler();
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "") + " · günde iki kez (09:01, 14:01)";
   const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
