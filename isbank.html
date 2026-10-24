@@ -610,6 +610,41 @@
   .altkutu.dar .altbas::after { content: "Değiştir ▾"; margin-left: auto; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--c, #e0a24f); color: var(--c, #e0a24f); font-size: 11.5px; font-weight: 800; }
   .altkutu.dar.acik .altbas::after { content: "Kapat ▴"; }
   .altkutu.dar:not(.acik) #nsub, .altkutu.dar:not(.acik) #tfil { flex-wrap: nowrap !important; }
+  /* Alt başlıklar eşit sütunlu ızgarada: hepsi aynı genişlik, yazı uzunsa iki satır */
+  .altkutu .nsub, .altkutu .tfil.sekme, .altkutu .tfil.mtiles { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)) !important; gap: 5px !important; }
+  .altkutu .nsub button, .altkutu .tfil.sekme button, .altkutu .tfil.mtiles button.mt, .altkutu .tfil.mtiles button.mt[style*="span 12"] { min-width: 0; width: 100%; margin: 0; flex: none !important; grid-column: auto !important; white-space: normal !important; text-align: center; line-height: 1.15; min-height: 40px !important; padding: 5px 6px !important; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .altkutu .tfil.mtiles button.mt span, .altkutu .tfil.mtiles.ipm button.mt.uzun span { white-space: normal !important; overflow: visible; text-overflow: clip; }
+  .altkutu.dar:not(.acik) .nsub, .altkutu.dar:not(.acik) .tfil { grid-template-columns: 1fr !important; }
+  .altbas { flex-wrap: nowrap; white-space: nowrap; min-width: 0; }
+  .altbas b { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-weight: 800; }
+  .altkutu.dar .altbas > span { display: none; }
+  .altkutu.dar .altbas::after { flex: 0 0 auto; white-space: nowrap; }
+  /* İş Black / İş Plus: büyük, kendi renginde iki kart */
+  .altkutu .tfil.aysec { display: grid !important; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .altkutu .tfil.aysec button { min-height: 66px; padding: 10px 8px !important; border-radius: 16px; font-size: 18px !important; font-weight: 800; letter-spacing: .2px; line-height: 1.2; }
+  .altkutu .tfil.aysec button small { font-size: 12px; font-weight: 600; margin-top: 3px; line-height: 1.25; }
+  .altkutu .tfil.aysec button:not(.p) { background: linear-gradient(160deg, #1d1a14, #070707); border: 1px solid #6b5a33; color: #f3dca8; }
+  .altkutu .tfil.aysec button.p { background: linear-gradient(160deg, #0d2340, #06101f); border: 1px solid #2f6fb8; color: #bfe6ff; }
+  .altkutu .tfil.aysec button.on:not(.p) { background: linear-gradient(160deg, #fbe8bb, #c9a050); color: #1a1205; border-color: #fff3d1; box-shadow: 0 6px 18px rgba(201,160,80,.35); }
+  .altkutu .tfil.aysec button.p.on { background: linear-gradient(160deg, #9fe9ff, #3f7cff); color: #001133; border-color: #d6f6ff; box-shadow: 0 6px 18px rgba(63,124,255,.35); }
+  .altkutu .tfil.aysec button.on small { color: inherit; opacity: .8; }
+  /* Kampanya takvimi: bitiş günleri */
+  .mc .grid i.b { position: relative; cursor: pointer; box-shadow: inset 0 0 0 1.5px #ff5a5a; color: #fff; font-weight: 800; }
+  .mc .grid i.b u { position: absolute; top: -5px; right: -3px; min-width: 13px; height: 13px; padding: 0 2px; border-radius: 7px; background: #ef3b3b; color: #fff; font-size: 9px; line-height: 13px; text-decoration: none; font-weight: 800; }
+  .mc .grid i.b.sec { background: #ef3b3b; }
+  .ccal .leg i.bt { border: 1.5px solid #ff5a5a; width: 7px; height: 7px; }
+  .calipucu { margin: 8px 0 0; text-align: center; font-size: 12px; color: #c9a8b8; }
+  .calgun { margin-top: 10px; } .calgun .cgh { display: flex; align-items: center; justify-content: space-between; font-weight: 800; font-size: 13px; color: #ffb3b3; margin-bottom: 6px; }
+  .calgun .cgh button { width: 30px; height: 30px; border-radius: 9px; border: 1px solid #5a2a2a; background: #1a0a0a; color: #fff; font: inherit; }
+  .calyak { margin-top: 12px; padding-top: 10px; border-top: 1px dashed #4a2a3a; } .calyak > b { display: block; font-size: 13px; color: #ffd0e6; margin-bottom: 6px; }
+  .calyak .cy { display: grid; grid-template-columns: 58px 1fr auto; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid #241820; font-size: 12.5px; }
+  .calyak .cy em { font-style: normal; font-weight: 800; color: #ffb3d9; text-align: center; padding: 2px 0; border-radius: 7px; background: rgba(255,45,149,.12); }
+  .calyak .cy.acil em { color: #fff; background: #d32f2f; } .calyak .cy span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .calyak .cy small { color: #9a8a92; }
+  .calgit { display: block; width: 100%; margin: 10px 0; padding: 12px; border-radius: 12px; border: 1px solid #ef5a5a; background: rgba(239,90,90,.08); color: #ffc9c9; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  /* Gizli alt satır her zaman gizli kalsın (görünüm kuralları "gizle"yi ezmesin) */
+  .altkutu.chipbar .tfil[hidden], .altkutu.chipbar .nsub[hidden] { display: none !important; }
+  .altkutu button em, .altkutu button b { flex: 0 0 auto; }
+  .ccal .leg { flex-wrap: wrap; row-gap: 4px; } .ccal .leg span { white-space: nowrap; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -821,7 +856,7 @@ function altGuncelle() {
   k.hidden = !(var1 || var2);
   if (!k.hidden && a) {
     k.style.setProperty("--c", c);
-    $("altbas").innerHTML = `▼ ${esc(ad)} <span>· alt başlıklar</span>`;
+    $("altbas").innerHTML = `▼ <b>${esc(ad)}</b> <span>· alt başlıklar</span>`;
     const r = a.getBoundingClientRect(), kr = k.getBoundingClientRect();
     k.style.setProperty("--ok", Math.max(16, Math.min(kr.width - 16, r.left + r.width / 2 - kr.left)) + "px");
   }
@@ -1127,7 +1162,8 @@ function bindSpecial() {
   $("list").querySelectorAll("[data-tur]").forEach((b) => (b.onclick = () => { campTur = b.dataset.tur; renderCamps(); icerigeKay(); }));
   $("list").querySelectorAll("[data-cat]").forEach((b) => (b.onclick = () => { cat = b.dataset.cat; renderList(); renderChips(); window.scrollTo({ top: 0 }); })); }
 // Kampanya takvimi: bu ay + gelecek ay; her ayın ilk haftası renkli, bugün işaretli, ay başına geri sayım
-function miniCal(y, m, today) {
+function miniCal(y, m, today, ends) {
+  ends = ends || {};
   const last = new Date(y, m + 1, 0).getDate(), first = (new Date(y, m, 1).getDay() + 6) % 7;
   const ad = new Date(y, m, 1).toLocaleDateString("tr-TR", { month: "long", year: "numeric" });
   let c = ["Pt", "Sa", "Ça", "Pe", "Cu", "Ct", "Pz"].map((x) => `<i class="h">${x}</i>`).join("");
@@ -1135,11 +1171,18 @@ function miniCal(y, m, today) {
   for (let k = 1; k <= last; k++) {
     const dt = new Date(y, m, k), past = dt < new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const now = dt.toDateString() === today.toDateString();
-    c += `<i class="${k <= 7 ? "k" : ""}${now ? " now" : ""}${past && !now ? " p" : ""}">${k}</i>`;
+    const g = `${y}-${String(m + 1).padStart(2, "0")}-${String(k).padStart(2, "0")}`, n = (ends[g] || []).length;
+    c += `<i class="${k <= 7 ? "k" : ""}${now ? " now" : ""}${past && !now ? " p" : ""}${n ? " b" : ""}${calGun === g ? " sec" : ""}"${n ? ` data-g="${g}"` : ""}>${k}${n ? `<u>${n}</u>` : ""}</i>`;
   }
   return `<div class="mc"><div class="cm">${ad}</div><div class="grid">${c}</div></div>`;
 }
 function campCal() {
+  // Kampanyaların bitiş günleri: takvimde kırmızı nokta + sayı; güne dokununca o gün bitenler
+  const ends = {}; camps.forEach((k) => { if (k.bitis && daysLeft(k.bitis) >= 0) (ends[k.bitis] = ends[k.bitis] || []).push(k); });
+  const gAd = (g) => new Date(g + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
+  const secili = calGun && ends[calGun] ? `<div class="calgun" id="calGunList"><div class="cgh">🔴 ${gAd(calGun)} biten kampanyalar<button type="button" data-g="${calGun}" onclick="calGun=null;$('list').innerHTML=campCal();bindCal()">✕</button></div>${ends[calGun].map(campCard).join("")}</div>` : `<p class="calipucu">👆 Kırmızı noktalı güne dokun: o gün biten kampanyalar görünsün.</p>`;
+  const sirali = camps.filter((k) => k.bitis && daysLeft(k.bitis) >= 0).sort((a, b) => a.bitis.localeCompare(b.bitis)).slice(0, 8);
+  const yakinda = sirali.length ? `<div class="calyak"><b>⏳ Yakında bitenler</b>${sirali.map((k) => { const n = daysLeft(k.bitis); return `<div class="cy${n <= 3 ? " acil" : ""}"><em>${n <= 0 ? "Bugün" : n === 1 ? "Yarın" : n + " gün"}</em><span>${esc(k.baslik)}</span><small>${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></div>`; }).join("")}</div>` : "";
   const t = new Date(), y = t.getFullYear(), m = t.getMonth(), d = t.getDate(), last = new Date(y, m + 1, 0).getDate();
   const ayAd = t.toLocaleDateString("tr-TR", { month: "long" }), nextAy = new Date(y, m + 1, 1).toLocaleDateString("tr-TR", { month: "long" });
   const ilkHafta = d <= 7, kalan = last - d + 1;
@@ -1154,8 +1197,10 @@ function campCal() {
   return `<div class="ccal${ilkHafta ? " hot" : ""}" id="ccal">
       <div class="ctop"><div class="cl">${msg}</div><button type="button" id="jIcs" class="cadd" title="Her ayın 1'inde hatırlatma">📅 Ay başını<br>takvime ekle</button></div>
       ${bar}
-      <div class="cals">${miniCal(y, m, t)}${miniCal(m === 11 ? y + 1 : y, (m + 1) % 12, t)}</div>
-      <div class="leg"><span><i class="k"></i>Ayın ilk haftası</span><span><i class="nw"></i>Bugün</span></div>
+      <div class="cals">${miniCal(y, m, t, ends)}${miniCal(m === 11 ? y + 1 : y, (m + 1) % 12, t, ends)}</div>
+      <div class="leg"><span><i class="k"></i>Ayın ilk haftası</span><span><i class="bt"></i>Kampanya bitişi</span><span><i class="nw"></i>Bugün</span></div>
+      ${secili}
+      ${yakinda}
       <details class="jhow"><summary>📲 Kampanyalara nasıl katılırım?</summary>
         <div class="jway"><i>📱</i><div><b>İşCep</b>Kampanyalar bölümünden kampanyayı seç, <b>Katıl</b>'a dokun.</div></div>
         <div class="jway"><i>💳</i><div><b>Maximum Mobil</b>Kampanyalar listesinde <b>Katıl</b>'a dokun.</div></div>
@@ -1188,9 +1233,9 @@ function campCard(k) {
 function renderCamps() {
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
   if (!camps.length) { $("list").innerHTML = '<div class="empty">Şu an listelenen kampanya yok.</div>'; return; }
-  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "✈️ Maximiles", "🛒 Pazarama", "📲 Kartsız öde"];
+  const turs = ["Tümü", ...new Set(camps.map((k) => k.tur))], SP = ["⭐ Öne çıkan", "📅 Takvim", "✈️ Maximiles", "🛒 Pazarama", "📲 Kartsız öde"];
   if (!turs.includes(campTur) && !SP.includes(campTur)) campTur = "Tümü";
-  const TI = { "⭐ Öne çıkan": ["⭐", "Öne çıkan", "#f0c64a"], "✈️ Maximiles": ["✈️", "Maximiles", "#5aa9f0"], "🛒 Pazarama": ["🛒", "Pazarama", "#ff8a3d"], "📲 Kartsız öde": ["📲", "Kartsız öde", "#3fbfd6"], "Tümü": ["💳", "Tümü", "#ff4fa3"], MaxiPuan: ["🪙", "MaxiPuan", "#e0a24f"], "İndirim": ["🏷️", "İndirim", "#3fc283"], Puan: ["🎯", "Puan", "#b48cf0"], Taksit: ["📆", "Taksit", "#3fbfd6"] };
+  const TI = { "⭐ Öne çıkan": ["⭐", "Öne çıkan", "#f0c64a"], "📅 Takvim": ["📅", "Takvim", "#ef5a5a"], "✈️ Maximiles": ["✈️", "Maximiles", "#5aa9f0"], "🛒 Pazarama": ["🛒", "Pazarama", "#ff8a3d"], "📲 Kartsız öde": ["📲", "Kartsız öde", "#3fbfd6"], "Tümü": ["💳", "Tümü", "#ff4fa3"], MaxiPuan: ["🪙", "MaxiPuan", "#e0a24f"], "İndirim": ["🏷️", "İndirim", "#3fc283"], Puan: ["🎯", "Puan", "#b48cf0"], Taksit: ["📆", "Taksit", "#3fbfd6"] };
   // 60 sütunlu ızgara: üst sırada özel sekmeler, alt sırada kampanya türleri eşit genişlikte
   const tile = (t, cnt, span) => { const [ic, ad, c] = TI[t] || ["🎁", t, "#9aa0a6"]; const yeni = t === "📲 Kartsız öde" && new Date() < new Date("2026-11-03");
     return `<button data-t="${esc(t)}" class="mt${t === campTur ? " on" : ""}" style="--c:${c};grid-column:span ${span}"><i>${ic}</i><span>${esc(ad)}</span>${cnt != null ? `<em>${cnt}</em>` : yeni ? `<em class="y">YENİ</em>` : ""}</button>`; };
@@ -1198,18 +1243,26 @@ function renderCamps() {
   $("tfil").className = "tfil mtiles";
   $("tfil").hidden = false;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); icerigeKay(); };
+  if (campTur === "📅 Takvim") { $("list").innerHTML = campCal(); bindCal(); return; }
   if (SP.includes(campTur)) { if (campTur === "🛒 Pazarama") { $("list").innerHTML = pazHtml(); bindPaz(); return; } $("list").innerHTML = campTur === "✈️ Maximiles" ? milesHtml() : campTur === "📲 Kartsız öde" ? odeHtml() : oneHtml(); bindSpecial(); return; }
   const vis = camps.filter((k) => campTur === "Tümü" || k.tur === campTur);
   const urg = vis.filter((k) => daysLeft(k.bitis) <= 3);
   let html = campTick();
   if (urg.length) html += `<div class="alarm">⏰ <b>${urg.length} kampanya</b> 3 gün içinde bitiyor!</div>`;
   html += vis.map(campCard).join("");
+  html += `<button type="button" class="calgit" id="calGit">📅 Kampanya takvimi · biten günler ve ay başı hatırlatması ›</button>`;
   html += `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm kampanyalar ve katılım koşulları ↗</a>`;
-  html += campCal();
   $("list").innerHTML = html;
-  const tk = $("jTick"); if (tk) tk.onclick = () => { const st = document.querySelector(".stick, header.sticky, .top"), h = st && getComputedStyle(st).position === "sticky" ? st.offsetHeight : 0; window.scrollTo({ top: $("ccal").getBoundingClientRect().top + scrollY - h - 10, behavior: "smooth" }); };
+  const takvimeGit = () => { campTur = "📅 Takvim"; renderCamps(); icerigeKay(); };
+  const tk = $("jTick"); if (tk) tk.onclick = takvimeGit;
+  $("calGit").onclick = takvimeGit;
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); icerigeKay(); };
+}
+// Takvimde bir güne dokununca o gün biten kampanyalar
+let calGun = null;
+function bindCal() {
   $("jIcs").onclick = icsReminder;
+  $("list").querySelectorAll(".mc .grid i[data-g]").forEach((c) => (c.onclick = () => { calGun = calGun === c.dataset.g ? null : c.dataset.g; $("list").innerHTML = campCal(); bindCal(); const g = $("calGunList"); if (g && calGun) g.scrollIntoView({ behavior: "smooth", block: "nearest" }); }));
 }
 
 function renderSubeler() {
