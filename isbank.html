@@ -1462,10 +1462,10 @@ function renderKampanyalar() {
   const sag = `<div class="ksag" style="--kk:${renk}"><div class="kyol">${esc(yol)} · <b>${liste.length} adet</b></div>`
     + `</div>`;
   const acil = liste.filter((k) => k.bitis && daysLeft(k.bitis) <= 3).length;
-  const kayp = KH[kKay][kSeg].toplam - L.length;
+  const V0 = KH[kKay][kSeg], kayp = V0.toplam - L.length, biten = (V0.kategoriler || []).reduce((a, c) => a + (c.biten || 0), 0);
   $("list").innerHTML = sag + (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
     + (liste.length ? liste.map((k) => kKart(k, renk)).join("") : '<div class="empty">Bu seçimde şu an kampanya yok.</div>')
-    + (kayp > 0 && !kNe && !kNere ? `<p class="note" style="text-align:center">${kayDom}'de ${KH[kKay][kSeg].toplam} kampanya görünüyor; ${kayp} tanesi sitede "daha fazla" ile açılıyor ve buraya gelmiyor.</p>` : "") + tumLink;
+    + (kayp > 0 && !kNe && !kNere && !kKim ? `<p class="note" style="text-align:center">${kayDom}'de ${V0.toplam} yazıyor: ${biten && biten >= kayp ? `<b>${L.length} güncel</b> + ${kayp} süresi bitmiş kampanya (sitede "Sona Ermiştir" etiketli). Burada yalnızca güncel olanlar var.` : `${kayp} tanesi buraya henüz gelmiyor.`}</p>` : "") + tumLink;
 }
 function renderCamps() {
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
