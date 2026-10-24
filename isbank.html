@@ -712,6 +712,7 @@
   .altkutu #tfil.kamp .tsat .tlab { display: flex !important; align-items: center; gap: 8px; padding: 0 0 6px !important; font-size: 12.5px !important; letter-spacing: .4px; color: var(--kk) !important; white-space: nowrap; }
   .altkutu #tfil.kamp .tsat .tlab::before, .altkutu #tfil.kamp .tsat .tlab::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--kk) 70%, transparent)); }
   .altkutu #tfil.kamp .tsat .tlab::after { background: linear-gradient(90deg, color-mix(in srgb, var(--kk) 70%, transparent), transparent); }
+  .altkutu #tfil.kamp .tsat:not(:first-child) .tlab::before { display: none; } /* Kaynak ortada; ötekiler sola yaslı, çizgi sağa uzar */
   .altkutu.dar:not(.acik) #tfil.kamp .tsat .tlab { display: none !important; }
   .altkutu.dar:not(.acik) #tfil.kamp button.hep { display: none !important; }
   .altkutu.dar:not(.acik) #tfil.kamp .tsat.kgr:not(:has(.on:not(.hep))) { display: none !important; }
