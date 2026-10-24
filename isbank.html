@@ -636,6 +636,12 @@
   .mc .grid i.b u { position: absolute; top: -5px; right: -3px; min-width: 13px; height: 13px; padding: 0 2px; border-radius: 7px; background: #ef3b3b; color: #fff; font-size: 9px; line-height: 13px; text-decoration: none; font-weight: 800; }
   .mc .grid i.b.sec { background: #ef3b3b; }
   .ccal .leg i.bt { border: 1.5px solid #ff5a5a; width: 7px; height: 7px; }
+  .cyap { position: sticky; top: var(--iminiH, 0px); z-index: 15; margin: -12px -12px 8px; padding: 10px 12px 6px; border-radius: 16px 16px 12px 12px; background: #0b0b0b; border-bottom: 1px solid color-mix(in srgb, var(--kc) 40%, #000); box-shadow: 0 8px 16px rgba(0,0,0,.55); }
+  .cyap .ctop { align-items: center; } .cyap .ctop .cl > b { font-size: 13.5px; line-height: 1.3; } .cyap .cadd { padding: 7px 9px; white-space: nowrap; }
+  .cyap .appr { margin: 6px 0 0; } .cyap .appr .ends { display: none; } .cyap .appr .track { margin: 4px 0 2px; height: 8px; }
+  .caciklama { margin: 0 0 6px; font-size: 12.5px; line-height: 1.45; color: #cfcfcf; } .caciklama:empty { display: none; }
+  .caytop { margin: 6px 0 0; text-align: center; font-size: 12px; color: #bdbdbd; } .caytop b { color: var(--kc); }
+  .csuz button { flex-direction: column; gap: 0; line-height: 1.15; } .csuz button > b { background: none !important; padding: 0 !important; font-size: 10.5px; font-weight: 600; opacity: .85; }
   .csuz { display: grid; gap: 6px; margin: 10px 0 8px; } .csuz > div { display: flex; gap: 5px; flex-wrap: wrap; }
   .csuz button { flex: 1 1 auto; min-height: 34px; padding: 4px 8px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--kc) 40%, #000); background: #0d0d0d; color: #e6e6e6; font: inherit; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
   .csuz button b { min-width: 18px; padding: 0 5px; border-radius: 9px; background: rgba(255,255,255,.12); font-size: 11px; line-height: 18px; }
@@ -666,10 +672,10 @@
   .calipucu { margin: 8px 0 0; text-align: center; font-size: 12px; color: #bdbdbd; }
   .calgun { margin-top: 10px; } .calgun .cgh { display: flex; align-items: center; justify-content: space-between; font-weight: 800; font-size: 13px; color: #ffb3b3; margin-bottom: 6px; }
   .calgun .cgh button { width: 30px; height: 30px; border-radius: 9px; border: 1px solid #5a2a2a; background: #1a0a0a; color: #fff; font: inherit; }
-  .calyak { margin-top: 12px; padding-top: 10px; border-top: 1px dashed #4a2a3a; } .calyak > b { display: block; font-size: 13px; color: #ffd0e6; margin-bottom: 6px; }
+  .calyak { margin-top: 12px; padding-top: 10px; border-top: 1px dashed #333; } .calyak > b { display: block; font-size: 13px; color: color-mix(in srgb, var(--kc) 60%, #fff); margin-bottom: 6px; }
   .calyak .cy { display: grid; grid-template-columns: 58px 1fr auto; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid #222; font-size: 12.5px; }
   .calyak .cy em { font-style: normal; font-weight: 800; color: color-mix(in srgb, var(--kc) 55%, #fff); text-align: center; padding: 2px 0; border-radius: 7px; background: color-mix(in srgb, var(--kc) 12%, transparent); }
-  .calyak .cy.acil em { color: #fff; background: #d32f2f; } .calyak .cy span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .calyak .cy small { color: #9a8a92; }
+  .calyak .cy.acil em { color: #fff; background: #d32f2f; } .calyak .cy span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .calyak .cy small { color: #9a9a9a; }
   .calgit { display: block; width: 100%; margin: 10px 0; padding: 12px; border-radius: 12px; border: 1px solid #ef5a5a; background: rgba(239,90,90,.08); color: #ffc9c9; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
   /* Gizli alt satır her zaman gizli kalsın (görünüm kuralları "gizle"yi ezmesin) */
   .altkutu.chipbar .tfil[hidden], .altkutu.chipbar .nsub[hidden] { display: none !important; }
@@ -710,9 +716,9 @@
   .altkutu.dar:not(.acik) #tfil.kamp button.on { flex: 1 1 auto !important; width: auto !important; min-height: 32px !important; }
   .altkutu.dar:not(.acik) .tsat button.hep { display: none !important; }
   .altkutu.dar:not(.acik) .tsat.kgr:not(:has(.on:not(.hep))) { display: none !important; }
-  .ksag { margin: 0 0 10px; padding: 9px 11px; border-radius: 12px; border: 1px solid #23402f; background: #08140d; color: #bfe8cf; font-size: 12px; line-height: 1.5; }
-  .ksag .kyol { font-size: 13px; color: #fff; font-weight: 700; margin-bottom: 2px; }
-  .ksag .kyol b { color: #3fc283; }
+  .ksag { margin: 0 0 10px; padding: 8px 11px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--kk, #e0a24f) 45%, #000); background: color-mix(in srgb, var(--kk, #e0a24f) 8%, #050505); }
+  .ksag .kyol { font-size: 13px; color: #fff; font-weight: 700; }
+  .ksag .kyol b { color: var(--kk, #e0a24f); }
   .altkutu .tsat button.kac { border-style: dashed !important; color: var(--c, #e0a24f) !important; background: transparent !important; font-weight: 800; }
   .menu button[data-k="Maximum"] span { display: inline-block; letter-spacing: -.3px; font-size: 11px; transform: scaleX(.84); transform-origin: center; white-space: nowrap; }
   .menu button[data-k="Haberler"] small { display: inline-block; transform: scaleX(.86); transform-origin: center; white-space: nowrap; letter-spacing: -.2px; }
@@ -1252,27 +1258,30 @@ function bigCal(y, m, today, ends, yeni) {
     const dl = n ? daysLeft(g) : 99, isi = dl <= 3 ? "r" : dl <= 7 ? "o" : "m";
     c += `<i class="${k <= 7 ? "ih" : ""}${now ? " now" : ""}${past && !now ? " p" : ""}${n ? " b" : ""}${calGun === g ? " sec" : ""}"${n ? ` data-g="${g}"` : ""}><b>${k}</b>${n ? `<u class="${isi}">${n}</u>` : ""}${nw ? `<s>●</s>` : ""}</i>`;
   }
-  return `<div class="bc"><div class="bch"><button type="button" data-ay="-1"${calAy <= 0 ? " disabled" : ""}>‹</button><b>${ad}</b><button type="button" data-ay="1"${calAy >= 3 ? " disabled" : ""}>›</button></div><div class="bcg">${c}</div></div>`;
+  return `<div class="bc"><div class="bch"><button type="button" data-ay="-1"${calAy <= 0 ? " disabled" : ""}>‹</button><b>${ad}</b><button type="button" data-ay="1"${calAy >= calAyMax ? " disabled" : ""}>›</button></div><div class="bcg">${c}</div></div>`;
 }
 function campCal() {
   // Kampanyaların bitiş günleri: üç kaynaktan (İş Bankası, Maximum, Maximiles), seçilen müşteri bölümü; aynı başlık bir kez
   const KAYS = calKay === "hepsi" ? Object.keys(K_KAY) : [calKay];
-  const kaynakli = KH && KH.isbank ? (() => { const o = [], g = new Set();
-      KAYS.forEach((kay) => (kListe(kay, calSeg) || []).forEach((k) => { const a = k.baslik.toLocaleLowerCase("tr"); if (!g.has(a)) { g.add(a); o.push({ ...k, _kay: kay }); } })); return o; })() : null;
+  // Kampanyalar bölümüyle birebir aynı liste: adetler iki yerde de aynı tutar
+  const kaynakli = KH && KH.isbank ? KAYS.flatMap((kay) => (kListe(kay, calSeg) || []).map((k) => ({ ...k, _kay: kay }))) : null;
   const kart = (k) => (k._kay ? kKart(k, K_KAY[k._kay][3]) : campCard(k));
   const ends = {}, yeni = {}; (kaynakli || camps).forEach((k) => { if (k.bitis && daysLeft(k.bitis) >= 0) (ends[k.bitis] = ends[k.bitis] || []).push(k); if (k.ilk && k.ilk > "2000-01-01") yeni[k.ilk] = (yeni[k.ilk] || 0) + 1; });
   const gAd = (g) => new Date(g + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
   // Seçilen gün: kaynaklara göre sağlama ile
-  const sagla = (L) => { const say = Object.keys(K_KAY).map((k) => [k, L.filter((x) => x._kay === k).length]).filter((x) => x[1]); return say.length > 1 ? ` <small>${L.length} = ${say.map(([k, n]) => K_KAY[k][0] + " " + n).join(" + ")} ✓</small>` : ""; };
+  const sagla = (L) => { const say = Object.keys(K_KAY).map((k) => [k, L.filter((x) => x._kay === k).length]).filter((x) => x[1]); return say.length > 1 ? ` <small>${say.map(([k, n]) => K_KAY[k][0] + " " + K_KAY[k][1] + " " + n).join(" · ")}</small>` : ""; };
   const secili = calGun && ends[calGun] ? `<div class="calgun" id="calGunList"><div class="cgh"><span>🔴 ${gAd(calGun)} biten <b>${ends[calGun].length}</b> kampanya${sagla(ends[calGun])}</span><button type="button" id="calKapat">✕</button></div>${ends[calGun].map(kart).join("")}</div>` : `<p class="calipucu">👆 Sayılı güne dokun: o gün biten kampanyalar açılsın.</p>`;
   const sirali = (kaynakli || camps).filter((k) => k.bitis && daysLeft(k.bitis) >= 0).sort((a, b) => a.bitis.localeCompare(b.bitis)).slice(0, 8);
   const yakinda = sirali.length ? `<div class="calyak"><b>⏳ Yakında bitenler</b>${sirali.map((k) => { const n = daysLeft(k.bitis); return `<a class="cy${n <= 3 ? " acil" : ""}" href="${esc(k.url || "#")}" target="_blank" rel="noopener"><em>${n <= 1 ? "Son gün" : n + " gün"}</em><span>${esc(k.baslik)}</span><small>${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></a>`; }).join("")}</div>` : "";
   // Önümüzdeki 7 gün şeridi
   const t0 = new Date(), hafta = [...Array(7)].map((_, i) => { const x = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate() + i); const g = `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
     return `<button type="button" class="hg${(ends[g] || []).length ? " var" : ""}${calGun === g ? " on" : ""}"${(ends[g] || []).length ? ` data-g="${g}"` : " disabled"}><small>${i === 0 ? "Bugün" : i === 1 ? "Yarın" : x.toLocaleDateString("tr-TR", { weekday: "short" })}</small><b>${x.getDate()}</b><em>${(ends[g] || []).length || "–"}</em></button>`; }).join("");
-  const aktif = (kay) => (kListe(kay, calSeg) || []).filter((k) => k.bitis).length;
-  const suz = KH && KH.isbank ? `<div class="csuz"><div>${[["hepsi", "📋", "Hepsi"], ...Object.entries(K_KAY).map(([k, v]) => [k, v[0], v[1]])].map(([k, ic, ad]) => `<button type="button" data-ck="${k}" class="${calKay === k ? "on" : ""}">${ic} ${ad}${k !== "hepsi" ? `<b>${aktif(k)}</b>` : ""}</button>`).join("")}</div>`
-    + `<div>${[["bireysel", "👤 Bireysel"], ["ticari", "🏢 Ticari"]].map(([k, ad]) => `<button type="button" data-cs="${k}" class="${calSeg === k ? "on" : ""}">${ad}</button>`).join("")}</div></div>` : "";
+  const aktif = (kay) => (kListe(kay, calSeg) || []).length;
+  const bitissiz = (kaynakli || []).filter((k) => !k.bitis).length;
+  // İleri ok: en uzak bitiş gününün ayına kadar (en az 3 ay)
+  { const t1 = new Date(), son = Object.keys(ends).sort().pop(); calAyMax = Math.max(3, son ? (+son.slice(0, 4) - t1.getFullYear()) * 12 + (+son.slice(5, 7) - 1 - t1.getMonth()) : 0); calAy = Math.min(calAy, calAyMax); }
+  const suz = KH && KH.isbank ? `<div class="csuz"><div>${[["hepsi", "📋", "Hepsi"], ...Object.entries(K_KAY).map(([k, v]) => [k, v[0], v[1]])].map(([k, ic, ad]) => `<button type="button" data-ck="${k}" class="${calKay === k ? "on" : ""}"><span>${ic} ${ad}</span><b>${k === "hepsi" ? Object.keys(K_KAY).reduce((a, x) => a + aktif(x), 0) : aktif(k)} adet</b></button>`).join("")}</div>`
+    + `<div>${[["bireysel", "👤 Bireysel"], ["ticari", "🏢 Ticari"]].map(([k, ad]) => `<button type="button" data-cs="${k}" class="${calSeg === k ? "on" : ""}"><span>${ad}</span><b>${(calKay === "hepsi" ? Object.keys(K_KAY) : [calKay]).reduce((a, x) => a + (kListe(x, k) || []).length, 0)} adet</b></button>`).join("")}</div></div>` : "";
   const t = new Date(), y = t.getFullYear(), m = t.getMonth(), d = t.getDate(), last = new Date(y, m + 1, 0).getDate();
   const ayAd = t.toLocaleDateString("tr-TR", { month: "long" }), nextAy = new Date(y, m + 1, 1).toLocaleDateString("tr-TR", { month: "long" });
   const ilkHafta = d <= 7, kalan = last - d + 1;
@@ -1285,11 +1294,14 @@ function campCal() {
     ? `<div class="appr hot"><div class="lbl"><span>🎯 İlk hafta</span><b>${7 - d + 1} gün kaldı</b></div><div class="track"><i style="width:${Math.round(d / 7 * 100)}%"></i><em style="left:${Math.round(d / 7 * 100)}%"></em></div><div class="ends"><span>1 ${ayAd}</span><span>7 ${ayAd}</span></div></div>`
     : `<div class="appr"><div class="lbl"><span>⏳ ${nextAy} başına yaklaşıyor</span><b>${kalan} gün</b></div><div class="track"><i style="width:${pct}%"></i><em style="left:${pct}%"></em></div><div class="ends"><span>bugün ${d} ${ayAd}</span><span>1 ${nextAy} 🎯</span></div></div>`;
   return `<div class="ccal${ilkHafta ? " hot" : ""}" id="ccal" style="--kc:${calKay === "hepsi" ? "#e0a24f" : K_KAY[calKay][3]}">
-      <div class="ctop"><div class="cl">${msg}</div><button type="button" id="jIcs" class="cadd" title="Her ayın 1'inde hatırlatma">📅 Ay başını<br>takvime ekle</button></div>
-      ${bar}
+      <div class="cyap"><div class="ctop"><div class="cl">${msg.replace(/<span>[\s\S]*<\/span>$/, "")}</div><button type="button" id="jIcs" class="cadd" title="Her ayın 1'inde hatırlatma">📅 Takvime ekle</button></div>
+      ${bar}</div>
+      <p class="caciklama">${(msg.match(/<span>([\s\S]*)<\/span>$/) || [, ""])[1]}</p>
       ${suz}
       <div class="hst">${hafta}</div>
-      ${(() => { const b = new Date(y, m + calAy, 1); return bigCal(b.getFullYear(), b.getMonth(), t, ends, yeni); })()}
+      ${(() => { const b = new Date(y, m + calAy, 1), on = `${b.getFullYear()}-${String(b.getMonth() + 1).padStart(2, "0")}`;
+        const n = Object.keys(ends).filter((g) => g.startsWith(on)).reduce((a, g) => a + ends[g].length, 0);
+        return bigCal(b.getFullYear(), b.getMonth(), t, ends, yeni) + `<p class="caytop">${b.toLocaleDateString("tr-TR", { month: "long" })} ayında biten: <b>${n} adet</b>${bitissiz ? ` · bitiş tarihi belirtilmeyen: ${bitissiz} adet` : ""}</p>`; })()}
       <div class="leg"><span><i class="k"></i>İlk hafta: katıl</span><span><i class="bt"></i>Biten kampanya</span><span><i class="yn"></i>Yeni gelen</span><span><i class="nw"></i>Bugün</span></div>
       ${secili}
       ${yakinda}
@@ -1433,11 +1445,9 @@ function renderKampanyalar() {
   }
   if (kOne) { $("list").innerHTML = kOneHtml(L, renk) + tumLink; bindSpecial(); return; }
   const liste = L.filter((k) => uy(k, "")).sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
-  // Sağlama: her satırın grupları toplanınca "Hepsi"ye eşit (gruplar birbirini dışlar)
-  const top = (S) => S.reduce((a, g) => a + g[2], 0), es = (S, T) => `${S.filter((g) => g[2]).map((g) => g[2]).join(" + ")} = <b>${top(S)}</b> ${top(S) === T.length ? "✓" : "✗"}`;
   const yol = [kayAd, kSeg === "ticari" ? "Ticari" : "Bireysel", kNe && kIkon("ne", kNe) + " " + kNe, kNere && kIkon("nere", kNere) + " " + kKisa(kNere), kKim && (GK.find((g) => g[0] === kKim) || K_HERKES)[1] + " " + kKim].filter(Boolean).join(" › ");
-  const sag = `<div class="ksag"><div class="kyol">${esc(yol)} <b>${liste.length}</b></div>`
-    + `<div>✓ <b>Sağlama</b> · 💰 ${es(neS, neT)} &nbsp;·&nbsp; 🛍️ ${es(nereS, nereT)}${kimS.some((g) => g[0] !== "Herkes" && g[2]) ? ` &nbsp;·&nbsp; 🎯 ${es(kimS, kimT)}` : ""}</div></div>`;
+  const sag = `<div class="ksag" style="--kk:${renk}"><div class="kyol">${esc(yol)} · <b>${liste.length} adet</b></div>`
+    + `</div>`;
   const acil = liste.filter((k) => k.bitis && daysLeft(k.bitis) <= 3).length;
   const kayp = KH[kKay][kSeg].toplam - L.length;
   $("list").innerHTML = sag + (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
@@ -1476,12 +1486,12 @@ function renderCamps() {
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); icerigeKay(); };
 }
 // Takvimde bir güne dokununca o gün biten kampanyalar
-let calGun = null, calAy = 0, calKay = "hepsi", calSeg = "bireysel";
+let calGun = null, calAy = 0, calAyMax = 3, calKay = "hepsi", calSeg = "bireysel";
 function bindCal() {
   $("jIcs").onclick = icsReminder;
   const yeniden = (kay) => { $("list").innerHTML = campCal(); bindCal(); const g = $("calGunList"); if (g && calGun && kay) g.scrollIntoView({ behavior: "smooth", block: "start" }); };
   $("list").querySelectorAll(".bcg i[data-g], .hst button[data-g]").forEach((c) => (c.onclick = () => { calGun = calGun === c.dataset.g ? null : c.dataset.g; yeniden(true); }));
-  $("list").querySelectorAll(".bch button[data-ay]").forEach((b) => (b.onclick = () => { calAy = Math.max(0, Math.min(3, calAy + +b.dataset.ay)); yeniden(); }));
+  $("list").querySelectorAll(".bch button[data-ay]").forEach((b) => (b.onclick = () => { calAy = Math.max(0, Math.min(calAyMax, calAy + +b.dataset.ay)); yeniden(); }));
   $("list").querySelectorAll(".csuz button").forEach((b) => (b.onclick = () => { if (b.dataset.ck) calKay = b.dataset.ck; else calSeg = b.dataset.cs; calGun = null; yeniden(); }));
   const k = $("calKapat"); if (k) k.onclick = () => { calGun = null; yeniden(); };
 }

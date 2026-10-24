@@ -1972,7 +1972,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/traktor-kampanya",
        "ilk": "2000-01-01",
        "ne": "Faiz & Kredi",
-       "nere": "Bankacılık"
+       "nere": "Tarım"
       },
       {
        "baslik": "İşCep’ten İmece Kart Alanlara 2.000 TL MaxiPuan Kazanma Fırsatı!",
@@ -1981,7 +1981,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/iscep-aninda-imece-kart-maxipuan-kampanyasi",
        "ilk": "2000-01-01",
        "ne": "MaxiPuan",
-       "nere": "Bankacılık"
+       "nere": "Tarım"
       },
       {
        "baslik": "Basınçlı Sulama Sistemleri Kredi Kampanyası",
@@ -1990,7 +1990,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/sulama-sistemleri",
        "ilk": "2000-01-01",
        "ne": "Faiz & Kredi",
-       "nere": "Bankacılık"
+       "nere": "Tarım"
       },
       {
        "baslik": "ELÜS Kredi Kampanyası",
@@ -1999,7 +1999,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/elus-kredi-kampanya",
        "ilk": "2000-01-01",
        "ne": "Faiz & Kredi",
-       "nere": "Bankacılık"
+       "nere": "Tarım"
       },
       {
        "baslik": "Çiftçi Kadın Kredisi Kampanyası",
@@ -2008,7 +2008,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/kadin-ciftcilere-destek-kredisi-kampanyasi",
        "ilk": "2000-01-01",
        "ne": "Faiz & Kredi",
-       "nere": "Bankacılık"
+       "nere": "Tarım"
       },
       {
        "baslik": "Tarım Kredi Kampanyası",
@@ -2017,7 +2017,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/tarim-destek-kredi-kampanyasi",
        "ilk": "2000-01-01",
        "ne": "Faiz & Kredi",
-       "nere": "Bankacılık"
+       "nere": "Tarım"
       },
       {
        "baslik": "Genç Çiftçi Kredisi Kampanyası",
@@ -2026,7 +2026,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/genc-ciftci-kredi-kampanyasi",
        "ilk": "2000-01-01",
        "ne": "Faiz & Kredi",
-       "nere": "Bankacılık"
+       "nere": "Tarım"
       },
       {
        "baslik": "İmeceMobil Market'te %10 indirim fırsatı!",
@@ -2035,7 +2035,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/imecemobil-market-indirim-firsati",
        "ilk": "2000-01-01",
        "ne": "İndirim",
-       "nere": "Market & Yemek"
+       "nere": "Tarım"
       },
       {
        "baslik": "İmeceMobil Market’ten yapacağınız tarımsal girdi alışverişlerinde yeni müşterilerimize özel 5.000 TL indirim fırsatı!",
@@ -2044,7 +2044,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/imecemobil-market-yeni-musteri-5000-indirim-firsati",
        "ilk": "2000-01-01",
        "ne": "İndirim",
-       "nere": "Market & Yemek"
+       "nere": "Tarım"
       },
       {
        "baslik": "Başak Traktör PO MaxiPuan Kampanyası",
@@ -2053,7 +2053,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/basak-traktor-po-maxipuan-kampanyasi",
        "ilk": "2000-01-01",
        "ne": "MaxiPuan",
-       "nere": "Bankacılık"
+       "nere": "Tarım"
       },
       {
        "baslik": "Yeni ve Mevcut Müşterilerimiz İçin - “İmece Kart Hoş Geldin Paketi” Kampanyası",
@@ -2062,7 +2062,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/imece-kart-hos-geldin-paketi-kampanyasi1",
        "ilk": "2000-01-01",
        "ne": "İndirim",
-       "nere": "Bankacılık"
+       "nere": "Tarım"
       },
       {
        "baslik": "Hasat Destek Kredi Kampanyası",
@@ -2071,7 +2071,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/hasat-destek-kredi-kampanyasi",
        "ilk": "2000-01-01",
        "ne": "Faiz & Kredi",
-       "nere": "Bankacılık"
+       "nere": "Tarım"
       },
       {
        "baslik": "TMO MaxiPuan Kampanyası",
@@ -2080,7 +2080,7 @@
        "url": "https://www.isbank.com.tr/kampanyalar/tmo-maxipuan-kampanyasi-2025",
        "ilk": "2000-01-01",
        "ne": "MaxiPuan",
-       "nere": "Bankacılık"
+       "nere": "Tarım"
       }
      ]
     },
@@ -4978,6 +4978,10 @@
    }
   ],
   "nere": [
+   {
+    "ad": "Tarım",
+    "ikon": "🌾"
+   },
    {
     "ad": "Pati",
     "ikon": "🐾"
