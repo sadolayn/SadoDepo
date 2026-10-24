@@ -151,57 +151,6 @@ def isb_kartlar(body, adet=None):
     isb_kartlar.biten = len(biten)
     return out
 
-def isb_tarayici(urls):
-    """Sayfada 'Daha Fazla' ile açılan kampanyalar için: gerçek tarayıcıda düğmeye liste bitene kadar basılır.
-    Dönüş: {adres: sayfanın son hâli}; tarayıcı yoksa boş."""
-    if not urls:
-        return {}
-    try:
-        from playwright.sync_api import sync_playwright
-    except Exception:
-        return {}
-    out = {}
-    try:
-        with sync_playwright() as p:
-            b = p.chromium.launch()
-            pg = b.new_page(user_agent=UA["User-Agent"], locale="tr-TR", viewport={"width": 1280, "height": 900})
-            dugme = re.compile(r"daha\s*fazla|devamını|tümünü|daha\s*çok|göster|yükle", re.I)
-            for i, url in enumerate(urls):
-                ilk = son = basilan = 0
-                try:
-                    pg.goto(url, wait_until="networkidle", timeout=90000)
-                    pg.wait_for_timeout(2000)
-                    say = lambda: pg.eval_on_selector_all("a[href*='/kampanyalar/']", "e => e.length")
-                    ilk = son = say()
-                    for _ in range(40):
-                        n = say()
-                        pg.evaluate("window.scrollTo(0, document.body.scrollHeight)")  # kaydırınca kendiliğinden yükleniyorsa
-                        pg.wait_for_timeout(1500)
-                        if say() > n:
-                            continue
-                        adaylar = [x for x in pg.get_by_role("button", name=dugme).all() + pg.get_by_role("link", name=dugme).all() + pg.get_by_text(dugme).all() if x.is_visible()]
-                        adaylar = [x for x in adaylar if not re.search(r"kampanyalar/?$|geçmiş", (x.get_attribute("href") or "") + (x.inner_text() or ""), re.I)]
-                        if not adaylar:
-                            break
-                        adaylar[-1].scroll_into_view_if_needed()
-                        adaylar[-1].click()
-                        basilan += 1
-                        pg.wait_for_timeout(2500)
-                        if pg.url.split("#")[0] != url.split("#")[0]:  # başka sayfaya gittiyse geri dön, dur
-                            pg.go_back(wait_until="networkidle")
-                            break
-                        if say() <= n:
-                            break
-                    son = say()
-                    out[url] = pg.content()
-                except Exception as e:
-                    print(f"  tarayıcı {i + 1}: hata {type(e).__name__}")
-                print(f"  tarayıcı {i + 1}: bağlantı {ilk} → {son}, düğmeye basılan {basilan}")
-            b.close()
-    except Exception:
-        pass
-    return out
-
 def isbank(segment):
     ana = get(KOK_I + "/kampanyalar" + ("?v=ticari" if segment == "ticari" else ""))
     if not ana:
@@ -211,20 +160,8 @@ def isbank(segment):
         lst = isb_kartlar(get(url), adet)
         slug = url.split("?")[0].rstrip("/").split("/")[-1]
         kats.append({"ad": ad, "slug": slug, "adet": adet, "url": url, "kampanyalar": lst, "biten": isb_kartlar.biten})
-    # Eksik kalan kategoriler ("Daha Fazla" ile açılanlar) tarayıcıyla tamamlanır
-    eksik = [k for k in kats if len(k["kampanyalar"]) < k["adet"]]
-    tam = isb_tarayici([k["url"] for k in eksik])
-    for k in eksik:
-        if k["url"] in tam:
-            lst = isb_kartlar(tam[k["url"]], k["adet"])
-            if len(lst) >= len(k["kampanyalar"]):
-                k["kampanyalar"] = lst
-                k["biten"] = max(k["biten"], isb_kartlar.biten)
-    print(f"isbank/{segment}: eksik kategori {len(eksik)}, tarayıcıyla tamamlanan {sum(1 for k in eksik if len(k['kampanyalar']) >= k['adet'])}")
-    # Sağlama: güncel + süresi bitmiş = sitedeki kategori adedi (yalnızca sayılar)
-    for k in kats:
-        if len(k["kampanyalar"]) != k["adet"]:
-            print(f"  kategori {kats.index(k) + 1}: sitede {k['adet']} = güncel {len(k['kampanyalar'])} + bitmiş {k['biten']}" + (" ✓" if len(k["kampanyalar"]) + k["biten"] == k["adet"] else " ✗"))
+    # İş Bankası'nın kategori adetlerine süresi bitmiş ("Bu Kampanya Sona Ermiştir") kampanyalar da dahildir;
+    # sitede güncel kampanyalar önce, bitmişler altta ve "Daha Fazla Kampanya Göster" ile listelenir. Burada yalnızca güncel olanlar alınır.
     return {"toplam": sum(k["adet"] for k in kats), "kategoriler": kats}
 
 # ---------- maximum.com.tr ----------

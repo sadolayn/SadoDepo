@@ -1466,7 +1466,7 @@ function renderKampanyalar() {
   const V0 = KH[kKay][kSeg], kayp = V0.toplam - L.length, biten = (V0.kategoriler || []).reduce((a, c) => a + (c.biten || 0), 0);
   $("list").innerHTML = sag + (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
     + (liste.length ? liste.map((k) => kKart(k, renk)).join("") : '<div class="empty">Bu seçimde şu an kampanya yok.</div>')
-    + (kayp > 0 && !kNe && !kNere && !kKim ? `<p class="note" style="text-align:center">${kayDom}'de ${V0.toplam} yazıyor: ${biten && biten >= kayp ? `<b>${L.length} güncel</b> + ${kayp} süresi bitmiş kampanya (sitede "Sona Ermiştir" etiketli). Burada yalnızca güncel olanlar var.` : `${kayp} tanesi buraya henüz gelmiyor.`}</p>` : "") + tumLink;
+    + (kayp > 0 && !kNe && !kNere && !kKim ? `<p class="note" style="text-align:center">${kayDom}'de ${V0.toplam} yazıyor: ${kKay === "isbank" || (biten && biten >= kayp) ? `<b>${L.length} güncel</b> + ${kayp} süresi bitmiş kampanya. Sitedeki sayılara "Bu Kampanya Sona Ermiştir" yazan eski kampanyalar da dahil; burada yalnızca güncel olanlar var.` : `${kayp} tanesi buraya henüz gelmiyor.`}</p>` : "") + tumLink;
 }
 function renderCamps() {
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
