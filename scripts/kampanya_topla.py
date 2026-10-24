@@ -121,24 +121,34 @@ def isb_kategoriler(body):
 def isb_kartlar(body, adet=None):
     """Kategori sayfasındaki güncel kampanya kartları ('Geçmiş Kampanyalar' sonrası alınmaz).
     Bitiş tarihi yazmayan kartlar da alınır; ama sayfadaki adetten fazlası çıkarsa (menü bağlantısı karışmış demektir) yalnızca tarihli olanlar kalır."""
-    guncel = re.split(r"Geçmiş\s+Kampanyalar", temiz(body), maxsplit=1)[0]
+    parca = re.split(r"Geçmiş\s+Kampanyalar", temiz(body), maxsplit=1)
+    guncel = parca[0]
     out, gor, tarihsiz = [], set(), []
+    # Süresi bitmiş kartlar (sitede "Bu Kampanya Sona Ermiştir" etiketli ya da "Geçmiş Kampanyalar" altında) yalnızca sayılır
+    biten = set()
+    for m in re.finditer(r'(?is)<a[^>]+href="(/kampanyalar/[^"#?]+)"[^>]*>(.*?)</a>', temiz(body)):
+        ic = metin(m.group(2)); sl = m.group(1).rstrip("/").split("/")[-1]
+        if re.search(r"sona\s+erm", ic, re.I) or (len(parca) > 1 and m.start() >= len(guncel) and len(ic) >= 15 and not re.search(r"\(\d+\)$", ic)):
+            biten.add(sl)
     for m in re.finditer(r'(?is)<a[^>]+href="(/kampanyalar/[^"#?]+)"[^>]*>(.*?)</a>', guncel):
         href, ic = m.group(1).replace("//", "/"), metin(m.group(2))
         slug = href.rstrip("/").split("/")[-1]
         if re.search(r"\(\d+\)$", ic) or slug in gor:
             continue
-        mt = re.match(r"(.*?)\s*Bitiş Tarihi:\s*(\d{2})\.(\d{2})\.(\d{4})\s*(.*)", ic)
+        if slug in biten or re.search(r"sona\s+erm", ic, re.I):
+            continue
+        mt = re.match(r"(.*?)\s*Bitiş Tarihi:\s*(\d{1,2})\.(\d{1,2})\.(\d{4})\s*(.*)", ic)
         if not mt:
-            if len(ic) >= 20 and not re.match(r"(?i)^(tüm kampanya|detaylı bilgi|geçmiş kampanya)", ic):
+            if len(ic) >= 20 and not re.match(r"(?i)^(>|›|tüm kampanya|detaylı bilgi|geçmiş kampanya)", ic) and not re.search(r"kampanyaları$", ic, re.I):
                 gor.add(slug)
                 tarihsiz.append({"baslik": re.sub(r"\s*Detaylı Bilgi\s*>?\s*$", "", ic)[:160], "bitis": "", "ozet": "", "url": KOK_I + href})
             continue
         gor.add(slug)
-        out.append({"baslik": mt.group(1).strip()[:160], "bitis": f"{mt.group(4)}-{mt.group(3)}-{mt.group(2)}",
+        out.append({"baslik": mt.group(1).strip()[:160], "bitis": f"{mt.group(4)}-{int(mt.group(3)):02d}-{int(mt.group(2)):02d}",
                     "ozet": re.sub(r"\s*Detaylı Bilgi\s*>?\s*$", "", mt.group(5)).strip()[:220], "url": KOK_I + href})
     if tarihsiz and (adet is None or len(out) + len(tarihsiz) <= adet):
         out += tarihsiz
+    isb_kartlar.biten = len(biten)
     return out
 
 def isb_tarayici(urls):
@@ -190,16 +200,21 @@ def isbank(segment):
     for url, ad, adet in isb_kategoriler(ana):
         lst = isb_kartlar(get(url), adet)
         slug = url.split("?")[0].rstrip("/").split("/")[-1]
-        kats.append({"ad": ad, "slug": slug, "adet": adet, "url": url, "kampanyalar": lst})
+        kats.append({"ad": ad, "slug": slug, "adet": adet, "url": url, "kampanyalar": lst, "biten": isb_kartlar.biten})
     # Eksik kalan kategoriler ("Daha Fazla" ile açılanlar) tarayıcıyla tamamlanır
     eksik = [k for k in kats if len(k["kampanyalar"]) < k["adet"]]
     tam = isb_tarayici([k["url"] for k in eksik])
     for k in eksik:
         if k["url"] in tam:
             lst = isb_kartlar(tam[k["url"]], k["adet"])
-            if len(lst) > len(k["kampanyalar"]):
+            if len(lst) >= len(k["kampanyalar"]):
                 k["kampanyalar"] = lst
+                k["biten"] = max(k["biten"], isb_kartlar.biten)
     print(f"isbank/{segment}: eksik kategori {len(eksik)}, tarayıcıyla tamamlanan {sum(1 for k in eksik if len(k['kampanyalar']) >= k['adet'])}")
+    # Sağlama: güncel + süresi bitmiş = sitedeki kategori adedi (yalnızca sayılar)
+    for k in kats:
+        if len(k["kampanyalar"]) != k["adet"]:
+            print(f"  kategori {kats.index(k) + 1}: sitede {k['adet']} = güncel {len(k['kampanyalar'])} + bitmiş {k['biten']}" + (" ✓" if len(k["kampanyalar"]) + k["biten"] == k["adet"] else " ✗"))
     return {"toplam": sum(k["adet"] for k in kats), "kategoriler": kats}
 
 # ---------- maximum.com.tr ----------
