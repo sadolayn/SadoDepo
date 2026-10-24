@@ -1,8 +1,8 @@
 {
- "guncelleme": "2026-10-25T00:04",
+ "guncelleme": "2026-10-25T00:12",
  "isbank": {
   "bireysel": {
-   "toplam": 192,
+   "toplam": 191,
    "kategoriler": [
     {
      "ad": "İş’te Maaş’a Özel",
@@ -601,7 +601,7 @@
     {
      "ad": "Giyim-Aksesuar Kampanyaları",
      "slug": "giyim-aksesuar-kampanyalari",
-     "adet": 48,
+     "adet": 47,
      "url": "https://www.isbank.com.tr/kampanyalar/giyim-aksesuar-kampanyalari",
      "kampanyalar": [
       {
@@ -4328,7 +4328,7 @@
  },
  "maximiles": {
   "bireysel": {
-   "toplam": 42,
+   "toplam": 54,
    "kampanyalar": [
     {
      "baslik": "10.000 TL Ve Üzeri Market Alışverişinize 1.000 TL'ye Varan MaxiPuan!",
@@ -4347,6 +4347,15 @@
      "ilk": "2000-01-01",
      "ne": "Ayrıcalık",
      "nere": "Eğlence & Spor"
+    },
+    {
+     "baslik": "Amazon.com.tr'de Peşin Fiyatına 6 Taksit Fırsatı!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/amazon-com-tr-de-6-taksit-firsati",
+     "ilk": "2026-10-25",
+     "ne": "Taksit",
+     "nere": "Online Alışveriş"
     },
     {
      "baslik": "Atasay.com'da 30.000 TL Ve Üzeri İlk Alışverişe 1.500 TL MaxiPuan!",
@@ -4403,6 +4412,24 @@
      "nere": "Eğitim & Kitap"
     },
     {
+     "baslik": "Gap'te %10 İndirim!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/gap-te-10-indirim",
+     "ilk": "2026-10-25",
+     "ne": "İndirim",
+     "nere": "Giyim & Kozmetik"
+    },
+    {
+     "baslik": "Giyim Ve Kozmetik MaxiPuan Kampanyası",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/giyim-ve-kozmetik-maxipuan-kampanyasi",
+     "ilk": "2026-10-25",
+     "ne": "MaxiPuan",
+     "nere": "Giyim & Kozmetik"
+    },
+    {
      "baslik": "Hepsiburada'da Peşin Fiyatına 6 Taksit Fırsatı!",
      "bitis": "2026-10-31",
      "ozet": "",
@@ -4430,6 +4457,15 @@
      "nere": "Araç & Akaryakıt"
     },
     {
+     "baslik": "Lastikcim.com'da 4 Taksit Fırsatı!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/lastikcim-com-da-4-taksit-firsati",
+     "ilk": "2026-10-25",
+     "ne": "Taksit",
+     "nere": "Araç & Akaryakıt"
+    },
+    {
      "baslik": "Market Alışverişlerinize 3.000 TL'ye Varan MaxiPuan!",
      "bitis": "2026-10-31",
      "ozet": "",
@@ -4446,6 +4482,15 @@
      "ilk": "2000-01-01",
      "ne": "MaxiPuan",
      "nere": "Market & Yemek"
+    },
+    {
+     "baslik": "Marks And Spencer'da %10 İndirim!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/marks-and-spencer-da-10-indirim",
+     "ilk": "2026-10-25",
+     "ne": "İndirim",
+     "nere": "Giyim & Kozmetik"
     },
     {
      "baslik": "Mavi'de 500 TL'ye Varan MaxiPuan!",
@@ -4473,6 +4518,15 @@
      "ilk": "2000-01-01",
      "ne": "MaxiMil",
      "nere": "Market & Yemek"
+    },
+    {
+     "baslik": "Maximiles Black İle Yurt Dışı Çıkış Harcı Ödemelerinizde %50’ye Varan İndirim!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-black-ile-yurt-disi-cikis-harci-odemelerinizde-50ye-varan-indirim",
+     "ilk": "2026-10-25",
+     "ne": "MaxiMil",
+     "nere": "Seyahat"
     },
     {
      "baslik": "Maximiles Black'inize Özel Swissotel Açık Hava Sineması Biletlerinde %20 İndirim!",
@@ -4509,6 +4563,15 @@
      "ilk": "2000-01-01",
      "ne": "MaxiMil",
      "nere": "Bankacılık"
+    },
+    {
+     "baslik": "AdL'de 750 TL MaxiPuan!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-adl-de-750-tl-maxipuan-kampanyasi",
+     "ilk": "2026-10-25",
+     "ne": "MaxiPuan",
+     "nere": "Giyim & Kozmetik"
     },
     {
      "baslik": "ETS’deki Seçili Oteller Ve Turlarda 7.500 TL’ye Varan MaxiPuan Fırsatı!",
@@ -4556,6 +4619,15 @@
      "nere": "Market & Yemek"
     },
     {
+     "baslik": "Love My Body'de 750 TL MaxiPuan!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-tan-love-my-body-de-750-tl-maxipuan-kampanyasi",
+     "ilk": "2026-10-25",
+     "ne": "MaxiPuan",
+     "nere": "Giyim & Kozmetik"
+    },
+    {
      "baslik": "Maximiles’a Özel İstanbul Havalimanı İGA Lounge’larında %100’e Varan İndirimli Giriş Ayrıcalığı!",
      "bitis": "2026-12-31",
      "ozet": "",
@@ -4597,6 +4669,15 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/mediamarktta-taksit-firsati",
      "ilk": "2000-01-01",
+     "ne": "Taksit",
+     "nere": "Elektronik & Beyaz Eşya"
+    },
+    {
+     "baslik": "Miele'de Peşin Fiyatına 6 Taksit!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/miele-de-pesin-fiyatina-6-taksit",
+     "ilk": "2026-10-25",
      "ne": "Taksit",
      "nere": "Elektronik & Beyaz Eşya"
     },
@@ -4664,6 +4745,15 @@
      "nere": "Ödeme & Fatura"
     },
     {
+     "baslik": "Samsung.com'da Seçili Beyaz Eşyalarda %15 İndirim!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/samsung-com-da-secili-beyaz-esyalarda-15-indirim",
+     "ilk": "2026-10-25",
+     "ne": "İndirim",
+     "nere": "Elektronik & Beyaz Eşya"
+    },
+    {
      "baslik": "Taksitli E-Ticaret Alışverişlerinizde 1.000 TL'ye Varan MaxiPuan!",
      "bitis": "2026-10-31",
      "ozet": "",
@@ -4682,11 +4772,29 @@
      "nere": "Seyahat"
     },
     {
+     "baslik": "Yepy'de Peşin Fiyatına 3 Ve 6 Taksit Fırsatı!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/yepy-de-pesin-fiyatina-taksit-firsati",
+     "ilk": "2026-10-25",
+     "ne": "Taksit",
+     "nere": "Online Alışveriş"
+    },
+    {
      "baslik": "Yolcu360'tan Araç Kiralamada İndirim Fırsatı!",
      "bitis": "2026-10-31",
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/yolcu360-tan-arac-kiralamada-indirim-firsati",
      "ilk": "2000-01-01",
+     "ne": "İndirim",
+     "nere": "Araç & Akaryakıt"
+    },
+    {
+     "baslik": "Yolcu360'tan Yurt Dışında Araç Kiralamaya Özel Net %15 İndirim Fırsatı",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/yolcu360-tan-arac-kiralamaya-ozel-net-15-yurt-disi-indirimi",
+     "ilk": "2026-10-25",
      "ne": "İndirim",
      "nere": "Araç & Akaryakıt"
     },
@@ -4707,6 +4815,137 @@
      "ilk": "2000-01-01",
      "ne": "MaxiMil",
      "nere": "Seyahat"
+    }
+   ]
+  },
+  "ticari": {
+   "toplam": 14,
+   "kampanyalar": [
+    {
+     "baslik": "İş Bankası Ticari Kredi Kartı Yeni Müşterilerine Özel Faizsiz Taksit Kampanyası",
+     "bitis": "2026-12-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/ilk-ticari-kredi-kartina-ozel-secili-sektorlerde-faizsiz-2-taksit-firsati",
+     "ilk": "2000-01-01",
+     "ne": "Taksit",
+     "nere": "Bankacılık"
+    },
+    {
+     "baslik": "İş Bankası TROY Ticari Kartınızı Trendyol'a Kaydedin 400 TL İndirim Kazanın",
+     "bitis": "2026-10-25",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/is-bankasi-troy-ticari-kartinizi-trendyola-kaydedin-400-tl-indirim-kazanin",
+     "ilk": "2000-01-01",
+     "ne": "İndirim",
+     "nere": "Online Alışveriş"
+    },
+    {
+     "baslik": "İş Bankası Visa Ticari Kart Sahiplerine Enterprise Araç Kiralamalarda İndirim Fırsatı!",
+     "bitis": "2026-12-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/is-bankasi-visa-ticari-kart-sahiplerine-enterprise-arac-kiralamalarda-indirim-firsati",
+     "ilk": "2000-01-01",
+     "ne": "İndirim",
+     "nere": "Araç & Akaryakıt"
+    },
+    {
+     "baslik": "Maximiles Business Startup Kredi Kart Sahiplerine Özel 200.000 USD'ye Varan Google Cloud Kredisi!",
+     "bitis": "2026-12-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-business-startup-kredi-kart-sahiplerine-ozel-200-000-usd-ye-varan-google-cloud-kredisi",
+     "ilk": "2000-01-01",
+     "ne": "MaxiMil",
+     "nere": "Bankacılık"
+    },
+    {
+     "baslik": "Maximiles Business Startup Kredi Kart Sahiplerine Özel 5.000 USD AWS Cloud Kredisi!",
+     "bitis": "2026-12-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-business-startup-kredi-kart-sahiplerine-ozel-5-000-usd-aws-cloud-kredisi",
+     "ilk": "2000-01-01",
+     "ne": "MaxiMil",
+     "nere": "Bankacılık"
+    },
+    {
+     "baslik": "Maximiles Business Startup Kredi Kart Sahiplerine Özel 5.000 USD'ye Varan Eachlabs Kredisi!",
+     "bitis": "2026-12-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-business-startup-kredi-kart-sahiplerine-ozel-5-000-usd-ye-varan-eachlabs-kredisi",
+     "ilk": "2000-01-01",
+     "ne": "MaxiMil",
+     "nere": "Bankacılık"
+    },
+    {
+     "baslik": "Maximiles Business Startup Kredi Kart Sahiplerine Özel Spiky.AI Alımlarına %20 İndirim!",
+     "bitis": "2027-03-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-business-startup-kredi-kart-sahiplerine-ozel-spiky-ai-alimlarina-20-indirim",
+     "ilk": "2000-01-01",
+     "ne": "MaxiMil",
+     "nere": "Bankacılık"
+    },
+    {
+     "baslik": "Maximiles Business Startup Kredi Kartı İle Webrazzi Etkinlik Biletlerinde %50'ye Varan İndirim!",
+     "bitis": "2026-12-09",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-business-startup-kredi-karti-ile-webrazzi-etkinlik-biletlerinde-50-ye-varan-indirim",
+     "ilk": "2000-01-01",
+     "ne": "MaxiMil",
+     "nere": "Eğlence & Spor"
+    },
+    {
+     "baslik": "Maximiles Business Startup Kredi Kartı Sahiplerine Özel Gemini Enterprise Ürünlerinde %15 İndirim!",
+     "bitis": "2026-12-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-business-startup-kredi-karti-sahiplerine-ozel-gemini-enterprise-urunlerinde-15-indirim",
+     "ilk": "2000-01-01",
+     "ne": "MaxiMil",
+     "nere": "Araç & Akaryakıt"
+    },
+    {
+     "baslik": "Offismekan‘da Uzun Dönemli Ofis Kiralamalarınıza Özel %20 İndirim Ve 12 Ay Taksit Fırsatı!",
+     "bitis": "2026-12-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/offismekanda-uzun-donemli-ofis-kiralamalariniza-ozel-20-indirim-ve-12-ay-taksit-firsati",
+     "ilk": "2000-01-01",
+     "ne": "İndirim",
+     "nere": "Araç & Akaryakıt"
+    },
+    {
+     "baslik": "Startup Kredi Kartı Sahiplerine Özel AI Expanded Ürün Paketlerinde %44’e Varan İndirim!",
+     "bitis": "2026-12-24",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/startup-kredi-karti-sahiplerine-ozel-ai-expanded-urun-paketlerinde-44e-varan-indirim",
+     "ilk": "2000-01-01",
+     "ne": "İndirim",
+     "nere": "Bankacılık"
+    },
+    {
+     "baslik": "Ticari Kredi Kartlar İle Harcamaya MaxiPuan Kampanyası",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/ticari-kredi-kartlara-ozel-iscep-ticari-katlimli-harcamaya-maxpiuan-kampanyasi",
+     "ilk": "2000-01-01",
+     "ne": "MaxiPuan",
+     "nere": "Bankacılık"
+    },
+    {
+     "baslik": "Ticari Kredi Kartları İle Deniz Ticaret Odası Ödemelerinde %50 İndirim Ayrıcalığı!",
+     "bitis": "2027-06-17",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/ticari-kredi-kartlari-ile-deniz-ticaret-odasi-odemelerinde-50-indirim-ayricaligi",
+     "ilk": "2000-01-01",
+     "ne": "İndirim",
+     "nere": "Bankacılık"
+    },
+    {
+     "baslik": "Yeni Ticari Kredi Kartı Müşterilerimize Hoş Geldin Kampanyası",
+     "bitis": "2026-12-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/yeni-ticari-kredi-karti-musterilerimize-hos-geldin-kampanyasi",
+     "ilk": "2000-01-01",
+     "ne": "Ayrıcalık",
+     "nere": "Bankacılık"
     }
    ]
   }
