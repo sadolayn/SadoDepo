@@ -1,6 +1,6 @@
-# Kampanya toplayıcı: isbank.com.tr (bireysel + ticari) ve maximum.com.tr (bireysel + ticari)
+# Kampanya toplayıcı: isbank.com.tr, maximum.com.tr ve maximiles.com.tr (her biri bireysel + ticari)
 # Günde iki kez çalışır; isbank/kampanya_hepsi.json dosyasına YALNIZCA işlenmiş alanları yazar
-# (başlık, kısa açıklama, bitiş tarihi, bağlantı, ilk görülme). Ham sayfa kaydedilmez, kayda yalnızca sayı basılır.
+# (başlık, kısa açıklama, bitiş tarihi, bağlantı, ilk görülme, ne/nere grubu). Ham sayfa kaydedilmez, kayda yalnızca sayı basılır.
 # Sigorta: bir kaynak o gün açılmazsa ya da öncekinin yarısından az kampanya gelirse o kaynağın eski listesi korunur.
 import json, re, html, os, urllib.request, urllib.error, datetime as dt
 
@@ -24,6 +24,72 @@ def metin(s):
     s = re.sub(r"\s+", " ", s).strip()
     # Banka diliyle yazılmış "sizi bekliyor / kazanın" gibi ifadeler olduğu gibi kalır; yalnızca boşluk temizlenir
     return s
+
+# ---------- Sınıflandırıcı ----------
+# Kampanya sınıflandırıcı: her kampanya "ne" ve "nere" boyutlarında TAM OLARAK BİR gruba girer (ilk eşleşen kazanır).
+
+def _r(*k):
+    return re.compile("|".join(k), re.I)
+
+# Ne kazanırım — sıra önemli
+NE = [
+    ("MaxiMil",       "✈️", _r(r"maximil", r"maximiles[’'`]?(?:ın|in)?ı?z?\s+ile", r"\bmil(?:ler)?\b")),
+    ("MaxiPuan",      "🪙", _r(r"maxipuan", r"pazaramapuan", r"\bpuan", r"geri kazan")),
+    ("Faiz & Kredi",  "🏦", _r(r"faiz oran", r"\bkredi(?!\s*kart)", r"ek hesap", r"mevduat", r"vadeli", r"faizsiz kredi")),
+    ("İndirim",       "🏷️", _r(r"indirim", r"%\s?\d", r"\d\s?%", r"yerine", r"bedava", r"ücretsiz", r"hediye", r"usd\s?'?\s?ye varan", r"bağış")),
+    ("Taksit",        "📆", _r(r"taksit", r"erteleme", r"vade fark", r"sonradan")),
+]
+NE_DIGER = ("Ayrıcalık", "✨")
+
+# Nerede — sıra önemli (dar ve kesin olanlar önce)
+NERE = [
+    ("Pati",                "🐾", _r(r"\bpati\b", r"royal canin", r"veteriner", r"petshop")),
+    ("Ödeme & Fatura",      "🧾", _r(r"vergi", r"harç", r"fatura", r"igdaş", r"sağlık", r"eczane", r"bağış", r"katkı pay", r"\bsgk\b", r"tema vakf", r"aidat")),
+    ("Eğitim & Kitap",      "🎓", _r(r"eğitim", r"okul", r"kırtasiye", r"kitap", r"penguen", r"iş kültür", r"kurs\b")),
+    ("Araç & Akaryakıt",    "🚗", _r(r"akaryak", r"\bshell\b", r"opet", r"petrol", r"istasyon", r"şarj", r"lastik", r"pirelli", r"petlas", r"michelin",
+                                  r"araç", r"oto\s?(?:yol|yıkama|motiv|park)", r"otomotiv", r"otopark", r"\bhgs\b", r"vinyet", r"europcar", r"tiktak", r"yolcu360",
+                                  r"windycar", r"qcar", r"enterprise", r"kiralama", r"up enerji", r"zeplin", r"taşıt")),
+    ("Market & Yemek",      "🛒", _r(r"market", r"migros", r"carrefour", r"\ba101\b", r"\bşok\b", r"\bbim\b", r"getir", r"metro mağaza", r"bonveno", r"yemek",
+                                  r"restoran", r"büfe", r"uber eats", r"trendyol go", r"kafe", r"\bcafe\b", r"gıda")),
+    ("Seyahat",             "🏖️", _r(r"otel", r"tatil", r"uçak", r"uçuş", r"\bets\b", r"ets[’']", r"ucuzabilet", r"\bthy\b", r"türk hava", r"emirates", r"havalimanı",
+                                  r"lounge", r"fast track", r"yurt dışı", r"duty free", r"roaming", r"\besim", r"seyahat", r"turizm", r"\btur(?:lar)?", r"pegasus")),
+    ("Giyim & Kozmetik",    "👗", _r(r"giyim", r"kozmetik", r"ayakkab", r"aksesuar", r"zara\b(?! home)", r"lefties", r"massimo", r"stradivarius", r"pull&bear", r"bershka",
+                                  r"oysho", r"\bmavi\b", r"mavi[’']", r"\bflo\b", r"flo[’']", r"lumberjack", r"nine west", r"in street", r"reebok", r"under armour", r"sportive",
+                                  r"\bgap\b", r"gap[’']", r"marks", r"forever 21", r"lululemon", r"\bdesa\b", r"desa[’']", r"\badl\b", r"adl[’']", r"love my body", r"victoria",
+                                  r"sephora", r"m\.a\.c", r"bobbi brown", r"yves rocher", r"kiko", r"cosmetics", r"jimmy key", r"tumi", r"samsonite", r"atasay", r"eleventy",
+                                  r"in-formal", r"maje", r"sandro", r"capri", r"decathlon", r"trendyolmilla", r"\bdolap\b", r"zsa zsa", r"mağazalarında vade farksız")),
+    ("Elektronik & Beyaz Eşya", "📱", _r(r"elektronik", r"media\s?markt", r"samsung", r"teknosa", r"vatan", r"apple", r"beyaz eşya", r"klima", r"mitsubishi", r"dyson",
+                                  r"miele", r"tefal", r"shark ninja", r"süpürge", r"monitör", r"telefon", r"\bmonster\b", r"monster[’']", r"demirdöküm", r"vaillant", r"yapay zeka", r"\btv\b")),
+    ("Ev & Yaşam",          "🛋️", _r(r"mobilya", r"yatak", r"yataş", r"doğtaş", r"kelebek", r"ikea", r"bella maison", r"lazzoni", r"zara home", r"karaca", r"korkmaz",
+                                  r"paşabahçe", r"yatsan", r"dekorasyon", r"flying tiger", r"yapı sektör", r"toyzz", r"oyuncak", r"ofis kiralama", r"offismekan", r"iş mekan")),
+    ("Eğlence & Spor",      "🎭", _r(r"macfit", r"\bspor", r"sport", r"maraton", r"euroleague", r"bubilet", r"passo", r"\bbkm\b", r"etkinlik", r"sinema", r"cinema",
+                                  r"kidzania", r"digiturk", r"prime üyel", r"alive", r"konser", r"biletinix", r"webrazzi")),
+    ("Online Alışveriş",    "🌐", _r(r"e-ticaret", r"amazon", r"trendyol", r"hepsiburada", r"\bn11\b", r"n11[’']", r"pttavm", r"pazarama", r"yepy", r"internet alışveriş",
+                                  r"online", r"\.com")),
+    ("Bankacılık",          "🏦", _r(r"maaş", r"emekli", r"kredi", r"ek hesap", r"mevduat", r"sigorta", r"\bbes\b", r"işcep", r"bankamatik", r"temassız", r"karekod",
+                                  r"\btroy\b", r"troy[’']", r"kart başvuru", r"ek kart", r"yeni kredi kartı", r"başvurunuz", r"\bpos\b", r"yazarkasa", r"ökc", r"esnaf",
+                                  r"tarım", r"çiftçi", r"startup", r"ticari kart", r"ticari kredi", r"eft", r"havale", r"işpay", r"hesap", r"faiz", r"black", r"plus", r"finansman", r"teminat", r"kosgeb", r"imece", r"\bosb\b", r"girişimci", r"paket")),
+]
+NERE_DIGER = ("Genel", "✨")
+
+# isbank.com.tr kategori adresinden kesin "nere" ipucu (anahtar kelimeden önce gelir)
+SLUG_NERE = {
+    "gida-market-kampanyalari": "Market & Yemek", "akaryakit-kampanyalari": "Araç & Akaryakıt", "otomotiv-kampanyalari": "Araç & Akaryakıt",
+    "arac-kiralama-kampanyalari": "Araç & Akaryakıt", "giyim-aksesuar-kampanyalari": "Giyim & Kozmetik", "seyahat-kampanyalari": "Seyahat",
+    "turizm-kampanyalari": "Seyahat", "egitim-kirtasiye-kampanyalari": "Eğitim & Kitap", "dekorasyon-mobilya-kampanyalari": "Ev & Yaşam",
+    "beyaz-esya-kampanyalari": "Elektronik & Beyaz Eşya", "e-ticaret-kampanyalari": "Online Alışveriş", "fatura-kampanyalari": "Ödeme & Fatura",
+    "iste-maasa-ozel": "Bankacılık", "emeklilere-ozel": "Bankacılık", "bireysel-emeklilik": "Bankacılık", "bireysel-kredi-kampanyalari": "Bankacılık",
+    "bankamatik-karti-kampanyalari": "Bankacılık",
+}
+
+def sinifla(k, slug=""):
+    t = (k.get("baslik", "") + " " + k.get("ozet", "")).replace("İ", "i").replace("I", "ı")
+    tb = k.get("baslik", "").replace("İ", "i").replace("I", "ı")
+    ne = next((ad for ad, _, re_ in NE if re_.search(tb)), None) or next((ad for ad, _, re_ in NE if re_.search(t)), NE_DIGER[0])
+    nere = SLUG_NERE.get(slug) or next((ad for ad, _, re_ in NERE if re_.search(tb)), None) or next((ad for ad, _, re_ in NERE if re_.search(t)), NERE_DIGER[0])
+    return ne, nere
+
+GRUPLAR = {"ne": [(a, i) for a, i, _ in NE] + [NE_DIGER], "nere": [(a, i) for a, i, _ in NERE] + [NERE_DIGER]}
 
 # ---------- isbank.com.tr ----------
 KOK_I = "https://www.isbank.com.tr"
@@ -71,7 +137,7 @@ def isbank(segment):
 # ---------- maximum.com.tr ----------
 KOK_M = "https://www.maximum.com.tr"
 
-def max_kartlar(body):
+def max_kartlar(body, kok=KOK_M):
     """Kartlar 'Son N Gün' şeridine göre bölünür; başlık şeritten sonraki ilk anlamlı metin, bağlantı kampanya detayı."""
     b = temiz(body)
     yer = [m for m in re.finditer(r"Son\s+(\d+)\s+G[üu]n", b)]
@@ -86,8 +152,8 @@ def max_kartlar(body):
         once = b[(yer[i - 1].end() if i else max(0, m.start() - 6000)): m.start()]
         link = None
         for h in reversed(re.findall(r'href="([^"#]+)"', once)):
-            if "kampanya" in h.lower() and not re.search(r"/kampanyalar/(bireysel|ticari)/?$", h, re.I):
-                link = h if h.startswith("http") else KOK_M + h
+            if "kampanya" in h.lower() and not re.search(r"/kampanyalar/[a-z-]*(bireysel|ticari)[a-z-]*/?$", h, re.I):
+                link = h if h.startswith("http") else kok + h
                 break
         anahtar = link or metinler[0]
         if anahtar in gor:
@@ -95,7 +161,7 @@ def max_kartlar(body):
         gor.add(anahtar)
         kalan = int(m.group(1))
         out.append({"baslik": metinler[0][:160], "bitis": (bugun + dt.timedelta(days=max(0, kalan - 1))).isoformat(),
-                    "ozet": (metinler[1][:220] if len(metinler) > 1 and len(metinler[1]) > 25 else ""), "url": link or KOK_M + "/kampanyalar"})
+                    "ozet": (metinler[1][:220] if len(metinler) > 1 and len(metinler[1]) > 25 else ""), "url": link or kok + "/kampanyalar"})
     return out
 
 def maximum(segment):
@@ -105,6 +171,43 @@ def maximum(segment):
     lst = max_kartlar(body)
     say = re.search(r"Kampanya\s+Sayısı\s*\(\s*(\d+)\s*\)", temiz(body))
     return {"toplam": int(say.group(1)) if say else len(lst), "kampanyalar": lst}
+
+# ---------- maximiles.com.tr (maximum.com.tr ile aynı altyapı) ----------
+KOK_X = "https://www.maximiles.com.tr"
+
+def genel_kartlar(body, kok):
+    """Yedek okuyucu: 'Son N Gün' şeridi yoksa kampanya detay bağlantılarını ve başlıklarını alır (bitiş bilinmez)."""
+    out, gor = [], set()
+    for m in re.finditer(r'(?is)<a[^>]+href="([^"#?]*/kampanyalar/[^"#?]+)"[^>]*>(.*?)</a>', temiz(body)):
+        href, ic = m.group(1), metin(m.group(2))
+        if re.search(r"/kampanyalar/[a-z-]*(bireysel|ticari)[a-z-]*/?$", href, re.I) or len(ic) < 15 or re.match(r"(?i)^(detaylı bilgi|tüm kampanya)", ic):
+            continue
+        url = href if href.startswith("http") else kok + href
+        if url in gor:
+            continue
+        gor.add(url)
+        out.append({"baslik": ic[:160], "bitis": "", "ozet": "", "url": url})
+    return out
+
+def maximiles(segment):
+    ana = get(KOK_X + "/kampanyalar")
+    if not ana:
+        return None
+    adresler = [KOK_X + "/kampanyalar/" + segment, KOK_X + "/kampanyalar/" + segment + "-kampanyalar"]
+    # Sekme adresi sayfadaki bağlantılardan bulunur (kayda yazılmaz)
+    for h in re.findall(r'href="([^"#?]*/kampanyalar/[a-z-]*' + segment + r'[a-z-]*)/?"', ana, re.I):
+        adresler.insert(0, h if h.startswith("http") else KOK_X + h)
+    if segment == "bireysel":
+        adresler.append(KOK_X + "/kampanyalar")
+    for u in dict.fromkeys(adresler):
+        body = ana if u == KOK_X + "/kampanyalar" else get(u)
+        if not body:
+            continue
+        lst = max_kartlar(body, KOK_X) or genel_kartlar(body, KOK_X)
+        if lst:
+            say = re.search(r"Kampanya\s+Sayısı\s*\(\s*(\d+)\s*\)", temiz(body))
+            return {"toplam": int(say.group(1)) if say else len(lst), "kampanyalar": lst}
+    return None
 
 # ---------- Birleştir, sigorta, kaydet ----------
 eski = {}
@@ -136,8 +239,8 @@ def adet(v):
     if "kategoriler" in v: return sum(len(k["kampanyalar"]) for k in v["kategoriler"])
     return len(v.get("kampanyalar", []))
 
-veri = {"guncelleme": dt.datetime.now(TR).strftime("%Y-%m-%dT%H:%M"), "isbank": {}, "maximum": {}}
-for kaynak, fn in [("isbank", isbank), ("maximum", maximum)]:
+veri = {"guncelleme": dt.datetime.now(TR).strftime("%Y-%m-%dT%H:%M"), "isbank": {}, "maximum": {}, "maximiles": {}}
+for kaynak, fn in [("isbank", isbank), ("maximum", maximum), ("maximiles", maximiles)]:
     for seg in ["bireysel", "ticari"]:
         yeni = fn(seg)
         onceki = (eski.get(kaynak) or {}).get(seg)
@@ -149,5 +252,26 @@ for kaynak, fn in [("isbank", isbank), ("maximum", maximum)]:
             print(f"{kaynak}/{seg}: sitede {yeni['toplam']}, okunan {adet(yeni)}" + (f", kategori {len(yeni['kategoriler'])}" if "kategoriler" in yeni else ""))
 
 ilk_tarih(veri, eski)
+
+# Her kampanyaya tek bir "ne" ve tek bir "nere" grubu: toplamlar her zaman tutar.
+# isbank'ta aynı kampanya birden çok kategoride olabilir; hepsine aynı grup verilir (kategori ipucu olan ilk adres önce).
+for kaynak in veri:
+    if not isinstance(veri[kaynak], dict): continue
+    for seg, v in veri[kaynak].items():
+        if not v: continue
+        if "kategoriler" in v:
+            ipucu = {}
+            for kat in v["kategoriler"]:
+                for k in kat["kampanyalar"]:
+                    if k["url"] not in ipucu or (kat["slug"] in SLUG_NERE and ipucu[k["url"]] not in SLUG_NERE):
+                        ipucu[k["url"]] = kat["slug"]
+            liste = [(k, ipucu[k["url"]]) for kat in v["kategoriler"] for k in kat["kampanyalar"]]
+        else:
+            liste = [(k, "") for k in v.get("kampanyalar", [])]
+        sonuc = {}
+        for k, slug in liste:
+            if k["url"] not in sonuc: sonuc[k["url"]] = sinifla(k, slug)
+            k["ne"], k["nere"] = sonuc[k["url"]]
+veri["gruplar"] = {b: [{"ad": a, "ikon": i} for a, i in g] for b, g in GRUPLAR.items()}
 os.makedirs("isbank", exist_ok=True)
 json.dump(veri, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
