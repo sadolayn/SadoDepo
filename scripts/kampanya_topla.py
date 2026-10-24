@@ -52,13 +52,13 @@ NE_DIGER = ("Ayrıcalık", "✨")
 # Nerede — sıra önemli (dar ve kesin olanlar önce)
 NERE = [
     ("Pati",                "🐾", _r(r"\bpati\b", r"royal canin", r"veteriner", r"petshop")),
-    ("Ödeme & Fatura",      "🧾", _r(r"vergi", r"harç", r"fatura", r"igdaş", r"sağlık", r"eczane", r"bağış", r"katkı pay", r"\bsgk\b", r"tema vakf", r"aidat")),
+    ("Ödeme & Fatura",      "🧾", _r(r"vergi", r"harç", r"fatura", r"igdaş", r"sağlık", r"eczane", r"bağış", r"katkı pay", r"\bsgk\b", r"tema vakf", r"aidat", r"\bmtv\b", r"farmazon")),
     ("Eğitim & Kitap",      "🎓", _r(r"eğitim", r"okul", r"kırtasiye", r"kitap", r"penguen", r"iş kültür", r"kurs\b")),
     ("Araç & Akaryakıt",    "🚗", _r(r"akaryak", r"\bshell\b", r"opet", r"petrol", r"istasyon", r"şarj", r"lastik", r"pirelli", r"petlas", r"michelin",
                                   r"araç", r"oto\s?(?:yol|yıkama|motiv|park)", r"otomotiv", r"otopark", r"\bhgs\b", r"vinyet", r"europcar", r"tiktak", r"yolcu360",
                                   r"windycar", r"qcar", r"enterprise", r"kiralama", r"up enerji", r"zeplin", r"taşıt")),
     ("Market & Yemek",      "🛒", _r(r"market", r"migros", r"carrefour", r"\ba101\b", r"\bşok\b", r"\bbim\b", r"getir", r"metro mağaza", r"bonveno", r"yemek",
-                                  r"restoran", r"büfe", r"uber eats", r"trendyol go", r"kafe", r"\bcafe\b", r"gıda")),
+                                  r"restoran", r"büfe", r"uber eats", r"trendyol go", r"kafe", r"\bcafe\b", r"gıda", r"toptan", r"gastropay")),
     ("Seyahat",             "🏖️", _r(r"otel", r"tatil", r"uçak", r"uçuş", r"\bets\b", r"ets[’']", r"ucuzabilet", r"\bthy\b", r"türk hava", r"emirates", r"havalimanı",
                                   r"lounge", r"fast track", r"yurt dışı", r"duty free", r"roaming", r"\besim", r"seyahat", r"turizm", r"\btur(?:lar)?", r"pegasus")),
     ("Giyim & Kozmetik",    "👗", _r(r"giyim", r"kozmetik", r"ayakkab", r"aksesuar", r"zara\b(?! home)", r"lefties", r"massimo", r"stradivarius", r"pull&bear", r"bershka",
@@ -73,10 +73,10 @@ NERE = [
     ("Eğlence & Spor",      "🎭", _r(r"macfit", r"\bspor", r"sport", r"maraton", r"euroleague", r"bubilet", r"passo", r"\bbkm\b", r"etkinlik", r"sinema", r"cinema",
                                   r"kidzania", r"digiturk", r"prime üyel", r"alive", r"konser", r"biletinix", r"webrazzi")),
     ("Online Alışveriş",    "🌐", _r(r"e-ticaret", r"amazon", r"trendyol", r"hepsiburada", r"\bn11\b", r"n11[’']", r"pttavm", r"pazarama", r"yepy", r"internet alışveriş",
-                                  r"online", r"\.com")),
+                                  r"online", r"\.com", r"sevkiyat", r"kargo")),
     ("Bankacılık",          "🏦", _r(r"maaş", r"emekli", r"kredi", r"ek hesap", r"mevduat", r"sigorta", r"\bbes\b", r"işcep", r"bankamatik", r"temassız", r"karekod",
                                   r"\btroy\b", r"troy[’']", r"kart başvuru", r"ek kart", r"yeni kredi kartı", r"başvurunuz", r"\bpos\b", r"yazarkasa", r"ökc", r"esnaf",
-                                  r"tarım", r"çiftçi", r"startup", r"ticari kart", r"ticari kredi", r"eft", r"havale", r"işpay", r"hesap", r"faiz", r"black", r"plus", r"finansman", r"teminat", r"kosgeb", r"imece", r"\bosb\b", r"girişimci", r"paket")),
+                                  r"tarım", r"çiftçi", r"startup", r"ticari kart", r"ticari kredi", r"eft", r"havale", r"işpay", r"hesap", r"faiz", r"black", r"plus", r"finansman", r"teminat", r"kosgeb", r"imece", r"\bosb\b", r"girişimci", r"paket", r"ihracatçı", r"kart sahibi")),
 ]
 NERE_DIGER = ("Genel", "✨")
 
@@ -244,22 +244,28 @@ def x_tarayici():
     except Exception:
         return None
 
+AY_RE = "ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık"
+
 def x_tarih(t):
-    """Sayfadaki tarihlerden bugünden sonraki en geç olanı (bitiş) döndürür."""
-    adaylar = []
-    for g, a, y in re.findall(r"\b(\d{1,2})[./](\d{1,2})[./](20\d{2})\b", t):
-        adaylar.append((int(y), int(a), int(g)))
-    for g, a, y in re.findall(r"\b(\d{1,2})\s+(ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık)\s+(20\d{2})\b", t.lower()):
-        adaylar.append((int(y), AYLAR[a], int(g)))
-    iyi = []
-    for y, a, g in adaylar:
-        try:
-            d = dt.date(y, a, g)
-        except ValueError:
-            continue
-        if bugun <= d <= bugun + dt.timedelta(days=400):
-            iyi.append(d)
-    return max(iyi).isoformat() if iyi else ""
+    """Kampanya metnindeki bitiş: önce tarih aralığının sonu, yoksa metindeki en geç tarih.
+    Dönüş: ISO tarih, "" (tarih yok) ya da None (bütün tarihler geçmiş: kampanya bitmiş)."""
+    t = t.lower()
+    def d(y, a, g):
+        try: return dt.date(int(y), int(a) if str(a).isdigit() else AYLAR[a], int(g))
+        except (ValueError, KeyError): return None
+    sonlar = []
+    for m in re.finditer(r"(\d{1,2})[./](\d{1,2})[./](20\d{2})\s*(?:-|–|ile)\s*(\d{1,2})[./](\d{1,2})[./](20\d{2})", t):
+        sonlar.append(d(m.group(6), m.group(5), m.group(4)))
+    for m in re.finditer(r"(\d{1,2})\s*(?:(" + AY_RE + r")\s*(?:(20\d{2})\s*)?)?(?:-|–)\s*(\d{1,2})\s+(" + AY_RE + r")\s+(20\d{2})", t):
+        sonlar.append(d(m.group(6), m.group(5), m.group(4)))
+    tum = [d(y, a, g) for g, a, y in re.findall(r"\b(\d{1,2})[./](\d{1,2})[./](20\d{2})\b", t)]
+    tum += [d(y, a, g) for g, a, y in re.findall(r"\b(\d{1,2})\s+(" + AY_RE + r")\s+(20\d{2})\b", t)]
+    sonlar, tum = [x for x in sonlar if x], [x for x in tum if x]
+    aday = sonlar or tum
+    if not aday:
+        return ""
+    gelecek = [x for x in aday if bugun <= x <= bugun + dt.timedelta(days=400)]
+    return max(gelecek).isoformat() if gelecek else None
 
 def x_detay(url):
     b = get(url)
@@ -278,7 +284,12 @@ def x_detay(url):
     if ozet.lower().startswith(baslik.lower()[:30]):
         ozet = ""
     ticari = bool(re.search(r"Kampanyalar\s*(?:[›>/»]\s*)?Ticari\s+Kampanyalar", metin(t)))
-    return {"baslik": baslik[:160], "bitis": x_tarih(metin(t)), "ozet": ozet[:220], "url": url}, ticari
+    # Tarih yalnızca başlığın altındaki kampanya metninde aranır (menü, alt bilgi ve öteki kampanya kartları dışarıda kalır)
+    govde = metin(t[h1.end():] if h1 else t)[:3500]
+    bitis = x_tarih(govde)
+    if bitis is None:
+        return "bitti"
+    return {"baslik": baslik[:160], "bitis": bitis, "ozet": ozet[:220], "url": url}, ticari
 
 X_HEPSI = None
 
@@ -292,8 +303,12 @@ def x_hepsi():
     tr = x_tarayici()
     bir_t, tic_t = tr if tr else (set(), set())
     print(f"maximiles: sayfada {len(duz)} bağlantı, tarayıcıda {len(bir_t)} bireysel + {len(tic_t)} ticari" + ("" if tr else " (tarayıcı yok)"))
+    biten = 0
     for url in sorted(duz | bir_t | tic_t):
         r = x_detay(url)
+        if r == "bitti":
+            biten += 1
+            continue
         if not r:
             continue
         k, ticari_iz = r
@@ -301,6 +316,7 @@ def x_hepsi():
         elif url in bir_t: seg = "bireysel"
         else: seg = "ticari" if ticari_iz or re.search(r"ticari|business|işyeri|kobi|şirket", url + " " + k["baslik"], re.I) else "bireysel"
         X_HEPSI.setdefault(seg, []).append(k)
+    print(f"maximiles: süresi geçmiş {biten}, bitişi okunamayan {sum(1 for v in X_HEPSI.values() for k in v if not k['bitis'])}")
     return X_HEPSI
 
 def maximiles(segment):
@@ -352,6 +368,12 @@ for kaynak, fn in [("isbank", isbank), ("maximum", maximum), ("maximiles", maxim
             print(f"{kaynak}/{seg}: sitede {yeni['toplam']}, okunan {adet(yeni)}" + (f", kategori {len(yeni['kategoriler'])}" if "kategoriler" in yeni else ""))
 
 ilk_tarih(veri, eski)
+# Bir kaynak/bölüm ilk kez toplanıyorsa kampanyaları "yeni" sayılmaz (hepsine birden YENİ rozeti çıkmasın)
+for kaynak in ("isbank", "maximum", "maximiles"):
+    for seg, v in veri[kaynak].items():
+        if v and not adet((eski.get(kaynak) or {}).get(seg)):
+            for k in v.get("kampanyalar", []) + [x for c in v.get("kategoriler", []) for x in c["kampanyalar"]]:
+                k["ilk"] = "2000-01-01"
 
 # Her kampanyaya tek bir "ne" ve tek bir "nere" grubu: toplamlar her zaman tutar.
 # isbank'ta aynı kampanya birden çok kategoride olabilir; hepsine aynı grup verilir (kategori ipucu olan ilk adres önce).
