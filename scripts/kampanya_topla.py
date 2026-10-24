@@ -9,11 +9,19 @@ UA = {"User-Agent": "Mozilla/5.0 (compatible; SadolaynBot/1.0)", "Accept-Languag
 TR = dt.timezone(dt.timedelta(hours=3))
 bugun = dt.datetime.now(TR).date()
 
+DURUM = {}  # alan adı -> son HTTP durumu (kayda yalnızca sayı olarak basılır)
+
 def get(url):
+    alan = url.split("/")[2]
     try:
-        return urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60).read().decode("utf-8", "replace")
+        r = urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60)
+        DURUM[alan] = r.status
+        return r.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        DURUM[alan] = e.code
     except Exception:
-        return ""
+        DURUM[alan] = 0
+    return ""
 
 def temiz(s):
     return re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>", " ", s)
@@ -152,7 +160,7 @@ def max_kartlar(body, kok=KOK_M):
         once = b[(yer[i - 1].end() if i else max(0, m.start() - 6000)): m.start()]
         link = None
         for h in reversed(re.findall(r'href="([^"#]+)"', once)):
-            if "kampanya" in h.lower() and not re.search(r"/kampanyalar/[a-z-]*(bireysel|ticari)[a-z-]*/?$", h, re.I):
+            if "kampanya" in h.lower() and not re.search(r"/kampanyalar/(bireysel|ticari)(-kampanyalar)?/?$", h, re.I):
                 link = h if h.startswith("http") else kok + h
                 break
         anahtar = link or metinler[0]
@@ -180,7 +188,7 @@ def genel_kartlar(body, kok):
     out, gor = [], set()
     for m in re.finditer(r'(?is)<a[^>]+href="([^"#?]*/kampanyalar/[^"#?]+)"[^>]*>(.*?)</a>', temiz(body)):
         href, ic = m.group(1), metin(m.group(2))
-        if re.search(r"/kampanyalar/[a-z-]*(bireysel|ticari)[a-z-]*/?$", href, re.I) or len(ic) < 15 or re.match(r"(?i)^(detaylı bilgi|tüm kampanya)", ic):
+        if re.search(r"/kampanyalar/(bireysel|ticari)(-kampanyalar)?/?$", href, re.I) or len(ic) < 15 or re.match(r"(?i)^(detaylı bilgi|tüm kampanya)", ic):
             continue
         url = href if href.startswith("http") else kok + href
         if url in gor:
@@ -236,16 +244,18 @@ def ilk_tarih(yeni, eski_v):
 
 def adet(v):
     if not v: return 0
-    if "kategoriler" in v: return sum(len(k["kampanyalar"]) for k in v["kategoriler"])
-    return len(v.get("kampanyalar", []))
+    # Tekil bağlantı sayısı: bağlantılar okunamayıp hepsi aynı adrese düşerse sigorta devreye girer
+    if "kategoriler" in v: return len({k["url"] for c in v["kategoriler"] for k in c["kampanyalar"]})
+    return len({k["url"] for k in v.get("kampanyalar", [])})
 
+KOK = {"isbank": KOK_I, "maximum": KOK_M, "maximiles": KOK_X}
 veri = {"guncelleme": dt.datetime.now(TR).strftime("%Y-%m-%dT%H:%M"), "isbank": {}, "maximum": {}, "maximiles": {}}
 for kaynak, fn in [("isbank", isbank), ("maximum", maximum), ("maximiles", maximiles)]:
     for seg in ["bireysel", "ticari"]:
         yeni = fn(seg)
         onceki = (eski.get(kaynak) or {}).get(seg)
         if not yeni or (onceki and adet(yeni) < 0.5 * adet(onceki)):
-            print(f"::warning::{kaynak}/{seg}: okunan {adet(yeni)} (önceki {adet(onceki)}) — eski liste korundu")
+            print(f"::warning::{kaynak}/{seg}: okunan {adet(yeni)} (önceki {adet(onceki)}, HTTP {DURUM.get(KOK[kaynak].split('/')[2], '-')}) — eski liste korundu")
             yeni = onceki
         veri[kaynak][seg] = yeni
         if yeni:
