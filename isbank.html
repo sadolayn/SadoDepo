@@ -667,6 +667,18 @@
   /* Kampanyalar: kategori düğmeleri daha sıkı (isbank'ta 20'den fazla kategori var) */
   .altkutu .tsat .tgrid.kat { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
   .altkutu .tsat .tgrid.kat button { min-height: 34px !important; font-size: 11.5px !important; padding: 4px 5px !important; }
+  .altkutu .tfil.iki .tsat.kgr .tgrid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+  .altkutu .tsat.kgr button { font-size: 11.5px !important; min-height: 36px !important; }
+  .altkutu .tfil.iki .tsat.uc .tgrid { grid-template-columns: repeat(3, 1fr); }
+  .altkutu .tsat.uc button { font-size: 12px !important; padding: 4px 3px !important; }
+  .altkutu.dar:not(.acik) #tfil.iki.kamp { display: flex !important; flex-wrap: wrap !important; gap: 5px !important; }
+  .altkutu.dar:not(.acik) #tfil.kamp .tsat, .altkutu.dar:not(.acik) #tfil.kamp .tsat .tgrid { display: contents !important; }
+  .altkutu.dar:not(.acik) #tfil.kamp button.on { flex: 1 1 auto !important; width: auto !important; min-height: 32px !important; }
+  .altkutu.dar:not(.acik) .tsat button.hep { display: none !important; }
+  .altkutu.dar:not(.acik) .tsat.kgr:not(:has(.on:not(.hep))) { display: none !important; }
+  .ksag { margin: 0 0 10px; padding: 9px 11px; border-radius: 12px; border: 1px solid #23402f; background: #08140d; color: #bfe8cf; font-size: 12px; line-height: 1.5; }
+  .ksag .kyol { font-size: 13px; color: #fff; font-weight: 700; margin-bottom: 2px; }
+  .ksag .kyol b { color: #3fc283; }
   .altkutu .tsat button.kac { border-style: dashed !important; color: var(--c, #e0a24f) !important; background: transparent !important; font-weight: 800; }
   .menu button[data-k="Maximum"] span { display: inline-block; letter-spacing: -.3px; font-size: 11px; transform: scaleX(.84); transform-origin: center; white-space: nowrap; }
   .menu button[data-k="Haberler"] small { display: inline-block; transform: scaleX(.86); transform-origin: center; white-space: nowrap; letter-spacing: -.2px; }
@@ -1265,78 +1277,108 @@ function campCard(k) {
       <div class="cfoot"><span>Bitiş: ${bit}</span>${k.url ? `<a class="clink" href="${esc(k.url)}" target="_blank" rel="noopener">${k.url.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr"}'de koşullar ↗</a>` : ""}</div>
     </div>`;
 }
-// ===== Kampanyalar: isbank.com.tr ve maximum.com.tr (bireysel + ticari), günde iki kez otomatik =====
-let KH = null, kKay = "isbank", kSeg = "bireysel", kKat = "", kKatAcik = false;
-try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kKat = k.kat || ""; } catch (e) {}
-const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, kat: kKat })); } catch (e) {} };
-// Maximum kampanyaları sitede tür bilgisi olmadan gelir: başlık ve açıklamadaki kelimelere göre gruplanır
-const MX_NE = [["MaxiPuan", "🪙", /maxipuan|puan/i], ["Taksit", "📆", /taksit|vade farks/i], ["İndirim", "🏷️", /indirim|%\s?\d|\d\s?%/i], ["MaxiMil", "✈️", /maximil|\bmil\b|mil kazan/i]];
-const MX_NERE = [["Market", "🛒", /market|migros|carrefour|a101|şok|bim|getir|gıda|yemek|restoran|kafe|yeme/i], ["Akaryakıt", "⛽", /akaryak|opet|shell|petrol|bp\b|total|aytemiz|otomotiv|araç|oto\b|lastik|kiralama/i],
-  ["Giyim", "👗", /giyim|ayakkab|zara|mavi|koton|lc ?waikiki|defacto|boyner|moda|kozmetik|forever|marks|spencer|aksesuar|optik/i], ["Elektronik", "📱", /elektronik|teknosa|media ?markt|vatan|apple|samsung|telefon|beyaz eşya|arçelik|vestel|beko|bosch/i],
-  ["Seyahat", "🏖️", /otel|tatil|seyahat|uçak|uçuş|thy|pegasus|ets|jolly|\btur\b|turizm|havalimanı/i], ["Ev & Mobilya", "🛋️", /mobilya|dekorasyon|ikea|koçtaş|bauhaus|ev tekstil|halı/i],
-  ["Online", "🌐", /online|internet|e-ticaret|trendyol|hepsiburada|pazarama|amazon|n11|\.com/i], ["Eğitim", "🎓", /eğitim|okul|kırtasiye|kurs|üniversite/i]];
-const kGrup = (k, L) => (L.find(([, , re]) => re && re.test(k.baslik + " " + (k.ozet || ""))) || [])[0] || "Diğer";
-function kKart(k, etiket, renk) {
-  const n = daysLeft(k.bitis), u = n <= 3, yeni = k.ilk && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
-  const left = n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
-  const bit = new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
-  const kay = k.url.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr";
+// ===== Kampanyalar: isbank.com.tr, maximum.com.tr ve maximiles.com.tr (bireysel + ticari), günde iki kez otomatik =====
+// Her kampanya tek bir "ne kazanırım" ve tek bir "nerede" grubundadır (sınıflandırma veri toplanırken yapılır): toplamlar her zaman tutar.
+// Süzgeçler "ve" ile birleşir: bir satırdaki sayılar öbür satırdaki seçime göre hesaplanır (dal dal daralır).
+let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kOne = false, kKatAcik = false;
+try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kNe = k.ne || ""; kNere = k.nere || ""; kOne = !!k.one; } catch (e) {}
+const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, ne: kNe, nere: kNere, one: kOne })); } catch (e) {} };
+const K_KAY = { isbank: ["🏦", "İş Bankası", "isbank.com.tr", "#3fc283"], maximum: ["💳", "Maximum", "maximum.com.tr", "#ff4fa3"], maximiles: ["✈️", "Maximiles", "maximiles.com.tr", "#35b8d6"] };
+const K_GRUP = { ne: [["MaxiMil", "✈️"], ["MaxiPuan", "🪙"], ["Faiz & Kredi", "🏦"], ["İndirim", "🏷️"], ["Taksit", "📆"], ["Ayrıcalık", "✨"]],
+  nere: [["Pati", "🐾"], ["Ödeme & Fatura", "🧾"], ["Eğitim & Kitap", "🎓"], ["Araç & Akaryakıt", "🚗"], ["Market & Yemek", "🛒"], ["Seyahat", "🏖️"], ["Giyim & Kozmetik", "👗"], ["Elektronik & Beyaz Eşya", "📱"], ["Ev & Yaşam", "🛋️"], ["Eğlence & Spor", "🎭"], ["Online Alışveriş", "🌐"], ["Bankacılık", "🏦"], ["Genel", "✨"]] };
+const kGr = (tip) => (KH && KH.gruplar && KH.gruplar[tip] ? KH.gruplar[tip].map((g) => [g.ad, g.ikon]) : K_GRUP[tip]);
+const kIkon = (tip, ad) => (kGr(tip).find((g) => g[0] === ad) || [, "✨"])[1];
+const kKisa = (ad) => ad.replace(" & Beyaz Eşya", "").replace(" Alışveriş", "");
+// Bir kaynağın bir müşteri bölümündeki kampanyaları: tekrarsız (isbank'ta aynı kampanya birden çok kategoride olabilir)
+function kListe(kay, seg) {
+  const v = KH && KH[kay] && KH[kay][seg];
+  if (!v) return null;
+  const ham = v.kategoriler ? v.kategoriler.flatMap((c) => c.kampanyalar) : v.kampanyalar || [], gor = new Set();
+  return ham.filter((k) => !gor.has(k.url) && gor.add(k.url)).map((k) => ({ ...k, ne: k.ne || "Ayrıcalık", nere: k.nere || "Genel" }));
+}
+function kKart(k, renk) {
+  const n = k.bitis ? daysLeft(k.bitis) : null, u = n != null && n <= 3, yeni = k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
+  const left = n == null ? "" : n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
+  const bit = k.bitis ? new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : "";
+  const kay = (Object.values(K_KAY).find((x) => k.url.includes(x[2])) || K_KAY.isbank)[2];
   return `<div class="camp${u ? " urgent" : ""}" style="--c:${renk}">
-      <div class="top"><span class="tag">${esc(etiket)}${yeni ? '<span class="newtag">YENİ</span>' : ""}</span><span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}">${left}</span></div>
+      <div class="top"><span class="tag">${kIkon("ne", k.ne)} ${esc(k.ne)} · ${kIkon("nere", k.nere)} ${esc(kKisa(k.nere))}${yeni ? '<span class="newtag">YENİ</span>' : ""}</span>${left ? `<span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}">${left}</span>` : ""}</div>
       <b>${esc(k.baslik)}</b>${k.ozet ? `<p>${esc(k.ozet)}</p>` : ""}
-      <div class="cfoot"><span>Bitiş: ${bit}</span><a class="clink" href="${esc(k.url)}" target="_blank" rel="noopener">${kay}'de koşullar ↗</a></div>
+      <div class="cfoot"><span>${bit ? "Bitiş: " + bit : ""}</span><a class="clink" href="${esc(k.url)}" target="_blank" rel="noopener">${kay}'de koşullar ↗</a></div>
     </div>`;
+}
+// ⭐ Öne çıkan: elle seçilmiş değil, verinin kendisinden — biten, yeni gelen, en çok kazandıran, en uzun taksit, en yüksek indirim
+function kOneHtml(L, renk) {
+  const sayi = (x) => +String(x).replace(/\./g, "").replace(",", ".");
+  // Kazanç: tutarın hemen ardından puan / mil / indirim / iade gelmeli ("30.000 TL ve üzeri alışveriş" harcama eşiğidir, sayılmaz)
+  const tl = (k) => Math.max(0, ...[...k.baslik.matchAll(/(\d{1,3}(?:\.\d{3})+|\d+)\s*(?:TL|₺)(?!\s*ve üzer)[^\d]{0,22}?(puan|mil\b|indirim|iade|hediye)/gi)].map((m) => sayi(m[1])));
+  const tk = (k) => Math.max(0, ...[...k.baslik.matchAll(/(\d{1,2})\s*(?:aya varan\s*)?(?:ay\s*)?(?:ilave\s*|ek\s*)?taksit/gi)].map((m) => +m[1]), ...[...k.baslik.matchAll(/\+\s?(\d{1,2})\s*taksit/gi)].map((m) => +m[1]));
+  const yz = (k) => !/indirim/i.test(k.baslik) ? 0 : Math.max(0, ...[...k.baslik.matchAll(/%\s?(\d{1,3})|(\d{1,3})\s?%/g)].map((m) => +(m[1] || m[2])).filter((x) => x <= 100));
+  const gun = (k) => (k.bitis ? daysLeft(k.bitis) : 999);
+  const fmt = (n) => n.toLocaleString("tr-TR");
+  const B = [
+    ["🔥", "Bitiyor", "3 gün ya da daha az kaldı", L.filter((k) => gun(k) <= 3).sort((a, b) => gun(a) - gun(b)), (k) => (gun(k) <= 1 ? "Son gün" : `${gun(k)} gün`)],
+    ["🆕", "Yeni", "son 3 günde eklendi", L.filter((k) => k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3).sort((a, b) => b.ilk.localeCompare(a.ilk)), () => "YENİ"],
+    ["💰", "En çok kazanç", "puan, mil ya da indirim olarak en yüksek TL tutarı", L.filter((k) => tl(k) >= 100).sort((a, b) => tl(b) - tl(a)), (k) => fmt(tl(k)) + " TL"],
+    ["📆", "En uzun taksit", "taksit sayısına göre", L.filter((k) => tk(k) >= 2).sort((a, b) => tk(b) - tk(a)), (k) => tk(k) + " taksit"],
+    ["🏷️", "En yüksek %", "indirim yüzdesine göre", L.filter((k) => yz(k) >= 5).sort((a, b) => yz(b) - yz(a)), (k) => "%" + yz(k)],
+  ].filter((x) => x[3].length);
+  if (!B.length) return '<div class="empty">Bu bölümde öne çıkarılacak kampanya yok.</div>';
+  return `<div class="ohead">⭐ Öne çıkanlar<span>${L.length} kampanyanın içinden kendiliğinden seçilir · satıra dokun, resmi sayfası açılır</span></div>`
+    + `<div class="otiles">${B.map(([ic, ad, , l], i) => `<button type="button" class="ot" data-go="kone${i}"><i>${ic}</i><span>${ad}</span><em>${l.length}</em></button>`).join("")}</div>`
+    + B.map(([ic, ad, alt, l, et], i) => `<div class="ocard" id="kone${i}" style="--c:${renk}"><div class="oh"><i>${ic}</i><b>${ad}</b><em>${l.length} kampanya</em></div><p style="color:var(--muted);margin:2px 0 6px">${alt}</p>`
+      + l.slice(0, 6).map((k) => `<a class="omini olnk" href="${esc(k.url)}" target="_blank" rel="noopener"><span>${esc(k.baslik)}&nbsp;<i class="oarr">↗</i></span><small><b>${et(k)}</b></small></a>`).join("") + `</div>`).join("");
 }
 function renderKampanyalar() {
   if (!KH || !KH.isbank) return renderCamps(); // veri gelene kadar eski düzen
   const fd = (t) => new Date(t).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
-  $("upd").innerHTML = `🔄 isbank.com.tr ve maximum.com.tr'den günde iki kez (09:01 · 14:01) kendiliğinden alınır · son: <b>${fd(KH.guncelleme)}</b>`;
-  const segV = (kay, seg) => (KH[kay] || {})[seg];
-  const sayi = (v) => (v ? (v.kategoriler ? v.kategoriler.reduce((a, c) => a + c.kampanyalar.length, 0) : v.kampanyalar.length) : 0);
-  const sb = (attr, v, ic, ad, n, on) => `<button type="button" ${attr}="${esc(v)}" class="${on ? "on" : ""}"><i>${ic}</i>${esc(ad)}${n != null ? `<b>${n}</b>` : ""}</button>`;
-  const V = segV(kKay, kSeg);
-  // Kategoriler: isbank sitenin kendi kategorileri; maximum "ne kazanırım" ve "nerede" grupları
-  let katSatir = "", liste = [];
-  if (kKay === "isbank" && V) {
-    const K = V.kategoriler.filter((c) => c.kampanyalar.length);
-    if (kKat && !K.some((c) => c.slug === kKat)) kKat = "";
-    // Kategoriler kapalı başlar (20'den fazla): seçili olan + "Kategoriler ▾"; dokununca hepsi açılır
-    const sec = K.find((c) => c.slug === kKat);
-    katSatir = `<div class="tsat"><span class="tlab">🗂️ Kategori</span><div class="tgrid">${sec ? sb("data-kk", sec.slug, "📂", sec.ad.replace(/ Kampanyaları$/, ""), sec.adet, true) : sb("data-kk", "", "📋", "Tümü", sayi(V), true)}<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Kapat" : `🗂️ Kategoriler (${K.length}) ▾`}</button></div>`
-      + (kKatAcik ? `<div class="tgrid kat" style="margin-top:5px">${sb("data-kk", "", "📋", "Tümü", sayi(V), !kKat)}${K.map((c) => sb("data-kk", c.slug, "", c.ad.replace(/ Kampanyaları$/, ""), c.adet, kKat === c.slug)).join("")}</div>` : "") + `</div>`;
-    (kKat ? K.filter((c) => c.slug === kKat) : K).forEach((c) => c.kampanyalar.forEach((k) => liste.push([k, c.ad.replace(/ Kampanyaları$/, "")])));
-  } else if (kKay === "maximum" && V) {
-    const L = V.kampanyalar, sayG = (G, ad) => L.filter((k) => kGrup(k, G) === ad).length;
-    const satir = (lab, G, pre) => `<div class="tsat"><span class="tlab">${lab}</span><div class="tgrid">${G.map(([ad, ic]) => [ad, ic, sayG(G, ad)]).filter((x) => x[2]).map(([ad, ic, n]) => sb("data-kk", pre + ad, ic, ad, n, kKat === pre + ad)).join("")}</div></div>`;
-    katSatir = `<div class="tsat"><span class="tlab">🎁 Kampanyalar</span><div class="tgrid">${sb("data-kk", "", "💳", "Tümü", L.length, !kKat)}${kSeg === "bireysel" ? sb("data-kk", "rehber:one", "⭐", "Öne çıkan", null, kKat === "rehber:one") : ""}</div></div>` + satir("💰 Ne kazanırım", MX_NE, "ne:") + satir("🛍️ Nerede", [...MX_NERE, ["Diğer", "✨"]], "nere:");
-    const [tip, ad] = kKat.split(":");
-    L.forEach((k) => { const g1 = kGrup(k, MX_NE), g2 = kGrup(k, MX_NERE); if (!kKat || (tip === "ne" && g1 === ad) || (tip === "nere" && g2 === ad)) liste.push([k, g1 !== "Diğer" ? g1 : g2]); });
-  }
+  $("upd").innerHTML = `🔄 isbank.com.tr, maximum.com.tr ve maximiles.com.tr'den günde iki kez (09:01 · 14:01) kendiliğinden alınır · son: <b>${fd(KH.guncelleme)}</b>`;
+  const sb = (attr, v, ic, ad, n, on, cls) => `<button type="button" ${attr}="${esc(v)}" class="${on ? "on" : ""}${cls ? " " + cls : ""}"><i>${ic}</i>${esc(ad)}${n != null ? `<b>${n}</b>` : ""}</button>`;
+  const say = (kay, seg) => { const l = kListe(kay, seg); return l ? l.length : null; };
+  const L = kListe(kKay, kSeg) || [], [, kayAd, kayDom, renk] = K_KAY[kKay];
+  const GN = kGr("ne"), GR = kGr("nere");
+  if (kNe && !GN.some((g) => g[0] === kNe)) kNe = "";
+  if (kNere && !GR.some((g) => g[0] === kNere)) kNere = "";
+  // Dal dal: "ne" sayıları seçili "nere"ye göre, "nere" sayıları seçili "ne"ye göre
+  const neT = L.filter((k) => !kNere || k.nere === kNere), nereT = L.filter((k) => !kNe || k.ne === kNe);
+  const neS = GN.map(([ad, ic]) => [ad, ic, neT.filter((k) => k.ne === ad).length]).filter((g) => g[2] || g[0] === kNe).sort((a, b) => b[2] - a[2]);
+  const nereS = GR.map(([ad, ic]) => [ad, ic, nereT.filter((k) => k.nere === ad).length]).filter((g) => g[2] || g[0] === kNere).sort((a, b) => b[2] - a[2]);
+  const ILK = 7, nereGor = kKatAcik || nereS.length <= ILK + 1 ? nereS : nereS.slice(0, ILK).concat(nereS.slice(ILK).filter((g) => g[0] === kNere));
   const t = $("tfil");
-  t.className = "tfil mtiles iki sekmeli";
+  t.className = "tfil mtiles iki sekmeli kamp";
   t.hidden = false;
-  t.innerHTML = `<div class="tsat"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${sb("data-ky", "isbank", "🏦", "İş Bankası", sayi(segV("isbank", kSeg)), kKay === "isbank")}${sb("data-ky", "maximum", "💳", "Maximum", sayi(segV("maximum", kSeg)), kKay === "maximum")}${sb("data-ky", "maximiles", "✈️", "Maximiles", null, kKay === "maximiles")}</div></div>`
-    + `<div class="tsat"><span class="tlab">👥 Müşteri</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", kKay === "maximiles" ? null : sayi(segV(kKay, "bireysel")), kSeg === "bireysel")}${sb("data-sg", "ticari", "🏢", "Ticari", kKay === "maximiles" ? null : sayi(segV(kKay, "ticari")), kSeg === "ticari")}</div></div>` + katSatir;
+  t.innerHTML = `<div class="tsat uc"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
+    + `<div class="tsat uc"><span class="tlab">👥 Müşteri</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
+    + (L.length && !kOne ? `<div class="tsat kgr"><span class="tlab">💰 Ne kazanırım</span><div class="tgrid">${sb("data-ne", "", "📋", "Hepsi", neT.length, !kNe, "hep")}${neS.map(([ad, ic, n]) => sb("data-ne", ad, ic, ad, n, kNe === ad)).join("")}</div></div>`
+      + `<div class="tsat kgr"><span class="tlab">🛍️ Nerede</span><div class="tgrid">${sb("data-nere", "", "📋", "Hepsi", nereT.length, !kNere, "hep")}${nereGor.map(([ad, ic, n]) => sb("data-nere", ad, ic, kKisa(ad), n, kNere === ad)).join("")}${nereGor.length < nereS.length || kKatAcik ? `<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Daha az" : `▾ ${nereS.length - nereGor.length} grup daha`}</button>` : ""}</div></div>` : "");
   t.onclick = (e) => {
     const b = e.target.closest("button"); if (!b) return;
     if (b.dataset.kac) { kKatAcik = !kKatAcik; renderKampanyalar(); return; }
-    if (b.dataset.ky) { kKay = b.dataset.ky; kKat = ""; } else if (b.dataset.sg) { kSeg = b.dataset.sg; kKat = ""; } else if (b.dataset.kk != null) kKat = b.dataset.kk; else return;
-    kKatAcik = false;
+    if (b.dataset.ky) { kKay = b.dataset.ky; kNe = kNere = ""; kOne = kKatAcik = false; }
+    else if (b.dataset.sg) { kSeg = b.dataset.sg; kNe = kNere = ""; kOne = kKatAcik = false; }
+    else if (b.dataset.one) kOne = !kOne;
+    else if (b.dataset.ne != null) kNe = kNe === b.dataset.ne ? "" : b.dataset.ne;
+    else if (b.dataset.nere != null) kNere = kNere === b.dataset.nere ? "" : b.dataset.nere;
+    else return;
     kKaydet(); renderKampanyalar(); icerigeKay();
   };
-  if (kKay === "maximiles") {
-    $("list").innerHTML = (kSeg === "ticari" ? `<div class="bkhero"><b>✈️ Maximiles Business</b><span>Ticari Maximiles kampanyaları İş Bankası'nın Ticari bölümünde: <a href="https://www.isbank.com.tr/kampanyalar?v=ticari" target="_blank" rel="noopener" style="color:var(--accent)">isbank.com.tr ↗</a></span></div>` : "")
-      + milesHtml() + `<p class="note" style="text-align:center">✈️ maximiles.com.tr kampanyaları da yakında burada, aynı düzende.</p>`;
+  const tumLink = `<a class="maxlink" href="${kKay === "isbank" ? "https://www.isbank.com.tr/kampanyalar" + (kSeg === "ticari" ? "?v=ticari" : "") : kKay === "maximum" ? "https://www.maximum.com.tr/kampanyalar/" + kSeg : "https://www.maximiles.com.tr/kampanyalar"}" target="_blank" rel="noopener">Tüm kampanyalar · ${kayDom} ↗</a>`;
+  if (!L.length) {
+    $("list").innerHTML = kKay === "maximiles" ? milesHtml() + `<p class="note" style="text-align:center">✈️ maximiles.com.tr kampanyaları bir sonraki otomatik toplamada (09:01 · 14:01) burada, aynı düzende.</p>` : '<div class="empty">Bu bölümde şu an kampanya yok.</div>' + tumLink;
     return;
   }
-  if (kKat === "rehber:one") { $("list").innerHTML = oneHtml(); bindSpecial(); return; }
-  liste.sort((a, b) => a[0].bitis.localeCompare(b[0].bitis));
-  const renk = kKay === "maximum" ? "#ff4fa3" : "#3fc283";
-  const acil = liste.filter(([k]) => daysLeft(k.bitis) <= 3).length;
-  $("list").innerHTML = (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
-    + (liste.length ? liste.map(([k, et]) => kKart(k, et, renk)).join("") : '<div class="empty">Bu seçimde şu an kampanya yok.</div>')
-    + (kKay === "isbank" && kKat ? (() => { const c = V.kategoriler.find((x) => x.slug === kKat); return c && c.adet > c.kampanyalar.length ? `<a class="maxlink" href="${esc(c.url)}" target="_blank" rel="noopener">Bu kategoride ${c.adet - c.kampanyalar.length} kampanya daha var · isbank.com.tr'de gör ↗</a>` : ""; })() : "")
-    + `<a class="maxlink" href="${kKay === "maximum" ? "https://www.maximum.com.tr/kampanyalar/" + kSeg : "https://www.isbank.com.tr/kampanyalar" + (kSeg === "ticari" ? "?v=ticari" : "")}" target="_blank" rel="noopener">Tüm kampanyalar · ${kKay === "maximum" ? "maximum.com.tr" : "isbank.com.tr"} ↗</a>`;
+  if (kOne) { $("list").innerHTML = kOneHtml(L, renk) + tumLink; bindSpecial(); return; }
+  const liste = L.filter((k) => (!kNe || k.ne === kNe) && (!kNere || k.nere === kNere)).sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
+  // Sağlama: her satırın grupları toplanınca "Hepsi"ye eşit (gruplar birbirini dışlar)
+  const top = (S) => S.reduce((a, g) => a + g[2], 0), es = (S, T) => `${S.filter((g) => g[2]).map((g) => g[2]).join(" + ")} = <b>${top(S)}</b> ${top(S) === T.length ? "✓" : "✗"}`;
+  const yol = [kayAd, kSeg === "ticari" ? "Ticari" : "Bireysel", kNe && kIkon("ne", kNe) + " " + kNe, kNere && kIkon("nere", kNere) + " " + kKisa(kNere)].filter(Boolean).join(" › ");
+  const sag = `<div class="ksag"><div class="kyol">${esc(yol)} <b>${liste.length}</b></div>`
+    + `<div>✓ <b>Sağlama</b> · 💰 ${es(neS, neT)} &nbsp;·&nbsp; 🛍️ ${es(nereS, nereT)}</div></div>`;
+  const acil = liste.filter((k) => k.bitis && daysLeft(k.bitis) <= 3).length;
+  const kayp = KH[kKay][kSeg].toplam - L.length;
+  $("list").innerHTML = sag + (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
+    + (liste.length ? liste.map((k) => kKart(k, renk)).join("") : '<div class="empty">Bu seçimde şu an kampanya yok.</div>')
+    + (kayp > 0 && !kNe && !kNere ? `<p class="note" style="text-align:center">${kayDom}'de ${KH[kKay][kSeg].toplam} kampanya görünüyor; ${kayp} tanesi sitede "daha fazla" ile açılıyor ve buraya gelmiyor.</p>` : "") + tumLink;
 }
 function renderCamps() {
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Liste değişince güncellenir";
