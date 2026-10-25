@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-10-25T17:46:31+03:00",
+ "guncelleme": "2026-10-25T18:40:00+03:00",
  "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) Resmi Gazete dışındaki karar ve duyuruları. Her kayıt resmi duyurusuna bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
  "duyurular": [
   {
@@ -29,6 +29,60 @@
    "onemli": true,
    "url": "https://ticaret.gov.tr/haberler/ticaret-bakanligindan-bddk-kararlariyla-uyumlu-yeni-duzenleme-15-10-2026",
    "gazete": "2026-10-15"
+  },
+  {
+   "tarih": "2026-10-07",
+   "kurum": "TMSF",
+   "baslik": "Tasfiye edilen fonlarda TMSF bünyesinde özel hesaplar açıldı, ilk ödemeler başladı",
+   "ozet": "Cumhurbaşkanı Yardımcısı TBMM'de fon tasfiyesini anlattı: TMSF bünyesinde her sorunlu fon için özel hesap açıldı, olağan tasfiyesi biten 17 fonda ödemeler 8 Ekim'de başladı. Tasfiye yönetimi 125 fonda Ziraat Bankası'na, 6 fonda İş Bankası'na verildi. 1 milyon TL'ye kadar ara ödeme getiren kanun 22 Ekim'de TBMM'de kabul edildi; ödemeler Resmi Gazete'de yayımlanmasına bağlı.",
+   "etki": "Tasfiyedeki fonların yatırımcıları ödeme takvimini şubelere sorabilir; tasfiye yönetimini yürüten bankalarda yoğunluk beklenir.",
+   "onemli": true,
+   "url": "https://www.ntv.com.tr/turkiye/mecliste-gundem-fon-krizi-cumhurbaskani-yardimcisi-yilmaz-odeme-sureci-yarin-basliyor-1745251"
+  },
+  {
+   "tarih": "2026-10-03",
+   "kurum": "SPK",
+   "baslik": "Kredili işlemlerde özkaynak esnekliği 30 Ekim'e kadar uzatıldı",
+   "ozet": "SPK 2026/68 sayılı bültenle, kredili işlemlerde asgari %35 olan özkaynak oranının aracı kurumların risk politikasına göre %20'ye kadar uygulanabilmesini 30 Ekim 2026 seans sonuna kadar uzattı. Yeni oran getirilmedi, süre uzatıldı.",
+   "etki": "Kredili hisse işlemi yapan yatırımcılar için teminat tamamlama baskısı 30 Ekim'e kadar hafif kalıyor.",
+   "onemli": false,
+   "url": "https://hukukcularevi.com/spk-2026-68-bulteni-kredili-islem-ozkaynak-esnekligi-30-ekim-2026-uzatildi-65-1779-seri-v-65-m17-m18/"
+  },
+  {
+   "tarih": "2026-10-01",
+   "kurum": "BDDK",
+   "baslik": "Kart asgari ödeme eşiği 100 bin TL'ye çıktı; telefon kredisi vadeleri değişti",
+   "ozet": "Karar 11581: limiti 100 bin TL ve altındaki kartlarda asgari ödeme dönem borcunun %20'si, üstündekilerde %40'ı (eşik önce 50 bin TL idi). Karar 11582: fiyatı 40 bin TL ve altındaki sıfır cep telefonlarında tüketici kredisi vadesi 12 ay, üstünde 3 ay; yenilenmiş telefonlarda eşik 50 bin TL.",
+   "etki": "Limiti 50-100 bin TL arasındaki kart sahiplerinin asgari ödemesi yarıya iner; telefon kredisi vadeleri yeni sınırlarla verilir.",
+   "onemli": true,
+   "url": "https://www.bddk.org.tr/Mevzuat/Liste/56"
+  },
+  {
+   "tarih": "2026-10-01",
+   "kurum": "TCMB",
+   "baslik": "Zorunlu karşılıkta düzenleme: KOBİ kredisi büyüme sınırı %5'e çıktı",
+   "ozet": "KOBİ kredilerinde 8 haftalık büyüme sınırı %4,5'ten %5'e yükseltildi. TL zorunlu karşılıklarda bloke oranı, aktif büyüklüğü 500 milyar TL üstü bankalarda %40'tan %35'e, 100-500 milyar TL arası bankalarda %30'dan %15'e indirildi.",
+   "etki": "Bankaların KOBİ'lere kredi verme alanı genişler, likidite yönetimi rahatlar.",
+   "onemli": true,
+   "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Duyurular/Basin/2026/DUY2026-43"
+  },
+  {
+   "tarih": "2026-09-23",
+   "kurum": "MASAK",
+   "baslik": "Ön ödemeli kart ve e-parada basitleştirilmiş tedbir eşiği 5.500 TL'ye çıktı",
+   "ozet": "Genel Tebliğ (Sıra No: 33) ile düşük riskli ürünlerde basitleştirilmiş tedbir eşikleri yükseltildi: ön ödemeli kart ve elektronik parada 2.750 TL'den 5.500 TL'ye, hayat sigortası yıllık priminde 10 bin TL'den 20 bin TL'ye. EFT/havale kimlik tespiti eşikleri değişmedi.",
+   "etki": "Düşük tutarlı ön ödemeli kart ve e-para işlemlerinde kimlik tespiti kolaylaşır; havale ve EFT kuralları aynı kalır.",
+   "onemli": false,
+   "url": "https://www.alomaliye.com/2026/09/23/mali-suclari-arastirma-kurulu-genel-tebligi-sira-no-34/"
+  },
+  {
+   "tarih": "2026-09-17",
+   "kurum": "SPK",
+   "baslik": "7 portföy yönetim şirketinin 130 fonu için tasfiye kararı",
+   "ozet": "SPK, yedi portföy yönetim şirketinin kurucusu olduğu 130 yatırım fonunun tasfiyesine karar verdi ve bu şirketlerin TEFAS'taki tüm fonlarını alım ve satıma kapattı. Liste sonraki bültenle 131 fona güncellendi.",
+   "etki": "Bu fonlar banka kanalı ve TEFAS üzerinden alınıp satılamıyor; elinde bu fonlardan olan müşteriler tasfiye ve ödeme takvimini soracaktır.",
+   "onemli": true,
+   "url": "https://tr.investing.com/news/stock-market-news/spk-7-portfoy-yonetim-sirketinin-130-fonu-icin-tasfiye-karar-ald-4069549"
   }
  ]
 }
