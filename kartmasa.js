@@ -74,17 +74,32 @@
 .card.red { color: var(--kred); }
 .card.k-d { color: var(--kd, var(--kred)); }
 .card.k-c { color: var(--kc, #15161a); }
-.card .r { position: absolute; top: 3%; left: 7%; font-family: var(--kf, "Arial Narrow", system-ui, sans-serif); font-weight: var(--kw, 800);
-  font-size: calc(var(--cw, 56px) * .5 * var(--kp, 1)); line-height: 1; letter-spacing: -1px; transform-origin: left top; transform: scaleX(var(--kx, 1));
+.card { --pl: 53%; --pr: 85%; --pt: 12%; --pb: 88%; --ps: .17; }
+.card .r { position: absolute; top: 3%; left: 6%; font-family: var(--kf, "Arial Narrow", system-ui, sans-serif); font-weight: var(--kw, 800);
+  font-size: calc(var(--cw, 56px) * .34 * var(--kp, 1)); line-height: 1; letter-spacing: -1px; transform-origin: left top; transform: scaleX(var(--kx, 1));
   -webkit-text-stroke: calc(var(--cw, 56px) * var(--kst, 0)) currentColor; }
-.card .r.ten { transform: scaleX(calc(.8 * var(--kx, 1))); letter-spacing: -2px; }
+.card .r.ten { transform: scaleX(calc(.7 * var(--kx, 1))); letter-spacing: -2px; }
 .card svg.ks { display: block; width: 1em; height: 1em; }
-.card .s1 { display: none; }
-.card .s2 { position: absolute; left: 6%; top: calc(var(--cw, 56px) * (.1 + .5 * var(--kp, 1))); font-size: calc(var(--cw, 56px) * .46 * var(--ksp, 1)); line-height: 1; }
-.duzen-ust .card .r { top: 1.5%; left: 5%; }
-.duzen-ust .card .s1 { display: block; position: absolute; top: 3%; left: auto; right: 5%; font-size: calc(var(--cw, 56px) * .4 * var(--ksp, 1)); }
-.duzen-ust .card .s2 { left: 0; right: 0; top: auto; bottom: 3%; font-size: calc(var(--cw, 56px) * .86); }
-.duzen-ust .card .s2 svg.ks { margin: 0 auto; }
+.card .s1 { position: absolute; left: 7%; top: calc(var(--cw, 56px) * (.07 + .34 * var(--kp, 1))); font-size: calc(var(--cw, 56px) * .21 * var(--ksp, 1)); line-height: 1; }
+/* Ortadaki simgeler: kartın rakamı kadar, gerçek iskambildeki dizilişle; alt yarıdakiler ters */
+.card .pp { position: absolute; left: calc(var(--pl) + (var(--pr) - var(--pl)) * var(--x)); top: calc(var(--pt) + (var(--pb) - var(--pt)) * var(--y));
+  width: calc(var(--cw, 56px) * var(--ps)); height: calc(var(--cw, 56px) * var(--ps)); transform: translate(-50%, -50%); }
+.card .pp.f { transform: translate(-50%, -50%) rotate(180deg); }
+.card .pp svg { display: block; width: 100%; height: 100%; }
+.card .pp.as { width: calc(var(--cw, 56px) * .5); height: calc(var(--cw, 56px) * .5); }
+/* Resimli kartlar (J, Q, K): çerçeve içinde taç/şapka ve simge — Sadolayn tasarımı */
+.card .fc { position: absolute; left: 40%; right: 7%; top: 7%; bottom: 7%; border: max(1px, calc(var(--cw, 56px) * .025)) solid #c9a24a; border-radius: calc(var(--cw, 56px) * .05);
+  background: linear-gradient(180deg, rgba(201,162,74,.12), rgba(201,162,74,.04)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4%; }
+.card .fc .em { width: 72%; color: #c58a1e; }
+.card .fc .em svg, .card .fc .fs svg { display: block; width: 100%; height: auto; }
+.card .fc .fs { width: 46%; }
+.card .fc .fl { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 700; font-size: calc(var(--cw, 56px) * .16); line-height: 1; color: #8a6a2a; }
+.duzen-ust .card { --pl: 27%; --pr: 73%; --pt: 38%; --pb: 90%; --ps: .19; }
+.duzen-ust .card .r { top: 1.5%; left: 5%; font-size: calc(var(--cw, 56px) * .5 * var(--kp, 1)); }
+.duzen-ust .card .s1 { top: 3%; left: auto; right: 5%; font-size: calc(var(--cw, 56px) * .4 * var(--ksp, 1)); }
+.duzen-ust .card .pp.as { top: 64%; width: calc(var(--cw, 56px) * .56); height: calc(var(--cw, 56px) * .56); }
+.duzen-ust .card .fc { left: 10%; right: 10%; top: 34%; bottom: 5%; flex-direction: row; gap: 6%; }
+.duzen-ust .card .fc .em { width: 42%; } .duzen-ust .card .fc .fs { width: 30%; } .duzen-ust .card .fc .fl { display: none; }
 .card.back > * { display: none; }
 .card.back, .kb { border: 2px solid #fff; }
 .card.back::after, .kb::after { content: ""; position: absolute; inset: 2px; border-radius: inherit; }
@@ -163,8 +178,31 @@
     "♦": '<path d="M50 2l38 48-38 48-38-48z"/>',
   };
   const simge = (s, k) => SVG[s] ? `<svg class="${k || "ks"}" viewBox="0 0 100 100" aria-hidden="true" fill="currentColor">${SVG[s]}</svg>` : s;
+  // Ortadaki simge dizilişi: [sütun (0 sol, .5 orta, 1 sağ), satır (0 üst … 1 alt)]; alt yarıdakiler ters çizilir
+  const L = 0, M = 0.5, R = 1;
+  const PIP = {
+    2: [[M, 0], [M, 1]], 3: [[M, 0], [M, .5], [M, 1]],
+    4: [[L, 0], [R, 0], [L, 1], [R, 1]], 5: [[L, 0], [R, 0], [M, .5], [L, 1], [R, 1]],
+    6: [[L, 0], [R, 0], [L, .5], [R, .5], [L, 1], [R, 1]], 7: [[L, 0], [R, 0], [M, .25], [L, .5], [R, .5], [L, 1], [R, 1]],
+    8: [[L, 0], [R, 0], [M, .25], [L, .5], [R, .5], [M, .75], [L, 1], [R, 1]],
+    9: [[L, 0], [R, 0], [L, 1 / 3], [R, 1 / 3], [M, .5], [L, 2 / 3], [R, 2 / 3], [L, 1], [R, 1]],
+    10: [[L, 0], [R, 0], [M, 1 / 6], [L, 1 / 3], [R, 1 / 3], [L, 2 / 3], [R, 2 / 3], [M, 5 / 6], [L, 1], [R, 1]],
+  };
+  // Resimli kartların süsü (özgün çizim): K taç, Q tiara, J tüylü şapka
+  const EMB = {
+    13: '<svg viewBox="0 0 100 70" fill="currentColor"><path d="M8 52 14 14l20 22L50 6l16 30 20-22 6 38z"/><circle cx="14" cy="12" r="6"/><circle cx="50" cy="6" r="6"/><circle cx="86" cy="12" r="6"/><rect x="8" y="56" width="84" height="10" rx="3"/></svg>',
+    12: '<svg viewBox="0 0 100 70" fill="currentColor"><path d="M10 54c6-20 20-32 40-34 20 2 34 14 40 34z"/><circle cx="50" cy="12" r="8"/><circle cx="24" cy="30" r="6"/><circle cx="76" cy="30" r="6"/><rect x="10" y="57" width="80" height="9" rx="3"/></svg>',
+    11: '<svg viewBox="0 0 100 70" fill="currentColor"><path d="M14 56c2-22 16-34 36-34s34 12 36 34z"/><path d="M58 26C66 10 80 4 96 2 90 14 78 26 62 32z"/><rect x="10" y="58" width="80" height="9" rx="3"/></svg>',
+  };
+  const ADI = { 11: "Vale", 12: "Kız", 13: "Papaz" };
+  function pips(c) {
+    const r = c.r === 1 ? 14 : c.r;
+    if (r === 14) return `<i class="pp as" style="--x:.5;--y:.5">${simge(c.s, "kp")}</i>`;
+    if (EMB[r]) return `<div class="fc"><div class="em">${EMB[r]}</div><div class="fs">${simge(c.s, "kp")}</div><div class="fl">${ADI[r]}</div></div>`;
+    return (PIP[r] || []).map(([x, y]) => `<i class="pp${y > .5 ? " f" : ""}" style="--x:${x};--y:${+y.toFixed(3)}">${simge(c.s, "kp")}</i>`).join("");
+  }
   function face(c) {
-    return `<span class="r${c.r === 10 ? " ten" : ""}">${RANK[c.r] || c.r}</span><span class="s1">${simge(c.s)}</span><span class="s2">${simge(c.s)}</span>`;
+    return `<span class="r${c.r === 10 ? " ten" : ""}">${RANK[c.r] || c.r}</span><span class="s1">${simge(c.s)}</span>${pips(c)}`;
   }
   const cls = (c) => "card " + suitCls[c.s] + (isRed(c.s) ? " red" : "");
   function el(c) { const d = document.createElement("div"); d.className = cls(c); d.innerHTML = face(c); return d; }
@@ -250,6 +288,16 @@
   const KartMasa = {
     OPT, el, back, html, ayarlar, apply, MASA,
     yuz: face, sinif: cls, simge,
+    // El dizilişi: renk değişen yerlerde küçük boşluk; kart azaldıkça el açılır. xs = her kartın sol kenarı
+    dizilis: (L, W, cw, pay) => {
+      const n = L.length, G = L.reduce((a, c, i) => a + (i && c.s !== L[i - 1].s ? 1 : 0), 0);
+      let gap = cw * 0.2, step = n > 1 ? Math.min(cw * 0.72, (W - cw - pay * 2 - gap * G) / (n - 1)) : 0;
+      if (n > 1 && step < cw * 0.34) { gap = 0; step = Math.min(cw * 0.72, (W - cw - pay * 2) / (n - 1)); }
+      const x0 = (W - (cw + step * (n - 1) + gap * G)) / 2, xs = [];
+      let g = 0; L.forEach((c, i) => { if (i && c.s !== L[i - 1].s) g++; xs.push(x0 + i * step + g * gap); });
+      return { xs, step, x0 };
+    },
+    dizilisIdx: (xs, rx) => { let k = 0; for (let i = 0; i < xs.length; i++) if (rx >= xs[i]) k = i; return k; },
     olcu: () => { const p = PUNTO[OPT.punto] || PUNTO.normal; return { kp: p[1], kx: p[2] }; }, // harf boyu ve eni (yerleşim için)
     hiz: () => (OPT.hizli ? 0.5 : 1),
     wait: (ms) => new Promise((r) => setTimeout(r, ms * (OPT.hizli ? 0.5 : 1))),

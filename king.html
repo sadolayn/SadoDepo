@@ -232,7 +232,7 @@
   .hak .no { color: var(--muted); }
 </style>
 <script src="cardsound.js?v=3"></script>
-<script src="kartmasa.js?v=5" data-oyun="king"></script>
+<script src="kartmasa.js?v=6" data-oyun="king"></script>
 <script src="isq.js"></script>
 <script src="token.js?v=2"></script>
 <script src="kingai.js?v=1"></script>
@@ -554,13 +554,12 @@ function renderHand() {
   h.style.setProperty("--cw", cw + "px");
   const maxA = Math.min(12, n), kavis = cw * 0.25;
   const pay = cw * (0.08 + 1.67 * Math.sin((maxA * Math.PI) / 180)); // dönen kenar kartlar ekrandan taşmasın
-  const step = n > 1 ? Math.min(cw * 0.72, (W - cw - pay * 2) / (n - 1)) : 0;
-  const x0 = (W - (cw + step * (n - 1))) / 2;
-  EL = { x0, step, n, cw, els: [], ok, myTurn };
+  const { xs, step, x0 } = KartMasa.dizilis(hands[0], W, cw, pay); // renk grupları arası boşluk
+  EL = { x0, xs, step, n, cw, els: [], ok, myTurn };
   hands[0].forEach((c, i) => {
     const el = cardEl(c);
     const t = n > 1 ? (i / (n - 1)) * 2 - 1 : 0; // -1 (sol) … 1 (sağ)
-    el.style.left = Math.round(x0 + i * step) + "px";
+    el.style.left = Math.round(xs[i]) + "px";
     el.style.top = Math.round(12 + kavis * t * t) + "px";
     el.style.setProperty("--rot", (t * maxA).toFixed(1) + "deg");
     if (myTurn) el.classList.add(ok.has(id(c)) ? "ok" : "no");
@@ -573,8 +572,8 @@ function renderHand() {
 let EL = null, BAS = null;
 function elIdx(x) {
   if (!EL || !EL.n) return -1;
-  const r = $("hand").getBoundingClientRect(), rx = x - r.left - EL.x0;
-  return Math.max(0, Math.min(EL.n - 1, Math.floor(rx / (EL.step || EL.cw))));
+  const r = $("hand").getBoundingClientRect();
+  return KartMasa.dizilisIdx(EL.xs, x - r.left);
 }
 function elSec(i) {
   if (!EL) return;
