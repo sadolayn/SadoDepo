@@ -1432,8 +1432,8 @@ const K_KAY = { isbank: ["🏦", "İş Bankası", "isbank.com.tr", "#5b6cf0", "l
 const K_GRUP = { ne: [["MaxiMil", "✈️"], ["MaxiPuan", "🪙"], ["Faiz & Kredi", "🏦"], ["İndirim", "🏷️"], ["Taksit", "📆"], ["Ayrıcalık", "✨"]],
   nere: [["Tarım", "🌾"], ["Pati", "🐾"], ["Ödeme & Fatura", "🧾"], ["Eğitim & Kitap", "🎓"], ["Araç & Akaryakıt", "🚗"], ["Market & Yemek", "🛒"], ["Seyahat", "🏖️"], ["Giyim & Kozmetik", "👗"], ["Elektronik & Beyaz Eşya", "📱"], ["Ev & Yaşam", "🛋️"], ["Eğlence & Spor", "🎭"], ["Online Alışveriş", "🌐"], ["Bankacılık", "🏦"], ["Genel", "✨"]] };
 // Kimin için: İş Bankası'nın kendi kategorileri önce (İşte Maaşa Özel, Emeklilere Özel, İş Black...), yoksa başlıktaki ifade
-const K_KIM = { bireysel: [["İş Black · Plus", "🖤", /is-black|plus/, /(?<!friday\s)black(?!\s*friday)|iş\s*plus|\bplus\s*(?:kart|müşteri)|private/i], ["Emekli", "👴", /emeklilere/, /emekli(?!lik)/i], ["Maaşı İş Bankası'na yatanlar", "💼", /maas/, /maaş/i]],
-  ticari: [["Çiftçi & Tarım", "🌾", /ciftci|tarim/, /çiftçi|tarım|imece|traktör|hasat|\btmo\b/i], ["Startup", "🚀", /startup/, /startup|girişimci/i], ["Turizmci", "🏨", /turizmci/, /turizmci|otel işlet|acente/i], ["Dış ticaret · İhracat", "🌍", /ihracat|dis-ticaret/, /ihracat|ihracatçı|\btim\b|dış ticaret|akreditif|ithalat/i], ["Esnaf · POS", "🏪", /esnaf|pos-yazarkasa/, /esnaf|\bpos\b|yazarkasa|ökc|üye işyeri/i], ["Yeni ticari kart", "🆕", /yeni-ticari/, /yeni ticari kart müşteri/i]] };
+const K_KIM = { bireysel: [["İş Black · Maximiles Black", "🖤", /is-black|plus/, /(?<!friday\s)black(?!\s*friday)|iş\s*plus|\bplus\s*(?:kart|müşteri)|private/i], ["Emekli", "👴", /emeklilere/, /emekli(?!lik)/i], ["Maaşı İş Bankası'na yatanlar", "💼", /maas/, /maaş/i]],
+  ticari: [["Çiftçi & Tarım", "🌾", /ciftci|tarim/, /çiftçi|tarım|imece|traktör|hasat|\btmo\b/i], ["Startup", "🚀", /startup/, /startup|girişimci/i], ["Turizmci", "🏨", /turizmci/, /turizmci|turizm kart|otel işlet|acente/i], ["Dış ticaret · İhracat", "🌍", /ihracat|dis-ticaret/, /ihracat|ihracatçı|\btim\b|dış ticaret|akreditif|ithalat/i], ["Esnaf · POS", "🏪", /esnaf|pos-yazarkasa/, /esnaf|\bpos\b|yazarkasa|ökc|üye işyeri/i], ["Yeni ticari kart", "🆕", /yeni-ticari/, /yeni ticari kart müşteri/i]] };
 const K_HERKES = ["Herkes", "👥"];
 function kKimBul(k, seg, sluglar) {
   const t = (k.baslik + " " + (k.ozet || "")).replace(/İ/g, "i").replace(/I/g, "ı");
@@ -1442,7 +1442,7 @@ function kKimBul(k, seg, sluglar) {
 }
 const kGr = (tip) => (KH && KH.gruplar && KH.gruplar[tip] ? KH.gruplar[tip].map((g) => [g.ad, g.ikon]) : K_GRUP[tip]);
 const kIkon = (tip, ad) => (kGr(tip).find((g) => g[0] === ad) || [, "✨"])[1];
-const kKisa = (ad) => ({ "Maaşı İş Bankası'na yatanlar": "Maaşlı", "Dış ticaret · İhracat": "Dış ticaret" })[ad] || ad.replace(" & Beyaz Eşya", "").replace(" Alışveriş", "");
+const kKisa = (ad) => ({ "Maaşı İş Bankası'na yatanlar": "Maaşlı", "Dış ticaret · İhracat": "Dış ticaret", "İş Black · Maximiles Black": "Black" })[ad] || ad.replace(" & Beyaz Eşya", "").replace(" Alışveriş", "");
 // Bir kaynağın bir müşteri bölümündeki kampanyaları: tekrarsız (isbank'ta aynı kampanya birden çok kategoride olabilir)
 function kListe(kay, seg) {
   const v = KH && KH[kay] && KH[kay][seg];
@@ -1480,8 +1480,10 @@ function kOneHtml(L, renk) {
   const sayi = (x) => +String(x).replace(/\./g, "").replace(",", ".");
   // Kazanç: tutarın hemen ardından puan / mil / indirim / iade gelmeli ("30.000 TL ve üzeri alışveriş" harcama eşiğidir, sayılmaz)
   const tl = kTL;
-  const tk = (k) => Math.max(0, ...[...k.baslik.matchAll(/(\d{1,2})\s*(?:aya varan\s*)?(?:ay\s*)?(?:ilave\s*|ek\s*)?taksit/gi)].map((m) => +m[1]), ...[...k.baslik.matchAll(/\+\s?(\d{1,2})\s*taksit/gi)].map((m) => +m[1]));
-  const yz = (k) => !/indirim/i.test(k.baslik.toLocaleLowerCase("tr")) ? 0 : Math.max(0, ...[...k.baslik.matchAll(/%\s?(\d{1,3})|(\d{1,3})\s?%/g)].map((m) => +(m[1] || m[2])).filter((x) => x <= 100));
+  // Taksit sayısı: "9 aya varan", "6'ya varan", "3 ay faizsiz", "ilave 3" gibi yazımların hepsi (başlık Türkçe küçük harfe çevrilerek)
+  const tk = (k) => { const b = k.baslik.toLocaleLowerCase("tr"); return Math.max(0, ...[...b.matchAll(/(\d{1,2})\s*(?:(?:[’'‘]y?a|aya)\s+varan\s*)?(?:ay\s*)?(?:faizsiz\s*)?(?:ilave\s*|ek\s*)?taksit/g)].map((m) => +m[1]), ...[...b.matchAll(/\+\s?(\d{1,2})\s*taksit/g)].map((m) => +m[1])); };
+  // İndirim yüzdesi: "%4,19 indirimli faiz oranı" gibi ondalıklı faiz oranları indirim sayılmaz
+  const yz = (k) => !/indirim/i.test(k.baslik.toLocaleLowerCase("tr")) ? 0 : Math.max(0, ...[...k.baslik.matchAll(/%\s?(\d{1,3})(?![,.]\d)|(\d{1,3})\s?%/g)].map((m) => +(m[1] || m[2])).filter((x) => x <= 100));
   const gun = (k) => (k.bitis ? daysLeft(k.bitis) : 999);
   const fmt = (n) => n.toLocaleString("tr-TR");
   const B = [
@@ -1578,7 +1580,7 @@ function renderKampanyalar() {
   const V0 = KH[kKay][kSeg], kayp = V0.toplam - L.length, biten = (V0.kategoriler || []).reduce((a, c) => a + (c.biten || 0), 0);
   govde = () => sag + (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
     + (liste.length ? liste.map((k) => kKart(k, renk)).join("") : '<div class="empty">Bu seçimde şu an kampanya yok.</div>')
-    + (kayp > 0 && !kNe && !kNere && !kKim ? `<p class="note" style="text-align:center">${kayDom}'de ${V0.toplam} yazıyor: ${kKay === "isbank" || (biten && biten >= kayp) ? `<b>${L.length} güncel</b> + ${kayp} süresi bitmiş kampanya. Sitedeki sayılara "Bu Kampanya Sona Ermiştir" yazan eski kampanyalar da dahil; burada yalnızca güncel olanlar var.` : `${kayp} tanesi buraya henüz gelmiyor.`}</p>` : "") + tumLink;
+    + (kayp > 0 && !kNe && !kNere && !kKim ? `<p class="note" style="text-align:center">${kayDom}'de ${V0.toplam} yazıyor: ${kKay === "isbank" || (biten && biten >= kayp) ? `<b>${L.length} güncel</b> + ${kayp} süresi bitmiş kampanya. Sitedeki sayılara "Bu Kampanya Sona Ermiştir" yazan eski kampanyalar da dahil; burada yalnızca güncel olanlar var.` : `burada <b>${L.length}</b> farklı kampanya var. Aynı kampanyaya giden kartlar burada bir kez sayılır, bitiş günü geçenler de listeden düşer; fark bundan.`}</p>` : "") + tumLink;
   yaz(govde());
 }
 // Arama: üç kaynakta, bireysel ve ticaride birden; başlık, açıklama ve gruplarda geçen her kampanya
@@ -1607,7 +1609,7 @@ function kAraHtml() {
 // Seçim bu telefonda saklanır; sonraki açılışta "yeni" kampanyalar ayrıca söylenir.
 const K_PROFIL = {
   bireysel: [
-    ["black", "🖤", "İş Black · Plus'lıyım", { kim: "İş Black · Plus" }], ["emekli", "👴", "Emekliyim", { kim: "Emekli" }],
+    ["black", "🖤", "İş Black · Plus ya da Maximiles Black'im", { kim: "İş Black · Maximiles Black" }], ["emekli", "👴", "Emekliyim", { kim: "Emekli" }],
     ["maas", "💼", "Maaşım İş Bankası'nda", { kim: "Maaşı İş Bankası'na yatanlar" }],
     ["genc", "🎓", "Öğrenciyim / gencim", { nere: ["Eğitim & Kitap", "Online Alışveriş"], re: /genç|öğrenci|üniversite|bonus genç|18-25|26 yaş/i }],
     ["aile", "👨‍👩‍👧", "Çocuklu aileyiz", { nere: ["Eğitim & Kitap", "Market & Yemek"], re: /okul|çocuk|oyuncak|kırtasiye|toyzz|kidzania|bebek/i }],
@@ -1657,10 +1659,10 @@ function kSihHtml() {
       <b>4 · Ne kazanmak istersin?</b><div class="kshs">${kGr("ne").filter((g) => g[0] !== "Ayrıcalık").map(([ad, ic]) => sec("ne", ad, ic, ad, S.ne === ad)).join("")}${sec("ne", "", "✨", "Fark etmez", !S.ne)}</div>
       ${secildi ? `<button type="button" class="kshsil" data-sh="sil:1">↺ Seçimleri temizle</button>` : ""}</div>`
     + (!secildi ? '<div class="empty">👆 Yukarıdan kendini seç; sana uygun kampanyalar burada sıralansın.</div>'
-      : `<div class="kshoz ${S.seg === "ticari" ? "tic" : "bir"}"><span class="kshseg">${S.seg === "ticari" ? "🏢 Ticari (işyerin) için" : "👤 Bireysel (kendin) için"}</span>${toplam ? `<div class="kshtop">💰 <b>${toplam.toLocaleString("tr-TR")} TL</b><span>'ye varan puan, mil ve indirim fırsatı</span></div>` : ""}
-          <div class="kshsay"><span>🎯 Sana uygun <b>${L.length}</b> kampanya</span>${bitiyor.length ? `<span class="u">⏰ <b>${bitiyor.length}</b> tanesi bu hafta bitiyor</span>` : ""}${yeniler.length ? `<span class="y">🆕 Son bakışından beri <b>${yeniler.length}</b> yeni</span>` : ""}</div>
+      : `<div class="kshoz ${S.seg === "ticari" ? "tic" : "bir"}"><span class="kshseg">${S.seg === "ticari" ? "🏢 Ticari (işyerin) için" : "👤 Bireysel (kendin) için"}</span>${toplam ? `<div class="kshtop">💰 <b>${toplam.toLocaleString("tr-TR")} TL</b><span> · listendeki kampanyaların başlığında yazan puan ve indirim tutarlarının toplamı</span></div>` : ""}
+          <div class="kshsay"><span>🎯 Sana uygun <b>${L.length}</b> kampanya</span>${bitiyor.length ? `<span class="u">⏰ <b>${bitiyor.length}</b> tanesi 7 gün içinde bitiyor</span>` : ""}${yeniler.length ? `<span class="y">🆕 Son bakışından beri <b>${yeniler.length}</b> yeni</span>` : ""}</div>
           ${ilk.length ? `<button type="button" class="kkop kshkop" data-kop="${esc("Bana uygun kampanyalar (sadolayn.github.io/SadoDepo):\n" + metin)}">🔗 Listeyi kopyala, paylaş</button>` : ""}
-          <small>Nasıl hesaplanır: listedeki her kampanyanın başlığında yazan puan, mil ya da indirim tutarı toplanır (iki sitede birden yayımlanan kampanya bir kez sayılır; "… TL ve üzeri" gibi harcama şartları sayılmaz). Harcama şartı ve üst sınır her kampanyanın kendi sayfasında.</small></div>`
+          <small>Nasıl hesaplanır: listedeki her kampanyanın başlığında TL olarak yazan puan ya da indirim tutarı toplanır. Mil olarak yazılanlar ve "… TL ve üzeri" gibi harcama şartları sayılmaz; iki sitede birden yayımlanan kampanya bir kez sayılır. Harcama şartı ve üst sınır her kampanyanın kendi sayfasında.</small></div>`
         + (ilk.length ? ilk.map((k) => kKart(k, K_KAY[k._kay][3])).join("") + (L.length > 15 ? `<p class="note" style="text-align:center">En uygun 15'i gösteriliyor; seçimi daraltırsan liste kısalır.</p>` : "")
           : '<div class="empty">Bu seçimle eşleşen güncel kampanya yok; bir seçimi kaldırmayı dene.</div>'));
 }

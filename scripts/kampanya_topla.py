@@ -59,18 +59,18 @@ NERE = [
     ("Eğitim & Kitap",      "🎓", _r(r"eğitim", r"okul", r"kırtasiye", r"kitap", r"penguen", r"iş kültür", r"kurs\b")),
     ("Araç & Akaryakıt",    "🚗", _r(r"akaryak", r"\bshell\b", r"opet", r"petrol", r"istasyon", r"şarj", r"lastik", r"pirelli", r"petlas", r"michelin",
                                   r"araç", r"oto\s?(?:yol|yıkama|motiv|park)", r"otomotiv", r"otopark", r"\bhgs\b", r"vinyet", r"europcar", r"tiktak", r"yolcu360",
-                                  r"windycar", r"qcar", r"enterprise", r"kiralama", r"up enerji", r"zeplin", r"taşıt")),
+                                  r"windycar", r"qcar", r"enterprise[’'][dt]an", r"enterprise araç", r"araç kiralama", r"rent\s?go", r"up enerji", r"zeplin", r"taşıt")),
     ("Market & Yemek",      "🛒", _r(r"market", r"migros", r"carrefour", r"\ba101\b", r"\bşok\b", r"\bbim\b", r"getir", r"metro mağaza", r"bonveno", r"yemek",
-                                  r"restoran", r"büfe", r"uber eats", r"trendyol go", r"kafe", r"\bcafe\b", r"gıda", r"toptan", r"gastropay")),
-    ("Seyahat",             "🏖️", _r(r"otel", r"tatil", r"uçak", r"uçuş", r"\bets\b", r"ets[’']", r"ucuzabilet", r"\bthy\b", r"türk hava", r"emirates", r"havalimanı",
-                                  r"lounge", r"fast track", r"yurt dışı", r"duty free", r"roaming", r"\besim", r"seyahat", r"turizm", r"\btur(?:lar)?", r"pegasus")),
+                                  r"restoran", r"brunch", r"(?<!cinemapink by maximum )büfe", r"uber eats", r"trendyol go", r"kafe", r"\bcafe\b", r"gıda", r"toptan", r"gastropay")),
+    ("Seyahat",             "🏖️", _r(r"(?<!swiss)otel", r"tatil", r"uçak", r"uçuş", r"\bets\b", r"ets[’']", r"ucuzabilet", r"\bthy\b", r"türk hava", r"emirates", r"havalimanı",
+                                  r"lounge", r"fast track", r"allways", r"hızlı geçiş", r"(?<!online )(?<!internet )yurt dışı(?!na para| internet| online)", r"duty free", r"roaming", r"\besim", r"seyahat", r"turizm", r"\btur(?:lar)?", r"pegasus")),
     ("Giyim & Kozmetik",    "👗", _r(r"giyim", r"kozmetik", r"ayakkab", r"aksesuar", r"zara\b(?! home)", r"lefties", r"massimo", r"stradivarius", r"pull&bear", r"bershka",
                                   r"oysho", r"\bmavi\b", r"mavi[’']", r"\bflo\b", r"flo[’']", r"lumberjack", r"nine west", r"in street", r"reebok", r"under armour", r"sportive",
                                   r"\bgap\b", r"gap[’']", r"marks", r"forever 21", r"lululemon", r"\bdesa\b", r"desa[’']", r"\badl\b", r"adl[’']", r"love my body", r"victoria",
                                   r"sephora", r"m\.a\.c", r"bobbi brown", r"yves rocher", r"kiko", r"cosmetics", r"jimmy key", r"tumi", r"samsonite", r"atasay", r"eleventy",
                                   r"in-formal", r"maje", r"sandro", r"capri", r"decathlon", r"trendyolmilla", r"\bdolap\b", r"zsa zsa", r"mağazalarında vade farksız")),
     ("Elektronik & Beyaz Eşya", "📱", _r(r"elektronik", r"media\s?markt", r"samsung", r"teknosa", r"vatan", r"apple", r"beyaz eşya", r"klima", r"mitsubishi", r"dyson",
-                                  r"miele", r"tefal", r"shark ninja", r"süpürge", r"monitör", r"telefon", r"\bmonster\b", r"monster[’']", r"demirdöküm", r"vaillant", r"yapay zeka", r"\btv\b")),
+                                  r"miele", r"tefal", r"shark ninja", r"süpürge", r"monitör", r"telefon", r"\bmonster\b", r"monster[’']", r"demirdöküm", r"vaillant", r"yapay zeka", r"gemini", r"\btv\b")),
     ("Ev & Yaşam",          "🛋️", _r(r"mobilya", r"yatak", r"yataş", r"doğtaş", r"kelebek", r"ikea", r"bella maison", r"lazzoni", r"zara home", r"karaca", r"korkmaz",
                                   r"paşabahçe", r"yatsan", r"dekorasyon", r"flying tiger", r"yapı sektör", r"toyzz", r"oyuncak", r"ofis kiralama", r"offismekan", r"iş mekan")),
     ("Eğlence & Spor",      "🎭", _r(r"macfit", r"\bspor", r"sport", r"maraton", r"euroleague", r"bubilet", r"passo", r"\bbkm\b", r"etkinlik", r"sinema", r"cinema",
@@ -423,11 +423,15 @@ for kaynak in veri:
     for seg, v in veri[kaynak].items():
         if not v: continue
         if "kategoriler" in v:
-            ipucu = {}
+            ipucu, cok = {}, {}
             for kat in v["kategoriler"]:
                 for k in kat["kampanyalar"]:
+                    if kat["slug"] in SLUG_NERE: cok.setdefault(k["url"], set()).add(SLUG_NERE[kat["slug"]])
                     if k["url"] not in ipucu or (kat["slug"] in SLUG_NERE and ipucu[k["url"]] not in SLUG_NERE):
                         ipucu[k["url"]] = kat["slug"]
+            # Sitede birbirinden farklı gruplara giren birden çok kategoride listelenen kampanyada kategori ipucu kullanılmaz
+            for u, g in cok.items():
+                if len(g) > 1: ipucu[u] = ""
             liste = [(k, ipucu[k["url"]]) for kat in v["kategoriler"] for k in kat["kampanyalar"]]
         else:
             liste = [(k, "") for k in v.get("kampanyalar", [])]
@@ -435,6 +439,15 @@ for kaynak in veri:
         for k, slug in liste:
             if k["url"] not in sonuc: sonuc[k["url"]] = sinifla(k, slug)
             k["ne"], k["nere"] = sonuc[k["url"]]
+# Aynı kampanya başka sitede açıklamasıyla bir gruba girdiyse, kısa yazıldığı için "Genel" kalan kopyası da o gruba alınır
+def _ayni(b): return re.sub(r"[^a-z0-9]", "", b.lower().replace("ı", "i"))
+_tum = [k for kaynak in veri if isinstance(veri[kaynak], dict) for v in veri[kaynak].values() if v
+        for k in v.get("kampanyalar", []) + [x for c in v.get("kategoriler", []) for x in c["kampanyalar"]]]
+_grup = {}
+for k in _tum:
+    if k.get("nere") and k["nere"] != NERE_DIGER[0]: _grup.setdefault(_ayni(k["baslik"]), k["nere"])
+for k in _tum:
+    if k.get("nere") == NERE_DIGER[0] and _ayni(k["baslik"]) in _grup: k["nere"] = _grup[_ayni(k["baslik"])]
 veri["gruplar"] = {b: [{"ad": a, "ikon": i} for a, i in g] for b, g in GRUPLAR.items()}
 os.makedirs("isbank", exist_ok=True)
 json.dump(veri, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
