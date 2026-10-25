@@ -124,26 +124,42 @@
   .hbnk li button { display: flex; gap: 8px; width: 100%; text-align: left; padding: 7px 9px; border-radius: 10px; border: 1px solid rgba(74,99,255,.25); background: rgba(0,0,0,.35); color: var(--ink); font: inherit; font-size: 13px; line-height: 1.4; cursor: pointer; }
   .hbnk li em { flex: none; font-style: normal; font-size: 11px; font-weight: 800; color: #8fa0ff; min-width: 46px; padding-top: 1px; }
   .hbnk .hmore { margin-top: 7px; width: 100%; padding: 7px; border-radius: 10px; border: 1px dashed rgba(74,99,255,.45); background: none; color: #a9b5ff; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
-  .yakin { margin-top: 10px; padding: 10px 11px; border-radius: 12px; border: 1px dashed rgba(240,198,74,.45); background: repeating-linear-gradient(135deg, rgba(240,198,74,.05) 0 10px, transparent 10px 20px); }
-  .yk-ust { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-  .yk-et { font-size: 11px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; color: #f0c64a; }
-  .yk-et i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #f0c64a; margin-right: 6px; vertical-align: 1px; animation: ykNabiz 1.6s ease-in-out infinite; }
-  @keyframes ykNabiz { 0%, 100% { box-shadow: 0 0 0 0 rgba(240,198,74,.6); } 50% { box-shadow: 0 0 0 5px rgba(240,198,74,0); } }
-  .yk-ch { display: inline-flex; gap: 5px; }
-  .yk-ch b { font-size: 11px; font-weight: 800; letter-spacing: .4px; padding: 2px 7px; border-radius: 6px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); color: #e9e2cf; }
-  .yakin p { margin: 7px 0 8px; font-size: 12.5px; line-height: 1.5; color: #c9c2ae; }
-  /* Önemli duyuru: kutunun ilk satırı */
-  .yk-on { margin: 8px 0 0; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(229,56,59,.5); background: rgba(229,56,59,.08); font-size: 12.5px; line-height: 1.5; color: #e9e2cf; }
-  .yk-on .et { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .8px; color: #fff; background: #d32f2f; border-radius: 6px; padding: 1px 6px; margin-right: 6px; vertical-align: 1px; }
-  .yk-on b { color: #f3dca8; }
-  .yk-on a { color: #ffb4b4; }
-  .yk-on .not { display: block; margin-top: 4px; font-size: 11.5px; color: #a9a08a; }
-  .yakin.vur { animation: ykVur 1.6s ease-out 2; }
-  @keyframes ykVur { 0%, 100% { box-shadow: 0 0 0 0 rgba(229,56,59,0); } 40% { box-shadow: 0 0 0 4px rgba(229,56,59,.5); } }
-  .yakin p b { color: #f3dca8; }
-  .yk-b { width: 100%; padding: 8px; border-radius: 10px; border: 1px solid #f0c64a; background: rgba(240,198,74,.12); color: #f3dca8; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
-  .yk-b.ok { border-color: rgba(63,194,131,.5); background: rgba(63,194,131,.1); color: #7ee2a8; cursor: default; }
-  @media (prefers-reduced-motion: reduce) { .yk-et i { animation: none; } }
+  /* ===== İki bölüm: Günün Gazetesi | Kurum Duyuruları ===== */
+  .sek { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: -4px 0 10px; }
+  .sek button { position: relative; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 6px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer; }
+  .sek button small { font-size: 11px; font-weight: 600; color: var(--muted); text-align: center; line-height: 1.3; }
+  .sek button.on { background: linear-gradient(160deg, #3a2a10, #1a1206); border-color: var(--accent); color: #fbe3b0; }
+  .sek button.kr.on { background: linear-gradient(160deg, #10224a, #070f22); border-color: #5d8bff; color: #d6e2ff; }
+  .sek button em { position: absolute; top: -7px; right: -5px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: #d32f2f; color: #fff; font-style: normal; font-size: 11.5px; font-weight: 800; line-height: 20px; box-shadow: 0 0 0 2px #000; }
+  body.kurumda .gz-only, body:not(.kurumda) .kr-only { display: none !important; }
+  /* Son 24 saat şeridi: girer girmez ne çıktığı görülsün */
+  .bugun { margin: 0 0 12px; padding: 10px 12px; border-radius: 14px; border: 1px solid #3b3214; background: linear-gradient(160deg, #1c160a, #0a0805); }
+  .bugun .bh { font-size: 12px; font-weight: 800; letter-spacing: .5px; color: #f0c64a; text-transform: uppercase; margin-bottom: 6px; }
+  .bugun .bl { display: flex; flex-wrap: wrap; gap: 6px; }
+  .bugun button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--line); background: #111; color: var(--ink); font: inherit; font-size: 12.5px; cursor: pointer; }
+  .bugun button b { color: #fff; } .bugun button.onm { border-color: #d32f2f; background: rgba(211,47,47,.12); }
+  .bugun .sakin { font-size: 12.5px; color: var(--muted); }
+  /* Kurum duyuruları */
+  .kh { background: var(--card); border: 1px solid #23365f; border-radius: 16px; padding: 14px; margin-bottom: 10px; }
+  .kh b { font-size: 16px; } .kh p { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+  .kf { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+  .kf button { padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .kf button i { font-style: normal; opacity: .7; margin-left: 4px; font-weight: 600; }
+  .kf button.on { background: var(--kc, #5d8bff); border-color: var(--kc, #5d8bff); color: #000; }
+  .kd { position: relative; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--kc, #5d8bff); border-radius: 14px; padding: 12px 12px 10px; margin-bottom: 10px; }
+  .kd.onm { border-color: rgba(211,47,47,.55); border-left-color: var(--kc, #5d8bff); background: linear-gradient(160deg, #1a0d0d, #0d0d0d); }
+  .kd .ku { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+  .kd .kr { padding: 1px 8px; border-radius: 6px; background: var(--kc, #5d8bff); color: #000; font-weight: 800; font-size: 11.5px; }
+  .kd .on { padding: 1px 6px; border-radius: 6px; background: #d32f2f; color: #fff; font-weight: 800; font-size: 11px; letter-spacing: .5px; }
+  .kd .yn { padding: 1px 6px; border-radius: 6px; background: #3fc283; color: #000; font-weight: 800; font-size: 11px; }
+  .kd h3 { margin: 6px 0 4px; font-size: 15.5px; line-height: 1.35; }
+  .kd p { margin: 0; font-size: 13.5px; color: #d6d6d6; }
+  .kd .et { margin-top: 6px; padding: 6px 9px; border-radius: 9px; background: rgba(240,198,74,.08); border: 1px solid rgba(240,198,74,.25); font-size: 12.5px; color: #f3dca8; }
+  .kd .kl { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font-size: 13px; }
+  .kd .kl a { color: #8fb0ff; text-decoration: none; font-weight: 700; } .kd .kl a.gz { color: var(--accent); }
+  .knot { font-size: 12px; color: var(--muted); text-align: center; margin: 6px 0 0; }
+  .kteaser { display: flex; align-items: center; gap: 10px; width: 100%; margin-top: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid #2b4a8f; background: linear-gradient(160deg, #0f1d3d, #070d1c); color: #d6e2ff; font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+  .kteaser b { color: #fff; } .kteaser span { flex: 1; } .kteaser em { font-style: normal; font-weight: 800; color: #8fb0ff; }
   .hbnk.bos { border-color: var(--line); background: none; padding: 8px 12px; }
   .hbnk.bos .hh { font-size: 12.5px; color: var(--muted); }
   .cal-f i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 5px; vertical-align: middle; }
@@ -172,17 +188,20 @@
     <h1>📜 Resmi Gazete</h1>
     <span style="width:52px"></span>
   </header>
-  <div class="status" id="status">Kontrol bilgisi yükleniyor…</div>
-  <div class="bar">
+  <div class="sek" id="sek"></div>
+  <div class="status gz-only" id="status">Kontrol bilgisi yükleniyor…</div>
+  <div class="bar gz-only">
     <button id="prev" aria-label="Önceki gün">‹</button>
     <select id="pick" aria-label="Gün seç"></select>
     <button id="next" aria-label="Sonraki gün">›</button>
   </div>
-  <div class="cal" id="cal"></div>
+  <div class="cal gz-only" id="cal"></div>
   </div>
-  <div id="haftaBnk"></div>
+  <div id="bugun"></div>
+  <div id="haftaBnk" class="gz-only"></div>
 
-  <div id="content"><div class="empty">Yükleniyor…</div></div>
+  <div id="content" class="gz-only"><div class="empty">Yükleniyor…</div></div>
+  <div id="kurum" class="kr-only"></div>
 </div>
 
 <script>
@@ -218,26 +237,76 @@ async function bnkYukle(isos) {
   if (!eksik.length) return;
   eksik.forEach((d) => bnkYolda.add(d));
   await Promise.all(eksik.map(async (d) => { try { const g = await getJSON(`gazete/${d}.json`); BNK[d] = Array.isArray(g.bankacilik) ? g.bankacilik : null; } catch (e) { BNK[d] = null; } bnkYolda.delete(d); }));
-  renderCal();
+  renderCal(); bugunCiz();
 }
-// "Yapım aşamasında": BDDK, MASAK, TCMB duyuruları. "Bunu bekliyorum" ilgiyi anonim sayar (kim olduğu bilinmez)
-const YK_KEY = "gazeteYakinda1";
-const yakinda = () => {
-  let ok = false; try { ok = localStorage.getItem(YK_KEY) === "1"; } catch (e) {}
-  return `<div class="yakin"><div class="yk-ust"><span class="yk-et"><i></i>Yapım aşamasında</span><span class="yk-ch"><b>BDDK</b><b>MASAK</b><b>TCMB</b><b>Ticaret Bak.</b></span></div>
-    <div class="yk-on"><span class="et">ÖNEMLİ</span><b>15 Ekim 2026 · Resmi Gazete 33401:</b> perakende taksit kuralları değişti. Genel <b>12 ay taksit tavanı</b> yönetmelikten çıktı; konut dışı taksitli satışlarda vade ve sınırları artık <b>Ticaret Bakanlığı</b> belirliyor (BDDK kararlarıyla uyumlu). İlk adım: sıfır cep telefonunda 12 ay taksit sınırı <b>20 bin → 40 bin TL</b> (üstü 3 ay), yenilenmiş telefonda tutar sınırı olmadan 12 ay. Diğer ürünlerde değişiklik yok.<span class="not">Kaynak: <a href="https://ticaret.gov.tr/haberler/ticaret-bakanligindan-bddk-kararlariyla-uyumlu-yeni-duzenleme-15-10-2026" target="_blank" rel="noopener">Ticaret Bakanlığı duyurusu ↗</a> · <a href="#2026-10-15" data-gun="2026-10-15">o günün özeti</a></span></div>
-    <p><b>Yakında bu kutuda:</b> Resmi Gazete'ye düşmeyen kararlar da. Kredi kartı taksit ve yapılandırma kararları, yaptırım listesi güncellemeleri, faiz duyuruları… hepsi tek yerde. 15 Ekim 2026 tarihli Resmi Gazete'deki yönetmelik değişikliğine istinaden taksit vadelerini ve sınırlarını belirleme yetkisi <b>Ticaret Bakanlığı</b>'na geçtiği için Bakanlığın taksit duyuruları da buraya eklenecek.</p>
-    <button type="button" class="yk-b ${ok ? "ok" : ""}" id="ykBtn" ${ok ? "disabled" : ""}>${ok ? "✓ Not ettik, teşekkürler! Hazır olunca burada" : "👀 Bunu bekliyorum"}</button></div>`;
+// ===== Kurum duyuruları: BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı (gazete/duyurular.json, her sabah derlenir) =====
+const KURUM = { "BDDK": ["🏦", "#5d8bff"], "TCMB": ["🏛️", "#ff6b6b"], "SPK": ["📈", "#3fc283"], "TMSF": ["🛡️", "#b48cf0"], "MASAK": ["🔎", "#f0c64a"], "Ticaret Bakanlığı": ["🛒", "#3fbfd6"] };
+const KKISA = { "Ticaret Bakanlığı": "Ticaret Bak." };
+let DUY = [], DUYUPD = null, kurumSec = "", sek = "gazete";
+// Okunmamış duyurular sekmede kırmızı sayı olarak görünür, bölüm açılınca düşer (yalnızca bu telefonda tutulur)
+const KGOR = "gazeteKurumGor1";
+let kGor = []; try { kGor = JSON.parse(localStorage.getItem(KGOR) || "[]"); } catch (e) {}
+const gunFark = (d) => (Date.now() - new Date(d + "T12:00:00")) / 864e5;
+const kId = (x) => x.url || x.tarih + x.baslik;
+const kYeni = () => DUY.filter((x) => gunFark(x.tarih) <= 14 && !kGor.includes(kId(x)));
+function sekCiz() {
+  const y = kYeni().length;
+  $("sek").innerHTML = `<button type="button" data-s="gazete" class="${sek === "gazete" ? "on" : ""}">📜 Günün Gazetesi<small>her sabah özet</small></button>`
+    + `<button type="button" data-s="kurum" class="kr ${sek === "kurum" ? "on" : ""}">🏛️ Kurum Duyuruları<small>BDDK · TCMB · SPK · TMSF · MASAK · Ticaret</small>${y && sek !== "kurum" ? `<em>${y > 9 ? "9+" : y}</em>` : ""}</button>`;
+  $("sek").querySelectorAll("button").forEach((b) => (b.onclick = () => sekAc(b.dataset.s, true)));
+}
+function sekAc(s_, kaydir) {
+  sek = s_; document.body.classList.toggle("kurumda", sek === "kurum");
+  if (sek === "kurum") {
+    kurumCiz(); kGor = [...new Set([...kGor, ...DUY.map(kId)])].slice(-300);
+    try { localStorage.setItem(KGOR, JSON.stringify(kGor)); } catch (e) {}
+    window.Rapor && Rapor.bolum("kurum-duyurulari");
+  }
+  sekCiz(); bugunCiz();
+  if (kaydir) window.scrollTo({ top: 0, behavior: "smooth" });
+}
+// Resmi bağlantı: kurumların kendi alan adları (değilse "Haber kaynağı" yazar)
+const RESMI_RE = /^https:\/\/([a-z0-9-]+\.)*(bddk\.org\.tr|tcmb\.gov\.tr|spk\.gov\.tr|tmsf\.org\.tr|hmb\.gov\.tr|ticaret\.gov\.tr|resmigazete\.gov\.tr|kap\.org\.tr)\//;
+function kurumKart(x) {
+  const [ic, kc] = KURUM[x.kurum] || ["🏛️", "#5d8bff"], yeni = gunFark(x.tarih) <= 3;
+  const t = new Date(x.tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "short" });
+  return `<div class="kd${x.onemli ? " onm" : ""}" style="--kc:${kc}"><div class="ku"><span class="kr">${ic} ${esc(KKISA[x.kurum] || x.kurum)}</span><span>${esc(t)}</span>${x.onemli ? '<span class="on">ÖNEMLİ</span>' : ""}${yeni ? '<span class="yn">YENİ</span>' : ""}</div>
+    <h3>${esc(x.baslik)}</h3>${x.ozet ? `<p>${esc(x.ozet)}</p>` : ""}${x.etki ? `<div class="et">🏦 Bankacılığa etkisi: ${esc(x.etki)}</div>` : ""}
+    <div class="kl">${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${RESMI_RE.test(x.url) ? "Resmi duyuru ↗" : "Haber kaynağı ↗"}</a>` : ""}${x.gazete ? `<a class="gz" href="#${esc(x.gazete)}" data-gun="${esc(x.gazete)}">📜 O günün Resmi Gazetesi</a>` : ""}</div></div>`;
+}
+function kurumCiz() {
+  const say = (k) => DUY.filter((x) => !k || x.kurum === k).length;
+  const L = DUY.filter((x) => !kurumSec || x.kurum === kurumSec);
+  $("kurum").innerHTML = `<div class="kh"><b>🏛️ Düzenleyici kurumlardan</b><p>Resmi Gazete'ye düşmeyen karar ve duyurular tek yerde. Her sabah derlenir; her kayıt kurumun resmi duyurusuna bağlanır.${DUYUPD ? ` Son derleme: ${esc(fmtTime(DUYUPD))}.` : ""}</p></div>
+    <div class="kf"><button type="button" data-k="" class="${!kurumSec ? "on" : ""}" style="--kc:#e0a24f">Hepsi<i>${say("")}</i></button>${Object.entries(KURUM).map(([k, [ic, kc]]) => `<button type="button" data-k="${esc(k)}" class="${kurumSec === k ? "on" : ""}" style="--kc:${kc}">${ic} ${esc(KKISA[k] || k)}<i>${say(k)}</i></button>`).join("")}</div>`
+    + (L.length ? L.map(kurumKart).join("") : `<div class="empty">${kurumSec ? esc(KKISA[kurumSec] || kurumSec) + " için henüz" : "Henüz"} derlenmiş duyuru yok; yenisi çıkınca burada.</div>`)
+    + `<p class="knot">MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz; resmi duyuruya bağlanır. Özetler kişisel derlemedir, bağlayıcı metin kurumun kendi duyurusudur.</p>`;
+  $("kurum").querySelectorAll("[data-k]").forEach((b) => (b.onclick = () => { kurumSec = b.dataset.k; kurumCiz(); }));
+  $("kurum").querySelectorAll("[data-gun]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); history.replaceState(null, "", "#" + a.dataset.gun); sekAc("gazete", true); show(a.dataset.gun); }));
+}
+// Son 24 saat şeridi: Resmi Gazete'deki bankacılık maddeleri + kurum duyuruları (iki bölümde de en üstte)
+function bugunCiz() {
+  const el = $("bugun"); if (!el) return;
+  const today = todayIso(), gz = BNK[today] || [], son = DUY.filter((x) => gunFark(x.tarih) <= 1.5);
+  const kSay = {}; son.forEach((x) => (kSay[x.kurum] = (kSay[x.kurum] || 0) + 1));
+  const onm = son.some((x) => x.onemli);
+  const parca = (gz.length ? [`<button type="button" data-b="gz">📜 Resmi Gazete: <b>${gz.length}</b> bankacılık maddesi</button>`] : [])
+    .concat(Object.entries(kSay).map(([k, n]) => `<button type="button" data-b="${esc(k)}" class="${son.some((x) => x.kurum === k && x.onemli) ? "onm" : ""}">${(KURUM[k] || ["🏛️"])[0]} ${esc(KKISA[k] || k)}: <b>${n}</b> duyuru</button>`));
+  el.innerHTML = `<div class="bugun"><div class="bh">⚡ Son 24 saatte${onm ? " · önemli duyuru var" : ""}</div><div class="bl">${parca.length ? parca.join("") : `<span class="sakin">Bankacılığı ilgilendiren yeni bir karar ya da duyuru yok.</span>`}</div></div>`;
+  el.querySelectorAll("[data-b]").forEach((b) => (b.onclick = async () => {
+    if (b.dataset.b === "gz") {
+      sekAc("gazete"); history.replaceState(null, "", "#" + today); await show(today);
+      const sec = document.querySelector("#content .sec.bnk");
+      if (sec) window.scrollTo({ top: sec.getBoundingClientRect().top + scrollY - document.querySelector(".stick").offsetHeight - 8, behavior: "smooth" });
+    } else { kurumSec = b.dataset.b; sekAc("kurum", true); }
+  }));
+}
+// Gazete bölümündeki haftalık kutunun altında: Kurum Duyuruları'na geçiş
+const kTeaser = () => {
+  const L = DUY.filter((x) => gunFark(x.tarih) <= 14), o = L.filter((x) => x.onemli).length;
+  return `<button type="button" class="kteaser" id="kTeaser">🏛️<span>Kurum duyuruları: son 2 haftada <b>${L.length}</b> karar ve duyuru${o ? `, <b>${o}</b> önemli` : ""} · BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı</span><em>Aç ›</em></button>`;
 };
-let ykGeldi = false;
-function bindYakinda() {
-  // Ana sayfadaki kayan yazıdan (gazete.html?yakinda) gelince kutuya kaydır ve kısaca vurgula
-  const k = document.querySelector(".yakin");
-  if (k && !ykGeldi && /yakinda/.test(location.search)) { ykGeldi = true; setTimeout(() => { const st = document.querySelector(".stick"); k.style.scrollMarginTop = ((st ? st.offsetHeight : 0) + 10) + "px"; k.scrollIntoView({ behavior: "smooth", block: "start" }); k.classList.add("vur"); }, 150); }
-  const g = document.querySelector(".yk-on [data-gun]"); if (g) g.onclick = (e) => { e.preventDefault(); history.replaceState(null, "", "#" + g.dataset.gun); show(g.dataset.gun); };
-  const b = $("ykBtn"); if (!b || b.disabled) return;
-  b.onclick = () => { window.Rapor && Rapor.bolum("yakinda-bddk-masak-tcmb"); try { localStorage.setItem(YK_KEY, "1"); } catch (e) {} b.disabled = true; b.classList.add("ok"); b.textContent = "✓ Not ettik, teşekkürler! Hazır olunca burada"; };
-}
+function bindTeaser() { const t = $("kTeaser"); if (t) t.onclick = () => sekAc("kurum", true); }
 const GUN = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
 function renderHaftaBnk(mon) {
   const el = $("haftaBnk"); if (!el) return;
@@ -247,11 +316,11 @@ function renderHaftaBnk(mon) {
   const L = []; [...gunler].reverse().forEach((d) => (BNK[d] || []).forEach((it) => L.push({ d, it }))); // en yeni gün en üstte
   const bugHafta = isoOf(mon) === (() => { const t = new Date(today + "T12:00:00"); t.setDate(t.getDate() - ((t.getDay() + 6) % 7)); return isoOf(t); })();
   const ad = bugHafta ? "Bu hafta" : "Bu haftada";
-  if (!L.length) { el.innerHTML = `<div class="hbnk bos"><div class="hh">✓ ${ad} bankacılığı ilgilendiren bir düzenleme yok</div></div>${yakinda()}`; bindYakinda(); return; }
+  if (!L.length) { el.innerHTML = `<div class="hbnk bos"><div class="hh">✓ ${ad} bankacılığı ilgilendiren bir düzenleme yok</div>${kTeaser()}</div>`; bindTeaser(); return; }
   el.innerHTML = `<div class="hbnk"><div class="hh">🏦 ${ad} bankacılığı ilgilendiren <b>${L.length}</b> düzenleme<small>Dokun, o günün özetinde aç · takvimdeki mavi sayılar aynı şeyi gösterir</small></div>
     <ul>${(bnkHepsi ? L : L.slice(0, 3)).map(({ d, it }) => { const t = new Date(d + "T12:00:00"); return `<li><button type="button" data-g="${d}"><em>${GUN[t.getDay()]} ${t.getDate()}</em><span>${esc(it.baslik)}</span></button></li>`; }).join("")}</ul>
-    ${L.length > 3 ? `<button type="button" class="hmore" id="bnkTog">${bnkHepsi ? "Daha az göster ▴" : `+${L.length - 3} düzenleme daha ▾`}</button>` : ""}${yakinda()}</div>`;
-  bindYakinda();
+    ${L.length > 3 ? `<button type="button" class="hmore" id="bnkTog">${bnkHepsi ? "Daha az göster ▴" : `+${L.length - 3} düzenleme daha ▾`}</button>` : ""}${kTeaser()}</div>`;
+  bindTeaser();
   if ($("bnkTog")) $("bnkTog").onclick = () => { bnkHepsi = !bnkHepsi; renderHaftaBnk(mon); };
   el.querySelectorAll("[data-g]").forEach((b) => (b.onclick = async () => {
     window.Rapor && Rapor.bolum("haftalik-bankacilik");
@@ -395,6 +464,9 @@ async function init() {
     if (!calCompact && window.scrollY > 80) { calCompact = true; renderCal(); }
 
   }, { passive: true });
+  try { const j = await getJSON("gazete/duyurular.json"); DUY = (j.duyurular || []).filter((x) => x && x.tarih && x.baslik).sort((a, b) => b.tarih.localeCompare(a.tarih)); DUYUPD = j.guncelleme || null; } catch (e) { DUY = []; }
+  // Ana sayfadaki kayan yazıdan (?yakinda) ya da ?kurum / #kurum ile gelince Kurum Duyuruları açılır
+  sekAc(/yakinda|kurum/.test(location.search) || location.hash === "#kurum" ? "kurum" : "gazete");
   renderStatus();
   const want = location.hash.slice(1);
   show(dates.includes(want) ? want : dates[0]);

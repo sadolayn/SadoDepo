@@ -1,0 +1,25 @@
+{
+ "guncelleme": "2026-10-25T17:00:00+03:00",
+ "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) Resmi Gazete dışındaki karar ve duyuruları. Her kayıt resmi duyurusuna bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
+ "duyurular": [
+  {
+   "tarih": "2026-10-22",
+   "kurum": "TCMB",
+   "baslik": "Politika faizi %37'den %36'ya indirildi",
+   "ozet": "Para Politikası Kurulu bir hafta vadeli repo ihale faizini 100 baz puan indirerek %36'ya çekti. Gecelik borç verme faizi %39, gecelik borçlanma faizi %34,5 oldu.",
+   "etki": "Politika faizi, mevduat ve kredi faizlerinin yönünü belirleyen temel orandır; bankaların fiyatlamalarında izlenir.",
+   "onemli": true,
+   "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Duyurular/Basin/2026/DUY2026-45"
+  },
+  {
+   "tarih": "2026-10-15",
+   "kurum": "Ticaret Bakanlığı",
+   "baslik": "Perakende taksit kuralları değişti: yetki Ticaret Bakanlığı'nda",
+   "ozet": "Resmi Gazete 33401'deki yönetmelik değişikliğiyle genel 12 ay taksit tavanı yönetmelikten çıktı; konut dışı taksitli satışlarda vade ve sınırları artık Ticaret Bakanlığı belirliyor (BDDK kararlarıyla uyumlu). İlk adım: sıfır cep telefonunda 12 ay taksit sınırı 20 bin TL'den 40 bin TL'ye çıktı (üstü 3 ay), yenilenmiş telefonda tutar sınırı olmadan 12 ay. Diğer ürünlerde değişiklik yok.",
+   "etki": "Kartlı taksitli satışlarda telefon taksit sınırları değişti; bundan sonraki taksit duyuruları Bakanlıktan gelecek.",
+   "onemli": true,
+   "url": "https://ticaret.gov.tr/haberler/ticaret-bakanligindan-bddk-kararlariyla-uyumlu-yeni-duzenleme-15-10-2026",
+   "gazete": "2026-10-15"
+  }
+ ]
+}

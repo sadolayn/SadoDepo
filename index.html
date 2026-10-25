@@ -612,12 +612,20 @@
     requestAnimationFrame(() => { const w = ser.scrollWidth / 2; ser.style.setProperty("--sure", Math.max(25, Math.round(w / 55)) + "s"); });
   }
   ciz();
+  // Kurum Duyuruları'ndaki son 7 günün ÖNEMLİ duyuruları kayan yazının başına (Resmi Gazete sayfasındaki bölüme gider)
+  Ortak.json("gazete/duyurular.json").then((j) => {
+    const yeni = (j.duyurular || []).filter((x) => x && x.onemli && x.baslik && (Date.now() - new Date(x.tarih + "T12:00:00")) / 864e5 <= 7).slice(0, 2);
+    if (!yeni.length) return;
+    const e = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    dizi.unshift(...yeni.map((x) => ["gazete.html?kurum", `<b class="yn">ÖNEMLİ</b>🏛️ ${e(x.kurum)}: ${e(x.baslik)} <b class="gir">Ayrıntı</b>`, "", "onem"]));
+    ciz();
+  }).catch(() => {});
   window.Kayan = { ppk: (o) => { if ((o && o.html) === (ppk && ppk.html)) { ppk = o; return; } ppk = o; ciz(); } };
   kutu.addEventListener("click", (e) => {
     const o = e.target.closest(".kyOge"); const h = o ? o.dataset.h : "iscep";
     e.preventDefault();
     if (h === "ppk") { ppk && ppk.tap && ppk.tap(); return; }
-    if (h.includes(".html")) { window.Rapor && Rapor.bolum("kayan-gazete-yakinda"); location.href = h; return; }
+    if (h.includes(".html")) { window.Rapor && Rapor.bolum(h.includes("kurum") ? "kayan-kurum" : "kayan-gazete-yakinda"); location.href = h; return; }
     window.Rapor && Rapor.bolum("kayan-" + h); location.href = "isbank.html#" + h;
   });
 })();
