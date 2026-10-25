@@ -289,6 +289,16 @@ def x_tarih(t):
     gelecek = [x for x in aday if bugun <= x <= bugun + dt.timedelta(days=400)]
     return max(gelecek).isoformat() if gelecek else None
 
+def x_baslik_gun(baslik):
+    """Başlık tek bir günü söylüyorsa ("25 Ekim'de …") o gün; yoksa None."""
+    tg = re.search(r"\b(\d{1,2})\s+(" + AY_RE + r")[’'`]?(?:d|t)[ae]\b", baslik.lower())
+    if not tg: return None
+    try:
+        g = dt.date(bugun.year, AYLAR[tg.group(2)], int(tg.group(1)))
+        return g.replace(year=bugun.year + 1) if g < bugun - dt.timedelta(days=180) else g
+    except (ValueError, KeyError):
+        return None
+
 def x_detay(url):
     b = get(url)
     if not b:
@@ -308,6 +318,11 @@ def x_detay(url):
     ticari = bool(re.search(r"Kampanyalar\s*(?:[›>/»]\s*)?Ticari\s+Kampanyalar", metin(t)))
     # Tarih yalnızca başlığın altındaki kampanya metninde aranır (menü, alt bilgi ve öteki kampanya kartları dışarıda kalır)
     govde = metin(t[h1.end():] if h1 else t)[:3500]
+    # Başlık tek bir günü söylüyorsa ("25 Ekim'de …") kampanya o gündür; metindeki puan yükleme tarihi bitiş sanılmasın
+    gun_ = x_baslik_gun(baslik)
+    if gun_:
+        if gun_ < bugun: return "bitti"
+        return {"baslik": baslik[:160], "bitis": gun_.isoformat(), "ozet": ozet[:220], "url": url, "tv": 3}, ticari
     # Sayfanın kendi "Başlangıç - Bitiş Tarihi" alanı varsa kesin olan odur (metindeki puan yükleme tarihi gibi sonraki tarihler bitiş sanılmasın)
     alan = re.search(r"başlangıç\s*[-–]\s*bitiş\s*tarihi\s*:?\s*\d{1,2}[./]\d{1,2}[./]20\d{2}\s*[-–]\s*(\d{1,2})[./](\d{1,2})[./](20\d{2})", metin(t).lower())
     if alan:
@@ -338,11 +353,16 @@ def x_hepsi():
     # Daha önce okunmuş ve bitişi gelmemiş kampanyanın sayfası yeniden açılmaz (banka sitesine gereksiz yük olmasın):
     # yalnızca yeni çıkan kampanyaların kendi sayfası okunur
     bilinen = {k["url"]: k for seg_ in ("bireysel", "ticari") for k in ((eski.get("maximiles") or {}).get(seg_) or {}).get("kampanyalar", [])
-               if k.get("bitis") and k["bitis"] >= bugun.isoformat() and k.get("tv") == 2}  # tv: bitiş tarihi yeni okuyucuyla okundu (eskiler bir kez yeniden okunur)
+               if k.get("bitis") and k["bitis"] >= bugun.isoformat() and k.get("tv", 0) >= 2}  # tv: bitiş tarihi yeni okuyucuyla okundu (eskiler bir kez yeniden okunur)
     acilan = 0
     for url in sorted(duz | bir_t | tic_t):
         if url in bilinen:
             k = {x: bilinen[url][x] for x in ("baslik", "bitis", "ozet", "url", "tv")}
+            g_ = x_baslik_gun(k["baslik"])
+            if g_ and g_ < bugun:
+                biten += 1
+                continue
+            if g_: k["bitis"] = g_.isoformat()
             seg = "ticari" if url in tic_t else "bireysel" if url in bir_t else next((s_ for s_ in ("bireysel", "ticari") if any(y["url"] == url for y in ((eski.get("maximiles") or {}).get(s_) or {}).get("kampanyalar", []))), "bireysel")
             X_HEPSI.setdefault(seg, []).append(k)
             continue
