@@ -315,10 +315,12 @@
   @keyframes nb { 50% { transform: scale(1.12); } }
   /* Menü: Bankacılık'taki renkli kutucuk dili */
   .menu button { --c: #e0a24f; --d: #2a2010; --t: #f3dca8; grid-column: span 4; height: 54px; border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 38%, #000), var(--d)); color: var(--t); font-weight: 700; }
-  .menu button, .menu button:nth-child(n+6) { grid-column: span 4; }
+  .menu { grid-template-columns: repeat(12, minmax(0, 1fr)) !important; }
+  .menu button, .menu button:nth-child(n+6) { grid-column: span 3; } .menu button:nth-child(n+9) { grid-column: span 4; }
   .menu button[data-k="KTakvim"] { --c: #ef5a5a; --d: #2e0a0a; --t: #ffd0d0; }
   .menu button[data-k="Pazarama"] { --c: #ff8a3d; --d: #2e1405; --t: #ffd9bf; }
   .menu button[data-k="Kartsiz"] { --c: #3fbfd6; --d: #04232a; --t: #c6f0f7; }
+  .menu button[data-k="POS"] { --c: #9b7bff; --d: #160c33; --t: #e2d9ff; }
   .menu button span { font-size: 11px; overflow: visible; } .menu button span small { font-size: 11px; font-weight: 600; opacity: .85; }
   .menu button.active { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
   .menu button.hasnew { border-color: #d32f2f; }
@@ -728,6 +730,14 @@
   .altkutu.dar:not(.acik) .tsat button.hep { display: none !important; }
   .altkutu.dar:not(.acik) .tsat.kgr:not(:has(.on:not(.hep))) { display: none !important; }
   .karac { display: grid; gap: 7px; margin: 0 0 10px; }
+  .altkutu #tfil.kamp .kara { margin: 6px 0 2px; pointer-events: auto; }
+  .altkutu.dar:not(.acik) #tfil.kamp .kara { margin: 4px 0 4px; flex: 1 1 100%; }
+  .altkutu.dar:not(.acik) #tfil.kamp .kara button { display: inline-block !important; }
+  .altkutu.dar:not(.acik) #tfil.kamp .kara button[hidden] { display: none !important; }
+  .altkutu #tfil.kamp.araniyor .tsat { display: none !important; }
+  .altkutu #tfil.kamp .kara button[hidden] { display: none !important; }
+  .altkutu.dar:not(.acik) #tfil.kamp { pointer-events: auto !important; }
+  .altkutu.dar:not(.acik) #tfil.kamp .tsat { pointer-events: none; }
   .kara { display: flex; align-items: center; gap: 6px; padding: 0 6px 0 12px; border-radius: 14px; border: 1px solid #3a3a3a; background: #0d0d0d; }
   .kara:focus-within { border-color: #e0a24f; } .kara i { font-style: normal; }
   .kara input { flex: 1; min-width: 0; height: 44px; border: 0; background: none; color: #fff; font: inherit; font-size: 15px; outline: none; }
@@ -751,7 +761,7 @@
   .ksag .kyol b { color: var(--kk, #e0a24f); }
   .altkutu .tsat button.kac { border-style: dashed !important; color: var(--c, #e0a24f) !important; background: transparent !important; font-weight: 800; }
   .menu button[data-k="Maximum"] span { display: inline-block; letter-spacing: -.3px; font-size: 11px; transform: scaleX(.84); transform-origin: center; white-space: nowrap; }
-  .menu button[data-k="Haberler"] small { display: inline-block; transform: scaleX(.86); transform-origin: center; white-space: nowrap; letter-spacing: -.2px; }
+  .menu button[data-k="Haberler"] small { display: inline-block; font-size: 10px; white-space: nowrap; letter-spacing: -.2px; opacity: .85; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -879,9 +889,9 @@ const CATS = [
   ["Soru", "#e0a24f", "❓"],
   ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Ödeme<small>Kartsız · POS</small>", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<small>Güncel · KAP</small>" };
+const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Kartsız<br>öde", "POS": "POS<br>rehberi", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<br><small>Güncel · KAP</small>" };
 // Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Video, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
-const MENU = [["Tarihçe", "🏛️"], ["Maximum", "🎁"], ["İşCep", "📲"], ["Haberler", "📰"], ["Black", "🖤"], ["Şubeler", "📍"], ["Soru", "❓"], ["KTakvim", "⏳"], ["Pazarama", "🛒"], ["Kartsiz", "📲"]];
+const MENU = [["Tarihçe", "🏛️"], ["İşCep", "📲"], ["Maximum", "🎁"], ["Black", "🖤"], ["KTakvim", "⏳"], ["Haberler", "📰"], ["Şubeler", "📍"], ["Pazarama", "🛒"], ["Kartsiz", "💳"], ["POS", "🏪"], ["Soru", "❓"]];
 const NEWS = ["Tümü", "📰 Güncel", "🎬 Video", "Haber", "Ürün", "Dijital", "KAP"];
 const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "🎬 Video": "🎬 Video", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
 let lastNews = "Tümü"; try { lastNews = localStorage.getItem("isbankNews") || "Tümü"; } catch (e) {}
@@ -1006,7 +1016,7 @@ function bolumeKay(el) {
   window.addEventListener("scroll", kontrol, { passive: true }); window.addEventListener("resize", kontrol);
   // Dar kutuya dokununca aç; açıkken bir başlık seçilince yine daralır
   k.addEventListener("click", (e) => {
-    if (!k.classList.contains("dar")) return;
+    if (!k.classList.contains("dar") || e.target.closest(".kara")) return;
     if (!k.classList.contains("acik")) { k.classList.add("acik"); e.stopPropagation(); return; }
     if (e.target.closest(".altbas")) k.classList.remove("acik");
     else if (e.target.closest("button")) setTimeout(() => k.classList.remove("acik"), 0);
@@ -1123,8 +1133,6 @@ function odeHtml() {
     <div class="pay-tip">🔒 Kartın, telefonun ya da MaxSticker'ın kaybolursa İşCep'ten hemen geçici olarak kapatabilirsin.</div>`;
 }
 // ===== POS rehberi: işyeri hangi POS'u seçmeli, sık karışan konular (genel bilgi; koşullar bankaya göre değişir) =====
-let odeSec = "kartsiz";
-try { odeSec = localStorage.getItem("isbankOde") || "kartsiz"; } catch (e) {}
 const POS = [
   { ic: "🧾", ad: "Yazarkasa POS (ÖKC)", k: "Dükkanda", kim: "Dükkanında perakende satış yapanlar", p: "Hem yazarkasa fişi keser hem kartla ödeme alır; tek cihazda yazarkasa + POS. Fiş kesmek zorunda olan perakende işyerleri için ana cihaz budur.", n: "Fiş ve kart işlemi aynı cihazda olduğu için gün sonu ve muhasebe kolaylaşır." },
   { ic: "🛵", ad: "Mobil ÖKC", k: "Gezerek", kim: "Kurye, kapıda ödeme, pazar, servis", p: "Kendi SIM'i (4G) ile çalışan, taşınabilir yazarkasa POS. Masaya, kapıya, sahaya gider; fişi orada keser.", n: "Paket servis ve kapıda ödeme alan işletmelerin ilk tercihi." },
@@ -1492,13 +1500,14 @@ function renderKampanyalar() {
   t.className = "tfil mtiles iki sekmeli kamp";
   t.hidden = false;
   t.style.setProperty("--kk", renk); t.style.setProperty("--kz", K_KAY[kKay][4]); t.style.setProperty("--ky", K_KAY[kKay][5]);
-  t.innerHTML = `<div class="tsat uc"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
+  t.innerHTML = `<div class="kara"><i>🔎</i><input id="kAra" type="search" enterkeyhint="search" placeholder="Ara: Migros, lastik, okul… (Türkçe harf şart değil)" value="${esc(kAra)}" autocomplete="off"><button type="button" id="kAraSil"${kAra ? "" : " hidden"}>✕</button></div>`
+    + `<div class="tsat uc"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
     + `<div class="tsat uc"><span class="tlab">👥 Müşteri</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
     + (L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, ad, n, kKim === ad)).join("")}</div></div>` : "")
     + (L.length && !kOne ? `<div class="tsat kgr"><span class="tlab">💰 Ne kazanırım</span><div class="tgrid">${sb("data-ne", "", "📋", "Hepsi", neT.length, !kNe, "hep")}${neS.map(([ad, ic, n]) => sb("data-ne", ad, ic, ad, n, kNe === ad)).join("")}</div></div>`
       + `<div class="tsat kgr"><span class="tlab">🛍️ Nerede</span><div class="tgrid">${sb("data-nere", "", "📋", "Hepsi", nereT.length, !kNere, "hep")}${nereGor.map(([ad, ic, n]) => sb("data-nere", ad, ic, kKisa(ad), n, kNere === ad)).join("")}${nereGor.length < nereS.length || kKatAcik ? `<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Daha az" : `▾ ${nereS.length - nereGor.length} grup daha`}</button>` : ""}</div></div>` : "");
   t.onclick = (e) => {
-    const b = e.target.closest("button"); if (!b) return;
+    const b = e.target.closest("button"); if (!b || b.closest(".kara")) return;
     if (b.dataset.kac) { kKatAcik = !kKatAcik; renderKampanyalar(); return; }
     if (b.dataset.ky) { kKay = b.dataset.ky; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
     else if (b.dataset.sg) { kSeg = b.dataset.sg; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
@@ -1515,13 +1524,13 @@ function renderKampanyalar() {
     return;
   }
   // Üstte arama kutusu ve öneri sihirbazı; arama ya da sihirbaz açıkken süzgeçlerin yerine onların sonucu görünür
-  const ust = `<div class="karac"><div class="kara"><i>🔎</i><input id="kAra" type="search" enterkeyhint="search" placeholder="Kampanya ara: Migros, lastik, okul…" value="${esc(kAra)}" autocomplete="off"><button type="button" id="kAraSil"${kAra ? "" : " hidden"}>✕</button></div>`
-    + `<button type="button" id="kSihirBtn" class="${kSih.acik ? "on" : ""}">🧭 Müşterime ne önereyim?</button></div>`;
+  const ust = `<div class="karac"><button type="button" id="kSihirBtn" class="${kSih.acik ? "on" : ""}">🧭 Müşterime ne önereyim?</button></div>`;
+  t.classList.toggle("araniyor", !!kAra.trim());
   let govde = () => "";
   const bagla = () => {
     const i = $("kAra"), sil = $("kAraSil");
-    i.oninput = () => { kAra = i.value; sil.hidden = !kAra; $("kGovde").innerHTML = kAra.trim() ? kAraHtml() : kSih.acik ? kSihHtml() : govde(); };
-    sil.onclick = () => { kAra = ""; i.value = ""; sil.hidden = true; $("kGovde").innerHTML = kSih.acik ? kSihHtml() : govde(); i.focus(); };
+    i.oninput = () => { kAra = i.value; sil.hidden = !kAra; t.classList.toggle("araniyor", !!kAra.trim()); $("kGovde").innerHTML = kAra.trim() ? kAraHtml() : kSih.acik ? kSihHtml() : govde(); };
+    sil.onclick = () => { kAra = ""; i.value = ""; sil.hidden = true; t.classList.remove("araniyor"); $("kGovde").innerHTML = kSih.acik ? kSihHtml() : govde(); i.focus(); };
     $("kSihirBtn").onclick = () => { kSih.acik = !kSih.acik; kAra = ""; renderKampanyalar(); if (kSih.acik) icerigeKay(); };
     $("kGovde").onclick = (e) => { const b = e.target.closest("[data-sh]"); if (!b) return; const [a, v] = b.dataset.sh.split(":"); if (a === "nere") kSih.nere = kSih.nere.includes(v) ? kSih.nere.filter((x) => x !== v) : [...kSih.nere, v]; else kSih[a] = kSih[a] === v ? "" : v; if (a === "seg") kSih.kim = ""; $("kGovde").innerHTML = kSihHtml(); };
   };
@@ -1540,7 +1549,7 @@ function renderKampanyalar() {
 }
 // Arama: üç kaynakta, bireysel ve ticaride birden; başlık, açıklama ve gruplarda geçen her kampanya
 let kAra = "";
-const kKucuk = (t) => (t || "").toLocaleLowerCase("tr").replace(/[’'`]/g, "");
+const kKucuk = (t) => (t || "").toLocaleLowerCase("tr").replace(/[’'`]/g, "").replace(/[çğıöşüâîû]/g, (h) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" })[h]);
 function kTumu(seg) { return Object.keys(K_KAY).flatMap((kay) => (seg ? [seg] : ["bireysel", "ticari"]).flatMap((sg) => (kListe(kay, sg) || []).map((k) => ({ ...k, _kay: kay, _seg: sg })))); }
 function kAraHtml() {
   const q = kKucuk(kAra.trim()).split(/\s+/).filter(Boolean);
@@ -2330,14 +2339,8 @@ function renderList() {
   if (cat === "Maximum") return renderKampanyalar();
   if (cat === "KTakvim") { $("upd").textContent = "Kampanya bitiş günleri her gün kendiliğinden güncellenir"; $("list").innerHTML = campCal(); bindCal(); return; }
   if (cat === "Pazarama") { $("upd").textContent = "MaxiPuan ve MaxiMil Pazarama'da 1 puan = 1 TL"; $("list").innerHTML = pazHtml(); bindPaz(); return; }
-  if (cat === "Kartsiz") {
-    // İki sekme: müşteri için Kartsız öde, işyeri için POS rehberi (seçim menünün altında, yapışkan alanda)
-    const t = $("tfil"); t.className = "tfil aysec"; t.hidden = false;
-    t.innerHTML = `<button type="button" data-od="kartsiz" class="${odeSec !== "pos" ? "on" : ""}">📲 Kartsız öde<small>müşteri için</small></button><button type="button" data-od="pos" class="p ${odeSec === "pos" ? "on" : ""}">🏪 POS rehberi<small>işyeri için</small></button>`;
-    t.onclick = (e) => { const b = e.target.closest("[data-od]"); if (!b) return; odeSec = b.dataset.od; try { localStorage.setItem("isbankOde", odeSec); } catch (x) {} renderList(); icerigeKay(); };
-    $("upd").textContent = odeSec === "pos" ? "İşyerinden kartla ödeme almanın yolları · genel bilgi" : "Kartsız ödemeye özel kampanyalar";
-    $("list").innerHTML = odeSec === "pos" ? posHtml() : odeHtml(); bindSpecial(); return;
-  }
+  if (cat === "Kartsiz") { $("upd").textContent = "Kartsız ödemeye özel kampanyalar"; $("list").innerHTML = odeHtml(); bindSpecial(); return; }
+  if (cat === "POS") { $("upd").textContent = "İşyerinden kartla ödeme almanın yolları · genel bilgi"; $("list").innerHTML = posHtml(); bindSpecial(); return; }
   if (cat === "Şubeler") return renderSubeler();
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "") + " · günde iki kez (09:01, 14:01)";
   const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
