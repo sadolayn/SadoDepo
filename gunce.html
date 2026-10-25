@@ -1106,7 +1106,7 @@ function renderPos() {
     <div class="pz-c"><div class="pz-logo">SADOLAYN</div><div class="pz-s">GÜNCE · İLERLEME FİŞİ<br>${esc(qName())} · ${esc(qRange())}<br>${P.when} · Fiş no ${P.fis}</div></div>
     ${P.tier === "tam" ? '<div class="pz-stamp">HEDEF TAMAM ✓</div>' : ""}
     <hr class="pz-hr">
-    <div class="pz-h">BUGÜNÜN KAYITLARI</div>
+    <div class="pz-h">BUGÜNÜN SATIŞLARI</div>
     ${P.todayL.length ? P.todayL.map((x) => `<div class="pz-row"><span>${x.ic} ${esc(x.ad)}</span><b>${esc(x.nT)}</b></div>`).join("") : '<div class="pz-row" style="color:#6b6458"><span>Bugün henüz kayıt yok</span><span>—</span></div>'}
     <hr class="pz-hr">
     <div class="pz-h">ÇEYREK HEDEFLERİ</div>
@@ -1133,7 +1133,7 @@ function posCanvas() {
   T("GÜNCE · İLERLEME FİŞİ", W / 2, 100, mono(18), "#555", "center");
   T(`${qName()} · ${qRange()}`, W / 2, 126, mono(18), "#555", "center");
   T(`${P.when} · Fiş no ${P.fis}`, W / 2, 152, mono(16), "#777", "center");
-  let y = 176; hr(y); y += 32; T("BUGÜNÜN KAYITLARI", M, y, mono(15, 1), "#8a8270"); y += 30;
+  let y = 176; hr(y); y += 32; T("BUGÜNÜN SATIŞLARI", M, y, mono(15, 1), "#8a8270"); y += 30;
   if (P.todayL.length) P.todayL.forEach((x) => { T(`${x.ic} ${x.ad}`, M, y, mono(20)); T(x.nT, W - M, y, mono(20, 1), "#262626", "right"); y += rowH; });
   else { T("Bugün henüz kayıt yok", M, y, mono(20), "#999"); y += rowH; }
   y += 6; hr(y); y += 32; T("ÇEYREK HEDEFLERİ", M, y, mono(15, 1), "#8a8270"); y += 30;
