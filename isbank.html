@@ -596,7 +596,8 @@
   .imini .cur { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--c, #fff); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .imini .cur i { font-style: normal; font-size: 21px; }
   .imini button { flex: 0 0 auto; padding: 9px 13px; border-radius: 11px; border: 1px solid var(--line); background: #161616; color: #fff; font: inherit; font-size: 13.5px; font-weight: 700; }
-  .altkutu { max-height: calc(100dvh - var(--iminiH, 0px) - 10px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+  html, body { overflow-anchor: none; } /* kutu daralınca tarayıcı sayfayı başa sıçratmasın (yoksa kutu açılıp kapanarak takılıyor) */
+  .altkutu.dar.acik { max-height: calc(100dvh - var(--iminiH, 0px) - 10px); overflow-y: auto; scrollbar-width: thin; }
   .altkutu { position: sticky; top: var(--iminiH, 0px); z-index: 20; margin: -4px 0 12px; padding: 8px 8px 6px; border-radius: 14px; background: #070707; border: 1px solid color-mix(in srgb, var(--c, #e0a24f) 55%, #000); border-top: 3px solid var(--c, #e0a24f); box-shadow: 0 8px 18px rgba(0,0,0,.6); }
   .altkutu::before { content: ""; position: absolute; top: -10px; left: var(--ok, 50%); width: 14px; height: 14px; margin-left: -7px; background: var(--c, #e0a24f); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
   .altbas { display: flex; align-items: center; gap: 6px; margin: 0 2px 2px; font-size: 12px; font-weight: 800; letter-spacing: .3px; color: var(--c, #e0a24f); }
