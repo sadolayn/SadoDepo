@@ -120,9 +120,9 @@
 
 <div class="ov" id="optOv"><div class="modal">
   <h2>Tavla</h2>
-  <p>Rakibin <b style="color:#e9c98f">Sadolayn</b> — onu yenmek kolay değil.</p>
+  <p>Rakibin <b style="color:#e9c98f">Sadolayn</b> — onu yenmek kolay değil; zarı da biraz şanslıdır 😉</p>
   <h3>Maç</h3>
-  <div class="seg" id="segN"><button data-n="1">1<small>el</small></button><button data-n="3">3<small>el</small></button><button data-n="5">5<small>el</small></button></div>
+  <div class="seg" id="segN"><button data-n="1">1<small>puan</small></button><button data-n="3">3<small>puan</small></button><button data-n="5">5<small>puan</small></button></div>
   <h3>İsmin</h3>
   <div id="isimler"></div>
   <h3>Pul rengin</h3>
@@ -130,13 +130,13 @@
   <h3>Tahta deseni</h3>
   <div class="desenler" id="desenler"></div>
   <button class="go" id="goBtn">Oyuna başla</button>
-  <div class="rules">• Mars (rakip hiç pul toplamadan bitirmek) 2 puan, normal galibiyet 1 puan.<br>• Seçtiğin sayıda puana ilk ulaşan maçı kazanır.<br>• Kırılan pul kenara çıkar; önce onu oyuna sokmalısın.<br>• Zarın ikisini de oynamak zorunlusun; çift atınca dört kez oynarsın.</div>
+  <div class="rules">• Mars (rakip hiç pul toplamadan bitirmek) 2 puan, normal galibiyet 1 puan.<br>• Seçtiğin sayıda puana ilk ulaşan maçı kazanır.<br>• Kırılan pul kenara çıkar; önce onu oyuna sokmalısın.<br>• Zarın ikisini de oynamak zorundasın; çift atınca dört kez oynarsın.</div>
 </div></div>
 
 <div class="ov" id="desenOv"><div class="modal">
   <details class="tvKural"><summary>📖 Oyunun kuralları</summary><ul>
     <li>Pullarını tahtanın etrafında dolaştırıp kendi evine (son çeyrek) topla, sonra dışarı çıkar. Pullarını ilk çıkaran oyunu kazanır.</li>
-    <li>Zarın ikisini de oynamak zorunlusun; <b>çift</b> atınca dört kez oynarsın.</li>
+    <li>Zarın ikisini de oynamak zorundasın; <b>çift</b> atınca dört kez oynarsın.</li>
     <li>Rakibin tek pulunun olduğu yere gelirsen o pul <b>kırılır</b>, kenara çıkar; kırık pulu olan önce onu oyuna sokmalı. İki ya da daha fazla pulun olan yere (kapı) rakip giremez.</li>
     <li><b>Mars</b> (rakip hiç pul toplamadan bitirmek) 2 puan, normal galibiyet 1 puan. Seçtiğin sayıda puana ilk ulaşan maçı kazanır.</li>
     <li><b>Nasıl oynanır:</b> zarlara dokun ya da çift tıkla · pulu sürükle ya da dokun, yeşil yerlere gider · pula çift dokununca büyük zarla ilerler · ↶ Geri al hamleni geri alır.</li>
@@ -807,7 +807,7 @@ function aiTurn() {
     setTimeout(() => {
       const c = flip(S);
       const m = bestMove(c, a, b);
-      if (!m || !m.seq.length) { status(`Sadolayn: <b>${a} · ${b}</b> — oynayamadı`); setTimeout(() => { aiLast = dice.slice(); dice = []; rem = []; phase = "roll"; render(); status(`Sadolayn <b>${aiLast.join(" · ")}</b> oynadı — sıra sende`); autoRoll(2200); }, 1300); return; }
+      if (!m || !m.seq.length) { status(`Sadolayn: <b>${a} · ${b}</b> — oynayamadı`); setTimeout(() => { aiLast = dice.slice(); dice = []; rem = []; phase = "roll"; render(); status(`Sadolayn <b>${aiLast.join(" · ")}</b> attı, oynayamadı — sıra sende`); autoRoll(2200); }, 1300); return; }
       const steps = m.seq.slice(); status(`Sadolayn: <b>${a} · ${b}</b> — oynuyor…`);
       const next = () => {
         if (!steps.length) {

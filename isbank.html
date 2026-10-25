@@ -11,7 +11,7 @@
 <meta name="description" content="Bilgi paylaştıkça büyür">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SADOLAYN">
-<meta property="og:title" content="Sadolayn · İş Bankası Gündemi (resmi değildir)">
+<meta property="og:title" content="Sadolayn · İş Bankası Gündemi (resmî değildir)">
 <meta property="og:description" content="“Bilgi paylaştıkça büyür”">
 <meta property="og:url" content="https://sadolayn.github.io/SadoDepo/isbank.html">
 <meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
@@ -865,7 +865,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   var SAHNE = [
     ["26 Ağustos 1924 · Ankara", "İş Bankası, Atatürk'ün direktifiyle 2 şube ve 37 çalışanla kuruldu."],
     ["1 milyon liralık sermaye", "Kuruluş sermayesinin dörtte birini, 250 bin lirayı Atatürk karşıladı."],
-    ["İlk genel müdür", "Bankanın ilk genel müdürü Celâl Bayar'dı."],
+    ["İlk genel müdür", "Bankanın ilk genel müdürü Celal Bayar'dı."],
     ["1928 · Kumbara", "Türkiye'ye ilk kumbaraları İş Bankası getirdi; tasarruf alışkanlığının simgesi oldu."],
     ["Vasiyet", "Atatürk'ün hisselerinin kâr payları, vasiyeti gereği Türk Dil Kurumu ve Türk Tarih Kurumu'na gider."],
     ["Bir asırdır", "İş Bankası 2024'te 100 yaşını kutladı; ikinci yüzyılına \"Türkiye'nin Bankası\" olarak girdi."]
@@ -1131,6 +1131,7 @@ function icerigeKay() {
   });
 }
 
+// Bitişe kalan gün: son gün 1, ertesi gün 0 ya da eksi (biten kampanya için "> 0" ile bakılır; -0 da biter sayılır)
 function daysLeft(d) {
   const end = new Date(d + "T23:59:59"), now = new Date();
   return Math.ceil((end - now) / 86400000);
@@ -1171,47 +1172,47 @@ function oneHtml() {
   const m = new Date().getMonth();
   const order = ONE.slice().sort((a, b) => ((b.sezon || []).includes(m) ? 1 : 0) - ((a.sezon || []).includes(m) ? 1 : 0));
   const match = (g) => camps.filter((c) => g.re.test(c.baslik + " " + c.ozet)).length + (g.black && blk && blk.ayricaliklar ? Math.min(6, blk.ayricaliklar.length) : 0);
-  const tiles = `<div class="otiles">${order.map((g, i) => { const n = match(g), hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) >= 0);
+  const tiles = `<div class="otiles">${order.map((g, i) => { const n = match(g), hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) > 0);
       return `<button type="button" class="ot${hot ? " hot" : ""}" data-go="one${i}"><i>${g.ic}</i><span>${g.kisa || g.ad}</span>${n ? `<em>${n}</em>` : ""}</button>`; }).join("")}
-    <button type="button" class="ot pay" data-tur="📲 Kartsız öde"><i>📲</i><span>Kartsız öde</span><em class="y">YENİ</em></button></div>`;
+    <button type="button" class="ot pay" data-tur="📲 Kartsız öde"><i>📲</i><span>Kartsız öde</span>${Date.now() < new Date("2026-11-03T00:00:00+03:00") ? '<em class="y">YENİ</em>' : ""}</button></div>`;
   return `<div class="ohead">⭐ Öne çıkanlar<span>Başlığa dokun, o bölüme git · kampanya satırına dokun, resmi sayfası açılır</span></div>` + tiles + order.map((g, i) => {
     const L = camps.filter((c) => g.re.test(c.baslik + " " + c.ozet)).concat(g.black && blk && blk.ayricaliklar ? blk.ayricaliklar.slice(0, 6).map((k) => ({ baslik: k.baslik, bitis: k.bitis || "2026-12-31" })) : []);
-    const hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) >= 0);
-    return `<div class="ocard${hot ? " hot" : ""}" id="one${i}"><div class="oh"><i>${g.ic}</i><b>${g.ad}</b>${hot ? '<span class="newtag">DÖNEMİ</span>' : ""}<em>${L.length ? L.length + " kampanya" : ""}</em></div>
-      <p>${g.bitis && daysLeft(g.bitis) < 0 ? g.sonra : g.rehber}${g.bitis && daysLeft(g.bitis) >= 0 ? ` <b style="color:#ffb27a">Son ${daysLeft(g.bitis)} gün.</b>` : ""}</p>
+    const hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) > 0);
+    return `<div class="ocard${hot ? " hot" : ""}" id="one${i}"><div class="oh"><i>${g.ic}</i><b>${g.ad}</b>${hot ? '<span class="newtag">TAM ZAMANI</span>' : ""}<em>${L.length ? L.length + " kampanya" : ""}</em></div>
+      <p>${g.bitis && daysLeft(g.bitis) <= 0 ? g.sonra : g.rehber}${g.bitis && daysLeft(g.bitis) > 0 ? ` <b style="color:#ffb27a">${daysLeft(g.bitis) <= 1 ? "Son gün." : `Son ${daysLeft(g.bitis)} gün.`}</b>` : ""}</p>
       ${L.map((c) => { const t = `<span>${esc(c.baslik)}${c.url ? '&nbsp;<i class="oarr">↗</i>' : ""}</span><small>${daysLeft(c.bitis) <= 3 ? "🔥 " : ""}${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small>`;
         return c.url ? `<a class="omini olnk" href="${esc(c.url)}" target="_blank" rel="noopener">${t}</a>` : `<div class="omini">${t}</div>`; }).join("")}
-      <div class="olinks">${g.link && !(g.bitis && daysLeft(g.bitis) < 0) ? `<a class="olink" href="${g.link}" target="_blank" rel="noopener">${g.linkAd || "Kampanya koşulları"} ↗</a>` : ""}${g.link2 ? `<a class="olink" href="${g.link2}" target="_blank" rel="noopener">${g.link2Ad} ↗</a>` : ""}${!g.black && !g.link2 ? `<a class="olink dim" href="${g.tum || "https://www.maximum.com.tr/kampanyalar"}" target="_blank" rel="noopener">${g.tumAd || "maximum.com.tr'de tüm kampanyalar"} ↗</a>` : ""}</div>${g.black ? `<button type="button" class="olink tolink" data-cat="Black" style="background:none;border:none;padding:0">🖤 Black sayfasına git ›</button>` : ""}</div>`;
+      <div class="olinks">${g.link && !(g.bitis && daysLeft(g.bitis) <= 0) ? `<a class="olink" href="${g.link}" target="_blank" rel="noopener">${g.linkAd || "Kampanya koşulları"} ↗</a>` : ""}${g.link2 ? `<a class="olink" href="${g.link2}" target="_blank" rel="noopener">${g.link2Ad} ↗</a>` : ""}${!g.black && !g.link2 ? `<a class="olink dim" href="${g.tum || "https://www.maximum.com.tr/kampanyalar"}" target="_blank" rel="noopener">${g.tumAd || "maximum.com.tr'de tüm kampanyalar"} ↗</a>` : ""}</div>${g.black ? `<button type="button" class="olink tolink" data-cat="Black" style="background:none;border:none;padding:0">🖤 Black sayfasına git ›</button>` : ""}</div>`;
   }).join("") + `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm Maximum kampanyaları ↗</a>`;
 }
 // ===== Kartsız öde: Maximum ile temassız ve yeni ödeme yolları =====
 // Kaynaklar: isbank.com.tr/iscep-mobil-temassiz-odeme, .../maxsticker-kart, .../maximum-karttan-samsung-akilli-saat-ile-odeme-yapma-kolayligi, .../tr-karekod-ile-odeme; yüzle ödeme duyurusu (Haziran 2025)
 const ODE = [
-  { ic: "💳", ad: "Temassız kart", k: "Kart", alt: "En bilinen yol", p: "Kartı POS'a yaklaştır, o kadar. Temassız limitin üstündeki tutarlarda POS kart şifreni ister.", n: "Temassız özelliğini İşCep'te kartının ayarlarından açıp kapatabilirsin.", kn: "ℹ️ 600 TL'lik kampanyada fiziki kartla temassız ödeme sayılmıyor; telefon, saat ya da karekod kullan." },
+  { ic: "💳", ad: "Temassız kart", k: "Kart", alt: "En bilinen yol", p: "Kartı POS'a yaklaştır, o kadar. Temassız limitin üstündeki tutarlarda POS kart şifreni ister.", n: "Temassız özelliğini İşCep'te kartının ayarlarından açıp kapatabilirsin.", kn: "ℹ️ 31 Ekim'e kadar süren 600 TL'lik kampanyada fiziki kartla temassız ödeme sayılmıyor; telefon, saat ya da karekod kullan." },
   { ic: "📱", ad: "Telefonla öde", k: "Telefon", alt: "İşCep · Maximum Mobil", p: "NFC'li Android telefonda kart cebinde kalır. Ekran kilidi açık olsun yeter, uygulamayı açman gerekmez. 2.500 TL altı şifresiz, üstünde POS'ta şifre sorulur.", n: "Maximum Mobil › Kartlarım › kartın sağ üstündeki temassız simgesi · İşCep › Kartlar › Mobil Temassız Ödeme", u: "https://www.isbank.com.tr/iscep-mobil-temassiz-odeme", ua: "isbank.com.tr" },
   { ic: "⌚", ad: "Akıllı saatle öde", k: "Saat", alt: "Samsung · Wear OS", p: "Telefon cepte, bilek POS'a: Wear OS 3.0 ve üzeri Samsung saatlerde Maximum Mobil uygulamasıyla ödenir.", n: "Saatteki Maximum Mobil › \"Saat ile Öde\"yi aç, temassız uygulama olarak Maximum'u ve kartını seç.", u: "https://www.isbank.com.tr/bankamizi-taniyin/maximum-karttan-samsung-akilli-saat-ile-odeme-yapma-kolayligi", ua: "isbank.com.tr" },
   { ic: "🏷️", ad: "MaxSticker", k: "MaxSticker", alt: "Yapıştır, öde", yeni: true, p: "Kredi kartının gücü küçük bir etikette: telefonun arkasına ya da sık kullandığın bir eşyaya yapıştırırsın. Üzerinde kart numarası, son kullanma tarihi ve CVV yoktur.", n: "İşCep › MaxSticker Kartlarım'dan başvurulur. Limit sıfırdan başlar, İşCep'ten sen belirlersin. Metal ve MagSafe kılıfların üstünde çalışmaz.", u: "https://www.isbank.com.tr/maxsticker-kart", ua: "isbank.com.tr", kn: "ℹ️ Şu an MaxSticker'a özel kampanya yok; çıkınca burada görünür." },
-  { ic: "🙂", ad: "Yüzle öde", k: "Yüzle", alt: "Kart, telefon, şifre yok", p: "Uygulanan mağazalarda kasadaki kameraya bakarak ödersin. Banka Haziran 2025'te Visa iş birliğiyle duyurdu; ilk aşamada seçili CarrefourSA mağazalarında.", n: "İşCep'te yüzünü bir kez tanımla ve ödemelerin yansıyacağı kredi kartını seç.", u: "https://www.dha.com.tr/ekonomi/is-bankasi-yuz-tanima-teknolojisi-ile-odeme-donemini-baslatiyor-2661768", ua: "duyuru haberi" },
+  { ic: "🙂", ad: "Yüzle öde", k: "Yüzle", alt: "Kart, telefon, şifre yok", p: "Hizmetin sunulduğu mağazalarda kasadaki kameraya bakarak ödersin. Banka Haziran 2025'te Visa iş birliğiyle duyurdu; ilk aşamada seçili CarrefourSA mağazalarında.", n: "İşCep'te yüzünü bir kez tanımla ve ödemelerin yansıyacağı kredi kartını seç.", u: "https://www.dha.com.tr/ekonomi/is-bankasi-yuz-tanima-teknolojisi-ile-odeme-donemini-baslatiyor-2661768", ua: "duyuru haberi" },
   { ic: "🔳", ad: "TR Karekod", k: "Karekod", alt: "QR ile öde", p: "POS'taki karekodu telefonunla okut, kartını ya da hesabını seç, tutarı onayla. Kart çıkarmana gerek yok; Maximum Mobil'le de olur.", n: "İşCep › Ödeme Yap › Karekod ile öde › kodu okut › Onayla", u: "https://www.isbank.com.tr/tr-karekod-ile-odeme", ua: "isbank.com.tr" },
   { ic: "🅿️", ad: "İşPay", k: "İşPay", alt: "Online, kart bilgisi yok", p: "İnternet alışverişinde ödeme adımında İşPay'i seçersin; kart bilgisi girmeden kredi kartı, MaxiPuan, havale, Taksitli Ek Hesap ya da Anında Alışveriş Kredisi ile ödersin.", n: "Alışveriş sitesinin ödeme sayfasında \"İşPay\" seçeneğine dokun, İş Bankası ile onayla.", u: "https://www.isbank.com.tr/bankamizi-taniyin/is-bankasi-odeme-deneyimini-ispay-ile-tek-platformda-topladi", ua: "isbank.com.tr" },
 ];
 // Kartsız ödemeye kampanyalar (resmi sayfalardan doğrulandı; yollar: hangi ödeme yollarında geçerli)
 const ODE_K = [
   { ic: "🎁", ad: "Mobil temassız, saat ve karekoda 600 TL MaxiPuan", tl: 600, od: "Mobil temassız, saat ve TR Karekod ödemelerine toplam <b>600 TL</b>'ye kadar MaxiPuan · harcama tutarı ve günlük sınır kampanya sayfasında", yollar: ["📱", "⌚", "🔳"], bas: "2026-10-01", bitis: "2026-10-31",
-    not: "Önce İşCep / Maximum Mobil › Kampanyalar › <b>KATIL</b>. Telefonla temassızda yalnız Android geçerli; fiziki kartla temassız sayılmaz. Kredi kartı, Bankamatik ve MaxiPara kartlar dahil.", u: "https://www.maximum.com.tr/kampanyalar/mobil-temassiz-ve-tr-karekod-odemelerinize-maxipuan-firsati" },
+    not: "Önce İşCep / Maximum Mobil › Kampanyalar › <b>KATIL</b>. Telefonla temassızda yalnız Android geçerli; fiziki kartla temassız sayılmaz. Kredi kartı, Bankamatik ve MaxiPara kartları dahil.", u: "https://www.maximum.com.tr/kampanyalar/mobil-temassiz-ve-tr-karekod-odemelerinize-maxipuan-firsati" },
   { ic: "⛽", ad: "Shell'de kartsız ödeyene +50 TL", tl: 50, od: "Akaryakıta 450 TL MaxiPuan + ödemelerden biri mobil temassız ya da karekodla ise <b>+50 TL</b> · toplam 500 TL", yollar: ["📱", "🔳"], bas: "2026-10-01", bitis: "2026-11-15",
-    not: "Mobil temassız ya da karekodla yapılan ödeme, koşulları tutuyorsa 600 TL'lik kampanyaya da sayılabilir; ayrıntı iki kampanyanın sayfasında.", u: "https://www.maximum.com.tr/kampanyalar/shell-maxipuan-kampanyasi" },
+    not: "Mobil temassız ya da karekodla yapılan ödeme, koşulları tutuyorsa 31 Ekim'e kadar 600 TL'lik kampanyaya da sayılabilir; ayrıntı iki kampanyanın sayfasında.", u: "https://www.maximum.com.tr/kampanyalar/shell-maxipuan-kampanyasi" },
   { ic: "✈️", ad: "ETS'de İşPay ile 1.000 TL'ye varan ek MaxiPuan", tl: 1000, od: "Tek seferde 45.000 TL+ → 350 TL · 70.000 TL+ → 700 TL · 120.000 TL+ → <b>1.000 TL</b>", yollar: ["🅿️"], bas: "2026-10-01", bitis: "2026-10-31",
     not: "Etstur sitesinde ödeme adımında <b>İşPay</b>'i seç ya da İşCep › Hayatım › Seyahatim › Etstur'dan öde.", u: "https://www.isbank.com.tr/kampanyalar/etsde-iscep-seyahatime-ozel-ek-maxipuan-firsati" },
 ];
 const kGun = (k) => daysLeft(k.bitis);
 function odeHtml() {
-  const K = ODE_K.filter((k) => kGun(k) >= 0);
+  const K = ODE_K.filter((k) => kGun(k) > 0);
   const known = new Set(K.map((k) => k.u));
   const L = camps.filter((c) => !known.has(c.url) && /temassız|temassiz|karekod|qr|maxsticker|saat ile|yüz ile|işpay|ispay/i.test(c.baslik + " " + c.ozet));
   const tag = (o) => K.filter((k) => k.yollar.includes(o.ic));
   const kCard = (k, i) => { const n = kGun(k); return `<a class="kz" id="kz${i}" href="${k.u}" target="_blank" rel="noopener">
-      <div class="kzh"><i>${k.ic}</i><b>${k.ad}</b><span class="${n <= 3 ? "u" : ""}">${n <= 0 ? "Son gün" : "Son " + n + " gün"}</span></div>
+      <div class="kzh"><i>${k.ic}</i><b>${k.ad}</b><span class="${n <= 3 ? "u" : ""}">${n <= 1 ? "Son gün" : "Son " + n + " gün"}</span></div>
       <div class="kzo">${k.od}</div>
       <div class="kzy">${k.yollar.map((y) => { const o = ODE.find((x) => x.ic === y); return `<em>${y} ${o ? o.ad : ""}</em>`; }).join("")}</div>
       <p>${k.not}</p><small>${new Date(k.bas + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })} – ${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })} · koşullar ↗</small></a>`; };
@@ -1245,7 +1246,7 @@ function isplusHtml() {
   if (!J) return `<div class="empty">İş Plus bilgileri yüklenemedi. <a href="https://www.isbank.com.tr/isplus" target="_blank" rel="noopener" style="color:var(--accent)">isbank.com.tr/isplus ↗</a></div>`;
   const S = J.seviyeler;
   return `<div class="isplus">
-      <div class="bh"><span>İŞCEP KULLANIMINA GÖRE</span><b>İş Plus</b><small>${esc(J.ozet)}</small></div>
+      <div class="bh"><span>İŞCEP VE KART KULLANIMINA GÖRE</span><b>İş Plus</b><small>${esc(J.ozet)}</small></div>
       <div class="ipt3">${S.map((x) => `<div style="--c:${x.renk}"><em>${esc(x.ad.toUpperCase())}</em><b>${esc(x.kart)}+</b><span>30 günde kart harcaması</span><i>${x.ek === "Ek koşul yok" ? "ek koşul yok" : "+ " + esc(x.ek)}</i></div>`).join("")}</div>
       <p class="iort">✔️ Üç seviyede de ortak koşul: ${esc(J.ortak)}. Hesap hep <b>son 30 güne</b> bakar.</p>
       <table class="iptab"><thead><tr><th>Ayrıcalık</th>${S.map((x) => `<th style="color:${x.renk === "#2a3a9c" ? "#8fa2ff" : x.renk}">${esc(x.ad)}</th>`).join("")}</tr></thead><tbody>
@@ -1255,7 +1256,7 @@ function isplusHtml() {
       <a href="${J.kaynak}" target="_blank" rel="noopener">İş Plus'ın tüm koşulları ↗</a>
     </div>
     <div class="ipadim"><b>💡 Seviye nasıl yükselir?</b>
-      <div><i style="--c:${S[0].renk}"></i><span><b>Turkuaz → Mavi:</b> kart harcamasını ayda ${esc(S[1].kart)}'ye çıkarıp <b>1 fatura talimatı</b> vermesi yeter (ya da hesabına 30 günde 90.000 TL gelmesi). Kazancı: ayda 4 ücretsiz EFT/FAST, markette %10, kitap ve sinemada %10.</span></div>
+      <div><i style="--c:${S[0].renk}"></i><span><b>Turkuaz → Mavi:</b> kart harcamasını ayda ${esc(S[1].kart)}'ye çıkarıp <b>1 fatura talimatı</b> vermen yeter (ya da hesabına 30 günde 90.000 TL gelmesi). Kazancı: ayda 4 ücretsiz EFT/FAST, markette %10, kitap ve sinemada %10.</span></div>
       <div><i style="--c:${S[1].renk}"></i><span><b>Mavi → Lacivert:</b> ayda ${esc(S[2].kart)} kart harcaması + <b>3 fatura talimatı</b> (ya da 120.000 TL gelen para). Kazancı: ayda 6 ücretsiz EFT/FAST, %15 indirimler, konser ve yapay zekâ platformlarında %15.</span></div>
       <div><i style="--c:#e0a24f"></i><span>En kolay adım çoğu zaman <b>fatura talimatı</b>: elektrik, su, telefon faturasını İşCep'ten talimata bağlamak hem seviyeyi yükseltir hem gecikmeyi önler.</span></div>
     </div>
@@ -1371,11 +1372,11 @@ function milesHtml() {
   const L = camps.filter((c) => /maximiles|maximil|mil\b|uçuş|uçak|havayolu|thy|pegasus/i.test(c.baslik + " " + c.ozet));
   const MX = blk && blk.ayricaliklar ? blk.ayricaliklar.filter((a) => /maximiles/i.test(a.baslik)) : [];
   return `<div class="ocard"><div class="oh"><i>✈️</i><b>Maximiles</b></div>
-      <p>Harcamaların <b>MaxiMil</b> olarak birikir; 1 MaxiMil = 1 TL değerinde uçak bileti ve seyahat harcamalarında kullanılır. Maximiles kartlar Maximum'un tüm kampanyalarından da yararlanır; ek olarak mil kampanyaları vardır.</p>
+      <p>Harcamaların <b>MaxiMil</b> olarak birikir; 1 MaxiMil = 1 TL değerinde uçak bileti ve seyahat harcamalarında, ayrıca Pazarama'da kullanılır. Maximiles kartlar Maximum'un tüm kampanyalarından da yararlanır; ek olarak mil kampanyaları vardır.</p>
       ${L.length ? L.map((c) => `<div class="omini"><span>${esc(c.baslik)}</span><small>${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></div>`).join("") : '<p style="color:var(--muted)">Listede şu an mil kampanyası yok.</p>'}
       <a class="olink" href="https://www.maximiles.com.tr/kampanyalar" target="_blank" rel="noopener">Maximiles kampanyaları ↗</a></div>
     ${MX.length ? `<div class="ocard"><div class="oh"><i>🖤</i><b>Maximiles ayrıcalıkları</b><em>isbank.com.tr</em></div>${MX.map((a) => `<a class="omini olnk" href="${esc(a.url)}" target="_blank" rel="noopener"><span>${esc(a.baslik)}</span><small>↗</small></a>`).join("")}</div>` : ""}
-    <button type="button" class="ocard tolink" data-cat="Black"><div class="oh"><i>🖤</i><b>Maximiles Black</b><em>›</em></div><p>En prestijli kart: lounge, Fast Track ve artan MaxiMil kazanımı.</p></button>`;
+    <button type="button" class="ocard tolink" data-cat="Black"><div class="oh"><i>🖤</i><b>Maximiles Black</b><em>›</em></div><p>Üst segment Maximiles kartı: lounge, Fast Track ve artan MaxiMil kazanımı.</p></button>`;
 }
 function bindSpecial() {
   $("list").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { const t = $(b.dataset.go); if (!t) return; bolumeGit(t); t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); }));
@@ -1407,12 +1408,12 @@ function campCal() {
   const calListe = (kays, seg) => { const L = kays.flatMap((kay) => (kListe(kay, seg) || []).map((k) => ({ ...k, _kay: kay }))); return kays.length > 1 ? tekil(L) : L; };
   const kaynakli = KH && KH.isbank ? calListe(KAYS, calSeg) : null;
   const kart = (k) => (k._kay ? kKart(k, K_KAY[k._kay][3]) : campCard(k));
-  const ends = {}, yeni = {}; (kaynakli || camps).forEach((k) => { if (k.bitis && daysLeft(k.bitis) >= 0) (ends[k.bitis] = ends[k.bitis] || []).push(k); if (k.ilk && k.ilk > "2000-01-01") yeni[k.ilk] = (yeni[k.ilk] || 0) + 1; });
+  const ends = {}, yeni = {}; (kaynakli || camps).forEach((k) => { if (k.bitis && daysLeft(k.bitis) > 0) (ends[k.bitis] = ends[k.bitis] || []).push(k); if (k.ilk && k.ilk > "2000-01-01") yeni[k.ilk] = (yeni[k.ilk] || 0) + 1; });
   const gAd = (g) => new Date(g + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
   // Seçilen gün: kaynaklara göre sağlama ile
   const sagla = (L) => { const say = Object.keys(K_KAY).map((k) => [k, L.filter((x) => x._kay === k).length]).filter((x) => x[1]); return say.length > 1 ? ` <small>${say.map(([k, n]) => K_KAY[k][0] + " " + K_KAY[k][1] + " " + n).join(" · ")}</small>` : ""; };
   const secili = calGun && ends[calGun] ? `<div class="calgun" id="calGunList"><div class="cgh"><span>🔴 ${gAd(calGun)} biten <b>${ends[calGun].length}</b> kampanya${sagla(ends[calGun])}</span><button type="button" id="calKapat">✕</button></div>${ends[calGun].map(kart).join("")}</div>` : `<p class="calipucu">👆 Sayılı güne dokun: o gün biten kampanyalar açılsın.</p>`;
-  const sirali = (kaynakli || camps).filter((k) => k.bitis && daysLeft(k.bitis) >= 0).sort((a, b) => a.bitis.localeCompare(b.bitis)).slice(0, 8);
+  const sirali = (kaynakli || camps).filter((k) => k.bitis && daysLeft(k.bitis) > 0).sort((a, b) => a.bitis.localeCompare(b.bitis)).slice(0, 8);
   const yakinda = sirali.length ? `<div class="calyak"><b>⏳ Yakında bitenler</b>${sirali.map((k) => { const n = daysLeft(k.bitis); return `<a class="cy${n <= 3 ? " acil" : ""}" href="${esc(k.url || "#")}" target="_blank" rel="noopener"><em>${n <= 1 ? "Son gün" : n + " gün"}</em><span>${esc(k.baslik)}</span><small>${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></a>`; }).join("")}</div>` : "";
   // Önümüzdeki 7 gün şeridi
   const t0 = new Date(), hafta = [...Array(7)].map((_, i) => { const x = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate() + i); const g = `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
@@ -1460,7 +1461,7 @@ function campTick() {
   const kalan = last - d + 1, ayAd = t.toLocaleDateString("tr-TR", { month: "long" }), nextAy = new Date(y, m + 1, 1).toLocaleDateString("tr-TR", { month: "long" });
   let tx = "";
   if (d <= 7) tx = `🎯 Ayın ilk haftası · ${ayAd} kampanyalarına bakma zamanı · ilk haftanın bitmesine ${7 - d + 1} gün · beğendiklerine Katıl`;
-  else if (kalan <= 5) tx = `⏳ 1 ${nextAy}'a ${kalan} gün kaldı · yeni ayın kampanyaları geliyor · ilk hafta göz atmayı unutma`;
+  else if (kalan <= 5) tx = `⏳ ${nextAy} ayına ${kalan} gün kaldı · yeni ayın kampanyaları geliyor · ilk hafta göz atmayı unutma`;
   if (!tx) return "";
   return `<button type="button" class="jtick" id="jTick" aria-label="Kampanya takvimine git"><span class="jt-w"><span class="jt-r">${tx} &nbsp;·&nbsp; takvim için dokun ↓ &nbsp;&nbsp;&nbsp; ${tx} &nbsp;·&nbsp; takvim için dokun ↓</span></span></button>`;
 }
@@ -1506,7 +1507,7 @@ function kListe(kay, seg) {
   const ham = v.kategoriler ? v.kategoriler.flatMap((c) => c.kampanyalar) : v.kampanyalar || [], gor = new Set(), sl = {};
   if (v.kategoriler) v.kategoriler.forEach((c) => c.kampanyalar.forEach((k) => (sl[k.url] = sl[k.url] || []).push(c.slug)));
   // Bitiş günü geçen kampanya, bir sonraki toplamayı beklemeden listeden düşer
-  return ham.filter((k) => !(k.bitis && daysLeft(k.bitis) < 0) && !gor.has(k.url) && gor.add(k.url)).map((k) => ({ ...k, ne: k.ne || "Ayrıcalık", nere: k.nere || "Genel", kim: kKimBul(k, seg, sl[k.url] || []) }));
+  return ham.filter((k) => !(k.bitis && daysLeft(k.bitis) <= 0) && !gor.has(k.url) && gor.add(k.url)).map((k) => ({ ...k, ne: k.ne || "Ayrıcalık", nere: k.nere || "Genel", kim: kKimBul(k, seg, sl[k.url] || []) }));
 }
 function kKart(k, renk) {
   const n = k.bitis ? daysLeft(k.bitis) : null, u = n != null && n <= 3, yeni = k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
@@ -1601,7 +1602,7 @@ function renderKampanyalar() {
   };
   const tumLink = `<a class="maxlink" href="${kKay === "isbank" ? "https://www.isbank.com.tr/kampanyalar" + (kSeg === "ticari" ? "?v=ticari" : "") : kKay === "maximum" ? "https://www.maximum.com.tr/kampanyalar/" + kSeg : "https://www.maximiles.com.tr/kampanyalar"}" target="_blank" rel="noopener">Tüm kampanyalar · ${kayDom} ↗</a>`;
   if (!L.length) {
-    $("list").innerHTML = kKay === "maximiles" ? milesHtml() + `<p class="note" style="text-align:center">✈️ maximiles.com.tr kampanyaları bir sonraki sabah toplamasında burada, aynı düzende.</p>` : '<div class="empty">Bu bölümde şu an kampanya yok.</div>' + tumLink;
+    $("list").innerHTML = kKay === "maximiles" ? milesHtml() + `<p class="note" style="text-align:center">✈️ Bu bölümde şu an Maximiles kampanyası yok; maximiles.com.tr her sabah kontrol edilir.</p>` : '<div class="empty">Bu bölümde şu an kampanya yok.</div>' + tumLink;
     return;
   }
   // Üstte arama kutusu ve öneri sihirbazı; arama ya da sihirbaz açıkken süzgeçlerin yerine onların sonucu görünür
@@ -1665,7 +1666,7 @@ function kAraHtml() {
 // Seçim bu telefonda saklanır; sonraki açılışta "yeni" kampanyalar ayrıca söylenir.
 const K_PROFIL = {
   bireysel: [
-    ["black", "🖤", "İş Black · Plus ya da Maximiles Black'im", { kim: "İş Black · Maximiles Black" }], ["emekli", "👴", "Emekliyim", { kim: "Emekli" }],
+    ["black", "🖤", "İş Black ya da Maximiles Black kullanıyorum", { kim: "İş Black · Maximiles Black" }], ["emekli", "👴", "Emekliyim", { kim: "Emekli" }],
     ["maas", "💼", "Maaşım İş Bankası'nda", { kim: "Maaşı İş Bankası'na yatanlar" }],
     ["genc", "🎓", "Öğrenciyim / gencim", { nere: ["Eğitim & Kitap", "Online Alışveriş"], re: /genç|öğrenci|üniversite|bonus genç|18-25|26 yaş/i }],
     ["aile", "👨‍👩‍👧", "Çocuklu aileyiz", { nere: ["Eğitim & Kitap", "Market & Yemek"], re: /okul|çocuk|oyuncak|kırtasiye|toyzz|kidzania|bebek/i }],
@@ -1783,7 +1784,7 @@ function renderSubeler() {
         ${T("🏦", "Toplam şube", f(d.yurtici + d.yurtdisi), "Türkiye + " + f(d.ulke) + " ülke")}
         ${T("🇹🇷", "Yurt içi şube", f(d.yurtici), "81 ilin tamamı")}
         ${T("🌍", "Yurt dışı şube", f(d.yurtdisi), f(d.ulke) + " ülkede")}
-        ${T("🏧", "Bankamatik", f(d.atm), "En geniş ağ")}
+        ${T("🏧", "Bankamatik", f(d.atm), "Özel bankalarda en geniş ağ")}
         ${T("👥", "Çalışan", f(d.calisan), esc(d.calisanDonem))}
         ${T("📱", "İşCep müşterisi", esc(d.iscep), esc(d.iscepDonem))}
       </div>
@@ -1938,7 +1939,7 @@ const ILK = [
 function renderFinans() {
   const t = $("tfil");
   t.className = "tfil sekme"; t.hidden = false;
-  t.innerHTML = [["veri", "📊", "Mali veriler"], ["takvim", "📅", "Finansal takvim"], ["sunum", "📄", "Yatırımcı sunumu"]].map(([k, ic, ad]) => altSekme("data-fs", k, ic, ad, null, finSec === k)).join("");
+  t.innerHTML = [["veri", "📊", "Finansal veriler"], ["takvim", "📅", "Finansal takvim"], ["sunum", "📄", "Yatırımcı sunumu"]].map(([k, ic, ad]) => altSekme("data-fs", k, ic, ad, null, finSec === k)).join("");
   t.onclick = (e) => { const b = e.target.closest("button[data-fs]"); if (!b) return; finSec = b.dataset.fs; renderFinans(); if (finSec === "sunum" && $("sunumBox")) bolumeKay($("sunumBox")); else icerigeKay(); };
   if (finSec === "takvim") return renderTakvim();
   $("upd").textContent = fin ? "Veri dönemi: " + pLabel(fin.periods[fin.periods.length - 1]) + " · banka 3 ayda bir açıklar" : "";
@@ -2013,7 +2014,7 @@ function ytTable(i) {
   const rows = finRows(i).map(([ad, bu, once, tur, iyi]) =>
     `<tr><td>${esc(ad)}</td><td class="now">${ytFmt(bu, tur)}</td><td class="old">${ytFmt(once, tur)}</td><td>${chgCell(bu, once, tur, iyi)}</td></tr>`).join("");
   return `<table class="yt"><thead><tr><th>Kalem</th><th>${pLabel(P[i])}</th><th>${j >= 0 ? pLabel(P[j]) : "–"}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
-    <div class="yt-note">Bankanın kendi yayımladığı resmi veri. Tutarlar TL (trn = trilyon, mlr = milyar). Yeşil iyiye, kırmızı kötüye işaret eder. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · her saat kontrol edilir.</div>`;
+    <div class="yt-note">Bankanın kendi yayımladığı resmi veri. Tutarlar TL (trn = trilyon, mlr = milyar). Yeşil iyiye, kırmızı kötüye işaret eder. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.</div>`;
 }
 function bindYt() {
   const c = document.getElementById("ytChips");
@@ -2030,7 +2031,7 @@ function yatHtml() {
     const opts = P.map((p, i) => ({ p, i })).filter((o) => o.p.startsWith(ly) || o.p === (+ly - 1) + "/12").reverse();
     if (ytSel == null) ytSel = last;
     const card = (ad, k, tur, iyi, alt) => `<div class="stat"><span>${ad}</span><b style="font-size:21px">${ytFmt(S[k][last], tur)}</b><small>${alt || ""} ${chgCell(S[k][last], S[k][j], tur, iyi)}</small></div>`;
-    h += `<div class="day" style="margin-top:22px">📊 Mali veriler · ${pLabel(P[last])}<small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Kaynak: bankanın yatırımcı sunumu. Haberlerdeki konsolide (iştiraklerle birlikte) rakamlardan biraz farklı olabilir.</small></div>
+    h += `<div class="day" style="margin-top:22px">📊 Finansal veriler · ${pLabel(P[last])}<small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Kaynak: bankanın finansal veri dosyası. Haberlerdeki konsolide (iştiraklerle birlikte) rakamlardan biraz farklı olabilir.</small></div>
       <div class="stats">
         ${card("Toplam aktif", "aktif", "tl", "up", "yıllık")}
         ${card("Krediler", "kredi", "tl", "up", "yıllık")}
@@ -2093,7 +2094,7 @@ function iscepIpHtml() {
   const tamami = kisa ? `<div class="ipgr">⭐ Öne çıkan ${L.length} ipucu</div>` : "";
   const dahaFazla = kisa ? `<button type="button" class="more" id="ipHepsi" style="display:block;width:100%;margin:6px 0 14px">📋 Tüm ipuçlarını göster (${L0.length})</button>` : "";
   const bas = ipSec ? `<div class="ipsec"><b>${(IPK.find((c) => c[0] === ipSec) || [])[1] || ""} ${esc((IPK.find((c) => c[0] === ipSec) || [])[2] || "")}</b><span>${L.length} ipucu</span><button type="button" data-ipk="">🌟 Hepsine dön</button></div>` : "";
-  return (ipSec ? `<div class="iphero mini"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in az bilinen süper güçleri 🚀</b></div>` : `<div class="iphero"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in az bilinen süper güçleri 🚀</b><span>800'den fazla işlemin içinden en çok “wow!” dedirtenler. Her gün biri öne çıkar.</span></div>`) + `
+  return (ipSec ? `<div class="iphero mini"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in az bilinen süper güçleri 🚀</b></div>` : `<div class="iphero"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in az bilinen süper güçleri 🚀</b><span>800'den fazla işlemin içinden en çok şaşırtanlar. Her gün biri öne çıkar.</span></div>`) + `
     <div class="ipgun"><div class="iph"><i>${g.ic}</i><div><em>${ipTorba ? `İpucu · ${IPUCU.length - ipTorba.length}/${IPUCU.length}` : "Günün ipucu"}</em><b>${esc(g.t)}${taze(g) ? '<span class="newtag">YENİ</span>' : ""}</b></div></div><p>${esc(g.d)}</p><div class="ipn">📍 ${esc(g.n)}</div>
       <div class="ipl"><a href="${g.u}" target="_blank" rel="noopener">Ayrıntı ↗</a>${ipGecmis.length ? `<button type="button" id="ipGeri">◀ Önceki</button>` : ""}<button type="button" id="ipZar">${ipTorba && !ipTorba.length ? "🔁 Hepsini gördün · baştan" : "🎲 Bir tane daha"}</button></div></div>` + bas + `
     ${tamami}${L.map(([x, i], n) => { const p = n ? L[n - 1][0] : null; let h = "";
@@ -2114,7 +2115,7 @@ function bindIscep() {
   const gr = $("ipGeri"); if (gr) gr.onclick = () => { if (ipGecmis.length) { ipGun = ipGecmis.pop(); renderIscep(); } };
   $("list").querySelectorAll("[data-ipk]").forEach((b) => (b.onclick = () => { ipSec = b.dataset.ipk || null; ipHepsi = false; renderIscep(); icerigeKay(); }));
   ipTiles();
-  $("list").querySelectorAll("[data-camp]").forEach((b) => (b.onclick = () => { cat = "Maximum"; campTur = b.dataset.camp; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); window.scrollTo({ top: 0 }); }));
+  $("list").querySelectorAll("[data-camp]").forEach((b) => (b.onclick = () => { cat = b.dataset.camp === "📲 Kartsız öde" ? "Kartsiz" : "Maximum"; campTur = b.dataset.camp; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderChips(); renderList(); window.scrollTo({ top: 0 }); }));
 }
 function renderIscep() {
   if (!IPJ) { ipYukle().then(() => { if (cat === "İşCep") renderIscep(); }); }
@@ -2195,7 +2196,7 @@ const trKucuk = (t) => String(t || "").replace(/İ/g, "i").replace(/I/g, "ı").t
 // Tamamı büyük harfle yazılmış başlıklar cümle düzenine çevrilir (kısaltmalar korunur)
 const gzBas = (t) => { const h = String(t || "").replace(/[^A-Za-zÇĞİÖŞÜçğıöşü]/g, ""), b = h.replace(/[^A-ZÇĞİÖŞÜ]/g, "").length;
   if (h.length < 12 || b / h.length < .6) return t;
-  const k = trKucuk(t).replace(/\b(iş bankası|işcep|türkiye|istanbul|ssk|bağ-kur|tl)\b/g, (w) => ({ "iş bankası": "İş Bankası", işcep: "İşCep", türkiye: "Türkiye", istanbul: "İstanbul", ssk: "SSK", "bağ-kur": "Bağ-Kur", tl: "TL" }[w] || w));
+  const k = trKucuk(t).replace(/(?<!\p{L})(iş bankası|işcep|türkiye|istanbul|ssk|bağ-kur|tl)(?!\p{L})/gu, (w) => ({ "iş bankası": "İş Bankası", işcep: "İşCep", türkiye: "Türkiye", istanbul: "İstanbul", ssk: "SSK", "bağ-kur": "Bağ-Kur", tl: "TL" }[w] || w));
   return k.replace(/(^|[.!?]\s+)(\S)/g, (m, a, c) => a + c.toLocaleUpperCase("tr-TR")); };
 let gzAcik = true; // sayfa her açılışta özet açık gelir; kapatılırsa yalnızca o ziyarette kapalı kalır
 function gundemOzet() {
@@ -2280,7 +2281,7 @@ function renderMedya() {
       $("list").innerHTML = `<div class="mdHero"><b>🎬 Reklam filmleri</b><span>Televizyonda yayımlanan filmler: bankanın kendi "Reklam Videoları" sayfasından ve YouTube kanalındaki reklam listesinden. Dokun, burada oynasın.</span></div>`
         + R.map((x) => `<div class="vdV rkV"><button type="button" class="vdTh rkTh" data-yt="${esc(x.id)}" aria-label="Oynat: ${esc(x.baslik || "Reklam filmi")}"><img src="https://i.ytimg.com/vi/${esc(x.id)}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"><span class="vdOyna"></span></button><div class="vdTx"><b>${esc(x.baslik || "Reklam filmi")}</b><a href="https://www.youtube.com/watch?v=${esc(x.id)}" target="_blank" rel="noopener">YouTube'da aç ↗</a></div></div>`).join("")
         + (MED.reklam_sitede ? `<a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari" target="_blank" rel="noopener"><b>🎞️ Bankanın sitesindeki diğer filmler</b><p>Bazı filmler YouTube'da değil, yalnızca bankanın kendi "Reklam Videoları" sayfasında oynuyor. Dokun, o sayfa açılsın.</p><small>isbank.com.tr ↗</small></a>` : "")
-        + `<details class="mdDig rkKanal"><summary>📺 YouTube kanalından son videolar<small>Tanıtımlar, söyleşiler, etkinlikler · her saat güncellenir</small></summary>${kanal}</details>`
+        + `<details class="mdDig rkKanal"${vids.some((x) => isNew("y:" + x.u)) ? " open" : ""}><summary>📺 YouTube kanalından son videolar<small>Tanıtımlar, söyleşiler, etkinlikler · her saat güncellenir</small></summary>${kanal}</details>`
         + sayfa("https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari", "Tüm reklam videoları");
       $("list").querySelectorAll("[data-yt]").forEach((b) => (b.onclick = () => {
         const f = document.createElement("iframe");
@@ -2322,7 +2323,7 @@ function renderMedya() {
       : `<a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/haberler-ve-medya" target="_blank" rel="noopener"><b>📰 İş Bankası'ndan Haberler</b><p>Bankanın kendi duyuruları resmi sitesinde, aya göre listelenir. Dokun, resmi sayfası açılsın.</p><small>isbank.com.tr ↗</small></a>
         <a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari" target="_blank" rel="noopener"><b>🎬 Reklam Videoları</b><p>Bankanın reklam filmleri; son videolar burada "Reklam filmleri" sekmesinde de var.</p><small>isbank.com.tr ↗</small></a>`)
     + sayfa("https://www.isbank.com.tr/bankamizi-taniyin/haberler-ve-medya", "Haberler ve Medya")
-    + `<p class="note" style="text-align:center">Basında çıkan İş Bankası haberleri için 📰 Haberler kalemine bak.</p>`;
+    + `<p class="note" style="text-align:center">Basında çıkan İş Bankası haberleri için 📰 Haberler bölümüne bak.</p>`;
 }
 const RESMI = [["▶️ YouTube", "https://www.youtube.com/user/turkiyeisbankasi"], ["📸 Instagram", "https://www.instagram.com/isbankasi/"], ["✖️ X", "https://x.com/isbankasi"], ["💼 LinkedIn", "https://www.linkedin.com/company/isbankasi"], ["👍 Facebook", "https://www.facebook.com/isbankasi"]];
 function renderVideo() {
@@ -2395,7 +2396,7 @@ function ppkSatir(d) {
 const PPK = ["2026-10-22", "2026-12-10", "2027-01-21", "2027-03-18", "2027-04-22", "2027-06-10"];
 const TK_FIX = [
   { d: "2026-11-05", t: "3. çeyrek finansalları açıklanıyor", a: "Ocak–Eylül 2026 bilançosu · KAP duyurusu", c: "#e0a24f" },
-  { d: "2027-02-05", t: "2026 yılı finansalları", a: "Tahmini: geçen yıl 6 Şubat'ta açıklandı", c: "#e0a24f", est: 1, ay: 1 },
+  { d: "2027-02-05", t: "2026 yılı finansalları", a: "Tahmini: 2026'da 6 Şubat'ta açıklanmıştı", c: "#e0a24f", est: 1, ay: 1 },
   { d: "2027-03-31", t: "Olağan genel kurul", a: "2026'da 31 Mart'ta İstanbul'da yapıldı", c: "#b48cff", est: 1, ay: 1 },
   { d: "2027-04-01", t: "Kâr payı (temettü) dağıtımı", a: "2026'da 1 Nisan'da başladı; tutarı genel kurul belirler", c: "#3fc283", est: 1, ay: 1 },
 ];
@@ -2405,7 +2406,7 @@ function takvim() {
   const now = new Date(), L = [...TK_FIX];
   PPK.forEach((d) => L.push(ppkSatir(d)));
   for (let y = now.getFullYear(); y <= now.getFullYear() + 1; y++) {
-    [["03-31", "1. çeyrek"], ["06-30", "2. çeyrek (yarıyıl)"], ["09-30", "3. çeyrek"], ["12-31", "Yıl sonu"]].forEach(([md, n]) => L.push({ d: `${y}-${md}`, t: `${n} bilanço dönemi kapanışı`, a: "Çeyrek sonu · hedef ve bütçe dönemi", c: "#8a8a8a" }));
+    [["03-31", "1. çeyrek"], ["06-30", "2. çeyrek (yarıyıl)"], ["09-30", "3. çeyrek"], ["12-31", "Yıl sonu"]].forEach(([md, n]) => L.push({ d: `${y}-${md}`, t: `${n} bilanço dönemi kapanışı`, a: "Çeyrek sonu · bilanço bu tarihe göre hazırlanır", c: "#8a8a8a" }));
     L.push({ d: `${y}-08-26`, t: `İş Bankası ${y - 1924}. kuruluş yıl dönümü 🎂`, a: "26 Ağustos 1924, Ankara", c: "#ef6a4c" });
   }
   return L.filter((x) => dLeft(x.d) >= 0).sort((a, b) => a.d.localeCompare(b.d)).slice(0, 14);
@@ -2439,7 +2440,7 @@ const TARIH = [
   ["9 Eylül 1924", "Banka, Ankara İstasyon Caddesi'ndeki ilk binasında yaklaşık 150 davetlinin katıldığı bir törenle açıldı.", "09-09"],
   ["1924", "Kuruluş sermayesinin 250 bin liralık kısmını, yani dörtte birini Atatürk karşıladı."],
   ["1924", "Bankanın ilk genel müdürü Celal Bayar'dı. Bayar, 1950'de Cumhurbaşkanı oldu."],
-  ["1924 yıl sonu", "Kuruluşunun üzerinden 4 ay geçmeden mevduatı 2,47 milyon liraya ulaştı. Aynı dönemde diğer 16 yerli bankanın toplamı 700 bin lira civarındaydı. Banka yılı 433 müşteriyle kapattı."],
+  ["1924 yıl sonu", "Kuruluşundan yaklaşık 4 ay sonra mevduatı 2,47 milyon liraya ulaştı. Aynı dönemde diğer 16 yerli bankanın toplamı 700 bin lira civarındaydı. Banka yılı 433 müşteriyle kapattı."],
   ["12 Temmuz 1925", "İzmir Şubesi açıldı.", "07-12"],
   ["1925", "İlk sanayi yatırımı Bursa'daki İpekiş oldu (250 bin lira sermaye)."],
   ["1925", "Bugünkü Anadolu Sigorta, Anadolu Anonim Sigorta adıyla 500 bin lira sermayeyle kuruldu."],
@@ -2549,7 +2550,7 @@ function deck() {
   return QD;
 }
 let SC = { d: 0, t: 0, s: 0 }; try { SC = Object.assign(SC, JSON.parse(localStorage.getItem("isbQuiz") || "{}")); } catch (e) {}
-const PRAISE = ["🎉 Tebrikler, doğru!", "👏 Harikasın!", "🌟 Bravo, tam isabet!", "🏆 Bankacı dediğin böyle olur!", "✅ Süper, bildin!", "💯 Mükemmel!"];
+const PRAISE = ["🎉 Tebrikler, doğru!", "👏 Harikasın!", "🌟 Bravo, tam isabet!", "🏆 Bilgine sağlık!", "✅ Süper, bildin!", "💯 Mükemmel!"];
 function qHtml() {
   const D = deck(); if (!D.length) return "";
   qKonum();
@@ -2575,13 +2576,13 @@ function bindQ() {
 }
 function renderSoru() {
   const yS = (typeof ISQ !== "undefined" ? ISQ : []).filter(yeniSoru).length;
-  $("upd").innerHTML = `🔀 ${typeof ISQ !== "undefined" ? ISQ.length : 0} soru her gün karışık gelir, aynı konu art arda gelmez${yS ? `<br>🆕 İşCep'in az bilinen özellikleri ve Bankamatik · Gişematik'ten <b>${yS} yeni soru</b>` : ""}`;
+  $("upd").innerHTML = `🔀 ${typeof ISQ !== "undefined" ? ISQ.length : 0} soru her gün karışık gelir, aynı konu art arda gelmez${yS ? `<br>🆕 Son üç haftada <b>${yS} yeni soru</b> eklendi` : ""}`;
   $("list").innerHTML = `<div class="daycard dq" id="dqBox">${qHtml()}</div>`;
   bindQ();
 }
 function renderTarihce() {
   $("upd").textContent = `${TARIH.length} bilgi · kaynak: isbank.com.tr "O Günlerden Bugünlere" ve "İlklerimiz" sayfaları, Patronlar Dünyası 100. yıl dosyası`;
-  $("list").innerHTML = `<button type="button" class="filmKart" onclick="ataOyna(true)"><img src="img/ataturk.jpg" alt=""><div><b>🎬 Atatürk ve İş Bankası</b><span>Kısa film · yaklaşık 1,5 dakika</span></div><em>▶</em></button>
+  $("list").innerHTML = `<button type="button" class="filmKart" onclick="ataOyna(true)"><img src="img/ataturk.jpg" alt=""><div><b>🎬 Atatürk ve İş Bankası</b><span>Kısa film · yaklaşık 50 saniye</span></div><em>▶</em></button>
     <div class="bmatik">
       <div class="bmTop"><div><span class="bmQ">💡 Biliyor muydunuz?</span><b class="bmH">"Bankamatik" bir marka,<br>sahibi <em>İş Bankası</em></b></div>
         <svg class="bmAtm" viewBox="0 0 64 84" aria-label="Bankamatik çizimi"><rect x="4" y="2" width="56" height="80" rx="8" fill="#1a2bb8" stroke="#6f84ff"/><rect x="11" y="10" width="42" height="26" rx="3" fill="#0b1140" stroke="#3a50f0"/><text x="32" y="26" text-anchor="middle" font-size="6.4" font-weight="800" fill="#f3dca8" font-family="system-ui,sans-serif">BANKAMATİK</text><rect x="14" y="42" width="22" height="20" rx="2" fill="#2a3fe0"/><g fill="#9fb0ff"><circle cx="19" cy="47" r="1.6"/><circle cx="25" cy="47" r="1.6"/><circle cx="31" cy="47" r="1.6"/><circle cx="19" cy="52" r="1.6"/><circle cx="25" cy="52" r="1.6"/><circle cx="31" cy="52" r="1.6"/><circle cx="19" cy="57" r="1.6"/><circle cx="25" cy="57" r="1.6"/><circle cx="31" cy="57" r="1.6"/></g><rect x="40" y="44" width="14" height="3" rx="1.5" fill="#e0a24f"/><rect x="40" y="52" width="14" height="10" rx="2" fill="#0b1140" stroke="#3a50f0"/><rect x="14" y="68" width="36" height="4" rx="2" fill="#0b1140"/></svg></div>
@@ -2632,7 +2633,7 @@ function renderList() {
   if (cat === "Kartsiz") { $("upd").textContent = "Kartsız ödemeye özel kampanyalar"; $("list").innerHTML = odeHtml(); bindSpecial(); return; }
   if (cat === "Medya") return renderMedya();
   if (cat === "Şubeler") return renderSubeler();
-  $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "") + " · günde iki kez (09:01, 14:01)";
+  $("upd").textContent = [kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "", "seçilmiş haberler"].filter(Boolean).join(" · ");
   const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
   if (!items.length) { $("list").innerHTML = '<div class="empty">Bu kategoride henüz haber yok.</div>'; return; }
   let html = cat === "Tümü" ? gundemOzet() : "", last = "";

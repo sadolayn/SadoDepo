@@ -1,6 +1,6 @@
 {
  "guncelleme": "2026-10-25T18:40:00+03:00",
- "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) Resmi Gazete dışındaki karar ve duyuruları. Her kayıt resmi duyurusuna bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
+ "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
  "duyurular": [
   {
    "tarih": "2026-10-22",
@@ -24,7 +24,7 @@
    "tarih": "2026-10-15",
    "kurum": "Ticaret Bakanlığı",
    "baslik": "Perakende taksit kuralları değişti: yetki Ticaret Bakanlığı'nda",
-   "ozet": "Resmi Gazete 33401'deki yönetmelik değişikliğiyle genel 12 ay taksit tavanı yönetmelikten çıktı; konut dışı taksitli satışlarda vade ve sınırları artık Ticaret Bakanlığı belirliyor (BDDK kararlarıyla uyumlu). İlk adım: sıfır cep telefonunda 12 ay taksit sınırı 20 bin TL'den 40 bin TL'ye çıktı (üstü 3 ay), yenilenmiş telefonda tutar sınırı olmadan 12 ay. Diğer ürünlerde değişiklik yok.",
+   "ozet": "Resmi Gazete 33401'deki yönetmelik değişikliğiyle genel 12 ay taksit tavanı yönetmelikten çıktı; konut dışı taksitli satışlarda vade ve sınırları artık Ticaret Bakanlığı belirliyor (BDDK kararlarıyla uyumlu). İlk adım: sıfır cep telefonunda 12 ay taksit sınırı 20 bin TL'den 40 bin TL'ye çıktı (üstü 3 ay), yenilenmiş telefonda tutar sınırı olmadan 12 ay (kartla taksitli satış; tüketici kredisi vadeleri BDDK'nın 1 Ekim kararında). Diğer ürünlerde değişiklik yok.",
    "etki": "Kartlı taksitli satışlarda telefon taksit sınırları değişti; bundan sonraki taksit duyuruları Bakanlıktan gelecek.",
    "onemli": true,
    "url": "https://ticaret.gov.tr/haberler/ticaret-bakanligindan-bddk-kararlariyla-uyumlu-yeni-duzenleme-15-10-2026",
@@ -34,8 +34,8 @@
    "tarih": "2026-10-07",
    "kurum": "TMSF",
    "baslik": "Tasfiye edilen fonlarda TMSF bünyesinde özel hesaplar açıldı, ilk ödemeler başladı",
-   "ozet": "Cumhurbaşkanı Yardımcısı TBMM'de fon tasfiyesini anlattı: TMSF bünyesinde her sorunlu fon için özel hesap açıldı, olağan tasfiyesi biten 17 fonda ödemeler 8 Ekim'de başladı. Tasfiye yönetimi 125 fonda Ziraat Bankası'na, 6 fonda İş Bankası'na verildi. 1 milyon TL'ye kadar ara ödeme getiren kanun 22 Ekim'de TBMM'de kabul edildi; ödemeler Resmi Gazete'de yayımlanmasına bağlı.",
-   "etki": "Tasfiyedeki fonların yatırımcıları ödeme takvimini şubelere sorabilir; tasfiye yönetimini yürüten bankalarda yoğunluk beklenir.",
+   "ozet": "Cumhurbaşkanı Yardımcısı TBMM'de fon tasfiyesini anlattı: TMSF bünyesinde her sorunlu fon için özel hesap açıldı, olağan tasfiyesi biten 17 fonda ödemeler 8 Ekim'de başladı. Tasfiye yönetimi 125 fonda Ziraat Bankası'na, 6 fonda İş Bankası'na verildi. Güncelleme: 1 milyon TL'ye kadar ara ödeme getiren kanun 22 Ekim'de TBMM'de kabul edildi; ödemeler Resmi Gazete'de yayımlanmasına bağlı.",
+   "etki": "Tasfiyedeki fonların yatırımcıları ödeme takvimini fonu aldıkları kurumdan ya da tasfiyeyi yürüten bankadan öğrenebilir; bu bankalarda yoğunluk olabilir.",
    "onemli": true,
    "url": "https://www.ntv.com.tr/turkiye/mecliste-gundem-fon-krizi-cumhurbaskani-yardimcisi-yilmaz-odeme-sureci-yarin-basliyor-1745251"
   },
@@ -72,15 +72,15 @@
    "baslik": "Ön ödemeli kart ve e-parada basitleştirilmiş tedbir eşiği 5.500 TL'ye çıktı",
    "ozet": "Genel Tebliğ (Sıra No: 33) ile düşük riskli ürünlerde basitleştirilmiş tedbir eşikleri yükseltildi: ön ödemeli kart ve elektronik parada 2.750 TL'den 5.500 TL'ye, hayat sigortası yıllık priminde 10 bin TL'den 20 bin TL'ye. EFT/havale kimlik tespiti eşikleri değişmedi.",
    "etki": "Düşük tutarlı ön ödemeli kart ve e-para işlemlerinde kimlik tespiti kolaylaşır; havale ve EFT kuralları aynı kalır.",
-   "onemli": false,
-   "url": "https://www.alomaliye.com/2026/09/23/mali-suclari-arastirma-kurulu-genel-tebligi-sira-no-34/"
+   "onemli": true,
+   "url": "https://hukukcularevi.com/masak-limitleri-degisti-mi-23-eylul-2026-genel-teblig-33-34-on-odemeli-kart-5500-mobil-odeme-6500-eft-havale-bm-yaptirim-listesi/"
   },
   {
    "tarih": "2026-09-17",
    "kurum": "SPK",
    "baslik": "7 portföy yönetim şirketinin 130 fonu için tasfiye kararı",
    "ozet": "SPK, yedi portföy yönetim şirketinin kurucusu olduğu 130 yatırım fonunun tasfiyesine karar verdi ve bu şirketlerin TEFAS'taki tüm fonlarını alım ve satıma kapattı. Liste sonraki bültenle 131 fona güncellendi.",
-   "etki": "Bu fonlar banka kanalı ve TEFAS üzerinden alınıp satılamıyor; elinde bu fonlardan olan müşteriler tasfiye ve ödeme takvimini soracaktır.",
+   "etki": "Bu fonlar TEFAS'ta alınıp satılamıyor; yatırımcılar tasfiye ve ödeme takvimini fonu aldıkları kurumdan ya da SPK/TEFAS duyurularından öğrenebilir.",
    "onemli": true,
    "url": "https://tr.investing.com/news/stock-market-news/spk-7-portfoy-yonetim-sirketinin-130-fonu-icin-tasfiye-karar-ald-4069549"
   }

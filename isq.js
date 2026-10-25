@@ -24,7 +24,7 @@ const ISQ_ALL = [].concat(
   // --- Tarihçe (isbank.com.tr "O Günlerden Bugünlere" ve sitedeki tarihçe) ---
   K("tarih", [
     ["Türkiye İş Bankası hangi yıl kuruldu?", ["1923", "1924", "1927", "1933"], 1],
-    ["Türkiye İş Bankası'nın kurucusu kimdir?", ["Mustafa Kemal Atatürk", "İsmet İnönü", "Kâzım Karabekir", "Celâl Bayar"], 0],
+    ["Türkiye İş Bankası hangi liderin öncülüğünde kuruldu?", ["Mustafa Kemal Atatürk", "İsmet İnönü", "Kâzım Karabekir", "Fevzi Çakmak"], 0],
     ["İş Bankası'nın ilk genel müdürü kimdir?", ["Muammer Eriş", "Celâl Bayar", "Şükrü Saracoğlu", "Hasan Saka"], 1],
     ["İş Bankası hangi tarihte kuruldu?", ["29 Ekim 1923", "26 Ağustos 1924", "23 Nisan 1920", "30 Ağustos 1922"], 1],
     ["İş Bankası hangi şehirde kuruldu?", ["İstanbul", "İzmir", "Ankara", "Bursa"], 2],
@@ -35,7 +35,7 @@ const ISQ_ALL = [].concat(
     izmirQ(),
     ["İş Bankası kurulduğunda kaç şubesi vardı?", ["1", "2", "5", "10"], 1],
     ["İş Bankası kurulduğunda kaç çalışanı vardı?", ["12", "37", "100", "250"], 1],
-    ["İş Bankası'nın Ankara'daki ilk binası hangi caddedeydi?", ["Atatürk Bulvarı", "Anafartalar Caddesi", "İstasyon Caddesi", "Bankalar Caddesi"], 2],
+    ["İş Bankası 1924'te Ankara'da ilk olarak hangi caddedeki binada faaliyete başladı?", ["Anafartalar Caddesi", "Çankırı Caddesi", "İstasyon Caddesi", "Bankalar Caddesi"], 2],
     ["İş Bankası kuruluş yılı olan 1924'ü kaç müşteriyle kapattı?", ["133", "433", "1.433", "4.330"], 1],
     ["İş Bankası'nın ilk sanayi yatırımı hangisidir?", ["Şişecam", "Sümerbank", "Paşabahçe", "İpekiş"], 3],
     ["Bugünkü Anadolu Sigorta hangi yıl kuruldu?", ["1925", "1938", "1951", "1990"], 0],
@@ -82,7 +82,7 @@ const ISQ_ALL = [].concat(
     ["İş Bankası'na uzaktan, görüntülü görüşmeyle müşteri olmak için İşCep'teki özelliğin adı nedir?", ["Hızlı Kredi", "Müşteri Olmak İstiyorum", "Kolay Adres", "QR ile Öde"], 1],
     ["İşCep'teki Açık Bankacılık hizmetine eklenen yeni özellik hangisidir?", ["Sadece kripto varlık takibi", "Farklı bankalardaki kartların İşCep'ten görüntülenmesi", "Yabancı borsa hisse alımı", "Araç kiralama entegrasyonu"], 1],
     ["İş Bankası İnternet Şubesi bilgileriyle ayrı şifre almadan giriş yapılabilen kamu platformu hangisidir?", ["Vergi Dairesi Portalı", "e-Devlet Kapısı", "e-Nabız", "UYAP Vatandaş"], 1],
-    ["İşCep'ten şifre girmeden doğrudan geçiş yapılabilen iki iştirak hangisidir?", ["Anadolu Hayat Emeklilik ve Anadolu Sigorta", "Şişecam ve Türk Telekom", "İş Yatırım ve Softtech", "Arçelik ve Migros"], 0],
+    ["İşCep'ten şifre girmeden doğrudan geçiş yapılabilen iki iştirak hangileridir?", ["Anadolu Hayat Emeklilik ve Anadolu Sigorta", "Şişecam ve Türk Telekom", "İş Yatırım ve Softtech", "Arçelik ve Migros"], 0],
     ["Farklı bankalardaki hesapların tek ekrandan izlenmesini sağlayan altyapının genel adı nedir?", ["Mobil Cüzdan", "Açık Bankacılık", "Ortak ATM Ağı", "Dijital Köprü"], 1],
     ["7/24 kesintisiz ve anlık TL transferi sağlayan, İş Bankası'nın da kullandığı sistem hangisidir?", ["SWIFT", "FAST", "EFT", "Western Union"], 1],
     ["Hesap numarası yerine telefon, e-posta ya da TCKN ile para almayı sağlayan özelliğin adı nedir?", ["Pratik Kod", "CepBank", "Kolay Adres", "Hızlı Transfer"], 2],

@@ -7,7 +7,7 @@
   "bankacilik": [
     {
       "baslik": "Türkiye Emisyon Ticaret Sistemi Piyasası Yönetmeliği (EPDK)",
-      "aciklama": "Karbon tahsisatı piyasasında nakit takas ve teminat yönetimi, 6362 sayılı Sermaye Piyasası Kanunu kapsamındaki bir merkezi uzlaştırma kuruluşu üzerinden yürüyecek ve teminatı aşan alım teklifi verilemeyecek. Emisyon yükümlüsü sanayi ve enerji şirketlerinin teminat, nakit yönetimi ve finansman ihtiyacı doğacağından kurumsal bankacılık açısından yeni bir iş alanı oluşuyor.",
+      "aciklama": "Karbon tahsisatı piyasasında nakit takas ve teminat yönetimi, 6362 sayılı Sermaye Piyasası Kanunu kapsamındaki bir merkezi uzlaştırma kuruluşu üzerinden yürüyecek ve teminatı aşan alım teklifi verilemeyecek. Emisyon yükümlüsü sanayi ve enerji şirketlerinin teminat, nakit yönetimi ve finansman ihtiyacı doğacağından bu şirketlerin bankacılık işlemleri de etkilenebilir.",
       "url": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261021-4.pdf"
     },
     {
@@ -40,7 +40,7 @@
           "detaylar": [
             "Teminat Usul ve Esasları uyarınca yapılan teminat çağrısına rağmen yeterli teminat yatırmayan katılımcı işlem yapamayacak.",
             "Temerrüde düşüp temerrüt borcunu ödemeden yalnızca teminatını tamamlayan katılımcı da aynı yaptırıma tabi olacak.",
-            "Yasak ikili anlaşmalar, vadeli elektrik piyasası, gün öncesi piyasası ve gün içi piyasasını birlikte kapsıyor (haberlerde eski metinle karşılaştırma ve yaptırımın süresine dair bilgi yer almıyor)."
+            "İşlem yasağı ikili anlaşmalar, vadeli elektrik piyasası, gün öncesi piyasası ve gün içi piyasasını birlikte kapsıyor (haberlerde eski metinle karşılaştırma ve yaptırımın süresine dair bilgi yer almıyor)."
           ],
           "yururluk": "Yayımı tarihinde",
           "kimi": "Elektrik piyasası katılımcıları (üretim, tedarik ve ticaret şirketleri), EPİAŞ",
@@ -65,7 +65,7 @@
           "detaylar": [
             "Mevcut yönetmelikte zaruri masraf, memur aylık katsayısının yurt kapasitesine göre 40 ile 100 kat arasında değişen bir çarpanla ve ortalama öğrenci sayısıyla hesaplanıyor; değişiklik bu hesaplamayı kayıtlı öğrenci sayısına bağlıyor.",
             "Yemekhane ve kantin ayrı işletmecilerdeyse toplam tutar mevcut kurala göre %60 yemekhane, %40 kantin işletmecisi arasında paylaştırılıyor.",
-            "Haberlerde değişikliğin tüm ayrıntıları yer almıyor; öğrencilere doğrudan bir ücret getirilmiyor, yükümlü işletmeciler."
+            "Haberlerde değişikliğin tüm ayrıntıları yer almıyor; öğrencilere doğrudan bir ücret getirilmiyor; yükümlülük işletmecilerde."
           ],
           "yururluk": "Yayımı tarihinde (haberlere göre)",
           "kimi": "KYK yurtlarındaki yemekhane, kantin ve diğer işletmeciler; dolaylı olarak yurtta kalan öğrenciler",

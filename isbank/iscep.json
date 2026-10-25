@@ -18,7 +18,7 @@
         "MaxSticker başvurusu uygulamadan yapılabiliyor",
         "Banka kartı bilgileri ana sayfada",
         "Maxi'de yeni özellikler",
-        "Maxi üzerinden çıkış harcı ödenen kişilere tekrar ödeme"
+        "Maxi ile daha önce çıkış harcı ödenen kişi için tekrar ödeme yapabilme"
       ]
     },
     {
@@ -50,7 +50,7 @@
       "surum": "10.10.1",
       "tarih": "2026-05-18",
       "yenilikler": [
-        "Çocuklar için müşteri olma",
+        "Çocuk adına müşteri olma (çocuğa hesap açma)",
         "Diğer banka kartlarını ekleyip takip etme",
         "Birikim hedefi oluşturma",
         "Mevduat getirisi hesaplama",

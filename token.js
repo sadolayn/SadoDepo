@@ -1,5 +1,5 @@
 // Yıldız — Batak, King ve Balayı King'de ortak bakiye. (Solitaire'de Yıldız yok; orada dilek tutulur.)
-// Bakiye "batakMP" anahtarında durur, böylece Batak'taki eski bakiye korunur. 1.000 Yıldız ile başlanır.
+// Bakiye "batakMP" anahtarında durur, böylece Batak'taki eski bakiye korunur. 1.000 Yıldız ve bir kerelik 2.000 Yıldız hediyeyle başlanır.
 // Oyun başında Yıldız konur; kazanan katını alır (kesinti yok). Yıldız yalnızca oyun içi skordur.
 // Yıldız biterse 3 saat sonra İş Bankası sorusu gelir (isq.js); doğru cevap 1.000 Yıldız kazandırır.
 // Kullanım:
@@ -64,7 +64,7 @@
     const masa = konan * kisi, durum = kat > 1 ? "kazandi" : kat === 1 ? "berabere" : "kaybetti";
     const ucret = 0, fee = 0, pay = konan * kat; // kesinti yok
     MP.bal += pay; if (MP.bal >= KADEMELER[0]) MP.empty = 0; save();
-    const t = durum === "kazandi" ? `🎉 <b>+${fmt(pay)}</b> Yıldız kazandın!`
+    const t = durum === "kazandi" ? `🎉 <b>${fmt(pay)}</b> Yıldız aldın (net <b>+${fmt(pay - konan)}</b>)!`
       : durum === "berabere" ? `Berabere: ${fmt(konan)} Yıldız iade edildi.` : `Bu oyunda ${fmt(konan)} Yıldız kaybettin.`;
     return { pay, fee, ucret, masa, durum, html: `<div class="tkBox">${t}<br>⭐ Bakiye: <b>${fmt(MP.bal)}</b> Yıldız</div>` };
   }
@@ -79,7 +79,7 @@
     if (left > 0) {
       const h = Math.floor(left / 36e5), m = Math.floor((left % 36e5) / 6e4);
       modal.innerHTML = `<h2>⭐ Yıldız bitti</h2>
-        <p>Yeni Yıldız için <b>${h} saat ${m} dakika</b> sonra gel. Seni bir bilgi sorusu bekliyor; bilirsen <b>1.000 Yıldız</b> kazanırsın.</p>
+        <p>Yeni Yıldız için <b>${h ? h + " saat " : ""}${m} dakika</b> sonra gel. Seni bir bilgi sorusu bekliyor; bilirsen <b>1.000 Yıldız</b> kazanırsın.</p>
         <p style="font-size:12.5px">Bakiyen Batak, King ve Balayı King'de ortak. Solitaire Yıldız istemez, dilek tutup oynayabilirsin 🌙</p>
         <a class="btn" href="${geri}" style="display:block;text-decoration:none;padding:12px">Oyunlara dön</a>`;
       goster();
@@ -92,7 +92,7 @@
     const ord = opts0.map((_, i) => i).sort(() => Math.random() - 0.5), ok = ord.indexOf(ok0);
     modal.innerHTML = `<h2>🧠 Bilgi Yarışması</h2><p>Doğru cevap: <b>1.000 Yıldız</b></p>
       <div style="font-weight:700;font-size:16px;margin:4px 0 12px;text-align:left"></div>
-      <div class="tkQ">${ord.map((i, n) => `<button type="button" data-i="${n}"></button>`).join("")}</div><div class="tkRes" style="margin-top:12px;font-size:14px"></div>`;
+      <div class="tkQ">${ord.map((i, n) => `<button type="button" data-i="${n}"></button>`).join("")}</div><div class="tkRes" style="margin-top:12px;font-size:14px"></div><p style="font-size:11px;opacity:.65;margin:10px 0 0">Gönüllü hazırlanmış bilgi yarışmasıdır; İş Bankası'nın resmî içeriği değildir.</p>`;
     modal.querySelector("div[style]").textContent = q;
     modal.querySelectorAll(".tkQ button").forEach((b, n) => (b.textContent = opts0[ord[n]]));
     goster();
@@ -103,7 +103,7 @@
       const res = modal.querySelector(".tkRes");
       if (+b.dataset.i === ok) {
         MP.bal += ODUL; MP.empty = 0; save();
-        res.innerHTML = `✅ Doğru! <b>1.000 Yıldız</b> hesabına yüklendi.<button class="btn" type="button" style="margin-top:10px">Oyuna devam</button>`;
+        res.innerHTML = `✅ Doğru! <b>1.000 Yıldız</b> bakiyene eklendi.<button class="btn" type="button" style="margin-top:10px">Oyuna devam</button>`;
         res.querySelector("button").onclick = () => { if (o.devam) o.devam(); };
       } else {
         b.classList.add("bad"); MP.empty = Date.now(); save();
@@ -113,7 +113,7 @@
   }
   if (hediyeVerildi) {
     const t = () => { const d = document.createElement("div");
-      d.textContent = "🎁 Hediye: 2.000 Yıldız hesabına yüklendi!";
+      d.textContent = "🎁 Hediye: 2.000 Yıldız bakiyene eklendi!";
       d.style.cssText = "position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:9999;padding:12px 18px;border-radius:14px;background:linear-gradient(180deg,#f3cf86,#d9a54a);color:#2a1a05;font:600 15px system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.45);max-width:90vw;text-align:center;transition:opacity .4s";
       document.body.appendChild(d); setTimeout(() => (d.style.opacity = "0"), 4200); setTimeout(() => d.remove(), 4700); };
     document.body ? t() : document.addEventListener("DOMContentLoaded", t);

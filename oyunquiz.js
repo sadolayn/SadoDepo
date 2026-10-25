@@ -74,7 +74,7 @@
     var bas = sert ? "🔐 Giriş sorusu" : "🎲 Sürpriz soru!";
     var kural = sert ? "Oyuna girmek için bir İş Bankası sorusunu bil 🙂<br>❌ Yanlışta <b>5 dakika</b> sonra tekrar deneyebilirsin."
       : "Bilirsen ne güzel; bilemezsen de oyun açılıyor 🙂";
-    box.innerHTML = "<h3>" + bas + '</h3><p class="r">' + kural + '</p><div class="q"></div><div class="os"></div><div class="m"></div><button class="x" type="button">Vazgeç</button>';
+    box.innerHTML = "<h3>" + bas + '</h3><p class="r">' + kural + '</p><div class="q"></div><div class="os"></div><div class="m"></div><p class="r" style="font-size:11px;opacity:.7">Gönüllü hazırlanmış bilgi yarışmasıdır; İş Bankası\'nın resmî içeriği değildir.</p><button class="x" type="button">Vazgeç</button>';
     box.querySelector(".q").textContent = q[0];
     box.querySelector(".x").onclick = close;
     var os = box.querySelector(".os"), msg = box.querySelector(".m");

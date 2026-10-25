@@ -138,6 +138,7 @@ const KURAL = () => `<ul class="rules">
       <li>${DEALS} el oynanır. Her oyuncu sırayla seçer ve her oyunu bir kez seçebilir: <b>♣ ×1, ♦ ×2, ♥ ×3, ♠ ×4, Kozsuz ×5</b>.</li>
       <li>Aldığın her el, oyunun çarpanı kadar puan. En çok puanı toplayan kazanır.</li>
       <li>Renge uymak ve mümkünse yükseltmek zorunlu. Renk yoksa koz atılır. Koz kırılmadan kozla açılmaz.</li>
+      <li>Sadolayn'ın şansı biraz yaver gider: dağıtımda eline genellikle güçlü kartlar gelir 😉</li>
       <li><b>Yıldız:</b> Oyuna Yıldız ayırarak başlarsın. Kazanırsan ayırdığının <b>2 katını</b> alırsın, berabere biterse Yıldızın iade edilir. Bakiyen Batak ve King'le ortak; biterse 3 saat sonra İş Bankası sorusu gelir.</li>
     </ul>`;
 if (window.KartMasa) KartMasa.kurallar = KURAL;
@@ -425,7 +426,7 @@ function showRules(resume) {
   const stake = resume && G && G.stake;
   // Kısa pencere: Yıldız ve Başla üstte/altta hep görünür; isimler ve kurallar açılır kutuda
   $("modal").innerHTML = `<h2>💞 Balayı King</h2>
-    ${resume ? (stake ? `<div class="tkBox">⭐ Ortada <b>${Token.fmt(stake)}</b> Yıldız var; oyunu bitirince sonucunu alırsın.</div>` : "") : '<div id="tkSec"></div><div class="tkNot">Kazanırsan <b>2 katı</b> · berabere biterse iade. Bakiyen bütün kart oyunlarında ortak.</div>'}
+    ${resume ? (stake ? `<div class="tkBox">⭐ Ortada <b>${Token.fmt(stake)}</b> Yıldız var; oyunu bitirince sonucunu alırsın.</div>` : "") : '<div id="tkSec"></div><div class="tkNot">Kazanırsan <b>2 katı</b> · berabere biterse iade. Bakiyen Batak, King ve Balayı King\'de ortak.</div>'}
     <details class="mDet"><summary>👥 Oyuncu isimleri</summary>${ISIM.html([["ben", "Sen", "Senin adın"], [null, "Sadolayn", "Rakibin"]])}</details>
     <details class="mDet"><summary>📖 Kurallar</summary>${KURAL()}</details>
     <div class="tkAlt"><button class="btn" id="start">${resume ? "Devam et" : "Başla"}</button>
