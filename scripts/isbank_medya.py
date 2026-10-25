@@ -9,11 +9,36 @@ KOK = "https://www.isbank.com.tr"
 UA = {"User-Agent": "Mozilla/5.0 (compatible; SadolaynBot/1.0)", "Accept-Language": "tr-TR,tr"}
 TR = dt.timezone(dt.timedelta(hours=3))
 
-def get(url):
+DURUM = []  # sayfa yanıt kodları (kayda yalnızca sayı basılır)
+
+def get_duz(url):
     try:
-        return urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60).read().decode("utf-8", "replace")
+        r = urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60)
+        DURUM.append(r.status)
+        return r.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        DURUM.append(e.code)
+    except Exception:
+        DURUM.append(0)
+    return ""
+
+def get_tarayici(url):
+    """Sayfa bağlantılarını sonradan yüklüyorsa: gerçek tarayıcıda açılıp son hâli alınır (kuruluysa)."""
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            b = p.chromium.launch()
+            pg = b.new_page(user_agent=UA["User-Agent"], locale="tr-TR")
+            pg.goto(url, wait_until="networkidle", timeout=90000)
+            pg.wait_for_timeout(2500)
+            h = pg.content()
+            b.close()
+            return h
     except Exception:
         return ""
+
+def get(url):
+    return get_duz(url)
 
 def temiz(s):
     return re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>", " ", s)
@@ -25,8 +50,8 @@ def metin(s):
 PLATFORM = [("instagram.com", "Instagram"), ("facebook.com", "Facebook"), ("twitter.com", "X"), ("x.com", "X"), ("youtube.com", "YouTube"),
             ("linkedin.com", "LinkedIn"), ("tiktok.com", "TikTok"), ("spotify.com", "Spotify"), ("t.me", "Telegram"), ("threads.net", "Threads")]
 
-def sosyal():
-    b = temiz(get(KOK + "/bankamizi-taniyin/sosyal-medya"))
+def sosyal(getir=None):
+    b = temiz((getir or get)(KOK + "/bankamizi-taniyin/sosyal-medya"))
     out, gor = [], set()
     for m in re.finditer(r'(?is)<a[^>]+href="(https?://[^"]+)"[^>]*>(.*?)</a>', b):
         url, ad = html.unescape(m.group(1)).strip(), metin(m.group(2))
@@ -42,7 +67,8 @@ def sosyal():
 # ---------- Bankadan haberler: "İş Bankası'ndan Haberler" sayfasındaki başlıklar ----------
 AYRI = {"haberler-ve-medya", "reklam-videolari", "sosyal-medya", "bankamizi-taniyin"}
 
-def haberler():
+def haberler(getir=None):
+    get = getir or get_duz
     ana = temiz(get(KOK + "/bankamizi-taniyin/haberler-ve-medya"))
     # "İş Bankası'ndan Haberler" kutusunun "Detaylı Bilgi" bağlantısı
     adres = None
@@ -75,11 +101,16 @@ if os.path.exists(OUT):
     except Exception: eski = {}
 veri = {"guncelleme": dt.datetime.now(TR).strftime("%Y-%m-%dT%H:%M")}
 for ad, fn in [("sosyal", sosyal), ("haberler", haberler)]:
-    yeni, onceki = fn(), eski.get(ad) or []
+    yeni, yol = fn(), "düz"
+    if not yeni:
+        yeni, yol = fn(get_tarayici), "tarayıcı"
+    onceki = eski.get(ad) or []
+    print(f"{ad}: {yol} okuma {len(yeni or [])}")
     if not yeni or len(yeni) < 0.5 * len(onceki):
         print(f"::warning::{ad}: okunan {len(yeni or [])} (önceki {len(onceki)}) — eski liste korundu")
         yeni = onceki
     veri[ad] = yeni
     print(f"{ad}: {len(yeni)}")
+print("sayfa yanıt kodları:", ",".join(map(str, DURUM)))
 os.makedirs("isbank", exist_ok=True)
 json.dump(veri, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)

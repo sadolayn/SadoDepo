@@ -19,6 +19,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Tarayıcı (sayfa bağlantıları sonradan yükleniyorsa)
+        continue-on-error: true
+        run: pip install -q playwright && python -m playwright install --with-deps chromium > /dev/null
       - name: Haber başlıkları ve sosyal medya hesapları
         run: python scripts/isbank_medya.py
       - name: Commit
