@@ -44,7 +44,8 @@ def temiz(s):
     return re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>", " ", s)
 
 def metin(s):
-    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", s))).strip()
+    s = html.unescape(re.sub(r"<[^>]+>", " ", s)).replace("\u200b", "").replace("\u00a0", " ")  # görünmez boşluklar silinir
+    return re.sub(r"\s+", " ", s).strip()
 
 # ---------- Sosyal medya: sayfadaki platform bağlantıları ----------
 PLATFORM = [("instagram.com", "Instagram"), ("facebook.com", "Facebook"), ("twitter.com", "X"), ("x.com", "X"), ("youtube.com", "YouTube"),
@@ -60,6 +61,7 @@ def sosyal(getir=None):
         # Sayfanın kendi alt bilgisindeki ikon bağlantılarının adı olmaz; yalnızca adı yazan hesaplar alınır. Nays yaşam süresini bitirdi.
         if not p or len(ad) < 2 or len(ad) > 40 or re.search(r"nays", ad + url, re.I) or (p, url) in gor:
             continue
+        url = re.sub(r"[?&](fref|lang|hl|ref|igshid)=[^&]*", "", url).rstrip("?&")  # izleme ekleri atılır
         gor.add((p, url))
         out.append({"platform": p, "ad": ad, "url": url})
     return out
@@ -80,11 +82,14 @@ def haberler(getir=None):
     if not adres:
         return None
     b = temiz(get(adres))
+    BAG = r'(?is)<a[^>]+href="((?:https://www\.isbank\.com\.tr)?/bankamizi-taniyin/[a-z0-9-]+/?)"[^>]*>(.*?)</a>'
+    # Menü ve alt bilgi: "Haberler ve Medya" sayfasında da bulunan bağlantılar haber sayılmaz
+    menu = {m.group(1).rstrip("/").split("/")[-1] for m in re.finditer(BAG, ana)}
     out, gor = [], set()
-    for m in re.finditer(r'(?is)<a[^>]+href="((?:https://www\.isbank\.com\.tr)?/bankamizi-taniyin/[a-z0-9-]+/?)"[^>]*>(.*?)</a>', b):
+    for m in re.finditer(BAG, b):
         href, ic = m.group(1), metin(m.group(2))
         slug = href.rstrip("/").split("/")[-1]
-        if slug in AYRI or slug in gor or len(ic) < 15 or re.match(r"(?i)^(detaylı bilgi|devamı|tümü)", ic):
+        if slug in AYRI or slug in menu or slug in gor or len(ic.split()) < 5 or re.match(r"(?i)^(detaylı bilgi|devamı|tümü)", ic):
             continue
         gor.add(slug)
         tarih = re.search(r"\b(\d{1,2})[./](\d{1,2})[./](20\d{2})\b", ic)
