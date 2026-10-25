@@ -145,6 +145,7 @@
   .kf { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
   .kf button { padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
   .kf button i { font-style: normal; opacity: .7; margin-left: 4px; font-weight: 600; }
+  .kf button.sifir:not(.on) { opacity: .5; }
   .kf button.on { background: var(--kc, #5d8bff); border-color: var(--kc, #5d8bff); color: #000; }
   .kd { position: relative; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--kc, #5d8bff); border-radius: 14px; padding: 12px 12px 10px; margin-bottom: 10px; }
   .kd.onm { border-color: rgba(211,47,47,.55); border-left-color: var(--kc, #5d8bff); background: linear-gradient(160deg, #1a0d0d, #0d0d0d); }
@@ -278,8 +279,8 @@ function kurumCiz() {
   const say = (k) => DUY.filter((x) => !k || x.kurum === k).length;
   const L = DUY.filter((x) => !kurumSec || x.kurum === kurumSec);
   $("kurum").innerHTML = `<div class="kh"><b>🏛️ Düzenleyici kurumlardan</b><p>Resmi Gazete'ye düşmeyen karar ve duyurular tek yerde. Her sabah derlenir; her kayıt kurumun resmi duyurusuna bağlanır.${DUYUPD ? ` Son derleme: ${esc(fmtTime(DUYUPD))}.` : ""}</p></div>
-    <div class="kf"><button type="button" data-k="" class="${!kurumSec ? "on" : ""}" style="--kc:#e0a24f">Hepsi<i>${say("")}</i></button>${Object.entries(KURUM).map(([k, [ic, kc]]) => `<button type="button" data-k="${esc(k)}" class="${kurumSec === k ? "on" : ""}" style="--kc:${kc}">${ic} ${esc(KKISA[k] || k)}<i>${say(k)}</i></button>`).join("")}</div>`
-    + (L.length ? L.map(kurumKart).join("") : `<div class="empty">${kurumSec ? esc(KKISA[kurumSec] || kurumSec) + " için henüz" : "Henüz"} derlenmiş duyuru yok; yenisi çıkınca burada.</div>`)
+    <div class="kf"><button type="button" data-k="" class="${!kurumSec ? "on" : ""}" style="--kc:#e0a24f">Hepsi<i>${say("")}</i></button>${Object.entries(KURUM).map(([k, [ic, kc]]) => `<button type="button" data-k="${esc(k)}" class="${kurumSec === k ? "on" : ""}${say(k) ? "" : " sifir"}" style="--kc:${kc}">${ic} ${esc(KKISA[k] || k)}<i>${say(k)}</i></button>`).join("")}</div>`
+    + (L.length ? L.map(kurumKart).join("") : `<div class="empty">${kurumSec ? `Son 60 günde ${esc(({ "BDDK": "BDDK'dan", "TCMB": "TCMB'den", "SPK": "SPK'dan", "TMSF": "TMSF'den", "MASAK": "MASAK'tan", "Ticaret Bakanlığı": "Ticaret Bakanlığı'ndan" })[kurumSec] || kurumSec)} bankacılığı ilgilendiren bir karar ya da duyuru derlenmedi.<br><small>Yenisi çıkınca her sabah buraya eklenir.</small>` : "Henüz derlenmiş duyuru yok; yenisi çıkınca burada."}</div>`)
     + `<p class="knot">MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz; resmi duyuruya bağlanır. Özetler kişisel derlemedir, bağlayıcı metin kurumun kendi duyurusudur.</p>`;
   $("kurum").querySelectorAll("[data-k]").forEach((b) => (b.onclick = () => { kurumSec = b.dataset.k; kurumCiz(); }));
   $("kurum").querySelectorAll("[data-gun]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); history.replaceState(null, "", "#" + a.dataset.gun); sekAc("gazete", true); show(a.dataset.gun); }));
