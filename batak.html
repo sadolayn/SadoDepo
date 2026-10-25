@@ -121,7 +121,6 @@
   }
   .panel button.pass { border-color: var(--red); color: var(--red); }
   .panel button.suit { font-size: 26px; padding: 6px 16px; }
-  .panel button.suit svg.ksb { display: block; width: 24px; height: 24px; }
   .panel button.suit.red { color: var(--red); }
 
   /* Kısa ekranda (tarayıcı çubukları açıkken) masa biraz küçülür, eldeki kartlar hep görünür */
@@ -133,7 +132,7 @@
   .hand .card { margin-left: -30px; transition: transform .12s, opacity .12s; cursor: pointer; }
   .hand .card:first-child { margin-left: 0; }
   .hand .card.ok { transform: translateY(-10px); }
-  .hand .card.no { filter: brightness(.5); cursor: default; }
+  .hand .card.no { opacity: .4; cursor: default; }
   .hand .card.ok:active { transform: translateY(-16px); }
   /* Kendi elin: yelpaze (oval) diziliş; parmağın altındaki kart kalkar, bırakınca atılır */
   .hand.yelpaze { display: block; position: relative; padding: 0; min-height: 0; height: calc(var(--cw) * 1.45 + var(--cw) * .3 + 18px); touch-action: none; }
@@ -218,7 +217,7 @@
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
 </style>
 <script src="cardsound.js?v=3"></script>
-<script src="kartmasa.js?v=6" data-oyun="batak" data-masa="sado"></script>
+<script src="kartmasa.js?v=7" data-oyun="batak" data-masa="sado"></script>
 <script src="isq.js"></script>
 <script src="token.js?v=2"></script>
 <script src="batakai.js?v=1"></script>
@@ -462,11 +461,12 @@ function yelpaze(h, p, myTurn, ok) {
   const cw = parseFloat(getComputedStyle(h).getPropertyValue("--cw")) || 56;
   const maxA = Math.min(12, n), kavis = cw * 0.25;
   const pay = cw * (0.08 + 1.67 * Math.sin((maxA * Math.PI) / 180));
-  const { xs, step, x0 } = KartMasa.dizilis(L, W, cw, pay); // renk grupları arası boşluk
-  EL = { x0, xs, step, n, cw, els: [], ok, myTurn, p };
+  const step = n > 1 ? Math.min(cw * 0.72, (W - cw - pay * 2) / (n - 1)) : 0;
+  const x0 = (W - (cw + step * (n - 1))) / 2;
+  EL = { x0, step, n, cw, els: [], ok, myTurn, p };
   L.forEach((c, i) => {
     const el = cardEl(c), t = n > 1 ? (i / (n - 1)) * 2 - 1 : 0;
-    el.style.left = Math.round(xs[i]) + "px";
+    el.style.left = Math.round(x0 + i * step) + "px";
     el.style.top = Math.round(12 + kavis * t * t) + "px";
     el.style.setProperty("--rot", (t * maxA).toFixed(1) + "deg");
     if (myTurn) el.classList.add(ok.has(id(c)) ? "ok" : "no");
@@ -476,7 +476,7 @@ function yelpaze(h, p, myTurn, ok) {
 function elIdx(x) {
   if (!EL || !EL.n) return -1;
   const r = $("hand").getBoundingClientRect();
-  return KartMasa.dizilisIdx(EL.xs, x - r.left);
+  return Math.max(0, Math.min(EL.n - 1, Math.floor((x - r.left - EL.x0) / (EL.step || EL.cw))));
 }
 const elSec = (i) => EL && EL.els.forEach((o, k) => o.el.classList.toggle("sec", k === i));
 $("hand").addEventListener("pointerdown", (e) => {
@@ -586,7 +586,7 @@ async function endBidding() {
     for (const s of SUITS) {
       const b = document.createElement("button");
       b.className = "suit" + (isRed(s) ? " red" : "");
-      b.innerHTML = KartMasa.simge(s, "ksb"); b.setAttribute("aria-label", SUIT_NAMES[s]);
+      b.textContent = s;
       b.onclick = () => { panel.classList.remove("show"); startPlay(s); };
       panel.appendChild(b);
     }
