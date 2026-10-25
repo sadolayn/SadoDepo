@@ -323,7 +323,8 @@
   .menu button[data-k="KTakvim"] { --c: #ef5a5a; --d: #2e0a0a; --t: #ffd0d0; }
   .menu button[data-k="Pazarama"] { --c: #ff8a3d; --d: #2e1405; --t: #ffd9bf; }
   .menu button[data-k="Kartsiz"] { --c: #3fbfd6; --d: #04232a; --t: #c6f0f7; }
-  .menu button[data-k="POS"] { --c: #9b7bff; --d: #160c33; --t: #e2d9ff; }
+  .menu button[data-k="Medya"] { --c: #9b7bff; --d: #160c33; --t: #e2d9ff; }
+  .menu button[data-k="Medya"] small { display: inline-block; font-size: 10px; white-space: nowrap; opacity: .85; }
   .menu button span { font-size: 11px; overflow: visible; } .menu button span small { font-size: 11px; font-weight: 600; opacity: .85; }
   .menu button.active { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
   .menu button.hasnew { border-color: #d32f2f; }
@@ -726,6 +727,7 @@
   .altkutu #tfil.kamp button .ka { display: inline-flex; align-items: center; justify-content: center; gap: 3px; text-align: center; }
   .altkutu #tfil.kamp button > b { background: none !important; padding: 0 !important; min-width: 0 !important; font-size: 10.5px !important; font-weight: 600; opacity: .8; line-height: 1.2 !important; }
   .altkutu.dar:not(.acik) #tfil.kamp button { flex-direction: row !important; gap: 5px !important; }
+  .altkutu .tfil.iki .tsat.uc.dort .tgrid { grid-template-columns: repeat(2, 1fr) !important; }
   .altkutu .tfil.iki .tsat.uc .tgrid { grid-template-columns: repeat(3, 1fr); }
   .altkutu .tsat.uc button { font-size: 12px !important; padding: 4px 3px !important; }
   .altkutu.dar:not(.acik) #tfil.iki.kamp { display: flex !important; flex-wrap: wrap !important; gap: 5px !important; }
@@ -734,6 +736,14 @@
   .altkutu.dar:not(.acik) .tsat button.hep { display: none !important; }
   .altkutu.dar:not(.acik) .tsat.kgr:not(:has(.on:not(.hep))) { display: none !important; }
   .pay .pdy { margin-top: 8px; font-size: 12px; color: #9a9a9a; } .pay .pdy a { color: #9b7bff; text-decoration: none; }
+  .mdHero { margin: 0 0 10px; padding: 12px 14px; border-radius: 14px; border: 1px solid #3a2c6b; background: linear-gradient(160deg, #1b1240, #0b0816); }
+  .mdHero b { display: block; font-size: 16px; color: #fff; } .mdHero span { display: block; margin-top: 3px; font-size: 12.5px; color: #c9bff0; line-height: 1.4; }
+  .mdHab { display: block; margin: 0 0 8px; padding: 11px 13px; border-radius: 12px; border: 1px solid #2a2a2a; background: #0d0d0d; color: #eee; text-decoration: none; }
+  .mdHab b { display: block; font-size: 14.5px; line-height: 1.35; } .mdHab small { display: block; margin-top: 4px; font-size: 12px; color: #9b7bff; }
+  .mdHes { margin: 0 0 8px; padding: 10px 12px; border-radius: 12px; border: 1px solid #2a2a2a; background: #0d0d0d; }
+  .mdHes b { display: block; font-size: 14px; color: #fff; margin-bottom: 6px; } .mdHes div { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mdHes a { padding: 6px 11px; border-radius: 999px; border: 1px solid #3a2c6b; background: #140d2b; color: #e2d9ff; text-decoration: none; font-size: 13px; }
+  .mdUyari { margin: 10px 0; padding: 10px 12px; border-radius: 12px; border: 1px solid #5a3a12; background: #1c1206; color: #ffd9a8; font-size: 12.5px; line-height: 1.45; }
   .karac { display: grid; gap: 7px; margin: 0 0 10px; }
   .altkutu #tfil.kamp .kara { margin: 6px 0 2px; pointer-events: auto; }
   .altkutu.dar:not(.acik) #tfil.kamp .kara { margin: 4px 0 4px; flex: 1 1 100%; }
@@ -901,9 +911,9 @@ const CATS = [
   ["Soru", "#e0a24f", "❓"],
   ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Kartsız<br>öde", "POS": "POS<br>rehberi", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Günün sorusu", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<br><small>Güncel · KAP</small>" };
+const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Kartsız<br>öde", "Medya": "Medya", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Günün sorusu", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<br><small>Güncel · KAP</small>" };
 // Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Video, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
-const MENU = [["Tarihçe", "🏛️"], ["İşCep", "📲"], ["Black", "🖤"], ["Maximum", "🎁"], ["KTakvim", "⏳"], ["Haberler", "📰"], ["Şubeler", "📍"], ["Pazarama", "🛒"], ["Kartsiz", "💳"], ["POS", "🏪"], ["Soru", "❓"]];
+const MENU = [["Tarihçe", "🏛️"], ["İşCep", "📲"], ["Black", "🖤"], ["Maximum", "🎁"], ["KTakvim", "⏳"], ["Haberler", "📰"], ["Şubeler", "📍"], ["Pazarama", "🛒"], ["Kartsiz", "💳"], ["Medya", "📣"], ["Soru", "❓"]];
 const NEWS = ["Tümü", "📰 Güncel", "🎬 Video", "Haber", "Ürün", "Dijital", "KAP"];
 const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "🎬 Video": "🎬 Video", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
 let lastNews = "Tümü"; try { lastNews = localStorage.getItem("isbankNews") || "Tümü"; } catch (e) {}
@@ -1143,39 +1153,6 @@ function odeHtml() {
       ${o.u ? `<a class="olink" href="${o.u}" target="_blank" rel="noopener">Ayrıntılar · ${o.ua} ↗</a>` : ""}</div>`; }).join("")}</div>
     <a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Yeni kartsız ödeme kampanyaları · maximum.com.tr ↗</a>
     <div class="pay-tip">🔒 Kartın, telefonun ya da MaxSticker'ın kaybolursa İşCep'ten hemen geçici olarak kapatabilirsin.</div>`;
-}
-// ===== POS rehberi: işyeri hangi POS'u seçmeli, sık karışan konular (genel bilgi; koşullar bankaya göre değişir) =====
-const POS = [
-  { ic: "🧾", ad: "Yazarkasa POS (ÖKC)", k: "Dükkanda", kim: "Dükkanında perakende satış yapanlar", p: "Hem yazarkasa fişi keser hem kartla ödeme alır; tek cihazda yazarkasa + POS. Fiş kesmek zorunda olan perakende işyerleri için ana cihaz budur.", n: "Fiş ve kart işlemi aynı cihazda olduğu için gün sonu ve muhasebe kolaylaşır.", d: ["EFT-POS'un yazarkasayla entegre çalışması zorunlu (VUK Genel Tebliği No. 483) · GİB Yeni Nesil ÖKC", "https://ynokc.gib.gov.tr"] },
-  { ic: "🛵", ad: "Mobil ÖKC", k: "Gezerek", kim: "Kurye, kapıda ödeme, pazar, servis", p: "Kendi SIM'i (4G) ile çalışan, taşınabilir yazarkasa POS. Masaya, kapıya, sahaya gider; fişi orada keser.", n: "Paket servis ve kapıda ödeme alan işletmelerin ilk tercihi.", d: ["Seyyar satışta EFT-POS özellikli yeni nesil ÖKC kullanımı 2013'ten beri zorunlu · GİB Yeni Nesil ÖKC", "https://ynokc.gib.gov.tr"] },
-  { ic: "📱", ad: "Telefonla POS (SoftPOS)", k: "Telefonla", kim: "Yeni başlayan, az işlem yapan, serbest çalışan", p: "NFC'li Android telefona kurulan uygulamayla temassız kart, telefon ve saat ödemesi alınır; ek cihaz gerekmez.", n: "Türkiye'de yeni bir yol; koşulları bankaya göre değişir. Fiş kesme zorunluluğun varsa yazarkasanın yerine geçmez, fişi ayrıca düzenlemen gerekir (muhasebecine danış).", d: ["Fiş zorunluluğu: GİB Yeni Nesil ÖKC kuralları", "https://ynokc.gib.gov.tr"] },
-  { ic: "🌐", ad: "Sanal POS", k: "İnternette", kim: "Kendi e-ticaret sitesi olanlar", p: "Sitendeki ödeme sayfasında kartla ödeme alırsın; 3D Secure ile müşteri telefonuna gelen kodla onaylar.", n: "Taksit, iade ve iptal işlemleri banka ekranından yapılır.", d: ["Genel uygulama; ayrıntılar banka sözleşmesinde"] },
-  { ic: "🔗", ad: "Linkle ödeme", k: "Linkle", kim: "WhatsApp, Instagram, telefonla satış yapanlar", p: "Sitesi olmayan işletme müşteriye bir ödeme bağlantısı gönderir, müşteri kartıyla o bağlantıdan öder.", n: "Uzaktan satışta en pratik yol; para sanal POS gibi hesaba geçer.", d: ["Genel uygulama; ayrıntılar banka sözleşmesinde"] },
-  { ic: "🔳", ad: "Karekodla tahsilat", k: "Karekod", kim: "Hızlı ödeme isteyen her işletme", p: "Cihaz ya da kasadaki TR Karekod'u müşteri telefonundan okutur, kartı ya da hesabıyla öder.", n: "Kart çıkarmadan, dokunmadan ödeme; müşteri tarafında da kampanyalara sayılabiliyor (Kartsız öde kalemine bak).", d: ["Ödemelerde TR Karekod Yönetmeliği (Resmî Gazete 21.08.2020) · TCMB Ödeme Sistemleri mevzuatı", "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Banka+Hakkinda/Mevzuat/Odeme+Sistemleri"] },
-];
-const POS_SSS = [
-  ["ÖKC ile POS arasındaki fark ne?", "POS yalnızca kartla ödeme alır. ÖKC (yeni nesil yazarkasa) fiş de keser ve Gelir İdaresi'ne bağlıdır. Perakende satışta kartlı ödeme alan EFT-POS'un ÖKC ile entegre çalışması zorunludur (VUK Genel Tebliği No. 483). <i>Dayanak: GİB Yeni Nesil ÖKC.</i>"],
-  ["Para hesabıma ne zaman geçer? (bloke / valör)", "Kartla alınan para hemen ya da anlaşılan gün sayısı sonra hesaba geçer. Erken geçmesi (blokesiz) genelde daha yüksek komisyonla olur. Oran ve gün sayısı işyeri anlaşmasına göre değişir. <i>Genel uygulama; ayrıntılar işyeri sözleşmesinde.</i>"],
-  ["İptal mi, iade mi?", "Gün sonu alınmadan, aynı gün → <b>iptal</b>: işlem müşterinin kartına hiç yansımaz. Gün sonundan sonra → <b>iade</b>: tutar birkaç iş günü içinde karta döner. Kısmi iade de yapılabilir. <i>Genel uygulama; ayrıntılar işyeri sözleşmesinde.</i>"],
-  ["Gün sonu nedir, almazsam ne olur?", "Günün kart işlemlerini kapatıp bankaya gönderir. Çoğu cihaz gece kendiliğinden alır; alınmazsa para hesaba geç geçebilir. <i>Genel uygulama; ayrıntılar işyeri sözleşmesinde.</i>"],
-  ["Taksitli satış her sektörde olur mu?", "Hayır. Telekomünikasyon, gıda, akaryakıt ve hediye kartı gibi harcamalarda kredi kartına taksit yapılamaz; diğer sektörlerde azami taksit sayısı BDDK kararlarıyla belirlenir ve zaman zaman değişir. Taksit arttıkça işyeri komisyonu da artar. <i>Dayanak: Banka Kartları ve Kredi Kartları Hakkında Yönetmelik, md. 26 (BDDK).</i>"],
-  ["Müşteri harcamaya itiraz ederse? (ters ibraz)", "Banka işyerinden belge ister: slip, fiş/fatura, teslim tutanağı. Bu belgeleri bir süre sakla; uzaktan satışta 3D Secure ile alınan ödeme itirazda işyerini korur. <i>Genel uygulama; ayrıntılar işyeri sözleşmesinde.</i>"],
-  ["Temassızda neden şifre sordu?", "Temassız ödemede belirli bir tutarın üstünde şifre istenir; sınırı BDDK belirler ve yıllar içinde yükseltilir. Cihaz arızası değildir."],
-];
-function posHtml() {
-  const P = KH && KH.isbank ? kTumu("ticari").filter((k) => /esnaf|pos/i.test(k.kim) || /\bpos\b|yazarkasa|ökc|üye işyeri/i.test(k.baslik)) : [];
-  return `<div class="pay-hero" style="--c:#3fbfd6"><b>🏪 İşyerin için hangi POS?</b><span>Nerede satış yaptığını seç, sana uyan yolu gör. Sık karışan konular (iptal-iade, bloke, taksit, gün sonu) en altta tek tek.</span></div>
-    <div class="otiles six">${POS.map((o, i) => `<button type="button" class="ot" data-go="pos${i}"><i>${o.ic}</i><span>${o.k}</span></button>`).join("")}</div>
-    <div class="pay-grid">${POS.map((o, i) => `<div class="pay" id="pos${i}"><div class="ph"><i>${o.ic}</i><div><b>${o.ad}</b><small>👤 ${o.kim}</small></div></div><p>${o.p}</p><div class="pn">💡 ${o.n}</div>${o.d ? `<div class="pdy">📚 ${o.d[1] ? `<a href="${o.d[1]}" target="_blank" rel="noopener">${o.d[0]} ↗</a>` : o.d[0]}</div>` : ""}</div>`).join("")}</div>
-    ${P.length ? `<div class="ohead" style="margin-top:14px">🎁 Güncel POS ve esnaf kampanyaları<span>Kampanyalar bölümünden, kendiliğinden</span></div>${P.map((k) => kKart(k, K_KAY[k._kay][3])).join("")}` : ""}
-    <div class="ohead" style="margin-top:14px">❓ Sık karışanlar<span>Başlığa dokun, açılsın</span></div>
-    ${POS_SSS.map(([q, a]) => `<details class="ipdet"><summary>${q}</summary><p>${a}</p></details>`).join("")}
-    <div class="ocard pkay"><div class="oh"><i>📚</i><b>Kaynaklar</b></div>
-      <a class="omini olnk" href="https://ynokc.gib.gov.tr" target="_blank" rel="noopener"><span>Gelir İdaresi · Yeni Nesil Ödeme Kaydedici Cihazlar (ÖKC) ↗</span></a>
-      <a class="omini olnk" href="https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Banka+Hakkinda/Mevzuat/Odeme+Sistemleri" target="_blank" rel="noopener"><span>TCMB · Ödeme Sistemleri mevzuatı (TR Karekod Yönetmeliği) ↗</span></a>
-      <a class="omini olnk" href="https://www.bddk.org.tr" target="_blank" rel="noopener"><span>BDDK · Banka Kartları ve Kredi Kartları Hakkında Yönetmelik ↗</span></a>
-      <p style="color:var(--muted);font-size:12px;margin:6px 0 0">Bloke, iptal-iade, gün sonu ve ters ibraz genel uygulamadır; ayrıntılar işyeri sözleşmesinde yazar.</p></div>
-    <div class="pay-tip">ℹ️ Genel bilgilendirmedir. Cihaz, komisyon, bloke süresi ve taksit koşulları işyeri anlaşmasına göre değişir; kesin bilgi için bankana danış.</div>`;
 }
 // ===== Black: İş Black programı (2 kademe) + Maximiles Black kart =====
 // Kaynak: isbank.com.tr duyurusu (23.01.2026), maximiles.com.tr Maximiles Black sayfası, İş Bankası lounge kampanya sayfası
@@ -1423,7 +1400,7 @@ function campCard(k) {
 // ===== Kampanyalar: isbank.com.tr, maximum.com.tr ve maximiles.com.tr (bireysel + ticari), günde iki kez otomatik =====
 // Her kampanya tek bir "ne kazanırım" ve tek bir "nerede" grubundadır (sınıflandırma veri toplanırken yapılır): toplamlar her zaman tutar.
 // Süzgeçler "ve" ile birleşir: bir satırdaki sayılar öbür satırdaki seçime göre hesaplanır (dal dal daralır).
-let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kKim = "", kOne = false, kKatAcik = false;
+let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kKim = "", kOne = false, kPos = false, kKatAcik = false;
 try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kNe = k.ne || ""; kNere = k.nere || ""; kKim = k.kim || ""; kOne = !!k.one; } catch (e) {}
 const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, ne: kNe, nere: kNere, kim: kKim, one: kOne })); } catch (e) {} };
 // Kaynak renkleri: lacivert, pembe, mavi (ana sayfadaki kartların tonlarıyla uyumlu)
@@ -1472,6 +1449,14 @@ function kKopyala(metin) {
   if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(metin).then(bitti, eski); else eski();
 }
 document.addEventListener("click", (e) => { const b = e.target.closest(".kkop"); if (b) kKopyala(b.dataset.kop); });
+// 🏪 İşyeri & POS: işyeri açacak ya da POS kullanan için üç kaynaktaki POS, yazarkasa ve esnaf kampanyaları
+const kPosListe = () => (KH && KH.isbank ? kTumu("ticari").filter((k) => /esnaf|pos/i.test(k.kim) || /\bpos\b|yazarkasa|ökc|üye işyeri|esnaf|kobi|işyeri/i.test(k.baslik + " " + (k.ozet || ""))) : []);
+function kPosHtml() {
+  const L = kPosListe().sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
+  return `<div class="mdHero" style="border-color:#3a5a2c;background:linear-gradient(160deg,#122a12,#081008)"><b>🏪 İşyeri & POS kampanyaları</b><span>İşyeri açıyor ya da POS kullanıyorsan: İş Bankası, Maximum ve Maximiles'taki POS, yazarkasa ve esnaf kampanyaları tek listede.</span></div>`
+    + `<div class="ksag" style="--kk:#6fbf4a"><div class="kyol">🏪 İşyeri & POS · <b>${L.length} adet</b></div></div>`
+    + (L.length ? L.map((k) => kKart(k, K_KAY[k._kay][3])).join("") : '<div class="empty">Şu an güncel POS ya da esnaf kampanyası yok.</div>');
+}
 // Başlıktaki kazanç tutarı: tutarın ardından puan / mil / indirim / iade gelmeli ("30.000 TL ve üzeri" harcama eşiğidir, sayılmaz)
 const kTL = (k) => Math.max(0, ...[...k.baslik.matchAll(/(\d{1,3}(?:\.\d{3})+|\d+)\s*(?:TL|₺)(?!\s*ve üzer)[^\d]{0,22}?(puan|mil\b|indirim|iade|hediye)/gi)].map((m) => +m[1].replace(/\./g, "")));
 // ⭐ Öne çıkan: elle seçilmiş değil, verinin kendisinden — biten, yeni gelen, en çok kazandıran, en uzun taksit, en yüksek indirim
@@ -1521,16 +1506,17 @@ function renderKampanyalar() {
   t.style.setProperty("--kk", renk); t.style.setProperty("--kz", K_KAY[kKay][4]); t.style.setProperty("--ky", K_KAY[kKay][5]);
   t.innerHTML = `<div class="kara"><i>🔎</i><input id="kAra" type="search" enterkeyhint="search" placeholder="Ara: Migros, lastik, okul… (Türkçe harf şart değil)" value="${esc(kAra)}" autocomplete="off"><button type="button" id="kAraSil"${kAra ? "" : " hidden"}>✕</button></div>`
     + `<div class="tsat uc"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
-    + `<div class="tsat uc"><span class="tlab">👥 Bölüm</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
+    + `<div class="tsat uc dort"><span class="tlab">👥 Bölüm</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}${sb("data-pos", "1", "🏪", "İşyeri & POS", kPosListe().length, kPos)}</div></div>`
     + (L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, kKisa(ad), n, kKim === ad)).join("")}</div></div>` : "")
     + (L.length && !kOne ? `<div class="tsat kgr"><span class="tlab">💰 Ne kazanırım</span><div class="tgrid">${sb("data-ne", "", "📋", "Hepsi", neT.length, !kNe, "hep")}${neS.map(([ad, ic, n]) => sb("data-ne", ad, ic, ad, n, kNe === ad)).join("")}</div></div>`
       + `<div class="tsat kgr"><span class="tlab">🛍️ Nerede</span><div class="tgrid">${sb("data-nere", "", "📋", "Hepsi", nereT.length, !kNere, "hep")}${nereGor.map(([ad, ic, n]) => sb("data-nere", ad, ic, kKisa(ad), n, kNere === ad)).join("")}${nereGor.length < nereS.length || kKatAcik ? `<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Daha az" : `▾ ${nereS.length - nereGor.length} grup daha`}</button>` : ""}</div></div>` : "");
   t.onclick = (e) => {
     const b = e.target.closest("button"); if (!b || b.closest(".kara")) return;
     if (b.dataset.kac) { kKatAcik = !kKatAcik; renderKampanyalar(); return; }
-    if (b.dataset.ky) { kKay = b.dataset.ky; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
-    else if (b.dataset.sg) { kSeg = b.dataset.sg; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
-    else if (b.dataset.one) kOne = !kOne;
+    if (b.dataset.ky) { kKay = b.dataset.ky; kNe = kNere = kKim = ""; kOne = kPos = kKatAcik = false; }
+    else if (b.dataset.sg) { kSeg = b.dataset.sg; kNe = kNere = kKim = ""; kOne = kPos = kKatAcik = false; }
+    else if (b.dataset.one) { kOne = !kOne; kPos = false; }
+    else if (b.dataset.pos) { kPos = !kPos; kOne = false; }
     else if (b.dataset.ne != null) kNe = kNe === b.dataset.ne ? "" : b.dataset.ne;
     else if (b.dataset.nere != null) kNere = kNere === b.dataset.nere ? "" : b.dataset.nere;
     else if (b.dataset.kim != null) kKim = kKim === b.dataset.kim ? "" : b.dataset.kim;
@@ -1564,6 +1550,7 @@ function renderKampanyalar() {
   };
   const yaz = (h) => { $("list").innerHTML = ust + `<div id="kGovde">${kAra.trim() ? kAraHtml() : kSih.acik ? kSihHtml() : h}</div>`; bagla(); };
   if (kOne) { govde = () => kOneHtml(L, renk) + tumLink; yaz(govde()); bindSpecial(); return; }
+  if (kPos) { govde = () => kPosHtml(); yaz(govde()); return; }
   const liste = L.filter((k) => uy(k, "")).sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
   const yol = [kayAd, kSeg === "ticari" ? "Ticari" : "Bireysel", kNe && kIkon("ne", kNe) + " " + kNe, kNere && kIkon("nere", kNere) + " " + kKisa(kNere), kKim && (GK.find((g) => g[0] === kKim) || K_HERKES)[1] + " " + kKim].filter(Boolean).join(" › ");
   const sag = `<div class="ksag" style="--kk:${renk}"><div class="kyol">${esc(yol)} · <b>${liste.length} adet</b></div>`
@@ -2095,6 +2082,41 @@ function renderLive() {
 }
 
 // ===== Video: bankanın resmi YouTube kanalındaki son paylaşımlar (yeni ürünler çoğu zaman önce burada tanıtılıyor) =====
+// ===== Medya: bankanın kendi sitesindeki haberler, resmi YouTube kanalındaki reklam filmleri, resmi sosyal medya hesapları =====
+// Haber başlıkları ve hesap bağlantıları isbank.com.tr'nin "Haberler ve Medya" sayfalarından günde bir kez (scripts/isbank_medya.py)
+let MED = null, medSec = "haber";
+try { medSec = localStorage.getItem("isbankMedya") || "haber"; } catch (e) {}
+const MED_IC = { Instagram: "📸", Facebook: "📘", X: "✖️", YouTube: "▶️", LinkedIn: "💼", TikTok: "🎵", Spotify: "🎧", Telegram: "✈️", Threads: "🧵" };
+function renderMedya() {
+  const t = $("tfil"); t.className = "tfil sekme"; t.hidden = false;
+  t.innerHTML = [["haber", "📰 Bankadan haberler"], ["reklam", "🎬 Reklam filmleri"], ["sosyal", "📱 Sosyal medya"]].map(([k, ad]) => `<button type="button" data-md="${k}" class="${medSec === k ? "on" : ""}">${ad}</button>`).join("");
+  t.onclick = (e) => { const b = e.target.closest("[data-md]"); if (!b) return; medSec = b.dataset.md; try { localStorage.setItem("isbankMedya", medSec); } catch (x) {} renderMedya(); icerigeKay(); };
+  const fd = (d) => new Date(d).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  const sayfa = (u, ad) => `<a class="maxlink" href="${u}" target="_blank" rel="noopener">${ad} · isbank.com.tr ↗</a>`;
+  if (medSec === "reklam") {
+    renderVideo();
+    $("list").insertAdjacentHTML("afterbegin", `<div class="mdHero"><b>🎬 Reklam filmleri ve videolar</b><span>Bankanın resmi YouTube kanalından, her saat kendiliğinden. Dokununca YouTube'da açılır.</span></div>`);
+    $("list").insertAdjacentHTML("beforeend", sayfa("https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari", "Tüm reklam videoları"));
+    return;
+  }
+  if (medSec === "sosyal") {
+    $("upd").innerHTML = MED && MED.guncelleme ? `🔄 Hesaplar bankanın kendi sayfasından günde bir kez alınır · son: <b>${fd(MED.guncelleme)}</b>` : "";
+    const L = MED && MED.sosyal && MED.sosyal.length ? MED.sosyal : RESMI.map(([n, u]) => ({ platform: n.replace(/^\S+\s/, ""), ad: "Türkiye İş Bankası", url: u }));
+    const gruplar = []; L.forEach((x) => { let g = gruplar.find((y) => y.ad === x.ad); if (!g) gruplar.push((g = { ad: x.ad, L: [] })); g.L.push(x); });
+    $("list").innerHTML = `<div class="mdHero"><b>📱 Resmi sosyal medya hesapları</b><span>Bağlantılar bankanın kendi "Sosyal Medya" sayfasından alınır. Takip etmek için dokun.</span></div>`
+      + gruplar.map((g) => `<div class="mdHes"><b>${esc(g.ad)}</b><div>${g.L.map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${MED_IC[x.platform] || "🔗"} ${esc(x.platform)}</a>`).join("")}</div></div>`).join("")
+      + `<div class="mdUyari">🔒 <b>Sahte hesaplara dikkat:</b> Bankalar sosyal medyadan ya da mesajla şifre, kart bilgisi veya doğrulama kodu istemez. Hesabın gerçek olduğundan emin olmak için bağlantıyı bankanın kendi sayfasından aç.</div>`
+      + sayfa("https://www.isbank.com.tr/bankamizi-taniyin/sosyal-medya", "Sosyal medya sayfası");
+    return;
+  }
+  $("upd").innerHTML = MED && MED.guncelleme ? `🔄 Başlıklar bankanın kendi sitesinden günde bir kez alınır · son: <b>${fd(MED.guncelleme)}</b>` : "";
+  const H = (MED && MED.haberler) || [];
+  $("list").innerHTML = `<div class="mdHero"><b>📰 İş Bankası'ndan haberler</b><span>Bankanın kendi sitesindeki duyurular. Başlığa dokun, resmi sayfası açılsın.</span></div>`
+    + (H.length ? H.map((h) => `<a class="mdHab" href="${esc(h.url)}" target="_blank" rel="noopener"><b>${esc(h.baslik)}</b><small>${h.tarih ? new Date(h.tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) + " · " : ""}isbank.com.tr ↗</small></a>`).join("")
+      : '<div class="empty">Haber başlıkları ilk toplamadan sonra burada (her gün 09:31). Şimdilik bankanın sayfasından bakabilirsin.</div>')
+    + sayfa("https://www.isbank.com.tr/bankamizi-taniyin/haberler-ve-medya", "Haberler ve Medya")
+    + `<p class="note" style="text-align:center">Basında çıkan İş Bankası haberleri için 📰 Haberler kalemine bak.</p>`;
+}
 const RESMI = [["▶️ YouTube", "https://www.youtube.com/user/turkiyeisbankasi"], ["📸 Instagram", "https://www.instagram.com/isbankasi/"], ["✖️ X", "https://twitter.com/isbankasi"], ["💼 LinkedIn", "https://www.linkedin.com/company/isbankasi"], ["👍 Facebook", "https://www.facebook.com/isbankasi"]];
 function renderVideo() {
   if (liveUpd) $("upd").textContent = "Her saat otomatik · son: " + new Date(liveUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
@@ -2405,7 +2427,7 @@ function renderList() {
   if (cat === "KTakvim") { $("upd").textContent = "Kampanya bitiş günleri her gün kendiliğinden güncellenir"; $("list").innerHTML = campCal(); bindCal(); return; }
   if (cat === "Pazarama") { $("upd").textContent = "MaxiPuan ve MaxiMil Pazarama'da 1 puan = 1 TL"; $("list").innerHTML = pazHtml(); bindPaz(); return; }
   if (cat === "Kartsiz") { $("upd").textContent = "Kartsız ödemeye özel kampanyalar"; $("list").innerHTML = odeHtml(); bindSpecial(); return; }
-  if (cat === "POS") { $("upd").textContent = "İşyerinden kartla ödeme almanın yolları · genel bilgi"; $("list").innerHTML = posHtml(); bindSpecial(); return; }
+  if (cat === "Medya") return renderMedya();
   if (cat === "Şubeler") return renderSubeler();
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "") + " · günde iki kez (09:01, 14:01)";
   const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
@@ -2452,6 +2474,7 @@ function renderList() {
     try { KH = await Ortak.json("isbank/kampanya_hepsi.json"); } catch (e) {}
     try { blk = await Ortak.json("isbank/black.json"); } catch (e) {}
     try { ipl = await Ortak.json("isbank/isplus.json"); } catch (e) {}
+    try { MED = await Ortak.json("isbank/medya.json"); } catch (e) {}
     try { kontrol = (await Ortak.json("isbank/kontrol.json")).son_kontrol; } catch (e) {}
     try { ppkJ = await Ortak.json("data/ppk.json"); } catch (e) {}
     seenInit();

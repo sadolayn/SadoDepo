@@ -1,0 +1,32 @@
+# İş Bankası "Haberler ve Medya": bankanın kendi sitesindeki haber başlıkları ve resmi sosyal medya hesapları, günde bir kez (İstanbul 09:31)
+# Yalnızca işlenmiş alanlar isbank/medya.json'a yazılır; kayda yalnızca sayılar basılır
+name: Medya
+on:
+  schedule:
+    - cron: "31 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: medya
+  cancel-in-progress: false
+jobs:
+  topla:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Haber başlıkları ve sosyal medya hesapları
+        run: python scripts/isbank_medya.py
+      - name: Commit
+        run: |
+          git config user.name "sadolayn-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add isbank/medya.json
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Medya güncellendi"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          exit 1
