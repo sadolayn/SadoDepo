@@ -146,6 +146,20 @@
   .kf button { padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
   .kf button i { font-style: normal; opacity: .7; margin-left: 4px; font-weight: 600; }
   .kf button.sifir:not(.on) { opacity: .5; }
+  .sek button small.kad { font-size: 12.5px; font-weight: 700; line-height: 1.35; }
+  /* Kurum takvimi: her gün o gün duyuru yapan kurumların renginde nokta */
+  .kcal { max-width: none; margin: 0 0 10px; }
+  .kcal .day { height: 34px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 3px; }
+  .kcal .day.kv { color: var(--ink); background: var(--field); border-color: var(--line); font-weight: 700; }
+  .kcal .day.sel { background: #1d2c55; border-color: #8fb0ff; color: #fff; }
+  .kcal .day.onm { box-shadow: inset 0 -2px 0 #d32f2f; }
+  .kcal .day .nk { display: flex; gap: 2px; margin-top: 3px; }
+  .kcal .day .nk i { width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
+  .kcal .cal-f { flex-wrap: wrap; gap: 6px 12px; margin-top: 8px; }
+  .kcal .cal-f i { background: var(--c); }
+  .kgun { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 10px; padding: 8px 12px; border-radius: 12px; background: #13203f; border: 1px solid #2b4a8f; font-size: 13.5px; color: #d6e2ff; }
+  .kcal .cal-f .kalt { display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: #d32f2f; margin-right: 5px; vertical-align: middle; }
+  .kgun button { white-space: nowrap; flex: none; border: 0; background: none; color: #8fb0ff; font: inherit; font-weight: 800; cursor: pointer; padding: 4px; }
   .kf button.on { background: var(--kc, #5d8bff); border-color: var(--kc, #5d8bff); color: #000; }
   .kd { position: relative; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--kc, #5d8bff); border-radius: 14px; padding: 12px 12px 10px; margin-bottom: 10px; }
   .kd.onm { border-color: rgba(211,47,47,.55); border-left-color: var(--kc, #5d8bff); background: linear-gradient(160deg, #1a0d0d, #0d0d0d); }
@@ -242,8 +256,8 @@ async function bnkYukle(isos) {
 }
 // ===== Kurum duyuruları: BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı (gazete/duyurular.json, her sabah derlenir) =====
 const KURUM = { "BDDK": ["🏦", "#5d8bff"], "TCMB": ["🏛️", "#ff6b6b"], "SPK": ["📈", "#3fc283"], "TMSF": ["🛡️", "#b48cf0"], "MASAK": ["🔎", "#f0c64a"], "Ticaret Bakanlığı": ["🛒", "#3fbfd6"] };
-const KKISA = { "Ticaret Bakanlığı": "Ticaret Bak." };
-let DUY = [], DUYUPD = null, kurumSec = "", sek = "gazete";
+const KKISA = {}; // kısaltma yok: her yerde kurumun tam adı yazılır
+let DUY = [], DUYUPD = null, kurumSec = "", sek = "gazete", kAy = "", kGun = "";
 // Okunmamış duyurular sekmede kırmızı sayı olarak görünür, bölüm açılınca düşer (yalnızca bu telefonda tutulur)
 const KGOR = "gazeteKurumGor1";
 let kGor = []; try { kGor = JSON.parse(localStorage.getItem(KGOR) || "[]"); } catch (e) {}
@@ -253,7 +267,7 @@ const kYeni = () => DUY.filter((x) => gunFark(x.tarih) <= 14 && !kGor.includes(k
 function sekCiz() {
   const y = kYeni().length;
   $("sek").innerHTML = `<button type="button" data-s="gazete" class="${sek === "gazete" ? "on" : ""}">📜 Günün Gazetesi<small>her sabah özet</small></button>`
-    + `<button type="button" data-s="kurum" class="kr ${sek === "kurum" ? "on" : ""}">🏛️ Kurum Duyuruları<small>BDDK · TCMB · SPK · TMSF · MASAK · Ticaret</small>${y && sek !== "kurum" ? `<em>${y > 9 ? "9+" : y}</em>` : ""}</button>`;
+    + `<button type="button" data-s="kurum" class="kr ${sek === "kurum" ? "on" : ""}">🏛️ Kurum Duyuruları<small class="kad">${Object.entries(KURUM).map(([k, [, kc]]) => `<span style="color:${kc}">${esc(k)}</span>`).join(" · ")}</small>${y && sek !== "kurum" ? `<em>${y > 9 ? "9+" : y}</em>` : ""}</button>`;
   $("sek").querySelectorAll("button").forEach((b) => (b.onclick = () => sekAc(b.dataset.s, true)));
 }
 function sekAc(s_, kaydir) {
@@ -275,14 +289,33 @@ function kurumKart(x) {
     <h3>${esc(x.baslik)}</h3>${x.ozet ? `<p>${esc(x.ozet)}</p>` : ""}${x.etki ? `<div class="et">🏦 Bankacılığa etkisi: ${esc(x.etki)}</div>` : ""}
     <div class="kl">${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${RESMI_RE.test(x.url) ? "Resmi duyuru ↗" : "Haber kaynağı ↗"}</a>` : ""}${x.gazete ? `<a class="gz" href="#${esc(x.gazete)}" data-gun="${esc(x.gazete)}">📜 O günün Resmi Gazetesi</a>` : ""}</div></div>`;
 }
+function kTakvim() {
+  const today = todayIso(), ilk = DUY.length ? DUY[DUY.length - 1].tarih.slice(0, 7) : today.slice(0, 7);
+  if (!kAy) kAy = (kGun || today).slice(0, 7);
+  const y = +kAy.slice(0, 4), m = +kAy.slice(5, 7) - 1, dim = new Date(y, m + 1, 0).getDate(), lead = (new Date(y, m, 1).getDay() + 6) % 7;
+  const gunde = {}; DUY.filter((x) => !kurumSec || x.kurum === kurumSec).forEach((x) => (gunde[x.tarih] = gunde[x.tarih] || []).push(x));
+  let h = `<div class="cal kcal"><div class="cal-h"><button type="button" id="kprev" aria-label="Önceki ay" ${kAy <= ilk ? "disabled" : ""}>‹</button><b>📅 ${AYLAR[m]} ${y}</b><button type="button" id="knext" aria-label="Sonraki ay" ${kAy >= today.slice(0, 7) ? "disabled" : ""}>›</button></div><div class="cal-g">`
+    + ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"].map((w, i) => `<div class="wd ${i > 4 ? "we" : ""}">${w}</div>`).join("") + "<div></div>".repeat(lead);
+  for (let d = 1; d <= dim; d++) {
+    const g = `${kAy}-${String(d).padStart(2, "0")}`, L = gunde[g] || [], ks = [...new Set(L.map((x) => x.kurum))];
+    h += `<button type="button" class="day${L.length ? " kv" : ""}${L.some((x) => x.onemli) ? " onm" : ""}${g === kGun ? " sel" : ""}${g === today ? " today" : ""}${g > today ? " fut" : ""}" ${L.length ? `data-kg="${g}" aria-label="${d} ${AYLAR[m]}: ${L.length} duyuru"` : "disabled"}>${d}${ks.length ? `<span class="nk">${ks.map((k) => `<i style="--c:${(KURUM[k] || [0, "#888"])[1]}"></i>`).join("")}</span>` : ""}</button>`;
+  }
+  return h + `</div><div class="cal-f">${Object.entries(KURUM).map(([k, [, kc]]) => `<span><i style="--c:${kc}"></i>${esc(k)}</span>`).join("")}<span><b class="kalt"></b>Önemli duyuru</span></div></div>`;
+}
 function kurumCiz() {
   const say = (k) => DUY.filter((x) => !k || x.kurum === k).length;
-  const L = DUY.filter((x) => !kurumSec || x.kurum === kurumSec);
+  const L = DUY.filter((x) => (!kurumSec || x.kurum === kurumSec) && (!kGun || x.tarih === kGun));
+  const gunAd = kGun ? new Date(kGun + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" }) : "";
   $("kurum").innerHTML = `<div class="kh"><b>🏛️ Düzenleyici kurumlardan</b><p>Resmi Gazete'ye düşmeyen karar ve duyurular tek yerde. Her sabah derlenir; her kayıt kurumun resmi duyurusuna bağlanır.${DUYUPD ? ` Son derleme: ${esc(fmtTime(DUYUPD))}.` : ""}</p></div>
     <div class="kf"><button type="button" data-k="" class="${!kurumSec ? "on" : ""}" style="--kc:#e0a24f">Hepsi<i>${say("")}</i></button>${Object.entries(KURUM).map(([k, [ic, kc]]) => `<button type="button" data-k="${esc(k)}" class="${kurumSec === k ? "on" : ""}${say(k) ? "" : " sifir"}" style="--kc:${kc}">${ic} ${esc(KKISA[k] || k)}<i>${say(k)}</i></button>`).join("")}</div>`
+    + kTakvim() + (kGun ? `<div class="kgun"><span>📅 <b>${esc(gunAd)}</b> · ${L.length} duyuru</span><button type="button" id="kGunX">Tümünü göster ✕</button></div>` : "")
     + (L.length ? L.map(kurumKart).join("") : `<div class="empty">${kurumSec ? `Son 60 günde ${esc(({ "BDDK": "BDDK'dan", "TCMB": "TCMB'den", "SPK": "SPK'dan", "TMSF": "TMSF'den", "MASAK": "MASAK'tan", "Ticaret Bakanlığı": "Ticaret Bakanlığı'ndan" })[kurumSec] || kurumSec)} bankacılığı ilgilendiren bir karar ya da duyuru derlenmedi.<br><small>Yenisi çıkınca her sabah buraya eklenir.</small>` : "Henüz derlenmiş duyuru yok; yenisi çıkınca burada."}</div>`)
     + `<p class="knot">MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz; resmi duyuruya bağlanır. Özetler kişisel derlemedir, bağlayıcı metin kurumun kendi duyurusudur.</p>`;
-  $("kurum").querySelectorAll("[data-k]").forEach((b) => (b.onclick = () => { kurumSec = b.dataset.k; kurumCiz(); }));
+  $("kurum").querySelectorAll("[data-k]").forEach((b) => (b.onclick = () => { kurumSec = b.dataset.k; kGun = ""; kurumCiz(); }));
+  $("kurum").querySelectorAll("[data-kg]").forEach((b) => (b.onclick = () => { kGun = kGun === b.dataset.kg ? "" : b.dataset.kg; kurumCiz(); }));
+  const kp = $("kprev"), kn = $("knext"), ay = (n) => { const d = new Date(+kAy.slice(0, 4), +kAy.slice(5, 7) - 1 + n, 1); kAy = isoOf(d).slice(0, 7); kurumCiz(); };
+  kp.onclick = () => ay(-1); kn.onclick = () => ay(1);
+  const kx = $("kGunX"); if (kx) kx.onclick = () => { kGun = ""; kurumCiz(); };
   $("kurum").querySelectorAll("[data-gun]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); history.replaceState(null, "", "#" + a.dataset.gun); sekAc("gazete", true); show(a.dataset.gun); }));
 }
 // Son 24 saat şeridi: Resmi Gazete'deki bankacılık maddeleri + kurum duyuruları (iki bölümde de en üstte)
@@ -299,7 +332,7 @@ function bugunCiz() {
       sekAc("gazete"); history.replaceState(null, "", "#" + today); await show(today);
       const sec = document.querySelector("#content .sec.bnk");
       if (sec) window.scrollTo({ top: sec.getBoundingClientRect().top + scrollY - document.querySelector(".stick").offsetHeight - 8, behavior: "smooth" });
-    } else { kurumSec = b.dataset.b; sekAc("kurum", true); }
+    } else { kurumSec = b.dataset.b; kGun = ""; sekAc("kurum", true); }
   }));
 }
 // Gazete bölümündeki haftalık kutunun altında: Kurum Duyuruları'na geçiş
