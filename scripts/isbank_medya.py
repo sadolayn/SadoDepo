@@ -122,6 +122,8 @@ YT_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/53
          "Accept-Language": "tr-TR,tr;q=0.9", "Cookie": "CONSENT=YES+1; SOCS=CAI"}
 YT_ID = r'(?:youtube(?:-nocookie)?\.com\\?/(?:embed\\?/|watch\?v=|v\\?/|shorts\\?/)|youtu\.be\\?/)([A-Za-z0-9_-]{11})'
 SAY = {}  # kayda yalnızca sayılar basılır
+# Bankanın sayfasında YouTube yerine video dosyası olarak duran ama resmi kanalda da bulunan filmler (adı arama sonucuyla doğrulandı)
+EK = ["3abDmZx6Wzk"]  # Türkiye İş Bankası - 96. Yıl Reklam Filmi
 
 def yt_get(url, sure=30):
     try:
@@ -205,9 +207,9 @@ def oembed(vid):
 def reklam():
     ids = reklam_sayfa() or reklam_sayfa(get_tarayici)
     aday, gor = [], set()
-    for vid, ad in [(i, "") for i in ids] + reklam_listeleri():
+    for vid, ad in [(i, "") for i in ids + EK] + reklam_listeleri():
         if vid not in gor:
-            gor.add(vid); aday.append((vid, ad, "banka" if vid in ids else "liste"))
+            gor.add(vid); aday.append((vid, ad, "banka" if vid in ids + EK else "liste"))
     aday = aday[:50]
     out, ok = [], 0
     for vid, ad, kay in aday:
@@ -215,7 +217,8 @@ def reklam():
         if t is None:
             continue  # kaldırılmış ya da gizli film
         ok += 1
-        out.append({"id": vid, "baslik": re.sub(r"\s+", " ", t or ad).strip()[:140], "kaynak": kay})
+        t = re.sub(r"\bFlmi\b", "Filmi", re.sub(r"\s+", " ", t or ad)).strip()  # YouTube'daki yazım hatası
+        out.append({"id": vid, "baslik": t[:140], "kaynak": kay})
     if aday and not ok:  # oEmbed hiç yanıt vermediyse adaylar adlarıyla alınır
         out = [{"id": v, "baslik": a[:140], "kaynak": k} for v, a, k in aday]
     SAY["yayındaki film"] = len(out)
@@ -247,6 +250,8 @@ if not yeni or len(yeni) < 0.5 * len(onceki):
     print(f"::warning::reklam: okunan {len(yeni)} (önceki {len(onceki)}) — eski liste korundu")
     yeni = onceki
 veri["reklam"] = yeni
+# Bankanın sayfasında YouTube'da olmayan, yalnızca kendi sitesinde oynayan film sayısı (sayfada "sitede N film daha" bağlantısı için)
+veri["reklam_sitede"] = max(0, SAY.get("sayfadaki mp4", 0) - len(EK)) if SAY.get("sayfadaki mp4") else eski.get("reklam_sitede", 0)
 print("sayfa yanıt kodları:", ",".join(map(str, DURUM)))
 os.makedirs("isbank", exist_ok=True)
 json.dump(veri, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
