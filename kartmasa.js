@@ -2,10 +2,10 @@
 // Kart yüzü (renk düzeni, yazı tipi, kalınlık, punto), kart arkası ve ses bütün oyunlarda ortaktır;
 // masa rengi her oyunda ayrı saklanır. Ayarlar "kartOpt" anahtarındadır.
 // Sayfa, betik etiketinde ayar verir:
-//   <script src="kartmasa.js" data-oyun="batak" data-masa="sado" data-duzen="ust" data-hiz="yok" data-tema="1">
+//   <script src="kartmasa.js" data-oyun="batak" data-masa="sado" data-hiz="yok" data-tema="1">
 //   data-oyun : masa rengi bu adla saklanır (yoksa sayfa adı)
 //   data-masa : o oyunun varsayılan masa rengi
-//   data-duzen: "ust" → küçük simge sağ üstte, büyük simge altta ortada (Solitaire)
+//   (kart düzeni her oyunda aynı; üst üste dizilen elin kapsayıcısına "kose" sınıfı verilirse küçük simge rakamın altına iner)
 //   data-hiz  : "yok" → "Hızlı oyun" seçeneği gösterilmez
 //   data-tema : "1" → tarayıcının şerit rengi masa rengini alır
 // Kullanım: kart boyu için kartın ya da kapsayıcısının üzerinde --cw (ör. 56px) tanımlanır.
@@ -74,17 +74,16 @@
 .card.red { color: var(--kred); }
 .card.k-d { color: var(--kd, var(--kred)); }
 .card.k-c { color: var(--kc, #15161a); }
-.card .r { position: absolute; top: 3%; left: 7%; font-family: var(--kf, "Arial Narrow", system-ui, sans-serif); font-weight: var(--kw, 800);
+.card .r { position: absolute; top: 2%; left: 6%; font-family: var(--kf, "Arial Narrow", system-ui, sans-serif); font-weight: var(--kw, 800);
   font-size: calc(var(--cw, 56px) * .5 * var(--kp, 1)); line-height: 1; letter-spacing: -1px; transform-origin: left top; transform: scaleX(var(--kx, 1));
   -webkit-text-stroke: calc(var(--cw, 56px) * var(--kst, 0)) currentColor; }
 .card .r.ten { transform: scaleX(calc(.8 * var(--kx, 1))); letter-spacing: -2px; }
-.card .s1 { position: absolute; top: calc(var(--cw, 56px) * (.04 + .5 * var(--kp, 1))); left: 8%; font-size: calc(var(--cw, 56px) * .32 * var(--ksp, 1)); line-height: 1; }
-.card .s2 { position: absolute; left: 8%; bottom: 5%; font-size: calc(var(--cw, 56px) * .6); line-height: 1; }
-body:not(.duzen-ust) .card .s1 { display: none; } /* büyük simge zaten solda; küçüğü üstüne binip çift görünüyordu */
+/* Bütün oyunlarda aynı düzen: rakam sol üstte, küçük simge sağ üstte, büyük simge altta ortada */
+.card .s1 { position: absolute; top: 3.5%; right: 5%; font-size: calc(var(--cw, 56px) * .37 * var(--ksp, 1) / var(--kp, 1)); line-height: 1; } /* büyük puntoda rakama yer açılsın */
+.card .s2 { position: absolute; left: 0; right: 0; bottom: 6%; display: flex; justify-content: center; font-size: calc(var(--cw, 56px) * .56); line-height: 1; }
 .card .s1 svg, .card .s2 svg { display: block; width: 1em; height: 1em; fill: currentColor; }
-.duzen-ust .card .r { top: 1.5%; left: 5%; }
-.duzen-ust .card .s1 { top: 3%; left: auto; right: 5%; font-size: calc(var(--cw, 56px) * .4 * var(--ksp, 1)); }
-.duzen-ust .card .s2 { left: 0; right: 0; bottom: 3%; text-align: center; font-size: calc(var(--cw, 56px) * .86); }
+/* Üst üste dizilen elde (Batak, King) kartın sağı görünmez: küçük simge rakamın altına iner */
+.kose .card .s1 { top: calc(var(--cw, 56px) * (.06 + .5 * var(--kp, 1))); right: auto; left: 7%; font-size: calc(var(--cw, 56px) * .28 * var(--ksp, 1)); }
 .card.back > * { display: none; }
 .card.back, .kb { border: 2px solid #fff; }
 .card.back::after, .kb::after { content: ""; position: absolute; inset: 2px; border-radius: inherit; }
@@ -188,7 +187,6 @@ body:not(.duzen-ust) .card .s1 { display: none; } /* büyük simge zaten solda; 
     if (!b) return;
     b.classList.remove(...ARKA.map((a) => "arka-" + a[0]), "yuz-klasik", "yuz-dort");
     b.classList.add("arka-" + OPT.arka, "yuz-" + OPT.yuz);
-    if (D.duzen === "ust") b.classList.add("duzen-ust");
     Object.entries(vars(OPT)).forEach(([k, v]) => b.style.setProperty(k, v));
   }
   const ayni = (o) => ["yuz", "yazi", "kalin", "punto"].every((k) => OPT[k] === o[k]);
