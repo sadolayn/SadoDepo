@@ -80,6 +80,8 @@
 .card .r.ten { transform: scaleX(calc(.8 * var(--kx, 1))); letter-spacing: -2px; }
 .card .s1 { position: absolute; top: calc(var(--cw, 56px) * (.04 + .5 * var(--kp, 1))); left: 8%; font-size: calc(var(--cw, 56px) * .32 * var(--ksp, 1)); line-height: 1; }
 .card .s2 { position: absolute; left: 8%; bottom: 5%; font-size: calc(var(--cw, 56px) * .6); line-height: 1; }
+body:not(.duzen-ust) .card .s1 { display: none; } /* büyük simge zaten solda; küçüğü üstüne binip çift görünüyordu */
+.card .s1 svg, .card .s2 svg { display: block; width: 1em; height: 1em; fill: currentColor; }
 .duzen-ust .card .r { top: 1.5%; left: 5%; }
 .duzen-ust .card .s1 { top: 3%; left: auto; right: 5%; font-size: calc(var(--cw, 56px) * .4 * var(--ksp, 1)); }
 .duzen-ust .card .s2 { left: 0; right: 0; bottom: 3%; text-align: center; font-size: calc(var(--cw, 56px) * .86); }
@@ -153,8 +155,19 @@
 
   const isRed = (s) => s === "♥" || s === "♦";
   const suitCls = { "♠": "k-s", "♥": "k-h", "♣": "k-c", "♦": "k-d" };
+  // Simgeler yazı tipine bırakılmaz, çizilir: telefonun yazı tipinde ♠ ile ♣ küçükken birbirine benziyordu.
+  // Maça sivri tepeli tek yaprak, sinek üç yuvarlak yapraklı yonca; ikisinin de ayağı aynı.
+  const AYAK = "M45 62C45 79 39 90 28 97H72C61 90 55 79 55 62Z";
+  const SUIT = {
+    "♠": `<path d="M50 3C60 20 96 37 96 59C96 74 85 83 72 83C63 83 56 79 52 72H48C44 79 37 83 28 83C15 83 4 74 4 59C4 37 40 20 50 3Z"/><path d="${AYAK}"/>`,
+    "♣": `<circle cx="50" cy="25" r="21"/><circle cx="25" cy="57" r="21"/><circle cx="75" cy="57" r="21"/><circle cx="50" cy="50" r="13"/><path d="${AYAK}"/>`,
+    "♥": `<path d="M50 94C22 70 3 52 3 31C3 15 15 4 29 4C39 4 46 10 50 19C54 10 61 4 71 4C85 4 97 15 97 31C97 52 78 70 50 94Z"/>`,
+    "♦": `<path d="M50 2L89 50L50 98L11 50Z"/>`,
+  };
+  const simge = (s) => `<svg viewBox="0 0 100 100" aria-hidden="true">${SUIT[s] || ""}</svg>`;
   function face(c) {
-    return `<span class="r${c.r === 10 ? " ten" : ""}">${RANK[c.r] || c.r}</span><span class="s1">${c.s}︎</span><span class="s2">${c.s}︎</span>`;
+    const g = simge(c.s);
+    return `<span class="r${c.r === 10 ? " ten" : ""}">${RANK[c.r] || c.r}</span><span class="s1" aria-label="${c.s}">${g}</span><span class="s2">${g}</span>`;
   }
   const cls = (c) => "card " + suitCls[c.s] + (isRed(c.s) ? " red" : "");
   function el(c) { const d = document.createElement("div"); d.className = cls(c); d.innerHTML = face(c); return d; }
