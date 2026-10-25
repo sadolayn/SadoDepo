@@ -43,3 +43,21 @@ Ne değişir:
   Durum yalnızca e-postadaki bağlantıyı (onay ya da "aboneliğimi bu cihazda göster") açan cihaza verilir; sitede e-posta yazan biri başkasının aboneliğini göremez.
 - Zaten abone olan adres yeniden yazılırsa "zaten abone ✅" denir ve o adrese "bu cihazda göster" bağlantısı gider.
 - Tabloya en sağa `stoken` sütunu eklenir.
+
+## Gönderen adresini değiştirme (e-postalar ayrı bir Gmail hesabından gitsin)
+
+Ücretsiz Gmail'de e-posta, Apps Script'i çalıştıran hesabın adresinden gider; görünen ad "Sadolayn Alerts" olsa da adres gizlenemez
+(`noReply` yalnızca Google Workspace'te var). Kişisel adres görünmesin diye gönderimi ayrı bir hesaba taşı (bilgisayardan, ~10 dk):
+
+1. Yeni bir Gmail hesabı aç (ör. "sadolayn.alerts").
+2. Kişisel hesapta: Apps Script projesini ve Drive'daki "Sadolayn Alerts — Aboneler" tablosunu yeni hesapla **Düzenleyici** olarak paylaş.
+3. Yeni hesapla script.google.com → projeyi aç → işlev listesinden **setup** → Çalıştır → izin ver.
+   Günlük 10:00 tetikleyicisi artık yeni hesap adına kurulur; bülten oradan gider.
+4. Yeni hesapla **Dağıt → Yeni dağıtım → Web uygulaması** (Şu kullanıcı olarak çalıştır: **Ben**, Erişim: **Herkes**) → yeni `…/exec` adresini Claude'a gönder
+   (sitedeki `ENDPOINT` güncellenir; onay e-postaları da yeni hesaptan gider).
+   Proje Ayarları → Komut dosyası özellikleri'nde `URL` diye bir satır varsa değerini yeni adresle değiştir.
+5. Kişisel hesapla aynı projede sol menü **Tetikleyiciler (⏰)** → kişisel hesabın `dailyDigest` tetikleyicisini sil (yoksa bülten iki kez gider).
+   Eski web uygulaması dağıtımını silme: daha önce gönderilmiş e-postalardaki "abonelikten çık" bağlantıları ona gider ve aynı tabloyu kullanır.
+6. Yeni hesapla `testDigestToMe` çalıştır; örnek bülten yeni hesabın gelen kutusuna gelmeli.
+
+Aboneler, abone listesi ve telefon bildirimleri olduğu gibi kalır; her e-posta aboneye ayrı gider, aboneler birbirini görmez.
