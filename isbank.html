@@ -388,6 +388,31 @@
   .yt-note { font-size: 11.5px; color: var(--muted); margin: 6px 2px 0; line-height: 1.45; }
   a.live { display: block; background: var(--card); border: 1px solid var(--line); border-left: 3px solid #5d8fe0; border-radius: 12px; padding: 11px 12px; margin-bottom: 8px; color: var(--ink); text-decoration: none; }
   a.live b { display: block; font-size: 15px; font-weight: 600; line-height: 1.35; }
+  /* Gündem özeti */
+  .gz { margin: 0 0 12px; border-radius: 16px; border: 1px solid #2c4f7a; background: linear-gradient(160deg, #0f1f36, #070c16); overflow: hidden; }
+  .gz > summary { list-style: none; cursor: pointer; padding: 12px 40px 12px 14px; position: relative; }
+  .gz > summary::-webkit-details-marker { display: none; }
+  .gz > summary::after { content: "▾"; position: absolute; right: 14px; top: 13px; color: #8fb0ff; } .gz[open] > summary::after { content: "▴"; }
+  .gz > summary b { font-size: 16px; color: #fff; } .gz > summary small { margin-left: 6px; font-size: 12px; color: #8fa6c8; }
+  .gzOz { display: block; margin-top: 4px; font-size: 13.5px; color: #cfe0ff; line-height: 1.4; } .gzOz b { color: #fff; font-size: 13.5px; }
+  .gzBas { margin: 6px 14px 6px; font-size: 11.5px; font-weight: 800; letter-spacing: .8px; color: #7f9cc7; }
+  .gzK { margin: 0 10px 6px; border-radius: 12px; border: 1px solid #1f3554; background: #0b1424; }
+  .gzK > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 9px 11px; }
+  .gzK > summary::-webkit-details-marker { display: none; }
+  .gzK > summary i { font-style: normal; font-size: 20px; flex: none; }
+  .gzK > summary span { flex: 1; min-width: 0; } .gzK > summary b { display: block; font-size: 14px; color: #fff; }
+  .gzK > summary small { display: block; font-size: 12px; color: #9fb3d1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gzK > summary em { flex: none; font-style: normal; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; background: #2b4a8f; color: #fff; font-size: 12.5px; font-weight: 800; line-height: 24px; text-align: center; }
+  .gzL { padding: 0 11px 9px; } .gzL a { display: block; padding: 7px 0; border-top: 1px solid #172a45; color: #e6eeff; text-decoration: none; font-size: 13.5px; line-height: 1.35; }
+  .gzL a small { display: block; font-size: 11.5px; color: #8fa6c8; margin-top: 2px; }
+  .gzGit { margin-top: 6px; border: 1px solid #2b4a8f; background: #12224a; color: #cfe0ff; border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+  .gzU { display: grid; gap: 6px; margin: 0 10px 6px; } .gzU a { display: flex; align-items: center; gap: 9px; padding: 8px 11px; border-radius: 12px; border: 1px solid #1f3554; background: #0b1424; color: #fff; text-decoration: none; }
+  .gzU span { font-size: 18px; } .gzU b { flex: 1; font-size: 13.5px; font-weight: 600; line-height: 1.3; } .gzU small { flex: none; font-size: 11.5px; color: #8fa6c8; }
+  .gzT { display: grid; gap: 6px; margin: 0 10px 6px; } .gzT a { display: flex; gap: 10px; align-items: center; padding: 8px 11px; border-radius: 12px; border: 1px solid #1f3554; background: #0b1424; color: #e6eeff; text-decoration: none; }
+  .gzT span { flex: none; width: 84px; text-align: center; padding: 4px 0; border-radius: 9px; background: #12224a; } .gzT span.yakin { background: #4a1d12; }
+  .gzT span b { display: block; font-size: 12.5px; color: #fff; } .gzT span small { display: block; font-size: 11px; color: #9fb3d1; } .gzT span.yakin small { color: #ffb38a; }
+  .gzT p { margin: 0; font-size: 13px; line-height: 1.35; }
+  .gzNot { margin: 4px 14px 12px; font-size: 11.5px; color: #7f93b3; }
   a.live span { font-size: 12px; color: var(--muted); }
   a.live span i { font-style: normal; color: #8fb0ff; font-weight: 600; }
   a.live.vd { border-left-color: #d32f2f; } a.live.vd span i { color: #ff8a8c; }
@@ -925,7 +950,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   <div class="disc">
     <b>ℹ️ Bu sayfa kişisel bir projedir; resmî değildir, Türkiye İş Bankası A.Ş. ile bağı yoktur.</b>
     <p>Bilgiler kamuya açık kaynaklardan özenle derlenir ve düzenli olarak kontrol edilir. Ürün, kampanya ve koşulların en güncel ve kesin hâli için lütfen <a href="https://www.isbank.com.tr" target="_blank" rel="noopener">www.isbank.com.tr</a> ve <a href="https://www.maximum.com.tr" target="_blank" rel="noopener">www.maximum.com.tr</a> adreslerini ziyaret ediniz.</p>
-    <small>Kampanyalar her sabah, seçilmiş haberler günde iki kez, "Güncel" ve "Video" sekmeleri her saat otomatik güncellenir.</small>
+    <small>Kampanyalar her sabah, seçilmiş haberler günde iki kez, "Güncel" sekmesi ve Medya'daki YouTube videoları her saat otomatik güncellenir.</small>
   </div>
 </div>
 
@@ -943,7 +968,6 @@ const CATS = [
   ["📅 Takvim", "#e0a24f", "📅"],
   ["Tümü", null, "📋"],
   ["📰 Güncel", "#5d8fe0", "📰"],
-  ["🎬 Video", "#d32f2f", "🎬"],
   ["Haber", "var(--haber)", "🗞️"],
   ["Ürün", "var(--urun)", "🧾"],
   ["Dijital", "var(--dijital)", "💡"],
@@ -952,16 +976,18 @@ const CATS = [
   ["Finans", "#3a50f0", "📊"],
 ];
 const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Kartsız<br>öde", "Medya": "Medya", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Günün sorusu", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<br><small>Güncel · KAP</small>" };
-// Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Video, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
+// Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
 const MENU = [["Tarihçe", "🏛️"], ["İşCep", "📲"], ["Black", "🖤"], ["Maximum", "🎁"], ["KTakvim", "⏳"], ["Haberler", "📰"], ["Şubeler", "📍"], ["Pazarama", "🛒"], ["Kartsiz", "💳"], ["Medya", "📣"], ["Soru", "❓"]];
-const NEWS = ["Tümü", "📰 Güncel", "🎬 Video", "Haber", "Ürün", "Dijital", "KAP"];
-const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "🎬 Video": "🎬 Video", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
+const NEWS = ["Tümü", "📰 Güncel", "Haber", "Ürün", "Dijital", "KAP"];
+const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
 let lastNews = "Tümü"; try { lastNews = localStorage.getItem("isbankNews") || "Tümü"; } catch (e) {}
+if (lastNews === "🎬 Video") lastNews = "Tümü";
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
 let bkamp = null, blk = null, fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null, vids = [], vidsOk = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
+if (cat === "🎬 Video") cat = "Medya"; // Video sekmesi Medya › Reklam filmleri altına taşındı
 let finSec = "veri"; // Finansal bilgiler alt başlığı: veri · takvim · sunum
 if (cat === "📅 Takvim") { cat = "Finans"; finSec = "takvim"; }
 if (cat === "Kampanya") { cat = "Maximum"; try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); localStorage.setItem("isbankKamp", JSON.stringify({ ...k, kay: "isbank" })); } catch (e) {} } // eski Banka Kampanya → Kampanyalar › İş Bankası
@@ -982,7 +1008,7 @@ const idsFor = (k) => {
   if (k === "Maximum") return KH && KH.isbank ? [...new Set(kTumu().filter((x) => x.ilk && x.ilk > "2000-01-01" && (Date.now() - new Date(x.ilk + "T00:00:00")) / 864e5 <= 3).map((x) => "k:" + x.url))].concat(Date.now() < new Date("2026-11-16T00:00:00+03:00") ? ["d:kampanya-yenilendi"] : []) : camps.map((c) => "c:" + c.baslik);
   if (k === "İşCep") return iscep ? iscep.surumler.map((v) => "v:" + v.surum) : [];
   if (k === "📰 Güncel") return live.map((x) => "g:" + (x.u || x.t));
-  if (k === "🎬 Video") return vids.map((x) => "y:" + x.u);
+  if (k === "Medya") return vids.map((x) => "y:" + x.u); // kanalın yeni videoları Medya kutucuğunda sayı olarak görünür
   if (k === "Finans") return fin ? ["f:" + fin.periods[fin.periods.length - 1]] : [];
   // Soru: son 21 günde eklenen sorular menüde sayı rozetiyle görünür
   if (k === "Soru") return (typeof ISQ !== "undefined" ? ISQ : []).filter((q) => q[5] && (Date.now() - new Date(q[5] + "T00:00:00")) / 864e5 <= 21).map((q) => "s:" + q[0]);
@@ -1017,7 +1043,7 @@ function renderChips() {
   $("subeBar").onclick = () => { cat = cat === "Finans" ? "Tümü" : "Finans"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); icerigeKay(); };
   const go = (k) => { cat = k; if (NEWS.includes(k)) { lastNews = k; try { localStorage.setItem("isbankNews", k); } catch (e) {} } try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); icerigeKay(); };
   const inNews = NEWS.includes(cat);
-  const nU = unseen("Tümü").length + unseen("📰 Güncel").length + unseen("🎬 Video").length;
+  const nU = unseen("Tümü").length + unseen("📰 Güncel").length;
   $("chips").innerHTML = MENU.map(([k, ic]) => {
     const on = k === "Haberler" ? inNews : k === cat;
     const u = k === "Haberler" ? nU : unseen(k).length;
@@ -1026,7 +1052,7 @@ function renderChips() {
   $("chips").querySelectorAll("button").forEach((b) => (b.onclick = () => go(b.dataset.k === "Haberler" ? (NEWS.includes(lastNews) ? lastNews : "Tümü") : b.dataset.k)));
   $("nsub").hidden = !inNews;
   const nb = (k) => { const u = k === cat ? 0 : unseen(k).length; return `<button type="button" data-n="${k}" class="${k === cat ? "on" : ""}">${NLBL[k]}${u ? `<b>${u > 9 ? "9+" : u}</b>` : ""}</button>`; };
-  $("nsub").innerHTML = inNews ? `<div class="tsat"><span class="tlab">📡 Kaynak</span><div class="tgrid">${["Tümü", "📰 Güncel", "🎬 Video"].map(nb).join("")}</div></div><div class="tsat"><span class="tlab">🏷️ Tür</span><div class="tgrid">${["Haber", "Ürün", "Dijital", "KAP"].map(nb).join("")}</div></div>` : "";
+  $("nsub").innerHTML = inNews ? `<div class="tsat"><span class="tlab">📡 Kaynak</span><div class="tgrid">${["Tümü", "📰 Güncel"].map(nb).join("")}</div></div><div class="tsat"><span class="tlab">🏷️ Tür</span><div class="tgrid">${["Haber", "Ürün", "Dijital", "KAP"].map(nb).join("")}</div></div>` : "";
   $("nsub").querySelectorAll("[data-n]").forEach((b) => (b.onclick = () => go(b.dataset.n)));
   altGuncelle();
 }
@@ -2144,8 +2170,76 @@ function agoTxt(iso) {
 function renderLive() {
   if (liveUpd) $("upd").textContent = "Her saat otomatik · son: " + new Date(liveUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   if (!live.length) { $("list").innerHTML = '<div class="empty">Son 2 günde İş Bankası haberi yok.</div>'; return; }
-  $("list").innerHTML = live.map((x) => `<a class="live" href="${esc(x.u)}" target="_blank" rel="noopener"><b>${isNew("g:" + (x.u || x.t)) ? '<span class="newtag" style="margin:0 6px 0 0">YENİ</span>' : ""}${esc(x.t)}</b><span><i>${esc(x.s)}</i>${x.d ? " · " + agoTxt(x.d) : ""}</span></a>`).join("")
+  $("list").innerHTML = gundemOzet() + live.map((x) => `<a class="live" href="${esc(x.u)}" target="_blank" rel="noopener"><b>${isNew("g:" + (x.u || x.t)) ? '<span class="newtag" style="margin:0 6px 0 0">YENİ</span>' : ""}${esc(x.t)}</b><span><i>${esc(x.s)}</i>${x.d ? " · " + agoTxt(x.d) : ""}</span></a>`).join("")
     + `<p class="note" style="margin-top:8px">Bu liste haber sitelerinden ve Google Haberler'den her saat otomatik toplanır; habere dokununca yayıncının sitesinde açılır.</p>`;
+  gundemBagla();
+}
+
+// ===== Gündem özeti: son 3 günün haberleri konulara ayrılır, yeni ürünler ve yaklaşan tarihler tek kartta (Tümü ve Güncel'in en üstünde) =====
+// Konular başlıktaki sözcüklerden kurala göre bulunur (yapay zekâ ya da yorum yok); bir haber ilk uyan konuya girer.
+const GZ_KONU = [
+  ["emekli", "👵", "Emekli promosyonu", /emekli/],
+  ["kamp", "🎁", "Kampanya ve fırsatlar", /maxipuan|maximil|kampanya|fırsat|indirim|taksit|\bpuan\b|hediye|çekiliş/, "Maximum"],
+  ["dijital", "📲", "İşCep ve dijital", /işcep|iscep|mobil|dijital|uygulama|yapay zek|ajan|visa direct/, "İşCep"],
+  ["kredi", "💰", "Kredi, faiz ve mevduat", /kredi|faiz|konut|taşıt|mevduat|vadeli|altın hesab/],
+  ["kart", "💳", "Kartlar", /maximum|maximiles|kart\b|kartı|kartla/],
+  ["finans", "📈", "Hisse ve finansallar", /isctr|hisse|bilanço|finansal|net kâr|net kar|temettü|çeyrek|kap açıklama|halka arz|tahvil|sermaye/, "Finans"],
+  ["odul", "🏆", "Ödüller", /ödül|birinci seçil|en iyi/],
+  ["iklim", "🌱", "Sürdürülebilirlik", /iklim|cop\d|sürdürülebilir|yeşil|çevre|karbon|enerji/],
+  ["girisim", "🤝", "KOBİ, girişim ve üretici", /kobi|girişim|kadın|çiftçi|tarım|üretici|ihracat|esnaf/],
+  ["kultur", "🎭", "Kültür, sanat ve spor", /maraton|sergi|müze|konser|festival|sponsor|sanat|tiyatro|kültür|spor|koşu/],
+  ["egitim", "📚", "Eğitim ve toplum", /eğitim|okul|çocuk|burs|bilim fabrika|öğrenci|gençlik|bağış/],
+];
+const GZ_AY = ["ocak", "şubat", "mart", "nisan", "mayıs", "haziran", "temmuz", "ağustos", "eylül", "ekim", "kasım", "aralık"];
+const trKucuk = (t) => String(t || "").replace(/İ/g, "i").replace(/I/g, "ı").toLowerCase();
+// Tamamı büyük harfle yazılmış başlıklar cümle düzenine çevrilir (kısaltmalar korunur)
+const gzBas = (t) => { const h = String(t || "").replace(/[^A-Za-zÇĞİÖŞÜçğıöşü]/g, ""), b = h.replace(/[^A-ZÇĞİÖŞÜ]/g, "").length;
+  if (h.length < 12 || b / h.length < .6) return t;
+  const k = trKucuk(t).replace(/\b(iş bankası|işcep|türkiye|istanbul|ssk|bağ-kur|tl)\b/g, (w) => ({ "iş bankası": "İş Bankası", işcep: "İşCep", türkiye: "Türkiye", istanbul: "İstanbul", ssk: "SSK", "bağ-kur": "Bağ-Kur", tl: "TL" }[w] || w));
+  return k.replace(/(^|[.!?]\s+)(\S)/g, (m, a, c) => a + c.toLocaleUpperCase("tr-TR")); };
+let gzAcik = false; try { gzAcik = localStorage.getItem("isbankGz") === "1"; } catch (e) {}
+function gundemOzet() {
+  const simdi = Date.now(), gun = (d) => (simdi - new Date(d.length === 10 ? d + "T12:00:00" : d)) / 864e5;
+  const H = live.map((x) => ({ t: gzBas(x.t), u: x.u, s: x.s, d: x.d, metin: x.t }))
+    .concat(all.filter((h) => gun(h.tarih) <= 3).map((h) => ({ t: h.baslik, u: h.url, s: h.kaynak, d: h.tarih, metin: h.baslik + " " + (h.ozet || "") })))
+    .filter((x) => x.t && x.d && gun(x.d) <= 3);
+  if (!H.length) return "";
+  // Konular
+  const K = {};
+  H.forEach((x) => { const k = GZ_KONU.find((g) => g[3].test(trKucuk(x.metin))); if (k) (K[k[0]] = K[k[0]] || { g: k, L: [] }).L.push(x); });
+  const konular = Object.values(K).map((k) => ({ ...k, L: k.L.sort((a, b) => String(b.d).localeCompare(String(a.d))) }))
+    .sort((a, b) => b.L.length - a.L.length || String(b.L[0].d).localeCompare(String(a.L[0].d))).slice(0, 6);
+  // Yeni ürün ve hizmetler: son 14 günün Ürün ve Dijital haberleri
+  const urun = all.filter((h) => (h.kategori === "Ürün" || h.kategori === "Dijital") && gun(h.tarih) <= 14).slice(0, 4);
+  // Yaklaşan tarihler: metindeki "31 Ekim", "1 Kasım'da" gibi ifadeler (bugünden sonraki 45 gün)
+  const bugun = new Date(); bugun.setHours(0, 0, 0, 0);
+  const tarihler = [], gorT = new Set();
+  H.concat(all.filter((h) => gun(h.tarih) <= 14 && !H.some((x) => x.u === h.url)).map((h) => ({ t: h.baslik, u: h.url, metin: h.baslik + ". " + (h.ozet || "") }))).forEach((x) => {
+    const m = trKucuk(x.metin);
+    for (const e of m.matchAll(new RegExp(`(?<![\\d–-])(\\d{1,2})\\s+(${GZ_AY.join("|")})(?:\\s+(20\\d\\d))?`, "g"))) {
+      const ay = GZ_AY.indexOf(e[2]); let y = e[3] ? +e[3] : bugun.getFullYear();
+      if (!e[3] && ay < bugun.getMonth() - 6) y++;
+      const t = new Date(y, ay, +e[1]), fark = (t - bugun) / 864e5;
+      if (fark < 0 || fark > 45 || +e[1] > 31) continue;
+      const k = GZ_KONU.find((g) => g[3].test(m)), anah = t.toDateString() + (k ? k[0] : x.t.slice(0, 20));
+      if (gorT.has(anah)) continue; gorT.add(anah);
+      tarihler.push({ t, fark, x, son: /son gün|son tarih|sona er|kadar/.test(m) });
+    }
+  });
+  tarihler.sort((a, b) => a.t - b.t);
+  const ozet = konular.length ? `En çok konuşulan: <b>${esc(konular[0].g[2])}</b> (${konular[0].L.length} haber)${konular[1] ? `, ardından <b>${esc(konular[1].g[2])}</b> (${konular[1].L.length})` : ""}.` : "";
+  const gunAd = (t) => t.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "short" });
+  const kalan = (f) => f === 0 ? "bugün" : f === 1 ? "yarın" : `${Math.round(f)} gün sonra`;
+  return `<details class="gz"${gzAcik ? " open" : ""}><summary><b>📌 Gündem özeti</b><small>son 3 gün · ${H.length} haber</small><span class="gzOz">${ozet}</span></summary>`
+    + (konular.length ? `<div class="gzBas">KONULAR</div>${konular.map((k) => `<details class="gzK"><summary><i>${k.g[1]}</i><span><b>${esc(k.g[2])}</b><small>${esc(k.L[0].t)}</small></span><em>${k.L.length}</em></summary><div class="gzL">${k.L.slice(0, 6).map((x) => `<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t)}<small>${esc(x.s || "")}${x.d && x.d.length > 10 ? " · " + agoTxt(x.d) : x.d ? " · " + new Date(x.d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : ""}</small></a>`).join("")}${k.g[4] ? `<button type="button" class="gzGit" data-gz="${k.g[4]}">Sitede: ${esc(LBL[k.g[4]] ? LBL[k.g[4]].replace(/<br>/g, " ") : k.g[4] === "Finans" ? "Finansal bilgiler" : k.g[4])} ›</button>` : ""}</div></details>`).join("")}` : "")
+    + (urun.length ? `<div class="gzBas">YENİ ÜRÜN VE HİZMETLER · son 2 hafta</div><div class="gzU">${urun.map((h) => `<a href="${esc(h.url)}" target="_blank" rel="noopener"><span>${h.kategori === "Dijital" ? "💡" : "🧾"}</span><b>${esc(h.baslik)}</b><small>${new Date(h.tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}</small></a>`).join("")}</div>` : "")
+    + (tarihler.length ? `<div class="gzBas">YAKLAŞAN TARİHLER</div><div class="gzT">${tarihler.slice(0, 4).map((d) => `<a href="${esc(d.x.u)}" target="_blank" rel="noopener"><span class="${d.fark <= 3 ? "yakin" : ""}"><b>${esc(gunAd(d.t))}</b><small>${kalan(d.fark)}</small></span><p>${d.son ? "⏳ " : ""}${esc(d.x.t)}</p></a>`).join("")}</div>` : "")
+    + `<p class="gzNot">Konular başlıklardaki sözcüklere göre kendiliğinden ayrılır; habere dokununca yayıncının sitesinde açılır.</p></details>`;
+}
+function gundemBagla() {
+  const g = $("list").querySelector(".gz"); if (!g) return;
+  g.ontoggle = () => { gzAcik = g.open; try { localStorage.setItem("isbankGz", gzAcik ? "1" : "0"); } catch (e) {} };
+  g.querySelectorAll("[data-gz]").forEach((b) => (b.onclick = () => $("chips").querySelector(`[data-k="${b.dataset.gz}"]`) ? $("chips").querySelector(`[data-k="${b.dataset.gz}"]`).click() : (b.dataset.gz === "Finans" && $("subeBar").click())));
 }
 
 // ===== Video: bankanın resmi YouTube kanalındaki son paylaşımlar (yeni ürünler çoğu zaman önce burada tanıtılıyor) =====
@@ -2185,7 +2279,7 @@ function renderMedya() {
       $("upd").innerHTML = MED.guncelleme ? `🔄 Film listesi günde bir kez derlenir · son: <b>${fd(MED.guncelleme)}</b>` : "";
       $("list").innerHTML = `<div class="mdHero"><b>🎬 Reklam filmleri</b><span>Televizyonda yayımlanan filmler: bankanın kendi "Reklam Videoları" sayfasından ve YouTube kanalındaki reklam listesinden. Dokun, burada oynasın.</span></div>`
         + R.map((x) => `<div class="vdV rkV"><button type="button" class="vdTh rkTh" data-yt="${esc(x.id)}" aria-label="Oynat: ${esc(x.baslik || "Reklam filmi")}"><img src="https://i.ytimg.com/vi/${esc(x.id)}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"><span class="vdOyna"></span></button><div class="vdTx"><b>${esc(x.baslik || "Reklam filmi")}</b><a href="https://www.youtube.com/watch?v=${esc(x.id)}" target="_blank" rel="noopener">YouTube'da aç ↗</a></div></div>`).join("")
-        + (MED.reklam_sitede ? `<a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari" target="_blank" rel="noopener"><b>🎞️ Bankanın sitesinde ${MED.reklam_sitede} film daha</b><p>Bazı eski filmler YouTube'da değil, yalnızca bankanın kendi "Reklam Videoları" sayfasında oynuyor.</p><small>isbank.com.tr ↗</small></a>` : "")
+        + (MED.reklam_sitede ? `<a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari" target="_blank" rel="noopener"><b>🎞️ Bankanın sitesindeki diğer filmler</b><p>Bazı filmler YouTube'da değil, yalnızca bankanın kendi "Reklam Videoları" sayfasında oynuyor. Dokun, o sayfa açılsın.</p><small>isbank.com.tr ↗</small></a>` : "")
         + `<details class="mdDig rkKanal"><summary>📺 YouTube kanalından son videolar<small>Tanıtımlar, söyleşiler, etkinlikler · her saat güncellenir</small></summary>${kanal}</details>`
         + sayfa("https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari", "Tüm reklam videoları");
       $("list").querySelectorAll("[data-yt]").forEach((b) => (b.onclick = () => {
@@ -2518,7 +2612,6 @@ function renderList() {
   $("tfil").hidden = cat !== "Maximum" && cat !== "İşCep" && cat !== "Black";
   renderSoon();
   if (cat === "📰 Güncel") return renderLive();
-  if (cat === "🎬 Video") return renderVideo();
   if (cat === "📅 Takvim") return renderTakvim();
   if (cat === "Finans") return renderFinans();
   if (cat === "Kampanya") return renderBankaKamp();
@@ -2542,7 +2635,7 @@ function renderList() {
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "") + " · günde iki kez (09:01, 14:01)";
   const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
   if (!items.length) { $("list").innerHTML = '<div class="empty">Bu kategoride henüz haber yok.</div>'; return; }
-  let html = "", last = "";
+  let html = cat === "Tümü" ? gundemOzet() : "", last = "";
   for (const h of items) {
     if (h.tarih !== last) { html += `<div class="day">${esc(fmtDay(h.tarih))}</div>`; last = h.tarih; }
     html += `<a class="item" href="${esc(h.url)}" target="_blank" rel="noopener" style="--c:${color(h.kategori)}">
@@ -2553,6 +2646,7 @@ function renderList() {
     </a>`;
   }
   $("list").innerHTML = html;
+  gundemBagla();
 }
 
 (async () => {
