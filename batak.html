@@ -121,6 +121,7 @@
   }
   .panel button.pass { border-color: var(--red); color: var(--red); }
   .panel button.suit { font-size: 26px; padding: 6px 16px; }
+  .panel button.suit svg.ksb { display: block; width: 24px; height: 24px; }
   .panel button.suit.red { color: var(--red); }
 
   /* Kısa ekranda (tarayıcı çubukları açıkken) masa biraz küçülür, eldeki kartlar hep görünür */
@@ -129,7 +130,6 @@
     display: flex; justify-content: center;
     padding: 14px 0 4px; min-height: 90px;
   }
-  .hand .card:not(:last-child) .s2 { display: none; }
   .hand .card { margin-left: -30px; transition: transform .12s, opacity .12s; cursor: pointer; }
   .hand .card:first-child { margin-left: 0; }
   .hand .card.ok { transform: translateY(-10px); }
@@ -218,7 +218,7 @@
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
 </style>
 <script src="cardsound.js?v=3"></script>
-<script src="kartmasa.js?v=4" data-oyun="batak" data-masa="sado"></script>
+<script src="kartmasa.js?v=5" data-oyun="batak" data-masa="sado"></script>
 <script src="isq.js"></script>
 <script src="token.js?v=2"></script>
 <script src="batakai.js?v=1"></script>
@@ -587,7 +587,7 @@ async function endBidding() {
     for (const s of SUITS) {
       const b = document.createElement("button");
       b.className = "suit" + (isRed(s) ? " red" : "");
-      b.textContent = s;
+      b.innerHTML = KartMasa.simge(s, "ksb"); b.setAttribute("aria-label", SUIT_NAMES[s]);
       b.onclick = () => { panel.classList.remove("show"); startPlay(s); };
       panel.appendChild(b);
     }

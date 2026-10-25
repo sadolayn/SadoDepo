@@ -129,10 +129,10 @@
   }
   .panel button.pass { border-color: var(--red); color: var(--red); }
   .panel button.suit { font-size: 26px; padding: 6px 16px; }
+  .panel button.suit svg.ksb { display: block; width: 24px; height: 24px; }
   .panel button.suit.red { color: var(--red); }
 
   .hand { --cw: 58px; position: relative; height: calc(var(--cw) * 1.45 + var(--cw) * .3 + 16px); }
-  .hand .card:not(:last-child) .s2 { display: none; }
   .hand .card .r { left: 4%; }
   .hand .card .r.ten { transform: scaleX(calc(.64 * var(--kx, 1))); letter-spacing: -3px; }
   /* Yelpaze: kartlar alttaki bir noktanın çevresinde dönerek oval dizilir; ortadakiler yukarıda, kenardakiler aşağıda */
@@ -232,7 +232,7 @@
   .hak .no { color: var(--muted); }
 </style>
 <script src="cardsound.js?v=3"></script>
-<script src="kartmasa.js?v=4" data-oyun="king"></script>
+<script src="kartmasa.js?v=5" data-oyun="king"></script>
 <script src="isq.js"></script>
 <script src="token.js?v=2"></script>
 <script src="kingai.js?v=1"></script>
@@ -658,7 +658,7 @@ function showTrumpPanel() {
   for (const s of SUITS) {
     const b = document.createElement("button");
     b.className = "suit" + (isRed(s) ? " red" : "");
-    b.textContent = s;
+    b.innerHTML = KartMasa.simge(s, "ksb"); b.setAttribute("aria-label", SUIT_NAMES[s]);
     b.onclick = () => { panel.classList.remove("show"); startPlay("koz", s); };
     panel.appendChild(b);
   }

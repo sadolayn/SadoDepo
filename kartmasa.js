@@ -78,11 +78,13 @@
   font-size: calc(var(--cw, 56px) * .5 * var(--kp, 1)); line-height: 1; letter-spacing: -1px; transform-origin: left top; transform: scaleX(var(--kx, 1));
   -webkit-text-stroke: calc(var(--cw, 56px) * var(--kst, 0)) currentColor; }
 .card .r.ten { transform: scaleX(calc(.8 * var(--kx, 1))); letter-spacing: -2px; }
-.card .s1 { position: absolute; top: calc(var(--cw, 56px) * (.04 + .5 * var(--kp, 1))); left: 8%; font-size: calc(var(--cw, 56px) * .32 * var(--ksp, 1)); line-height: 1; }
-.card .s2 { position: absolute; right: 9%; bottom: 5%; font-size: calc(var(--cw, 56px) * .6); line-height: 1; }
+.card svg.ks { display: block; width: 1em; height: 1em; }
+.card .s1 { display: none; }
+.card .s2 { position: absolute; left: 6%; top: calc(var(--cw, 56px) * (.1 + .5 * var(--kp, 1))); font-size: calc(var(--cw, 56px) * .46 * var(--ksp, 1)); line-height: 1; }
 .duzen-ust .card .r { top: 1.5%; left: 5%; }
-.duzen-ust .card .s1 { top: 3%; left: auto; right: 5%; font-size: calc(var(--cw, 56px) * .4 * var(--ksp, 1)); }
-.duzen-ust .card .s2 { left: 0; right: 0; bottom: 3%; text-align: center; font-size: calc(var(--cw, 56px) * .86); }
+.duzen-ust .card .s1 { display: block; position: absolute; top: 3%; left: auto; right: 5%; font-size: calc(var(--cw, 56px) * .4 * var(--ksp, 1)); }
+.duzen-ust .card .s2 { left: 0; right: 0; top: auto; bottom: 3%; font-size: calc(var(--cw, 56px) * .86); }
+.duzen-ust .card .s2 svg.ks { margin: 0 auto; }
 .card.back > * { display: none; }
 .card.back, .kb { border: 2px solid #fff; }
 .card.back::after, .kb::after { content: ""; position: absolute; inset: 2px; border-radius: inherit; }
@@ -153,8 +155,16 @@
 
   const isRed = (s) => s === "♥" || s === "♦";
   const suitCls = { "♠": "k-s", "♥": "k-h", "♣": "k-c", "♦": "k-d" };
+  // Simgeler yazı tipine bırakılmaz, çizilir: küçük boyda ♠ ile ♣ karışmasın diye sinek üç yuvarlak yaprak, maça sivri uçlu.
+  const SVG = {
+    "♠": '<path d="M50 3C40 18 7 36 7 60c0 17 20 26 36 13-2 10-6 17-14 23h42c-8-6-12-13-14-23 16 13 36 4 36-13C93 36 60 18 50 3z"/>',
+    "♥": '<path d="M50 94C38 82 5 60 5 32 5 15 18 5 32 5c9 0 15 5 18 13 3-8 9-13 18-13 14 0 27 10 27 27 0 28-33 50-45 62z"/>',
+    "♣": '<circle cx="50" cy="27" r="22"/><circle cx="25" cy="58" r="22"/><circle cx="75" cy="58" r="22"/><path d="M40 44h20v12l-6 16c2 10 7 18 16 24H30c9-6 14-14 16-24l-6-16z"/>',
+    "♦": '<path d="M50 2l38 48-38 48-38-48z"/>',
+  };
+  const simge = (s, k) => SVG[s] ? `<svg class="${k || "ks"}" viewBox="0 0 100 100" aria-hidden="true" fill="currentColor">${SVG[s]}</svg>` : s;
   function face(c) {
-    return `<span class="r${c.r === 10 ? " ten" : ""}">${RANK[c.r] || c.r}</span><span class="s1">${c.s}︎</span><span class="s2">${c.s}︎</span>`;
+    return `<span class="r${c.r === 10 ? " ten" : ""}">${RANK[c.r] || c.r}</span><span class="s1">${simge(c.s)}</span><span class="s2">${simge(c.s)}</span>`;
   }
   const cls = (c) => "card " + suitCls[c.s] + (isRed(c.s) ? " red" : "");
   function el(c) { const d = document.createElement("div"); d.className = cls(c); d.innerHTML = face(c); return d; }
@@ -239,7 +249,7 @@
 
   const KartMasa = {
     OPT, el, back, html, ayarlar, apply, MASA,
-    yuz: face, sinif: cls,
+    yuz: face, sinif: cls, simge,
     olcu: () => { const p = PUNTO[OPT.punto] || PUNTO.normal; return { kp: p[1], kx: p[2] }; }, // harf boyu ve eni (yerleşim için)
     hiz: () => (OPT.hizli ? 0.5 : 1),
     wait: (ms) => new Promise((r) => setTimeout(r, ms * (OPT.hizli ? 0.5 : 1))),
