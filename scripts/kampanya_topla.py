@@ -36,7 +36,11 @@ def _ucuncu_ek(m):
 
 def metin(s):
     s = re.sub(r"(?i)<br\s*/?>", " ", s)
-    s = html.unescape(re.sub(r"<[^>]+>", " ", s)).replace("\u200b", "").replace("\ufeff", "")  # görünmez boşluklar atılır
+    return normal(html.unescape(re.sub(r"<[^>]+>", " ", s)))
+
+def normal(s):
+    """Görünmez boşluklar, "25% indirim" yazımı ve bankanın ağzından iyelikler (her kaynaktaki başlık ve özete uygulanır)."""
+    s = (s or "").replace("\u200b", "").replace("\ufeff", "")
     s = re.sub(r"\s+", " ", s).strip()
     s = re.sub(r"(?<![\d%])(\d+(?:,\d+)?)% ", r"%\1 ", s)  # "25% indirim" → "%25 indirim"
     for a, b in _BANKAMIZ:
@@ -212,8 +216,9 @@ def max_kartlar(body, kok=KOK_M):
             continue
         gor.add(anahtar)
         kalan = int(m.group(1))
-        # "Son N Gün" şeridindeki N bitişe kalan gün (bugün hariç): 25 Ekim'de "Son 6 Gün" → 31 Ekim (isbank.com.tr'deki tarihle aynı)
-        out.append({"baslik": kisalt(metinler[0], 160), "bitis": (bugun + dt.timedelta(days=max(0, kalan))).isoformat(),
+        # "Son N Gün" şeridi kampanyaların çoğunda bugünü de sayar (25 Ekim'de "Son 7 Gün" → 31 Ekim). Bazılarında bir gün eksik
+        # sayıyor; aynı kampanya isbank.com.tr'de de varsa bitiş günü oradaki açık tarihten alınır (dosyanın sonundaki eşleme)
+        out.append({"baslik": kisalt(metinler[0], 160), "bitis": (bugun + dt.timedelta(days=max(0, kalan - 1))).isoformat(),
                     "ozet": (kisalt(metinler[1], 220) if len(metinler) > 1 and len(metinler[1]) > 25 and not BOS_OZET.search(metinler[1]) else ""), "url": link or kok + "/kampanyalar"})
     return out
 
@@ -500,8 +505,17 @@ for k in _tum:
     if k.get("nere") and k["nere"] != NERE_DIGER[0]: _grup.setdefault(_ayni(k["baslik"]), k["nere"])
 for k in _tum:
     if k.get("nere") == NERE_DIGER[0] and _ayni(k["baslik"]) in _grup: k["nere"] = _grup[_ayni(k["baslik"])]
-# Maximiles sayfalarındaki tarih alanı bazen kampanya metniyle çelişiyor (ör. metin "1–31 Ekim", alan 30.10).
-# Aynı kampanya İş Bankası ya da Maximum'da da varsa bitiş günü oradan alınır (önce isbank.com.tr)
+# Maximum'un "Son N Gün" sayacı ve Maximiles sayfalarındaki tarih alanı bazen bir gün kayıyor (ör. metin "1–31 Ekim", alan 30.10).
+# isbank.com.tr kampanya sayfası bitişi açık tarih olarak yazar: aynı kampanya orada da varsa bitiş günü oradan alınır
+_isb = {}
+for v in (veri.get("isbank") or {}).values():
+    if not v: continue
+    for k in v.get("kampanyalar", []) + [x for c in v.get("kategoriler", []) for x in c["kampanyalar"]]:
+        if k.get("bitis"): _isb[_ayni(k["baslik"])] = k["bitis"]
+for v in (veri.get("maximum") or {}).values():
+    if not v: continue
+    for k in v.get("kampanyalar", []) + [x for c in v.get("kategoriler", []) for x in c["kampanyalar"]]:
+        if _ayni(k["baslik"]) in _isb: k["bitis"] = _isb[_ayni(k["baslik"])]
 _bitis = {}
 for kaynak in ("maximum", "isbank"):
     for v in (veri.get(kaynak) or {}).values():
@@ -512,6 +526,12 @@ for v in (veri.get("maximiles") or {}).values():
     if not v: continue
     for k in v.get("kampanyalar", []):
         if _ayni(k["baslik"]) in _bitis: k["bitis"] = _bitis[_ayni(k["baslik"])]
+for kaynak in ("isbank", "maximum", "maximiles"):
+    for v in (veri.get(kaynak) or {}).values():
+        if not v: continue
+        for k in v.get("kampanyalar", []) + [x for c in v.get("kategoriler", []) for x in c["kampanyalar"]]:
+            for a in ("baslik", "ozet"):
+                if k.get(a): k[a] = normal(k[a])
 veri["gruplar"] = {b: [{"ad": a, "ikon": i} for a, i in g] for b, g in GRUPLAR.items()}
 os.makedirs("isbank", exist_ok=True)
 json.dump(veri, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
