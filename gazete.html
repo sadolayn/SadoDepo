@@ -237,7 +237,7 @@ async function renderStatus() {
     <span>Her sabah 07:00 civarı güncellenir</span>`;
   if (!have) {
     const h = new Date().getHours();
-    $("haftaBnk").insertAdjacentHTML("beforebegin", `<div class="warnbox" id="nowarn">📭 Bugünün (${esc(fmtDate(today))}) özeti henüz eklenmedi${h < 2 ? " — kontrol sürüyor, birazdan eklenecek" : "; bir sonraki kontrolde eklenecek"}. Şimdilik <a href="https://www.resmigazete.gov.tr/" target="_blank" rel="noopener">Resmi Gazete'nin sitesine</a> bakabilirsin.</div>`);
+    $("haftaBnk").insertAdjacentHTML("beforebegin", `<div class="warnbox" id="nowarn">📭 Bugünün (${esc(fmtDate(today))}) özeti henüz eklenmedi${h < 8 ? " — her sabah 07:00 civarı eklenir" : "; bir sonraki kontrolde eklenecek"}. Şimdilik <a href="https://www.resmigazete.gov.tr/" target="_blank" rel="noopener">Resmi Gazete'nin sitesine</a> bakabilirsin.</div>`);
   }
 }
 const AYLAR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
@@ -306,10 +306,10 @@ function kurumCiz() {
   const say = (k) => DUY.filter((x) => !k || x.kurum === k).length;
   const L = DUY.filter((x) => (!kurumSec || x.kurum === kurumSec) && (!kGun || x.tarih === kGun));
   const gunAd = kGun ? new Date(kGun + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" }) : "";
-  $("kurum").innerHTML = `<div class="kh"><b>🏛️ Düzenleyici kurumlardan</b><p>Resmi Gazete'ye düşmeyen karar ve duyurular tek yerde. Her sabah derlenir; her kayıt kurumun resmi duyurusuna bağlanır.${DUYUPD ? ` Son derleme: ${esc(fmtTime(DUYUPD))}.` : ""}</p></div>
+  $("kurum").innerHTML = `<div class="kh"><b>🏛️ Düzenleyici kurumlardan</b><p>Resmi Gazete'ye düşmeyen karar ve duyurular tek yerde. Her sabah derlenir; her kayıt mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır.${DUYUPD ? ` Son derleme: ${esc(fmtTime(DUYUPD))}.` : ""}</p></div>
     <div class="kf"><button type="button" data-k="" class="${!kurumSec ? "on" : ""}" style="--kc:#e0a24f">Hepsi<i>${say("")}</i></button>${Object.entries(KURUM).map(([k, [ic, kc]]) => `<button type="button" data-k="${esc(k)}" class="${kurumSec === k ? "on" : ""}${say(k) ? "" : " sifir"}" style="--kc:${kc}">${ic} ${esc(KKISA[k] || k)}<i>${say(k)}</i></button>`).join("")}</div>`
     + kTakvim() + (kGun ? `<div class="kgun"><span>📅 <b>${esc(gunAd)}</b> · ${L.length} duyuru</span><button type="button" id="kGunX">Tümünü göster ✕</button></div>` : "")
-    + (L.length ? L.map(kurumKart).join("") : `<div class="empty">${kurumSec ? `Son 60 günde ${esc(({ "BDDK": "BDDK'dan", "TCMB": "TCMB'den", "SPK": "SPK'dan", "TMSF": "TMSF'den", "MASAK": "MASAK'tan", "Ticaret Bakanlığı": "Ticaret Bakanlığı'ndan" })[kurumSec] || kurumSec)} bankacılığı ilgilendiren bir karar ya da duyuru derlenmedi.<br><small>Yenisi çıkınca her sabah buraya eklenir.</small>` : "Henüz derlenmiş duyuru yok; yenisi çıkınca burada."}</div>`)
+    + (L.length ? L.map(kurumKart).join("") : `<div class="empty">${kurumSec ? `Bu dönemde ${esc(({ "BDDK": "BDDK'dan", "TCMB": "TCMB'den", "SPK": "SPK'dan", "TMSF": "TMSF'den", "MASAK": "MASAK'tan", "Ticaret Bakanlığı": "Ticaret Bakanlığı'ndan" })[kurumSec] || kurumSec)} bankacılığı ilgilendiren bir karar ya da duyuru derlenmedi.<br><small>Yenisi çıkınca her sabah buraya eklenir.</small>` : "Henüz derlenmiş duyuru yok; yenisi çıkınca burada."}</div>`)
     + `<p class="knot">MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz; resmi duyuruya bağlanır. Özetler kişisel derlemedir, bağlayıcı metin kurumun kendi duyurusudur.</p>`;
   $("kurum").querySelectorAll("[data-k]").forEach((b) => (b.onclick = () => { kurumSec = b.dataset.k; kGun = ""; kurumCiz(); }));
   $("kurum").querySelectorAll("[data-kg]").forEach((b) => (b.onclick = () => { kGun = kGun === b.dataset.kg ? "" : b.dataset.kg; kurumCiz(); }));

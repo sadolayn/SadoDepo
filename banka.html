@@ -343,7 +343,7 @@
     <span style="width:52px"></span>
   </header>
 
-  <p class="note" style="margin:0 0 10px;font-size:12px;opacity:.75">ℹ️ Kişisel hesap yardımcısıdır; resmi teklif ya da bağlayıcı bilgi değildir. Kesin oran ve koşullar için şubeye ya da <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:var(--accent)">isbank.com.tr</a>'ye bakın.</p>
+  <p class="note" style="margin:0 0 10px;font-size:12px;opacity:.75">ℹ️ Kişisel hesap yardımcısıdır; resmi teklif ya da bağlayıcı bilgi değildir. Kesin oran ve koşullar için şubeye ya da <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:var(--accent)">isbank.com.tr</a>'ye bak.</p>
 
   <div class="tabs">
     <div class="tlab t1">👤 Bireysel</div>
@@ -402,10 +402,10 @@
       <label>Aylık faiz oranı</label>
       <div class="field"><input id="e_faiz" data-hatirla type="text" inputmode="decimal" value="" placeholder="Faiz oranını gir"><span class="unit">%</span></div>
       <div class="ekchips" id="e_oranlar"></div>
-      <label>Kaç gün kullanacak? <span style="font-size:11.5px">(takvim günü, hafta sonu dahil)</span></label>
+      <label>Kaç gün kullanılacak? <span style="font-size:11.5px">(takvim günü, hafta sonu dahil)</span></label>
       <div class="ekchips" id="e_gunler"></div>
       <div class="field" style="margin-top:7px"><input id="e_gun" type="text" inputmode="numeric" value="30" aria-label="Gün sayısı"><span class="unit">gün</span></div>
-      <div class="ekok"><span>✓</span><span>Valör dikkate alınmıştır. KKDF %15 ve BSMV %15 faize eklenir.</span></div>
+      <div class="ekok"><span>✓</span><span>Takvim günü esas alınır. KKDF %15 ve BSMV %15 faize eklenir.</span></div>
     </div>
 <div class="card fyMsg" data-fymsg="e_faiz" hidden>✍️ <b>Faiz oranını gir</b>, hesap burada görünsün.<small>Oran kişiye ve kampanyaya göre değişir; hesap bilgi amaçlıdır.</small></div>
     <div class="card" data-fy="e_faiz">
@@ -421,7 +421,7 @@
     </div>
 
     <div class="card">
-      <h2>🗓️ Taksitli Nakit Avans <span style="font-weight:400;font-size:13px;color:var(--muted)">· Ek Hesaba bağlı</span></h2>
+      <h2>🗓️ Taksitli Ek Hesap <span style="font-weight:400;font-size:13px;color:var(--muted)">· ek hesap limitinden</span></h2>
       <p class="hint">Taksitli Ek Hesap: ek hesap limitinden 500 TL – 600.000 TL, 2–12 ay. Oran kullanım günü sabitlenir, vade boyunca değişmez; tahsis ücreti yok.</p>
       <label>Tutar</label>
       <div class="field"><input id="et_tutar" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div>
@@ -445,7 +445,7 @@
   <section class="panel" id="mev">
     <div class="card">
       <h2 id="mevTitle" style="display:flex;align-items:center;justify-content:space-between;gap:8px">Vadeli Mevduat Getirisi</h2>
-      <p class="hint">Faiz yıllık oran üzerinden gün/365 ile hesaplanır, stopaj kesildikten sonraki net getiri gösterilir.</p>
+      <p class="hint">Faiz yıllık oran üzerinden gün/365 ile (artık yıl günlerinde gün/366) hesaplanır, stopaj kesildikten sonraki net getiri gösterilir.</p>
       <label>Anapara</label>
       <div class="field"><input id="m_tutar" type="text" inputmode="decimal" value="500.000"><span class="unit">TL</span></div>
       <div class="two">
@@ -465,7 +465,7 @@
         </div>
       </div>
       <p class="note" id="m_note"></p>
-      <p class="note" style="border-left:3px solid var(--accent);padding-left:8px">📅 <b>Artık yıl notu:</b> 4'e tam bölünebilen yıllar artık yıldır (2028, 2032…) ve yıl 365 değil <b>366 gün</b> sayılır; Şubat 29 çeker. 100'e bölünüp 400'e bölünmeyen yıllar (2100 gibi) artık yıl değildir. Vade bir artık yıla denk gelen günler için faiz ÷366 ile hesaplanır.</p>
+      <p class="note" style="border-left:3px solid var(--accent);padding-left:8px">📅 <b>Artık yıl notu:</b> 4'e tam bölünebilen yıllar artık yıldır (2028, 2032…) ve yıl 365 değil <b>366 gün</b> sayılır; Şubat 29 çeker. 100'e bölünüp 400'e bölünmeyen yıllar (2100 gibi) artık yıl değildir. Vadenin artık yıla denk gelen günleri için faiz ÷366 ile hesaplanır.</p>
     </div>
 <div class="card fyMsg" data-fymsg="m_faiz" hidden>✍️ <b>Faiz oranını gir</b>, hesap burada görünsün.<small>Oran kişiye ve kampanyaya göre değişir; hesap bilgi amaçlıdır.</small></div>
     <div class="card" data-fy="m_faiz">
@@ -535,7 +535,7 @@
         <div class="tswarn" id="ts_warn" hidden></div>
         <div class="ts main"><span>Aylık taksit</span><b id="ts_taksit">–</b><i id="ts_ilk"></i></div>
         <div class="ts"><span>Toplam geri ödeme</span><b id="ts_toplam">–</b></div>
-        <div class="ts"><span>Toplam masraf</span><b id="ts_masraf">–</b><i>tahsis ücreti + BSMV</i></div>
+        <div class="ts"><span>Toplam masraf</span><b id="ts_masraf">–</b><i id="ts_masrafi">tahsis ücreti + BSMV</i></div>
         <div class="ts" id="ts_sigbox" hidden><span>Hayat sigortası (tahmini)</span><b id="ts_sig">–</b><i id="ts_sigi"></i></div>
         <div class="ts"><span>Hesaba geçecek</span><b id="ts_net">–</b></div>
         <div class="tsbtns"><button type="button" id="ts_copy" class="tscopy">📋 Özeti kopyala</button></div>
@@ -548,7 +548,7 @@
         <div><label>Tahsis ücreti</label><div class="field"><input id="t_tahsis" type="text" inputmode="decimal" value="5"><span class="unit">‰</span></div></div>
         <div><label>Diğer masraf</label><div class="field"><input id="t_ucret" type="text" inputmode="decimal" value="0"><span class="unit">TL</span></div></div>
       </div>
-      <p class="hint">Her taksit dönemi 1 ay faiz işler (KKDF ve BSMV dahil). İlk taksit kullandırımdan tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır.</p>
+      <p class="hint">Her taksit dönemi 1 ay faiz işler (KKDF ve BSMV dahil). İlk taksit kullandırımdan tam bir ay sonra değilse ilk taksidin faizi gün/30 ile hesaplanır.</p>
       <p class="hint" id="t_mnote">Kredi tahsis ücreti yasal olarak en fazla kredi tutarının binde 5'i olabilir ve bu ücrete %15 BSMV eklenir.</p>
       <div class="two">
         <div><label>Hayat sigortası</label><select id="t_sigtip"><option value="yok" selected>Sigorta yok</option><option value="tek">Tek prim (peşin)</option></select></div>
@@ -651,7 +651,7 @@
         <div class="ts"><span>Hesaba geçecek</span><b id="ta_s_net">–</b></div>
         <div class="tsbtns"><button type="button" id="ta_copy" class="tscopy">📋 Özeti kopyala</button></div>
       </div>
-      <p class="hint">ℹ️ Hayat sigortası primi ve rehin tesis ücreti bu hesaba dahil değildir; kasko zorunludur. Kesin tutarlar işlem günü bankanızca belirlenir.</p>
+      <p class="hint">ℹ️ Hayat sigortası primi ve rehin tesis ücreti bu hesaba dahil değildir; kasko zorunludur. Kesin tutarlar işlem günü banka tarafından belirlenir.</p>
     </div>
     <div class="card">
       <h2>📏 Vade ve kredi sınırları</h2>
@@ -659,7 +659,7 @@
       <table class="ltvtab" id="ta_tab"></table>
       <p class="hint" id="ta_tabnot" style="margin-top:8px"></p>
       <div class="tswarn" style="margin-top:10px;border-color:rgba(90,209,201,.45);background:rgba(90,209,201,.08);color:#c4f4f0">
-        ⚡ <b>Dikkat — Türkiye'de üretilen elektrikli araçlar (Togg):</b> sınırlar farklı ve daha geniş. Yukarıdaki hesap bunu kapsamaz; kampanya mektubuna ve BDDK kararına göre işlem yap.
+        ⚡ <b>Dikkat — Türkiye'de üretilen elektrikli araçlar (Togg):</b> sınırlar farklı ve daha geniş. Yukarıdaki hesap bunu kapsamaz; güncel koşullar için bankanın sitesine ve BDDK kararına bak.
         <table class="ltvtab" style="margin-top:8px"><tr><th>Fatura değeri</th><th>Azami vade</th><th>Kredi payı</th></tr>
         <tr><td>2.500.000 TL'ye kadar</td><td>48 ay</td><td>%70</td></tr>
         <tr><td>2.500.001 – 5.000.000 TL</td><td>36 ay</td><td>%50</td></tr>
@@ -719,7 +719,7 @@
       <div class="field"><input id="k2_butce" type="text" inputmode="decimal" placeholder="ör. 10.000"><span class="unit">TL</span></div>
       <div class="vkres" id="k2_ters" hidden></div>
       <div class="tbl"><table class="vktab" id="k2_vk"></table></div>
-      <p class="hint" style="margin-top:6px">Satıra dokununca o vade seçilir. Hesaplar yukarıdaki faiz, tarih ve vergi ayarlarıyla yapılır.</p>
+      <p class="hint" style="margin-top:6px">Satıra dokununca o vade seçilir. Hesaplar yukarıdaki faiz ve tarih ayarlarıyla yapılır.</p>
     </div>
     <div class="card eks" id="k2_eks">
       <div class="ekshead">
@@ -798,7 +798,7 @@
       <div class="tsbtns" style="margin-top:12px"><button type="button" id="tr_copy" class="tscopy">📋 Özeti kopyala</button></div>
       <button type="button" id="tr_pdf" class="tscopy pdfbtn">📄 Ödeme planı PDF indir</button>
     </div>
-    <p class="note">Vergi levhalı (gerçek usul) çiftçide KKDF %0, BSMV %5. Levhasız, ÇKS / çiftçilik belgeli çiftçide KKDF %15, BSMV %5; kredi tutarı 15.000 TL'ye kadarsa KKDF %0. Hazine faiz destekli (sübvansiyonlu) tarım kredilerinde faiz oranı ayrıca indirimlidir. Uygulamayı bankanın güncel yönergesiyle teyit et.</p>
+    <p class="note">Vergi levhalı (gerçek usul) çiftçide KKDF %0, BSMV %5. Levhasız, ÇKS / çiftçilik belgeli çiftçide KKDF %15, BSMV %5; kredi tutarı 15.000 TL'ye kadarsa KKDF %0. Hazine faiz destekli (sübvansiyonlu) tarım kredilerinde faiz oranı ayrıca indirimlidir. Uygulamayı bankanla teyit et.</p>
   </section>
 
   <!-- Taksitli ticari kredi -->
@@ -828,7 +828,7 @@
         <div><label>BSMV (vergi)</label><div class="field"><input id="tc_bsmv" type="text" inputmode="decimal" value="5"><span class="unit">%</span></div></div>
         <div><label>KKDF (fon)</label><div class="field"><input id="tc_kkdf" type="text" inputmode="decimal" value="0"><span class="unit">%</span></div></div>
       </div>
-      <p class="hint">Her taksitte faiz, kalan anapara × aylık faiz × gün/30 ile işler; ilk taksit de diğerleriyle <b>eşittir</b> (kırık dönem taksiti küçültmez, anaparadan düşer). Hafta sonu ve resmî/dinî bayrama denk gelen ödeme ilk iş gününe kayar. Taksitli ticari kredide KKDF %0, BSMV %5'tir.</p>
+      <p class="hint">Her taksitte faiz, kalan anapara × aylık faiz × gün/30 ile işler; ilk taksit de diğerleriyle <b>eşittir</b> (kırık dönem taksidi küçültmez, anaparadan düşer). Hafta sonu ve resmî/dinî bayrama denk gelen ödeme ilk iş gününe kayar. Taksitli ticari kredide KKDF %0, BSMV %5'tir.</p>
     </div>
     <div class="card vkcard" data-fy="tc_faiz">
       <h2>🔁 Vade karşılaştırma &amp; ters hesap</h2>
@@ -861,7 +861,7 @@
     <div class="card">
       <h2>TL Çek İskontosu / İştirası Kredisi</h2>
       <div style="color:var(--accent);font-weight:600;font-size:13px;margin:-4px 0 6px">+ Çek Valör Tespiti</div>
-      <p class="hint">Çek vadesi hafta sonu, resmi tatil ya da resmi tatile denk gelirse ilk iş gününe kayar; takas karşılığı hesaba bir sonraki iş günü geçer (valör). Arife (yarım gün) takas ve valör günü sayılır. Faiz kullandırımda peşin alınır.</p>
+      <p class="hint">Çek vadesi hafta sonuna, resmî tatile ya da dinî bayrama denk gelirse ilk iş gününe kayar; takas karşılığı hesaba bir sonraki iş günü geçer (valör). Arife (yarım gün) takas ve valör günü sayılır. Faiz kullandırımda peşin alınır.</p>
       <label>Kullandırım (işlem) tarihi</label>
       <input id="c_isl" type="date" style="color-scheme:dark">
       <label style="margin-top:12px">Çekler</label>
@@ -1012,7 +1012,7 @@ function yearFrac(start, days) {
   return { f, leapDays };
 }
 // Ek faiz / bilanço / PPK
-let PPK = { last: { date: "2026-09-10", rate: 37, lend: 40, borrow: 35.5 }, meetings: ["2026-10-22", "2026-12-10", "2027-01-21", "2027-03-18", "2027-04-22", "2027-06-10"] };
+let PPK = { last: { date: "2026-10-22", rate: 36, lend: 39, borrow: 34.5 }, meetings: ["2026-12-10", "2027-01-21", "2027-03-18", "2027-04-22", "2027-06-10"] };
 Ortak.json("data/ppk.json").then((j) => { PPK = j; calcMev(); }).catch(() => {});
 const fdt = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
 const fdtw = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "short" });
@@ -1066,7 +1066,7 @@ function calcExtra(P, r, g, start) {
     $("m2_label").textContent = diff > 0 ? "2. teklif daha fazla kazandırıyor" : "1. teklif daha iyi";
     $("m2_out").textContent = (diff > 0 ? "+" : "") + tl(diff);
     const list = [
-      [`Banka net (%${nfx(r * 100)} · ${g} gün)`, tl(ours)],
+      [`1. teklif net (%${nfx(r * 100)} · ${g} gün)`, tl(ours)],
       [`2. teklif net (%${nfx(r2 * 100)} · ${g2} gün)`, tl(theirs)],
       ["Fark (vade başına)", tl(Math.abs(diff)), diff > 0 ? "neg" : "pos"],
       ["Günlük fark", tl(Math.abs(diff) / Math.max(g, g2))],
@@ -1082,7 +1082,7 @@ function calcExtra(P, r, g, start) {
       list.push([`Aynı ${g} günde gereken oran`, "%" + nfx(Math.ceil(rNeed * 10000) / 100)]);
       if (dNeed) list.push([`%${nfx(r * 100)} ile gereken vade`, `${dNeed} gün (+${dNeed - g})`, "total"]);
       note = dNeed
-        ? `Örnek: ${g} gün yerine ${dNeed} gün seçilirse 1. teklifin oranıyla net ${tl(netFor(P, r, dNeed, start, sMan))} kazanılır; 2. teklifin ${g2} günlük getirisine ulaşılır (para ${dNeed - g2} gün daha uzun kalır). Fark ${tl(diff)}.`
+        ? `Örnek: ${g} gün yerine ${dNeed} gün seçilirse 1. teklifin oranıyla net ${tl(netFor(P, r, dNeed, start, sMan))} kazanılır; 2. teklifin ${g2} günlük getirisine ulaşılır${dNeed > g2 ? ` (para ${dNeed - g2} gün daha uzun kalır)` : dNeed < g2 ? ` (para ${g2 - dNeed} gün daha kısa kalır)` : ""}. Fark ${tl(diff)}.`
         : "";
     }
     rows("m2_rows", list);
@@ -1155,10 +1155,10 @@ function calcMev() {
   let tNot = "";
   if (tAd) {
     const nb = nextBiz(end1), g2 = g + dayDiff(end1, nb), ilk = n === 1 ? "Vade sonu" : "İlk vade sonu";
-    $("m_warn").innerHTML = `📅 <b>${ilk} tatile denk geliyor:</b> ${fd(end1)} ${wd(end1)} (${tAd}). İlk iş günü <b>${fd(nb)} ${wd(nb)}</b>; vade <b>${g2} gün</b> açılabilir. Hesap ${g} güne göre yapıldı, bilginiz olsun.`;
+    $("m_warn").innerHTML = `📅 <b>${ilk} tatile denk geliyor:</b> ${fd(end1)} ${wd(end1)} (${tAd}). İlk iş günü <b>${fd(nb)} ${wd(nb)}</b>; vade <b>${g2} gün</b> açılabilir. Hesap ${g} güne göre yapıldı.`;
     tNot = `Not: ${ilk} ${fd(end1)} ${wd(end1)} (${tAd}) gününe denk geliyor. Vade, ilk iş günü olan ${fd(nb)} ${wd(nb)} tarihine göre ${g2} gün olarak açılabilir; yukarıdaki tutarlar ${g} gün içindir.`;
   } else if (aAd) {
-    $("m_warn").innerHTML = `📅 <b>${n === 1 ? "Vade sonu" : "İlk vade sonu"} arifeye denk geliyor:</b> ${fd(end1)} ${wd(end1)} (${aAd}, yarım gün çalışılır). Bilginiz olsun.`;
+    $("m_warn").innerHTML = `📅 <b>${n === 1 ? "Vade sonu" : "İlk vade sonu"} arifeye denk geliyor:</b> ${fd(end1)} ${wd(end1)} (${aAd}, yarım gün çalışılır).`;
     tNot = `Not: ${n === 1 ? "Vade sonu" : "İlk vade sonu"} ${fd(end1)} ${wd(end1)} ${aAd} (yarım gün) gününe denk geliyor.`;
   }
   $("m_warn").hidden = !(tAd || aAd);
@@ -1297,7 +1297,7 @@ function calcTK() {
   const tahsis = P * oran / 1000, tahsisB = tahsis * bsmv, ucret = tahsis + tahsisB + diger;
   $("t_mnote").innerHTML = num("t_tahsis") > 5
     ? '<span style="color:#ef8a5d">Tahsis ücreti binde 5\'i geçemez; hesap binde 5 ile yapıldı.</span>'
-    : "Kredi tahsis ücreti yasal olarak en fazla kredi tutarının binde 5'i olabilir ve bu ücrete BSMV (%15) eklenir. Diğer masraf: varsa sigorta vb.";
+    : "Kredi tahsis ücreti yasal olarak en fazla kredi tutarının binde 5'i olabilir ve bu ücrete BSMV (%15) eklenir. Diğer masraf: varsa ekspertiz, dosya vb.";
   const i = r * (1 + bsmv + kkdf);
   const bas = pDate($("t_bas").value) || new Date();
   if (!tIlkManual || !$("t_ilk").value) $("t_ilk").value = ymd(addMonthsC(bas, 1));
@@ -1348,7 +1348,7 @@ function calcTK() {
   $("ts_taksit").textContent = tl(tek ? plan[0].t : R2(taksit));
   $("ts_ilk").textContent = tek ? `Tek taksit · ${shortD(plan[0].d)}` : `${n} ay` + (ilkFark ? ` · ilk taksit ${tl(plan[0].t)}` : "");
   $("ts_toplam").textContent = tl(toplam);
-  $("ts_masraf").textContent = tl(ucret);
+  $("ts_masraf").textContent = tl(ucret); $("ts_masrafi").textContent = diger ? "tahsis + BSMV + diğer masraf" : "tahsis ücreti + BSMV";
   $("ts_sig").textContent = sigOn ? tl(sig) : "Yok";
   $("ts_sigi").textContent = sigOn ? `binde ${nfx(sigOran)} × ${nfx(n / 12)} yıl` : "";
   $("ts_net").textContent = tl(P - ucret);
@@ -1405,7 +1405,7 @@ function calcAO(c) {
     if (st.err) return clearA(st.err);
     const { k, B, last, g, acc, eski } = st;
     const kapama = R2(B + acc);
-    if (!X) return clearA("Ara ödeme tutarı girin.");
+    if (!X) return clearA("Ara ödeme tutarını gir.");
     if (X >= kapama - 0.005) {
       $("ao_label").textContent = "Erken kapama tutarı"; $("ao_out").textContent = tl(kapama);
       rows("ao_rows", [["Kalan anapara", tl(B)], [`İşlemiş faiz + vergiler (${g} gün)`, tl(acc)], ["Faiz tasarrufu", tl(eski - kapama), "pos"]]);
@@ -1414,7 +1414,7 @@ function calcAO(c) {
     }
     if (X <= acc) return clearA(`Ara ödeme, işlemiş faizi (${tl(acc)}) karşılamalı.`);
     const f0 = st.onDue ? k + 1 : k, cnt = n - f0;
-    if (cnt <= 0) return clearA(`Bugün son taksit günü; kalan borç için ${tl(kapama)} ödenmeli.`);
+    if (cnt <= 0) return clearA(`Seçilen tarih son taksit günü; kalan borç için ${tl(kapama)} ödenmeli.`);
     const B2 = R2(B - (X - acc));
     const per = mkPer(at, dues[f0], cnt);
     const v = $("ao_sec").value === "v";
@@ -1434,7 +1434,7 @@ function calcAO(c) {
       ["Faiz tasarrufu", tl(eski - X - sumT(p)), "pos"],
     ]);
     $("ao_plan").innerHTML = planHead + p.map((x, j) => planRow(x, f0 + j + 1)).join("") + planTot(p);
-    $("ao_note").textContent = (st.onDue ? "Ara ödeme taksit gününe denk geldi: o günün taksiti ödenmemiş sayıldı, faizi ara ödemeden kapatıldı ve yeni plan bir sonraki taksit gününden başlar. " : "") + "Ara ödeme önce işlemiş faizi (gün/30, KKDF+BSMV dahil) kapatır, kalanı anaparadan düşer. Yeni planın ilk taksiti, ara ödeme gününden taksit gününe kadar olan günlerin faiziyle hesaplanır.";
+    $("ao_note").textContent = (st.onDue ? "Ara ödeme taksit gününe denk geldi: o günün taksidi ödenmemiş sayıldı, faizi ara ödemeden kapatıldı ve yeni plan bir sonraki taksit gününden başlar. " : "") + "Ara ödeme önce işlemiş faizi (gün/30, KKDF+BSMV dahil) kapatır, kalanı anaparadan düşer. Yeni planın ilk taksiti, ara ödeme gününden taksit gününe kadar olan günlerin faiziyle hesaplanır.";
   })();
 
   // ---- Yapılandırma
@@ -1444,7 +1444,7 @@ function calcAO(c) {
     const { k, B, g, acc, eski } = st;
     const yn = Math.round(num("ys_n")), yr = num("ys_r") / 100;
     let pes = num("ys_p");
-    if (!(yn > 0)) return clearY("Yeni vade girin.");
+    if (!(yn > 0)) return clearY("Yeni vadeyi gir.");
     const eksik = pes < acc;
     if (eksik) pes = acc;
     const BC = R2(B - (pes - acc));
@@ -1503,10 +1503,10 @@ function calcKK() {
   const TB = [[0, "30.000 TL altı", 3.25, 3.55], [30000, "30.000 – 180.000 TL", 3.75, 4.05], [180001, "180.000 TL üstü", 4.25, 4.55]];
   $("k_note").innerHTML = `<b>Oranlar neden değişiyor?</b> TCMB azami faizi <b>dönem borcunun tutarına göre</b> üç dilimde belirliyor. Dönem borcunu değiştirince dilim değişirse oranlar da kendiliğinden değişir${kkManual ? " (şu an oranları elle girdin, otomatik seçim kapalı)" : ""}:
     <table class="ltvtab" style="margin-top:6px"><tr><th>Dönem borcu</th><th>Akdi</th><th>Gecikme</th></tr>${TB.map((r) => `<tr class="${!kkManual && r[1] === t[2] ? "on" : ""}"><td>${r[1]}</td><td>%${nfx(r[2])}</td><td>%${nfx(r[3])}</td></tr>`).join("")}</table>
-    <span style="display:block;margin-top:4px">📌 <b>maximum.com.tr'de yayımlanan oranlar:</b> Maximum kartlarda akdi faiz %3,25 / %3,75 / %4,25 (aylık, BSMV-KKDF hariç; <a href="https://www.maximum.com.tr/harcama-taksitlendirme" target="_blank" rel="noopener" style="color:var(--accent)">maximum.com.tr ↗</a>). Gecikme faizi de TCMB üst sınırında. Oranlar TCMB\'nin 1 Ekim 2026 tablosuyla aynı; kesin oran müşterinin hesap özetinde yazar.</span>`;
+    <span style="display:block;margin-top:4px">📌 <b>maximum.com.tr'de yayımlanan oranlar:</b> Maximum kartlarda akdi faiz %3,25 / %3,75 / %4,25 (aylık, BSMV-KKDF hariç; <a href="https://www.maximum.com.tr/harcama-taksitlendirme" target="_blank" rel="noopener" style="color:var(--accent)">maximum.com.tr ↗</a>). Gecikme faizi de TCMB üst sınırında. Oranlar TCMB\'nin 1 Ekim 2026 tablosuyla aynı; kesin oran hesap özetinde yazar.</span>`;
   $("k_out").textContent = tl(top);
   $("k_lim").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.a === num("k_asg")));
-  $("k_oto").innerHTML = `<span>✓</span><span>Oranlar otomatik: <b>akdi %${nfx(ra * 100)}</b> · <b>gecikme %${nfx(rg * 100)}</b> · asgari %${nfx(num("k_asg"))} · ${g} gün · BSMV+KKDF %${nfx(v * 100)}${kkManual ? " (elle değiştirildi)" : ` <span style="opacity:.75">(dönem borcu ${t[2]} dilimi, İş Bankası oranı)</span>`}. Sadece borcu, ödenen tutarı ve limiti girmen yeter.</span>`;
+  $("k_oto").innerHTML = `<span>✓</span><span>Oranlar otomatik: <b>akdi %${nfx(ra * 100)}</b> · <b>gecikme %${nfx(rg * 100)}</b> · asgari %${nfx(num("k_asg"))} · ${g} gün · BSMV+KKDF %${nfx(v * 100)}${kkManual ? " (elle girildi)" : ` <span style="opacity:.75">(dönem borcu ${t[2]} dilimi, İş Bankası oranı)</span>`}. Sadece borcu, ödenen tutarı ve limiti girmen yeter.</span>`;
   rows("k_rows", [
     ["Asgari ödeme", tl(asg)],
     [O >= asg ? "Asgari ödendi ✓" : "Ödenmeyen asgari", O >= asg ? "" : tl(asg - O), O >= asg ? "pos" : "neg"],
@@ -1618,7 +1618,7 @@ function calcKonut() {
   $("k2s_net").textContent = tl(P - tahsis - masraf);
   k2Pdf = { tur: "Konut Kredisi", bas: D.bas, P, r, n, bsmv: 0, kkdf: 0, tF, tV: 0, tFo: 0, top: toplam, T: R2(taksit), rows: plan.map((x) => ({ d: x.d, a: x.ana, f: x.f, fo: 0, v: 0, t: x.t, b: x.bal })) };
   k2Summary = krediOzet({ tur: "Konut Kredisi", P, n, r, taksit: R2(taksit), plan, bsmv: 0, kkdf: 0, tF, tB: 0, tK: 0, toplam, d0: plan[0].d, d1: plan[plan.length - 1].d });
-  $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksitin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.";
+  $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksidin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.";
 }
 
 // ---------- Hesap çekirdekleri (DOM'suz): vade karşılaştırma ve ters hesap da bunları kullanır ----------
@@ -1773,7 +1773,7 @@ const YON_IZLE = {
     const el = $(id); if (!el) continue;
     const dd = new Date(o.d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
     el.hidden = false;
-    el.innerHTML = `⚠️ <b>Dikkat:</b> ${dd} tarihli Resmi Gazete'de "${o.k}" geçen bir düzenleme var. Aşağıdaki baremler bu değişikliğe göre kontrol edilmemiş olabilir; <a href="gazete.html#${o.d}" style="color:inherit;font-weight:700">özeti aç</a> ve isbank.com.tr ile karşılaştır.`;
+    el.innerHTML = `⚠️ <b>Dikkat:</b> ${dd} tarihli Resmi Gazete'de taşıt kredilerini ilgilendirebilecek bir düzenleme var. Aşağıdaki baremler bu değişikliğe göre kontrol edilmemiş olabilir; <a href="gazete.html#${o.d}" style="color:inherit;font-weight:700">özeti aç</a> ve isbank.com.tr ile karşılaştır.`;
   }
 })();
 
@@ -1813,7 +1813,7 @@ function vkCalc(pre) { ({ t: calcTK, k2: calcKonut, tc: calcTic })[pre](); vkRen
   $(pre + "_butce").addEventListener("input", () => vkRender(pre));
 });
 // Banka dışına giden her özetin sonunda aynı uyarı olsun (tek yerden)
-const NOT_OZET = "ℹ️ Tahmini hesaplamadır, resmi belge değildir. Kesin tutar işlem günü bankanızca belirlenir.";
+const NOT_OZET = "ℹ️ Tahmini hesaplamadır, resmî belge değildir. Kesin tutar işlem günü banka tarafından belirlenir.";
 function notEkle(t) { return !t || String(t).includes(NOT_OZET) ? t : String(t).trimEnd() + "\n\n" + NOT_OZET; }
 // Hesap özeti: tek tip metin + kopyala düğmesi (kişisel not)
 function ozetMetni(baslik, bolumler, not) {
@@ -1831,7 +1831,7 @@ function ozetBagla(pre, getT) {
 }
 // ---------- Ödeme planı PDF (üç kredide ortak) ----------
 let tkPdf = null, k2Pdf = null, tcPdf = null;
-const PDF_NOTE = "Bu belge tahmini bir hesaplamadır; bankanın resmi ödeme planı değildir. Kesin tutarlar ve tarihler işlem günü bankanızca belirlenir. Ücret, masraf, komisyon ve sigorta dahil edilmemiştir.";
+const PDF_NOTE = "Bu belge tahmini bir hesaplamadır; bankanın resmi ödeme planı değildir. Kesin tutarlar ve tarihler işlem günü banka tarafından belirlenir. Ücret, masraf, komisyon ve sigorta dahil edilmemiştir.";
 // Özet kutuları: ilk satır kredi, ikinci satır ödeme bilgisi
 function planKutular(o) {
   const f = fmt2, pc = (x) => "%" + x.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
@@ -1959,7 +1959,7 @@ function krediOzet(o) {
     `Toplam faiz: ${tl(o.tF)}`,
     `BSMV oranı: ${pc(o.bsmv)} · BSMV tutarı: ${tl(o.tB)}`,
     `KKDF oranı: ${pc(o.kkdf)} · KKDF tutarı: ${tl(o.tK)}`,
-    `Toplam vergi (BSMV + KKDF): ${tl(o.tB + o.tK)}`,
+    `Toplam vergi ve fon (BSMV + KKDF): ${tl(o.tB + o.tK)}`,
     L,
     `İlk taksit tarihi: ${shortD(o.d0)}`,
     `Son taksit tarihi: ${shortD(o.d1)}`,
@@ -1997,7 +1997,7 @@ function calcTic() {
   $("tc_dnote").innerHTML = ilk && ilk > bas && gun > 45
     ? `<span style="color:#ef8a5d">⚠️ İlk taksit kredi veriliş tarihinden en fazla <b>45 gün</b> sonra olabilir; ${kay || ymd(ilkK) !== ymd(ilk) ? `iş gününe kaymış hâliyle (${shortD(ilkK)}) ` : ""}şu an <b>${gun} gün</b>. ${shortD(bas)} için en geç ${shortD(addDays(bas, 45))} seç (iş günü olmalı).</span>`
     : ok ? `İlk taksite <b>${gun} gün</b>. ` + (kay ? `${shortD(ilk)} ${ilk.toLocaleDateString("tr-TR", { weekday: "long" })} olduğu için ilk taksit <b>${shortD(ilkK)}</b> tarihine kayar. ` : "") + `Ödeme günü: her ayın <b>${ilk.getDate()}.</b> günü; hafta sonu ya da bayrama denk gelirse ilk iş günü.`  +
-    (!kay && isHoliday(addDays(ilk, -1)) && ilk.getDate() > 1 ? `<br><span style="color:#e0a24f">💡 Bankaya ödeme günü ${shortD(addDays(ilk, -1))} girildiyse (tatil olduğu için planda ${shortD(ilk)} görünür) burada da ${shortD(addDays(ilk, -1))} gir; yoksa sonraki taksit günleri kayar.</span>` : "") : '<span style="color:#ef8a5d">⚠️ Ödeme başlangıç tarihi kredi veriliş tarihinden sonra olmalı.</span>';
+    (!kay && isHoliday(addDays(ilk, -1)) && ilk.getDate() > 1 ? `<br><span style="color:#e0a24f">💡 Sözleşmedeki ödeme günü ${shortD(addDays(ilk, -1))} ise (tatil olduğu için planda ${shortD(ilk)} görünür) burada da ${shortD(addDays(ilk, -1))} gir; yoksa sonraki taksit günleri kayar.</span>` : "") : '<span style="color:#ef8a5d">⚠️ Ödeme başlangıç tarihi kredi veriliş tarihinden sonra olmalı.</span>';
   const clear = () => { ["tcs_taksit", "tcs_faiz", "tcs_vergi", "tcs_toplam"].forEach((x) => ($(x).textContent = "–")); $("tcs_ilk").textContent = ""; $("tc_out").textContent = "–"; rows("tc_rows", []); $("tc_plan").innerHTML = ""; tcLast = null; tcSummary = ""; };
   if (!P || !n || n > 600 || !ok) return clear();
   const { T, plan, dues, g } = tcCore(P, r, n, bsmv, kkdf, bas, ilk);
@@ -2080,7 +2080,7 @@ function calcTarim() {
   const cur = build(kkdf, bsmv);
   const sum = (pl, k) => pl.reduce((a, x) => a + x[k], 0);
   const toplam = sum(cur.plan, "t"), fz = sum(cur.plan, "f");
-  const alt = durum === "levha" ? build(0.15, bsmv) : null;
+  const alt = durum === "levha" ? build(trKkdf("cks", num("tr_tutar")), bsmv) : null; // levhasız olsaydı: 15.000 TL'ye kadar KKDF yok
   const fark = alt ? Math.abs(sum(alt.plan, "t") - toplam) : 0;
   const ilkF = cur.plan.length > 1 && Math.abs(cur.plan[0].t - R2(cur.T)) > 0.005;
   $("tr_bigLbl").textContent = mode === "hasat" ? "Vade sonu ödeme" : mode === "yillik" ? "Yıllık taksit" : "Aylık taksit";
@@ -2209,10 +2209,10 @@ function calcCek() {
   $("c_tab").innerHTML = "<tr><th>#</th><th>Tutar</th><th>Vade</th><th>Vade gün</th><th>Valör</th><th>Gün</th><th>Faiz</th><th>BSMV</th></tr>" +
     res.map((x) => `<tr><td>${x.i + 1}</td><td>${fmt2(x.T)}</td><td>${shortD(x.v)}</td><td>${x.nv}</td><td>${shortD(x.val)}</td><td>${x.nf}</td><td>${fmt2(x.F)}</td><td>${fmt2(x.bs)}</td></tr>`).join("");
   $("c_warn").innerHTML = warns.some((w) => !w.startsWith("ℹ️")) ? `<div class="ckwarn">${warns.map((w) => `<div>${w}</div>`).join("")}</div>` : `<div class="ckwarn" style="border-color:#1f6f4a;background:rgba(31,111,74,.12);color:#9fe0bf">✅ Vade ve valör tarihleri iş gününe denk geliyor.${warns.map((w) => `<div>${w}</div>`).join("")}</div>`;
-  $("c_note").textContent = !ic ? `Banka tablosu: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ ${B}; gün = valör − kullandırım + 1 (valör günü dahil). Ortalama vade gün sayısı tutar ağırlıklıdır. Faiz kullandırımda peşin alınır.` : `Reeskont: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ (${B} + yıllık faiz × gün). Faiz kullandırımda peşin alınır; gün sayısı kullandırımdan valör (hesaba geçiş) tarihine kadardır.`;
+  $("c_note").textContent = !ic ? `Hesap yöntemi: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ ${B}; gün = valör − kullandırım + 1 (valör günü dahil). Ortalama vade gün sayısı tutar ağırlıklıdır. Faiz kullandırımda peşin alınır.` : `Reeskont: Faiz = Kullandırılan tutar × yıllık faiz × gün ÷ (${B} + yıllık faiz × gün). Faiz kullandırımda peşin alınır; gün sayısı kullandırımdan valör (hesaba geçiş) tarihine kadardır.`;
   const sum = [ozetMetni("TL ÇEK İSKONTO ÖZETİ", [[`İşlem (kullandırım) tarihi: ${shortD(isl)}`, `Çek adedi: ${res.length}`, `Yıllık faiz oranı: %${nfx(ry * 100)}`],
     res.map((x) => `${x.i + 1}) ${fmt2(x.T)} TL · vade ${shortD(x.v)} · valör ${shortD(x.val)} · ${x.nf} gün`),
-    [`Toplam çek: ${tl(TT)}`, ...(oran < 1 ? [`Kullandırılan (%${nfx(oran * 100)}): ${tl(AA)}`] : []), `İskonto faizi: ${tl(FF)}`, `BSMV (%${nfx(bsmv * 100)}): ${tl(BS)}`, ...(KK ? [`KKDF: ${tl(KK)}`] : []), ...(kom ? [`Kullandırım komisyonu + BSMV: ${tl(kom + komBS)}`] : []), `Ortalama vade: ${shortD(ortVD)} · valör ${shortD(ortVV)}`, `Hesabınıza geçecek net tutar: ${tl(net)}`]],
+    [`Toplam çek: ${tl(TT)}`, ...(oran < 1 ? [`Kullandırılan (%${nfx(oran * 100)}): ${tl(AA)}`] : []), `İskonto faizi: ${tl(FF)}`, `BSMV (%${nfx(bsmv * 100)}): ${tl(BS)}`, ...(KK ? [`KKDF: ${tl(KK)}`] : []), ...(kom ? [`Kullandırım komisyonu + BSMV: ${tl(kom + komBS)}`] : []), `Ortalama vade: ${shortD(ortVD)} · valör ${shortD(ortVV)}`, `Hesaba geçecek net tutar: ${tl(net)}`]],
     "Faiz kullandırımda peşin alınır; valör tarihleri hafta sonu ve resmi tatillere göre kaydırılmıştır.")];
   $("c_prev").textContent = sum.join("\n");
   cekPdf = { isl, ry, res, TT, AA, FF, BS, KK, kom: kom + komBS, net, ortVD, ortVV, bsmv, kkdf, oran };
@@ -2322,7 +2322,7 @@ function renderCal(isl, res) {
   });
   const list = groups.map((g) => `<div class="hl${g.half ? " half" : ""}"><span>${g.s === g.e ? fdtw(g.s) : `${g.s.getDate()}–${fdtw(g.e)}`} ${g.e.getFullYear()}</span><b>${g.base}</b></div>`).join("");
   $("c_cal").innerHTML = `<div class="tip" id="c_tip">Bir güne dokun, açıklamasını gör.</div><div class="yr">${html}</div>
-    <div class="lg"><span class="l1">Kullandırım</span><span class="l2">Çek vadesi</span><span class="l3">Valör</span><span class="l4">Resmi / dini bayram</span><span class="l5">Arife (yarım gün)</span><span class="l6">Hafta sonu</span></div>`;
+    <div class="lg"><span class="l1">Kullandırım</span><span class="l2">Çek vadesi</span><span class="l3">Valör</span><span class="l4">Resmî tatil / bayram</span><span class="l5">Arife (yarım gün)</span><span class="l6">Hafta sonu</span></div>`;
 }
 $("c_cal").addEventListener("click", (e) => { const d = e.target.closest(".d[data-tip]"); if (d) $("c_tip").textContent = d.dataset.tip; });
 $("c_list").addEventListener("input", (e) => { const el = e.target; if (el.dataset.i == null) return; CEKLER[+el.dataset.i][el.dataset.k] = el.value; calcCek(); });
@@ -2378,11 +2378,11 @@ renderCekList();
     $("e_oranlarNot") && $("e_oranlarNot").remove();
     const n = document.createElement("div"); n.id = "e_oranlarNot"; n.className = "ekoran";
     const P = [lnk(EK.link, `Standart %${f2(EK.aylik)}`)];
-    donemli().filter(aktif).forEach((k) => P.push(lnk(k.url, `${k.ad} %${f2(k.oran)}${k.bit ? ` (${trh(k.bit)}'e kadar)` : ""}`)));
+    donemli().filter(aktif).forEach((k) => P.push(lnk(k.url, `${k.ad} %${f2(k.oran)}${k.bit ? ` (son gün ${trh(k.bit)})` : ""}`)));
     if (EK.isplus) P.push(lnk(EK.link_isplus, "İş Plus: " + Object.entries(EK.isplus).map(([a, v]) => `${a} %${f2(v)}`).join(" · ")));
     if (EK.black) P.push(lnk(EK.link_black, `İş Black %${f2(EK.black.Black)} · Black Plus %${f2(EK.black["Black Plus"])}`));
     const biten = donemli().filter((k) => k.bit && bugun > k.bit && gunFark(k.bit, bugun) <= 30);
-    n.innerHTML = `<b>Kaynaklar:</b> ${P.join(" · ")}. Taksitli kullanımda indirim yok.` + biten.map((k) => `<br>⏹️ ${k.ad} için %${f2(k.oran)} kampanyası ${trh(k.bit)}'de bitti; artık standart oran geçerli.`).join("");
+    n.innerHTML = `<b>Kaynaklar:</b> ${P.join(" · ")}. Bu indirimler taksitli kullanıma geçmez; taksitli için ayrı dönemsel kampanya olabilir.` + biten.map((k) => `<br>⏹️ ${k.ad} için %${f2(k.oran)} kampanyası sona erdi (son gün ${trh(k.bit)}); artık standart oran geçerli.`).join("");
     $("e_oranlar").after(n);
   }
   function gunler(g) {
@@ -2432,10 +2432,10 @@ renderCekList();
     $("et_note").textContent = (P < 500 || P > 600000 ? "⚠️ Taksitli kullanım 500 TL – 600.000 TL arası ve ek hesap limiti kadar. " : "") + "İlk taksit kullanımdan 30 gün sonra.";
     tOzet = ozetMetni("TAKSİTLİ NAKİT AVANS ÖZETİ (Ek Hesaba bağlı)", [[`Tutar: ${tl(P)}`, `Vade: ${n} ay`, `Aylık faiz oranı: %${f2(r * 100)}`], [`Aylık taksit tutarı: ${tl(t)}`, `Toplam geri ödeme: ${tl(top)}`], [`Toplam faiz: ${tl(sF)}`, `KKDF + BSMV: ${tl(sV)}`, `Efektif aylık maliyet: %${(re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })}`]], "Oran kullanım günü sabitlenir, vade boyunca değişmez.");
     const K = EK.kampanya, kEl = $("et_kamp");
-    if (K && bugun >= (K.bas || "") && bugun <= K.bit) { kEl.hidden = false; kEl.href = K.url; kEl.innerHTML = `🎉 <b>${K.ad}</b> · ${trh(K.bit)}'e kadar: ${K.oran} ↗`; } else kEl.hidden = true;
+    if (K && bugun >= (K.bas || "") && bugun <= K.bit) { kEl.hidden = false; kEl.href = K.url; kEl.innerHTML = `🎉 <b>${K.ad}</b> · son gün ${trh(K.bit)}: ${K.oran} ↗`; } else kEl.hidden = true;
   };
   function src() {
-    $("e_src").innerHTML = `Faiz oranı kendiliğinden gelmez; sana uygulanan oranı yaz. Düğmelerdeki oranlar <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr</a>'de herkese açık yayımlanan genel oranlardır (son kontrol: ${new Date(EK.kontrol + "T12:00:00").toLocaleDateString("tr-TR")}); müşteriye özel oran farklı olabilir. Hesap bilgi amaçlıdır.`;
+    $("e_src").innerHTML = `Faiz oranı kendiliğinden gelmez; sana uygulanan oranı yaz. Düğmelerdeki oranlar <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr</a>'de herkese açık yayımlanan genel oranlardır (son kontrol: ${new Date(EK.kontrol + "T12:00:00").toLocaleDateString("tr-TR")}); kişiye uygulanan oran farklı olabilir. Hesap bilgi amaçlıdır.`;
   }
   const kopya = (id, getT) => $(id).addEventListener("click", () => {
     const t = getT(); if (!t) return; const b = $(id), o = b.textContent;

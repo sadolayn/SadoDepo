@@ -172,7 +172,7 @@ function save() { try { localStorage.setItem("piyasa_v1", JSON.stringify(S)); } 
 const $ = (x) => document.getElementById(x);
 const nf = (v, d = 2) => Number(v).toLocaleString("tr-TR", { minimumFractionDigits: d, maximumFractionDigits: d });
 const tl = (v) => nf(v, v >= 1000 ? 0 : 2) + " TL";
-const pct = (v, d = 1) => (v > 0 ? "+" : v < 0 ? "−" : "") + nf(Math.abs(v), d) + "%";
+const pct = (v, d = 1) => (v > 0 ? "+" : v < 0 ? "−" : "") + "%" + nf(Math.abs(v), d);
 const cls = (v) => (v > 0 ? "up" : v < 0 ? "down" : "");
 const arrow = (v) => (v > 0 ? "▲" : v < 0 ? "▼" : "•");
 const fdate = (s, o = { day: "numeric", month: "long", year: "numeric" }) => new Date(s + "T12:00:00").toLocaleDateString("tr-TR", o);

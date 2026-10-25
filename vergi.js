@@ -87,7 +87,7 @@ window.Vergi = (function () {
       <div id="v_alert"></div>
       </div>
       <div class="vlist" id="v_list"></div>
-      <p class="note">Son gün hafta sonu ya da resmi tatile denk gelirse izleyen ilk iş gününe kayar (VUK). Arife günleri öğleden sonra tatildir; ödemeyi sabah yaptırın. Bir vergiye dokun → aşağıda ödeme planı ve kısa bir not hazırlanır.</p>
+      <p class="note">Son gün hafta sonu ya da resmi tatile denk gelirse izleyen ilk iş gününe kayar (VUK). Arife günleri öğleden sonra tatildir; ödemeyi sabah yap. Bir vergiye dokun → aşağıda ödeme planı ve kısa bir not hazırlanır.</p>
     </div>
     <div class="card">
       <h2>💳 Ödeme planı</h2>
@@ -111,7 +111,7 @@ window.Vergi = (function () {
     <div class="card">
       <h2>📅 1 Yıllık Vergi Takvimi</h2>
       <div class="cal" id="v_cal"></div>
-      <p class="note">Tarihler Gelir İdaresi vergi takviminin genel düzenine göre hazırlanmıştır; GİB süre uzatımı ilan edebilir, kesin tarih için gib.gov.tr vergi takvimini kontrol edin. Gecikme zammı: aylık %3,7 (13.11.2025 Resmî Gazete), gün bazında hesaplanır.</p>
+      <p class="note">Tarihler Gelir İdaresi vergi takviminin genel düzenine göre hazırlanmıştır; GİB süre uzatımı ilan edebilir, kesin tarih için gib.gov.tr vergi takvimini kontrol et. Gecikme zammı: aylık %3,7 (13.11.2025 Resmî Gazete), gün bazında hesaplanır.</p>
     </div>
 `;
 const GZ_AYLIK = 3.7; // gecikme zammı, aylık % (13.11.2025 RG)
@@ -130,14 +130,14 @@ function vergiEvents(from, to) {
     add(y, 11, 30, { k: "emk2", ic: "🏠", n: "Emlak ve ÇTV 2. taksit", c: "b", both: 1, t: "Emlak vergisi + çevre temizlik vergisi (Kasım)" });
     add(y, 3, 31, { k: "gv1", ic: "💼", n: "Yıllık gelir vergisi beyanı + 1. taksit", c: "b", t: "Kira, serbest meslek, ticari kazanç vb. önceki yıl gelirleri" });
     add(y, 7, 31, { k: "gv2", ic: "💼", n: "Yıllık gelir vergisi 2. taksit", c: "b", t: "Mart'ta beyan edilen gelir vergisinin ikinci yarısı" });
-    add(y, 2, 28, { k: "bu", ic: "🏪", n: "Basit usul beyanı", c: "t", t: "Basit usule tabi esnafın yıllık beyanı" });
     add(y, 4, 30, { k: "kv", ic: "🏢", n: "Kurumlar vergisi beyan ve ödeme", c: "t", t: "Şirketlerin önceki yıl kurumlar vergisi" });
     add(y, 5, 17, { k: "gec1", ic: "📊", n: "Geçici vergi (1. dönem)", c: "t", t: "Ocak–Mart dönemi geçici vergi beyan ve ödeme" });
     add(y, 8, 17, { k: "gec2", ic: "📊", n: "Geçici vergi (2. dönem)", c: "t", t: "Nisan–Haziran dönemi geçici vergi beyan ve ödeme" });
     add(y, 11, 17, { k: "gec3", ic: "📊", n: "Geçici vergi (3. dönem)", c: "t", t: "Temmuz–Eylül dönemi geçici vergi beyan ve ödeme" });
     for (let m = 1; m <= 12; m++) {
       const pm = AYLAR_TR[(m + 10) % 12];
-      add(y, m, 28, { k: "kdv", ic: "🧾", n: "KDV + Muhtasar ve prim hizmet + Damga", c: "t", t: `${pm} dönemi beyan ve ödemeleri` });
+      add(y, m, 26, { k: "muh", ic: "🧾", n: "Muhtasar ve prim hizmet + Damga", c: "t", t: `${pm} dönemi beyan ve ödemeleri` });
+      add(y, m, 28, { k: "kdv", ic: "🧾", n: "KDV", c: "t", t: `${pm} dönemi KDV beyan ve ödemesi` });
       add(y, m, 31, { k: "sgk", ic: "👷", n: "SGK primi + Ba-Bs formları", c: "t", t: `${pm} dönemi SGK prim ödemesi ve Ba-Bs bildirimleri` });
     }
   }
@@ -145,10 +145,10 @@ function vergiEvents(from, to) {
 }
 // Kartla ödeme / taksit durumu (İş Bankası kampanya sayfalarındaki son bilgilere göre; kampanyalar dönemseldir)
 const VTK = {
-  mtv: { def: 3, max: 3, lvl: "g", txt: "🚗 <b>MTV'de taksit var (kampanyalı).</b> Maximum özellikli bireysel kartlarla Ocak/Temmuz dönemlerinde 3 aya varan taksit (Ocak 2026: 750 TL ve üzeri, tüm banka kanalları). gib.gov.tr'de peşin ödenen 2.000 TL ve üzeri MTV sonradan 2–3 taksit faizsiz yapılabildi. Ticari: <b>İş Bankası Vergi Kart</b> ile plaka sınırı olmadan toplu MTV talimatı." },
+  mtv: { def: 3, max: 3, lvl: "g", txt: "🚗 <b>MTV'de geçmiş dönemlerde kampanyalı taksit oldu.</b> Maximum özellikli bireysel kartlarla Ocak/Temmuz dönemlerinde 3 aya varan taksit (Ocak 2026: 750 TL ve üzeri, tüm banka kanalları). gib.gov.tr'de peşin ödenen 2.000 TL ve üzeri MTV sonradan 2–3 taksit faizsiz yapılabildi. Ticari: <b>İş Bankası Vergi Kart</b> ile plaka sınırı olmadan toplu MTV talimatı." },
   emk: { def: 1, max: 12, lvl: "o", txt: "🏠 <b>Emlak ve ÇTV'de taksit kampanyası genelde yok</b>, kartla tek çekim ödenir (ÇTV belediye POS'u üzerinden Vergi Kart ile de ödenebilir). Taksit seçersen standart kart faizi işler." },
   gv: { def: 1, max: 12, lvl: "o", txt: "💼 <b>Gelir vergisinde taksit kampanyaya bağlı</b>; kampanya yoksa kartla tek çekim. Taksit seçersen standart kart faizi işler." },
-  tic: { def: 1, max: 4, lvl: "o", txt: "🏢 <b>Ticari vergilerde taksit dönemsel kampanyaya bağlı.</b> İş Bankası ticari kredi kartlarıyla geçmiş kampanyalarda 2–4 ay faizsiz taksit verildi (gib.gov.tr veya banka kanalı, taksitlendirme İşCep / Maximum İşyerim'den). <b>Vergi Kart</b>: tek çekim, ayda iki hesap kesimi (15 ve 28'i). Kampanya yoksa standart oran." },
+  tic: { def: 1, max: 4, lvl: "o", txt: "🏢 <b>Ticari vergilerde taksit dönemsel kampanyaya bağlı.</b> İş Bankası ticari kredi kartlarıyla geçmiş kampanyalarda 2–4 ay faizsiz taksit verildi (gib.gov.tr veya banka kanalı, taksitlendirme İşCep / Maximum İşyerim'den). <b>Vergi Kart</b>: tek çekim, ayda iki hesap kesimi (15'i ve 28'i). Kampanya yoksa standart oran." },
   sgk: { def: 2, max: 2, lvl: "o", txt: "👷 <b>SGK primi:</b> ticari kartla 5.000 TL ve üzeri ödemeye 2 ay faizsiz taksit kampanyası uygulandı (2025, talep İşCep'ten, hesap kesiminden önce). Kartla SGK ödemesinde <b>%3,10 + BSMV komisyon</b> (en az 4,94 TL + BSMV) alınır; taksit kampanyası komisyonu kapsamaz. SGK'da gecikme cezası ve gecikme zammı ayrı kurallarla hesaplanır; aşağıdaki gecikme tutarı yaklaşıktır." },
 };
 const vtkOf = (e) => (e.k.startsWith("mtv") ? VTK.mtv : e.k.startsWith("emk") ? VTK.emk : e.k.startsWith("gv") ? VTK.gv : e.k === "sgk" ? VTK.sgk : VTK.tic);
@@ -184,7 +184,7 @@ function calcVergi() {
 }
 function calcVergiPlan(today) {
   const e = vSel;
-  $("v_sel").innerHTML = e ? `${e.ic} <b>${e.n}</b> · son gün ${fdtw(e.d)} ${e.d.getFullYear()} · <b>${dayDiff(today, e.d)} gün</b> kaldı` : "Listeden bir vergi seç.";
+  $("v_sel").innerHTML = e ? `${e.ic} <b>${e.n}</b> · son gün ${fdtw(e.d)} ${e.d.getFullYear()} · ${dayDiff(today, e.d) ? `<b>${dayDiff(today, e.d)} gün</b> kaldı` : "<b>bugün son gün</b>"}` : "Listeden bir vergi seç.";
   const T = num("v_tut"), n = Math.max(1, +$("v_tak").value || 1), r = num("v_fz") / 100, g = Math.max(0, Math.round(num("v_gun")));
   if (!T) { $("v_out").textContent = "–"; rows("v_rows", []); $("v_msg").value = ""; return; }
   const i = r * 1.3;
@@ -200,7 +200,7 @@ function calcVergiPlan(today) {
     ["Vergi tutarı", tl(T)],
     ...(kom ? [["Kartla SGK ödeme komisyonu (%3,10 + BSMV)", "+" + tl(kom), "neg"]] : []),
     ...(n > 1 ? [[`Kartla ${n} taksit toplamı`, tl(top)], [r ? "Taksit maliyeti (faiz + KKDF + BSMV)" : "Taksit maliyeti", r ? "+" + tl(ek) : "Faizsiz", r ? "neg" : "pos"]] : []),
-    [`Geç öderse: ${g} gün gecikme zammı (aylık %${nfx(GZ_AYLIK)})`, "+" + tl(gz), "neg"],
+    [`Geç ödenirse: ${g} gün gecikme zammı (aylık %${nfx(GZ_AYLIK)})`, "+" + tl(gz), "neg"],
     [`${g} gün gecikmeyle toplam`, tl(T + gz), "total"],
     ...(r && n > 1 ? [[gz > ek ? "✅ Taksitli ödemek gecikmekten ucuz" : "ℹ️ Bu sürede gecikme zammı taksit maliyetinden düşük", tl(Math.abs(gz - ek)) + " fark"]] : []),
   ]);

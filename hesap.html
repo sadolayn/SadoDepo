@@ -365,7 +365,7 @@
     </div></div>
     <div class="rulobox"><div class="tape" id="tape"><div id="tapeIn"><span class="e">— rulo boş —</span></div></div></div>
     <div class="tapebar"><button id="tPdf">📄 PDF indir</button><button id="tCopy">📋 Kopyala</button><button id="tClear">🧻 Kopar</button></div>
-    <div class="smart">🧠 <b>Bu hesap makinesi akıllıdır!</b><br>10'u 3'e bölüp 3 ile çarparsanız tertemiz <b>10</b> bulursunuz.<br><s>9,9999999</s> diyen makinelere itibar etmeyiniz 😁</div>
+    <div class="smart">🧠 <b>Bu hesap makinesi akıllıdır!</b><br>10'u 3'e bölüp 3 ile çarparsan tertemiz <b>10</b> bulursun.<br><s>9,9999999</s> diyen makinelere itibar etme 😁</div>
   </section>
 
   <!-- ===== Mesafe ölçer ===== -->
@@ -402,7 +402,7 @@
         <li>Ekrandaki <b>artıyı</b> ölçeceğin şeyin <b>yere değdiği noktaya</b> getir (ağacın dibi, duvarın zemine değdiği yer…). Üstte <b>uzaklık</b> canlı yazar. <b>🔒 Uzaklığı kilitle</b>'ye bas.</li>
         <li>Yüksekliği de merak ediyorsan telefonu yavaşça kaldır, artıyı aynı şeyin <b>tepesine</b> getir: <b>yükseklik</b> yazar.</li>
       </ol>
-      <p class="hint">İpucu: Olduğun yerde dur, sadece telefonu eğ. Düz zeminde 1–30 m arasında en iyi sonucu verir (yaklaşık ±%5–10). Ölçüm, telefonun eğim sensörüyle trigonometri kullanılarak yapılır.</p>
+      <p class="hint">İpucu: Olduğun yerde dur, sadece telefonu eğ. Düz zeminde 15 metreye kadar en iyi sonucu verir; uzaklık arttıkça hata büyür. Ölçüm, telefonun eğim sensörüyle trigonometri kullanılarak yapılır.</p>
       <div class="tapebar"><button type="button" id="camStop">⏹ Kamerayı kapat</button></div>
     </div>
   </section>
@@ -453,7 +453,7 @@
     </div>
     <div class="card">
       <h2>Tarihe gün ekle / çıkar</h2>
-      <div class="two"><div><label>Tarih</label><input type="date" id="aD"></div><div><label>Gün (eksi olabilir)</label><div class="field"><input id="aN" inputmode="numeric" value="45"><span>gün</span></div></div></div>
+      <div class="two"><div><label>Tarih</label><input type="date" id="aD"></div><div><label>Gün (geri saymak için ±)</label><div class="field"><input id="aN" inputmode="numeric" value="45"><span><button type="button" id="aNeg" aria-label="Eksi ya da artı yap" style="background:none;border:1px solid var(--line);border-radius:8px;color:var(--ink);font-size:15px;padding:2px 8px;margin-right:6px;cursor:pointer">±</button>gün</span></div></div></div>
       <div class="res"><div class="big"><small>Sonuç</small><span id="aOut">–</span></div><div class="rows" id="aRows" style="margin-top:6px"></div></div>
     </div>
   </section>
@@ -483,7 +483,7 @@
         <div><label>Döner sermaye ücreti</label><div class="field"><input id="tpD" inputmode="decimal" placeholder="0"><span>TL</span></div></div>
       </div>
       <div class="res"><div class="big"><small>Toplam tapu harcı (%4)</small><span id="tpOut">–</span></div><div class="rows" id="tpRows" style="margin-top:6px"></div></div>
-      <p class="hint">Tapu harcı satış bedelinin <b>binde 20'si alıcıdan, binde 20'si satıcıdan</b> alınır (toplam %4). Beyan edilen bedel <b>emlak vergi değerinin altında olamaz</b>; düşük beyan edilirse harç vergi değeri üzerinden hesaplanır ve ceza çıkabilir. Döner sermaye ücretini tapu müdürlüğü belirler (2026'da il ve ilçeye göre yaklaşık 3.400–6.700 TL). Taraflar anlaşırsa harcın tamamını biri ödeyebilir.</p>
+      <p class="hint">Tapu harcı satış bedelinin <b>binde 20'si alıcıdan, binde 20'si satıcıdan</b> alınır (toplam %4). Beyan edilen bedel <b>emlak vergi değerinin altında olamaz</b>; düşük beyan edilirse harç vergi değeri üzerinden hesaplanır ve ceza çıkabilir. Döner sermaye ücretini her yıl Tapu ve Kadastro Genel Müdürlüğü belirler (2026'da il ve ilçeye göre yaklaşık 3.400–6.700 TL). Taraflar anlaşırsa harcın tamamını biri ödeyebilir.</p>
     </div>
     <div class="card">
       <h2>％ Yüzde</h2>
@@ -528,7 +528,7 @@
       <div class="seg" id="bmLvl"><button data-l="1">🙂 Kolay</button><button data-l="2" class="on">😤 Zor</button><button data-l="3">🔥 Çok zor</button></div>
       <p class="hint" id="bmLvlHint" style="margin:6px 0 0"></p>
       <label>Senin gizli sayın (Sadolayn bunu bulmaya çalışacak)</label>
-      <div class="field"><input id="bmMine" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="ör. 4271" style="letter-spacing:4px;-webkit-text-security:disc"><span><button type="button" id="bmEye" style="background:none;border:none;font-size:16px;cursor:pointer">👁</button></span></div>
+      <div class="field"><input id="bmMine" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="ör. 4271" style="letter-spacing:4px;-webkit-text-security:disc"><span><button type="button" id="bmEye" aria-label="Sayıyı göster ya da gizle" style="background:none;border:none;font-size:16px;cursor:pointer">👁</button></span></div>
       <div class="chips"><button type="button" id="bmRand">🎲 Benim yerime rastgele seç</button></div>
       <p class="hint" id="bmErr" style="color:var(--red)"></p>
       <button type="button" class="btn-go" id="bmGo">Oyuna başla</button>
@@ -552,7 +552,7 @@
         <div class="rlPaper" id="rlPaper">
           <div class="rlHead"><b>SADOLAYN</b><span>🔢 Sayı Bulmaca · <span id="rlInfo"></span></span><i>✂ · · · · · · · · · · · · · · · · · · · · ✂</i></div>
           <div class="rlLines" id="rlLines"></div>
-          <div class="rlWrite"><input id="rlText" type="text" maxlength="60" placeholder="Not yaz, Enter'a bas (ör. 7 yok, 3 başta)"><button type="button" id="rlAdd">＋</button></div>
+          <div class="rlWrite"><input id="rlText" type="text" maxlength="60" placeholder="Not yaz, Enter'a bas (ör. 7 yok, 3 başta)"><button type="button" id="rlAdd" aria-label="Not ekle">＋</button></div>
           <canvas id="rlCanvas" aria-label="Çizim alanı"></canvas>
           <div class="rlFoot">Parmağınla çiz, karala, hesap yap ✍️</div>
         </div>
@@ -744,7 +744,7 @@ $("tPdf").onclick = async () => {
     let y = 12;
     doc.setFont("FS", "bold"); doc.setFontSize(14); doc.text("SADOLAYN", W / 2, y, { align: "center" }); y += 5;
     doc.setFont("FS", "normal"); doc.setFontSize(8.5); doc.setTextColor(110);
-    doc.text("SL-12 · Hesap rulosu", W / 2, y, { align: "center" }); y += 4.5;
+    doc.text(`${SKIN[skin].replace(/[^\x20-\x7E]/g, "").trim()} · Hesap rulosu`, W / 2, y, { align: "center" }); y += 4.5;
     doc.text(now.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" }) + "  " + now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }), W / 2, y, { align: "center" }); y += 4;
     dash(y); y += 6;
     doc.setFontSize(11);
@@ -761,7 +761,7 @@ $("tPdf").onclick = async () => {
   } catch (e) { $("tPdf").textContent = "⚠️ Olmadı, tekrar dene"; }
   setTimeout(() => ($("tPdf").textContent = "📄 PDF indir"), 1600);
 };
-$("tCopy").onclick = () => { const t = tapeL.map(([a, b]) => `${b ? b + " " : ""}${a}`.trim()).join("\n"); if (!t) return; (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { $("tCopy").textContent = "✅ Kopyalandı"; setTimeout(() => ($("tCopy").textContent = "📋 Ruloyu kopyala"), 1400); }, () => prompt("Kopyala:", t)); };
+$("tCopy").onclick = () => { const t = tapeL.map(([a, b]) => `${b ? b + " " : ""}${a}`.trim()).join("\n"); if (!t) return; (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { $("tCopy").textContent = "✅ Kopyalandı"; setTimeout(() => ($("tCopy").textContent = "📋 Kopyala"), 1400); }, () => prompt("Kopyala:", t)); };
 disp();
 
 // ===== Tarih yardımcıları ve tatiller =====
@@ -817,10 +817,10 @@ function calcF() {
   $("fKrBox").hidden = !kr; $("fStBox").hidden = kr;
   fMarkChip();
   let st = null;
-  if (!kr && g) { st = fStopaj(g); if (fTaxAuto) $("fTax").value = String(st[1]).replace(".", ","); $("fTaxL").textContent = `Stopaj — güncel oran %${nf(st[1], 1)} (${st[2]})`; }
+  if (!kr && g) { st = fStopaj(g); if (fTaxAuto) $("fTax").value = String(st[1]).replace(".", ","); $("fTaxL").textContent = `Stopaj — güncel oran %${nf(st[1], 1)} · ${st[2]}`; }
   $("fStNote").innerHTML = `Güncel TL mevduat stopajı: 6 aya kadar <b>%17,5</b> · 1 yıla kadar <b>%15</b> · 1 yıldan uzun <b>%10</b> (31.12.2026'ya kadar geçerli karar). Vadeye göre kendiliğinden gelir, istersen değiştirebilirsin.`;
   // Oran girilmeden sonuç gösterilmez; hazır bir oran bankanın oranı sanılmasın
-  if (!P || !r || !g) { $("fOut").textContent = "–"; rows("fRows", []); $("fNote").innerHTML = $("fR").value.trim() ? "" : "✍️ <b>Faiz oranını gir</b>, hesap burada görünsün. Oran müşteriye göre değişir; hesap bilgi amaçlıdır."; ["fDay", "fTot"].forEach((id) => ($(id).textContent = "–")); $("fDay2").textContent = $("fTot2").textContent = ""; $("fWarn").hidden = true; return; }
+  if (!P || !r || !g) { $("fOut").textContent = "–"; rows("fRows", []); $("fNote").innerHTML = $("fR").value.trim() ? "" : "✍️ <b>Faiz oranını gir</b>, hesap burada görünsün. Oran bankaya ve kişiye göre değişir; hesap bilgi amaçlıdır."; ["fDay", "fTot"].forEach((id) => ($(id).textContent = "–")); $("fDay2").textContent = $("fTot2").textContent = ""; $("fWarn").hidden = true; return; }
   const gun = (P * r) / base, faiz = gun * g;
   // Vade bitişi tatile denk geliyor mu?
   let iw = new Date(end); while (isWE(iw) || isHol(iw)) iw = addD(iw, 1);
@@ -845,7 +845,7 @@ function calcF() {
       ["Faiz + vergiler", tl(faiz + bs + kk) + " TL"],
       ["Toplam geri ödeme", tl(P + faiz + bs + kk) + " TL"],
     ]);
-    $("fNote").textContent = "* Vergiler hariç. BSMV ve KKDF boşsa 0 sayılır; kredi türüne göre kendin gir (ör. BSMV %5, KKDF %15).";
+    $("fNote").textContent = "* Basit faiz hesabıdır, taksitli kredinin ödeme planı değildir; oran aylık verildiyse 12 ile çarpıp gir. BSMV ve KKDF boşsa 0 sayılır; kredi türüne göre kendin gir (ör. ticari TL kredide BSMV %5, KKDF %0; konut kredisinde ikisi de yok).";
   } else {
     const tax = faiz * num($("fTax").value) / 100;
     rows("fRows", [
@@ -890,7 +890,7 @@ function calcT() {
 $("tQ").addEventListener("click", (e) => {
   const b = e.target.closest("button[data-q]"); if (!b) return; const a = pD($("tA").value) || today, q = b.dataset.q;
   if (q === "bil" || q === "ppk") { const d = q === "bil" ? nextQEnd() : nextPPK(); if (d) { $("tA").value = ymd(today); $("tB").value = ymd(d); calcT(); } return; }
-  const r = q === "0" ? today : q === "m" ? new Date(a.getFullYear(), a.getMonth() + 1, 0, 12) : q === "y" ? new Date(a.getFullYear(), 11, 31, 12) : addD(a, +q);
+  const r = q === "0" ? today : q === "m" ? new Date(a.getFullYear(), a.getMonth() + 1, 0, 12) : q === "y" ? new Date(a.getFullYear(), 11, 31, 12) : q === "365" ? addM(a, 12) : addD(a, +q); // "+1 yıl" takvim yılı (artık yılda 366 gün)
   $("tB").value = ymd(r); calcT();
 });
 function calcA() {
@@ -902,6 +902,7 @@ function calcA() {
   rows("aRows", [["Gün", r.toLocaleDateString("tr-TR", { weekday: "long", day: "numeric", month: "long" })], ...(ymd(iw) !== ymd(r) ? [["Tatile denk geliyor; ilk iş günü", longD(iw)]] : []), ["Bugüne uzaklık", `${dd(today, r)} gün`]]);
 }
 ["aD", "aN"].forEach((id) => $(id).addEventListener("input", calcA));
+$("aNeg").onclick = () => { const v = $("aN").value.trim(); $("aN").value = v.startsWith("-") ? v.slice(1) : "-" + (v || "0"); calcA(); }; // iPhone sayı klavyesinde eksi tuşu yok
 $("tA").value = ymd(today); $("tB").value = ymd(new Date(today.getFullYear(), 11, 31, 12)); $("aD").value = ymd(today);
 calcT(); calcA(); calcF();
 
@@ -923,7 +924,7 @@ function calcEv() {
   const cur = up[0], qStart = addD(new Date(cur.d.getFullYear(), cur.d.getMonth() - 2, 0, 12), 0), tot = dd(qStart, cur.d), done = dd(qStart, today);
   $("evBil").innerHTML = `<h3>📊 Bilanço dönemleri</h3>` + up.map((x, i) => {
     const g = dd(today, x.d);
-    return evRow(x.d, `${x.y} / ${x.q}. çeyrek sonu${x.q === 4 ? " (yıl sonu)" : ""}`, g, i === 0 ? `${isGunSay(today, x.d)} iş günü` : "", i === 0) + (i === 0 ? `<div class="bar" title="Dönemin %${Math.round(done / tot * 100)}'i geçti"><i style="width:${Math.min(100, done / tot * 100)}%"></i></div>` : "");
+    return evRow(x.d, `${x.y} / ${x.q}. çeyrek sonu${x.q === 4 ? " (yıl sonu)" : ""}`, g, i === 0 ? `${isGunSay(today, x.d)} iş günü` : "", i === 0) + (i === 0 ? `<div class="bar" title="Dönemden geçen: %${Math.round(done / tot * 100)}"><i style="width:${Math.min(100, done / tot * 100)}%"></i></div>` : "");
   }).join("");
   const pp = PPK.map(pD).filter((d) => dd(today, d) >= 0).slice(0, 4);
   const pj = window.PPKJ, L = pj && pj.last;
@@ -955,7 +956,7 @@ const VCAT = [
     ["gaz", "Doğal gaz faturası", 0, 20, { n: "Doğal gazda KDV %20 tüketim bedeli üzerinden alınır." }],
     ["su", "Su faturası (şebeke suyu)", 0, 1, { n: "Şebeke suyunda KDV %1'dir. Faturadaki atık su bedelinde KDV %10'dur ve ÇTV (çevre temizlik vergisi) m³ başına ayrıca eklenir." }],
     ["gsm", "Cep telefonu faturası", 10, 20, { lbl: "ÖİV", par: true, n: "Hat faturasında <b>%10 ÖİV</b> (özel iletişim vergisi) ve <b>%20 KDV</b> ikisi de vergisiz tutar üzerinden alınır: 100 TL'lik hizmete 30 TL vergi." }]]],
-  ["Otomobil (sıfır)", [["oto", "Benzinli / dizel / hibrit (motor hacmine göre)", "oto", 20], ["ev", "Elektrikli otomobil (motor gücüne göre)", "ev", 20]]],
+  ["Otomobil (sıfır)", [["oto", "Benzinli / dizel (motor hacmine göre)", "oto", 20], ["ev", "Elektrikli otomobil (motor gücüne göre)", "ev", 20]]],
 ];
 const VC = {}; VCAT.forEach(([, l]) => l.forEach((x) => (VC[x[0]] = x)));
 $("vCat").innerHTML = VCAT.map(([g, l]) => `<optgroup label="${g}">${l.map(([id, ad]) => `<option value="${id}">${ad}</option>`).join("")}</optgroup>`).join("");
@@ -1017,7 +1018,7 @@ function calcV() {
     ["Fiyatın vergi payı", "%" + nf(top / G * 100, 1)],
   ]);
   $("vNote").innerHTML = `<span class="vleg"><span><i style="background:#6f6a62"></i>Ürün</span><span><i style="background:#ef6a4c"></i>${L}</span><span><i style="background:#e0a24f"></i>KDV</span></span>` +
-    (opt.n ? opt.n + " Oranlar Ekim 2026 itibarıyla." : manual ? "" : `KDV, ÖTV eklenmiş fiyat üzerinden alınır. ${typeof spec === "number" ? "" : "ÖTV dilimi vergisiz fiyata (matraha) göre belirlenir. "}Oranlar Ekim 2026 itibarıyla güncel; Cumhurbaşkanı kararıyla değişebilir.${c === "oto" || c === "ev" ? " Engelli, ticari ve özel indirimler dahil değildir." : ""}`);
+    (opt.n ? opt.n + " Oranlar Ekim 2026 itibarıyla." : manual ? "" : `${ot.t ? "KDV, ÖTV eklenmiş fiyat üzerinden alınır. " : ""}${typeof spec === "number" || !ot.t ? "" : "ÖTV dilimi vergisiz fiyata (matraha) göre belirlenir. "}Oranlar Ekim 2026 itibarıyla güncel; Cumhurbaşkanı kararıyla değişebilir.${c === "oto" || c === "ev" ? " Engelli, ticari ve özel indirimler dahil değildir." : ""}`);
 }
 vSubUI(); calcV();
 
@@ -1039,14 +1040,23 @@ function calcTp() {
 ["tpP", "tpE", "tpD"].forEach((id) => $(id).addEventListener("input", calcTp)); calcTp();
 
 // ===== Yüzde =====
+// Sayının okunuşundaki son kelimeye göre Türkçe ek: ekS(250, 0) → "nin" (250'nin), ekS(20, 1) → "si" (%20'si)
+const EKS = { 0: ["ın", "ı"], 1: ["in", "i"], 2: ["nin", "si"], 3: ["ün", "ü"], 4: ["ün", "ü"], 5: ["in", "i"], 6: ["nın", "sı"], 7: ["nin", "si"], 8: ["in", "i"], 9: ["un", "u"],
+  10: ["un", "u"], 20: ["nin", "si"], 30: ["un", "u"], 40: ["ın", "ı"], 50: ["nin", "si"], 60: ["ın", "ı"], 70: ["in", "i"], 80: ["in", "i"], 90: ["ın", "ı"], yuz: ["ün", "ü"], bin: ["in", "i"], milyon: ["un", "u"], milyar: ["ın", "ı"] };
+function ekS(x, tur) {
+  const t = nf(Math.abs(x), 4), d = (t.includes(",") ? t.split(",")[1] : t.replace(/\D/g, "")).replace(/^0+(?=\d)/, "") || "0";
+  const z = (d.match(/0+$/) || [""])[0].length, n = +d;
+  const k = n === 0 ? 0 : z === 0 ? +d.slice(-1) : z === 1 ? +d.slice(-2) : z === 2 ? "yuz" : z < 6 ? "bin" : z < 9 ? "milyon" : "milyar";
+  return EKS[k][tur];
+}
 function calcY() {
   const A = num($("yA").value), B = num($("yB").value);
   rows("yRows", [
-    [`${nf(A)}'in %${nf(B)}'si`, nf(A * B / 100, 4)],
+    [`${nf(A)}'${ekS(A, 0)} %${nf(B)}'${ekS(B, 1)}`, nf(A * B / 100, 4)],
     [`${nf(A)} + %${nf(B)}`, nf(A * (1 + B / 100), 4)],
     [`${nf(A)} − %${nf(B)}`, nf(A * (1 - B / 100), 4)],
-    [`${nf(B)}, ${nf(A)}'in yüzde kaçı?`, A ? "%" + nf(B / A * 100, 4) : "–"],
-    [`${nf(A)} → ${nf(B)} değişim`, A ? (B >= A ? "+" : "") + "%" + nf((B - A) / A * 100, 4) : "–"],
+    [`${nf(B)}, ${nf(A)}'${ekS(A, 0)} yüzde kaçı?`, A ? "%" + nf(B / A * 100, 4) : "–"],
+    [`${nf(A)} → ${nf(B)} değişim`, A ? (B >= A ? "+%" : "−%") + nf(Math.abs((B - A) / A * 100), 4) : "–"],
   ]);
 }
 ["yA", "yB"].forEach((id) => $(id).addEventListener("input", calcY));
@@ -1152,7 +1162,7 @@ function onOri(e) {
 function mGuide() {
   const g = $("guide"); if (!g) return;
   g.innerHTML = mLockD == null
-    ? `① Artıyı ölçeceğin şeyin <u>yere değdiği</u> noktaya getir<small>Uzaklık üstte yazıyor → sonra 🔒 Kilitle</small>`
+    ? `① Artıyı ölçeceğin şeyin <u>yere değdiği</u> noktaya getir<small>Uzaklık üstte yazıyor → sonra 🔒 Uzaklığı kilitle</small>`
     : `② Şimdi telefonu kaldır, artıyı <u>tepesine</u> getir<small>Uzaklık kilitli: ${mFmt(mLockD)} · yükseklik sağ üstte</small>`;
 }
 function mRender() {
@@ -1179,10 +1189,10 @@ async function camStart() {
     mStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
     $("vid").srcObject = mStream; await $("vid").play().catch(() => {});
     $("camPh").hidden = true; ["cross", "hud", "camStep", "lvl", "guide"].forEach((id) => ($(id).hidden = false)); mGuide();
-    setTimeout(() => { if (mBeta == null) { $("lvl").hidden = false; $("lvl").textContent = "Eğim sensörü bulunamadı (telefonda aç)"; } }, 1500);
+    setTimeout(() => { if (mBeta == null) { $("lvl").hidden = false; $("lvl").textContent = "Eğim sensörü bulunamadı (sayfayı telefonda aç)"; } }, 1500);
   } catch (err) {
     $("camPh").hidden = false;
-    $("camPh").querySelector("div:nth-child(2)").innerHTML = `<b style="color:var(--red)">Kamera açılamadı.</b><br>${err && err.name === "NotAllowedError" ? "Tarayıcıda kamera iznine \"İzin ver\" demelisin." : "Bu cihazda kamera ya da eğim sensörü yok."}`;
+    $("camPh").querySelector("div:nth-child(2)").innerHTML = `<b style="color:var(--red)">Kamera açılamadı.</b><br>${err && err.message === "sensör izni verilmedi" ? "Eğim sensörüne izin vermelisin; sayfayı yenileyip yeniden dene." : err && err.name === "NotAllowedError" ? "Tarayıcıda kamera iznine \"İzin ver\" demelisin." : "Bu cihazda kamera ya da eğim sensörü yok."}`;
   }
 }
 function camStop() { if (mStream) mStream.getTracks().forEach((t) => t.stop()); mStream = null; window.removeEventListener("deviceorientation", onOri); mBeta = null; $("camPh").hidden = false; ["cross", "hud", "camStep", "lvl", "guide"].forEach((id) => ($(id).hidden = true)); }

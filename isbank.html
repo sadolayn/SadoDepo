@@ -2169,7 +2169,7 @@ function agoTxt(iso) {
 }
 function renderLive() {
   if (liveUpd) $("upd").textContent = "Her saat otomatik · son: " + new Date(liveUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
-  if (!live.length) { $("list").innerHTML = '<div class="empty">Son 2 günde İş Bankası haberi yok.</div>'; return; }
+  if (!live.length) { $("list").innerHTML = '<div class="empty">Son 36 saatte İş Bankası haberi yok.</div>'; return; }
   $("list").innerHTML = gundemOzet() + live.map((x) => `<a class="live" href="${esc(x.u)}" target="_blank" rel="noopener"><b>${isNew("g:" + (x.u || x.t)) ? '<span class="newtag" style="margin:0 6px 0 0">YENİ</span>' : ""}${esc(x.t)}</b><span><i>${esc(x.s)}</i>${x.d ? " · " + agoTxt(x.d) : ""}</span></a>`).join("")
     + `<p class="note" style="margin-top:8px">Bu liste haber sitelerinden ve Google Haberler'den her saat otomatik toplanır; habere dokununca yayıncının sitesinde açılır.</p>`;
   gundemBagla();

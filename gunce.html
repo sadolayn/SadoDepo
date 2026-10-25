@@ -363,10 +363,10 @@
     <div id="tRows"></div>
     <div class="addrow"><input id="newName" placeholder="+ Yeni kalem (ör. kitap, spor, birikim)" maxlength="30"><select id="newType" aria-label="Kalem türü"><option value="adet">Adet</option><option value="tutar">Tutar (TL)</option><option value="bakiye">Bakiye (TL)</option><option value="ortalama">Ort. bakiye (TL)</option></select><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
     <div class="kilavuz">
-      <b>Nasıl eklenir?</b> Kalemin adını yaz → türünü seç → <b>Ekle</b> → sağdaki kutuya çeyrek hedefini yaz → <b>Kaydet</b>.
+      <b>Nasıl eklenir?</b> Kalemin adını yaz → türünü seç (kalem hemen eklenir) → sağdaki kutuya çeyrek hedefini yaz → <b>Kaydet</b>.
       <ul>
         <li><b>Adet</b> · yaptıkça +1 (okunan kitap, spor günü, biten iş…)</li>
-        <li><b>Tutar</b> · günlük tutarlar toplanır (biriktirilen para, yürünen km…)</li>
+        <li><b>Tutar</b> · günlük tutarlar toplanır (biriktirilen para, yapılan harcama…)</li>
         <li><b>Bakiye</b> · çeyrek sonunda ulaşmak istediğin bakiye</li>
         <li><b>Ort. bakiye</b> · çeyrek boyunca günlük ortalama (ör. birikim hesabı)</li>
       </ul>
@@ -599,7 +599,7 @@ function renderHero() {
       <div class="steps">
         <div class="step"><b class="n">1</b><div><b>Hedeflerini gir</b> — her kalem için çeyrek hedefi (adet, tutar ya da bakiye)</div></div>
         <div class="step"><b class="n">2</b><div><b>Her gün gir</b> — adetlerde + tuşuna bas, tutar ve bakiyeyi yaz. Birkaç saniye sürer</div></div>
-        <div class="step"><b class="n">3</b><div><b>Gerisini bize bırak</b> — bugün ve bu hafta ne kadar gerektiğini, hedefi tutma ihtimalini Günce söyler 🎯</div></div>
+        <div class="step"><b class="n">3</b><div><b>Gerisini Günce'ye bırak</b> — bugün ve bu hafta ne kadar gerektiğini, hedefi tutma ihtimalini Günce söyler 🎯</div></div>
       </div>
       <button class="cta" id="heroT">🎯 Hedeflerimi gir</button>
       <div class="note" style="color:#aab0d6;margin-top:8px">Çeyrekte <b style="color:#fff">${fmt(T.total)}</b> iş günü var${ph === "simdi" ? `, <b style="color:#fff">${fmt(T.left)}</b> tanesi kaldı` : ""}.</div>`;
@@ -661,7 +661,7 @@ function tileLine(p, s, ph) {
   const g = isAdet(p) ? Math.round(s.gap) : s.gap;
   if (s.pct >= 100) return "✓ Tamam";
   if (ph !== "simdi") return `${fv(p, s.tgt - s.done)} eksik`;
-  if (isAdet(p)) return g >= 0 ? `Planın ${g ? g + " önünde" : "üzerinde"}` : `Plana ${-g} adet geride`;
+  if (isAdet(p)) return g > 0 ? `Planın ${g} adet önünde` : g === 0 ? "Tam planda" : `Plana ${-g} adet geride`;
   return g >= 0 ? `Planın ${fmtTL(g)} önünde` : `Plana ${fmtTL(-g)} geride`;
 }
 function renderCoach() {
@@ -670,8 +670,8 @@ function renderCoach() {
   if (!O.L.length || ph !== "simdi") {
     el.hidden = ph === "simdi" || !O.L.length;
     if (!el.hidden) el.innerHTML = ph === "gecmis"
-      ? `<h3>📜 Çeyrek özeti</h3><p class="msg">${O.pct >= 100 ? "Bu çeyreği <b>tüm hedeflerle</b> kapattın. Tebrikler! 🎉" : `Bu çeyreği <b>%${Math.round(O.pct)}</b> ortalama gerçekleşmeyle kapattın. Yeni çeyrekte aynı tempoyu sürdürmek için hedefleri şimdiden gir.`}</p>`
-      : `<h3>🗓️ Çeyrek planı</h3><p class="msg">Bu çeyrekte <b>${fmt(T.total)}</b> iş günü var. Hedeflerine ulaşmak için ortalama: ${O.L.map(({ p, s }) => `${p.icon} <b>${fmt(s.tgt / T.total * 5)}</b>/hafta`).join(" · ")}</p>`;
+      ? `<h3>📜 Çeyrek özeti</h3><p class="msg">${O.pct >= 100 ? "Bu çeyreği <b>tüm hedeflerle</b> kapattın. Tebrikler! 🎉" : `Bu çeyreği <b>%${Math.round(O.pct)}</b> ortalama gerçekleşmeyle kapattın. Yeni çeyrek için hedefleri şimdiden gir.`}</p>`
+      : `<h3>🗓️ Çeyrek planı</h3><p class="msg">Bu çeyrekte <b>${fmt(T.total)}</b> iş günü var. ${O.L.some(({ p }) => isAdet(p)) ? `Hedeflerine ulaşmak için haftada ortalama: ${O.L.filter(({ p }) => isAdet(p)).map(({ p, s }) => `${p.icon} <b>${fv(p, s.tgt / T.total * 5)}</b>`).join(" · ")}` : "Hedeflerini gir, haftalık tempo burada görünsün."}</p>`;
     return;
   }
   el.hidden = false;
@@ -682,11 +682,12 @@ function renderCoach() {
   const left = fmt(T.left), lastWeek = T.left <= 5;
   const list = (arr, k) => arr.filter((x) => x.s[k] > 0).slice(0, 3).map(({ p, s }) => `<b>${fv(p, s[k])} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(", ").replace(/, ([^,]*)$/, " ve $1");
   let msg;
+  const hafta = list(open, "weekNeed"); // bakiye kalemlerinde haftalık adet yoktur; boşsa cümle ona göre kurulur
   if (!open.length) msg = pick(["Tüm hedeflerin tamam! 🏆 Kalan günler bonus.", "Çeyreği şimdiden kapattın 🎉 Fazlası, bir sonraki çeyreğe güzel bir başlangıç demek."]);
-  else if (lastWeek) msg = `🏁 <b>Son düzlük!</b> Çeyreğe ${left} iş günü kaldı. ${list(open, "weekNeed") ? `${list(open, "weekNeed")} ile bitiş çizgisini geçersin.` : ""} Her gün şimdi çok değerli.`;
-  else if (!behind.length) msg = pick([`Harika gidiyorsun! 💪 Çeyreğe <b>${left} iş günü</b> kaldı ve planın önündesin. Bu hafta ${list(open, "weekNeed") || "biraz daha"} yaparsan farkı koruyorsun.`, `Tempo çok iyi 👏 ${left} iş günü kaldı. Bu haftaki ${list(open, "weekNeed") || "küçük adımlar"} seni rahat bitirir.`]);
-  else if (O.pct >= O.plan - 15) msg = pick([`Çeyreğe <b>${left} iş günü</b> kaldı, başarabilirsin! Bu hafta ${list(open, "weekNeed")} yaparsan tekrar plana oturursun.`, `Az kaldı, yakındasın! ${left} iş günü var. Bu hafta ${list(open, "weekNeed")} — hepsi bu.`]);
-  else msg = pick([`Fark açılmış ama ${left} iş günü az değil. 🎯 Önceliğin <b>${esc(behind[0].p.name.toLocaleLowerCase("tr"))}</b>: bu hafta ${list(open, "weekNeed")} hedefle; her gün küçük bir adım.`, `Zor ama imkânsız değil 💡 Kalan ${left} iş gününde günde ${behind.slice(0, 2).map(({ p, s }) => `<b>${fv(p, s.perDay)} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(" ve ")} yetiyor. Bugünden başla.`]);
+  else if (lastWeek) msg = `🏁 <b>Son düzlük!</b> Çeyrek sonuna ${left} iş günü kaldı. ${hafta ? `${hafta} ile bitiş çizgisini geçersin.` : ""} Her gün şimdi çok değerli.`;
+  else if (!behind.length) msg = pick([`Harika gidiyorsun! 💪 Çeyrek sonuna <b>${left} iş günü</b> kaldı ve planın önündesin. Bu hafta ${hafta || "biraz daha"} yaparsan farkı korursun.`, `Tempo çok iyi 👏 ${left} iş günü kaldı. Bu haftaki ${hafta || "küçük adımlar"} rahatça bitirmeni sağlar.`]);
+  else if (O.pct >= O.plan - 15) msg = hafta ? pick([`Çeyrek sonuna <b>${left} iş günü</b> kaldı, başarabilirsin! Bu hafta ${hafta} yaparsan tekrar plana oturursun.`, `Az kaldı, yakındasın! ${left} iş günü var. Bu hafta ${hafta}, hepsi bu.`]) : `Çeyrek sonuna <b>${left} iş günü</b> kaldı, başarabilirsin! Bakiyeni hedefe doğru adım adım yükselt.`;
+  else msg = pick([`Fark açılmış ama ${left} iş günü az değil. 🎯 Önceliğin <b>${esc(behind[0].p.name.toLocaleLowerCase("tr"))}</b>${hafta ? `: bu hafta ${hafta} hedefle` : ""}; her gün küçük bir adım.`, `Zor ama imkânsız değil 💡 Kalan ${left} iş gününde günde ${behind.slice(0, 2).map(({ p, s }) => `<b>${fv(p, s.perDay)} ${esc(p.name.toLocaleLowerCase("tr"))}</b>`).join(" ve ")} yetiyor. Bugünden başla.`]);
   const isToday = T.todayWork > 0;
   const rows = O.L.map(({ p, s }) => {
     const li = (alt, cls, t) => `<li><span class="ic">${p.icon}</span><div class="tx">${esc(p.name)}<small>${alt}</small></div><span class="pill ${cls}">${t}</span></li>`;
@@ -700,8 +701,8 @@ function renderCoach() {
     <h3>🧭 Rehberin <span class="r">${today.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })}</span></h3>
     <p class="msg">${msg}</p>
     <div class="wk">
-      <div><b>${isToday ? tdTot : "–"}</b><span>${isToday ? "bugün gereken" : "bugün tatil"}</span></div>
-      <div><b>${wkTot}</b><span>bu hafta gereken</span></div>
+      <div><b>${isToday ? tdTot : "–"}</b><span>${isToday ? "bugün gereken (adet)" : "bugün iş günü değil"}</span></div>
+      <div><b>${wkTot}</b><span>bu hafta gereken (adet)</span></div>
       <div><b>${wkDone}</b><span>bu hafta yaptığın</span></div>
     </div>
     <ul class="todo">${rows}</ul>
@@ -876,16 +877,16 @@ function renderProb() {
   const risk = rows.find((x) => x.s.pct < 100 && x.s.prob != null && x.s.prob < 0.7 && x.s.perDay > x.s.mu);
   const dalga = !risk && rows.find((x) => x.s.pct < 100 && x.s.prob != null && x.s.prob < 0.7);
   const tip = ph !== "simdi" ? "" : dalga
-    ? `<div class="tip">📊 <b>${esc(dalga.p.name)}</b> tempo olarak yetiyor ama dalgalı (ihtimal %${Math.round(dalga.s.prob * 100)}). Her iş günü düzenli küçük adım, ihtimali yükseltir.</div>`
+    ? `<div class="tip">📊 <b>${esc(dalga.p.name)}</b> tempo olarak yetiyor ama dalgalı (ihtimal %${Math.round(dalga.s.prob * 100)}). Her iş günü düzenli küçük adım ihtimali yükseltir.</div>`
     : risk
     ? `<div class="tip">🎯 <b>Odak: ${esc(risk.p.name)}</b> (ihtimal %${Math.round(risk.s.prob * 100)}). Günde <b>${fv(risk.p, risk.s.mu)}</b> → <b>${fv(risk.p, risk.s.perDay)}</b> yaparsan tutar; haftada yaklaşık <b>${isAdet(risk.p) ? Math.ceil(risk.s.perDay * 5 - 1e-9) + " adet" : fmtTL(risk.s.perDay * 5)}</b>.</div>`
-    : `<div class="tip">✨ Bu tempoyla <b>tüm hedeflerin tutuyor</b> görünüyor. Temponu koru, fazlası senin artın.</div>`;
+    : `<div class="tip">✨ Bu tempoyla <b>hedeflerin tutuyor</b> görünüyor. Temponu koru, fazlası sana artı.</div>`;
   el.innerHTML = `
     <h3>🔮 Hedef tutma ihtimali <span class="r">${ph === "gecmis" ? "kapanış" : "tempona göre"}</span></h3>
     <div class="sum">${gauge}<div class="t">Tümünü tutturma: <b>%${all == null ? "–" : Math.round(all * 100)}</b><br>Tahmini ort. gerçekleşme: <b>%${Math.round(fcAvg)}</b><br>Kalan: <b>${fmt(ph === "simdi" ? T.left : 0)}</b> iş günü</div></div>
     ${list}
     ${tip}
-    <details class="nasil"><summary>Nasıl hesaplanıyor?</summary><p class="note" style="margin:6px 0 0">Adet ve tutarda çeyrek başından bu yana her iş günü yaptıklarının ortalaması ve dalgalanması alınır; aynı tempo sürerse kalan günlerde hedefe ulaşma ihtimali hesaplanır. ${few ? "<b style='color:var(--mid)'>Henüz 3 iş gününden az kayıt var; tahmin kaba.</b> " : ""}Bakiyelerde girdiğin bakiye bir sonraki girişe kadar her gün aynı sayılır; ortalama bakiye takvim günü üzerinden hesaplanır. Çubukta koyu kısım gerçekleşen, açık kısım tahmin, beyaz çizgi hedef.</p></details>`;
+    <details class="nasil"><summary>Nasıl hesaplanıyor?</summary><p class="note" style="margin:6px 0 0">Adet ve tutarda çeyrek başından bu yana her iş günü yaptıklarının ortalaması ve dalgalanması alınır; aynı tempo sürerse kalan günlerde hedefe ulaşma ihtimali hesaplanır. ${few ? "<b style='color:var(--mid)'>Çeyreğin ilk 3 iş günü içindesin; tahmin kaba.</b> " : ""}Bakiyelerde girdiğin bakiye bir sonraki girişe kadar her gün aynı sayılır; ortalama bakiye takvim günü üzerinden hesaplanır. Çubukta koyu kısım gerçekleşen, açık kısım tahmin, beyaz çizgi hedef.</p></details>`;
 }
 
 // ================= Hedef penceresi =================
@@ -1016,7 +1017,7 @@ function icsWeekly() {
     `DESCRIPTION:Bu hafta kaç adet gerektiğini gör ve geçen haftayı işaretle: ${url}`, `URL:${url}`,
     "BEGIN:VALARM", "TRIGGER:PT0M", "ACTION:DISPLAY", "DESCRIPTION:Günce haftalık hedef", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
   download("gunce-haftalik-hatirlatma.ics", ics, "text/calendar");
-  toast("Takvim dosyası indi; açınca her pazartesi 09:00 hatırlatır");
+  toast("Takvim dosyası indirildi; açınca her pazartesi 09:00 hatırlatır");
 }
 // Dışarıdan gelen veriyi (karekod bağlantısı ya da yedek dosyası) temizle: yalnızca beklenen biçim kalır,
 // sayfaya kod sızdırılamaz. Sahte bir karekod/bağlantı açılsa bile kalem adı dışında metin taşınamaz.
@@ -1105,7 +1106,7 @@ function renderPos() {
     <div class="pz-c"><div class="pz-logo">SADOLAYN</div><div class="pz-s">GÜNCE · İLERLEME FİŞİ<br>${esc(qName())} · ${esc(qRange())}<br>${P.when} · Fiş no ${P.fis}</div></div>
     ${P.tier === "tam" ? '<div class="pz-stamp">HEDEF TAMAM ✓</div>' : ""}
     <hr class="pz-hr">
-    <div class="pz-h">BUGÜNÜN SATIŞLARI</div>
+    <div class="pz-h">BUGÜNÜN KAYITLARI</div>
     ${P.todayL.length ? P.todayL.map((x) => `<div class="pz-row"><span>${x.ic} ${esc(x.ad)}</span><b>${esc(x.nT)}</b></div>`).join("") : '<div class="pz-row" style="color:#6b6458"><span>Bugün henüz kayıt yok</span><span>—</span></div>'}
     <hr class="pz-hr">
     <div class="pz-h">ÇEYREK HEDEFLERİ</div>
@@ -1132,7 +1133,7 @@ function posCanvas() {
   T("GÜNCE · İLERLEME FİŞİ", W / 2, 100, mono(18), "#555", "center");
   T(`${qName()} · ${qRange()}`, W / 2, 126, mono(18), "#555", "center");
   T(`${P.when} · Fiş no ${P.fis}`, W / 2, 152, mono(16), "#777", "center");
-  let y = 176; hr(y); y += 32; T("BUGÜNÜN SATIŞLARI", M, y, mono(15, 1), "#8a8270"); y += 30;
+  let y = 176; hr(y); y += 32; T("BUGÜNÜN KAYITLARI", M, y, mono(15, 1), "#8a8270"); y += 30;
   if (P.todayL.length) P.todayL.forEach((x) => { T(`${x.ic} ${x.ad}`, M, y, mono(20)); T(x.nT, W - M, y, mono(20, 1), "#262626", "right"); y += rowH; });
   else { T("Bugün henüz kayıt yok", M, y, mono(20), "#999"); y += rowH; }
   y += 6; hr(y); y += 32; T("ÇEYREK HEDEFLERİ", M, y, mono(15, 1), "#8a8270"); y += 30;
@@ -1191,6 +1192,7 @@ async function unpackData(t) {
   const raw = t[0] === "1" ? await zip(u, "d") : u;
   return JSON.parse(new TextDecoder().decode(raw));
 }
+let tasiGun = 0; // karekodla gerçekten taşınan gün sayısı (veri büyükse kırpılır)
 async function tasiLink() {
   const base = location.href.split("#")[0];
   let obj = { products: D.products, targets: D.targets, days: D.days, bal: D.bal || {} };
@@ -1200,6 +1202,7 @@ async function tasiLink() {
     obj = { ...obj, days: Object.fromEntries(Object.entries(D.days).filter(([k]) => k >= from)) };
     t = await packData(obj);
   }
+  tasiGun = Object.keys(obj.days || {}).length;
   return t.length > 2600 ? null : base + "#tasi=" + t;
 }
 function tasiModal(html) {
@@ -1211,12 +1214,12 @@ function tasiModal(html) {
 }
 async function tasiGoster() {
   const url = await tasiLink();
-  if (!url) { toast("Veri çok büyük; 💾 Yedeği indir ile dosya olarak taşı"); return; }
+  if (!url) { toast("Veri çok büyük; ⬇️ Yedeği indir ile dosya olarak taşı"); return; }
   if (!window.qrcode) { try { await loadJs("lib/qrcode.js"); } catch (e) { toast("Karekod hazırlanamadı"); return; } }
   const q = qrcode(0, "L"); q.addData(url); q.make();
-  const nDay = Object.keys(D.days).length;
+  const nDay = tasiGun;
   const m = tasiModal(`<h3>📲 Telefonuna al</h3>
-    <p>Telefonunun kamerasıyla okut; açılan sayfada <b>Taşı</b>'ya bas. Hedeflerin ve ${nDay} günlük işaretlemen telefonuna geçer.</p>
+    <p>Telefonunun kamerasıyla okut; açılan sayfadaki düğmeye bas. Hedeflerin ve ${nDay} günlük işaretlemen telefonuna geçer.</p>
     <div class="qr">${q.createSvgTag({ cellSize: 3, margin: 0, scalable: true })}</div>
     <small>Veriler yalnızca bu karekodun içinde taşınır; hiçbir sunucuya gönderilmez. Karekodu kimseyle paylaşma.</small>
     <div class="bt"><button type="button" class="c">🔗 Bağlantıyı kopyala</button><button type="button" class="k" data-x>Kapat</button></div>`);
@@ -1270,12 +1273,12 @@ $("fileIn").onchange = (e) => { if (e.target.files[0]) importJson(e.target.files
 $("expCsv").onclick = exportCsv;
 $("resetAll").onclick = () => {
   const n = D.products.length, g = Object.keys(D.days).length;
-  if (!confirm(`Günce tamamen sıfırlansın mı?\n\n• ${n} kalemin tamamı, ADLARIYLA birlikte silinir\n• Bütün çeyreklerin hedefleri silinir\n• ${g} günlük işaretlemenin hepsi silinir\n\nBu geri alınamaz. İstersen önce 💾 Yedeği indir.`)) return;
+  if (!confirm(`Günce tamamen sıfırlansın mı?\n\n• ${n} kalemin tamamı, ADLARIYLA birlikte silinir\n• Bütün çeyreklerin hedefleri silinir\n• ${g} günlük işaretlemenin hepsi silinir\n\nBu geri alınamaz. İstersen önce ⬇️ Yedeği indir.`)) return;
   if (!confirm("Emin misin? Her şey silinecek ve Günce ilk günkü gibi boş açılacak.")) return;
   D = { products: [], targets: {}, days: {}, bal: {}, v3: true, v4: true };
   save(); selDay = new Date(today); render(); window.scrollTo({ top: 0, behavior: "smooth" }); toast("Günce sıfırlandı. 🎯 Hedefler'den kendi kalemlerini ekle");
 };
-$("resetM").onclick = () => { if (confirm(`${qName()} (${qRange()}) günlük kayıtları silinsin mi? (Hedefler kalır)`)) { eachQuarterDay((d) => delete D.days[keyOf(d)]); save(); render(); } };
+$("resetM").onclick = () => { if (confirm(`Bu çeyreğin (${qName()}, ${qRange()}) günlük kayıtları silinsin mi? (Hedefler kalır)`)) { eachQuarterDay((d) => delete D.days[keyOf(d)]); save(); render(); } };
 
 load(); migrate(); save(); render();
 const PC = window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches;

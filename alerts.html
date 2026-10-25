@@ -188,7 +188,7 @@
       <i class="r1"></i><i class="r2"></i><i class="r3"></i><span class="sweep"></span><span class="core">🔔</span>
       <div id="blips"></div>
     </div>
-    <div class="ticker" aria-label="Son dakika başlıkları"><span class="tk-et">● CANLI</span><div class="tk-win"><div class="tk-run" id="tk">Gündem yükleniyor…</div></div></div>
+    <div class="ticker" aria-label="Son başlıklar"><span class="tk-et">● GÜNDEM</span><div class="tk-win"><div class="tk-run" id="tk">Gündem yükleniyor…</div></div></div>
   </section>
 
   <div class="flow">
@@ -218,7 +218,7 @@
 
   <div class="bildirim" id="bildirim" hidden>
     <span class="bi-ic">🔔</span>
-    <div><b>Sadolayn Alerts <small>· yarın 10:00</small></b><span id="biTx"></span></div>
+    <div><b>Sadolayn Alerts <small>· örnek bildirim · 10:00</small></b><span id="biTx"></span></div>
   </div>
 
   <div class="card">
@@ -292,7 +292,7 @@ function cumleGoster(t) {
   const k = cumleAyikla(t), el = $("cumle");
   if (!k.length) { el.hidden = true; return; }
   const fiyat = /döviz|dolar|euro|altın|kur|borsa|hisse|kağıt|bist|fiyat|değer/i.test(t);
-  el.innerHTML = `<b>🧠 Cümleni anladım.</b> Haberlerde şunları arayayım mı? Dokunarak ekle:<div class="cw">${k.map((w) => `<button type="button" data-c="${esc(w)}">+ ${esc(w)}</button>`).join("")}</div><small>Bülten haber bağlantısı gönderir; belirli bir saatteki kur ya da hisse değerini göndermez.${fiyat ? ' Anlık döviz, altın ve borsa için <a href="piyasa.html">📈 Piyasa</a> sayfasına bak.' : ""}</small>`;
+  el.innerHTML = `<b>🧠 Cümleni anladım.</b> Haberlerde şunları arayayım mı? Dokunarak ekle:<div class="cw">${k.map((w) => `<button type="button" data-c="${esc(w)}">+ ${esc(w)}</button>`).join("")}</div><small>Bülten haber bağlantısı gönderir; belirli bir saatteki kur ya da hisse değerini göndermez.${fiyat ? ' Günlük döviz ve altın için <a href="piyasa.html">💱 Döviz &amp; Altın</a> sayfasına bak.' : ""}</small>`;
   el.hidden = false;
 }
 function blipsCiz() {
@@ -302,8 +302,7 @@ function blipsCiz() {
 }
 function bildirimGoster() {
   const el = $("bildirim"); if (!kws.length) { el.hidden = true; return; }
-  const n = kws.length * 4;
-  $("biTx").innerHTML = `☀️ Günaydın! <b style="display:inline;color:#f3dca8;font-size:12.5px">${esc(kws[0])}</b>${kws.length > 1 ? ` ve ${kws.length - 1} kelimen daha` : ""} için ~${n} yeni haber seni bekliyor.`;
+  $("biTx").innerHTML = `☀️ Günaydın! <b style="display:inline;color:#f3dca8;font-size:12.5px">${esc(kws[0])}</b>${kws.length > 1 ? ` ve ${kws.length - 1} kelimen daha` : ""} için yeni haberler seni bekliyor.`;
   if (el.hidden) { el.hidden = false; } else { el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; }
 }
 (async function ticker() {
@@ -375,7 +374,7 @@ $("preview").onclick = async () => {
         ? s.items.map((it) => `<a class="news" href="${esc(it.link)}" target="_blank" rel="noopener"><b>${esc(it.title)}</b><span>${esc(it.source)} · ${ago(it.ts)}</span></a>`).join("")
         : `<div class="none">Son 24 saatte haber yok.</div>`;
     }
-    $("pv").innerHTML = `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">${window.__bugun ? "☀️ Bugünkü haberlerin · son 24 saat" : "Bugün gelecek e-postanın önizlemesi"}</div>` + html;
+    $("pv").innerHTML = `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">${window.__bugun ? "☀️ Bugünkü haberlerin · son 24 saat" : "Bir sonraki e-postanın önizlemesi · son 24 saat"}</div>` + html;
     $("pv").style.display = "block";
     $("pv").scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (e) {
@@ -420,7 +419,7 @@ async function abGoster() {
   const L = abOku(), box = $("abon");
   if (!L.length) { box.innerHTML = ""; return; }
   const satir = (x, d) => {
-    let cls = "wait", ic = "⏳", durum = "Onay bekleniyor", alt = "E-postandaki <b>Aboneliğini onayla</b> bağlantısına tıkla. Gelmediyse spam / gereksiz klasörüne bak.";
+    let cls = "wait", ic = "⏳", durum = "Onay bekleniyor", alt = "E-postandaki <b>Aboneliği onayla</b> bağlantısına tıkla. Gelmediyse spam / gereksiz klasörüne bak.";
     if (d && d.ok) {
       if (d.status === "active") { cls = "ok"; ic = "✅"; durum = "Abonelik aktif"; alt = `Kelimeler: ${esc(d.keywords.split(" | ").join(", "))}<br>Her sabah 10:00'da, kelimelerine uyan <b>yeni haber varsa</b> özet gelir; haber yoksa o gün e-posta gelmez.` + (d.pending ? `<br>Yeni kelimelerin için onay bekleniyor.` : ""); }
       else if (d.status === "unsub") { cls = "off"; ic = "🚫"; durum = "Abonelikten çıkıldı"; alt = "Yeniden abone olmak için yukarıdan kelimelerini seçip <b>Abone ol</b>'a bas."; }

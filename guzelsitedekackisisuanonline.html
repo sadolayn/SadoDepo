@@ -55,14 +55,14 @@
   <div class="card"><h2>Son 7 gün · tekil ziyaretçi</h2><div class="days" id="days"></div><p class="note" id="gunNote" style="margin:10px 0 0"></p></div>
   <div class="card">
     <label class="tog"><span>🙈 Bu cihazda beni sayma</span><input type="checkbox" id="ben"></label>
-    <p class="note" style="margin:8px 0 0">Açıkken bu telefondaki ziyaretlerin canlı sayıya ve günlük sayaca eklenmez. Bu sayfa sitede hiçbir yerde bağlantılı değil; linki sadece sende.</p>
+    <p class="note" style="margin:8px 0 0">Açıkken bu cihazdaki ziyaretlerin canlı sayıya ve günlük sayaca eklenmez. Bu sayfa sitede hiçbir yerde bağlantılı değil; linki sadece sende.</p>
   </div>
   <p class="note">Sayım anonimdir: yalnızca sayfa adı ve cihaz türü tutulur; isim, konum ya da IP kaydedilmez. Sekme kapanınca kayıt kendiliğinden silinir.</p>
 </div>
 <script type="module">
 const FB_DB = "https://sadolaynsadosan-default-rtdb.europe-west1.firebasedatabase.app", V = "10.12.2";
 const $ = (id) => document.getElementById(id);
-const AD = { index: "🏠 Ana sayfa", isbank: "🏛️ İş Bankası Gündemi", banka: "🏦 Bankacılık", hesap: "🧮 Hesaplamalar", gunce: "📒 Günce", gazete: "📜 Resmi Gazete", haberler: "📰 Güncel Haberler", oyunlar: "🎲 Oyunlar", batak: "♠️ Batak", king: "👑 King", tavla: "🎯 Tavla", solitaire: "🃏 Solitaire", pilot: "✈️ UçUç", tahmin: "🔢 Sayı Tahmin", balayi: "💞 Balayı", hava: "🌤️ Hava", takvim: "📅 Takvim", yakin: "📍 En Yakınımda", piyasa: "📈 Piyasa", alerts: "🔔 Alarmlar" };
+const AD = { index: "🏠 Ana sayfa", isbank: "🏛️ İş Bankası Gündemi", banka: "🏦 Bankacılık", hesap: "🧮 Hesaplamalar", gunce: "📒 Günce", gazete: "📜 Resmi Gazete", haberler: "📰 Güncel Haberler", oyunlar: "🎲 Oyunlar", batak: "♠️ Batak", king: "👑 King", tavla: "🎯 Tavla", solitaire: "🃏 Solitaire", pilot: "✈️ UçUç", tahmin: "🔢 Asal Tahmin", bilmece: "🧩 Sayı Bilmecesi", balayi: "💞 Balayı", hava: "🌤️ Hava", takvim: "📅 Takvim", yakin: "📍 En Yakınımda", piyasa: "💱 Döviz & Altın", alerts: "🔔 Sadolayn Alerts" };
 try { if (localStorage.getItem("canli_ben") === null) localStorage.setItem("canli_ben", "1"); $("ben").checked = localStorage.getItem("canli_ben") === "1"; } catch (e) {}
 $("ben").onchange = () => { try { localStorage.setItem("canli_ben", $("ben").checked ? "1" : "0"); } catch (e) {} };
 const gunOf = (ms) => new Date(ms + 3 * 3600e3).toISOString().slice(0, 10);

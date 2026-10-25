@@ -26,12 +26,34 @@ def get(url):
 def temiz(s):
     return re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>", " ", s)
 
+# "Bankamız / müşterilerimize" gibi bankanın ağzından yazılmış ifadeler üçüncü kişiye çevrilir (isbank_black.py ile aynı kural)
+_BANKAMIZ = [(r"\bBankamızdan\b", "İş Bankası'ndan"), (r"\bBankamıza\b", "İş Bankası'na"), (r"\bBankamızda\b", "İş Bankası'nda"),
+             (r"\bBankamızın\b", "İş Bankası'nın"), (r"\bBankamız\b", "İş Bankası")]
+_EK3 = {"": "", "in": "nin", "e": "ne", "i": "ni", "de": "nde", "den": "nden", "le": "yle", "dir": "dir"}
+def _ucuncu_ek(m):
+    kok, ler, ek = m.group(1), m.group(2) or "", (m.group(3) or "").lower()
+    return kok + (ler + "i" if ler else "si") + _EK3[ek]
+
 def metin(s):
     s = re.sub(r"(?i)<br\s*/?>", " ", s)
-    s = html.unescape(re.sub(r"<[^>]+>", " ", s))
+    s = html.unescape(re.sub(r"<[^>]+>", " ", s)).replace("\u200b", "").replace("\ufeff", "")  # görünmez boşluklar atılır
     s = re.sub(r"\s+", " ", s).strip()
-    # Banka diliyle yazılmış "sizi bekliyor / kazanın" gibi ifadeler olduğu gibi kalır; yalnızca boşluk temizlenir
+    s = re.sub(r"(?<![\d%])(\d+(?:,\d+)?)% ", r"%\1 ", s)  # "25% indirim" → "%25 indirim"
+    for a, b in _BANKAMIZ:
+        s = re.sub(a, b, s, flags=re.I)
+    s = re.sub(r"\b(müşteri|şube)(ler)?i?miz(in|den|de|dir|le|e|i)?\b", _ucuncu_ek, s, flags=re.I)
+    # "sizi bekliyor / kazanın" gibi davet cümleleri olduğu gibi kalır (kampanyanın kendi metni)
     return s
+
+def kisalt(s, n):
+    """Uzun metni kelime ortasında bölmeden kısaltır, sonuna … koyar."""
+    s = (s or "").strip()
+    if len(s) <= n: return s
+    k = s[:n - 1].rsplit(" ", 1)[0].rstrip(" ,;:-–")
+    return k + "…"
+
+# Sitenin "sonuç yok" yazısı kampanya özeti sanılmasın
+BOS_OZET = re.compile(r"arama sonucuna uygun kampanya bulunamam|tüm kampanyalara göz", re.I)
 
 # ---------- Sınıflandırıcı ----------
 # Kampanya sınıflandırıcı: her kampanya "ne" ve "nere" boyutlarında TAM OLARAK BİR gruba girer (ilk eşleşen kazanır).
@@ -141,11 +163,11 @@ def isb_kartlar(body, adet=None):
         if not mt:
             if len(ic) >= 20 and not re.match(r"(?i)^(>|›|tüm kampanya|detaylı bilgi|geçmiş kampanya)", ic) and not re.search(r"kampanyaları$", ic, re.I):
                 gor.add(slug)
-                tarihsiz.append({"baslik": re.sub(r"\s*Detaylı Bilgi\s*>?\s*$", "", ic)[:160], "bitis": "", "ozet": "", "url": KOK_I + href})
+                tarihsiz.append({"baslik": kisalt(re.sub(r"\s*Detaylı Bilgi\s*>?\s*$", "", ic), 160), "bitis": "", "ozet": "", "url": KOK_I + href})
             continue
         gor.add(slug)
-        out.append({"baslik": mt.group(1).strip()[:160], "bitis": f"{mt.group(4)}-{int(mt.group(3)):02d}-{int(mt.group(2)):02d}",
-                    "ozet": re.sub(r"\s*Detaylı Bilgi\s*>?\s*$", "", mt.group(5)).strip()[:220], "url": KOK_I + href})
+        out.append({"baslik": kisalt(mt.group(1), 160), "bitis": f"{mt.group(4)}-{int(mt.group(3)):02d}-{int(mt.group(2)):02d}",
+                    "ozet": kisalt(re.sub(r"\s*Detaylı Bilgi\s*>?\s*$", "", mt.group(5)), 220), "url": KOK_I + href})
     if tarihsiz and (adet is None or len(out) + len(tarihsiz) <= adet):
         out += tarihsiz
     isb_kartlar.biten = len(biten)
@@ -190,8 +212,9 @@ def max_kartlar(body, kok=KOK_M):
             continue
         gor.add(anahtar)
         kalan = int(m.group(1))
-        out.append({"baslik": metinler[0][:160], "bitis": (bugun + dt.timedelta(days=max(0, kalan - 1))).isoformat(),
-                    "ozet": (metinler[1][:220] if len(metinler) > 1 and len(metinler[1]) > 25 else ""), "url": link or kok + "/kampanyalar"})
+        # "Son N Gün" şeridindeki N bitişe kalan gün (bugün hariç): 25 Ekim'de "Son 6 Gün" → 31 Ekim (isbank.com.tr'deki tarihle aynı)
+        out.append({"baslik": kisalt(metinler[0], 160), "bitis": (bugun + dt.timedelta(days=max(0, kalan))).isoformat(),
+                    "ozet": (kisalt(metinler[1], 220) if len(metinler) > 1 and len(metinler[1]) > 25 and not BOS_OZET.search(metinler[1]) else ""), "url": link or kok + "/kampanyalar"})
     return out
 
 def maximum(segment):
@@ -322,20 +345,20 @@ def x_detay(url):
     gun_ = x_baslik_gun(baslik)
     if gun_:
         if gun_ < bugun: return "bitti"
-        return {"baslik": baslik[:160], "bitis": gun_.isoformat(), "ozet": ozet[:220], "url": url, "tv": 3}, ticari
+        return {"baslik": kisalt(baslik, 160), "bitis": gun_.isoformat(), "ozet": kisalt(ozet, 220), "url": url, "tv": 3}, ticari
     # Sayfanın kendi "Başlangıç - Bitiş Tarihi" alanı varsa kesin olan odur (metindeki puan yükleme tarihi gibi sonraki tarihler bitiş sanılmasın)
     alan = re.search(r"başlangıç\s*[-–]\s*bitiş\s*tarihi\s*:?\s*\d{1,2}[./]\d{1,2}[./]20\d{2}\s*[-–]\s*(\d{1,2})[./](\d{1,2})[./](20\d{2})", metin(t).lower())
     if alan:
         try:
             son = dt.date(int(alan.group(3)), int(alan.group(2)), int(alan.group(1)))
             if son < bugun: return "bitti"
-            return {"baslik": baslik[:160], "bitis": son.isoformat(), "ozet": ozet[:220], "url": url, "tv": 2}, ticari
+            return {"baslik": kisalt(baslik, 160), "bitis": son.isoformat(), "ozet": kisalt(ozet, 220), "url": url, "tv": 2}, ticari
         except ValueError:
             pass
     bitis = x_tarih(govde)
     if bitis is None:
         return "bitti"
-    return {"baslik": baslik[:160], "bitis": bitis, "ozet": ozet[:220], "url": url, "tv": 2}, ticari
+    return {"baslik": kisalt(baslik, 160), "bitis": bitis, "ozet": kisalt(ozet, 220), "url": url, "tv": 2}, ticari
 
 X_HEPSI = None
 

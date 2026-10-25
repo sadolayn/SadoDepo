@@ -254,7 +254,7 @@ function render() {
   $("src").innerHTML = `<option value="">Tüm kaynaklar</option>` + srcs.map((s) => `<option ${s === cur ? "selected" : ""}>${esc(s)}</option>`).join("");
   const q = fold($("q").value.trim()), src = $("src").value;
   const list = items.filter((x) => (!src || x.s === src) && (!q || fold(x.t).includes(q)));
-  if (!list.length) { $("list").innerHTML = `<div class="empty">${cat === "okul" && !q && !src ? "Son 2 günde okul tatili haberi yok. 🎒 Okullar açık görünüyor." : cat === "isbank" && !q && !src ? "Son 2 günde İş Bankası haberi yok." : isY && !q && !src ? "Bu yazar için henüz yazı yok; bir sonraki güncellemede dolacak." : (cat === "tarim" || cat === "yz") && !(D.cats[cat] || []).length ? "Bu kategori bir sonraki güncellemede dolacak." : "Bu filtrede haber yok."}</div>`; return; }
+  if (!list.length) { $("list").innerHTML = `<div class="empty">${cat === "okul" && !q && !src ? "Son 36 saatte okul tatili haberi yok." : cat === "isbank" && !q && !src ? "Son 36 saatte İş Bankası haberi yok." : isY && !q && !src ? "Bu yazar için henüz yazı yok; bir sonraki güncellemede dolacak." : (cat === "tarim" || cat === "yz") && !(D.cats[cat] || []).length ? "Bu kategori bir sonraki güncellemede dolacak." : "Bu filtrede haber yok."}</div>`; return; }
   let h = "", last = "";
   for (const x of list) {
     const dl = x.d ? dayLabel(x.d) : "";

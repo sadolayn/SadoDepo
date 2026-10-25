@@ -10,7 +10,7 @@
       Karekod yalnızca sayfanın adresini içerir (lib/qrcode.js, MIT, Kazuhiko Arase). İstemeyen sayfa: <body data-karekod="yok">
 */
 (function () {
-  var FOOTER = 'Copyright © {Y} Sadolayn. All rights reserved.<br><span style="font-size:11.5px;letter-spacing:.3px;color:#8a8a8a">Tüm hakları saklıdır.</span><br><span style="display:block;max-width:420px;margin:6px auto 0;font-size:12px;line-height:1.5;color:#9a9a9a">Kişisel bir sitedir; Türkiye İş Bankası A.Ş. ile bağı yoktur, banka tarafından hazırlanmamıştır. Banka adları ilgili kurumun tescilli markasıdır; resmi bilgi için <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:#b5b5b5;display:inline-block;padding:5px 2px;margin:-5px 0">isbank.com.tr</a>.<br>Ziyaretler isimsiz sayılır, kişisel veri toplanmaz. Ana sayfadaki "Önerileriniz ve görüşleriniz" formuna yazdıkların yalnızca site sahibine ulaşır.</span>';
+  var FOOTER = 'Copyright © {Y} Sadolayn. All rights reserved.<br><span style="font-size:11.5px;letter-spacing:.3px;color:#8a8a8a">Tüm hakları saklıdır.</span><br><span style="display:block;max-width:420px;margin:6px auto 0;font-size:12px;line-height:1.5;color:#9a9a9a">Kişisel bir sitedir; Türkiye İş Bankası A.Ş. ile bağı yoktur, banka tarafından hazırlanmamıştır. Banka adları ilgili kurumun tescilli markasıdır; resmi bilgi için <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:#b5b5b5;display:inline-block;padding:5px 2px;margin:-5px 0">isbank.com.tr</a>.<br>Ziyaretler isimsiz sayılır; yalnızca kendi isteğinle yazdıkların (öneri formu, Alerts e-postası) saklanır. Ana sayfadaki "Önerileriniz ve görüşleriniz" formuna yazdıkların yalnızca site sahibine ulaşır.</span>';
 
   var css = document.createElement("style");
   css.textContent =

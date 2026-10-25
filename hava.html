@@ -216,7 +216,7 @@ function render(place, d, pol) {
     const p = h.precipitation_probability[i];
     hours += `<div class="hour"><div class="h">${i === startIdx ? "Şimdi" : h.time[i].slice(11, 13)}</div>
       <div class="i">${w.icon}</div><div class="t">${round(h.temperature_2m[i])}°</div>
-      <div class="p">${p >= 20 ? "💧" + p + "%" : ""}</div></div>`;
+      <div class="p">${p >= 20 ? "💧%" + p : ""}</div></div>`;
   }
 
   const N7 = Math.min(7, dl.time.length);
@@ -250,7 +250,7 @@ function render(place, d, pol) {
     <div class="grid">
       <div class="cell"><span>Hissedilen</span><b>${round(c.apparent_temperature)}°</b></div>
       <div class="cell"><span>Nem</span><b>%${round(c.relative_humidity_2m)}</b></div>
-      <div class="cell"><span>Rüzgâr</span><b>${round(c.wind_speed_10m)} km/s ${dirName(c.wind_direction_10m)}</b></div>
+      <div class="cell"><span>Rüzgâr</span><b>${round(c.wind_speed_10m)} km/sa ${dirName(c.wind_direction_10m)}</b></div>
       <div class="cell"><span>UV indeksi</span><b>${round(dl.uv_index_max[0])}</b></div>
       <div class="cell"><span>Gün doğumu</span><b>${tTime(dl.sunrise[0])}</b></div>
       <div class="cell"><span>Gün batımı</span><b>${tTime(dl.sunset[0])}</b></div>
@@ -301,7 +301,7 @@ function alertsHTML(dl, pol) {
   else { i = first((j) => wc[j] >= 95); if (i >= 0) A.push({ c: "org", e: "⛈️", t: "Gök gürültülü sağanak", s: `${dLabel(dl.time[i], i)} yer yer gök gürültülü sağanak${wc[i] >= 96 ? " ve dolu" : ""} bekleniyor.${far(i)}`, o: 2 }); }
   // Rüzgâr
   i = first((j) => gu[j] >= 60);
-  if (i >= 0) A.push({ c: gu[i] >= 80 ? "red" : "org", e: "💨", t: gu[i] >= 80 ? "Fırtına" : "Kuvvetli rüzgâr", s: `${dLabel(dl.time[i], i)} rüzgâr hamlesi ${Math.round(gu[i])} km/s'ye ulaşabilir. Çatı uçması ve devrilen ağaçlara dikkat.${far(i)}`, o: gu[i] >= 80 ? 0 : 2 });
+  if (i >= 0) A.push({ c: gu[i] >= 80 ? "red" : "org", e: "💨", t: gu[i] >= 80 ? "Fırtına" : "Kuvvetli rüzgâr", s: `${dLabel(dl.time[i], i)} rüzgâr hamlesi ${Math.round(gu[i])} km/sa hıza ulaşabilir. Çatı uçması ve devrilen ağaçlara dikkat.${far(i)}`, o: gu[i] >= 80 ? 0 : 2 });
   // UV
   if ((dl.uv_index_max[0] || 0) >= 8) A.push({ c: "org", e: "🕶️", t: "UV çok yüksek", s: `Bugün UV indeksi ${Math.round(dl.uv_index_max[0])}. 11:00–16:00 arası güneşten korun.`, o: 4 });
   // Polen
