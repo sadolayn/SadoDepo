@@ -196,6 +196,7 @@
   .ayar .adet summary { cursor: pointer; font-size: 14px; font-weight: 600; padding: 4px 0; color: #f0c674; }
   .ayar .rules { color: #e8dccb; }
   .ayar .abtn { display: block; box-sizing: border-box; width: calc(100% - 32px) !important; margin: 16px 16px 0; border-radius: 999px; background: linear-gradient(180deg, #f3cf86, #d9a54a); color: #2a1a05; border: none; font-family: Georgia, serif; font-style: italic; font-size: 18px; font-weight: 700; padding: 13px; box-shadow: 0 6px 18px rgba(217,165,74,.25); }
+  .ayar .aAlt [data-cikis] { display: block; box-sizing: border-box; width: calc(100% - 32px) !important; margin: 8px 16px 0 !important; border-radius: 999px; padding: 11px; font-size: 15px; }
   .ayar .kasa { margin: 10px 16px 0; font-size: 12px; color: #b79a74; text-align: center; }
   /* Başla düğmesi pencerenin altında hep görünür */
   .ayar .aAlt { position: sticky; bottom: -16px; z-index: 2; margin: 8px 0 -16px; padding: 4px 0 16px; background: linear-gradient(rgba(22,15,29,0), rgba(22,15,29,.97) 14px); }
@@ -303,6 +304,9 @@ function kasaBildir(o) {
 // Ortak Yıldız modülü (token.js): bakiye Batak, King ve Balayı King'de ortak
 const MP = Token.MP, mpSave = Token.save, mpFmt = Token.fmt, KADEMELER = Token.KADEMELER;
 let gameStake = 0;
+// Açılır pencerelerden oyunlar sayfasına dönüş (pencere açıkken üstteki 🎮 düğmesine dokunulamıyor)
+const CIKIS = (not) => `<button type="button" class="btn" data-cikis style="margin-top:8px;background:transparent;color:var(--ink);border-color:var(--line)">🎮 Oyunlardan çık</button>${not ? `<p style="font-size:12px;margin:6px 0 0;color:var(--muted)">${not}</p>` : ""}`;
+document.addEventListener("click", (e) => { if (e.target.closest && e.target.closest("[data-cikis]")) location.href = "oyunlar.html"; });
 // İş Bankası tarihçesi ve ürün soruları (internetten doğrulandı: Küre Ansiklopedi, Diken, isbank.com.tr, Teknoblog)
 // 4. alan: son geçerlilik tarihi (kampanya soruları kampanya bitince sorulmaz)
 let roundNo = 0;
@@ -689,7 +693,7 @@ function endRound() {
     <h2>${title}</h2>
     <p>El ${roundNo}/${OPT.eller} · İhale ${contract} · Alınan ${side}${over ? " (ihale+3)" : ""} · Koz ${trump}</p>
     <table><tr><th></th><th>El</th><th>Puan</th><th>Toplam</th></tr>${rows}</table>
-    <button class="btn" id="next">${last ? "Sonucu gör" : "Sonraki el"}</button>`;
+    <button class="btn" id="next">${last ? "Sonucu gör" : "Sonraki el"}</button>${last ? "" : CIKIS(gameStake ? "Oyun yarıda kalır; ortadaki Yıldız geri gelmez." : "")}`;
   $("overlay").classList.add("show");
   $("next").onclick = () => { $("overlay").classList.remove("show"); last ? gameOver() : newRound(); };
   setStatus("");
@@ -720,7 +724,7 @@ function gameOver() {
   gameStake = 0;
   $("modal").classList.remove("ayar"); $("modal").innerHTML = `<h2>${win}</h2><p>${OPT.eller} el tamamlandı</p><table>${rows}</table>
     ${R.html}
-    <button class="btn" id="again">${Token.yeter() ? "Yeni oyun" : "Devam"}</button>`;
+    <button class="btn" id="again">${Token.yeter() ? "Yeni oyun" : "Devam"}</button>${CIKIS()}`;
   $("overlay").classList.add("show");
   $("again").onclick = () => showRules();
 }
@@ -747,7 +751,7 @@ function showRules() {
     <div class="ahint" id="dagNote"></div>
     <details class="adet"><summary>👥 Oyuncu isimleri</summary>${ISIM.html([["ben", "Sen", "Senin adın"], ["sag", "Sadosan", "Sağındaki"], [null, "Sadolayn", "Karşındaki"], ["sol", "Sadocan", "Solundaki"]])}</details>
     <details class="adet"><summary>📖 Kurallar</summary>${KURAL()}</details>
-    <div class="aAlt"><button class="btn abtn" id="start">Başla</button>
+    <div class="aAlt"><button class="btn abtn" id="start">Başla</button>${CIKIS()}
     <div class="kasa">Bu cihazda: ${KASA.oyun} oyun</div></div>`;
   $("overlay").classList.add("show");
   ISIM.bind($("modal"), () => { setNames(); if (typeof render === "function") try { render(); } catch (e) {} });

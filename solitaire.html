@@ -470,7 +470,7 @@ function stuckModal(force) {
     <p>Destedeki kartlar da dahil oynanabilecek bir kart yok; desteyi boşuna çevirmene gerek yok.${kalan < 52 ? `<br><b style="color:var(--accent)">${52 - kalan}</b> kartı bitişe taşıdın 👏` : ""}</p>
     <button class="btn" id="stNew">Yeni oyun</button>
     <button class="btn ghost" id="stUndo">↩️ Birkaç hamle geri al</button>
-    <button class="btn ghost" id="stLook">Masaya bakayım</button>`;
+    <button class="btn ghost" id="stLook">Masaya bakayım</button>${CIKIS()}`;
   $("overlay").classList.add("show");
   $("stNew").onclick = () => { $("overlay").classList.remove("show"); wishScreen(); };
   $("stUndo").onclick = () => { $("overlay").classList.remove("show"); for (let i = 0; i < 3; i++) undo(); };
@@ -516,7 +516,7 @@ function checkWin() {
       <div class="moon">✨</div>
       <h2>Dileğin kabul olsun!</h2>
       <p>Oyunu <b>${S.moves}</b> hamlede, <b>${fmtT(elapsed)}</b> sürede, <b>${S.score}</b> puanla bitirdin.${yeniRekor ? "<br>🏆 <b style='color:var(--accent)'>Yeni puan rekoru!</b>" : ""}</p>
-      <button class="btn" id="again">Yeni dilek, yeni oyun</button>`;
+      <button class="btn" id="again">Yeni dilek, yeni oyun</button>${CIKIS()}`;
     $("overlay").classList.add("show");
     $("again").onclick = () => { $("overlay").classList.remove("show"); wishScreen(); };
   }, 1700);
@@ -661,13 +661,17 @@ document.addEventListener("touchmove", (e) => {
   if (e.cancelable) e.preventDefault();
 }, { passive: false });
 
+// Açılır pencerelerden oyunlar sayfasına dönüş (pencere açıkken üstteki 🎮 düğmesine dokunulamıyor; oyun kaydedilir)
+const CIKIS = () => `<button type="button" class="btn ghost" data-cikis>🎮 Oyunlardan çık</button>`;
+document.addEventListener("click", (e) => { if (e.target.closest && e.target.closest("[data-cikis]")) { try { saveGame(); } catch (x) {} location.href = "oyunlar.html"; } });
+
 // ---------- Dilek ekranı ----------
 function wishScreen() {
   $("modal").innerHTML = `
     <div class="moon">🌙</div>
     <h2>İçinden bir dilek tut…</h2>
     <p>Gözlerini kapat, dileğini içinden geçir.<br>Oyunu bitirirsen dileğin kabul olsun. ✨</p>
-    <button class="btn" id="go">Dileğimi tuttum, başla</button>`;
+    <button class="btn" id="go">Dileğimi tuttum, başla</button>${CIKIS()}`;
   $("overlay").classList.add("show");
   $("go").onclick = () => { $("overlay").classList.remove("show"); deal(); };
 }
