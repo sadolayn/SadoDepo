@@ -1,5 +1,322 @@
 {
- "guncelleme": "2026-10-25T07:59",
- "sosyal": [],
- "haberler": []
+ "guncelleme": "2026-10-25T08:00",
+ "sosyal": [
+  {
+   "platform": "Facebook",
+   "ad": "Türkiye​ İş Bankası",
+   "url": "https://www.facebook.com/isbankasi/?fref=ts"
+  },
+  {
+   "platform": "Facebook",
+   "ad": "İşCep",
+   "url": "https://www.facebook.com/isCep/"
+  },
+  {
+   "platform": "Facebook",
+   "ad": "Maximum",
+   "url": "https://www.facebook.com/maximum/?fref=ts"
+  },
+  {
+   "platform": "Facebook",
+   "ad": "Maximiles",
+   "url": "https://www.facebook.com/MaximilesKart/?fref=ts"
+  },
+  {
+   "platform": "Facebook",
+   "ad": "İş Sanat",
+   "url": "https://www.facebook.com/issanat/?fref=ts"
+  },
+  {
+   "platform": "Facebook",
+   "ad": "Kültür Yayınları",
+   "url": "https://www.facebook.com/iskultur/?fref=ts"
+  },
+  {
+   "platform": "Facebook",
+   "ad": "Maximum Gaming",
+   "url": "https://www.facebook.com/maximumgamingg/"
+  },
+  {
+   "platform": "Facebook",
+   "ad": "Workup",
+   "url": "https://www.facebook.com/workupisbankasi/"
+  },
+  {
+   "platform": "Facebook",
+   "ad": "Maximum Genç",
+   "url": "https://www.facebook.com/maximumgenc/"
+  },
+  {
+   "platform": "X",
+   "ad": "Türkiye İş Ba​nkası",
+   "url": "https://x.com/isbankasi?lang=tr"
+  },
+  {
+   "platform": "X",
+   "ad": "İşCep",
+   "url": "https://x.com/iscepisbankasi"
+  },
+  {
+   "platform": "X",
+   "ad": "Maximum",
+   "url": "https://x.com/MaximumKart?lang=tr"
+  },
+  {
+   "platform": "X",
+   "ad": "Maximiles",
+   "url": "https://x.com/MaximilesKart?lang=tr"
+  },
+  {
+   "platform": "X",
+   "ad": "İş Sanat",
+   "url": "https://x.com/issanat?lang=tr"
+  },
+  {
+   "platform": "X",
+   "ad": "Kültür Yayınları",
+   "url": "https://x.com/iskultur?lang=tr"
+  },
+  {
+   "platform": "X",
+   "ad": "Maximum Gaming",
+   "url": "https://x.com/maximumgamingg"
+  },
+  {
+   "platform": "X",
+   "ad": "Workup​",
+   "url": "https://x.com/workupisbankasi"
+  },
+  {
+   "platform": "X",
+   "ad": "İş Bankası Destek​",
+   "url": "https://x.com/IsBankasiDestek"
+  },
+  {
+   "platform": "X",
+   "ad": "Maximum Genç​",
+   "url": "https://x.com/maximumgenc/"
+  },
+  {
+   "platform": "YouTube",
+   "ad": "Türkiye İş Bankası",
+   "url": "https://www.youtube.com/user/turkiyeisbankasi"
+  },
+  {
+   "platform": "YouTube",
+   "ad": "İşCep",
+   "url": "https://www.youtube.com/iscep"
+  },
+  {
+   "platform": "YouTube",
+   "ad": "Maximum",
+   "url": "https://www.youtube.com/user/maximumkart"
+  },
+  {
+   "platform": "YouTube",
+   "ad": "Maximiles",
+   "url": "https://www.youtube.com/user/MaximilesKart"
+  },
+  {
+   "platform": "YouTube",
+   "ad": "İş Sanat",
+   "url": "https://www.youtube.com/user/issanatsm"
+  },
+  {
+   "platform": "YouTube",
+   "ad": "Maximum Gaming",
+   "url": "https://www.youtube.com/channel/UCKjSnXagZZ5vlX2p-o_WMRg"
+  },
+  {
+   "platform": "YouTube",
+   "ad": "Workup​",
+   "url": "https://www.youtube.com/channel/UCottEjEztxt0NzJ-nAr0Zsw"
+  },
+  {
+   "platform": "YouTube",
+   "ad": "Maximum Genç​",
+   "url": "https://www.youtube.com/maximumgenc"
+  },
+  {
+   "platform": "Instagram",
+   "ad": "Türkiye İş Bankası",
+   "url": "https://www.instagram.com/isbankasi/"
+  },
+  {
+   "platform": "Instagram",
+   "ad": "İşCep",
+   "url": "https://www.instagram.com/iscepisbankasi/"
+  },
+  {
+   "platform": "Instagram",
+   "ad": "Maximum",
+   "url": "https://www.instagram.com/maximumkart/"
+  },
+  {
+   "platform": "Instagram",
+   "ad": "Maximiles",
+   "url": "https://www.instagram.com/maximileskart/"
+  },
+  {
+   "platform": "Instagram",
+   "ad": "İş Sanat",
+   "url": "https://www.instagram.com/issanat/"
+  },
+  {
+   "platform": "Instagram",
+   "ad": "Maximum Gaming",
+   "url": "https://www.instagram.com/maximumgaming_/?hl=tr"
+  },
+  {
+   "platform": "Instagram",
+   "ad": "Workup​",
+   "url": "https://www.instagram.com/workupisbankasi/?hl=tr"
+  },
+  {
+   "platform": "Instagram",
+   "ad": "Maximum Genç",
+   "url": "https://www.instagram.com/maximumgenc/"
+  },
+  {
+   "platform": "LinkedIn",
+   "ad": "Türkiye İş Bankası",
+   "url": "https://www.linkedin.com/company/isbankasi"
+  },
+  {
+   "platform": "LinkedIn",
+   "ad": "Workup",
+   "url": "https://www.linkedin.com/company/isbankworkup/"
+  }
+ ],
+ "haberler": [
+  {
+   "baslik": "Vizyon ve Stratejimiz",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/vizyon-ve-stratejimiz",
+   "tarih": ""
+  },
+  {
+   "baslik": "Yurt Dışı Şubelerimiz",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/yurtdisi-subelerimiz",
+   "tarih": ""
+  },
+  {
+   "baslik": "Satılık Gayrimenkuller",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/is-bankasindan-satilik-gayrimenkuller",
+   "tarih": ""
+  },
+  {
+   "baslik": "Sürdürülebilirlik",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/surdurulebilirlik",
+   "tarih": ""
+  },
+  {
+   "baslik": "Politikalarımız",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/politikalarimiz",
+   "tarih": ""
+  },
+  {
+   "baslik": "Sürdürülebilirlik Kilometre Taşları",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/surdurulebilirlik-kilometre-taslari",
+   "tarih": ""
+  },
+  {
+   "baslik": "Sorumlu Bankacılık",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/sorumlu-bankacilik",
+   "tarih": ""
+  },
+  {
+   "baslik": "Sorumlu Ürün ve Hizmetler",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/sorumlu-urun-ve-hizmetler",
+   "tarih": ""
+  },
+  {
+   "baslik": "Üyelikler ve İnisiyatifler",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/uyelikler-ve-insiyatifler",
+   "tarih": ""
+  },
+  {
+   "baslik": "Derecelendirme Notları ve Endeksler",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/derecelendirme-notlari-ve-endeksler",
+   "tarih": ""
+  },
+  {
+   "baslik": "İklim Dönüşüm Stratejisi",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/iklim-donusum-stratejisi",
+   "tarih": ""
+  },
+  {
+   "baslik": "Yatırımcı İlişkileri",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/yatirimci-iliskileri",
+   "tarih": ""
+  },
+  {
+   "baslik": "Finansal Bilgiler",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/finansal-bilgiler",
+   "tarih": ""
+  },
+  {
+   "baslik": "Yatırımcı Sunumu",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/yatirimci-sunumu",
+   "tarih": ""
+  },
+  {
+   "baslik": "Özel Durum Açıklamaları",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/ozel-durum-aciklamalari",
+   "tarih": ""
+  },
+  {
+   "baslik": "Kredi Derecelendirme Notları",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/kredi-derecelendirme-notlari",
+   "tarih": ""
+  },
+  {
+   "baslik": "Kurumsal Bilgiler",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/kurumsal-bilgiler",
+   "tarih": ""
+  },
+  {
+   "baslik": "Kurumsal Yönetim",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/kurumsal-yonetim",
+   "tarih": ""
+  },
+  {
+   "baslik": "Paylara İlişkin Bilgiler",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/paylara-iliskin-bilgiler",
+   "tarih": ""
+  },
+  {
+   "baslik": "Sıkça Sorulan Sorular",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/sikca-sorulan-sorular",
+   "tarih": ""
+  },
+  {
+   "baslik": "Kariyer Fırsatları",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/iste-kariyer",
+   "tarih": ""
+  },
+  {
+   "baslik": "İş Bankası'ndan Haberler",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/is-bankasindan-haberler",
+   "tarih": ""
+  },
+  {
+   "baslik": "Kurumsal Sosyal Sorumluluk",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/kurumsal-sosyal-sorumluluk",
+   "tarih": ""
+  },
+  {
+   "baslik": "Kültür ve Sanat",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/kultur-ve-sanat",
+   "tarih": ""
+  },
+  {
+   "baslik": "Kültür Yayınları",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/kultur-yayinlari",
+   "tarih": ""
+  },
+  {
+   "baslik": "Ortaklık Yapısı",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/ortaklik-yapisi",
+   "tarih": ""
+  }
+ ]
 }
