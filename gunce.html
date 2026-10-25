@@ -361,14 +361,14 @@
     <p class="sub" id="shSub"></p>
     <div class="thead"><span></span><span>Kalem</span><span>Çeyrek hedefi</span><span></span></div>
     <div id="tRows"></div>
-    <div class="addrow"><input id="newName" placeholder="+ Yeni kalem (ör. kitap, spor, birikim)" maxlength="30"><select id="newType" aria-label="Kalem türü"><option value="adet">Adet</option><option value="tutar">Tutar (TL)</option><option value="bakiye">Bakiye (TL)</option><option value="ortalama">Ort. bakiye (TL)</option></select><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
+    <div class="addrow"><input id="newName" placeholder="+ Yeni kalem (ör. kredi kartı, ek hesap, kredi)" maxlength="30"><select id="newType" aria-label="Kalem türü"><option value="adet">Adet</option><option value="tutar">Tutar (TL)</option><option value="bakiye">Bakiye (TL)</option><option value="ortalama">Ort. bakiye (TL)</option></select><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
     <div class="kilavuz">
       <b>Nasıl eklenir?</b> Kalemin adını yaz → türünü seç (kalem hemen eklenir) → sağdaki kutuya çeyrek hedefini yaz → <b>Kaydet</b>.
       <ul>
-        <li><b>Adet</b> · yaptıkça +1 (okunan kitap, spor günü, biten iş…)</li>
-        <li><b>Tutar</b> · günlük tutarlar toplanır (biriktirilen para, yapılan harcama…)</li>
+        <li><b>Adet</b> · yaptıkça +1 (kredi kartı, ek hesap, fatura talimatı…)</li>
+        <li><b>Tutar</b> · günlük tutarlar toplanır (kullandırılan kredi, sigorta primi…)</li>
         <li><b>Bakiye</b> · çeyrek sonunda ulaşmak istediğin bakiye</li>
-        <li><b>Ort. bakiye</b> · çeyrek boyunca günlük ortalama (ör. birikim hesabı)</li>
+        <li><b>Ort. bakiye</b> · çeyrek boyunca günlük ortalama (ör. mevduat)</li>
       </ul>
       Tutarı rakamla yaz, binlik noktaları Günce koyar. Hedefin aylık verildiyse adet ve tutarda 3 ile çarp.
     </div>
@@ -597,7 +597,7 @@ function renderHero() {
       <div style="font-size:19px;font-weight:800;margin:4px 0 2px">${qName()} hedeflerin henüz yok</div>
       <div class="big">Senin tek işin: <b>her gün yaptığını girmek.</b> Hesap, plan, takip ve motivasyon Günce'den 💪</div>
       <div class="steps">
-        <div class="step"><b class="n">1</b><div><b>Hedeflerini gir</b> — her kalem için çeyrek hedefi (adet, tutar ya da bakiye)</div></div>
+        <div class="step"><b class="n">1</b><div><b>Hedeflerini gir</b> — kredi kartı, ek hesap, kredi gibi her kalem için çeyrek hedefi (adet, tutar ya da bakiye)</div></div>
         <div class="step"><b class="n">2</b><div><b>Her gün gir</b> — adetlerde + tuşuna bas, tutar ve bakiyeyi yaz. Birkaç saniye sürer</div></div>
         <div class="step"><b class="n">3</b><div><b>Gerisini Günce'ye bırak</b> — bugün ve bu hafta ne kadar gerektiğini, hedefi tutma ihtimalini Günce söyler 🎯</div></div>
       </div>
