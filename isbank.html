@@ -772,6 +772,14 @@
   .kshs { display: flex; flex-wrap: wrap; gap: 5px; }
   .kshs button { min-height: 34px; padding: 4px 10px; border-radius: 999px; border: 1px solid #2c4a37; background: #0d0d0d; color: #ddd; font: inherit; font-size: 12.5px; }
   .kshs button.on { background: #3fc283; border-color: #3fc283; color: #000; font-weight: 700; }
+  /* Bireysel mavi, Ticari turuncu: seçilen taraf adımların ve seçimlerin rengini belirler (çerçeve sihirbazın yeşili) */
+  .ksih.bir, .kshoz.bir { --sc: #4aa3ff; } .ksih.tic, .kshoz.tic { --sc: #f39a3c; }
+  .ksih > b { color: var(--sc, #3fc283); }
+  .kshs button.on { background: var(--sc, #3fc283); border-color: var(--sc, #3fc283); }
+  .kshs button.sgb, .kshs button.sgt { flex: 1 1 0; min-height: 40px; font-size: 13.5px; font-weight: 700; }
+  .kshs button.sgb { border-color: #2f6fb8; color: #bfe0ff; background: #08162a; } .kshs button.sgt { border-color: #a8601e; color: #ffd9b0; background: #241505; }
+  .kshs button.sgb.on { background: #4aa3ff; border-color: #4aa3ff; color: #001833; } .kshs button.sgt.on { background: #f39a3c; border-color: #f39a3c; color: #2a1400; }
+  .kshoz .kshseg { display: inline-block; margin-bottom: 6px; padding: 2px 10px; border-radius: 999px; background: var(--sc); color: #000; font-size: 12px; font-weight: 800; }
   .kshsil { margin-top: 10px; min-height: 32px; padding: 4px 12px; border-radius: 999px; border: 1px dashed #4a6a55; background: none; color: #9fbfab; font: inherit; font-size: 12.5px; }
   .kshoz { margin: 0 0 10px; padding: 12px; border-radius: 14px; border: 1px solid #2c5a3d; background: linear-gradient(160deg, #0d2417, #070f0a); }
   .kshtop { font-size: 14px; color: #cfe9d8; } .kshtop b { font-size: 26px; color: #6fe3a0; letter-spacing: -.5px; }
@@ -1466,14 +1474,14 @@ document.addEventListener("click", (e) => { const b = e.target.closest(".kkop");
 // 🏪 İşyeri & POS: işyeri açacak ya da POS kullanan için üç kaynaktaki POS, yazarkasa ve esnaf kampanyaları
 const kPosListe = () => (KH && KH.isbank ? kTumu("ticari").filter((k) => /esnaf|pos/i.test(k.kim) || /\bpos\b|yazarkasa|ökc|üye işyeri|esnaf|kobi|işyeri/i.test(k.baslik + " " + (k.ozet || ""))) : []);
 // Başlıktaki kazanç tutarı: tutarın ardından puan / mil / indirim / iade gelmeli ("30.000 TL ve üzeri" harcama eşiğidir, sayılmaz)
-const kTL = (k) => Math.max(0, ...[...k.baslik.matchAll(/(\d{1,3}(?:\.\d{3})+|\d+)\s*(?:TL|₺)(?!\s*ve üzer)[^\d]{0,22}?(puan|mil\b|indirim|iade|hediye)/gi)].map((m) => +m[1].replace(/\./g, "")));
+const kTL = (k) => Math.max(0, ...[...k.baslik.toLocaleLowerCase("tr").matchAll(/(\d{1,3}(?:\.\d{3})+|\d+)\s*(?:tl|₺)(?!\s*ve üzer)[^\d]{0,22}?(puan|mil\b|indirim|iade|hediye)/g)].map((m) => +m[1].replace(/\./g, "")));
 // ⭐ Öne çıkan: elle seçilmiş değil, verinin kendisinden — biten, yeni gelen, en çok kazandıran, en uzun taksit, en yüksek indirim
 function kOneHtml(L, renk) {
   const sayi = (x) => +String(x).replace(/\./g, "").replace(",", ".");
   // Kazanç: tutarın hemen ardından puan / mil / indirim / iade gelmeli ("30.000 TL ve üzeri alışveriş" harcama eşiğidir, sayılmaz)
-  const tl = (k) => Math.max(0, ...[...k.baslik.matchAll(/(\d{1,3}(?:\.\d{3})+|\d+)\s*(?:TL|₺)(?!\s*ve üzer)[^\d]{0,22}?(puan|mil\b|indirim|iade|hediye)/gi)].map((m) => sayi(m[1])));
+  const tl = kTL;
   const tk = (k) => Math.max(0, ...[...k.baslik.matchAll(/(\d{1,2})\s*(?:aya varan\s*)?(?:ay\s*)?(?:ilave\s*|ek\s*)?taksit/gi)].map((m) => +m[1]), ...[...k.baslik.matchAll(/\+\s?(\d{1,2})\s*taksit/gi)].map((m) => +m[1]));
-  const yz = (k) => !/indirim/i.test(k.baslik) ? 0 : Math.max(0, ...[...k.baslik.matchAll(/%\s?(\d{1,3})|(\d{1,3})\s?%/g)].map((m) => +(m[1] || m[2])).filter((x) => x <= 100));
+  const yz = (k) => !/indirim/i.test(k.baslik.toLocaleLowerCase("tr")) ? 0 : Math.max(0, ...[...k.baslik.matchAll(/%\s?(\d{1,3})|(\d{1,3})\s?%/g)].map((m) => +(m[1] || m[2])).filter((x) => x <= 100));
   const gun = (k) => (k.bitis ? daysLeft(k.bitis) : 999);
   const fmt = (n) => n.toLocaleString("tr-TR");
   const B = [
@@ -1484,7 +1492,7 @@ function kOneHtml(L, renk) {
     ["🏷️", "En yüksek %", "indirim yüzdesine göre", L.filter((k) => yz(k) >= 5).sort((a, b) => yz(b) - yz(a)), (k) => "%" + yz(k)],
   ].filter((x) => x[3].length);
   // İşyeri & POS: üç kaynağın ticari tarafından, bölümden bağımsız (POS, yazarkasa, esnaf)
-  const P = kPosListe().sort((a, b) => gun(a) - gun(b)).filter((k, i, a) => a.findIndex((x) => x.baslik.trim() === k.baslik.trim()) === i); // iki kaynakta aynı kampanya bir kez
+  const P = kPosListe().sort((a, b) => gun(a) - gun(b)).filter((k, i, a) => a.findIndex((x) => kAyni(x) === kAyni(k)) === i); // iki kaynakta aynı kampanya bir kez
   if (P.length) B.push(["🏪", "İşyeri & POS", "İş Bankası, Maximum ve Maximiles'taki POS, yazarkasa ve esnaf kampanyaları", P, (k) => K_KAY[k._kay][1], 99]);
   if (!B.length) return '<div class="empty">Bu bölümde öne çıkarılacak kampanya yok.</div>';
   return `<div class="ohead">⭐ Öne çıkanlar<span>${L.length} kampanyanın içinden kendiliğinden seçilir · satıra dokun, resmi sayfası açılır</span></div>`
@@ -1608,6 +1616,7 @@ let kSih = { acik: false, seg: "bireysel", pro: [], nere: [], ne: "" };
 let kSihGor = [];
 try { const x = JSON.parse(localStorage.getItem("isbankSihir") || "null"); if (x) { kSih = { ...kSih, ...x, acik: false }; kSihGor = x.gor || []; } } catch (e) {}
 function kSihKaydet(gor) { try { localStorage.setItem("isbankSihir", JSON.stringify({ seg: kSih.seg, pro: kSih.pro, nere: kSih.nere, ne: kSih.ne, gor: gor || kSihGor })); } catch (e) {} }
+const kAyni = (k) => kKucuk(k.baslik).replace(/[^a-z0-9%]/g, "");
 function kSihListe() {
   const S = kSih, P = (K_PROFIL[S.seg] || []).filter((p) => S.pro.includes(p[0])).map((p) => p[3]);
   const kimler = P.map((p) => p.kim).filter(Boolean), NE = S.ne || (P.find((p) => p.ne) || {}).ne || "";
@@ -1615,7 +1624,8 @@ function kSihListe() {
   return kTumu(S.seg).filter((k) => k.kim === "Herkes" || kimler.includes(k.kim)).map((k) => {
       const t = k.baslik + " " + (k.ozet || ""), reU = RE.some((r) => r.test(t)), nU = nereler.includes(k.nere), kU = kimler.includes(k.kim);
       return { k, uy: kU || nU || reU || !nereler.length, p: (kU ? 4 : 0) + (nU ? 3 : 0) + (reU ? 3 : 0) + (NE && k.ne === NE ? 2 : 0) + (k.bitis && daysLeft(k.bitis) <= 7 ? 1 : 0) };
-    }).filter((x) => x.uy).sort((a, b) => b.p - a.p || (a.k.bitis || "9").localeCompare(b.k.bitis || "9")).map((x) => x.k);
+    }).filter((x) => x.uy).sort((a, b) => b.p - a.p || (a.k.bitis || "9").localeCompare(b.k.bitis || "9")).map((x) => x.k)
+    .filter((k, i, a) => a.findIndex((x) => kAyni(x) === kAyni(k)) === i); // İş Bankası ve Maximum'da aynı kampanya bir kez (toplam iki kez sayılmasın)
 }
 function kSihHtml() {
   const S = kSih, sec = (a, v, ic, ad, on) => `<button type="button" data-sh="${a}:${esc(v)}" class="${on ? "on" : ""}">${ic} ${esc(ad)}</button>`;
@@ -1626,17 +1636,17 @@ function kSihHtml() {
   const yeniler = kSihGor.length ? L.filter((k) => !kSihGor.includes(k.url)) : [];
   if (secildi) { kSihKaydet(L.map((k) => k.url)); }
   const metin = ilk.map((k) => `• ${k.baslik}${k.bitis ? " (son gün " + new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) + ")" : ""}\n  ${k.url}`).join("\n");
-  return `<div class="ksih"><div class="ksh">🧭 Bana uygun kampanyalar<small>Kendini seç, liste anında oluşsun. Seçimin bu telefonda saklanır; tekrar geldiğinde yenileri ayrıca görürsün.</small></div>
-      <b>1 · Kart ya da hesabın</b><div class="kshs">${sec("seg", "bireysel", "👤", "Bireysel (kendim)", S.seg === "bireysel")}${sec("seg", "ticari", "🏢", "Ticari (işyerim)", S.seg === "ticari")}</div>
+  return `<div class="ksih ${S.seg === "ticari" ? "tic" : "bir"}"><div class="ksh">🧭 Bana uygun kampanyalar<small>Kendini seç, liste anında oluşsun. Seçimin bu telefonda saklanır; tekrar geldiğinde yenileri ayrıca görürsün.</small></div>
+      <b>1 · Kart ya da hesabın</b><div class="kshs">${sec("seg", "bireysel", "👤", "Bireysel (kendim)", S.seg === "bireysel").replace('class="', 'class="sgb ')}${sec("seg", "ticari", "🏢", "Ticari (işyerim)", S.seg === "ticari").replace('class="', 'class="sgt ')}</div>
       <b>2 · Sen kimsin? <small>(birden çok seçilebilir)</small></b><div class="kshs">${(K_PROFIL[S.seg] || []).map(([id, ic, ad]) => sec("pro", id, ic, ad, S.pro.includes(id))).join("")}</div>
       <b>3 · Başka nerede harcıyorsun? <small>(isteğe bağlı)</small></b><div class="kshs">${NERE.map(([ad, ic]) => sec("nere", ad, ic, kKisa(ad), S.nere.includes(ad))).join("")}</div>
       <b>4 · Ne kazanmak istersin?</b><div class="kshs">${kGr("ne").filter((g) => g[0] !== "Ayrıcalık").map(([ad, ic]) => sec("ne", ad, ic, ad, S.ne === ad)).join("")}${sec("ne", "", "✨", "Fark etmez", !S.ne)}</div>
       ${secildi ? `<button type="button" class="kshsil" data-sh="sil:1">↺ Seçimleri temizle</button>` : ""}</div>`
     + (!secildi ? '<div class="empty">👆 Yukarıdan kendini seç; sana uygun kampanyalar burada sıralansın.</div>'
-      : `<div class="kshoz">${toplam ? `<div class="kshtop">💰 <b>${toplam.toLocaleString("tr-TR")} TL</b><span>'ye varan puan, mil ve indirim fırsatı</span></div>` : ""}
+      : `<div class="kshoz ${S.seg === "ticari" ? "tic" : "bir"}"><span class="kshseg">${S.seg === "ticari" ? "🏢 Ticari (işyerin) için" : "👤 Bireysel (kendin) için"}</span>${toplam ? `<div class="kshtop">💰 <b>${toplam.toLocaleString("tr-TR")} TL</b><span>'ye varan puan, mil ve indirim fırsatı</span></div>` : ""}
           <div class="kshsay"><span>🎯 Sana uygun <b>${L.length}</b> kampanya</span>${bitiyor.length ? `<span class="u">⏰ <b>${bitiyor.length}</b> tanesi bu hafta bitiyor</span>` : ""}${yeniler.length ? `<span class="y">🆕 Son bakışından beri <b>${yeniler.length}</b> yeni</span>` : ""}</div>
           ${ilk.length ? `<button type="button" class="kkop kshkop" data-kop="${esc("Bana uygun kampanyalar (sadolayn.github.io/SadoDepo):\n" + metin)}">🔗 Listeyi kopyala, paylaş</button>` : ""}
-          <small>Tutar başlıklardaki "…'ye varan" rakamların toplamıdır; kesin koşullar her kampanyanın kendi sayfasında.</small></div>`
+          <small>Nasıl hesaplanır: listedeki her kampanyanın başlığında yazan puan, mil ya da indirim tutarı toplanır (iki sitede birden yayımlanan kampanya bir kez sayılır; "… TL ve üzeri" gibi harcama şartları sayılmaz). Harcama şartı ve üst sınır her kampanyanın kendi sayfasında.</small></div>`
         + (ilk.length ? ilk.map((k) => kKart(k, K_KAY[k._kay][3])).join("") + (L.length > 15 ? `<p class="note" style="text-align:center">En uygun 15'i gösteriliyor; seçimi daraltırsan liste kısalır.</p>` : "")
           : '<div class="empty">Bu seçimle eşleşen güncel kampanya yok; bir seçimi kaldırmayı dene.</div>'));
 }
