@@ -2360,18 +2360,12 @@ renderCekList();
   const bugun = ymd(new Date());
   const gunFark = (a, b) => Math.round((new Date(b + "T12:00:00") - new Date(a + "T12:00:00")) / 864e5);
   const lnk = (u, t) => u ? `<a href="${u}" target="_blank" rel="noopener">${t} ↗</a>` : t;
-  let oranElle = false, tOranElle = false, vade = 12, secili = null; // secili: hangi düğmeye basıldı (kampanya bitişini hesaba katmak için)
+  let oranElle = false, tOranElle = false, vade = 12, secili = null; // secili: hangi düğmeye basıldı (aynı orana sahip düğmelerden yalnızca o yansın)
   // Dönemli oranlar: maaş kampanyası + JSON'dan gelen ek kampanyalar ({ad, oran, bas, bit, url}). Süresi dolan kendiliğinden gizlenir.
   const donemli = () => [EK.maasli && { id: "maasli", ad: "Maaşı İş Bankası'na yatanlar", oran: EK.maasli, bas: EK.maasli_bas, bit: EK.maasli_bit, url: EK.link_maasli }]
     .concat((EK.ekler || []).map((k, i) => ({ id: "ek" + i, ...k }))).filter(Boolean);
   const aktif = (k) => (!k.bas || bugun >= k.bas) && (!k.bit || bugun <= k.bit);
-  // Seçili kampanyanın bitişinden sonraki günler standart oranla hesaplanır (kampanya bitince kalan borca standart faiz işler).
-  const kalem = (P, r, g) => {
-    const k = secili && donemli().find((x) => x.id === secili && aktif(x) && Math.abs(x.oran - r) < 1e-9);
-    const kg = k && k.bit ? Math.min(g, gunFark(bugun, k.bit) + 1) : g;
-    const faiz = P * r / 100 * kg / 30 + P * EK.aylik / 100 * (g - kg) / 30, v = faiz * VG;
-    return { faiz, kkdf: faiz * 0.15, bsmv: faiz * 0.15, v, top: faiz + v, kg, k };
-  };
+  const kalem = (P, r, g) => { const faiz = P * r / 100 * g / 30, v = faiz * VG; return { faiz, kkdf: faiz * 0.15, bsmv: faiz * 0.15, v, top: faiz + v }; };
   const gunAd = (g) => g === 30 ? "1 ay (30 gün)" : g + " gün";
 
   function oranlar() {
@@ -2408,11 +2402,10 @@ renderCekList();
     rows("e_rows", [["Faiz", tl(k.faiz)], ["KKDF (%15)", tl(k.kkdf)], ["BSMV (%15)", tl(k.bsmv)], ["Günlük maliyet", tl(k.top / g)], ["Geri ödenecek toplam", tl(P + k.top), "total"]]);
     const w = $("e_warn");
     w.className = "ekwarn" + (asim ? " hot" : "");
-    const bol = k.k && k.kg < g ? `<b>📅 ${k.k.ad} oranı ${trh(k.k.bit)}'de bitiyor.</b> İlk ${k.kg} gün %${f2(r)}, kalan ${g - k.kg} gün standart %${f2(EK.aylik)} ile hesaplandı.<br>` : "";
-    w.innerHTML = bol + (asim
+    w.innerHTML = (asim
       ? `<b>⚠️ ${Math.round(num("e_gun"))} gün yazıldı; hesap 30 güne göre gösteriliyor.</b> Bir aydan uzun kullanımda dönem faizi ödenmezse anaparaya eklenir ve faize faiz işler; tutar değişir. Uzun vade için aşağıdaki <b>Taksitli Nakit Avans</b>'a bak.`
       : `<b>⚠️ 1 aydan sonra dikkat:</b> Ek hesap faizi her hesap kesim döneminde tahsil edilir. Dönem faizi ödenmezse faiz anaparaya eklenir, faize de faiz işler; tutar bu hesaptan farklı olabilir.`);
-    ekOzet = ozetMetni("BİREYSEL EK HESAP FAİZ ÖZETİ", [[`Kullanılacak tutar: ${tl(P)}`, `Süre: ${gunAd(g)}`, `Aylık faiz oranı: %${f2(r)}` + (k.k && k.kg < g ? ` (ilk ${k.kg} gün; kalan ${g - k.kg} gün %${f2(EK.aylik)})` : "")], [`Faiz: ${tl(k.faiz)}`, `KKDF (%15): ${tl(k.kkdf)}`, `BSMV (%15): ${tl(k.bsmv)}`, `Toplam maliyet: ${tl(k.top)}`, `Geri ödenecek toplam: ${tl(P + k.top)}`]]);
+    ekOzet = ozetMetni("BİREYSEL EK HESAP FAİZ ÖZETİ", [[`Kullanılacak tutar: ${tl(P)}`, `Süre: ${gunAd(g)}`, `Aylık faiz oranı: %${f2(r)}`], [`Faiz: ${tl(k.faiz)}`, `KKDF (%15): ${tl(k.kkdf)}`, `BSMV (%15): ${tl(k.bsmv)}`, `Toplam maliyet: ${tl(k.top)}`, `Geri ödenecek toplam: ${tl(P + k.top)}`]]);
     $("e_hapT").textContent = `· ${tl(P)} · %${f2(r)}`;
     $("e_hap").innerHTML = GUNLER.map(([v, ad]) => { const x = kalem(P, r, v); return `<tr class="r${v === g ? " on" : ""}" data-g="${v}"><td>${ad}</td><td>${f2(x.faiz)}</td><td>${f2(x.v)}</td><td>${f2(x.top)} TL</td></tr>`; }).join("");
     $("e_hap").querySelectorAll("tr").forEach((tr) => (tr.onclick = () => { $("e_gun").value = tr.dataset.g; calcEk(); $("e_out").scrollIntoView({ behavior: "smooth", block: "center" }); }));
@@ -2442,7 +2435,7 @@ renderCekList();
     if (K && bugun >= (K.bas || "") && bugun <= K.bit) { kEl.hidden = false; kEl.href = K.url; kEl.innerHTML = `🎉 <b>${K.ad}</b> · ${trh(K.bit)}'e kadar: ${K.oran} ↗`; } else kEl.hidden = true;
   };
   function src() {
-    $("e_src").innerHTML = `Faiz oranı kendiliğinden gelmez; sana uygulanan oranı yaz. Düğmelerdeki oranlar <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr</a>'de herkese açık yayımlanan genel oranlardır (son kontrol: ${new Date(EK.kontrol + "T12:00:00").toLocaleDateString("tr-TR")}); müşteriye özel oran farklı olabilir. Süresi dolan kampanya oranı kendiliğinden kalkar. Hesap bilgi amaçlıdır.`;
+    $("e_src").innerHTML = `Faiz oranı kendiliğinden gelmez; sana uygulanan oranı yaz. Düğmelerdeki oranlar <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr</a>'de herkese açık yayımlanan genel oranlardır (son kontrol: ${new Date(EK.kontrol + "T12:00:00").toLocaleDateString("tr-TR")}); müşteriye özel oran farklı olabilir. Hesap bilgi amaçlıdır.`;
   }
   const kopya = (id, getT) => $(id).addEventListener("click", () => {
     const t = getT(); if (!t) return; const b = $(id), o = b.textContent;
