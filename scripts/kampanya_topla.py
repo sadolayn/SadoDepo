@@ -1,5 +1,5 @@
 # Kampanya toplayıcı: isbank.com.tr, maximum.com.tr ve maximiles.com.tr (her biri bireysel + ticari)
-# Günde iki kez çalışır; isbank/kampanya_hepsi.json dosyasına YALNIZCA işlenmiş alanları yazar
+# Günde bir kez (sabah) çalışır; isbank/kampanya_hepsi.json dosyasına YALNIZCA işlenmiş alanları yazar
 # (başlık, kısa açıklama, bitiş tarihi, bağlantı, ilk görülme, ne/nere grubu). Ham sayfa kaydedilmez, kayda yalnızca sayı basılır.
 # Sigorta: bir kaynak o gün açılmazsa ya da öncekinin yarısından az kampanya gelirse o kaynağın eski listesi korunur.
 import json, re, html, os, urllib.request, urllib.error, datetime as dt

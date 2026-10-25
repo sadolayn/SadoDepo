@@ -1,9 +1,9 @@
-# Kampanyalar: isbank.com.tr, maximum.com.tr ve maximiles.com.tr (bireysel + ticari), günde iki kez (İstanbul 09:01 ve 14:01)
+# Kampanyalar: isbank.com.tr, maximum.com.tr ve maximiles.com.tr (bireysel + ticari), günde bir kez, her sabah (İstanbul 08:23; GitHub gecikse de mesai başına yetişsin diye erken)
 # Yalnızca işlenmiş alanlar isbank/kampanya_hepsi.json'a yazılır; kayda yalnızca sayılar basılır
 name: Kampanyalar
 on:
   schedule:
-    - cron: "1 6,11 * * *"
+    - cron: "23 5 * * *"
   workflow_dispatch:
 permissions:
   contents: write

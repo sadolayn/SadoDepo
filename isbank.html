@@ -899,7 +899,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   <div class="disc">
     <b>ℹ️ Bu sayfa kişisel bir projedir; resmî değildir, Türkiye İş Bankası A.Ş. ile bağı yoktur.</b>
     <p>Bilgiler kamuya açık kaynaklardan özenle derlenir ve düzenli olarak kontrol edilir. Ürün, kampanya ve koşulların en güncel ve kesin hâli için lütfen <a href="https://www.isbank.com.tr" target="_blank" rel="noopener">www.isbank.com.tr</a> ve <a href="https://www.maximum.com.tr" target="_blank" rel="noopener">www.maximum.com.tr</a> adreslerini ziyaret ediniz.</p>
-    <small>Seçilmiş haberler ve kampanyalar günde iki kez (09:01 ve 14:01), "Güncel" ve "Video" sekmeleri her saat otomatik güncellenir.</small>
+    <small>Kampanyalar her sabah, seçilmiş haberler günde iki kez, "Güncel" ve "Video" sekmeleri her saat otomatik güncellenir.</small>
   </div>
 </div>
 
@@ -1420,7 +1420,7 @@ function campCard(k) {
       <div class="cfoot"><span>Bitiş: ${bit}</span>${k.url ? `<a class="clink" href="${esc(k.url)}" target="_blank" rel="noopener">${k.url.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr"}'de koşullar ↗</a>` : ""}</div>
     </div>`;
 }
-// ===== Kampanyalar: isbank.com.tr, maximum.com.tr ve maximiles.com.tr (bireysel + ticari), günde iki kez otomatik =====
+// ===== Kampanyalar: isbank.com.tr, maximum.com.tr ve maximiles.com.tr (bireysel + ticari), her sabah otomatik =====
 // Her kampanya tek bir "ne kazanırım" ve tek bir "nerede" grubundadır (sınıflandırma veri toplanırken yapılır): toplamlar her zaman tutar.
 // Süzgeçler "ve" ile birleşir: bir satırdaki sayılar öbür satırdaki seçime göre hesaplanır (dal dal daralır).
 let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kKim = "", kOne = false, kKatAcik = false;
@@ -1506,7 +1506,7 @@ function kOneHtml(L, renk) {
 function renderKampanyalar() {
   if (!KH || !KH.isbank) return renderCamps(); // veri gelene kadar eski düzen
   const fd = (t) => new Date(t).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
-  $("upd").innerHTML = `🔄 isbank.com.tr, maximum.com.tr ve maximiles.com.tr'den günde iki kez (09:01 · 14:01) kendiliğinden alınır · son: <b>${fd(KH.guncelleme)}</b>`;
+  $("upd").innerHTML = `🔄 isbank.com.tr, maximum.com.tr ve maximiles.com.tr'den her sabah kendiliğinden alınır · son: <b>${fd(KH.guncelleme)}</b>`;
   const sb = (attr, v, ic, ad, n, on, cls) => `<button type="button" ${attr}="${esc(v)}" class="${on ? "on" : ""}${cls ? " " + cls : ""}"><span class="ka"><i>${ic}</i>${esc(ad)}</span>${n != null ? `<b>${n} adet</b>` : ""}</button>`;
   const say = (kay, seg) => { const l = kListe(kay, seg); return l ? l.length : null; };
   const L = kListe(kKay, kSeg) || [], [, kayAd, kayDom, renk] = K_KAY[kKay];
@@ -1546,7 +1546,7 @@ function renderKampanyalar() {
   };
   const tumLink = `<a class="maxlink" href="${kKay === "isbank" ? "https://www.isbank.com.tr/kampanyalar" + (kSeg === "ticari" ? "?v=ticari" : "") : kKay === "maximum" ? "https://www.maximum.com.tr/kampanyalar/" + kSeg : "https://www.maximiles.com.tr/kampanyalar"}" target="_blank" rel="noopener">Tüm kampanyalar · ${kayDom} ↗</a>`;
   if (!L.length) {
-    $("list").innerHTML = kKay === "maximiles" ? milesHtml() + `<p class="note" style="text-align:center">✈️ maximiles.com.tr kampanyaları bir sonraki otomatik toplamada (09:01 · 14:01) burada, aynı düzende.</p>` : '<div class="empty">Bu bölümde şu an kampanya yok.</div>' + tumLink;
+    $("list").innerHTML = kKay === "maximiles" ? milesHtml() + `<p class="note" style="text-align:center">✈️ maximiles.com.tr kampanyaları bir sonraki sabah toplamasında burada, aynı düzende.</p>` : '<div class="empty">Bu bölümde şu an kampanya yok.</div>' + tumLink;
     return;
   }
   // Üstte arama kutusu ve öneri sihirbazı; arama ya da sihirbaz açıkken süzgeçlerin yerine onların sonucu görünür
