@@ -308,10 +308,19 @@ def x_detay(url):
     ticari = bool(re.search(r"Kampanyalar\s*(?:[›>/»]\s*)?Ticari\s+Kampanyalar", metin(t)))
     # Tarih yalnızca başlığın altındaki kampanya metninde aranır (menü, alt bilgi ve öteki kampanya kartları dışarıda kalır)
     govde = metin(t[h1.end():] if h1 else t)[:3500]
+    # Sayfanın kendi "Başlangıç - Bitiş Tarihi" alanı varsa kesin olan odur (metindeki puan yükleme tarihi gibi sonraki tarihler bitiş sanılmasın)
+    alan = re.search(r"başlangıç\s*[-–]\s*bitiş\s*tarihi\s*:?\s*\d{1,2}[./]\d{1,2}[./]20\d{2}\s*[-–]\s*(\d{1,2})[./](\d{1,2})[./](20\d{2})", metin(t).lower())
+    if alan:
+        try:
+            son = dt.date(int(alan.group(3)), int(alan.group(2)), int(alan.group(1)))
+            if son < bugun: return "bitti"
+            return {"baslik": baslik[:160], "bitis": son.isoformat(), "ozet": ozet[:220], "url": url, "tv": 2}, ticari
+        except ValueError:
+            pass
     bitis = x_tarih(govde)
     if bitis is None:
         return "bitti"
-    return {"baslik": baslik[:160], "bitis": bitis, "ozet": ozet[:220], "url": url}, ticari
+    return {"baslik": baslik[:160], "bitis": bitis, "ozet": ozet[:220], "url": url, "tv": 2}, ticari
 
 X_HEPSI = None
 
@@ -329,11 +338,11 @@ def x_hepsi():
     # Daha önce okunmuş ve bitişi gelmemiş kampanyanın sayfası yeniden açılmaz (banka sitesine gereksiz yük olmasın):
     # yalnızca yeni çıkan kampanyaların kendi sayfası okunur
     bilinen = {k["url"]: k for seg_ in ("bireysel", "ticari") for k in ((eski.get("maximiles") or {}).get(seg_) or {}).get("kampanyalar", [])
-               if k.get("bitis") and k["bitis"] >= bugun.isoformat()}
+               if k.get("bitis") and k["bitis"] >= bugun.isoformat() and k.get("tv") == 2}  # tv: bitiş tarihi yeni okuyucuyla okundu (eskiler bir kez yeniden okunur)
     acilan = 0
     for url in sorted(duz | bir_t | tic_t):
         if url in bilinen:
-            k = {x: bilinen[url][x] for x in ("baslik", "bitis", "ozet", "url")}
+            k = {x: bilinen[url][x] for x in ("baslik", "bitis", "ozet", "url", "tv")}
             seg = "ticari" if url in tic_t else "bireysel" if url in bir_t else next((s_ for s_ in ("bireysel", "ticari") if any(y["url"] == url for y in ((eski.get("maximiles") or {}).get(s_) or {}).get("kampanyalar", []))), "bireysel")
             X_HEPSI.setdefault(seg, []).append(k)
             continue

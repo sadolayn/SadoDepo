@@ -1350,7 +1350,10 @@ function campCal() {
   // Kampanyaların bitiş günleri: üç kaynaktan (İş Bankası, Maximum, Maximiles), seçilen müşteri bölümü; aynı başlık bir kez
   const KAYS = calKay === "hepsi" ? Object.keys(K_KAY) : [calKay];
   // Kampanyalar bölümüyle birebir aynı liste: adetler iki yerde de aynı tutar
-  const kaynakli = KH && KH.isbank ? KAYS.flatMap((kay) => (kListe(kay, calSeg) || []).map((k) => ({ ...k, _kay: kay }))) : null;
+  // "Hepsi"nde birden çok sitede yayımlanan aynı kampanya bir kez (önce İş Bankası, sonra Maximum, Maximiles); tek kaynakta o sitenin listesi aynen
+  const tekil = (L) => L.filter((k, i, a) => a.findIndex((x) => kAyni(x) === kAyni(k)) === i);
+  const calListe = (kays, seg) => { const L = kays.flatMap((kay) => (kListe(kay, seg) || []).map((k) => ({ ...k, _kay: kay }))); return kays.length > 1 ? tekil(L) : L; };
+  const kaynakli = KH && KH.isbank ? calListe(KAYS, calSeg) : null;
   const kart = (k) => (k._kay ? kKart(k, K_KAY[k._kay][3]) : campCard(k));
   const ends = {}, yeni = {}; (kaynakli || camps).forEach((k) => { if (k.bitis && daysLeft(k.bitis) >= 0) (ends[k.bitis] = ends[k.bitis] || []).push(k); if (k.ilk && k.ilk > "2000-01-01") yeni[k.ilk] = (yeni[k.ilk] || 0) + 1; });
   const gAd = (g) => new Date(g + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
@@ -1366,8 +1369,8 @@ function campCal() {
   const bitissiz = (kaynakli || []).filter((k) => !k.bitis).length;
   // İleri ok: en uzak bitiş gününün ayına kadar (en az 3 ay)
   { const t1 = new Date(), son = Object.keys(ends).sort().pop(); calAyMax = Math.max(3, son ? (+son.slice(0, 4) - t1.getFullYear()) * 12 + (+son.slice(5, 7) - 1 - t1.getMonth()) : 0); calAy = Math.min(calAy, calAyMax); }
-  const suz = KH && KH.isbank ? `<div class="csuz"><div>${[["hepsi", "📋", "Hepsi"], ...Object.entries(K_KAY).map(([k, v]) => [k, v[0], v[1]])].map(([k, ic, ad]) => `<button type="button" data-ck="${k}" class="${calKay === k ? "on" : ""}"><span>${ic} ${ad}</span><b>${k === "hepsi" ? Object.keys(K_KAY).reduce((a, x) => a + aktif(x), 0) : aktif(k)} adet</b></button>`).join("")}</div>`
-    + `<div>${[["bireysel", "👤 Bireysel"], ["ticari", "🏢 Ticari"]].map(([k, ad]) => `<button type="button" data-cs="${k}" class="${calSeg === k ? "on" : ""}"><span>${ad}</span><b>${(calKay === "hepsi" ? Object.keys(K_KAY) : [calKay]).reduce((a, x) => a + (kListe(x, k) || []).length, 0)} adet</b></button>`).join("")}</div></div>` : "";
+  const suz = KH && KH.isbank ? `<div class="csuz"><div>${[["hepsi", "📋", "Hepsi"], ...Object.entries(K_KAY).map(([k, v]) => [k, v[0], v[1]])].map(([k, ic, ad]) => `<button type="button" data-ck="${k}" class="${calKay === k ? "on" : ""}"><span>${ic} ${ad}</span><b>${k === "hepsi" ? calListe(Object.keys(K_KAY), calSeg).length : aktif(k)} adet</b></button>`).join("")}</div>`
+    + `<div>${[["bireysel", "👤 Bireysel"], ["ticari", "🏢 Ticari"]].map(([k, ad]) => `<button type="button" data-cs="${k}" class="${calSeg === k ? "on" : ""}"><span>${ad}</span><b>${calListe(calKay === "hepsi" ? Object.keys(K_KAY) : [calKay], k).length} adet</b></button>`).join("")}</div>${calKay === "hepsi" ? '<p class="calipucu" style="margin:4px 0 0">ℹ️ Hepsi\'nde birden çok sitede yayımlanan aynı kampanya bir kez sayılır.</p>' : ""}</div>` : "";
   const t = new Date(), y = t.getFullYear(), m = t.getMonth(), d = t.getDate(), last = new Date(y, m + 1, 0).getDate();
   const ayAd = t.toLocaleDateString("tr-TR", { month: "long" }), nextAy = new Date(y, m + 1, 1).toLocaleDateString("tr-TR", { month: "long" });
   const ilkHafta = d <= 7, kalan = last - d + 1;
