@@ -752,6 +752,11 @@
   .altkutu.dar:not(.acik) #tfil.kamp .kara button[hidden] { display: none !important; }
   .altkutu #tfil.kamp.araniyor .tsat { display: none !important; }
   .altkutu #tfil.kamp .kara button[hidden] { display: none !important; }
+  .altkutu #tfil.kamp .kara button.ksihk { display: none !important; }
+  .altkutu.dar:not(.acik) #tfil.kamp .kara button.ksihk { display: inline-block !important; width: auto; flex: 0 0 auto; margin-right: -2px; padding: 0 10px; border-radius: 11px; border: 1px dashed #5fbf8a; background: #0b1d12; color: #bff0d2; font-size: 12.5px; font-weight: 800; white-space: nowrap; }
+  .altkutu.dar:not(.acik) #tfil.kamp .kara { min-width: 0; max-width: 100%; }
+  .altkutu.dar:not(.acik) #tfil.kamp .kara input { width: 0; }
+  .altkutu.dar:not(.acik) #tfil.kamp .kara button.ksihk.on { flex: 0 0 auto !important; width: auto !important; min-height: 0 !important; border: 1px solid #5fbf8a !important; background: #5fbf8a !important; color: #04140a !important; }
   .altkutu.dar:not(.acik) #tfil.kamp { pointer-events: auto !important; }
   .altkutu.dar:not(.acik) #tfil.kamp .tsat { pointer-events: none; }
   .kara { display: flex; align-items: center; gap: 6px; padding: 0 6px 0 12px; border-radius: 14px; border: 1px solid #3a3a3a; background: #0d0d0d; }
@@ -1013,6 +1018,14 @@ function altGuncelle() {
 // Alt başlık kutusunda düz sekme düğmeleri (Şubeler, Banka Kampanya)
 const altSekme = (attr, v, ic, ad, n, on) => `<button type="button" ${attr}="${esc(v)}" class="${on ? "on" : ""}"><i>${ic}</i>${esc(ad)}${n != null ? `<b>${n}</b>` : ""}</button>`;
 // Bir bölüme kay: üstteki ince çubuk ve alt başlık kutusu onu örtmesin
+// Başlığa dokununca o bölüme git: üst kutu kaydırınca daraldığı için kutu yerine oturduktan sonra konum yeniden ölçülür
+// (yoksa hedef daralan kutunun boşluğu kadar kayar, bir sonraki bölüm görünür)
+function bolumeGit(el) {
+  const yer = () => { const k = $("altkutu"), alt = k.hidden ? $("imini").offsetHeight : k.getBoundingClientRect().bottom; return Math.max(0, el.getBoundingClientRect().top + scrollY - alt - 8); };
+  let n = 0;
+  const git = () => { const y = yer(); if (Math.abs(y - scrollY) < 2 || n++ > 3) return; window.scrollTo({ top: y, behavior: "auto" }); requestAnimationFrame(() => requestAnimationFrame(git)); };
+  git();
+}
 function bolumeKay(el) {
   const h = $("imini").offsetHeight + ($("altkutu").hidden ? 0 : $("altkutu").offsetHeight) + 8;
   window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - h), behavior: "smooth" });
@@ -1304,7 +1317,7 @@ function milesHtml() {
     <button type="button" class="ocard tolink" data-cat="Black"><div class="oh"><i>🖤</i><b>Maximiles Black</b><em>›</em></div><p>En prestijli kart: lounge, Fast Track ve artan MaxiMil kazanımı.</p></button>`;
 }
 function bindSpecial() {
-  $("list").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { const t = $(b.dataset.go); if (!t) return; const st = document.querySelector(".chipbar"), h = st ? st.getBoundingClientRect().bottom : 0; window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - h - 8, behavior: "smooth" }); t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); }));
+  $("list").querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { const t = $(b.dataset.go); if (!t) return; bolumeGit(t); t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash"); }));
   const ANA = { "📲 Kartsız öde": "Kartsiz", "🛒 Pazarama": "Pazarama", "⏳ Kampanya takvimi": "KTakvim" }; // ana menüye çıkan rehber sayfaları
   $("list").querySelectorAll("[data-tur]").forEach((b) => (b.onclick = () => { const t = b.dataset.tur; if (ANA[t]) { cat = ANA[t]; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); } else { campTur = t; renderCamps(); } icerigeKay(); }));
   $("list").querySelectorAll("[data-cat]").forEach((b) => (b.onclick = () => { cat = b.dataset.cat; renderList(); renderChips(); window.scrollTo({ top: 0 }); })); }
@@ -1401,7 +1414,7 @@ function campCard(k) {
 // ===== Kampanyalar: isbank.com.tr, maximum.com.tr ve maximiles.com.tr (bireysel + ticari), günde iki kez otomatik =====
 // Her kampanya tek bir "ne kazanırım" ve tek bir "nerede" grubundadır (sınıflandırma veri toplanırken yapılır): toplamlar her zaman tutar.
 // Süzgeçler "ve" ile birleşir: bir satırdaki sayılar öbür satırdaki seçime göre hesaplanır (dal dal daralır).
-let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kKim = "", kOne = false, kPos = false, kKatAcik = false;
+let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kKim = "", kOne = false, kKatAcik = false;
 try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kNe = k.ne || ""; kNere = k.nere || ""; kKim = k.kim || ""; kOne = !!k.one; } catch (e) {}
 const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, ne: kNe, nere: kNere, kim: kKim, one: kOne })); } catch (e) {} };
 // Kaynak renkleri: lacivert, pembe, mavi (ana sayfadaki kartların tonlarıyla uyumlu)
@@ -1452,12 +1465,6 @@ function kKopyala(metin) {
 document.addEventListener("click", (e) => { const b = e.target.closest(".kkop"); if (b) kKopyala(b.dataset.kop); });
 // 🏪 İşyeri & POS: işyeri açacak ya da POS kullanan için üç kaynaktaki POS, yazarkasa ve esnaf kampanyaları
 const kPosListe = () => (KH && KH.isbank ? kTumu("ticari").filter((k) => /esnaf|pos/i.test(k.kim) || /\bpos\b|yazarkasa|ökc|üye işyeri|esnaf|kobi|işyeri/i.test(k.baslik + " " + (k.ozet || ""))) : []);
-function kPosHtml() {
-  const L = kPosListe().sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
-  return `<div class="mdHero" style="border-color:#3a5a2c;background:linear-gradient(160deg,#122a12,#081008)"><b>🏪 İşyeri & POS kampanyaları</b><span>İşyeri açıyor ya da POS kullanıyorsan: İş Bankası, Maximum ve Maximiles'taki POS, yazarkasa ve esnaf kampanyaları tek listede.</span></div>`
-    + `<div class="ksag" style="--kk:#6fbf4a"><div class="kyol">🏪 İşyeri & POS · <b>${L.length} adet</b></div></div>`
-    + (L.length ? L.map((k) => kKart(k, K_KAY[k._kay][3])).join("") : '<div class="empty">Şu an güncel POS ya da esnaf kampanyası yok.</div>');
-}
 // Başlıktaki kazanç tutarı: tutarın ardından puan / mil / indirim / iade gelmeli ("30.000 TL ve üzeri" harcama eşiğidir, sayılmaz)
 const kTL = (k) => Math.max(0, ...[...k.baslik.matchAll(/(\d{1,3}(?:\.\d{3})+|\d+)\s*(?:TL|₺)(?!\s*ve üzer)[^\d]{0,22}?(puan|mil\b|indirim|iade|hediye)/gi)].map((m) => +m[1].replace(/\./g, "")));
 // ⭐ Öne çıkan: elle seçilmiş değil, verinin kendisinden — biten, yeni gelen, en çok kazandıran, en uzun taksit, en yüksek indirim
@@ -1476,11 +1483,14 @@ function kOneHtml(L, renk) {
     ["📆", "En uzun taksit", "taksit sayısına göre", L.filter((k) => tk(k) >= 2).sort((a, b) => tk(b) - tk(a)), (k) => tk(k) + " taksit"],
     ["🏷️", "En yüksek %", "indirim yüzdesine göre", L.filter((k) => yz(k) >= 5).sort((a, b) => yz(b) - yz(a)), (k) => "%" + yz(k)],
   ].filter((x) => x[3].length);
+  // İşyeri & POS: üç kaynağın ticari tarafından, bölümden bağımsız (POS, yazarkasa, esnaf)
+  const P = kPosListe().sort((a, b) => gun(a) - gun(b)).filter((k, i, a) => a.findIndex((x) => x.baslik.trim() === k.baslik.trim()) === i); // iki kaynakta aynı kampanya bir kez
+  if (P.length) B.push(["🏪", "İşyeri & POS", "İş Bankası, Maximum ve Maximiles'taki POS, yazarkasa ve esnaf kampanyaları", P, (k) => K_KAY[k._kay][1], 99]);
   if (!B.length) return '<div class="empty">Bu bölümde öne çıkarılacak kampanya yok.</div>';
   return `<div class="ohead">⭐ Öne çıkanlar<span>${L.length} kampanyanın içinden kendiliğinden seçilir · satıra dokun, resmi sayfası açılır</span></div>`
     + `<div class="otiles">${B.map(([ic, ad, , l], i) => `<button type="button" class="ot" data-go="kone${i}"><i>${ic}</i><span>${ad}</span><em>${l.length}</em></button>`).join("")}</div>`
     + B.map(([ic, ad, alt, l, et], i) => `<div class="ocard" id="kone${i}" style="--c:${renk}"><div class="oh"><i>${ic}</i><b>${ad}</b><em>${l.length} kampanya</em></div><p style="color:var(--muted);margin:2px 0 6px">${alt}</p>`
-      + l.slice(0, 6).map((k) => `<a class="omini olnk" href="${esc(k.url)}" target="_blank" rel="noopener"><span>${esc(k.baslik)}&nbsp;<i class="oarr">↗</i></span><small><b>${et(k)}</b></small></a>`).join("") + `</div>`).join("");
+      + l.slice(0, B[i][5] || 6).map((k) => `<a class="omini olnk" href="${esc(k.url)}" target="_blank" rel="noopener"><span>${esc(k.baslik)}&nbsp;<i class="oarr">↗</i></span><small><b>${et(k)}</b></small></a>`).join("") + `</div>`).join("");
 }
 function renderKampanyalar() {
   if (!KH || !KH.isbank) return renderCamps(); // veri gelene kadar eski düzen
@@ -1505,19 +1515,18 @@ function renderKampanyalar() {
   t.className = "tfil mtiles iki sekmeli kamp";
   t.hidden = false;
   t.style.setProperty("--kk", renk); t.style.setProperty("--kz", K_KAY[kKay][4]); t.style.setProperty("--ky", K_KAY[kKay][5]);
-  t.innerHTML = `<div class="kara"><i>🔎</i><input id="kAra" type="search" enterkeyhint="search" placeholder="Ara: Migros, lastik, okul… (Türkçe harf şart değil)" value="${esc(kAra)}" autocomplete="off"><button type="button" id="kAraSil"${kAra ? "" : " hidden"}>✕</button></div>`
+  t.innerHTML = `<div class="kara"><i>🔎</i><input id="kAra" type="search" enterkeyhint="search" placeholder="Ara: Migros, lastik, okul… (Türkçe harf şart değil)" value="${esc(kAra)}" autocomplete="off"><button type="button" id="kAraSil"${kAra ? "" : " hidden"}>✕</button><button type="button" class="ksihk${kSih.acik ? " on" : ""}">🧭 Bana uygun</button></div>`
     + `<div class="tsat uc"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
-    + `<div class="tsat uc dort"><span class="tlab">👥 Bölüm</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}${sb("data-pos", "1", "🏪", "İşyeri & POS", kPosListe().length, kPos)}</div></div>`
+    + `<div class="tsat uc"><span class="tlab">👥 Bölüm</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
     + (L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, kKisa(ad), n, kKim === ad)).join("")}</div></div>` : "")
     + (L.length && !kOne ? `<div class="tsat kgr"><span class="tlab">💰 Ne kazanırım</span><div class="tgrid">${sb("data-ne", "", "📋", "Hepsi", neT.length, !kNe, "hep")}${neS.map(([ad, ic, n]) => sb("data-ne", ad, ic, ad, n, kNe === ad)).join("")}</div></div>`
       + `<div class="tsat kgr"><span class="tlab">🛍️ Nerede</span><div class="tgrid">${sb("data-nere", "", "📋", "Hepsi", nereT.length, !kNere, "hep")}${nereGor.map(([ad, ic, n]) => sb("data-nere", ad, ic, kKisa(ad), n, kNere === ad)).join("")}${nereGor.length < nereS.length || kKatAcik ? `<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Daha az" : `▾ ${nereS.length - nereGor.length} grup daha`}</button>` : ""}</div></div>` : "");
   t.onclick = (e) => {
     const b = e.target.closest("button"); if (!b || b.closest(".kara")) return;
     if (b.dataset.kac) { kKatAcik = !kKatAcik; renderKampanyalar(); return; }
-    if (b.dataset.ky) { kKay = b.dataset.ky; kNe = kNere = kKim = ""; kOne = kPos = kKatAcik = false; }
-    else if (b.dataset.sg) { kSeg = b.dataset.sg; kNe = kNere = kKim = ""; kOne = kPos = kKatAcik = false; }
-    else if (b.dataset.one) { kOne = !kOne; kPos = false; }
-    else if (b.dataset.pos) { kPos = !kPos; kOne = false; }
+    if (b.dataset.ky) { kKay = b.dataset.ky; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
+    else if (b.dataset.sg) { kSeg = b.dataset.sg; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
+    else if (b.dataset.one) kOne = !kOne;
     else if (b.dataset.ne != null) kNe = kNe === b.dataset.ne ? "" : b.dataset.ne;
     else if (b.dataset.nere != null) kNere = kNere === b.dataset.nere ? "" : b.dataset.nere;
     else if (b.dataset.kim != null) kKim = kKim === b.dataset.kim ? "" : b.dataset.kim;
@@ -1538,6 +1547,8 @@ function renderKampanyalar() {
     i.oninput = () => { kAra = i.value; sil.hidden = !kAra; t.classList.toggle("araniyor", !!kAra.trim()); $("kGovde").innerHTML = kAra.trim() ? kAraHtml() : kSih.acik ? kSihHtml() : govde(); };
     sil.onclick = () => { kAra = ""; i.value = ""; sil.hidden = true; t.classList.remove("araniyor"); $("kGovde").innerHTML = kSih.acik ? kSihHtml() : govde(); i.focus(); };
     $("kSihirBtn").onclick = () => { kSih.acik = !kSih.acik; kAra = ""; renderKampanyalar(); if (kSih.acik) icerigeKay(); };
+    // Kutu daralınca "Bana uygun" kutunun içinde kalır: sayfa aşağıdayken de tek dokunuşla açılır
+    t.querySelector(".ksihk").onclick = () => { kSih.acik = !kSih.acik; kAra = ""; renderKampanyalar(); bolumeGit($("kGovde")); };
     $("kGovde").onclick = (e) => {
       const b = e.target.closest("[data-sh]"); if (!b) return;
       const i = b.dataset.sh.indexOf(":"), a = b.dataset.sh.slice(0, i), v = b.dataset.sh.slice(i + 1), cevir = (L) => (L.includes(v) ? L.filter((x) => x !== v) : [...L, v]);
@@ -1551,7 +1562,6 @@ function renderKampanyalar() {
   };
   const yaz = (h) => { $("list").innerHTML = ust + `<div id="kGovde">${kAra.trim() ? kAraHtml() : kSih.acik ? kSihHtml() : h}</div>`; bagla(); };
   if (kOne) { govde = () => kOneHtml(L, renk) + tumLink; yaz(govde()); bindSpecial(); return; }
-  if (kPos) { govde = () => kPosHtml(); yaz(govde()); return; }
   const liste = L.filter((k) => uy(k, "")).sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
   const yol = [kayAd, kSeg === "ticari" ? "Ticari" : "Bireysel", kNe && kIkon("ne", kNe) + " " + kNe, kNere && kIkon("nere", kNere) + " " + kKisa(kNere), kKim && (GK.find((g) => g[0] === kKim) || K_HERKES)[1] + " " + kKim].filter(Boolean).join(" › ");
   const sag = `<div class="ksag" style="--kk:${renk}"><div class="kyol">${esc(yol)} · <b>${liste.length} adet</b></div>`
