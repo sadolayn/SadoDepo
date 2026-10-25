@@ -477,6 +477,18 @@ for k in _tum:
     if k.get("nere") and k["nere"] != NERE_DIGER[0]: _grup.setdefault(_ayni(k["baslik"]), k["nere"])
 for k in _tum:
     if k.get("nere") == NERE_DIGER[0] and _ayni(k["baslik"]) in _grup: k["nere"] = _grup[_ayni(k["baslik"])]
+# Maximiles sayfalarındaki tarih alanı bazen kampanya metniyle çelişiyor (ör. metin "1–31 Ekim", alan 30.10).
+# Aynı kampanya İş Bankası ya da Maximum'da da varsa bitiş günü oradan alınır (önce isbank.com.tr)
+_bitis = {}
+for kaynak in ("maximum", "isbank"):
+    for v in (veri.get(kaynak) or {}).values():
+        if not v: continue
+        for k in v.get("kampanyalar", []) + [x for c in v.get("kategoriler", []) for x in c["kampanyalar"]]:
+            if k.get("bitis"): _bitis[_ayni(k["baslik"])] = k["bitis"]
+for v in (veri.get("maximiles") or {}).values():
+    if not v: continue
+    for k in v.get("kampanyalar", []):
+        if _ayni(k["baslik"]) in _bitis: k["bitis"] = _bitis[_ayni(k["baslik"])]
 veri["gruplar"] = {b: [{"ad": a, "ikon": i} for a, i in g] for b, g in GRUPLAR.items()}
 os.makedirs("isbank", exist_ok=True)
 json.dump(veri, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
