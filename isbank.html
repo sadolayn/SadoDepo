@@ -1623,9 +1623,11 @@ const K_PROFIL = {
   ],
 };
 let kSih = { acik: false, seg: "bireysel", pro: [], nere: [], ne: "" };
-let kSihGor = [];
-try { const x = JSON.parse(localStorage.getItem("isbankSihir") || "null"); if (x) { kSih = { ...kSih, ...x, acik: false }; kSihGor = x.gor || []; } } catch (e) {}
-function kSihKaydet(gor) { try { localStorage.setItem("isbankSihir", JSON.stringify({ seg: kSih.seg, pro: kSih.pro, nere: kSih.nere, ne: kSih.ne, gor: gor || kSihGor })); } catch (e) {} }
+// "Son bakışından beri yeni": önceki ziyaretin günü saklanır; o günden sonra listeye giren kampanyalar sayılır
+const kBugun = () => new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);
+let kSihOnceki = "";
+try { const x = JSON.parse(localStorage.getItem("isbankSihir") || "null"); if (x) { kSih = { ...kSih, ...x, acik: false }; kSihOnceki = x.son || ""; } } catch (e) {}
+function kSihKaydet() { try { localStorage.setItem("isbankSihir", JSON.stringify({ seg: kSih.seg, pro: kSih.pro, nere: kSih.nere, ne: kSih.ne, son: kBugun() })); } catch (e) {} }
 const kAyni = (k) => kKucuk(k.baslik).replace(/[^a-z0-9%]/g, "");
 function kSihListe() {
   const S = kSih, P = (K_PROFIL[S.seg] || []).filter((p) => S.pro.includes(p[0])).map((p) => p[3]);
@@ -1633,7 +1635,9 @@ function kSihListe() {
   const nereler = [...new Set([...S.nere, ...P.flatMap((p) => p.nere || [])])], RE = P.map((p) => p.re).filter(Boolean);
   return kTumu(S.seg).filter((k) => k.kim === "Herkes" || kimler.includes(k.kim)).map((k) => {
       const t = k.baslik + " " + (k.ozet || ""), reU = RE.some((r) => r.test(t)), nU = nereler.includes(k.nere), kU = kimler.includes(k.kim);
-      return { k, uy: kU || nU || reU || !nereler.length, p: (kU ? 4 : 0) + (nU ? 3 : 0) + (reU ? 3 : 0) + (NE && k.ne === NE ? 2 : 0) + (k.bitis && daysLeft(k.bitis) <= 7 ? 1 : 0) };
+      // Kim olduğunu ya da nerede harcadığını seçtiyse yalnızca onlara uyanlar; "Ne kazanmak istersin" seçildiyse o türden olanlar
+      const secim = kimler.length || nereler.length || RE.length;
+      return { k, uy: (!secim || kU || nU || reU) && (!S.ne || k.ne === S.ne), p: (kU ? 4 : 0) + (nU ? 3 : 0) + (reU ? 3 : 0) + (NE && k.ne === NE ? 2 : 0) + (k.bitis && daysLeft(k.bitis) <= 7 ? 1 : 0) };
     }).filter((x) => x.uy).sort((a, b) => b.p - a.p || (a.k.bitis || "9").localeCompare(b.k.bitis || "9")).map((x) => x.k)
     .filter((k, i, a) => a.findIndex((x) => kAyni(x) === kAyni(k)) === i); // İş Bankası ve Maximum'da aynı kampanya bir kez (toplam iki kez sayılmasın)
 }
@@ -1643,8 +1647,8 @@ function kSihHtml() {
   const secildi = S.pro.length || S.nere.length || S.ne;
   const L = secildi ? kSihListe() : [], ilk = L.slice(0, 15);
   const toplam = L.reduce((a, k) => a + kTL(k), 0), bitiyor = L.filter((k) => k.bitis && daysLeft(k.bitis) <= 7);
-  const yeniler = kSihGor.length ? L.filter((k) => !kSihGor.includes(k.url)) : [];
-  if (secildi) { kSihKaydet(L.map((k) => k.url)); }
+  const yeniler = kSihOnceki && kSihOnceki < kBugun() ? L.filter((k) => k.ilk && k.ilk > "2000-01-01" && k.ilk > kSihOnceki) : [];
+  if (secildi) kSihKaydet();
   const metin = ilk.map((k) => `• ${k.baslik}${k.bitis ? " (son gün " + new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) + ")" : ""}\n  ${k.url}`).join("\n");
   return `<div class="ksih ${S.seg === "ticari" ? "tic" : "bir"}"><div class="ksh">🧭 Bana uygun kampanyalar<small>Kendini seç, liste anında oluşsun. Seçimin bu telefonda saklanır; tekrar geldiğinde yenileri ayrıca görürsün.</small></div>
       <b>1 · Kart ya da hesabın</b><div class="kshs">${sec("seg", "bireysel", "👤", "Bireysel (kendim)", S.seg === "bireysel").replace('class="', 'class="sgb ')}${sec("seg", "ticari", "🏢", "Ticari (işyerim)", S.seg === "ticari").replace('class="', 'class="sgt ')}</div>
