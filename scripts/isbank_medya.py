@@ -89,13 +89,27 @@ def haberler(getir=None):
     for m in re.finditer(BAG, b):
         href, ic = m.group(1), metin(m.group(2))
         slug = href.rstrip("/").split("/")[-1]
-        if slug in AYRI or slug in menu or slug in gor or len(ic.split()) < 5 or re.match(r"(?i)^(detaylı bilgi|devamı|tümü)", ic):
+        if slug in AYRI or slug in menu or slug in gor:
+            continue
+        # Kartta bağlantı çoğu zaman "Detaylı Bilgi" düğmesindedir: başlık kartın üstündeki başlık etiketinden,
+        # kısa açıklama başlıkla düğme arasındaki metinden, tarih düğmenin yanındaki gg.aa.yyyy'den alınır
+        once = b[max(0, m.start() - 3000):m.start()]
+        bas = list(re.finditer(r"(?is)<h[1-6][^>]*>(.*?)</h[1-6]>", once))
+        if len(ic.split()) >= 5:
+            baslik, ozet = ic, ""
+        elif bas:
+            baslik, ozet = metin(bas[-1].group(1)), metin(once[bas[-1].end():])
+        else:
+            continue
+        if len(baslik.split()) < 3:
             continue
         gor.add(slug)
-        tarih = re.search(r"\b(\d{1,2})[./](\d{1,2})[./](20\d{2})\b", ic)
-        baslik = re.sub(r"\s*\b\d{1,2}[./]\d{1,2}[./]20\d{2}\b\s*", " ", ic)
+        tarih = re.search(r"\b(\d{1,2})\.(\d{1,2})\.(20\d{2})\b", b[m.end():m.end() + 800]) or re.search(r"\b(\d{1,2})\.(\d{1,2})\.(20\d{2})\b", once[-800:])
+        baslik = re.sub(r"\s*\b\d{1,2}[./]\d{1,2}[./]20\d{2}\b\s*", " ", baslik)
         baslik = re.sub(r"\s*(Detaylı Bilgi|Devamı)\s*>?\s*$", "", baslik).strip()[:180]
-        out.append({"baslik": baslik, "url": KOK + "/bankamizi-taniyin/" + slug,
+        ozet = re.sub(r"\s*\b\d{1,2}[./]\d{1,2}[./]20\d{2}\b\s*", " ", ozet)
+        ozet = re.sub(r"\s*(Detaylı Bilgi|Devamı)\s*>?\s*", " ", ozet).strip()[:220]
+        out.append({"baslik": baslik, "ozet": ozet, "url": KOK + "/bankamizi-taniyin/" + slug,
                     "tarih": f"{tarih.group(3)}-{int(tarih.group(2)):02d}-{int(tarih.group(1)):02d}" if tarih else ""})
     return out[:40]
 
@@ -110,6 +124,9 @@ for ad, fn in [("sosyal", sosyal), ("haberler", haberler)]:
     if not yeni:
         yeni, yol = fn(get_tarayici), "tarayıcı"
     onceki = eski.get(ad) or []
+    if ad == "haberler" and yeni:
+        var = {x["url"] for x in yeni}
+        yeni = sorted(yeni + [x for x in onceki if x["url"] not in var], key=lambda x: x.get("tarih") or "", reverse=True)[:40]
     print(f"{ad}: {yol} okuma {len(yeni or [])}")
     if not yeni or len(yeni) < 0.5 * len(onceki):
         print(f"::warning::{ad}: okunan {len(yeni or [])} (önceki {len(onceki)}) — eski liste korundu")

@@ -739,7 +739,7 @@
   .mdHero { margin: 0 0 10px; padding: 12px 14px; border-radius: 14px; border: 1px solid #3a2c6b; background: linear-gradient(160deg, #1b1240, #0b0816); }
   .mdHero b { display: block; font-size: 16px; color: #fff; } .mdHero span { display: block; margin-top: 3px; font-size: 12.5px; color: #c9bff0; line-height: 1.4; }
   .mdHab { display: block; margin: 0 0 8px; padding: 11px 13px; border-radius: 12px; border: 1px solid #2a2a2a; background: #0d0d0d; color: #eee; text-decoration: none; }
-  .mdHab b { display: block; font-size: 14.5px; line-height: 1.35; } .mdHab small { display: block; margin-top: 4px; font-size: 12px; color: #9b7bff; }
+  .mdHab b { display: block; font-size: 14.5px; line-height: 1.35; } .mdHab p { margin: 4px 0 0; font-size: 13px; color: #bbb; line-height: 1.4; } .mdHab small { display: block; margin-top: 4px; font-size: 12px; color: #9b7bff; }
   .mdHes { margin: 0 0 8px; padding: 10px 12px; border-radius: 12px; border: 1px solid #2a2a2a; background: #0d0d0d; }
   .mdHes b { display: block; font-size: 14px; color: #fff; margin-bottom: 6px; } .mdHes div { display: flex; flex-wrap: wrap; gap: 6px; }
   .mdHes a { padding: 6px 11px; border-radius: 999px; border: 1px solid #3a2c6b; background: #140d2b; color: #e2d9ff; text-decoration: none; font-size: 13px; }
@@ -2112,7 +2112,7 @@ function renderMedya() {
   $("upd").innerHTML = MED && MED.guncelleme ? `🔄 Başlıklar bankanın kendi sitesinden günde bir kez alınır · son: <b>${fd(MED.guncelleme)}</b>` : "";
   const H = (MED && MED.haberler) || [];
   $("list").innerHTML = `<div class="mdHero"><b>📰 İş Bankası'ndan haberler</b><span>Bankanın kendi sitesindeki duyurular. Başlığa dokun, resmi sayfası açılsın.</span></div>`
-    + (H.length ? H.map((h) => `<a class="mdHab" href="${esc(h.url)}" target="_blank" rel="noopener"><b>${esc(h.baslik)}</b><small>${h.tarih ? new Date(h.tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) + " · " : ""}isbank.com.tr ↗</small></a>`).join("")
+    + (H.length ? H.map((h) => `<a class="mdHab" href="${esc(h.url)}" target="_blank" rel="noopener"><b>${esc(h.baslik)}</b>${h.ozet ? `<p>${esc(h.ozet)}</p>` : ""}<small>${h.tarih ? new Date(h.tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) + " · " : ""}isbank.com.tr ↗</small></a>`).join("")
       : '<div class="empty">Haber başlıkları ilk toplamadan sonra burada (her gün 09:31). Şimdilik bankanın sayfasından bakabilirsin.</div>')
     + sayfa("https://www.isbank.com.tr/bankamizi-taniyin/haberler-ve-medya", "Haberler ve Medya")
     + `<p class="note" style="text-align:center">Basında çıkan İş Bankası haberleri için 📰 Haberler kalemine bak.</p>`;
