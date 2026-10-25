@@ -1996,7 +1996,7 @@ function yatHtml() {
 let IPJ = null, IPK = [], IPUCU = [];
 async function ipYukle() {
   if (IPJ) return;
-  try { IPJ = await Ortak.json("isbank/iscep_ipucu.json"); IPK = IPJ.kategoriler.map((x) => [x.k, x.ic, x.ad]); IPUCU = IPJ.ipuclari; } catch (e) { IPJ = { ipuclari: [] }; }
+  try { IPJ = await Ortak.json("isbank/iscep_ipucu.json"); IPK = IPJ.kategoriler.map((x) => [x.k, x.ic, x.k === "ayar" ? "Ayarlar" /* düğmede "Profil ve Ayarlar" üç satıra bölünüyordu */ : x.ad]); IPUCU = IPJ.ipuclari; } catch (e) { IPJ = { ipuclari: [] }; }
 }
 let ipHepsi = false; // İşCep "Hepsi": önce öne çıkan 10 ipucu, istenirse tamamı
 let ipSec = null, ipGun = null, ipGecmis = [], ipTorba = null; // ipTorba: bu turda henüz çıkmamış ipuçları (hepsi bitmeden tekrar yok)
