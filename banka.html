@@ -349,7 +349,7 @@
     <div class="tlab t1">👤 Bireysel</div>
     <button data-tab="mev" data-yeni="mevozet|2026-10-20|•"><i>💰</i><span>Vadeli<br>Mevduat</span></button>
     <button data-tab="tk"><i>🛍️</i><span>Tüketici<br>Kredisi</span></button>
-    <button data-tab="ek" data-yeni="ekhesap|2026-10-19|•"><i>➕</i><span>Ek<br>Hesap</span></button>
+    <button data-tab="ek" data-yeni="ekhesap|2026-10-25|•"><i>➕</i><span>Ek<br>Hesap</span></button>
     <button data-tab="kk"><i>💳</i><span>Bireysel Kart<br>Gecikme</span></button>
     <button data-tab="konut"><i>🏠</i><span>Konut<br>Kredisi</span></button>
     <button data-tab="tasit" data-yeni="tasit|2026-10-23|YENİ"><i>🚗</i><span>Bireysel<br>Taşıt Kredisi</span></button>
@@ -395,7 +395,7 @@
   <!-- Ek Hesap -->
   <section class="panel" id="ek">
     <div class="card">
-      <h2>➕ Bireysel Ek Hesap Faizi</h2>
+      <h2 class="t" data-yeni="ekkaynak|2026-10-25|YENİLENDİ">➕ Bireysel Ek Hesap Faizi</h2>
       <p class="hint">“Şu kadar çekersem, kaç gün kullanırsam ne öderim?” Tutarı yaz, günü seç, sonucu gör.</p>
       <label>Kullanılacak tutar</label>
       <div class="field"><input id="e_tutar" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div>
@@ -2350,25 +2350,45 @@ renderCekList();
 // Faiz = tutar × aylık oran × gün / 30; KKDF %15 + BSMV %15 faize eklenir.
 // Taksitli Ek Hesap: vergi dahil aylık oranla eşit taksit (isbank.com.tr örnek ödeme tablosuyla birebir).
 (function () {
-  let EK = { aylik: 4.25, maasli: 4.19, maasli_bit: "2026-10-31", isplus: { Turkuaz: 4.23, Mavi: 4.21, Lacivert: 4.19 }, black: { Black: 4.15, "Black Plus": 4.10 }, kontrol: "2026-10-19", link: "https://www.isbank.com.tr/ek-hesap", taksit_max: 12, kampanya: null };
+  let EK = { aylik: 4.25, maasli: 4.19, maasli_bas: "2026-01-01", maasli_bit: "2026-10-31", isplus: { Turkuaz: 4.23, Mavi: 4.21, Lacivert: 4.19 }, black: { Black: 4.15, "Black Plus": 4.10 }, kontrol: "2026-10-25", link: "https://www.isbank.com.tr/ek-hesap",
+    link_maasli: "https://www.isbank.com.tr/kampanyalar/maasini-is-bankasindan-alan-musterilerimize-ozel-indirimli-faiz-orani-ile-ek-hesap",
+    link_isplus: "https://www.isbank.com.tr/kampanyalar/ek-hesap-faiz-oraninda-indirim-ayricaligi",
+    link_black: "https://www.isbank.com.tr/ek-hesap-faiz-oraninda-indirim-ayricaligi", taksit_max: 12, kampanya: null, ekler: [] };
   const VG = 0.30, GUNLER = [[1, "1 gün"], [5, "5 gün"], [10, "10 gün"], [15, "15 gün"], [30, "1 ay"]];
   const f2 = (v) => v.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const trh = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
   const bugun = ymd(new Date());
-  let oranElle = false, tOranElle = false, vade = 12;
-  const kalem = (P, r, g) => { const faiz = P * r / 100 * g / 30, v = faiz * VG; return { faiz, kkdf: faiz * 0.15, bsmv: faiz * 0.15, v, top: faiz + v }; };
+  const gunFark = (a, b) => Math.round((new Date(b + "T12:00:00") - new Date(a + "T12:00:00")) / 864e5);
+  const lnk = (u, t) => u ? `<a href="${u}" target="_blank" rel="noopener">${t} ↗</a>` : t;
+  let oranElle = false, tOranElle = false, vade = 12, secili = null; // secili: hangi düğmeye basıldı (kampanya bitişini hesaba katmak için)
+  // Dönemli oranlar: maaş kampanyası + JSON'dan gelen ek kampanyalar ({ad, oran, bas, bit, url}). Süresi dolan kendiliğinden gizlenir.
+  const donemli = () => [EK.maasli && { id: "maasli", ad: "Maaşı İş Bankası'na yatanlar", oran: EK.maasli, bas: EK.maasli_bas, bit: EK.maasli_bit, url: EK.link_maasli }]
+    .concat((EK.ekler || []).map((k, i) => ({ id: "ek" + i, ...k }))).filter(Boolean);
+  const aktif = (k) => (!k.bas || bugun >= k.bas) && (!k.bit || bugun <= k.bit);
+  // Seçili kampanyanın bitişinden sonraki günler standart oranla hesaplanır (kampanya bitince kalan borca standart faiz işler).
+  const kalem = (P, r, g) => {
+    const k = secili && donemli().find((x) => x.id === secili && aktif(x) && Math.abs(x.oran - r) < 1e-9);
+    const kg = k && k.bit ? Math.min(g, gunFark(bugun, k.bit) + 1) : g;
+    const faiz = P * r / 100 * kg / 30 + P * EK.aylik / 100 * (g - kg) / 30, v = faiz * VG;
+    return { faiz, kkdf: faiz * 0.15, bsmv: faiz * 0.15, v, top: faiz + v, kg, k };
+  };
   const gunAd = (g) => g === 30 ? "1 ay (30 gün)" : g + " gün";
 
   function oranlar() {
-    const L = [[EK.aylik, "Standart"]];
-    if (EK.maasli && (!EK.maasli_bit || bugun <= EK.maasli_bit)) L.push([EK.maasli, "Maaşı İş Bankası'na yatanlar"]);
+    const L = [[EK.aylik, "Standart", "std"]];
+    donemli().filter(aktif).forEach((k) => L.push([k.oran, k.ad, k.id]));
     const r = num("e_faiz");
-    $("e_oranlar").innerHTML = L.map(([v, ad]) => `<button type="button" data-r="${v}" class="${Math.abs(r - v) < 1e-9 ? "on" : ""}">%${f2(v)}<small>${ad}</small></button>`).join("");
-    $("e_oranlar").querySelectorAll("button").forEach((b) => (b.onclick = () => { $("e_faiz").value = f2(+b.dataset.r); oranElle = true; calcEk(); }));
-    const ip = EK.isplus ? Object.entries(EK.isplus).map(([k, v]) => `${k} %${f2(v)}`).join(" · ") : "";
+    if (secili && !L.some((x) => x[2] === secili && Math.abs(r - x[0]) < 1e-9)) secili = null;
+    $("e_oranlar").innerHTML = L.map(([v, ad, id]) => `<button type="button" data-r="${v}" data-id="${id}" class="${Math.abs(r - v) < 1e-9 && (!secili || secili === id) ? "on" : ""}">%${f2(v)}<small>${ad}</small></button>`).join("");
+    $("e_oranlar").querySelectorAll("button").forEach((b) => (b.onclick = () => { $("e_faiz").value = f2(+b.dataset.r); oranElle = true; secili = b.dataset.id; calcEk(); }));
     $("e_oranlarNot") && $("e_oranlarNot").remove();
     const n = document.createElement("div"); n.id = "e_oranlarNot"; n.className = "ekoran";
-    n.innerHTML = `${EK.maasli_bit && bugun <= EK.maasli_bit ? `Maaşı İş Bankası'na yatanlar için oran ${trh(EK.maasli_bit)}'e kadar. ` : ""}${ip ? `İş Plus: ${ip}. ` : ""}${EK.black ? `İş Black %${f2(EK.black.Black)} · Black Plus %${f2(EK.black["Black Plus"])}. ` : ""}Taksitli kullanımda indirim yok. <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr ↗</a>`;
+    const P = [lnk(EK.link, `Standart %${f2(EK.aylik)}`)];
+    donemli().filter(aktif).forEach((k) => P.push(lnk(k.url, `${k.ad} %${f2(k.oran)}${k.bit ? ` (${trh(k.bit)}'e kadar)` : ""}`)));
+    if (EK.isplus) P.push(lnk(EK.link_isplus, "İş Plus: " + Object.entries(EK.isplus).map(([a, v]) => `${a} %${f2(v)}`).join(" · ")));
+    if (EK.black) P.push(lnk(EK.link_black, `İş Black %${f2(EK.black.Black)} · Black Plus %${f2(EK.black["Black Plus"])}`));
+    const biten = donemli().filter((k) => k.bit && bugun > k.bit && gunFark(k.bit, bugun) <= 30);
+    n.innerHTML = `<b>Kaynaklar:</b> ${P.join(" · ")}. Taksitli kullanımda indirim yok.` + biten.map((k) => `<br>⏹️ ${k.ad} için %${f2(k.oran)} kampanyası ${trh(k.bit)}'de bitti; artık standart oran geçerli.`).join("");
     $("e_oranlar").after(n);
   }
   function gunler(g) {
@@ -2388,10 +2408,11 @@ renderCekList();
     rows("e_rows", [["Faiz", tl(k.faiz)], ["KKDF (%15)", tl(k.kkdf)], ["BSMV (%15)", tl(k.bsmv)], ["Günlük maliyet", tl(k.top / g)], ["Geri ödenecek toplam", tl(P + k.top), "total"]]);
     const w = $("e_warn");
     w.className = "ekwarn" + (asim ? " hot" : "");
-    w.innerHTML = asim
+    const bol = k.k && k.kg < g ? `<b>📅 ${k.k.ad} oranı ${trh(k.k.bit)}'de bitiyor.</b> İlk ${k.kg} gün %${f2(r)}, kalan ${g - k.kg} gün standart %${f2(EK.aylik)} ile hesaplandı.<br>` : "";
+    w.innerHTML = bol + (asim
       ? `<b>⚠️ ${Math.round(num("e_gun"))} gün yazıldı; hesap 30 güne göre gösteriliyor.</b> Bir aydan uzun kullanımda dönem faizi ödenmezse anaparaya eklenir ve faize faiz işler; tutar değişir. Uzun vade için aşağıdaki <b>Taksitli Nakit Avans</b>'a bak.`
-      : `<b>⚠️ 1 aydan sonra dikkat:</b> Ek hesap faizi her hesap kesim döneminde tahsil edilir. Dönem faizi ödenmezse faiz anaparaya eklenir, faize de faiz işler; tutar bu hesaptan farklı olabilir.`;
-    ekOzet = ozetMetni("BİREYSEL EK HESAP FAİZ ÖZETİ", [[`Kullanılacak tutar: ${tl(P)}`, `Süre: ${gunAd(g)}`, `Aylık faiz oranı: %${f2(r)}`], [`Faiz: ${tl(k.faiz)}`, `KKDF (%15): ${tl(k.kkdf)}`, `BSMV (%15): ${tl(k.bsmv)}`, `Toplam maliyet: ${tl(k.top)}`, `Geri ödenecek toplam: ${tl(P + k.top)}`]]);
+      : `<b>⚠️ 1 aydan sonra dikkat:</b> Ek hesap faizi her hesap kesim döneminde tahsil edilir. Dönem faizi ödenmezse faiz anaparaya eklenir, faize de faiz işler; tutar bu hesaptan farklı olabilir.`);
+    ekOzet = ozetMetni("BİREYSEL EK HESAP FAİZ ÖZETİ", [[`Kullanılacak tutar: ${tl(P)}`, `Süre: ${gunAd(g)}`, `Aylık faiz oranı: %${f2(r)}` + (k.k && k.kg < g ? ` (ilk ${k.kg} gün; kalan ${g - k.kg} gün %${f2(EK.aylik)})` : "")], [`Faiz: ${tl(k.faiz)}`, `KKDF (%15): ${tl(k.kkdf)}`, `BSMV (%15): ${tl(k.bsmv)}`, `Toplam maliyet: ${tl(k.top)}`, `Geri ödenecek toplam: ${tl(P + k.top)}`]]);
     $("e_hapT").textContent = `· ${tl(P)} · %${f2(r)}`;
     $("e_hap").innerHTML = GUNLER.map(([v, ad]) => { const x = kalem(P, r, v); return `<tr class="r${v === g ? " on" : ""}" data-g="${v}"><td>${ad}</td><td>${f2(x.faiz)}</td><td>${f2(x.v)}</td><td>${f2(x.top)} TL</td></tr>`; }).join("");
     $("e_hap").querySelectorAll("tr").forEach((tr) => (tr.onclick = () => { $("e_gun").value = tr.dataset.g; calcEk(); $("e_out").scrollIntoView({ behavior: "smooth", block: "center" }); }));
@@ -2421,7 +2442,7 @@ renderCekList();
     if (K && bugun >= (K.bas || "") && bugun <= K.bit) { kEl.hidden = false; kEl.href = K.url; kEl.innerHTML = `🎉 <b>${K.ad}</b> · ${trh(K.bit)}'e kadar: ${K.oran} ↗`; } else kEl.hidden = true;
   };
   function src() {
-    $("e_src").innerHTML = `Faiz oranı kendiliğinden gelmez; sana uygulanan oranı yaz. Düğmelerdeki oranlar <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr</a>'de herkese açık yayımlanan genel oranlardır (son kontrol: ${new Date(EK.kontrol + "T12:00:00").toLocaleDateString("tr-TR")}); müşteriye özel oran farklı olabilir. Hesap bilgi amaçlıdır.`;
+    $("e_src").innerHTML = `Faiz oranı kendiliğinden gelmez; sana uygulanan oranı yaz. Düğmelerdeki oranlar <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr</a>'de herkese açık yayımlanan genel oranlardır (son kontrol: ${new Date(EK.kontrol + "T12:00:00").toLocaleDateString("tr-TR")}); müşteriye özel oran farklı olabilir. Süresi dolan kampanya oranı kendiliğinden kalkar. Hesap bilgi amaçlıdır.`;
   }
   const kopya = (id, getT) => $(id).addEventListener("click", () => {
     const t = getT(); if (!t) return; const b = $(id), o = b.textContent;
@@ -2429,7 +2450,7 @@ renderCekList();
     if (navigator.clipboard) navigator.clipboard.writeText(notEkle(t)).then(done, () => prompt("Kopyala:", t)); else prompt("Kopyala:", t);
   });
   ozetBagla("e", () => ekOzet); ozetBagla("et", () => tOzet);
-  $("e_faiz").addEventListener("input", (e) => { if (e.isTrusted) oranElle = true; });
+  $("e_faiz").addEventListener("input", (e) => { if (e.isTrusted) { oranElle = true; secili = null; } });
   $("et_faiz").addEventListener("input", (e) => { if (e.isTrusted) tOranElle = true; });
   ["e_tutar", "et_tutar"].forEach((id) => $(id).addEventListener("blur", () => { $(id).value = num(id).toLocaleString("tr-TR", { maximumFractionDigits: 2 }); }));
   document.querySelectorAll("#ek input").forEach((e) => e.addEventListener("input", () => (e.id.startsWith("et_") ? calcEkT() : calcEk())));

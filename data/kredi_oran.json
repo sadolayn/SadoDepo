@@ -23,7 +23,7 @@
       "Mavi": 4.21,
       "Lacivert": 4.19
     },
-    "kontrol": "2026-10-19",
+    "kontrol": "2026-10-25",
     "link": "https://www.isbank.com.tr/ek-hesap",
     "taksit_max": 12,
     "kampanya": {
@@ -36,6 +36,11 @@
     "black": {
       "Black": 4.15,
       "Black Plus": 4.1
-    }
+    },
+    "maasli_bas": "2026-01-01",
+    "link_maasli": "https://www.isbank.com.tr/kampanyalar/maasini-is-bankasindan-alan-musterilerimize-ozel-indirimli-faiz-orani-ile-ek-hesap",
+    "link_isplus": "https://www.isbank.com.tr/kampanyalar/ek-hesap-faiz-oraninda-indirim-ayricaligi",
+    "link_black": "https://www.isbank.com.tr/ek-hesap-faiz-oraninda-indirim-ayricaligi",
+    "ekler": []
   }
 }
