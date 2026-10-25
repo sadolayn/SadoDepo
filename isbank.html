@@ -768,6 +768,8 @@
   .mdDig summary::-webkit-details-marker { display: none; } .mdDig summary::after { content: "▾"; position: absolute; right: 14px; top: 11px; } .mdDig[open] summary::after { content: "▴"; }
   .mdDig summary small { display: block; font-weight: 500; font-size: 12px; color: #a99ad8; margin-top: 2px; }
   .mdDig[open] summary { margin-bottom: 8px; }
+  .mdYapim { margin: 0 0 10px; padding: 11px 13px; border-radius: 12px; border: 1px dashed #c9962f; background: repeating-linear-gradient(-45deg, rgba(240,198,74,.07) 0 10px, transparent 10px 20px), #141006; color: #f3dca8; font-size: 13px; line-height: 1.45; }
+  .mdYapim b { color: #f0c64a; } .mdYapim span { display: block; margin-top: 3px; }
   .mdUyari { margin: 10px 0; padding: 10px 12px; border-radius: 12px; border: 1px solid #5a3a12; background: #1c1206; color: #ffd9a8; font-size: 12.5px; line-height: 1.45; }
   .karac { display: grid; gap: 7px; margin: 0 0 10px; }
   .altkutu #tfil.kamp .kara { margin: 6px 0 2px; pointer-events: auto; }
@@ -2150,7 +2152,7 @@ function renderLive() {
 // ===== Medya: bankanın kendi sitesindeki haberler, resmi YouTube kanalındaki reklam filmleri, resmi sosyal medya hesapları =====
 // Haber başlıkları ve hesap bağlantıları isbank.com.tr'nin "Haberler ve Medya" sayfalarından günde bir kez (scripts/isbank_medya.py)
 let MED = null, medSec = "haber";
-try { medSec = localStorage.getItem("isbankMedya") || "haber"; } catch (e) {}
+try { medSec = localStorage.getItem("isbankMedya") || ""; } catch (e) {}
 const MED_IC = { Instagram: "📸", Facebook: "📘", X: "✖️", YouTube: "▶️", LinkedIn: "💼", TikTok: "🎵", Spotify: "🎧", Telegram: "✈️", Threads: "🧵" };
 // Sosyal medya: platform simgeleri (kendi renginde yuvarlak), hesapların kısa tanımı, önce çıkan hesaplar
 const MED_SVG = {
@@ -2167,7 +2169,9 @@ let mdPf = ""; try { mdPf = localStorage.getItem("isbankMedyaPf") || ""; } catch
 const mdIk = (pl) => `<i class="mdI" data-p="${esc(pl)}"><svg viewBox="0 0 24 24" aria-hidden="true">${MED_SVG[pl] || `<text x="12" y="16.5" text-anchor="middle" font-size="12" font-weight="800" font-family="Arial, sans-serif" fill="#fff">${esc(pl.slice(0, 1))}</text>`}</svg></i>`;
 function renderMedya() {
   const t = $("tfil"); t.className = "tfil sekme"; t.hidden = false;
-  t.innerHTML = [["haber", "📰 Bankadan haberler"], ["reklam", "🎬 Reklam filmleri"], ["sosyal", "📱 Sosyal medya"]].map(([k, ad]) => `<button type="button" data-md="${k}" class="${medSec === k ? "on" : ""}">${ad}</button>`).join("");
+  const hYok = !(MED && MED.haberler && MED.haberler.length); // haber listesi henüz okunamıyor: yapım aşamasında
+  if (!medSec) medSec = hYok ? "reklam" : "haber";
+  t.innerHTML = [["haber", hYok ? "📰 Bankadan haberler 🚧" : "📰 Bankadan haberler"], ["reklam", "🎬 Reklam filmleri"], ["sosyal", "📱 Sosyal medya"]].map(([k, ad]) => `<button type="button" data-md="${k}" class="${medSec === k ? "on" : ""}">${ad}</button>`).join("");
   t.onclick = (e) => { const b = e.target.closest("[data-md]"); if (!b) return; medSec = b.dataset.md; try { localStorage.setItem("isbankMedya", medSec); } catch (x) {} renderMedya(); icerigeKay(); };
   const fd = (d) => new Date(d).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   const sayfa = (u, ad) => `<a class="maxlink" href="${u}" target="_blank" rel="noopener">${ad} · isbank.com.tr ↗</a>`;
@@ -2219,6 +2223,7 @@ function renderMedya() {
   $("upd").innerHTML = MED && MED.guncelleme ? `🔄 Başlıklar bankanın kendi sitesinden günde bir kez alınır · son: <b>${fd(MED.guncelleme)}</b>` : "";
   const H = (MED && MED.haberler) || [];
   $("list").innerHTML = `<div class="mdHero"><b>📰 İş Bankası'ndan haberler</b><span>Bankanın kendi sitesindeki duyurular. Başlığa dokun, resmi sayfası açılsın.</span></div>`
+    + (H.length ? "" : `<div class="mdYapim">🚧 <b>Yapım aşamasında</b><span>Haber başlıklarının buraya kendiliğinden gelmesi üzerinde çalışılıyor. O zamana kadar aşağıdaki kartlar bankanın kendi haber sayfasını açar.</span></div>`)
     + (H.length ? H.map((h) => `<a class="mdHab" href="${esc(h.url)}" target="_blank" rel="noopener"><b>${esc(h.baslik)}</b>${h.ozet ? `<p>${esc(h.ozet)}</p>` : ""}<small>${h.tarih ? new Date(h.tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) + " · " : ""}isbank.com.tr ↗</small></a>`).join("")
       : `<a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/haberler-ve-medya" target="_blank" rel="noopener"><b>📰 İş Bankası'ndan Haberler</b><p>Bankanın kendi duyuruları resmi sitesinde, aya göre listelenir. Dokun, resmi sayfası açılsın.</p><small>isbank.com.tr ↗</small></a>
         <a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari" target="_blank" rel="noopener"><b>🎬 Reklam Videoları</b><p>Bankanın reklam filmleri; son videolar burada "Reklam filmleri" sekmesinde de var.</p><small>isbank.com.tr ↗</small></a>`)
