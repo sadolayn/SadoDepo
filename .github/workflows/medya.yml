@@ -1,4 +1,4 @@
-# İş Bankası "Haberler ve Medya": bankanın kendi sitesindeki haber başlıkları ve resmi sosyal medya hesapları, günde bir kez (İstanbul 09:31)
+# İş Bankası "Haberler ve Medya": bankanın kendi sitesindeki haber başlıkları, reklam filmleri ve resmi sosyal medya hesapları, günde bir kez (İstanbul 09:31)
 # Yalnızca işlenmiş alanlar isbank/medya.json'a yazılır; kayda yalnızca sayılar basılır
 name: Medya
 on:
@@ -13,7 +13,7 @@ concurrency:
 jobs:
   topla:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -22,7 +22,7 @@ jobs:
       - name: Tarayıcı (sayfa bağlantıları sonradan yükleniyorsa)
         continue-on-error: true
         run: pip install -q playwright && python -m playwright install --with-deps chromium > /dev/null
-      - name: Haber başlıkları ve sosyal medya hesapları
+      - name: Haber başlıkları, reklam filmleri ve sosyal medya hesapları
         run: python scripts/isbank_medya.py
       - name: Commit
         run: |

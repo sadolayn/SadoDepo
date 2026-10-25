@@ -3,8 +3,9 @@
 # (menü sayfaları haber sanılmasın diye başka yol denenmez). Sosyal medya hesapları sayfadan sorunsuz okunur.
 # Günde bir kez çalışır; isbank/medya.json dosyasına YALNIZCA işlenmiş alanları yazar (başlık, bağlantı; platform, hesap adı, bağlantı).
 # Ham sayfa kaydedilmez, kayda yalnızca sayı basılır. Bir bölüm okunamazsa ya da öncekinin yarısından azı gelirse eski liste korunur.
-# Reklam filmleri bankanın resmi YouTube kanalından ayrıca gelir (scripts/haberler.py, data/haberler.json → isbvideo).
-import json, re, html, os, urllib.request, datetime as dt
+# Reklam filmleri: bankanın "Reklam Videoları" sayfasındaki YouTube film kimlikleri + resmi kanalın adı "reklam" geçen oynatma listeleri;
+# film adları YouTube'un herkese açık oEmbed bilgisinden okunur. Kanalın diğer son videoları ayrıca gelir (scripts/haberler.py → isbvideo).
+import json, re, html, os, urllib.request, urllib.parse, datetime as dt
 
 OUT = "isbank/medya.json"
 KOK = "https://www.isbank.com.tr"
@@ -115,6 +116,111 @@ def haberler(getir=None):
                     "tarih": f"{tarih.group(3)}-{int(tarih.group(2)):02d}-{int(tarih.group(1)):02d}" if tarih else ""})
     return out[:40]
 
+# ---------- Reklam filmleri ----------
+YT_KANAL = "UC8taW8Ljy9xA_tiWy-1OPww"
+YT_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128 Safari/537.36",
+         "Accept-Language": "tr-TR,tr;q=0.9", "Cookie": "CONSENT=YES+1; SOCS=CAI"}
+YT_ID = r'(?:youtube(?:-nocookie)?\.com\\?/(?:embed\\?/|watch\?v=|v\\?/|shorts\\?/)|youtu\.be\\?/)([A-Za-z0-9_-]{11})'
+SAY = {}  # kayda yalnızca sayılar basılır
+
+def yt_get(url, sure=30):
+    try:
+        return urllib.request.urlopen(urllib.request.Request(url, headers=YT_UA), timeout=sure).read().decode("utf-8", "replace")
+    except Exception:
+        return ""
+
+def yt_veri(sayfa):
+    m = re.search(r'(?s)(?:var ytInitialData|window\["ytInitialData"\])\s*=\s*(\{.*?\});\s*</script>', sayfa)
+    try:
+        return json.loads(m.group(1)) if m else None
+    except Exception:
+        return None
+
+def gez(o):
+    if isinstance(o, dict):
+        yield o
+        for v in o.values():
+            yield from gez(v)
+    elif isinstance(o, list):
+        for v in o:
+            yield from gez(v)
+
+def yazi(t):
+    if isinstance(t, dict):
+        if "simpleText" in t: return t["simpleText"]
+        if "runs" in t: return "".join(x.get("text", "") for x in t["runs"])
+        if "content" in t: return t["content"]
+    return t if isinstance(t, str) else ""
+
+def reklam_sayfa(getir=None):
+    """Bankanın "Reklam Videoları" sayfasındaki YouTube film kimlikleri, sayfadaki sırayla."""
+    b = (getir or get)(KOK + "/bankamizi-taniyin/reklam-videolari")
+    ids = []
+    for m in re.finditer(YT_ID, b):
+        if m.group(1) not in ids:
+            ids.append(m.group(1))
+    SAY["sayfadaki youtube filmi"] = len(ids)
+    SAY["sayfadaki mp4"] = len(set(re.findall(r"[\w/.%-]+\.mp4", b)))
+    return ids
+
+def reklam_listeleri():
+    """Resmi kanalın adı "reklam" geçen oynatma listelerindeki filmler: [(kimlik, ad)]."""
+    d = yt_veri(yt_get(f"https://www.youtube.com/channel/{YT_KANAL}/playlists?hl=tr"))
+    listeler = []
+    for o in gez(d or {}):
+        if o.get("playlistId") and "title" in o and "videoId" not in o:
+            listeler.append((o["playlistId"], yazi(o["title"])))
+        lv = o.get("lockupViewModel")
+        if isinstance(lv, dict) and "PLAYLIST" in str(lv.get("contentType", "")):
+            ad = next((yazi(x["title"]) for x in gez(lv.get("metadata", {})) if "title" in x and yazi(x["title"])), "")
+            listeler.append((lv.get("contentId", ""), ad))
+    tum, sec = set(), []
+    for pid, ad in listeler:
+        if pid and pid not in tum:
+            tum.add(pid)
+            if re.search(r"reklam", ad, re.I):
+                sec.append(pid)
+    SAY["oynatma listesi"], SAY["reklam listesi"] = len(tum), len(sec)
+    out = []
+    for pid in sec[:4]:
+        d, n = yt_veri(yt_get(f"https://www.youtube.com/playlist?list={pid}&hl=tr")), 0
+        for o in gez(d or {}):
+            v = o.get("playlistVideoRenderer")
+            if isinstance(v, dict) and v.get("videoId"):
+                out.append((v["videoId"], yazi(v.get("title")))); n += 1
+        if not n:  # liste sayfası okunamazsa akışından (son 15 film)
+            x = yt_get(f"https://www.youtube.com/feeds/videos.xml?playlist_id={pid}")
+            for e in re.finditer(r"(?s)<entry>.*?<yt:videoId>([\w-]{11})</yt:videoId>.*?<title>(.*?)</title>", x):
+                out.append((e.group(1), html.unescape(e.group(2))))
+    SAY["listedeki film"] = len(out)
+    return out
+
+def oembed(vid):
+    try:
+        j = json.loads(yt_get("https://www.youtube.com/oembed?format=json&url=" + urllib.parse.quote(f"https://www.youtube.com/watch?v={vid}"), 15))
+        return j.get("title") or ""
+    except Exception:
+        return None
+
+def reklam():
+    ids = reklam_sayfa() or reklam_sayfa(get_tarayici)
+    aday, gor = [], set()
+    for vid, ad in [(i, "") for i in ids] + reklam_listeleri():
+        if vid not in gor:
+            gor.add(vid); aday.append((vid, ad, "banka" if vid in ids else "liste"))
+    aday = aday[:50]
+    out, ok = [], 0
+    for vid, ad, kay in aday:
+        t = oembed(vid)
+        if t is None:
+            continue  # kaldırılmış ya da gizli film
+        ok += 1
+        out.append({"id": vid, "baslik": re.sub(r"\s+", " ", t or ad).strip()[:140], "kaynak": kay})
+    if aday and not ok:  # oEmbed hiç yanıt vermediyse adaylar adlarıyla alınır
+        out = [{"id": v, "baslik": a[:140], "kaynak": k} for v, a, k in aday]
+    SAY["yayındaki film"] = len(out)
+    return out
+
 # ---------- Birleştir, sigorta, kaydet ----------
 eski = {}
 if os.path.exists(OUT):
@@ -135,6 +241,12 @@ for ad, fn in [("sosyal", sosyal), ("haberler", haberler)]:
         yeni = onceki
     veri[ad] = yeni
     print(f"{ad}: {len(yeni)}")
+yeni, onceki = reklam(), eski.get("reklam") or []
+print("reklam:", ", ".join(f"{k} {v}" for k, v in SAY.items()))
+if not yeni or len(yeni) < 0.5 * len(onceki):
+    print(f"::warning::reklam: okunan {len(yeni)} (önceki {len(onceki)}) — eski liste korundu")
+    yeni = onceki
+veri["reklam"] = yeni
 print("sayfa yanıt kodları:", ",".join(map(str, DURUM)))
 os.makedirs("isbank", exist_ok=True)
 json.dump(veri, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
