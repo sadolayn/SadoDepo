@@ -1099,20 +1099,20 @@ const ONE = [
   { ic: "🛒", kisa: "Market", ad: "Market alışverişi", re: /market|migros|carrefour|a101|şok|bim|getir/i, rehber: "Market kampanyaları genellikle ay başında yenilenir; katılmadan yapılan harcamalar puan kazandırmaz." },
   { ic: "📱", kisa: "Elektronik", ad: "Elektronik & teknoloji", re: /mediamarkt|samsung|apple|teknosa|vatan|elektronik|telefon|bilgisayar/i, rehber: "Telefon, bilgisayar ve beyaz eşyada MaxiPuan ve taksit fırsatları sık gelir; büyük alışverişten önce buraya bak.", tum: "https://www.maximum.com.tr/kampanyalar/elektronik-kampanyalari", tumAd: "Elektronik kampanyaları" },
   { ic: "🎓", kisa: "Eğitim", ad: "Eğitim · özel okul & dershane", re: /eğitim|egitim|okul|dershane|kurs|üniversite/i, sezon: [7, 8, 9, 0, 1],
-    sonra: "Özel okul ödemelerinde İş Bankası dönem dönem seçili okullarda faizsiz taksit kampanyası yapıyor; taksit talimatı İşCep ya da Maximum Mobil'den, kartın hesap kesim tarihinden önce verilir. Dershane ve kurs ödemeleri genellikle kapsam dışıdır.",
-    rehber: "Özel okul ödemelerinde taksit fırsatı: İş Bankası'nın Ekim 2026 kampanyasında seçili okullarda 50.000–2.200.000 TL arası peşin harcamalar <b>3 aya varan faizsiz taksite</b> bölünebiliyor (1–31 Ekim 2026). Taksit talimatı yalnızca <b>İşCep</b> ya da <b>Maximum Mobil</b>'den, kartın hesap kesim tarihinden önce verilmeli. Dershane, kurs, kırtasiye ve servis ödemeleri bu kampanyaya dahil değil.", link: "https://www.isbank.com.tr/kampanyalar/egitim-odemelerinizde-secili-okullarda-faizsiz-taksit-firsati", bitis: "2026-10-31" },
+    sonra: "Özel okul ödemelerinde İş Bankası dönem dönem seçili okullarda faizsiz taksit kampanyası yapıyor; güncel olanlar aşağıda listelenir. Hangi okulların dahil olduğu kampanya sayfasındaki listede yazar.",
+    rehber: "Özel okul ödemelerinde taksit fırsatı: İş Bankası'nın Ekim 2026 kampanyasında listedeki seçili okullara yapılan 50.000 TL üzeri peşin harcamalar İşCep ya da Maximum Mobil'den <b>3 aya kadar faizsiz</b> sonradan taksitlendirilebiliyor (1–31 Ekim 2026). Okul listesi ve koşullar kampanya sayfasında.", link: "https://www.isbank.com.tr/kampanyalar/egitim-odemelerinizde-secili-okullarda-faizsiz-taksit-firsati", bitis: "2026-10-31" },
   { ic: "🇹🇷", kisa: "TROY", ad: "TROY özellikli kartlar", re: /troy/i, sonra: "TROY, Türkiye'nin yerli kart ödeme sistemi. TROY logolu İş Bankası kredi kartı, Bankamatik ve MaxiPara kartlarına özel indirimler düzenli olarak çıkıyor; güncel olanlar aşağıda listelenir.", rehber: "TROY, Türkiye'nin yerli kart ödeme sistemi. TROY logolu İş Bankası kredi kartı, Bankamatik ve MaxiPara kartlarına özel indirimler var: örneğin Pazarama'da tek seferde 1.250 TL ve üzeri alışverişe <b>250 TL indirim</b> (12 Ekim – 22 Kasım 2026, sepette TROY kupon kodu seçilir).", link: "https://www.isbank.com.tr/kampanyalar/is-bankasi-troy-sahiplerine-pazaramada-indirim-firsati", bitis: "2026-11-22" },
   { ic: "🎂", kisa: "25. yıl", ad: "Maximum 25. yıla özel", re: /25\.?\s?yıl/i, rehber: "Maximum 2026'da 25. yaşını kutluyor. Yıl boyunca \"25. yıla özel\" MaxiPuan, indirim ve taksit kampanyaları çıkıyor; yenileri listeye eklendikçe burada görünür." },
   { ic: "🖤", kisa: "Black", ad: "Black'e özel", re: /black/i, rehber: "İş Black ve Maximiles Black sahiplerine özel ayrıcalıklar: ücretsiz para transferi, vadeli hesapta ek faiz, otopark, otel ve lounge indirimleri.", black: true },
   { ic: "⛽", kisa: "Akaryakıt", ad: "Akaryakıt & yol", re: /shell|opet|bp|akaryakıt|hgs|ogs|otopark/i, rehber: "Akaryakıt ve HGS kampanyaları her ay çıkar; HGS talimatını kartına bağlayınca ödeme unutulmaz." },
   { ic: "✈️", kisa: "Seyahat", ad: "Seyahat & tatil", re: /ets|tatil|otel|uçak|bilet|tur|pazarama tatil/i, rehber: "Uçak bileti ve otelde peşin fiyatına taksit ve MaxiPuan fırsatları yaz ve bayram dönemlerinden önce artar.", tum: "https://www.maximum.com.tr/kampanyalar/seyahat-kampanyalari", tumAd: "Seyahat kampanyaları" },
-  { ic: "🏥", kisa: "Sağlık", ad: "Sağlık · hastane, doktor, diş", re: /sağlık|saglik|hastane|doktor|hekim|eczane|diş|klinik|optik|göz/i, rehber: "Hastane, doktor muayenesi, diş ve göz kliniği gibi <b>peşin sağlık harcamalarında</b> Maximum dönem dönem faizsiz taksit kampanyası yapıyor; maximum.com.tr'de şu an \"Peşin sağlık harcamalarınızda 2 ay faizsiz taksitlendirme\" kampanyası listeleniyor. Taksit hakkı genelde POS'ta ya da sonradan İşCep / Maximum Mobil'den seçilir." },
-  { ic: "👗", kisa: "Giyim", ad: "Giyim & kozmetik", re: /giyim|kozmetik|moda|ayakkabı|zara|lc waikiki|koton|defacto|forever|under armour|lumberjack|inditex/i, rehber: "Giyim ve kozmetikte hem toplam harcamaya MaxiPuan hem de markalarda peşin fiyatına 6 taksit fırsatları sık çıkar; sezon başları ve indirim dönemleri öncesi bak.", tum: "https://www.isbank.com.tr/kampanyalar/giyim-ve-kozmetik-maxipuan-kampanyasi", tumAd: "Giyim ve kozmetik MaxiPuan kampanyası" },
+  { ic: "🏥", kisa: "Sağlık", ad: "Sağlık · hastane, doktor, diş", re: /sağlık|saglik|hastane|doktor|hekim|eczane|diş|klinik|optik|göz/i, rehber: "Hastane, doktor muayenesi, diş ve göz kliniği gibi <b>peşin sağlık harcamalarında</b> Maximum dönem dönem faizsiz taksit kampanyası yapıyor (ör. \"Peşin sağlık harcamalarınızda 2 ay faizsiz taksitlendirme\"). Güncel olanlar aşağıda listelenir; koşullar kampanya sayfasında." },
+  { ic: "👗", kisa: "Giyim", ad: "Giyim & kozmetik", re: /giyim|kozmetik|moda|ayakkabı|zara|lc waikiki|koton|defacto|forever|under armour|lumberjack|inditex/i, rehber: "Giyim ve kozmetikte hem toplam harcamaya MaxiPuan hem de markalarda peşin fiyatına 6 taksit fırsatları sık çıkar; sezon başları ve indirim dönemleri öncesi bak.", tum: "https://www.isbank.com.tr/kampanyalar/giyim-aksesuar-kampanyalari", tumAd: "Giyim ve aksesuar kampanyaları" },
   { ic: "🛋️", kisa: "Ev", ad: "Ev · mobilya & beyaz eşya", re: /mobilya|beyaz eşya|ikea|doğtaş|dogtas|yatsan|desa|dyson|miele|demirdöküm|bellona|istikbal|arçelik|vestel|dekorasyon/i, rehber: "Mobilya, beyaz eşya ve küçük ev aletlerinde (IKEA, Doğtaş, Dyson, Miele gibi) peşin fiyatına 6–9 taksit ve MaxiPuan kampanyaları var. Büyük alışverişte taksit sayısı ile MaxiPuan'ı karşılaştır." },
   { ic: "🛍️", kisa: "Online", ad: "E-ticaret · online alışveriş", re: /e-ticaret|eticaret|online|trendyol|hepsiburada|amazon|n11|pazarama(?! tatil)/i, rehber: "Trendyol, Hepsiburada, Amazon gibi sitelerde peşin fiyatına taksit ve e-ticaret toplamına MaxiPuan fırsatları her ay yenilenir. Kartının internet alışverişine açık olduğundan emin ol; bunu İşCep'te kart ayarlarından görebilirsin." },
   { ic: "🍽️", kisa: "Yeme-içme", ad: "Yeme-içme & yemek siparişi", re: /restoran|restaurant|yeme|kafe|cafe|yemek|uber eats|getiryemek|yemeksepeti|starbucks|burger/i, rehber: "Restoran, kafe ve yemek siparişi uygulamalarında indirim ve MaxiPuan kampanyaları çıkar; çoğunda kampanyaya katılım ya da uygulamada Maximum kartın seçili olması gerekir." },
-  { ic: "🐾", kisa: "Pati", ad: "Maximum Pati Kart · evcil dostlar", re: /pati|evcil|mama|royal canin|veteriner|pet/i, rehber: "Evcil hayvanı olanlara özel <b>Maximum Pati Kart</b>: mama, veteriner ve pet shop harcamalarında ayrıcalıklar, Pati Kart'a özel indirimler (ör. Royal Canin'de ek indirim) ve ücretsiz \"Patim Güvende\" sigortası gibi fırsatlar sunuluyor.", link: "https://www.isbank.com.tr/maximum-pati-kart", linkAd: "Maximum Pati Kart (isbank.com.tr)" },
-  { ic: "🧾", kisa: "Fatura·vergi", ad: "Fatura, vergi & talimat", re: /fatura|vergi|igdaş|igdas|tapu|harç|talimat/i, rehber: "Vergi, harç ve bazı faturalar (ör. İGDAŞ) Maximum'la sonradan 3 aya varan taksite bölünebiliyor. Fatura talimatı vermek de çoğu zaman MaxiPuan kazandırıyor." },
+  { ic: "🐾", kisa: "Pati", ad: "Maximum Pati Kart · evcil dostlar", re: /pati|evcil|mama|royal canin|veteriner|pet/i, rehber: "Evcil hayvanı olanlara özel <b>Maximum Pati Kart</b>: mama, veteriner ve pet shop harcamalarında ayrıcalıklar, Pati Kart'a özel indirimler (ör. Royal Canin'de ek indirim) sunuluyor; güncel olanlar aşağıda listelenir.", link: "https://www.isbank.com.tr/maximum-pati-kart", linkAd: "Maximum Pati Kart (isbank.com.tr)" },
+  { ic: "🧾", kisa: "Fatura·vergi", ad: "Fatura, vergi & talimat", re: /fatura|vergi|igdaş|igdas|tapu|harç|talimat/i, rehber: "Vergi, harç ve bazı faturalar (ör. İGDAŞ) için dönem dönem sonradan 3 aya varan taksit kampanyaları çıkıyor; fatura talimatına MaxiPuan veren kampanyalar da sık görülür. Güncel olanlar aşağıda listelenir." },
 ];
 function oneHtml() {
   const m = new Date().getMonth();
@@ -1138,16 +1138,16 @@ const ODE = [
   { ic: "📱", ad: "Telefonla öde", k: "Telefon", alt: "İşCep · Maximum Mobil", p: "NFC'li Android telefonda kart cebinde kalır. Ekran kilidi açık olsun yeter, uygulamayı açman gerekmez. 2.500 TL altı şifresiz, üstünde POS'ta şifre sorulur.", n: "Maximum Mobil › Kartlarım › kartın sağ üstündeki temassız simgesi · İşCep › Kartlar › Mobil Temassız Ödeme", u: "https://www.isbank.com.tr/iscep-mobil-temassiz-odeme", ua: "isbank.com.tr" },
   { ic: "⌚", ad: "Akıllı saatle öde", k: "Saat", alt: "Samsung · Wear OS", p: "Telefon cepte, bilek POS'a: Wear OS 3.0 ve üzeri Samsung saatlerde Maximum Mobil uygulamasıyla ödenir.", n: "Saatteki Maximum Mobil › \"Saat ile Öde\"yi aç, temassız uygulama olarak Maximum'u ve kartını seç.", u: "https://www.isbank.com.tr/bankamizi-taniyin/maximum-karttan-samsung-akilli-saat-ile-odeme-yapma-kolayligi", ua: "isbank.com.tr" },
   { ic: "🏷️", ad: "MaxSticker", k: "MaxSticker", alt: "Yapıştır, öde", yeni: true, p: "Kredi kartının gücü küçük bir etikette: telefonun arkasına ya da sık kullandığın bir eşyaya yapıştırırsın. Üzerinde kart numarası, son kullanma tarihi ve CVV yoktur.", n: "İşCep › MaxSticker Kartlarım'dan başvurulur. Limit sıfırdan başlar, İşCep'ten sen belirlersin. Metal ve MagSafe kılıfların üstünde çalışmaz.", u: "https://www.isbank.com.tr/maxsticker-kart", ua: "isbank.com.tr", kn: "ℹ️ Şu an MaxSticker'a özel kampanya yok; çıkınca burada görünür." },
-  { ic: "🙂", ad: "Yüzle öde", k: "Yüzle", alt: "Kart, telefon, şifre yok", p: "Anlaşmalı mağazalarda (ör. CarrefourSA) kasadaki kameraya bakarak ödersin. Türk bankacılığında bir ilk; Visa iş birliğiyle.", n: "İşCep'te yüzünü bir kez tanımla ve ödemelerin yansıyacağı kredi kartını seç.", u: "https://www.dha.com.tr/ekonomi/is-bankasi-yuz-tanima-teknolojisi-ile-odeme-donemini-baslatiyor-2661768", ua: "duyuru haberi" },
+  { ic: "🙂", ad: "Yüzle öde", k: "Yüzle", alt: "Kart, telefon, şifre yok", p: "Uygulanan mağazalarda kasadaki kameraya bakarak ödersin. Banka Haziran 2025'te Visa iş birliğiyle duyurdu; ilk aşamada seçili CarrefourSA mağazalarında.", n: "İşCep'te yüzünü bir kez tanımla ve ödemelerin yansıyacağı kredi kartını seç.", u: "https://www.dha.com.tr/ekonomi/is-bankasi-yuz-tanima-teknolojisi-ile-odeme-donemini-baslatiyor-2661768", ua: "duyuru haberi" },
   { ic: "🔳", ad: "TR Karekod", k: "Karekod", alt: "QR ile öde", p: "POS'taki karekodu telefonunla okut, kartını ya da hesabını seç, tutarı onayla. Kart çıkarmana gerek yok; Maximum Mobil'le de olur.", n: "İşCep › Ödeme Yap › Karekod ile öde › kodu okut › Onayla", u: "https://www.isbank.com.tr/tr-karekod-ile-odeme", ua: "isbank.com.tr" },
   { ic: "🅿️", ad: "İşPay", k: "İşPay", alt: "Online, kart bilgisi yok", p: "İnternet alışverişinde ödeme adımında İşPay'i seçersin; kart bilgisi girmeden kredi kartı, MaxiPuan, havale, Taksitli Ek Hesap ya da Anında Alışveriş Kredisi ile ödersin.", n: "Alışveriş sitesinin ödeme sayfasında \"İşPay\" seçeneğine dokun, İş Bankası ile onayla.", u: "https://www.isbank.com.tr/bankamizi-taniyin/is-bankasi-odeme-deneyimini-ispay-ile-tek-platformda-topladi", ua: "isbank.com.tr" },
 ];
 // Kartsız ödemeye kampanyalar (resmi sayfalardan doğrulandı; yollar: hangi ödeme yollarında geçerli)
 const ODE_K = [
-  { ic: "🎁", ad: "Mobil temassız, saat ve karekoda 600 TL MaxiPuan", tl: 600, od: "Her <b>1.500 TL ve üzeri</b> ödemeye <b>30 TL</b>, toplam <b>600 TL</b> MaxiPuan · günde 1 kez sayılır", yollar: ["📱", "⌚", "🔳"], bas: "2026-10-01", bitis: "2026-10-31",
+  { ic: "🎁", ad: "Mobil temassız, saat ve karekoda 600 TL MaxiPuan", tl: 600, od: "Mobil temassız, saat ve TR Karekod ödemelerine toplam <b>600 TL</b>'ye kadar MaxiPuan · harcama tutarı ve günlük sınır kampanya sayfasında", yollar: ["📱", "⌚", "🔳"], bas: "2026-10-01", bitis: "2026-10-31",
     not: "Önce İşCep / Maximum Mobil › Kampanyalar › <b>KATIL</b>. Telefonla temassızda yalnız Android geçerli; fiziki kartla temassız sayılmaz. Kredi kartı, Bankamatik ve MaxiPara kartlar dahil.", u: "https://www.maximum.com.tr/kampanyalar/mobil-temassiz-ve-tr-karekod-odemelerinize-maxipuan-firsati" },
   { ic: "⛽", ad: "Shell'de kartsız ödeyene +50 TL", tl: 50, od: "Akaryakıta 450 TL MaxiPuan + ödemelerden biri mobil temassız ya da karekodla ise <b>+50 TL</b> · toplam 500 TL", yollar: ["📱", "🔳"], bas: "2026-10-01", bitis: "2026-11-15",
-    not: "İki kampanya birlikte işler: aynı ödeme 600 TL'lik kampanyaya da sayılabilir (1.500 TL ve üzeriyse).", u: "https://www.maximum.com.tr/kampanyalar/shell-maxipuan-kampanyasi" },
+    not: "Mobil temassız ya da karekodla yapılan ödeme, koşulları tutuyorsa 600 TL'lik kampanyaya da sayılabilir; ayrıntı iki kampanyanın sayfasında.", u: "https://www.maximum.com.tr/kampanyalar/shell-maxipuan-kampanyasi" },
   { ic: "✈️", ad: "ETS'de İşPay ile 1.000 TL'ye varan ek MaxiPuan", tl: 1000, od: "Tek seferde 45.000 TL+ → 350 TL · 70.000 TL+ → 700 TL · 120.000 TL+ → <b>1.000 TL</b>", yollar: ["🅿️"], bas: "2026-10-01", bitis: "2026-10-31",
     not: "Etstur sitesinde ödeme adımında <b>İşPay</b>'i seç ya da İşCep › Hayatım › Seyahatim › Etstur'dan öde.", u: "https://www.isbank.com.tr/kampanyalar/etsde-iscep-seyahatime-ozel-ek-maxipuan-firsati" },
 ];
@@ -1215,45 +1215,45 @@ function isplusHtml() {
 }
 function blackHtml() {
   return `<div class="blk">
-      <div class="bh"><span>İŞ BANKASI</span><b>İş Black</b><small>Varlığına göre kendiliğinden tanımlanan ayrıcalık programı · başvuru gerekmez</small></div>
+      <div class="bh"><span>BİLGİ · RESMİ DEĞİL</span><b>İş Black</b><small>Varlığına göre kendiliğinden tanımlanan ayrıcalık programı · başvuru gerekmez</small></div>
       <div class="tiers">
-        <div class="tier"><em>BLACK</em><b>1 milyon TL</b><span>ve üzeri aylık ortalama varlık</span></div>
-        <div class="tier plus"><em>BLACK PLUS</em><b>4 milyon TL</b><span>ve üzeri aylık ortalama varlık</span></div>
+        <div class="tier"><em>BLACK</em><b>1 milyon TL</b><span>ve üzeri güncel ya da aylık ortalama varlık</span></div>
+        <div class="tier plus"><em>BLACK PLUS</em><b>4 milyon TL</b><span>ve üzeri güncel ya da aylık ortalama varlık</span></div>
       </div>
       <table class="bt"><thead><tr><th></th><th>Black</th><th class="p">Black Plus</th></tr></thead><tbody>
         <tr><td>💰 Maksimum Vadeli Hesap'ta ek faiz</td><td>+%1</td><td class="p">+%3</td></tr>
         <tr><td>➕ Ek Hesap faiz oranı</td><td>%4,15</td><td class="p">%4,10</td></tr>
-        <tr><td>🌍 Yurt dışı para transferi</td><td>–</td><td class="p">ayda 2 ücretsiz</td></tr>
+        <tr><td>🌍 Yurt dışı para transferi</td><td>–</td><td class="p">ayda ilk 2 ücretsiz<small style="display:block;font-weight:500;font-size:10.5px;opacity:.75">25.000 TL'ye kadar · muhabir masrafı hariç</small></td></tr>
         <tr><td>🔐 Kiralık kasa depozitosu</td><td>–</td><td class="p">alınmaz</td></tr>
         <tr><td>📈 İş Portföy uzman görüşmesi</td><td>–</td><td class="p">3 ayda bir</td></tr>
       </tbody></table>
       <div class="bcom"><b>Diğer ayrıcalıklardan</b>
-        <span>💸 Sınırsız ücretsiz havale/EFT/FAST</span><span>🏧 Yurt içi ATM'lerden ücretsiz para çekme</span><span>👤 Kişiye özel temsilci</span><span>☎️ Çözüm Merkezi'nde öncelik</span>
-        <span>💱 İŞ'te FX ile döviz-altın-gümüş</span><span>📰 Günlük piyasa ve aylık fon bülteni</span><span>✈️ Bilet.com'da uçuş ve transfer indirimi</span><span>🎭 Kültür-sanatta %20 indirim</span>
+        <span>💸 İşCep ve İnternet Şubesi'nden sınırsız ücretsiz havale/EFT/FAST</span><span>🏧 Yurt içi ATM'lerden ücretsiz para çekme</span><span>👤 Kişiye özel temsilci</span><span>☎️ Çözüm Merkezi'nde öncelik</span>
+        <span>💱 İŞ'te FX ile döviz-altın-gümüş</span><span>📰 Günlük piyasa ve aylık fon bülteni</span><span>✈️ Bilet.com'da uçuş ve transfer indirimi</span><span>🎭 Kültür-sanat harcamalarında indirim (Black %20, Black Plus %50; üst sınırlı)</span>
         <span>🛡️ Anadolu Sigorta'da İşCep'e özel indirimler</span><span>🏖️ Girişte ücret alınmayan İş Black BES planı</span></div>
-      <p>Ayrıcalıklar <b>İşCep › İş Black</b> menüsünden görülür ve kullanılır. Kademe, İş Bankası'ndaki aylık ortalama varlığa göre belirlenir.</p>
+      <p>Ayrıcalıklar <b>İşCep › İş Black</b> menüsünden görülür ve kullanılır. Kademe, İş Bankası'ndaki güncel ya da aylık ortalama varlığa göre belirlenir; koşullar bankanın sayfasında.</p>
       <a href="https://www.isbank.com.tr/is-black" target="_blank" rel="noopener">İş Black ayrıcalıklarının tamamı ↗</a>
     </div>
     <div class="blk card">
-      <div class="bh"><span>EN ÜST SEVİYE KART</span><b>Maximiles Black</b><small>Seyahat edenler için MaxiMil kazandıran kart · 1 MaxiMil = 1 TL</small></div>
+      <div class="bh"><span>SEYAHAT KARTI</span><b>Maximiles Black</b><small>Seyahat edenler için MaxiMil kazandıran kart · 1 MaxiMil = 1 TL</small></div>
       <ul>
         <li>✈️ MaxiMil kazanımı varlığa göre artar (market, akaryakıt, seyahat, restoran, e-ticaret)</li>
         <li>🛋️ Havalimanı lounge ayrıcalığı ve <b>Fast Track</b> ile hızlı geçiş</li>
         <li>🅿️ Otoparklarda indirim (havalimanları dahil)</li>
-        <li>🛡️ Satın alma koruması (olay başı 3.000 TL'ye kadar)</li>
-        <li>🌍 Bilet ve konaklama kartla ödenirse 30.000 € limitli yurt dışı seyahat sigortası</li>
+        <li>🛡️ Alışveriş sigortası</li>
+        <li>🌍 Bilet ve konaklama kartla ödenirse yurt dışı seyahat sigortası (limitler kart sayfasında)</li>
         <li>🧭 Seyahat, restoran ve etkinlik için bilgi-organizasyon servisi</li>
       </ul>
       <div class="lounge"><b>Lounge indirimi (İş Bankası'ndaki varlığa göre)</b>
         <div><span>4–8 milyon TL</span><em>İGA & Sabiha Gökçen %50</em></div>
         <div><span>8 milyon TL+</span><em>%100'e varan + 1 misafir</em></div>
         <div><span>Tüm Maximiles</span><em>Esenboğa, İzmir, Bodrum TAV %50</em></div></div>
-      <p>Başvuru İşCep, Maximum Mobil, internet şubesi ya da şubeden yapılır; asgari kart limiti 300.000 TL. Yıllık kart ücreti ve güncel koşullar için bankanın sayfasına bak.</p>
+      <p>Başvuru İşCep, Maximum Mobil, internet şubesi ya da şubeden yapılır. Asgari kart limiti, yıllık kart ücreti ve güncel koşullar için bankanın sayfasına bak.</p>
       <a href="https://www.isbank.com.tr/maximiles-black" target="_blank" rel="noopener">Maximiles Black sayfası ↗</a>
     </div>
-    <details class="bilmek"><summary><span>💡 Biliyor muydunuz?</span><em>Black'e bir adım daha yakın olabilirsiniz… <u>dokun</u></em></summary>
+    <details class="bilmek"><summary><span>💡 Biliyor muydunuz?</span><em>Diğer bankadaki parayı İşCep'ten aktarma… <u>dokun</u></em></summary>
       <div class="bring"><b>💸 Diğer bankadaki parayı İşCep'ten aktarma</b>
-        <span>Diğer bankalardaki vadesiz TL hesabındaki parayı, o bankaya gitmeden İşCep'ten İş Bankası'na aktarabilirsin: <b>Para Aktar › İş Bankası Hesabıma Para Getir</b>. Hesapları bir kez <b>Hesaplarım › Diğer Banka Hesabı/Kartı Ekle</b> ile eklersen bakiyelerini de İşCep'te görürsün. Bu hizmet Açık Bankacılık ile ücretsizdir; birikimin İş Bankası'nda toplandıkça Black (1 milyon TL) ve Black Plus (4 milyon TL) kademelerine yaklaşırsın.</span>
+        <span>Diğer bankalardaki vadesiz TL hesabındaki parayı, o bankaya gitmeden İşCep'ten İş Bankası'na aktarabilirsin: <b>Para Aktar › İş Bankası Hesabıma Para Getir</b>. Hesapları bir kez <b>Hesaplarım › Diğer Banka Hesabı/Kartı Ekle</b> ile eklersen bakiyelerini de İşCep'te görürsün. Hizmet Açık Bankacılık altyapısıyla çalışır; parayı gönderen banka kendi ücretini uygulayabilir.</span>
         <a href="https://www.isbank.com.tr/acik-bankacilik" target="_blank" rel="noopener">Açık Bankacılık nasıl çalışır ↗</a></div>
     </details>`;
 }
@@ -1272,7 +1272,7 @@ function renderBankaKamp() {
   const K = bkSec ? K0.filter((c) => c.ad === bkSec) : K0;
   const sabit = `<div class="bkhero"><b>🎁 Bankacılık kampanyaları</b><span>Kartla harcama dışındaki fırsatlar: maaş, emeklilik, kredi, sigorta, para transferi ve fatura.</span></div>
     <div class="bkgrid">
-      <div class="bkc"><i>💸</i><b>Havale · EFT · FAST</b><span>İşCep ve İnternet Şubesi'nden 7/24 FAST ile anında para gönder. İş Black müşterilerine havale, EFT ve FAST ücretsiz.</span></div>
+      <div class="bkc"><i>💸</i><b>Havale · EFT · FAST</b><span>İşCep ve İnternet Şubesi'nden 7/24 FAST ile anında para gönder. İş Black müşterilerine İşCep ve İnternet Şubesi'nden havale, EFT ve FAST ücretsiz.</span></div>
       <div class="bkc"><i>💰</i><b>Maksimum Vadeli Hesap</b><span>Birikimine vadeli faiz; İş Black'te +%1, Black Plus'ta +%3 ek faiz.</span></div>
     </div>`;
   $("list").innerHTML = (bkSec ? "" : sabit) + K.map((c) => `<div class="bkcat">
@@ -1974,7 +1974,7 @@ function yatHtml() {
     const opts = P.map((p, i) => ({ p, i })).filter((o) => o.p.startsWith(ly) || o.p === (+ly - 1) + "/12").reverse();
     if (ytSel == null) ytSel = last;
     const card = (ad, k, tur, iyi, alt) => `<div class="stat"><span>${ad}</span><b style="font-size:21px">${ytFmt(S[k][last], tur)}</b><small>${alt || ""} ${chgCell(S[k][last], S[k][j], tur, iyi)}</small></div>`;
-    h += `<div class="day" style="margin-top:22px">📊 Mali veriler · ${pLabel(P[last])}</div>
+    h += `<div class="day" style="margin-top:22px">📊 Mali veriler · ${pLabel(P[last])}<small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Kaynak: bankanın yatırımcı sunumu. Haberlerdeki konsolide (iştiraklerle birlikte) rakamlardan biraz farklı olabilir.</small></div>
       <div class="stats">
         ${card("Toplam aktif", "aktif", "tl", "up", "yıllık")}
         ${card("Krediler", "kredi", "tl", "up", "yıllık")}
@@ -2068,7 +2068,7 @@ function renderIscep() {
   const odul = `<div class="odul">
       <div class="odTop"><span class="odKupa">🏆</span><div><small>GLOBAL FINANCE ÖDÜLÜ · BANKA DUYURUSUNA GÖRE</small><b>Dünyanın En İyi Mobil Bankacılık Uygulaması</b></div></div>
       <div class="odYil"><span><i>🥇</i><b>2023</b>Birinci</span><span><i>🥇</i><b>2024</b>Birinci</span><span class="son"><i>🥇</i><b>2025</b>3 yıl üst üste</span></div>
-      <div class="odAlt"><span>📲 <b>2007</b>'den beri</span><span>👥 <b>~16 milyon</b> müşteri (Haz. 2026)</span><span>⚙️ <b>800+</b> işlem</span></div>
+      <div class="odAlt"><span>📲 <b>2007</b>'den beri</span><span>👥 <b>~16 milyon</b> İşCep müşterisi (Haz. 2026)</span><span>⚙️ <b>800+</b> işlem</span></div>
       <a href="https://www.isbank.com.tr/bankamizi-taniyin/iscep-ucuncu-kez-dunyanin-en-iyi-mobil-bankacilik-uygulamasi-secildi" target="_blank" rel="noopener">Ödül haberi, 23 Ekim 2025 ↗</a> · <a href="https://www.isbank.com.tr/contentmanagement/IsbankInvestorDocuments/pdf/YatirimciSunumu.pdf" target="_blank" rel="noopener">Müşteri sayısı: yatırımcı sunumu ↗</a>
     </div>`;
   let html = iscepIpHtml() + (ipSec ? "" : odul);
@@ -2155,7 +2155,7 @@ function renderMedya() {
     + sayfa("https://www.isbank.com.tr/bankamizi-taniyin/haberler-ve-medya", "Haberler ve Medya")
     + `<p class="note" style="text-align:center">Basında çıkan İş Bankası haberleri için 📰 Haberler kalemine bak.</p>`;
 }
-const RESMI = [["▶️ YouTube", "https://www.youtube.com/user/turkiyeisbankasi"], ["📸 Instagram", "https://www.instagram.com/isbankasi/"], ["✖️ X", "https://twitter.com/isbankasi"], ["💼 LinkedIn", "https://www.linkedin.com/company/isbankasi"], ["👍 Facebook", "https://www.facebook.com/isbankasi"]];
+const RESMI = [["▶️ YouTube", "https://www.youtube.com/user/turkiyeisbankasi"], ["📸 Instagram", "https://www.instagram.com/isbankasi/"], ["✖️ X", "https://x.com/isbankasi"], ["💼 LinkedIn", "https://www.linkedin.com/company/isbankasi"], ["👍 Facebook", "https://www.facebook.com/isbankasi"]];
 function renderVideo() {
   if (liveUpd) $("upd").textContent = "Her saat otomatik · son: " + new Date(liveUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   const tarih = (d) => (Date.now() - new Date(d)) / 864e5 < 1 ? agoTxt(d) : new Date(d).toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
@@ -2173,7 +2173,7 @@ function renderVideo() {
   // En yeni hangisiyse o bölüm üstte
   h += kisa.length && uzun.length && (uzun[0].d || "") > (kisa[0].d || "") ? kartlar + serit : serit + kartlar;
   $("list").innerHTML = h + hesap
-    + `<p class="note" style="margin-top:8px">Bankanın resmi YouTube kanalındaki son videolar her saat otomatik gelir; dokununca YouTube'da açılır. Instagram, X ve TikTok paylaşımları dışarıya açık bir akış sunmadığı için buraya otomatik alınamıyor, yukarıdaki bağlantılardan bakabilirsin.</p>`;
+    + `<p class="note" style="margin-top:8px">Bankanın resmi YouTube kanalındaki son videolar her saat otomatik gelir; dokununca YouTube'da açılır. Instagram, X, Facebook ve LinkedIn paylaşımları dışarıya açık bir akış sunmadığı için buraya otomatik alınamıyor, yukarıdaki bağlantılardan bakabilirsin.</p>`;
 }
 
 // ===== Bilanço grafikleri (bankanın çeyreklik resmi verisinden) =====
@@ -2226,7 +2226,7 @@ function ppkSatir(d) {
 const PPK = ["2026-10-22", "2026-12-10", "2027-01-21", "2027-03-18", "2027-04-22", "2027-06-10"];
 const TK_FIX = [
   { d: "2026-11-05", t: "3. çeyrek finansalları açıklanıyor", a: "Ocak–Eylül 2026 bilançosu · KAP duyurusu", c: "#e0a24f" },
-  { d: "2027-02-26", t: "2026 yılı finansalları", a: "Geçen yıl şubat sonu açıklandı", c: "#e0a24f", est: 1, ay: 1 },
+  { d: "2027-02-05", t: "2026 yılı finansalları", a: "Tahmini: geçen yıl 6 Şubat'ta açıklandı", c: "#e0a24f", est: 1, ay: 1 },
   { d: "2027-03-31", t: "Olağan genel kurul", a: "2026'da 31 Mart'ta İstanbul'da yapıldı", c: "#b48cff", est: 1, ay: 1 },
   { d: "2027-04-01", t: "Kâr payı (temettü) dağıtımı", a: "2026'da 1 Nisan'da başladı; tutarı genel kurul belirler", c: "#3fc283", est: 1, ay: 1 },
 ];
@@ -2275,32 +2275,29 @@ const TARIH = [
   ["1925", "İlk sanayi yatırımı Bursa'daki İpekiş oldu (250 bin lira sermaye)."],
   ["1925", "Bugünkü Anadolu Sigorta, Anadolu Anonim Sigorta adıyla 500 bin lira sermayeyle kuruldu."],
   ["1926", "Maden kömürü işletmelerine ve İstanbul Şeker Fabrikaları'na ortak olarak sanayileşmeye öncülük etti."],
-  ["1927", "Sermaye 2 milyon lira artırıldı, banka Milli İtibar Bankası ile birleşti."],
+  ["1927", "Sermaye 4 milyon liraya çıkarıldı ve banka, Osmanlı İtibar-ı Milli Bankası ile birleşti."],
   ["1928", "Türkiye'ye ilk kumbaraları İş Bankası getirdi. Kumbara, tasarruf alışkanlığının simgesi oldu."],
   ["1929", "Milli Reasürans kuruldu ve o günden beri faaliyetini sürdürüyor."],
   ["1929–1934", "Büyük Buhran yıllarında bile mevduat 5 yılda 9 katına çıktı. Bankanın sektördeki payı %4'ten %21'e yükseldi."],
   ["1932", "Hamburg ve İskenderiye şubeleriyle yurt dışında şube açan ilk Türk bankası oldu."],
   ["1933", "Atatürk, Akşam gazetesine verdiği demeçte bankayı özellikle bankacı yetiştirmesi yönüyle övdü."],
-  ["1935", "Şişecam kuruldu ve Paşabahçe fabrikası Kasım 1935'te üretime başladı. 1934'te camın tamamı ithal edilirken 1946'da ihtiyacın %96'sı yurt içinden karşılanır oldu."],
+  ["1935", "Şişecam'ın temeli olan Paşabahçe cam fabrikası Temmuz 1935'te üretime başladı, Kasım 1935'te resmen açıldı."],
   ["1930 → 1953", "Şube sayısı 28'den 130'a çıktı. 1960'a gelindiğinde 240'ı aşmıştı."],
   ["1956", "İş Bankası Kültür Yayınları o yıldan beri kesintisiz kitap yayımlıyor."],
   ["1979", "Banka 865 şube ve 19.074 çalışana ulaştı. Türkiye'deki mevduatın %22'si İş Bankası'ndaydı."],
-  ["1983", "Merkezi bilgisayar sistemi ilk olarak Ankara'daki 6 şubede çalışmaya başladı. 1993'te bütün şubeler ağa bağlandı."],
   ["1982", "Türkiye'nin ilk ATM'sini ve onunla çalışan kartı İş Bankası sundu. Makinelere verdiği \"Bankamatik\" adı zamanla bütün ATM'lerin genel adı gibi kullanılır oldu."],
+  ["1983", "Merkezi bilgisayar sistemi ilk olarak Ankara'daki 6 şubede çalışmaya başladı. 1993'te bütün şubeler ağa bağlandı."],
   ["1987", "Çevrim içi çalışan modern Bankamatik'ler ve banka kartları hizmete girdi."],
-  ["1990", "Anadolu Hayat Emeklilik kuruldu. Banka aynı yıl kredi kartı başvurusu almaya başladı."],
+  ["1990", "Bugünkü Anadolu Hayat Emeklilik, hayat sigortası şirketi olarak kuruldu."],
   ["1991", "Telefon bankacılığı \"Mavi Hat\" hizmete girdi."],
-  ["1997", "Türkiye'nin ilk internet şubesini açtı. ATM sayısı da aynı yıl 1.000'i geçti."],
+  ["1997", "İnternet şubesini açtı; Türkiye'de internet bankacılığını ilk başlatan bankalardan biri oldu."],
   ["Mayıs 1998", "Hazine'nin elindeki %12,3'lük pay halka arz edildi."],
   ["2000", "Genel müdürlük Ankara'dan İstanbul Levent'teki İş Kuleleri'ne taşındı."],
   ["Ulus, Ankara", "Bankanın Ulus'taki tarihi genel müdürlük binası bugün İktisadi Bağımsızlık Müzesi olarak ziyaret edilebiliyor."],
-  ["2007", "Biyometrik kimlik tanıma sistemini kullanmaya başladı."],
   ["2007", "Mobil bankacılık uygulaması İşCep yayına girdi."],
   ["2012", "Yurt dışındaki ilk Bankamatik, Irak'taki Erbil Şubesi'nde kuruldu."],
   ["2012", "QR kodla ödeme sistemi Parakod'u hayata geçirdi."],
-  ["2015", "İşCep ile Bankamatik'i birleştiren İşCepmatik hizmete girdi."],
-  ["2017", "Yapay zekâ destekli dijital asistan Maxi devreye girdi."],
-  ["Atatürk'ün vasiyeti", "Atatürk'ün bankadaki hisselerinin temsil hakkı vasiyetiyle Cumhuriyet Halk Partisi'ne bırakıldı."],
+  ["2018", "Yapay zekâ destekli dijital asistan Maxi, Kasım 2018'de İşCep'te kullanıma açıldı."],
   ["2023 – 2025", "İşCep, Global Finance'ın En İyi Dijital Banka Ödülleri'nde üç yıl üst üste \"Dünyanın En İyi Mobil Bankacılık Uygulaması\" seçildi."],
   ["2024", "İş Bankası 100. yaşını kutladı. \"Türkiye'nin Bankası\" olarak ikinci yüzyılına girdi."],
 ];
@@ -2419,7 +2416,7 @@ function renderTarihce() {
     <div class="bmatik">
       <div class="bmTop"><div><span class="bmQ">💡 Biliyor muydunuz?</span><b class="bmH">"Bankamatik" bir marka,<br>sahibi <em>İş Bankası</em></b></div>
         <svg class="bmAtm" viewBox="0 0 64 84" aria-label="Bankamatik çizimi"><rect x="4" y="2" width="56" height="80" rx="8" fill="#1a2bb8" stroke="#6f84ff"/><rect x="11" y="10" width="42" height="26" rx="3" fill="#0b1140" stroke="#3a50f0"/><text x="32" y="26" text-anchor="middle" font-size="6.4" font-weight="800" fill="#f3dca8" font-family="system-ui,sans-serif">BANKAMATİK</text><rect x="14" y="42" width="22" height="20" rx="2" fill="#2a3fe0"/><g fill="#9fb0ff"><circle cx="19" cy="47" r="1.6"/><circle cx="25" cy="47" r="1.6"/><circle cx="31" cy="47" r="1.6"/><circle cx="19" cy="52" r="1.6"/><circle cx="25" cy="52" r="1.6"/><circle cx="31" cy="52" r="1.6"/><circle cx="19" cy="57" r="1.6"/><circle cx="25" cy="57" r="1.6"/><circle cx="31" cy="57" r="1.6"/></g><rect x="40" y="44" width="14" height="3" rx="1.5" fill="#e0a24f"/><rect x="40" y="52" width="14" height="10" rx="2" fill="#0b1140" stroke="#3a50f0"/><rect x="14" y="68" width="36" height="4" rx="2" fill="#0b1140"/></svg></div>
-      <p>Para çekilen makinelere hepimiz "bankamatik" deriz ama bu genel bir kelime değil. İş Bankası <b>1982</b>'de Türkiye'nin ilk ATM'sini ve onunla çalışan kartı sundu, makinelerine de <b>Bankamatik</b> adını verdi. Ad o kadar sevildi ki bütün ATM'lerin genel adı gibi kullanılır oldu.</p>
+      <p>Para çekilen makinelere hepimiz "bankamatik" deriz ama bu ad aslında İş Bankası'ndan geliyor. İş Bankası <b>1982</b>'de Türkiye'nin ilk ATM'sini ve onunla çalışan kartı sundu, makinelerine de <b>Bankamatik</b> adını verdi. Ad o kadar sevildi ki bütün ATM'lerin genel adı gibi kullanılır oldu.</p>
       <div class="bmYil"><span><b>1982</b>İlk Bankamatik</span><span><b>1987</b>Çevrim içi ATM ve banka kartı</span><span><b>2012</b>Yurt dışındaki ilk Bankamatik, Erbil</span></div>
       <a href="https://www.isbank.com.tr/bankamizi-taniyin/irak-ve-gurcistandaki-is-bankasi-musterileri-de-bankamatik-kullaniyor" target="_blank" rel="noopener">Kaynak: İş Bankası ↗</a>
     </div>

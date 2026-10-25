@@ -53,7 +53,7 @@
    "k": "para",
    "ic": "🌍",
    "t": "Yurt dışına dakikalar içinde para gönder: Visa ile",
-   "d": "ABD'ye USD, Avrupa ülkelerine EUR, İngiltere'ye GBP; para alıcının bankasına dakikalar içinde iletilir. 250 TL sabit ücret; muhabir banka masrafı yok, gönderilen tutardan kesinti yapılmaz. İşlem başına 30 – 5.000 USD (veya karşılığı), günlük 10.000 USD, aylık 50.000 USD. 18 yaş üstü bireysel müşteriler; kendi ya da başkasının yurt dışı hesabına gönderilebilir. Takip: İşlem Takibi ekranı.",
+   "d": "ABD'ye USD, Avrupa ülkelerine EUR, İngiltere'ye GBP; para genellikle dakikalar içinde alıcının bankasına ulaşır; hesaba geçiş alıcı bankaya bağlıdır. Sabit ücret 250 TL (banka duyurusuna göre yıl sonuna kadar); güncel ücret ve koşullar işlem ekranında yazar. İşlem başına 30 – 5.000 USD (veya karşılığı), günlük 10.000 USD, aylık 50.000 USD. 18 yaş üstü bireysel müşteriler; kendi ya da başkasının yurt dışı hesabına gönderilebilir. Takip: İşlem Takibi ekranı.",
    "n": "Para Aktar › Başka Hesaba › Visa ile Yurt Dışı Para Transferi",
    "u": "https://www.isbank.com.tr/visa-ile-yurt-disi-para-transferi",
    "src": "isbank.com.tr",
@@ -63,7 +63,7 @@
    "k": "para",
    "ic": "💰",
    "t": "Diğer bankadaki paranı tek dokunuşla İş Bankası'na getir",
-   "d": "O bankanın uygulamasını açmadan, diğer bankadaki vadesiz TL hesabındaki parayı İşCep'ten İş Bankası hesabına çek. Hesap ekli değilse işlem sırasında listeden bankanı seçmen yeter; izni bir kez verince sonrası tek dokunuş. Gelen parayla hemen vadeli hesap aç, fatura ya da kart borcu öde. Açık Bankacılık ile ücretsiz.",
+   "d": "O bankanın uygulamasını açmadan, diğer bankadaki vadesiz TL hesabındaki parayı İşCep'ten İş Bankası hesabına çek. Hesap ekli değilse işlem sırasında listeden bankanı seçmen yeter; izni bir kez verince sonrası tek dokunuş. Gelen parayla hemen vadeli hesap aç, fatura ya da kart borcu öde. Parayı gönderen banka kendi ücretini uygulayabilir.",
    "n": "Para Aktar › İş Bankası Hesabıma Para Getir",
    "u": "https://www.isbank.com.tr/acik-bankacilik",
    "src": "isbank.com.tr"
@@ -72,7 +72,7 @@
    "k": "para",
    "ic": "💠",
    "t": "İşCep'i kullandıkça seviye atla: İş Plus",
-   "d": "Kartla harcadıkça ve fatura talimatı verdikçe Turkuaz, Mavi, Lacivert seviyelerine kendiliğinden geçersin: ayda 6'ya kadar ücretsiz EFT/FAST, markette %15'e varan indirim, daha düşük ek hesap faizi. Başvuru gerekmez.",
+   "d": "Kartla harcadıkça ve fatura talimatı verdikçe Turkuaz, Mavi, Lacivert seviyelerine kendiliğinden geçersin: ayda 6'ya kadar ücretsiz EFT/FAST, ayın ilk market alışverişinde %15'e varan indirim, daha düşük ek hesap faizi. Başvuru gerekmez.",
    "n": "Profil ve Ayarlar › İş Plus'ı Keşfedin",
    "u": "https://www.isbank.com.tr/isplus",
    "src": "isbank.com.tr"
@@ -81,7 +81,7 @@
    "k": "para",
    "ic": "🏧",
    "t": "Kartın yanında değil mi? Bankamatik'ten İşCep'le para çek",
-   "d": "Bankamatik ekranındaki karekodu İşCep'le okut, tutarı seç; para çekme ve yatırma kartsız olur. Günde 20.000 TL'ye kadar ücretsiz.",
+   "d": "Bankamatik ekranındaki karekodu İşCep'le okut, tutarı seç; para çekme ve yatırma kartsız olur. Günlük karekodla işlem limitini İşCep'te görebilirsin.",
    "n": "İşCep açılış ekranı › Karekod İşlemleri (ya da giriş yapıp Bankamatik Para Çek/Yatır)",
    "u": "https://www.isbank.com.tr/bankamatik",
    "src": "isbank.com.tr"
@@ -99,7 +99,7 @@
    "k": "para",
    "ic": "🔁",
    "t": "Diğer bankalardaki hesapların da İşCep'te",
-   "d": "Başka bankalardaki hesap ve kartlarını ekle, bakiyelerini tek ekranda gör; istersen o bankaya gitmeden paranı İş Bankası'na getir. Açık Bankacılık ile ücretsiz. Verdiğin izinleri Profil ve Ayarlar › Diğer Banka İzinleri'nden yönetirsin.",
+   "d": "Başka bankalardaki hesap ve kartlarını ekle, bakiyelerini tek ekranda gör; istersen o bankaya gitmeden paranı İş Bankası'na getir (gönderen banka kendi ücretini uygulayabilir). Verdiğin izinleri Profil ve Ayarlar › Diğer Banka İzinleri'nden yönetirsin.",
    "n": "Hesaplarım › Diğer Banka Hesabı/Kartı Ekle · Para Aktar › İş Bankası Hesabıma Para Getir",
    "u": "https://www.isbank.com.tr/acik-bankacilik",
    "src": "isbank.com.tr"
@@ -128,7 +128,7 @@
    "k": "ayar",
    "ic": "🎁",
    "t": "Kampanyalara İşCep'ten tek dokunuşla katıl",
-   "d": "Çoğu kampanya katılım ister: KATIL'a basmadan yapılan harcama puan kazandırmaz. İşCep ana sayfasındaki Kampanyalar alanında sana özel fırsatlar da görünür; bütün müşteriler katılabilir.",
+   "d": "Çoğu kampanya katılım ister: KATIL'a basmadan yapılan harcama puan kazandırmaz. İşCep ana sayfasındaki Kampanyalar alanında herkese açık kampanyaların yanında sana özel fırsatlar da görünebilir.",
    "n": "Ana sayfa › Kampanyalar › KATIL",
    "u": "https://www.maximum.com.tr/kampanyalar",
    "git": "Tümü",
@@ -152,7 +152,7 @@
    "k": "ayar",
    "ic": "⌚",
    "t": "Saatinle öde, Bankamatik'ten para bile çek",
-   "d": "NFC'li, Wear OS 3.0 ve üzeri Android saatine kartını yükle; sonra internet, Bluetooth ya da telefon olmadan saatle ödeme yap, Bankamatik'ten para çek.",
+   "d": "NFC'li, Wear OS 3.0 ve üzeri Android saatine kartını yükle; sonra telefonun yanında olmadan saatle ödeme yap, Bankamatik'ten para çek.",
    "n": "Kartlar › Akıllı Saat ile Öde / Para Çek › Kullanmaya Başla",
    "u": "https://www.isbank.com.tr/iscep-akilli-saat-ile-odeme",
    "src": "isbank.com.tr",
@@ -223,7 +223,7 @@
    "g": "🔐 Profil ve Ayarlar › Güvenlik ve İşlem Ayarları",
    "ic": "🚦",
    "t": "İşlem kısıtlaması ve limitler: hesabına kendi kilidini koy",
-   "d": "Para transferi, EFT gibi işlemlere işlem başı ya da günlük limit koy; istersen Standart, Kısıtlı ya da Çok Kısıtlı seviyeye çek. Dolandırıcılığa karşı güçlü bir kalkan.",
+   "d": "Para transferi, EFT gibi işlemlere işlem başı ya da günlük limit koy; istersen Standart, Kısıtlı ya da Çok Kısıtlı seviyeye çek. Dolandırıcılık riskini azaltmaya yardımcı olur.",
    "n": "Profil ve Ayarlar › Güvenlik ve İşlem Ayarları › İşlem Kısıtlamaları · Para Aktarma Limitleri",
    "u": "https://www.isbank.com.tr/TR/guvenlik/bizim-yaptiklarimiz/Sayfalar/bizim-yaptiklarimiz.aspx",
    "src": "isbank.com.tr"
@@ -263,7 +263,7 @@
    "g": "🔐 Profil ve Ayarlar › Güvenlik ve İşlem Ayarları",
    "ic": "🕘",
    "t": "İnternet Şube'yi, Maximum Mobil'i, Çözüm Merkezi'ni sen aç-kapa",
-   "d": "Her kanal için seç: Kullanılmasın, Hafta içi kullanılsın ya da Tüm günler kullanılsın. İstersen kullanım saat aralığı da belirlersin (ör. yalnızca 09:00–22:00). Kullanmadığın kanalı kapatmak, gece ya da hafta sonu yetkisiz işleme karşı güçlü bir kilit.",
+   "d": "Her kanal için seç: Kullanılmasın, Hafta içi kullanılsın ya da Tüm günler kullanılsın. İstersen kullanım saat aralığı da belirlersin (ör. yalnızca 09:00–22:00). Kullanmadığın kanalı kapatmak, gece ya da hafta sonu yetkisiz işlem riskini azaltır.",
    "n": "Profil ve Ayarlar › Güvenlik ve İşlem Ayarları › Kanal Kullanım Tercihleri › İnternet Şube / Maximum Mobil / Çözüm Merkezi",
    "u": "https://www.isbank.com.tr/iscep",
    "src": "uygulama"
@@ -409,8 +409,8 @@
   {
    "k": "aile",
    "ic": "👧",
-   "t": "Kızının geleceğine bugünden başla: Girişimci Kız Çocukları Hesabı",
-   "d": "Ebeveyn, kız çocuğu adına İşCep'ten ya da şubeden açar; 1.000 TL ile başlar. 180 gün vadeli, kendiliğinden yenilenir ve yıllık TÜFE'nin üzerine ek faiz alır, yani birikim enflasyona karşı korunur. Düzenli talimatla her ay ekleme yapılabilir. Çocuk 18 yaşına gelince birikim vadesiz hesabına geçer; nasıl kullanacağına o karar verir. Girişimcilik Vakfı katkısıyla.",
+   "t": "Girişimci Kız Çocukları Hesabı",
+   "d": "8 Mart 2025 ve sonrasında doğan kız çocukları için; ebeveyn İşCep'ten ya da şubeden açar, 1.000 TL ile başlar. 180 gün vadeli, kendiliğinden yenilenir; yıllık TÜFE değişiminin üzerine ek getiri sunulur (koşullar bankada). Çocuk 18 yaşına gelince birikim vadesiz hesabına geçer; nasıl kullanacağına o karar verir. Girişimcilik Vakfı katkısıyla.",
    "n": "Menü › Hesaplar › Yeni Hesap Aç › Vadeli Hesap › Girişimci Kız Çocukları Hesabı",
    "u": "https://www.isbank.com.tr/girisimci-kiz-cocuklari-hesabi",
    "src": "isbank.com.tr"

@@ -50,12 +50,12 @@ const ISQ_ALL = [].concat(
     ["1979'da İş Bankası kaç şubeye ulaşmıştı?", ["265", "565", "865", "1.265"], 2],
     ["1979'da Türkiye'deki mevduatın yaklaşık yüzde kaçı İş Bankası'ndaydı?", ["%5", "%12", "%22", "%40"], 2],
     ["İş Bankası'nın merkezi bilgisayar sistemi ilk olarak hangi yıl çalışmaya başladı?", ["1973", "1983", "1993", "2003"], 1],
-    ["Anadolu Hayat Emeklilik hangi yıl kuruldu?", ["1975", "1990", "2001", "2010"], 1],
-    ["Türkiye'nin ilk internet şubesini hangi banka, hangi yıl açtı?", ["İş Bankası, 1997", "Garanti BBVA, 2001", "Akbank, 1999", "Ziraat Bankası, 2003"], 0],
+    ["Bugünkü Anadolu Hayat Emeklilik, hayat sigortası şirketi olarak hangi yıl kuruldu?", ["1975", "1990", "2001", "2010"], 1],
+    ["İş Bankası internet şubesini hangi yıl açtı?", ["1993", "1997", "2001", "2005"], 1],
     ["İş Bankası genel müdürlüğü 2000 yılında Ankara'dan nereye taşındı?", ["İstanbul Levent, İş Kuleleri", "İstanbul Maslak", "İzmir Konak", "İstanbul Ataşehir"], 0],
     ["İş Bankası'nın ilk genel müdürü Celâl Bayar hangi yıl Cumhurbaşkanı oldu?", ["1938", "1946", "1950", "1960"], 2],
     ["İş Bankası'nın QR kodla ödeme sistemi Parakod hangi yıl hayata geçti?", ["2005", "2012", "2018", "2022"], 1],
-    ["İş Bankası'nın yapay zekâ destekli dijital asistanı Maxi hangi yıl devreye girdi?", ["2012", "2017", "2021", "2024"], 1],
+    ["İş Bankası'nın yapay zekâ destekli dijital asistanı Maxi hangi yıl devreye girdi?", ["2012", "2015", "2018", "2024"], 2],
     ["İş Bankası 100. yaşını hangi yıl kutladı?", ["2014", "2023", "2024", "2025"], 2],
   ]),
 
@@ -148,14 +148,12 @@ const ISQ_ALL = [].concat(
     ["İş Black ayrıcalıkları İşCep'te hangi menüden görülür?", ["Kampanyalar › Black", "İş Black", "Ayarlar › Üyelik", "Kartlarım"], 1],
     ["İş Black müşterilerine kültür-sanat etkinliklerinde yüzde kaç indirim var?", ["%10", "%20", "%30", "%50"], 1],
     ["Maximiles Black kartta 1 MaxiMil kaç TL değerindedir?", ["0,10 TL", "0,50 TL", "1 TL", "2 TL"], 2],
-    ["Maximiles Black kart için asgari kart limiti ne kadardır?", ["50.000 TL", "150.000 TL", "300.000 TL", "1.000.000 TL"], 2],
-    ["Maximiles Black'te satın alma koruması olay başına ne kadara kadar geçerlidir?", ["1.000 TL", "3.000 TL", "10.000 TL", "50.000 TL"], 1],
     ["Maximiles Black'te bilet ve konaklama kartla ödenirse yurt dışı seyahat sigortası limiti ne kadardır?", ["5.000 €", "10.000 €", "30.000 €", "100.000 €"], 2],
   ]),
 
   // --- Bankamatik ve Gişematik ---
   K("matik", [
-    ["Herkesin ATM'lere dediği \"Bankamatik\" adı aslında nedir?", ["Türkçede genel bir kelime", "İş Bankası'nın ATM'lerine verdiği marka", "Merkez Bankası'nın sistem adı", "Bir Alman üreticinin model adı"], 1],
+    ["Herkesin ATM'lere dediği \"Bankamatik\" adı aslında nedir?", ["Bir Japon üreticinin model adı", "İş Bankası'nın ATM'lerine verdiği marka", "Merkez Bankası'nın sistem adı", "Bir Alman üreticinin model adı"], 1],
     ["Türkiye'nin ilk ATM'sini (Bankamatik) hangi banka sundu?", ["Ziraat Bankası", "Akbank", "Garanti", "İş Bankası"], 3],
     ["İş Bankası ilk Bankamatik'i ve onunla çalışan kartı hangi yıl sundu?", ["1975", "1982", "1990", "1997"], 1],
     ["Çevrim içi çalışan modern Bankamatik'ler ve banka kartları hangi yıl hizmete girdi?", ["1980", "1987", "1995", "2001"], 1],
@@ -163,7 +161,6 @@ const ISQ_ALL = [].concat(
     ["İşCep ile Bankamatik'i birleştiren hizmetin adı nedir?", ["İşCepmatik", "CepATM", "MaxiMatik", "Gişematik"], 0],
     // Gişematik limitleri: çekme 120.000 TL, yatırma 500.000 TL
     ["İş Bankası Gişematik'ten tek seferde en fazla kaç TL para çekilebilir?", ["20.000 TL", "50.000 TL", "120.000 TL", "250.000 TL"], 2],
-    ["İş Bankası Gişematik'e tek seferde en fazla kaç TL para yatırılabilir?", ["100.000 TL", "250.000 TL", "500.000 TL", "1.000.000 TL"], 2],
   ]),
   // --- Bankamatik ve Gişematik: yeni sorular (21 Ekim 2026; isbank.com.tr/bankamatik ve İş Vapur duyurusu) ---
   K("matik", [
@@ -184,7 +181,7 @@ const ISQ_ALL = [].concat(
 
   // --- Ödüller, iştirakler ve kurum ---
   K("kurum", [
-    ["İş Bankası'nın kaç tane Tarım İhtisas Şubesi var?", ["40-45", "50-55", "55-60", "100 ve üzeri"], 2],
+    ["Ağustos 2025 itibarıyla İş Bankası'nın kaç Tarım İhtisas Şubesi vardı?", ["24", "40", "56", "100"], 2],
     ["'Hasan Âli Yücel Klasikler Dizisi' hangi yayınevine aittir?", ["Yapı Kredi Yayınları", "İş Bankası Kültür Yayınları", "Can Yayınları", "Remzi Kitabevi"], 1],
     ["İş Bankası açık bankacılık alanındaki çalışmalarıyla hangi uluslararası yayından ödül aldı?", ["Financial Times", "The Banker", "Forbes", "Bloomberg"], 1],
     ["Euromoney Mükemmellik Ödülleri'nde İş Bankası hangi unvana layık görüldü?", ["Dünyanın En İyi Yenilikçi Bankası", "Avrupa'nın En Sürdürülebilir Bankası", "Orta ve Doğu Avrupa'nın En İyi Dijital Bankası", "Global En İyi Perakende Bankası"], 2],
