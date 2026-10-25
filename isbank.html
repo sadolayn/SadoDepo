@@ -315,8 +315,11 @@
   @keyframes nb { 50% { transform: scale(1.12); } }
   /* Menü: Bankacılık'taki renkli kutucuk dili */
   .menu button { --c: #e0a24f; --d: #2a2010; --t: #f3dca8; grid-column: span 4; height: 54px; border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 38%, #000), var(--d)); color: var(--t); font-weight: 700; }
-  .menu { grid-template-columns: repeat(12, minmax(0, 1fr)) !important; }
-  .menu button, .menu button:nth-child(n+6) { grid-column: span 3; } .menu button:nth-child(n+9) { grid-column: span 4; }
+  /* 5 + 5 kutucuk; Soru en altta tam genişlikte ince şerit */
+  .menu { grid-template-columns: repeat(20, minmax(0, 1fr)) !important; }
+  .menu button, .menu button:nth-child(n+6) { grid-column: span 4; }
+  .menu button[data-k="Soru"] { grid-column: 1 / -1 !important; height: 40px !important; flex-direction: row !important; gap: 8px; }
+  .menu button[data-k="Soru"] i { font-size: 18px !important; margin: 0 !important; }
   .menu button[data-k="KTakvim"] { --c: #ef5a5a; --d: #2e0a0a; --t: #ffd0d0; }
   .menu button[data-k="Pazarama"] { --c: #ff8a3d; --d: #2e1405; --t: #ffd9bf; }
   .menu button[data-k="Kartsiz"] { --c: #3fbfd6; --d: #04232a; --t: #c6f0f7; }
@@ -729,6 +732,7 @@
   .altkutu.dar:not(.acik) #tfil.kamp button.on { flex: 1 1 auto !important; width: auto !important; min-height: 32px !important; }
   .altkutu.dar:not(.acik) .tsat button.hep { display: none !important; }
   .altkutu.dar:not(.acik) .tsat.kgr:not(:has(.on:not(.hep))) { display: none !important; }
+  .pay .pdy { margin-top: 8px; font-size: 12px; color: #9a9a9a; } .pay .pdy a { color: #9b7bff; text-decoration: none; }
   .karac { display: grid; gap: 7px; margin: 0 0 10px; }
   .altkutu #tfil.kamp .kara { margin: 6px 0 2px; pointer-events: auto; }
   .altkutu.dar:not(.acik) #tfil.kamp .kara { margin: 4px 0 4px; flex: 1 1 100%; }
@@ -889,9 +893,9 @@ const CATS = [
   ["Soru", "#e0a24f", "❓"],
   ["Finans", "#3a50f0", "📊"],
 ];
-const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Kartsız<br>öde", "POS": "POS<br>rehberi", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Soru", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<br><small>Güncel · KAP</small>" };
+const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Kartsız<br>öde", "POS": "POS<br>rehberi", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Günün sorusu", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<br><small>Güncel · KAP</small>" };
 // Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Video, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
-const MENU = [["Tarihçe", "🏛️"], ["İşCep", "📲"], ["Maximum", "🎁"], ["Black", "🖤"], ["KTakvim", "⏳"], ["Haberler", "📰"], ["Şubeler", "📍"], ["Pazarama", "🛒"], ["Kartsiz", "💳"], ["POS", "🏪"], ["Soru", "❓"]];
+const MENU = [["Tarihçe", "🏛️"], ["İşCep", "📲"], ["Black", "🖤"], ["Maximum", "🎁"], ["KTakvim", "⏳"], ["Haberler", "📰"], ["Şubeler", "📍"], ["Pazarama", "🛒"], ["Kartsiz", "💳"], ["POS", "🏪"], ["Soru", "❓"]];
 const NEWS = ["Tümü", "📰 Güncel", "🎬 Video", "Haber", "Ürün", "Dijital", "KAP"];
 const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "🎬 Video": "🎬 Video", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
 let lastNews = "Tümü"; try { lastNews = localStorage.getItem("isbankNews") || "Tümü"; } catch (e) {}
@@ -1134,31 +1138,36 @@ function odeHtml() {
 }
 // ===== POS rehberi: işyeri hangi POS'u seçmeli, sık karışan konular (genel bilgi; koşullar bankaya göre değişir) =====
 const POS = [
-  { ic: "🧾", ad: "Yazarkasa POS (ÖKC)", k: "Dükkanda", kim: "Dükkanında perakende satış yapanlar", p: "Hem yazarkasa fişi keser hem kartla ödeme alır; tek cihazda yazarkasa + POS. Fiş kesmek zorunda olan perakende işyerleri için ana cihaz budur.", n: "Fiş ve kart işlemi aynı cihazda olduğu için gün sonu ve muhasebe kolaylaşır." },
-  { ic: "🛵", ad: "Mobil ÖKC", k: "Gezerek", kim: "Kurye, kapıda ödeme, pazar, servis", p: "Kendi SIM'i (4G) ile çalışan, taşınabilir yazarkasa POS. Masaya, kapıya, sahaya gider; fişi orada keser.", n: "Paket servis ve kapıda ödeme alan işletmelerin ilk tercihi." },
-  { ic: "📱", ad: "Telefonla POS (SoftPOS)", k: "Telefonla", kim: "Yeni başlayan, az işlem yapan, serbest çalışan", p: "NFC'li Android telefona kurulan uygulamayla temassız kart, telefon ve saat ödemesi alınır; ek cihaz gerekmez.", n: "Fiş kesme zorunluluğun varsa yazarkasanın yerine geçmez; fişi ayrıca düzenlemen gerekir (muhasebecine danış)." },
-  { ic: "🌐", ad: "Sanal POS", k: "İnternette", kim: "Kendi e-ticaret sitesi olanlar", p: "Sitendeki ödeme sayfasında kartla ödeme alırsın; 3D Secure ile müşteri telefonuna gelen kodla onaylar.", n: "Taksit, iade ve iptal işlemleri banka ekranından yapılır." },
-  { ic: "🔗", ad: "Linkle ödeme", k: "Linkle", kim: "WhatsApp, Instagram, telefonla satış yapanlar", p: "Sitesi olmayan işletme müşteriye bir ödeme bağlantısı gönderir, müşteri kartıyla o bağlantıdan öder.", n: "Uzaktan satışta en pratik yol; para sanal POS gibi hesaba geçer." },
-  { ic: "🔳", ad: "Karekodla tahsilat", k: "Karekod", kim: "Hızlı ödeme isteyen her işletme", p: "Cihaz ya da kasadaki TR Karekod'u müşteri telefonundan okutur, kartı ya da hesabıyla öder.", n: "Kart çıkarmadan, dokunmadan ödeme; müşteri tarafında da kampanyalara sayılabiliyor (Kartsız öde sekmesine bak)." },
+  { ic: "🧾", ad: "Yazarkasa POS (ÖKC)", k: "Dükkanda", kim: "Dükkanında perakende satış yapanlar", p: "Hem yazarkasa fişi keser hem kartla ödeme alır; tek cihazda yazarkasa + POS. Fiş kesmek zorunda olan perakende işyerleri için ana cihaz budur.", n: "Fiş ve kart işlemi aynı cihazda olduğu için gün sonu ve muhasebe kolaylaşır.", d: ["EFT-POS'un yazarkasayla entegre çalışması zorunlu (VUK Genel Tebliği No. 483) · GİB Yeni Nesil ÖKC", "https://ynokc.gib.gov.tr"] },
+  { ic: "🛵", ad: "Mobil ÖKC", k: "Gezerek", kim: "Kurye, kapıda ödeme, pazar, servis", p: "Kendi SIM'i (4G) ile çalışan, taşınabilir yazarkasa POS. Masaya, kapıya, sahaya gider; fişi orada keser.", n: "Paket servis ve kapıda ödeme alan işletmelerin ilk tercihi.", d: ["Seyyar satışta EFT-POS özellikli yeni nesil ÖKC kullanımı 2013'ten beri zorunlu · GİB Yeni Nesil ÖKC", "https://ynokc.gib.gov.tr"] },
+  { ic: "📱", ad: "Telefonla POS (SoftPOS)", k: "Telefonla", kim: "Yeni başlayan, az işlem yapan, serbest çalışan", p: "NFC'li Android telefona kurulan uygulamayla temassız kart, telefon ve saat ödemesi alınır; ek cihaz gerekmez.", n: "Türkiye'de yeni bir yol; koşulları bankaya göre değişir. Fiş kesme zorunluluğun varsa yazarkasanın yerine geçmez, fişi ayrıca düzenlemen gerekir (muhasebecine danış).", d: ["Fiş zorunluluğu: GİB Yeni Nesil ÖKC kuralları", "https://ynokc.gib.gov.tr"] },
+  { ic: "🌐", ad: "Sanal POS", k: "İnternette", kim: "Kendi e-ticaret sitesi olanlar", p: "Sitendeki ödeme sayfasında kartla ödeme alırsın; 3D Secure ile müşteri telefonuna gelen kodla onaylar.", n: "Taksit, iade ve iptal işlemleri banka ekranından yapılır.", d: ["Genel uygulama; ayrıntılar banka sözleşmesinde"] },
+  { ic: "🔗", ad: "Linkle ödeme", k: "Linkle", kim: "WhatsApp, Instagram, telefonla satış yapanlar", p: "Sitesi olmayan işletme müşteriye bir ödeme bağlantısı gönderir, müşteri kartıyla o bağlantıdan öder.", n: "Uzaktan satışta en pratik yol; para sanal POS gibi hesaba geçer.", d: ["Genel uygulama; ayrıntılar banka sözleşmesinde"] },
+  { ic: "🔳", ad: "Karekodla tahsilat", k: "Karekod", kim: "Hızlı ödeme isteyen her işletme", p: "Cihaz ya da kasadaki TR Karekod'u müşteri telefonundan okutur, kartı ya da hesabıyla öder.", n: "Kart çıkarmadan, dokunmadan ödeme; müşteri tarafında da kampanyalara sayılabiliyor (Kartsız öde kalemine bak).", d: ["Ödemelerde TR Karekod Yönetmeliği (Resmî Gazete 21.08.2020) · TCMB Ödeme Sistemleri mevzuatı", "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Banka+Hakkinda/Mevzuat/Odeme+Sistemleri"] },
 ];
 const POS_SSS = [
-  ["ÖKC ile POS arasındaki fark ne?", "POS yalnızca kartla ödeme alır. ÖKC (yeni nesil yazarkasa) fiş de keser ve Gelir İdaresi'ne bağlıdır. Fiş kesmek zorunda olan perakende işyeri için doğru cihaz yazarkasa POS'tur."],
-  ["Para hesabıma ne zaman geçer? (bloke / valör)", "Kartla alınan para hemen ya da anlaşılan gün sayısı sonra hesaba geçer. Erken geçmesi (blokesiz) genelde daha yüksek komisyonla olur. Oran ve gün sayısı işyeri anlaşmasına göre değişir."],
-  ["İptal mi, iade mi?", "Gün sonu alınmadan, aynı gün → <b>iptal</b>: işlem müşterinin kartına hiç yansımaz. Gün sonundan sonra → <b>iade</b>: tutar birkaç iş günü içinde karta döner. Kısmi iade de yapılabilir."],
-  ["Gün sonu nedir, almazsam ne olur?", "Günün kart işlemlerini kapatıp bankaya gönderir. Çoğu cihaz gece kendiliğinden alır; alınmazsa para hesaba geç geçebilir."],
-  ["Taksitli satış her sektörde olur mu?", "Hayır. Akaryakıt, gıda, telekom gibi bazı sektörlerde kredi kartına taksit yasal olarak yok ya da sınırlı; diğerlerinde azami taksit sayısı sektöre göre değişir. Taksit arttıkça işyeri komisyonu da artar."],
-  ["Müşteri harcamaya itiraz ederse? (ters ibraz)", "Banka işyerinden belge ister: slip, fiş/fatura, teslim tutanağı. Bu belgeleri bir süre sakla; uzaktan satışta 3D Secure ile alınan ödeme itirazda işyerini korur."],
-  ["Temassızda neden şifre sordu?", "Temassız ödemede belirli bir tutarın üstünde şifre istenir; bu sınır kural gereği, cihaz arızası değil."],
+  ["ÖKC ile POS arasındaki fark ne?", "POS yalnızca kartla ödeme alır. ÖKC (yeni nesil yazarkasa) fiş de keser ve Gelir İdaresi'ne bağlıdır. Perakende satışta kartlı ödeme alan EFT-POS'un ÖKC ile entegre çalışması zorunludur (VUK Genel Tebliği No. 483). <i>Dayanak: GİB Yeni Nesil ÖKC.</i>"],
+  ["Para hesabıma ne zaman geçer? (bloke / valör)", "Kartla alınan para hemen ya da anlaşılan gün sayısı sonra hesaba geçer. Erken geçmesi (blokesiz) genelde daha yüksek komisyonla olur. Oran ve gün sayısı işyeri anlaşmasına göre değişir. <i>Genel uygulama; ayrıntılar işyeri sözleşmesinde.</i>"],
+  ["İptal mi, iade mi?", "Gün sonu alınmadan, aynı gün → <b>iptal</b>: işlem müşterinin kartına hiç yansımaz. Gün sonundan sonra → <b>iade</b>: tutar birkaç iş günü içinde karta döner. Kısmi iade de yapılabilir. <i>Genel uygulama; ayrıntılar işyeri sözleşmesinde.</i>"],
+  ["Gün sonu nedir, almazsam ne olur?", "Günün kart işlemlerini kapatıp bankaya gönderir. Çoğu cihaz gece kendiliğinden alır; alınmazsa para hesaba geç geçebilir. <i>Genel uygulama; ayrıntılar işyeri sözleşmesinde.</i>"],
+  ["Taksitli satış her sektörde olur mu?", "Hayır. Telekomünikasyon, gıda, akaryakıt ve hediye kartı gibi harcamalarda kredi kartına taksit yapılamaz; diğer sektörlerde azami taksit sayısı BDDK kararlarıyla belirlenir ve zaman zaman değişir. Taksit arttıkça işyeri komisyonu da artar. <i>Dayanak: Banka Kartları ve Kredi Kartları Hakkında Yönetmelik, md. 26 (BDDK).</i>"],
+  ["Müşteri harcamaya itiraz ederse? (ters ibraz)", "Banka işyerinden belge ister: slip, fiş/fatura, teslim tutanağı. Bu belgeleri bir süre sakla; uzaktan satışta 3D Secure ile alınan ödeme itirazda işyerini korur. <i>Genel uygulama; ayrıntılar işyeri sözleşmesinde.</i>"],
+  ["Temassızda neden şifre sordu?", "Temassız ödemede belirli bir tutarın üstünde şifre istenir; sınırı BDDK belirler ve yıllar içinde yükseltilir. Cihaz arızası değildir."],
 ];
 function posHtml() {
   const P = KH && KH.isbank ? kTumu("ticari").filter((k) => /esnaf|pos/i.test(k.kim) || /\bpos\b|yazarkasa|ökc|üye işyeri/i.test(k.baslik)) : [];
   return `<div class="pay-hero" style="--c:#3fbfd6"><b>🏪 İşyerin için hangi POS?</b><span>Nerede satış yaptığını seç, sana uyan yolu gör. Sık karışan konular (iptal-iade, bloke, taksit, gün sonu) en altta tek tek.</span></div>
     <div class="otiles six">${POS.map((o, i) => `<button type="button" class="ot" data-go="pos${i}"><i>${o.ic}</i><span>${o.k}</span></button>`).join("")}</div>
-    <div class="pay-grid">${POS.map((o, i) => `<div class="pay" id="pos${i}"><div class="ph"><i>${o.ic}</i><div><b>${o.ad}</b><small>👤 ${o.kim}</small></div></div><p>${o.p}</p><div class="pn">💡 ${o.n}</div></div>`).join("")}</div>
+    <div class="pay-grid">${POS.map((o, i) => `<div class="pay" id="pos${i}"><div class="ph"><i>${o.ic}</i><div><b>${o.ad}</b><small>👤 ${o.kim}</small></div></div><p>${o.p}</p><div class="pn">💡 ${o.n}</div>${o.d ? `<div class="pdy">📚 ${o.d[1] ? `<a href="${o.d[1]}" target="_blank" rel="noopener">${o.d[0]} ↗</a>` : o.d[0]}</div>` : ""}</div>`).join("")}</div>
     ${P.length ? `<div class="ohead" style="margin-top:14px">🎁 Güncel POS ve esnaf kampanyaları<span>Kampanyalar bölümünden, kendiliğinden</span></div>${P.map((k) => kKart(k, K_KAY[k._kay][3])).join("")}` : ""}
     <div class="ohead" style="margin-top:14px">❓ Sık karışanlar<span>Başlığa dokun, açılsın</span></div>
     ${POS_SSS.map(([q, a]) => `<details class="ipdet"><summary>${q}</summary><p>${a}</p></details>`).join("")}
-    <div class="pay-tip">ℹ️ Genel bilgilendirmedir. Cihaz, komisyon, bloke süresi ve taksit koşulları işyeri anlaşmasına göre değişir; kesin bilgi için şubene ya da isbank.com.tr'ye danış.</div>`;
+    <div class="ocard pkay"><div class="oh"><i>📚</i><b>Kaynaklar</b></div>
+      <a class="omini olnk" href="https://ynokc.gib.gov.tr" target="_blank" rel="noopener"><span>Gelir İdaresi · Yeni Nesil Ödeme Kaydedici Cihazlar (ÖKC) ↗</span></a>
+      <a class="omini olnk" href="https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Banka+Hakkinda/Mevzuat/Odeme+Sistemleri" target="_blank" rel="noopener"><span>TCMB · Ödeme Sistemleri mevzuatı (TR Karekod Yönetmeliği) ↗</span></a>
+      <a class="omini olnk" href="https://www.bddk.org.tr" target="_blank" rel="noopener"><span>BDDK · Banka Kartları ve Kredi Kartları Hakkında Yönetmelik ↗</span></a>
+      <p style="color:var(--muted);font-size:12px;margin:6px 0 0">Bloke, iptal-iade, gün sonu ve ters ibraz genel uygulamadır; ayrıntılar işyeri sözleşmesinde yazar.</p></div>
+    <div class="pay-tip">ℹ️ Genel bilgilendirmedir. Cihaz, komisyon, bloke süresi ve taksit koşulları işyeri anlaşmasına göre değişir; kesin bilgi için bankana danış.</div>`;
 }
 // ===== Black: İş Black programı (2 kademe) + Maximiles Black kart =====
 // Kaynak: isbank.com.tr duyurusu (23.01.2026), maximiles.com.tr Maximiles Black sayfası, İş Bankası lounge kampanya sayfası
