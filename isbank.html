@@ -1585,12 +1585,22 @@ function renderKampanyalar() {
 let kAra = "";
 const kKucuk = (t) => (t || "").toLocaleLowerCase("tr").replace(/[’'`]/g, "").replace(/[çğıöşüâîû]/g, (h) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" })[h]);
 function kTumu(seg) { return Object.keys(K_KAY).flatMap((kay) => (seg ? [seg] : ["bireysel", "ticari"]).flatMap((sg) => (kListe(kay, sg) || []).map((k) => ({ ...k, _kay: kay, _seg: sg })))); }
+// Yakın anlamlılar: aranan kelime tam olarak bunlardan biriyse yanındakiler de aranır ("öğrenci" → okul, eğitim, kırtasiye…)
+// Kısa ve az tutuldu; sonuçların üstünde "ayrıca … da arandı" diye yazar, karışmasın
+const K_YAKIN = {
+  "ogrenci": ["okul", "eğitim", "kırtasiye", "üniversite", "kitap"], "okul": ["eğitim", "kırtasiye", "öğrenci"], "egitim": ["okul", "kırtasiye", "kurs"],
+  "cocuk": ["oyuncak", "bebek", "okul"], "bebek": ["oyuncak", "çocuk"], "araba": ["araç", "akaryakıt", "lastik", "kasko", "HGS"], "arac": ["akaryakıt", "lastik", "kasko", "HGS"],
+  "benzin": ["akaryakıt"], "mazot": ["akaryakıt"], "tatil": ["otel", "seyahat", "tur"], "otel": ["tatil", "konaklama"], "ucak": ["uçuş", "havayolu", "seyahat"],
+  "yemek": ["restoran", "lokanta"], "restoran": ["yemek", "lokanta"], "kiyafet": ["giyim", "ayakkabı"], "giyim": ["kıyafet", "ayakkabı"],
+  "kedi": ["pati", "veteriner", "petshop", "evcil"], "kopek": ["pati", "veteriner", "petshop", "evcil"], "telefon": ["elektronik", "cep telefonu"],
+  "sigorta": ["kasko", "DASK"], "fatura": ["ödeme", "talimat"], "ciftci": ["tarım", "İmece"], "tarim": ["çiftçi", "İmece"],
+};
 function kAraHtml() {
-  const q = kKucuk(kAra.trim()).split(/\s+/).filter(Boolean);
-  const L = kTumu().filter((k) => { const t = kKucuk(`${k.baslik} ${k.ozet || ""} ${k.ne} ${k.nere} ${k.kim}`); return q.every((w) => t.includes(w)); })
+  const q = kKucuk(kAra.trim()).split(/\s+/).filter(Boolean), ek = q.flatMap((w) => K_YAKIN[w] || []);
+  const L = kTumu().filter((k) => { const t = kKucuk(`${k.baslik} ${k.ozet || ""} ${k.ne} ${k.nere} ${k.kim}`); return q.every((w) => t.includes(w) || (K_YAKIN[w] || []).some((y) => (" " + t).includes(" " + kKucuk(y)))); }) // yakın anlamlı kelime başında aranır ("tur" → "Turkcell" eşleşmesin)
     .sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
   const say = Object.keys(K_KAY).map((k) => [k, L.filter((x) => x._kay === k).length]).filter((x) => x[1]);
-  return `<div class="ksag" style="--kk:#e0a24f"><div class="kyol">🔎 "${esc(kAra.trim())}" · <b>${L.length} adet</b></div>${say.length ? `<small class="kdag">${say.map(([k, n]) => K_KAY[k][0] + " " + K_KAY[k][1] + " " + n).join(" · ")} · bireysel ve ticari birlikte</small>` : ""}</div>`
+  return `<div class="ksag" style="--kk:#e0a24f"><div class="kyol">🔎 "${esc(kAra.trim())}" · <b>${L.length} adet</b></div>${ek.length ? `<small class="kdag">Ayrıca yakın anlamlılar da arandı: ${esc(ek.join(", "))}</small>` : ""}${say.length ? `<small class="kdag">${say.map(([k, n]) => K_KAY[k][0] + " " + K_KAY[k][1] + " " + n).join(" · ")} · bireysel ve ticari birlikte</small>` : ""}</div>`
     + (L.length ? L.slice(0, 60).map((k) => kKart(k, K_KAY[k._kay][3])).join("") + (L.length > 60 ? `<p class="note" style="text-align:center">İlk 60 sonuç gösteriliyor; aramayı daralt.</p>` : "") : '<div class="empty">Bu aramayla eşleşen güncel kampanya yok. Marka ya da ürün adıyla dene: "lastik", "okul", "Migros".</div>');
 }
 // 🧭 Bana uygun kampanyalar: ziyaretçi kendini tanımlar ("Sen kimsin?"), liste üç kaynaktan sıralanır.
