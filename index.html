@@ -763,6 +763,8 @@
     for (const h of L || []) {
       const t = String(h.t || "").replace(/\s+-\s+[^-]+$/, "").trim(), k = kucuk(t);
       if (!t || !h.u || (h.d && new Date(h.d) < hafta)) continue;
+      // Banka hakkında olumsuz başlıklar (dava, protesto, şikâyet, arıza…) ana sayfada da gösterilmez
+      if (/protesto|eylem|yürü(?:dü|yüş)|slogan|grev|sendika|dava|mahkeme|ceza|soruşturma|gözaltı|tutukla|iddianame|skandal|şika?yet|şikâyet|mağdur|dolandır|hack|siber saldırı|sızıntı|sızdır|çöktü|erişim sorunu|arıza|kesinti(?!siz)|tepki|rüşvet|kara para|usulsüz|zimmet|haciz|icra|tazminat|işten çıkar|kovul|istifa|zarar et|çakıldı|sert düş|kriz|ihlal|suç/.test(t.replace(/İ/g, "i").replace(/I/g, "ı").toLowerCase())) continue;
       if (!YENILIK.test(k) || ELE.test(k)) continue;
       const harf = t.replace(/[^A-Za-zÇĞİÖŞÜçğıöşü]/g, ""), buyuk = harf.replace(/[^A-ZÇĞİÖŞÜ]/g, "").length;
       if (harf.length && buyuk / harf.length > 0.45) continue; // BÜYÜK HARFLİ başlık
