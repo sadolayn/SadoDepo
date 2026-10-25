@@ -741,9 +741,29 @@
   .mdHero b { display: block; font-size: 16px; color: #fff; } .mdHero span { display: block; margin-top: 3px; font-size: 12.5px; color: #c9bff0; line-height: 1.4; }
   .mdHab { display: block; margin: 0 0 8px; padding: 11px 13px; border-radius: 12px; border: 1px solid #2a2a2a; background: #0d0d0d; color: #eee; text-decoration: none; }
   .mdHab b { display: block; font-size: 14.5px; line-height: 1.35; } .mdHab p { margin: 4px 0 0; font-size: 13px; color: #bbb; line-height: 1.4; } .mdHab small { display: block; margin-top: 4px; font-size: 12px; color: #9b7bff; }
-  .mdHes { margin: 0 0 8px; padding: 10px 12px; border-radius: 12px; border: 1px solid #2a2a2a; background: #0d0d0d; }
-  .mdHes b { display: block; font-size: 14px; color: #fff; margin-bottom: 6px; } .mdHes div { display: flex; flex-wrap: wrap; gap: 6px; }
-  .mdHes a { padding: 6px 11px; border-radius: 999px; border: 1px solid #3a2c6b; background: #140d2b; color: #e2d9ff; text-decoration: none; font-size: 13px; }
+  .mdPf { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+  .mdPf button { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px 5px 6px; border-radius: 999px; border: 1px solid #2f2f2f; background: #121212; color: #ddd; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .mdPf button:first-child { padding-left: 12px; }
+  .mdPf button em { font-style: normal; font-weight: 600; opacity: .6; }
+  .mdPf button.on { border-color: #9b7bff; background: #241a4a; color: #fff; }
+  .mdPf .mdI { width: 22px; height: 22px; }
+  .mdKut { border: 1px solid #262626; border-radius: 14px; background: #0d0d0d; overflow: hidden; margin: 0 0 10px; }
+  .mdRow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-top: 1px solid #1d1d1d; }
+  .mdRow:first-child { border-top: 0; }
+  .mdAd { flex: 1; min-width: 0; } .mdAd b { display: block; font-size: 14px; line-height: 1.25; color: #fff; } .mdAd small { display: block; font-size: 12px; color: #9a9a9a; margin-top: 1px; }
+  .mdPl { display: flex; justify-content: flex-end; gap: 5px; flex: none; }
+  .mdPl a { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; border-radius: 50%; }
+  .mdPl a.gen { border-radius: 999px; padding: 3px 12px 3px 3px; background: #17122b; border: 1px solid #3a2c6b; color: #e2d9ff; font-size: 13px; font-weight: 700; }
+  .mdI { display: inline-flex; width: 31px; height: 31px; border-radius: 50%; flex: none; background: #444; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+  .mdI svg { width: 100%; height: 100%; display: block; }
+  .mdI[data-p="Instagram"] { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 95%); }
+  .mdI[data-p="YouTube"] { background: #e62117; } .mdI[data-p="X"] { background: #000; box-shadow: inset 0 0 0 1px #555; }
+  .mdI[data-p="Facebook"] { background: #1877f2; } .mdI[data-p="LinkedIn"] { background: #0a66c2; }
+  .mdBas { margin: 4px 2px 6px; font-size: 12px; font-weight: 800; letter-spacing: .6px; color: #a99ad8; text-transform: uppercase; }
+  .mdDig { margin: 0 0 10px; } .mdDig summary { position: relative; list-style: none; cursor: pointer; padding: 11px 34px 11px 14px; border-radius: 14px; border: 1px solid #3a2c6b; background: #140d2b; color: #e2d9ff; font-weight: 800; font-size: 14px; }
+  .mdDig summary::-webkit-details-marker { display: none; } .mdDig summary::after { content: "▾"; position: absolute; right: 14px; top: 11px; } .mdDig[open] summary::after { content: "▴"; }
+  .mdDig summary small { display: block; font-weight: 500; font-size: 12px; color: #a99ad8; margin-top: 2px; }
+  .mdDig[open] summary { margin-bottom: 8px; }
   .mdUyari { margin: 10px 0; padding: 10px 12px; border-radius: 12px; border: 1px solid #5a3a12; background: #1c1206; color: #ffd9a8; font-size: 12.5px; line-height: 1.45; }
   .karac { display: grid; gap: 7px; margin: 0 0 10px; }
   .altkutu #tfil.kamp .kara { margin: 6px 0 2px; pointer-events: auto; }
@@ -2128,6 +2148,19 @@ function renderLive() {
 let MED = null, medSec = "haber";
 try { medSec = localStorage.getItem("isbankMedya") || "haber"; } catch (e) {}
 const MED_IC = { Instagram: "📸", Facebook: "📘", X: "✖️", YouTube: "▶️", LinkedIn: "💼", TikTok: "🎵", Spotify: "🎧", Telegram: "✈️", Threads: "🧵" };
+// Sosyal medya: platform simgeleri (kendi renginde yuvarlak), hesapların kısa tanımı, önce çıkan hesaplar
+const MED_SVG = {
+  Instagram: '<rect x="4" y="4" width="16" height="16" rx="4.5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="3.8" fill="none" stroke="#fff" stroke-width="2"/><circle cx="16.6" cy="7.4" r="1.2" fill="#fff"/>',
+  YouTube: '<path d="M9.5 7.5v9l7.5-4.5z" fill="#fff"/>',
+  X: '<path d="M5.5 5h3.6l9.4 14h-3.6z" fill="#fff"/><path d="M17.6 5h-1.9L6.4 19h1.9z" fill="#fff"/>',
+  Facebook: '<path d="M13.4 20v-6.6h2.3l.4-2.7h-2.7V9c0-.8.3-1.3 1.4-1.3h1.4V5.3c-.3 0-1.1-.1-2.1-.1-2.1 0-3.5 1.3-3.5 3.6v1.9H8.3v2.7h2.3V20z" fill="#fff"/>',
+  LinkedIn: '<text x="12" y="16.3" text-anchor="middle" font-size="11.5" font-weight="800" font-family="Arial, sans-serif" fill="#fff">in</text>',
+};
+const MED_PSIRA = ["Instagram", "YouTube", "X", "Facebook", "LinkedIn", "TikTok", "Spotify", "Telegram", "Threads"];
+const MED_TANIM = { "Türkiye İş Bankası": "Bankanın ana hesabı", "İşCep": "Mobil bankacılık", "Maximum": "Kart ve kampanyalar", "İş Bankası Destek": "Soru ve şikâyetler için destek hesabı", "Maximiles": "Mil kazandıran kart", "İş Sanat": "Konser, tiyatro, sergi", "Kültür Yayınları": "İş Bankası Kültür Yayınları", "Maximum Gaming": "Oyun ve e-spor", "Workup": "Girişimcilik programı", "Maximum Genç": "Gençlere özel" };
+const MED_ONDE = ["Türkiye İş Bankası", "İşCep", "Maximum", "İş Bankası Destek"];
+let mdPf = ""; try { mdPf = localStorage.getItem("isbankMedyaPf") || ""; } catch (e) {}
+const mdIk = (pl) => `<i class="mdI" data-p="${esc(pl)}"><svg viewBox="0 0 24 24" aria-hidden="true">${MED_SVG[pl] || `<text x="12" y="16.5" text-anchor="middle" font-size="12" font-weight="800" font-family="Arial, sans-serif" fill="#fff">${esc(pl.slice(0, 1))}</text>`}</svg></i>`;
 function renderMedya() {
   const t = $("tfil"); t.className = "tfil sekme"; t.hidden = false;
   t.innerHTML = [["haber", "📰 Bankadan haberler"], ["reklam", "🎬 Reklam filmleri"], ["sosyal", "📱 Sosyal medya"]].map(([k, ad]) => `<button type="button" data-md="${k}" class="${medSec === k ? "on" : ""}">${ad}</button>`).join("");
@@ -2144,10 +2177,20 @@ function renderMedya() {
     $("upd").innerHTML = MED && MED.guncelleme ? `🔄 Hesaplar bankanın kendi sayfasından günde bir kez alınır · son: <b>${fd(MED.guncelleme)}</b>` : "";
     const L = MED && MED.sosyal && MED.sosyal.length ? MED.sosyal : RESMI.map(([n, u]) => ({ platform: n.replace(/^\S+\s/, ""), ad: "Türkiye İş Bankası", url: u }));
     const gruplar = []; L.forEach((x) => { let g = gruplar.find((y) => y.ad === x.ad); if (!g) gruplar.push((g = { ad: x.ad, L: [] })); g.L.push(x); });
-    $("list").innerHTML = `<div class="mdHero"><b>📱 Resmi sosyal medya hesapları</b><span>Bağlantılar bankanın kendi "Sosyal Medya" sayfasından alınır. Takip etmek için dokun.</span></div>`
-      + gruplar.map((g) => `<div class="mdHes"><b>${esc(g.ad)}</b><div>${g.L.map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${MED_IC[x.platform] || "🔗"} ${esc(x.platform)}</a>`).join("")}</div></div>`).join("")
+    const sira = (pl) => { const i = MED_PSIRA.indexOf(pl); return i < 0 ? 99 : i; };
+    gruplar.forEach((g) => g.L.sort((a, b) => sira(a.platform) - sira(b.platform)));
+    const plat = [...new Set(L.map((x) => x.platform))].sort((a, b) => sira(a) - sira(b));
+    if (mdPf && !plat.includes(mdPf)) mdPf = "";
+    const onde = gruplar.filter((g) => MED_ONDE.includes(g.ad)).sort((a, b) => MED_ONDE.indexOf(a.ad) - MED_ONDE.indexOf(b.ad)), diger = gruplar.filter((g) => !MED_ONDE.includes(g.ad));
+    const satir = (g) => { const H = mdPf ? g.L.filter((x) => x.platform === mdPf) : g.L; return H.length ? `<div class="mdRow"><div class="mdAd"><b>${esc(g.ad)}</b>${MED_TANIM[g.ad] ? `<small>${esc(MED_TANIM[g.ad])}</small>` : ""}</div><div class="mdPl">${H.map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener" aria-label="${esc(g.ad)} · ${esc(x.platform)}"${mdPf ? ' class="gen"' : ""}>${mdIk(x.platform)}${mdPf ? `<span>Aç ↗</span>` : ""}</a>`).join("")}</div></div>` : ""; };
+    const dSay = diger.filter((g) => !mdPf || g.L.some((x) => x.platform === mdPf)).length;
+    $("list").innerHTML = `<div class="mdHero"><b>📱 Resmi sosyal medya hesapları</b><span>Bağlantılar bankanın kendi "Sosyal Medya" sayfasından alınır. Simgeye dokun, hesap açılsın; üstten platform seçebilirsin.</span></div>`
+      + `<div class="mdPf"><button type="button" data-pf="" class="${mdPf ? "" : "on"}">Hepsi</button>${plat.map((pl) => `<button type="button" data-pf="${esc(pl)}" class="${mdPf === pl ? "on" : ""}">${mdIk(pl)}${esc(pl)}<em>${L.filter((x) => x.platform === pl).length}</em></button>`).join("")}</div>`
+      + `<div class="mdKut">${onde.map(satir).join("")}</div>`
+      + (dSay ? (mdPf ? `<div class="mdBas">Diğer hesaplar</div><div class="mdKut">${diger.map(satir).join("")}</div>` : `<details class="mdDig"><summary>Diğer hesaplar · ${dSay}<small>${esc(diger.map((g) => g.ad).join(", "))}</small></summary><div class="mdKut">${diger.map(satir).join("")}</div></details>`) : "")
       + `<div class="mdUyari">🔒 <b>Sahte hesaplara dikkat:</b> Bankalar sosyal medyadan ya da mesajla şifre, kart bilgisi veya doğrulama kodu istemez. Hesabın gerçek olduğundan emin olmak için bağlantıyı bankanın kendi sayfasından aç.</div>`
       + sayfa("https://www.isbank.com.tr/bankamizi-taniyin/sosyal-medya", "Sosyal medya sayfası");
+    $("list").querySelectorAll("[data-pf]").forEach((b) => (b.onclick = () => { mdPf = b.dataset.pf; try { localStorage.setItem("isbankMedyaPf", mdPf); } catch (x) {} renderMedya(); }));
     return;
   }
   $("upd").innerHTML = MED && MED.guncelleme ? `🔄 Başlıklar bankanın kendi sitesinden günde bir kez alınır · son: <b>${fd(MED.guncelleme)}</b>` : "";
