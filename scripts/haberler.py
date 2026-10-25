@@ -187,6 +187,13 @@ isb = [x for x in cats.get("isbank", []) if ISB_RE.search(low(x["t"]))]
 for c, items in cats.items():
     if c not in ("isbank", "okul"): isb += [x for x in items if ISB_RE.search(low(x["t"]))]
 cats["isbank"] = isb
+# Banka hakkında olumsuz başlıklar (dava, protesto, şikâyet, soruşturma, arıza, dolandırıcılık…) hiçbir kategoride gösterilmez:
+# bu sayfa banka gündemini derler, tartışma ya da şikâyet aktarmaz
+ISB_OLUMSUZ = re.compile(r"protesto|eylem|yürü(?:dü|yüş)|slogan|grev|sendika|dava|mahkeme|ceza|soruşturma|gözaltı|tutukla|iddianame|skandal|"
+                         r"şika?yet|şikâyet|mağdur|dolandır|hack|siber saldırı|sızıntı|sızdır|çöktü|erişim sorunu|arıza|kesinti(?!siz)|tepki|rüşvet|"
+                         r"kara para|usulsüz|zimmet|haciz|icra|tazminat|işten çıkar|kovul|istifa|zarar et|çakıldı|sert düş|kriz|ihlal|suç", re.I)
+for c in list(cats):
+    cats[c] = [x for x in cats[c] if not (ISB_RE.search(low(x["t"])) and ISB_OLUMSUZ.search(low(x["t"])))]
 tar = [x for x in cats.get("tarim", []) if TARIM_RE.search(low(x["t"]))]
 for c, items in cats.items():
     if c not in ("tarim", "okul", "yz"): tar += [x for x in items if TARIM_RE.search(low(x["t"]))]

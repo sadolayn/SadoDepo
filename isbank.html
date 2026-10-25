@@ -2500,7 +2500,9 @@ function renderList() {
     } catch (e) {}
     try {
       const h = await Ortak.json("data/haberler.json");
-      live = (h.cats && h.cats.isbank) || []; liveUpd = h.updated || null;
+      // Banka hakkında olumsuz başlıklar (dava, protesto, şikâyet, arıza…) gösterilmez; veri dosyası da aynı süzgeçten geçer
+      const OLUMSUZ = /protesto|eylem|yürü(?:dü|yüş)|slogan|grev|sendika|dava|mahkeme|ceza|soruşturma|gözaltı|tutukla|iddianame|skandal|şika?yet|şikâyet|mağdur|dolandır|hack|siber saldırı|sızıntı|sızdır|çöktü|erişim sorunu|arıza|kesinti(?!siz)|tepki|rüşvet|kara para|usulsüz|zimmet|haciz|icra|tazminat|işten çıkar|kovul|istifa|zarar et|çakıldı|sert düş|kriz|ihlal|suç/;
+      live = ((h.cats && h.cats.isbank) || []).filter((x) => !OLUMSUZ.test((x.t || "").replace(/İ/g, "i").replace(/I/g, "ı").toLowerCase())); liveUpd = h.updated || null;
       vids = h.isbvideo || []; vidsOk = h.isbvideo_ok || null;
     } catch (e) {}
     if (!CATS.some((c) => c[0] === cat) && !MENU.some((m) => m[0] === cat) && cat !== "Finans") cat = "Tümü";
