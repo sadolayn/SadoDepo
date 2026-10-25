@@ -48,7 +48,7 @@
     const L = secenekler(), son = oku("tokenYildiz", {});
     let v = L.includes(son[oyun]) ? son[oyun] : L.includes(100) ? 100 : L[0] || 0;
     kok.innerHTML = `<div class="tkBal"><span>⭐ Bakiyen</span><b>${fmt(MP.bal)} Yıldız</b></div>
-      <div class="tkRow"><span>Yıldız koy</span><div class="tkStep"><button type="button" data-d="-1" aria-label="Azalt">‹</button><b></b><button type="button" data-d="1" aria-label="Artır">›</button></div></div>`;
+      <div class="tkRow"><span>Yıldız ayır</span><div class="tkStep"><button type="button" data-d="-1" aria-label="Azalt">‹</button><b></b><button type="button" data-d="1" aria-label="Artır">›</button></div></div>`;
     const b = kok.querySelector(".tkStep b"), [ge, il] = kok.querySelectorAll(".tkStep button");
     const sync = () => { b.textContent = fmt(v); ge.disabled = L.indexOf(v) <= 0; il.disabled = L.indexOf(v) >= L.length - 1; if (api.onChange) api.onChange(v); };
     const api = { deger: () => v, onChange: null, sync };
@@ -69,7 +69,7 @@
     return { pay, fee, ucret, masa, durum, html: `<div class="tkBox">${t}<br>⭐ Bakiye: <b>${fmt(MP.bal)}</b> Yıldız</div>` };
   }
   const kasa = (oyun) => (oku("tokenKasa", {})[oyun] || { oyun: 0, ucret: 0 });
-  // Yıldız bittiyse: 3 saat bekleme, sonra İş Bankası sorusu (doğru cevap 1.000 Yıldız)
+  // Yıldız bittiyse: 3 saat bekleme, sonra bilgi sorusu (doğru cevap 1.000 Yıldız)
   function kilit(modal, o) {
     o = o || {};
     const goster = o.goster || (() => {}), geri = o.geri || "oyunlar.html";
@@ -79,7 +79,7 @@
     if (left > 0) {
       const h = Math.floor(left / 36e5), m = Math.floor((left % 36e5) / 6e4);
       modal.innerHTML = `<h2>⭐ Yıldız bitti</h2>
-        <p>Yeni Yıldız için <b>${h} saat ${m} dakika</b> sonra gel. Seni İş Bankası tarihçesi ve ürünleriyle ilgili bir soru bekliyor; bilirsen <b>1.000 Yıldız</b> kazanırsın.</p>
+        <p>Yeni Yıldız için <b>${h} saat ${m} dakika</b> sonra gel. Seni bir bilgi sorusu bekliyor; bilirsen <b>1.000 Yıldız</b> kazanırsın.</p>
         <p style="font-size:12.5px">Bakiyen Batak, King ve Balayı King'de ortak. Solitaire Yıldız istemez, dilek tutup oynayabilirsin 🌙</p>
         <a class="btn" href="${geri}" style="display:block;text-decoration:none;padding:12px">Oyunlara dön</a>`;
       goster();
@@ -90,7 +90,7 @@
     let qi; do { qi = Math.floor(Math.random() * pool.length); } while (pool.length > 1 && qi === MP.lastQ);
     const [q, opts0, ok0] = pool[qi];
     const ord = opts0.map((_, i) => i).sort(() => Math.random() - 0.5), ok = ord.indexOf(ok0);
-    modal.innerHTML = `<h2>🏦 İş Bankası Bilgi Yarışması</h2><p>Doğru cevap: <b>1.000 Yıldız</b></p>
+    modal.innerHTML = `<h2>🧠 Bilgi Yarışması</h2><p>Doğru cevap: <b>1.000 Yıldız</b></p>
       <div style="font-weight:700;font-size:16px;margin:4px 0 12px;text-align:left"></div>
       <div class="tkQ">${ord.map((i, n) => `<button type="button" data-i="${n}"></button>`).join("")}</div><div class="tkRes" style="margin-top:12px;font-size:14px"></div>`;
     modal.querySelector("div[style]").textContent = q;

@@ -11,4 +11,4 @@ Bu depo **herkese açık**. Commit'ler, silinmiş dallar ve GitHub Actions logla
 - Bir banka sayfasının yapısını öğrenmek gerekiyorsa kullanıcıdan ekran görüntüsü ya da sayfa kaynağı iste.
 - Veri çeken script'ler yalnızca işlenmiş ve gereken alanları içeren JSON yazsın, ham yanıtı kaydetmesin.
 
-> Neden: 20.10.2026'da `kesif-sube` dalına yazılan keşif çıktısı, İş Bankası'nın Google Maps anahtarını içeriyordu. Google bunu GitHub'da tespit edip bankaya uyarı gönderdi. Dal silindi ve GitHub destek talebi açıldı (#4890714).
+> Neden: Geçmişte depoya yazılan bir keşif çıktısı üçüncü tarafa ait bir anahtar içerdiği için sorun yarattı. Benzeri tekrarlanmasın diye bu kurallar var.

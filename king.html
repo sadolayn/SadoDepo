@@ -287,7 +287,7 @@ const KURAL = () => `<ul class="rules">
       <li><b>Koz:</b> Aldığın her el +50. Her oyuncunun <b>ilk seçimi koz olamaz</b>; ilk turda herkes ceza seçer.</li>
       <li>Renge uymak zorunlu. Koz oyununda renk yoksa koz atılır ve yükseltmek gerekir.</li>
       <li>Ceza oyunlarında renk yoksa ceza kartı varsa onu atmak zorundasın (kupa, kız, erkek, rifki).</li>
-      <li><b>Yıldız:</b> Oyuna Yıldız koyarak başlarsın. Tek başına birinci olursan koyduğunun <b>3 katını</b> alırsın; birinciliği paylaşırsan Yıldızın iade edilir. Bakiyen Batak ve Balayı King'le ortak; biterse 3 saat sonra İş Bankası sorusu gelir.</li>
+      <li><b>Yıldız:</b> Oyuna Yıldız ayırarak başlarsın. Tek başına birinci olursan ayırdığının <b>3 katını</b> alırsın; birinciliği paylaşırsan Yıldızın iade edilir. Bakiyen Batak ve Balayı King'le ortak; biterse 3 saat sonra İş Bankası sorusu gelir.</li>
     </ul>`;
 if (window.KartMasa) KartMasa.kurallar = KURAL;
 const SUITS = ["♠", "♥", "♣", "♦"];
@@ -748,7 +748,7 @@ function endRound() {
   G.history.push({ el: G.round + 1, secen: chooser, ct: contract, trump, oyun: contract === "koz" ? "Koz " + trump : CEZALAR[contract].ad, deltas });
   G.round++;
   if (G.round >= 20 && !G.sonuc) {
-    // Yıldız: tek başına birinci olan koyduğunun 3 katını alır; birincilik paylaşılırsa iade
+    // Yıldız: tek başına birinci olan ayırdığının 3 katını alır; birincilik paylaşılırsa iade
     const top = Math.max(...G.scores), tops = G.scores.filter((x) => x === top).length;
     G.sonuc = Token.sonuc("king", G.stake || 0, 4, G.scores[0] === top ? (tops === 1 ? 3 : 1) : 0);
   }

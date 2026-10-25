@@ -388,7 +388,6 @@ $("preview").onclick = async () => {
 $("sub").onclick = async () => {
   const email = $("email").value.trim();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return show("bad", "Geçerli bir e-posta adresi gir.");
-  if (/@isbank\.com\.tr$/i.test(email)) return show("bad", "İş e-postası kabul edilmiyor; kişisel e-postanı yaz.");
   save();
   const b = $("sub");
   b.disabled = true; b.textContent = "Gönderiliyor…";

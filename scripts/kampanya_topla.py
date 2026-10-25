@@ -326,7 +326,18 @@ def x_hepsi():
     bir_t, tic_t = tr if tr else (set(), set())
     print(f"maximiles: sayfada {len(duz)} bağlantı, tarayıcıda {len(bir_t)} bireysel + {len(tic_t)} ticari" + ("" if tr else " (tarayıcı yok)"))
     biten = 0
+    # Daha önce okunmuş ve bitişi gelmemiş kampanyanın sayfası yeniden açılmaz (banka sitesine gereksiz yük olmasın):
+    # yalnızca yeni çıkan kampanyaların kendi sayfası okunur
+    bilinen = {k["url"]: k for seg_ in ("bireysel", "ticari") for k in ((eski.get("maximiles") or {}).get(seg_) or {}).get("kampanyalar", [])
+               if k.get("bitis") and k["bitis"] >= bugun.isoformat()}
+    acilan = 0
     for url in sorted(duz | bir_t | tic_t):
+        if url in bilinen:
+            k = {x: bilinen[url][x] for x in ("baslik", "bitis", "ozet", "url")}
+            seg = "ticari" if url in tic_t else "bireysel" if url in bir_t else next((s_ for s_ in ("bireysel", "ticari") if any(y["url"] == url for y in ((eski.get("maximiles") or {}).get(s_) or {}).get("kampanyalar", []))), "bireysel")
+            X_HEPSI.setdefault(seg, []).append(k)
+            continue
+        acilan += 1
         r = x_detay(url)
         if r == "bitti":
             biten += 1
@@ -338,7 +349,7 @@ def x_hepsi():
         elif url in bir_t: seg = "bireysel"
         else: seg = "ticari" if ticari_iz or re.search(r"ticari|business|işyeri|kobi|şirket", url + " " + k["baslik"], re.I) else "bireysel"
         X_HEPSI.setdefault(seg, []).append(k)
-    print(f"maximiles: süresi geçmiş {biten}, bitişi okunamayan {sum(1 for v in X_HEPSI.values() for k in v if not k['bitis'])}")
+    print(f"maximiles: yeni açılan sayfa {acilan}, hafızadan {len(bilinen)}, süresi geçmiş {biten}, bitişi okunamayan {sum(1 for v in X_HEPSI.values() for k in v if not k['bitis'])}")
     return X_HEPSI
 
 def maximiles(segment):

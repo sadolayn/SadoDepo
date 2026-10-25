@@ -407,7 +407,7 @@
     <p style="font-size:11.5px;color:#8a8a8a;margin:-4px 0 8px">Yazdıkların yalnızca site sahibine ulaşır (Google Form), kimseyle paylaşılmaz. İsim ve iletişim yazmak isteğe bağlıdır; yazarsan yalnızca sana cevap vermek için kullanılır, başka hiçbir amaçla saklanmaz.</p>
     <textarea id="oneriMsg" maxlength="1500" rows="5" placeholder="Önerin…" required></textarea>
     <input id="oneriKim" maxlength="80" placeholder="Adın ya da iletişim (isteğe bağlı)" autocomplete="off">
-    <p style="font-size:11px;color:#8a8a8a;margin:4px 0 0">⚠️ İş e-postanı, müşteri bilgisi ya da kişisel veri yazma.</p>
+    <p style="font-size:11px;color:#8a8a8a;margin:4px 0 0">⚠️ Kurum e-postanı ya da kişisel veri (TCKN, telefon vb.) yazma.</p>
     <div class="oneri-act"><button type="button" id="oneriKapat">Vazgeç</button><button type="submit" id="oneriGonder">Gönder</button></div>
     <div class="oneri-msg" id="oneriDurum"></div>
   </form>
@@ -502,7 +502,7 @@
 (function () {
   const $ = (id) => document.getElementById(id);
   const URL_ = "https://sadolayn.github.io/SadoDepo/";
-  const METIN = "Bunu kesinlikle denemelisin!\nBankacılık hesaplamaları, güncel İş Bankası gündemi, döviz-altın, ajanda ve keyifli oyunlar tek yerde.\nSadolayn Alerts ile seçtiğin konunun haberleri her sabah 10:00'da telefonunda.\nA❤️KLA D💙V🤍M";
+  const METIN = "Şuna bir bak:\nBankacılık hesaplamaları, güncel İş Bankası gündemi, döviz-altın, ajanda ve keyifli oyunlar tek yerde.\nSadolayn Alerts ile seçtiğin konunun haberleri her sabah 10:00'da telefonunda.\nA❤️KLA D💙V🤍M";
   $("oner").onclick = async () => {
     window.Rapor && Rapor.bolum("arkadasina-oner");
     if (navigator.share) { try { await navigator.share({ title: "SADOLAYN", text: METIN, url: URL_ }); return; } catch (e) { if (e && e.name === "AbortError") return; } }

@@ -1077,7 +1077,7 @@ function oneHtml() {
   const tiles = `<div class="otiles">${order.map((g, i) => { const n = match(g), hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) >= 0);
       return `<button type="button" class="ot${hot ? " hot" : ""}" data-go="one${i}"><i>${g.ic}</i><span>${g.kisa || g.ad}</span>${n ? `<em>${n}</em>` : ""}</button>`; }).join("")}
     <button type="button" class="ot pay" data-tur="📲 Kartsız öde"><i>📲</i><span>Kartsız öde</span><em class="y">YENİ</em></button></div>`;
-  return `<div class="ohead">⭐ Kaçırılmayacak fırsatlar<span>Başlığa dokun, o bölüme git · kampanya satırına dokun, resmi sayfası açılır</span></div>` + tiles + order.map((g, i) => {
+  return `<div class="ohead">⭐ Öne çıkanlar<span>Başlığa dokun, o bölüme git · kampanya satırına dokun, resmi sayfası açılır</span></div>` + tiles + order.map((g, i) => {
     const L = camps.filter((c) => g.re.test(c.baslik + " " + c.ozet)).concat(g.black && blk && blk.ayricaliklar ? blk.ayricaliklar.slice(0, 6).map((k) => ({ baslik: k.baslik, bitis: k.bitis || "2026-12-31" })) : []);
     const hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) >= 0);
     return `<div class="ocard${hot ? " hot" : ""}" id="one${i}"><div class="oh"><i>${g.ic}</i><b>${g.ad}</b>${hot ? '<span class="newtag">DÖNEMİ</span>' : ""}<em>${L.length ? L.length + " kampanya" : ""}</em></div>
@@ -1409,15 +1409,15 @@ function campCard(k) {
 let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kKim = "", kOne = false, kKatAcik = false;
 try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kNe = k.ne || ""; kNere = k.nere || ""; kKim = k.kim || ""; kOne = !!k.one; } catch (e) {}
 const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, ne: kNe, nere: kNere, kim: kKim, one: kOne })); } catch (e) {} };
-// Renkler: İş Bankası lacivert (ana sayfadaki İş Bankası Gündemi kartı gibi), Maximum pembe, Maximiles mavi
+// Kaynak renkleri: lacivert, pembe, mavi (ana sayfadaki kartların tonlarıyla uyumlu)
 // [ikon, ad, alan adı, vurgu rengi, seçili düğme zemini, seçili düğme yazısı]
 const K_KAY = { isbank: ["🏦", "İş Bankası", "isbank.com.tr", "#5b6cf0", "linear-gradient(160deg, #34449e, #1c2560)", "#fff"],
   maximum: ["💳", "Maximum", "maximum.com.tr", "#ff4fa3", "#ff4fa3", "#000"], maximiles: ["✈️", "Maximiles", "maximiles.com.tr", "#4a9be8", "#4a9be8", "#000"] };
 const K_GRUP = { ne: [["MaxiMil", "✈️"], ["MaxiPuan", "🪙"], ["Faiz & Kredi", "🏦"], ["İndirim", "🏷️"], ["Taksit", "📆"], ["Ayrıcalık", "✨"]],
   nere: [["Tarım", "🌾"], ["Pati", "🐾"], ["Ödeme & Fatura", "🧾"], ["Eğitim & Kitap", "🎓"], ["Araç & Akaryakıt", "🚗"], ["Market & Yemek", "🛒"], ["Seyahat", "🏖️"], ["Giyim & Kozmetik", "👗"], ["Elektronik & Beyaz Eşya", "📱"], ["Ev & Yaşam", "🛋️"], ["Eğlence & Spor", "🎭"], ["Online Alışveriş", "🌐"], ["Bankacılık", "🏦"], ["Genel", "✨"]] };
 // Kimin için: İş Bankası'nın kendi kategorileri önce (İşte Maaşa Özel, Emeklilere Özel, İş Black...), yoksa başlıktaki ifade
-const K_KIM = { bireysel: [["İş Black · Plus", "🖤", /is-black|plus/, /(?<!friday\s)black(?!\s*friday)|iş\s*plus|\bplus\s*(?:kart|müşteri)|private/i], ["Emekli", "👴", /emeklilere/, /emekli(?!lik)/i], ["Maaş müşterisi", "💼", /maas/, /maaş/i]],
-  ticari: [["Çiftçi & Tarım", "🌾", /ciftci|tarim/, /çiftçi|tarım|imece|traktör|hasat|\btmo\b/i], ["Startup", "🚀", /startup/, /startup|girişimci/i], ["Turizmci", "🏨", /turizmci/, /turizmci|otel işlet|acente/i], ["Dış ticaret · İhracat", "🌍", /ihracat|dis-ticaret/, /ihracat|ihracatçı|\btim\b|dış ticaret|akreditif|ithalat/i], ["Esnaf · POS", "🏪", /esnaf|pos-yazarkasa/, /esnaf|\bpos\b|yazarkasa|ökc|üye işyeri/i], ["Yeni müşteri", "🆕", /yeni-ticari/, /yeni ticari kart müşteri/i]] };
+const K_KIM = { bireysel: [["İş Black · Plus", "🖤", /is-black|plus/, /(?<!friday\s)black(?!\s*friday)|iş\s*plus|\bplus\s*(?:kart|müşteri)|private/i], ["Emekli", "👴", /emeklilere/, /emekli(?!lik)/i], ["Maaşı İş Bankası'na yatanlar", "💼", /maas/, /maaş/i]],
+  ticari: [["Çiftçi & Tarım", "🌾", /ciftci|tarim/, /çiftçi|tarım|imece|traktör|hasat|\btmo\b/i], ["Startup", "🚀", /startup/, /startup|girişimci/i], ["Turizmci", "🏨", /turizmci/, /turizmci|otel işlet|acente/i], ["Dış ticaret · İhracat", "🌍", /ihracat|dis-ticaret/, /ihracat|ihracatçı|\btim\b|dış ticaret|akreditif|ithalat/i], ["Esnaf · POS", "🏪", /esnaf|pos-yazarkasa/, /esnaf|\bpos\b|yazarkasa|ökc|üye işyeri/i], ["Yeni ticari kart", "🆕", /yeni-ticari/, /yeni ticari kart müşteri/i]] };
 const K_HERKES = ["Herkes", "👥"];
 function kKimBul(k, seg, sluglar) {
   const t = (k.baslik + " " + (k.ozet || "")).replace(/İ/g, "i").replace(/I/g, "ı");
@@ -1502,7 +1502,7 @@ function renderKampanyalar() {
   t.style.setProperty("--kk", renk); t.style.setProperty("--kz", K_KAY[kKay][4]); t.style.setProperty("--ky", K_KAY[kKay][5]);
   t.innerHTML = `<div class="kara"><i>🔎</i><input id="kAra" type="search" enterkeyhint="search" placeholder="Ara: Migros, lastik, okul… (Türkçe harf şart değil)" value="${esc(kAra)}" autocomplete="off"><button type="button" id="kAraSil"${kAra ? "" : " hidden"}>✕</button></div>`
     + `<div class="tsat uc"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
-    + `<div class="tsat uc"><span class="tlab">👥 Müşteri</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
+    + `<div class="tsat uc"><span class="tlab">👥 Bölüm</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
     + (L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, ad, n, kKim === ad)).join("")}</div></div>` : "")
     + (L.length && !kOne ? `<div class="tsat kgr"><span class="tlab">💰 Ne kazanırım</span><div class="tgrid">${sb("data-ne", "", "📋", "Hepsi", neT.length, !kNe, "hep")}${neS.map(([ad, ic, n]) => sb("data-ne", ad, ic, ad, n, kNe === ad)).join("")}</div></div>`
       + `<div class="tsat kgr"><span class="tlab">🛍️ Nerede</span><div class="tgrid">${sb("data-nere", "", "📋", "Hepsi", nereT.length, !kNere, "hep")}${nereGor.map(([ad, ic, n]) => sb("data-nere", ad, ic, kKisa(ad), n, kNere === ad)).join("")}${nereGor.length < nereS.length || kKatAcik ? `<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Daha az" : `▾ ${nereS.length - nereGor.length} grup daha`}</button>` : ""}</div></div>` : "");
@@ -1524,7 +1524,7 @@ function renderKampanyalar() {
     return;
   }
   // Üstte arama kutusu ve öneri sihirbazı; arama ya da sihirbaz açıkken süzgeçlerin yerine onların sonucu görünür
-  const ust = `<div class="karac"><button type="button" id="kSihirBtn" class="${kSih.acik ? "on" : ""}">🧭 Müşterime ne önereyim?</button></div>`;
+  const ust = `<div class="karac"><button type="button" id="kSihirBtn" class="${kSih.acik ? "on" : ""}">🧭 Bana uygun kampanyalar</button></div>`;
   t.classList.toggle("araniyor", !!kAra.trim());
   let govde = () => "";
   const bagla = () => {
@@ -1559,7 +1559,7 @@ function kAraHtml() {
   return `<div class="ksag" style="--kk:#e0a24f"><div class="kyol">🔎 "${esc(kAra.trim())}" · <b>${L.length} adet</b></div>${say.length ? `<small class="kdag">${say.map(([k, n]) => K_KAY[k][0] + " " + K_KAY[k][1] + " " + n).join(" · ")} · bireysel ve ticari birlikte</small>` : ""}</div>`
     + (L.length ? L.slice(0, 60).map((k) => kKart(k, K_KAY[k._kay][3])).join("") + (L.length > 60 ? `<p class="note" style="text-align:center">İlk 60 sonuç gösteriliyor; aramayı daralt.</p>` : "") : '<div class="empty">Bu aramayla eşleşen güncel kampanya yok. Marka ya da ürün adıyla dene: "lastik", "okul", "Migros".</div>');
 }
-// 🧭 Öneri sihirbazı: müşteri tipi, kimlik, ilgi alanı ve beklentiye göre üç kaynaktan sıralı kısa liste
+// 🧭 Bana uygun kampanyalar: ziyaretçinin kendi seçimine (bireysel/ticari, durum, harcama alanı, beklenti) göre üç kaynaktan sıralı kısa liste
 let kSih = { acik: false, seg: "bireysel", kim: "", nere: [], ne: "" };
 function kSihHtml() {
   const S = kSih, sec = (a, v, ic, ad, on) => `<button type="button" data-sh="${a}:${esc(v)}" class="${on ? "on" : ""}">${ic} ${esc(ad)}</button>`;
@@ -1569,12 +1569,12 @@ function kSihHtml() {
     .map((k) => ({ k, p: (S.kim && k.kim === S.kim ? 4 : 0) + (S.nere.includes(k.nere) ? 3 : 0) + (S.ne && k.ne === S.ne ? 2 : 0) }))
     .sort((a, b) => b.p - a.p || (a.k.bitis || "9").localeCompare(b.k.bitis || "9"));
   const ilk = L.slice(0, 15);
-  return `<div class="ksih"><div class="ksh">🧭 Müşterime ne önereyim?<small>Seç, liste anında oluşsun. Üç kaynaktan (İş Bankası, Maximum, Maximiles) en uygunları üstte.</small></div>
-      <b>1 · Müşteri</b><div class="kshs">${sec("seg", "bireysel", "👤", "Bireysel", S.seg === "bireysel")}${sec("seg", "ticari", "🏢", "Ticari", S.seg === "ticari")}</div>
-      <b>2 · Kimdir?</b><div class="kshs">${KIM.map(([ad, ic]) => sec("kim", ad, ic, ad, S.kim === ad)).join("")}${sec("kim", "", "👥", "Hiçbiri / bilmiyorum", !S.kim)}</div>
-      <b>3 · Nerede harcıyor? <small>(birden çok seçilebilir)</small></b><div class="kshs">${NERE.map(([ad, ic]) => sec("nere", ad, ic, kKisa(ad), S.nere.includes(ad))).join("")}</div>
-      <b>4 · Ne kazanmak ister?</b><div class="kshs">${kGr("ne").filter((g) => g[0] !== "Ayrıcalık").map(([ad, ic]) => sec("ne", ad, ic, ad, S.ne === ad)).join("")}${sec("ne", "", "✨", "Fark etmez", !S.ne)}</div></div>`
-    + `<div class="ksag" style="--kk:#3fc283"><div class="kyol">🎯 Önerilen · <b>${L.length} adet</b>${L.length > 15 ? " · ilk 15'i aşağıda" : ""}</div></div>`
+  return `<div class="ksih"><div class="ksh">🧭 Bana uygun kampanyalar<small>Kendine göre seç, liste anında oluşsun. Üç kaynaktan (İş Bankası, Maximum, Maximiles) sana en uygunları üstte.</small></div>
+      <b>1 · Kart ya da hesabın</b><div class="kshs">${sec("seg", "bireysel", "👤", "Bireysel (kendim)", S.seg === "bireysel")}${sec("seg", "ticari", "🏢", "Ticari (işyerim)", S.seg === "ticari")}</div>
+      <b>2 · Hangisi sana uyuyor?</b><div class="kshs">${KIM.map(([ad, ic]) => sec("kim", ad, ic, ad, S.kim === ad)).join("")}${sec("kim", "", "👥", "Hiçbiri", !S.kim)}</div>
+      <b>3 · Nerede harcıyorsun? <small>(birden çok seçilebilir)</small></b><div class="kshs">${NERE.map(([ad, ic]) => sec("nere", ad, ic, kKisa(ad), S.nere.includes(ad))).join("")}</div>
+      <b>4 · Ne kazanmak istersin?</b><div class="kshs">${kGr("ne").filter((g) => g[0] !== "Ayrıcalık").map(([ad, ic]) => sec("ne", ad, ic, ad, S.ne === ad)).join("")}${sec("ne", "", "✨", "Fark etmez", !S.ne)}</div></div>`
+    + `<div class="ksag" style="--kk:#3fc283"><div class="kyol">🎯 Sana uygun · <b>${L.length} adet</b>${L.length > 15 ? " · ilk 15'i aşağıda" : ""}</div></div>`
     + (ilk.length ? ilk.map(({ k }) => kKart(k, K_KAY[k._kay][3])).join("") : '<div class="empty">Bu seçimle eşleşen güncel kampanya yok; bir seçimi kaldırmayı dene.</div>');
 }
 function renderCamps() {

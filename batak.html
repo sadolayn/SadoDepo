@@ -269,7 +269,7 @@ const KURAL = () => `<ul class="rules">
       <li><b>El dağılımı:</b> Dengeli'de her oyuncuya her renkten 2–5 kart düşer, kozlar herkese benzer sayıda gelir. Rastgele'de kartlar tamamen şansa dağılır; bir oyuncuya çok koz gelebilir.</li>
       <li><b>Puan:</b> ihaleyi tutan, söz verdiği her el için 15, fazla her el için 10 puan alır; tutamayan ihale × 10 eksi yazar. Diğerleri aldıkları her el için 10 puan alır; <b>hiç el alamayan −50</b> yazar.</li>
       <li><b>Eşli:</b> karşındaki oyuncu eşindir, ellerin toplamı sayılır. İhaleyi alan eşinin kartlarını açık görür ve iki eli de o oynar.</li>
-      <li><b>Yıldız:</b> 1.000 Yıldız ile başlarsın. Tekli oyunda birinci olursan koyduğun Yıldızın <b>3 katını</b>, eşlide tarafın kazanırsa <b>2 katını</b> alırsın. Berabere biterse Yıldızın iade edilir.</li>
+      <li><b>Yıldız:</b> 1.000 Yıldız ile başlarsın. Tekli oyunda birinci olursan ayırdığın Yıldızın <b>3 katını</b>, eşlide tarafın kazanırsa <b>2 katını</b> alırsın. Berabere biterse Yıldızın iade edilir.</li>
       <li>İstatistik için oyun özeti (Yıldız, sonuç; ad gitmez) site sahibine iletilir.</li>
       <li> Yıldız biterse 3 saat sonra İş Bankası sorusu gelir; doğru cevap 1.000 Yıldız kazandırır. Bakiyen King ve Balayı King'le ortaktır.</li>
     </ul>`;
@@ -294,18 +294,11 @@ let OPT = { eller: 7, arti3: false, yuk: true, esli: false, yildiz: 100, dagilim
 try { Object.assign(OPT, JSON.parse(localStorage.getItem("batakOpt") || "{}")); } catch (e) {}
 if (!(OPT.eller >= 1 && OPT.eller <= 20)) OPT.eller = 7;
 OPT.arti3 = false; // +3 kuralı yeni ayarlarda yok
-// Oyun sayacı: site sahibi kaç oyun oynandığını görebilsin diye oyun özeti Google Form'a gider
-const KASA_FORM = { action: "https://docs.google.com/forms/d/e/1FAIpQLSfeuDkVXo1nk6IZ_9f7uEjXkCUF3M--PUv7cYcBwXPWe6F6gA/formResponse", mesaj: "entry.1123079006", kimden: "entry.1229018588" };
+// Oyun sayacı: yalnızca bu cihazda tutulur, hiçbir yere gönderilmez
 let KASA = { oyun: 0, ucret: 0 }; try { Object.assign(KASA, JSON.parse(localStorage.getItem("batakKasa") || "{}")); } catch (e) {}
 function kasaBildir(o) {
   window.Rapor && Rapor.oyun("batak", o.sonuc === "Kazandı");
   KASA.oyun++; try { localStorage.setItem("batakKasa", JSON.stringify(KASA)); } catch (e) {}
-  try {
-    const f = new FormData();
-    f.append(KASA_FORM.mesaj, `BATAK | Yıldız: ${o.token} | Sonuç: ${o.sonuc} | El: ${o.el} | ${o.esli ? "Eşli" : "Tekli"} | ${o.dag}`);
-    f.append(KASA_FORM.kimden, "Batak oyun sayacı");
-    fetch(KASA_FORM.action, { method: "POST", mode: "no-cors", body: f }).catch(() => {});
-  } catch (e) {}
 }
 // ---------- Yıldız ----------
 // Ortak Yıldız modülü (token.js): bakiye Batak, King ve Balayı King'de ortak

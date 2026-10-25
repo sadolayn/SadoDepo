@@ -159,7 +159,6 @@
   .prod { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid var(--line); }
   .prod:first-child { border-top: 0; }
   .prod { flex-wrap: wrap; }
-  .kmpW { flex: 0 0 100%; padding-left: 40px; margin-top: -2px; }
   .prod .ic { font-size: 23px; width: 30px; text-align: center; }
   .prod .nm { flex: 1; min-width: 0; }
   .prod .nm b { display: block; font-size: 15px; }
@@ -237,16 +236,6 @@
   .tr.yeni { animation: yeniSat 1.6s ease-out; border-radius: 12px; }
   @keyframes yeniSat { 0% { background: rgba(224,162,79,.28); } 100% { background: transparent; } }
   .tr .hint.ok { color: var(--accent2); font-weight: 700; }
-  /* Kalemin altındaki "müşterine anlatabileceğin kampanyalar" */
-  .kmpB { white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; margin: 6px 0 0; padding: 5px 10px; border-radius: 99px; border: 1px solid #4a3a1e; background: rgba(224,162,79,.08); color: var(--accent2); font-size: 12px; font-weight: 700; cursor: pointer; }
-  .kmpB i { font-style: normal; transition: transform .2s; }
-  .kmpB.ac i { transform: rotate(90deg); }
-  .kmpL { margin: 8px 0 2px; display: grid; gap: 6px; }
-  .kmpL a { display: block; padding: 9px 11px; border-radius: 12px; background: var(--field); border: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: 13px; line-height: 1.4; }
-  .kmpL a small { display: flex; justify-content: space-between; gap: 8px; margin-top: 3px; font-size: 11.5px; color: var(--muted); }
-  .kmpL a small b { color: var(--accent2); font-weight: 700; }
-  .kmpL a small b.son { color: var(--low); }
-  .kmpL .kn { font-size: 11px; color: #6d6658; }
   .motto { margin: -4px 0 10px; font-size: 13px; color: var(--muted); }
   .motto b { color: var(--accent2); }
   .addrow select { flex: none; padding: 10px 6px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 14px; }
@@ -259,7 +248,7 @@
   .addrow { display: flex; gap: 8px; margin: 10px 0 14px; }
   .addrow input { flex: 1; min-width: 0; padding: 10px; font-size: 15px; background: var(--field); color: var(--ink); border: 1px dashed var(--line); border-radius: 10px; }
   .sheet .foot { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; position: sticky; bottom: -20px; background: var(--card); padding: 10px 0 0; }
-  /* ===== Performans fişi ===== */
+  /* ===== İlerleme fişi ===== */
   .posTop { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
   .posSlot { position: relative; margin-top: 12px; padding-top: 10px; }
   .posSlot::before { content: ""; position: absolute; left: -4px; right: -4px; top: 0; height: 12px; border-radius: 6px; background: linear-gradient(#2a2a2a, #111); box-shadow: inset 0 -3px 4px rgba(0,0,0,.8); z-index: 2; }
@@ -336,9 +325,9 @@
   <!-- 4. Olasılık raporu -->
   <div class="card prob" id="prob"></div>
 
-  <!-- 5. Performans fişi (POS rulosu) -->
+  <!-- 5. İlerleme fişi (rulo görünümlü) -->
   <div class="card posc" id="posCard">
-    <div class="posTop"><h3 style="margin:0">🧾 Performans fişim</h3><span class="note" style="margin:0">İşaretledikçe fişin uzar ✨</span></div>
+    <div class="posTop"><h3 style="margin:0">🧾 İlerleme fişim</h3><span class="note" style="margin:0">İşaretledikçe fişin uzar ✨</span></div>
     <div class="posSlot"><div class="posPaper" id="posPaper"></div></div>
     <div class="btns" style="margin-top:12px"><button class="btn pri" id="posPng">🧾 Fişi indir</button><button class="btn" id="posPdf">📄 PDF indir</button></div>
   </div>
@@ -363,23 +352,23 @@
     <p class="note" style="margin:10px 0 0">Veriler yalnızca bu cihazda, bu tarayıcıda saklanır; kimse göremez, hiçbir sisteme gönderilmez. Başka cihazda görmek için <b>📲 Başka cihaza taşı</b>'yı kullan. Tarayıcı verilerini silersen kaybolmaması için ara ara yedek indir.</p>
   </div>
 
-  <p class="note warn">🔒 Buraya <b>müşteri bilgisi</b> (ad, TCKN, hesap no vb.) girme; yalnızca adetleri ve tutarları işle. Hesaplar senin girdiğin hedef ve adetlere göre yapılan tahminlerdir.</p>
+  <p class="note warn">🔒 Buraya <b>kişisel ya da gizli bilgi</b> (ad, TCKN, hesap no vb.) girme; yalnızca adetleri ve tutarları işle. Hesaplar senin girdiğin hedef ve adetlere göre yapılan tahminlerdir.</p>
 </div>
 
 <div class="sheet" id="sheet" hidden>
   <div class="in">
     <h2>🎯 Çeyrek hedeflerim</h2>
     <p class="sub" id="shSub"></p>
-    <div class="thead"><span></span><span>Ürün / kalem</span><span>Çeyrek hedefi</span><span></span></div>
+    <div class="thead"><span></span><span>Kalem</span><span>Çeyrek hedefi</span><span></span></div>
     <div id="tRows"></div>
-    <div class="addrow"><input id="newName" placeholder="+ Yeni kalem (ör. ek hesap, mevduat)" maxlength="30"><select id="newType" aria-label="Kalem türü"><option value="adet">Adet</option><option value="tutar">Tutar (TL)</option><option value="bakiye">Bakiye (TL)</option><option value="ortalama">Ort. bakiye (TL)</option></select><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
+    <div class="addrow"><input id="newName" placeholder="+ Yeni kalem (ör. kitap, spor, birikim)" maxlength="30"><select id="newType" aria-label="Kalem türü"><option value="adet">Adet</option><option value="tutar">Tutar (TL)</option><option value="bakiye">Bakiye (TL)</option><option value="ortalama">Ort. bakiye (TL)</option></select><button class="btn" id="addBtn" style="padding:10px 14px">Ekle</button></div>
     <div class="kilavuz">
       <b>Nasıl eklenir?</b> Kalemin adını yaz → türünü seç → <b>Ekle</b> → sağdaki kutuya çeyrek hedefini yaz → <b>Kaydet</b>.
       <ul>
-        <li><b>Adet</b> · sattıkça +1 (kredi kartı, ek hesap, fatura talimatı…)</li>
-        <li><b>Tutar</b> · günlük tutarlar toplanır (kullandırılan kredi, sigorta primi)</li>
+        <li><b>Adet</b> · yaptıkça +1 (okunan kitap, spor günü, biten iş…)</li>
+        <li><b>Tutar</b> · günlük tutarlar toplanır (biriktirilen para, yürünen km…)</li>
         <li><b>Bakiye</b> · çeyrek sonunda ulaşmak istediğin bakiye</li>
-        <li><b>Ort. bakiye</b> · çeyrek boyunca günlük ortalama (ör. mevduat)</li>
+        <li><b>Ort. bakiye</b> · çeyrek boyunca günlük ortalama (ör. birikim hesabı)</li>
       </ul>
       Tutarı rakamla yaz, binlik noktaları Günce koyar. Hedefin aylık verildiyse adet ve tutarda 3 ile çarp.
     </div>
@@ -807,57 +796,6 @@ if (window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matche
     } else if (e.key === "t" || e.key === "T") { if (canPick(today)) pickDay(new Date(today)); }
   });
 }
-// ================= Müşterine anlatabileceğin kampanyalar =================
-// Kaynak: İş Bankası Gündemi'nin her gün isbank.com.tr / maximum.com.tr ile kontrol edilen kampanya listeleri.
-// Kalemin adındaki kelimeye göre eşleşir (kişi kalemine ne ad verirse versin); eşleşme yoksa hiçbir şey görünmez.
-const KONU = [ // k: kalem adinda aranan, c: kampanya başliğinda aranan (öncelik sirasiyla)
-  { k: /kredi kart|^kart|kart$|maximum/, c: [/ilk kredi kart|kart başvuru|ilk kart/, /kredi kart|maximum kart/, /troy|kart/] },
-  { k: /bankamatik|banka kart|işpay/, c: [/bankamatik kart|ilk imza/, /işpay/] },
-  { k: /talimat|fatura|hgs|ogs/, c: [/fatura talimat/, /talimat|hgs/] },
-  { k: /ek hesap|kmh/, c: [/ek hesap/] },
-  { k: /kredi(?!\s*kart)|ihtiyaç|taşit|konut/, c: [/kredi(?!\s*kart)/, /ek hesap/] },
-  { k: /sigorta|bes\b|bireysel emeklilik|kasko|hayat/, c: [/sigorta|bes\b|bireysel emeklilik|kasko/, /katki pay|anadolu hayat/] },
-  { k: /müşteri|maaş|emekli|promosyon/, c: [/arkadaş|müşteri olmak/, /maaş/, /emekli/] },
-  { k: /mevduat|vadeli|birikim|tasarruf/, c: [/mevduat|vadeli|birikim|tasarruf|hoş geldin/] },
-  { k: /işcep|dijital|mobil/, c: [/işcep/] },
-  { k: /yatirim|hisse|fon\b|borsa/, c: [/hisse|yatirim|\bfon|borsa/] },
-  { k: /\bpos\b|üye işyeri|ticari/, c: [/\bpos\b|üye işyeri/] },
-];
-let KMP = null, kmpAcik = new Set();
-async function kampanyaYukle() {
-  const L = [];
-  try { const b = await Ortak.json("isbank/banka_kampanya.json"); for (const c of b.kategoriler || []) for (const x of c.kampanyalar || []) L.push({ t: x.baslik, o: x.ozet || "", b: x.bitis || "", u: x.url }); } catch (e) {}
-  try { const m = await Ortak.json("isbank/kampanyalar.json"); for (const x of m.kampanyalar || []) L.push({ t: x.baslik, o: x.ozet || "", b: x.bitis || "", u: x.url }); } catch (e) {}
-  const gor = new Set();
-  KMP = L.filter((x) => x.u && /^https:\/\/www\.(isbank|maximum)\.com\.tr\//.test(x.u) && (!x.b || x.b >= TK) && !gor.has(x.u) && gor.add(x.u));
-  renderProds();
-}
-// Kalem adında başka bir banka ya da onun kart markası geçiyorsa İş Bankası kampanyası hiç gösterilmez
-// (ör. "Garanti kredi kartı" kaleminin altına İş Bankası kredi kartı kampanyası düşmesin)
-const BASKA_BANKA = /garanti|bbva|akbank|yap[ii] ?kredi|ziraat|halk ?bank|vak[ii]f|qnb|finansbank|denizbank|\bteb\b|(^|\s)ing(\s|$)|hsbc|şekerbank|odea|fibabanka|alternatif ?bank|anadolubank|kuveyt|albaraka|türkiye finans|enpara|papara|burgan|icbc|emlak ?katilim|aktif ?bank|getir ?finans|colendi|katilim bank|bonus|axess|\bworld\b|paraf|bankkart|cardfinans|başka banka|diğer banka|rakip/;
-const norm = (t) => String(t).toLocaleLowerCase("tr").replace(/ı/g, "i"); // "ING", "YAPI KREDI", "Kredi" hepsi aynı yakalansın
-function kampanyalar(p) {
-  if (!KMP || !KMP.length) return [];
-  const ad = norm(p.name);
-  if (BASKA_BANKA.test(ad)) return [];
-  const K = KONU.filter((x) => x.k.test(ad));
-  if (!K.length) return [];
-  // Yalnızca başlıkta geçen kelimeye bakılır; önce en ilgili grup, sonra bitişi en yakın olan
-  const puan = (x) => { const t = norm(x.t); let best = 99; for (const k of K) k.c.forEach((r, i) => { if (i < best && r.test(t)) best = i; }); return best; };
-  return KMP.map((x) => ({ x, p: puan(x) })).filter((y) => y.p < 99)
-    .sort((a, b) => a.p - b.p || ((a.x.b || "9999") < (b.x.b || "9999") ? -1 : 1)).slice(0, 3).map((y) => y.x);
-}
-function kalanGun(b) {
-  if (!b) return "";
-  const n = Math.round((new Date(b + "T12:00:00") - today) / 864e5);
-  return n <= 0 ? '<b class="son">Bugün son gün</b>' : n === 1 ? '<b class="son">Yarın bitiyor</b>' : n <= 7 ? `<b class="son">⏳ ${n} gün kaldı</b>` : `<b>Son gün: ${new Date(b + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}</b>`;
-}
-function kmpHtml(p) {
-  const L = kampanyalar(p); if (!L.length) return "";
-  const ac = kmpAcik.has(p.id);
-  return `<div class="kmpW"><button type="button" class="kmpB ${ac ? "ac" : ""}" data-kmp="${p.id}">💡 Müşterine anlatabileceğin ${L.length} kampanya <i>›</i></button>
-    ${ac ? `<div class="kmpL">${L.map((x) => `<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t.replace(/[!]+$/, ""))}<small>${kalanGun(x.b)}<span class="kn">${x.u.includes("maximum.com.tr") ? "maximum.com.tr" : "isbank.com.tr"} ↗</span></small></a>`).join("")}</div>` : ""}</div>`;
-}
 function renderProds() {
   const dd = D.days[keyOf(selDay)] || {}, isT = keyOf(selDay) === TK;
   $("prods").innerHTML = D.products.map((p) => {
@@ -870,19 +808,14 @@ function renderProds() {
         : `Son bakiye ${fmtTL(s.cur)}${s.tgt ? ` / ${fmtTL(s.tgt)}` : ""}`;
       const yer = p.type === "tutar" ? "bugünkü tutar" : "bakiye";
       return `<div class="prod" data-p="${p.id}"><div class="ic">${p.icon}</div><div class="nm"><b>${esc(p.name)}<span class="tag">${TYPES[p.type]}</span></b><span>${info}</span></div>
-        <div class="mny"><input data-v="${p.id}" inputmode="decimal" enterkeyhint="done" placeholder="${yer}" value="${dd[p.id] != null ? sayiYaz(dd[p.id]) : ""}" aria-label="${esc(p.name)} ${yer}"></div>${kmpHtml(p)}</div>`;
+        <div class="mny"><input data-v="${p.id}" inputmode="decimal" enterkeyhint="done" placeholder="${yer}" value="${dd[p.id] != null ? sayiYaz(dd[p.id]) : ""}" aria-label="${esc(p.name)} ${yer}"></div></div>`;
     }
     const info = s.tgt ? `Çeyrek ${s.done}/${s.tgt}${isT && s.ph === "simdi" && s.pct < 100 ? (s.todayNeed ? ` · <i>bugün ${s.todayNeed} daha</i>` : " · <i>bugünkü tamam ✓</i>") : s.pct >= 100 ? " · ✓" : ""}` : `Çeyrek ${s.done} · <i>hedef yok</i>`;
     return `<div class="prod" data-p="${p.id}"><div class="ic">${p.icon}</div><div class="nm"><b>${esc(p.name)}</b><span>${info}</span></div>
-      <div class="cnt"><button data-m="${p.id}" aria-label="Azalt">−</button><span class="v">${dd[p.id] || 0}</span><button class="plus" data-a="${p.id}" aria-label="Artır">+</button></div>${kmpHtml(p)}</div>`;
+      <div class="cnt"><button data-m="${p.id}" aria-label="Azalt">−</button><span class="v">${dd[p.id] || 0}</span><button class="plus" data-a="${p.id}" aria-label="Artır">+</button></div></div>`;
   }).join("") || `<p class="note">Kalem yok. 🎯 Hedefler'den ekle.</p>`;
   $("prods").querySelectorAll("[data-a]").forEach((b) => (b.onclick = () => bump(b.dataset.a, 1)));
   $("prods").querySelectorAll("[data-m]").forEach((b) => (b.onclick = () => bump(b.dataset.m, -1)));
-  $("prods").querySelectorAll("[data-kmp]").forEach((b) => (b.onclick = () => {
-    const id = b.dataset.kmp; if (kmpAcik.has(id)) kmpAcik.delete(id); else { kmpAcik.add(id); window.Rapor && Rapor.bolum("kampanya-ac"); }
-    renderProds();
-  }));
-  $("prods").querySelectorAll(".kmpL a").forEach((a) => a.addEventListener("click", () => window.Rapor && Rapor.bolum("kampanya-tik")));
   $("prods").querySelectorAll("[data-v]").forEach((i) => {
     i.oninput = () => canliAyrac(i);
     i.onchange = () => setVal(i.dataset.v, i.value);
@@ -1142,7 +1075,7 @@ function exportCsv() {
   download(`gunce-${qy}-Q${qn + 1}.csv`, csv, "text/csv;charset=utf-8");
   toast("Excel dosyası indirildi");
 }
-// ================= Performans fişi (POS rulosu) =================
+// ================= İlerleme fişi (rulo görünümlü) =================
 const POS_SOZ = {
   tam: ["Hedef tamam! Bu fiş çerçevelik. 🏆", "Sen hedefi tutturmadın, çıtayı yükselttin. Tebrikler! 🥇", "Bu çeyreğin yıldızı belli oldu: sensin ⭐"],
   yakin: ["Bitiş çizgisi göründü; son düzlükte hız kesme! 🏁", "Az kaldı! Bir iki güzel adım, fişin altına mühür basılır. ✅", "Bu tempoyla hedef cebinde. Devam! 💪"],
@@ -1169,7 +1102,7 @@ function renderPos() {
   const P = posData(), el = $("posPaper"); if (!el) return;
   const ring = (pct) => { const r = 30, c = 2 * Math.PI * r, v = Math.min(100, pct) / 100; return `<svg width="76" height="76" viewBox="0 0 76 76" aria-label="Genel başarı"><circle cx="38" cy="38" r="${r}" fill="none" stroke="#ebe4d0" stroke-width="9"/><circle cx="38" cy="38" r="${r}" fill="none" stroke="${posCol(pct)}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c * v} ${c}" transform="rotate(-90 38 38)"/><text x="38" y="43" text-anchor="middle" font-size="15" font-weight="700" fill="#262626" font-family="Courier New, monospace">%${Math.round(pct)}</text></svg>`; };
   el.innerHTML = `
-    <div class="pz-c"><div class="pz-logo">SADOLAYN</div><div class="pz-s">GÜNCE · PERFORMANS FİŞİ<br>${esc(qName())} · ${esc(qRange())}<br>${P.when} · Fiş no ${P.fis}</div></div>
+    <div class="pz-c"><div class="pz-logo">SADOLAYN</div><div class="pz-s">GÜNCE · İLERLEME FİŞİ<br>${esc(qName())} · ${esc(qRange())}<br>${P.when} · Fiş no ${P.fis}</div></div>
     ${P.tier === "tam" ? '<div class="pz-stamp">HEDEF TAMAM ✓</div>' : ""}
     <hr class="pz-hr">
     <div class="pz-h">BUGÜNÜN SATIŞLARI</div>
@@ -1196,7 +1129,7 @@ function posCanvas() {
   const hr = (y) => { g.strokeStyle = "#bdb5a0"; g.setLineDash([6, 5]); g.beginPath(); g.moveTo(M, y); g.lineTo(W - M, y); g.stroke(); g.setLineDash([]); };
   const mono = (sz, b) => `${b ? "bold " : ""}${sz}px 'Courier New', monospace`;
   T("SADOLAYN", W / 2, 66, "italic bold 44px Georgia, serif", "#a8741c", "center");
-  T("GÜNCE · PERFORMANS FİŞİ", W / 2, 100, mono(18), "#555", "center");
+  T("GÜNCE · İLERLEME FİŞİ", W / 2, 100, mono(18), "#555", "center");
   T(`${qName()} · ${qRange()}`, W / 2, 126, mono(18), "#555", "center");
   T(`${P.when} · Fiş no ${P.fis}`, W / 2, 152, mono(16), "#777", "center");
   let y = 176; hr(y); y += 32; T("BUGÜNÜN SATIŞLARI", M, y, mono(15, 1), "#8a8270"); y += 30;
@@ -1344,7 +1277,7 @@ $("resetAll").onclick = () => {
 };
 $("resetM").onclick = () => { if (confirm(`${qName()} (${qRange()}) günlük kayıtları silinsin mi? (Hedefler kalır)`)) { eachQuarterDay((d) => delete D.days[keyOf(d)]); save(); render(); } };
 
-load(); migrate(); save(); render(); kampanyaYukle();
+load(); migrate(); save(); render();
 const PC = window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches;
 $("devCard").hidden = !PC;
 $("tasiBtn").onclick = tasiGoster; $("tasiBtn2").onclick = tasiGoster;

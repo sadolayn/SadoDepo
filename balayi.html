@@ -138,7 +138,7 @@ const KURAL = () => `<ul class="rules">
       <li>${DEALS} el oynanır. Her oyuncu sırayla seçer ve her oyunu bir kez seçebilir: <b>♣ ×1, ♦ ×2, ♥ ×3, ♠ ×4, Kozsuz ×5</b>.</li>
       <li>Aldığın her el, oyunun çarpanı kadar puan. En çok puanı toplayan kazanır.</li>
       <li>Renge uymak ve mümkünse yükseltmek zorunlu. Renk yoksa koz atılır. Koz kırılmadan kozla açılmaz.</li>
-      <li><b>Yıldız:</b> Oyuna Yıldız koyarak başlarsın. Kazanırsan koyduğunun <b>2 katını</b> alırsın, berabere biterse Yıldızın iade edilir. Bakiyen Batak ve King'le ortak; biterse 3 saat sonra İş Bankası sorusu gelir.</li>
+      <li><b>Yıldız:</b> Oyuna Yıldız ayırarak başlarsın. Kazanırsan ayırdığının <b>2 katını</b> alırsın, berabere biterse Yıldızın iade edilir. Bakiyen Batak ve King'le ortak; biterse 3 saat sonra İş Bankası sorusu gelir.</li>
     </ul>`;
 if (window.KartMasa) KartMasa.kurallar = KURAL;
 const SUITS = ["♠", "♥", "♣", "♦"];
@@ -388,7 +388,7 @@ function endRound() {
   G.history.push({ el: G.round + 1, secen: chooser, oyun: game, tricks: [...tricksWon], deltas });
   G.round++;
   if (G.round >= DEALS && !G.sonuc) {
-    // Yıldız: kazanan koyduğunun 2 katını alır; berabere biterse iade (sayfa kapansa da kaybolmasın diye hemen ödenir)
+    // Yıldız: kazanan ayırdığının 2 katını alır; berabere biterse iade (sayfa kapansa da kaybolmasın diye hemen ödenir)
     const [a, b] = G.scores;
     G.sonuc = Token.sonuc("balayi", G.stake || 0, 2, a > b ? 2 : a === b ? 1 : 0);
   }

@@ -449,13 +449,13 @@
     </div>
     <div class="izc" id="sIz">
       <button data-k="yillik" style="--c:var(--izin)">Yıllık izin</button>
-      <button data-k="idari" style="--c:var(--dgr)">İdari izin</button>
-      <button data-k="ozur" style="--c:var(--dgr)">Özür izni</button>
+      <button data-k="idari" style="--c:var(--dgr)">Mazeret izni</button>
+      <button data-k="ozur" style="--c:var(--dgr)">Sağlık izni</button>
       <button data-k="diger" style="--c:var(--dgr)">Diğer izin</button>
     </div>
     <label id="sTitleL">Başlık</label>
     <input id="sTitle" maxlength="80" autocomplete="off">
-    <p class="note" id="sKvkk" hidden style="margin:6px 0 0">🔒 Müşteri adı, TCKN, telefon ya da firma unvanı yazma; yalnızca konuyu yaz.</p>
+    <p class="note" id="sKvkk" hidden style="margin:6px 0 0">🔒 Kişi adı, TCKN, telefon gibi kişisel bilgi yazma; yalnızca konuyu yaz.</p>
     <div class="flds">
       <div id="sDW"><label id="sDL">Tarih</label><input type="date" id="sD"></div>
       <div id="sEW"><label>Bitiş</label><input type="date" id="sE"></div>
@@ -808,15 +808,15 @@ function renderYear() {
 // ================= Ajanda (yalnızca bu cihazda) =================
 const AKEY = "sado_ajanda1";
 const TYPES = {
-  not: { ic: "📝", ad: "Not", c: "var(--not)", ph: "Örn. Kredi dosyasını tamamla", tl: "Başlık" },
-  arama: { ic: "📞", ad: "Müşteri arama", c: "var(--rdv)", ph: "Örn. Randevu teyidi", tl: "Konu" },
-  ziyaret: { ic: "🏢", ad: "Firma ziyareti", c: "var(--zyr)", ph: "Örn. Tanışma görüşmesi", tl: "Konu" },
-  toplanti: { ic: "👥", ad: "Toplantı", c: "var(--tpl)", ph: "Örn. Haftalık toplantı", tl: "Konu" },
+  not: { ic: "📝", ad: "Not", c: "var(--not)", ph: "Örn. Faturayı öde", tl: "Başlık" },
+  arama: { ic: "📞", ad: "Arama", c: "var(--rdv)", ph: "Örn. Randevu teyidi", tl: "Konu" },
+  ziyaret: { ic: "🏢", ad: "Ziyaret", c: "var(--zyr)", ph: "Örn. Arkadaş ziyareti", tl: "Konu" },
+  toplanti: { ic: "👥", ad: "Toplantı", c: "var(--tpl)", ph: "Örn. Veli toplantısı", tl: "Konu" },
   randevu: { ic: "⏰", ad: "Randevu", c: "var(--rdv)", ph: "", tl: "Konu" },
   izin: { ic: "🏖️", ad: "Yıllık izin", c: "var(--izin)", ph: "Örn. Yaz tatili", tl: "Açıklama" },
   diger: { ic: "🗂️", ad: "İzin", c: "var(--dgr)", ph: "", tl: "Açıklama" },
 };
-const IZK = { yillik: "Yıllık izin", idari: "İdari izin", ozur: "Özür izni", diger: "Diğer izin" };
+const IZK = { yillik: "Yıllık izin", idari: "Mazeret izni", ozur: "Sağlık izni", diger: "Diğer izin" };
 const WORK = new Set(["arama", "ziyaret", "toplanti", "randevu"]);
 const izAd = (x) => (x.t === "izin" ? "Yıllık izin" : IZK[x.k] || "Diğer izin");
 const tAd = (x) => (isRange(x) ? izAd(x) : (TYPES[x.t] || TYPES.not).ad);
