@@ -1486,7 +1486,7 @@ function kOneHtml(L, renk) {
   const fmt = (n) => n.toLocaleString("tr-TR");
   const B = [
     ["🔥", "Bitiyor", "3 gün ya da daha az kaldı", L.filter((k) => gun(k) <= 3).sort((a, b) => gun(a) - gun(b)), (k) => (gun(k) <= 1 ? "Son gün" : `${gun(k)} gün`)],
-    ["🆕", "Yeni", "son 3 günde eklendi", L.filter((k) => k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3).sort((a, b) => b.ilk.localeCompare(a.ilk)), () => "YENİ"],
+    ["🆕", "Yeni eklenen", "son 3 günde listeye yeni giren kampanyalar (yeni müşteriye özel demek değil)", L.filter((k) => k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3).sort((a, b) => b.ilk.localeCompare(a.ilk)), () => "YENİ"],
     ["💰", "En çok kazanç", "puan, mil ya da indirim olarak en yüksek TL tutarı", L.filter((k) => tl(k) >= 100).sort((a, b) => tl(b) - tl(a)), (k) => fmt(tl(k)) + " TL"],
     ["📆", "En uzun taksit", "taksit sayısına göre", L.filter((k) => tk(k) >= 2).sort((a, b) => tk(b) - tk(a)), (k) => tk(k) + " taksit"],
     ["🏷️", "En yüksek %", "indirim yüzdesine göre", L.filter((k) => yz(k) >= 5).sort((a, b) => yz(b) - yz(a)), (k) => "%" + yz(k)],
