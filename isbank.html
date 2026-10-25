@@ -952,7 +952,8 @@ let SEEN = null, NEWNOW = new Set();
 try { SEEN = JSON.parse(localStorage.getItem("isbSeen2") || "null"); } catch (e) {}
 const idsFor = (k) => {
   if (k === "Tümü") return all.map((h) => "n:" + (h.url || h.baslik));
-  if (k === "Maximum") return camps.map((c) => "c:" + c.baslik);
+  // Kampanyalar: son 3 günde listeye giren kampanyalar + 15 Kasım'a kadar "Kampanyalar yenilendi" duyurusu (bir kez açınca düşer)
+  if (k === "Maximum") return KH && KH.isbank ? [...new Set(kTumu().filter((x) => x.ilk && x.ilk > "2000-01-01" && (Date.now() - new Date(x.ilk + "T00:00:00")) / 864e5 <= 3).map((x) => "k:" + x.url))].concat(Date.now() < new Date("2026-11-16T00:00:00+03:00") ? ["d:kampanya-yenilendi"] : []) : camps.map((c) => "c:" + c.baslik);
   if (k === "İşCep") return iscep ? iscep.surumler.map((v) => "v:" + v.surum) : [];
   if (k === "📰 Güncel") return live.map((x) => "g:" + (x.u || x.t));
   if (k === "🎬 Video") return vids.map((x) => "y:" + x.u);
