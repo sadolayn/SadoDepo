@@ -1,4 +1,6 @@
 # İş Bankası "Haberler ve Medya": bankanın kendi sitesindeki haber başlıkları ve resmi sosyal medya hesapları.
+# Not: Haber listesi sayfada süzgeçle sonradan yükleniyor; kartlar düz bağlantı olarak gelirse alınır, gelmezse liste boş kalır
+# (menü sayfaları haber sanılmasın diye başka yol denenmez). Sosyal medya hesapları sayfadan sorunsuz okunur.
 # Günde bir kez çalışır; isbank/medya.json dosyasına YALNIZCA işlenmiş alanları yazar (başlık, bağlantı; platform, hesap adı, bağlantı).
 # Ham sayfa kaydedilmez, kayda yalnızca sayı basılır. Bir bölüm okunamazsa ya da öncekinin yarısından azı gelirse eski liste korunur.
 # Reklam filmleri bankanın resmi YouTube kanalından ayrıca gelir (scripts/haberler.py, data/haberler.json → isbvideo).
@@ -111,21 +113,6 @@ def haberler(getir=None):
         ozet = re.sub(r"\s*(Detaylı Bilgi|Devamı)\s*>?\s*", " ", ozet).strip()[:220]
         out.append({"baslik": baslik, "ozet": ozet, "url": KOK + "/bankamizi-taniyin/" + slug,
                     "tarih": f"{tarih.group(3)}-{int(tarih.group(2)):02d}-{int(tarih.group(1)):02d}" if tarih else ""})
-    # Kartlar bağlantı değilse (düğme komutu ya da sayfaya gömülü veri): sayfada geçen haber adresleri toplanır,
-    # başlık ve tarih haberin kendi sayfasından alınır (günde birkaç sayfa)
-    if not out:
-        adaylar = [x for x in dict.fromkeys(re.findall(r"bankamizi-taniyin/([a-z0-9-]{8,})", b)) if x not in AYRI and x not in menu]
-        print(f"haberler: sayfada aday adres {len(adaylar)}, menü {len(menu)}")
-        for slug in adaylar[:15]:
-            d = temiz(get(KOK + "/bankamizi-taniyin/" + slug))
-            h1 = re.search(r"(?is)<h1[^>]*>(.*?)</h1>", d)
-            baslik = metin(h1.group(1)) if h1 else ""
-            if len(baslik.split()) < 3:
-                continue
-            govde = metin(d[h1.end():])[:1500]
-            tarih = re.search(r"\b(\d{1,2})\.(\d{1,2})\.(20\d{2})\b", govde)
-            out.append({"baslik": baslik[:180], "ozet": re.sub(r"\s*\b\d{1,2}\.\d{1,2}\.20\d{2}\b\s*", " ", govde)[:220].rsplit(" ", 1)[0] + "…", "url": KOK + "/bankamizi-taniyin/" + slug,
-                        "tarih": f"{tarih.group(3)}-{int(tarih.group(2)):02d}-{int(tarih.group(1)):02d}" if tarih else ""})
     return out[:40]
 
 # ---------- Birleştir, sigorta, kaydet ----------

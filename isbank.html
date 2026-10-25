@@ -2113,7 +2113,8 @@ function renderMedya() {
   const H = (MED && MED.haberler) || [];
   $("list").innerHTML = `<div class="mdHero"><b>📰 İş Bankası'ndan haberler</b><span>Bankanın kendi sitesindeki duyurular. Başlığa dokun, resmi sayfası açılsın.</span></div>`
     + (H.length ? H.map((h) => `<a class="mdHab" href="${esc(h.url)}" target="_blank" rel="noopener"><b>${esc(h.baslik)}</b>${h.ozet ? `<p>${esc(h.ozet)}</p>` : ""}<small>${h.tarih ? new Date(h.tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) + " · " : ""}isbank.com.tr ↗</small></a>`).join("")
-      : '<div class="empty">Haber başlıkları ilk toplamadan sonra burada (her gün 09:31). Şimdilik bankanın sayfasından bakabilirsin.</div>')
+      : `<a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/haberler-ve-medya" target="_blank" rel="noopener"><b>📰 İş Bankası'ndan Haberler</b><p>Bankanın kendi duyuruları resmi sitesinde, aya göre listelenir. Dokun, resmi sayfası açılsın.</p><small>isbank.com.tr ↗</small></a>
+        <a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari" target="_blank" rel="noopener"><b>🎬 Reklam Videoları</b><p>Bankanın reklam filmleri; son videolar burada "Reklam filmleri" sekmesinde de var.</p><small>isbank.com.tr ↗</small></a>`)
     + sayfa("https://www.isbank.com.tr/bankamizi-taniyin/haberler-ve-medya", "Haberler ve Medya")
     + `<p class="note" style="text-align:center">Basında çıkan İş Bankası haberleri için 📰 Haberler kalemine bak.</p>`;
 }
