@@ -2197,7 +2197,7 @@ const gzBas = (t) => { const h = String(t || "").replace(/[^A-Za-zÇĞİÖŞÜç
   if (h.length < 12 || b / h.length < .6) return t;
   const k = trKucuk(t).replace(/\b(iş bankası|işcep|türkiye|istanbul|ssk|bağ-kur|tl)\b/g, (w) => ({ "iş bankası": "İş Bankası", işcep: "İşCep", türkiye: "Türkiye", istanbul: "İstanbul", ssk: "SSK", "bağ-kur": "Bağ-Kur", tl: "TL" }[w] || w));
   return k.replace(/(^|[.!?]\s+)(\S)/g, (m, a, c) => a + c.toLocaleUpperCase("tr-TR")); };
-let gzAcik = false; try { gzAcik = localStorage.getItem("isbankGz") === "1"; } catch (e) {}
+let gzAcik = true; // sayfa her açılışta özet açık gelir; kapatılırsa yalnızca o ziyarette kapalı kalır
 function gundemOzet() {
   const simdi = Date.now(), gun = (d) => (simdi - new Date(d.length === 10 ? d + "T12:00:00" : d)) / 864e5;
   const H = live.map((x) => ({ t: gzBas(x.t), u: x.u, s: x.s, d: x.d, metin: x.t }))
@@ -2238,7 +2238,7 @@ function gundemOzet() {
 }
 function gundemBagla() {
   const g = $("list").querySelector(".gz"); if (!g) return;
-  g.ontoggle = () => { gzAcik = g.open; try { localStorage.setItem("isbankGz", gzAcik ? "1" : "0"); } catch (e) {} };
+  g.ontoggle = () => { gzAcik = g.open; };
   g.querySelectorAll("[data-gz]").forEach((b) => (b.onclick = () => $("chips").querySelector(`[data-k="${b.dataset.gz}"]`) ? $("chips").querySelector(`[data-k="${b.dataset.gz}"]`).click() : (b.dataset.gz === "Finans" && $("subeBar").click())));
 }
 
