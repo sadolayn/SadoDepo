@@ -827,7 +827,7 @@
     var n = 0, yb = 0, y3 = 0;
     Object.keys(G).forEach(function (a) { n++; if (G[a] === bugun) yb++; if (G[a] >= uc) y3++; });
     if (!n) return;
-    el.innerHTML = '<span data-git="maximum">🎁 <b>' + n.toLocaleString("tr-TR") + "</b> güncel kampanya</span>" + (yb ? '<span class="y" data-git="yeni">🆕 bugün <b>' + yb + "</b> yeni</span>" : y3 ? '<span class="y" data-git="yeni">🆕 son 3 günde <b>' + y3 + "</b> yeni</span>" : "");
+    el.innerHTML = '<span data-git="maximum">🎁 <b>' + n.toLocaleString("tr-TR") + "</b> farklı kampanya</span>" + (yb ? '<span class="y" data-git="yeni">🆕 bugün <b>' + yb + "</b> yeni</span>" : y3 ? '<span class="y" data-git="yeni">🆕 son 3 günde <b>' + y3 + "</b> yeni</span>" : "");
     el.hidden = false;
     // Etikete dokununca: sayı Kampanyalar'a, "yeni" Kampanyalar › Yeni gelenler'e götürür (kartın geri kalanı İş Bankası Gündemi'ni açar)
     el.addEventListener("click", function (e) { var s = e.target.closest("[data-git]"); if (!s) return; e.preventDefault(); location.href = "isbank.html#" + s.dataset.git; });
