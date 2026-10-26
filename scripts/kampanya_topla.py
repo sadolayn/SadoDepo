@@ -422,7 +422,8 @@ if os.path.exists(OUT):
 # İlk görülme hafızası: bağlantı → [ilk görüldüğü gün, son görüldüğü gün]. Kampanya bir gün listeden düşüp
 # (site eksik yüklenince) geri gelince "yeni" sanılmasın; 90 gündür görülmeyen kayıt silinir. Yalnızca bağlantı ve tarih tutulur.
 ILK = "isbank/kampanya_ilk.json"
-# Not: toplayıcı 24-25 Ekim 2026'da kuruldu; o günlerde ilk kez okunan kampanyalar (önceden sitede olup okunamayanlar) "yeni" sayılmadı
+# Not: toplayıcı 24-25 Ekim 2026'da kuruldu; o günlerde yalnızca toplayıcı düzeltmesiyle okunmaya başlayan kampanyalar (sitedeki toplam
+# değişmeden okunan sayı artanlar) "yeni" sayılmadı. Sitenin kendi toplamı da artanlar (Maximum'da 25 Ekim'de 211 → 219, 8 Inditex markası) yeni kaldı.
 _KATLA = str.maketrans("çğıöşüâîû", "cgiosuaiu")
 def _kelimeler(b):
     t = re.sub(r"[’'`]", "", b.replace("İ", "i").replace("I", "ı").lower().translate(_KATLA))
