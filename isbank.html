@@ -432,7 +432,6 @@
   .rkV .vdTh { display: block; width: 100%; padding: 0; cursor: pointer; }
   .rkV .vdTh iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .rkV .vdTx a { font-size: 12.5px; color: #9b7bff; text-decoration: none; font-weight: 600; }
-  .rkKanal { margin-top: 14px; } .rkKanal[open] > summary { margin-bottom: 10px; }
   .vdOyna { position: absolute; left: 50%; top: 50%; width: 52px; height: 36px; margin: -18px 0 0 -26px; border-radius: 10px; background: rgba(229,56,59,.92); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,.4); }
   .vdOyna::after { content: ""; border-left: 14px solid #fff; border-top: 8.5px solid transparent; border-bottom: 8.5px solid transparent; margin-left: 3px; }
   .vdS .vdOyna { width: 34px; height: 24px; margin: -12px 0 0 -17px; border-radius: 7px; } .vdS .vdOyna::after { border-left-width: 10px; border-top-width: 6px; border-bottom-width: 6px; margin-left: 2px; }
@@ -950,7 +949,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   <div class="disc">
     <b>ℹ️ Bu sayfa kişisel bir projedir; resmî değildir, Türkiye İş Bankası A.Ş. ile bağı yoktur.</b>
     <p>Bilgiler kamuya açık kaynaklardan özenle derlenir ve düzenli olarak kontrol edilir. Ürün, kampanya ve koşulların en güncel ve kesin hâli için lütfen <a href="https://www.isbank.com.tr" target="_blank" rel="noopener">www.isbank.com.tr</a> ve <a href="https://www.maximum.com.tr" target="_blank" rel="noopener">www.maximum.com.tr</a> adreslerini ziyaret ediniz.</p>
-    <small>Kampanyalar her sabah, seçilmiş haberler günde iki kez, "Güncel" sekmesi ve Medya'daki YouTube videoları her saat otomatik güncellenir.</small>
+    <small>Kampanyalar her sabah, seçilmiş haberler günde iki kez, "Güncel" ve "Video" sekmeleri her saat otomatik güncellenir.</small>
   </div>
 </div>
 
@@ -968,6 +967,7 @@ const CATS = [
   ["📅 Takvim", "#e0a24f", "📅"],
   ["Tümü", null, "📋"],
   ["📰 Güncel", "#5d8fe0", "📰"],
+  ["🎬 Video", "#d32f2f", "🎬"],
   ["Haber", "var(--haber)", "🗞️"],
   ["Ürün", "var(--urun)", "🧾"],
   ["Dijital", "var(--dijital)", "💡"],
@@ -976,18 +976,16 @@ const CATS = [
   ["Finans", "#3a50f0", "📊"],
 ];
 const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Kartsız<br>öde", "Medya": "Medya", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Günün sorusu", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<br><small>Güncel · KAP</small>" };
-// Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
+// Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Video, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
 const MENU = [["Tarihçe", "🏛️"], ["İşCep", "📲"], ["Black", "🖤"], ["Maximum", "🎁"], ["KTakvim", "⏳"], ["Haberler", "📰"], ["Şubeler", "📍"], ["Pazarama", "🛒"], ["Kartsiz", "💳"], ["Medya", "📣"], ["Soru", "❓"]];
-const NEWS = ["Tümü", "📰 Güncel", "Haber", "Ürün", "Dijital", "KAP"];
-const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
+const NEWS = ["Tümü", "📰 Güncel", "🎬 Video", "Haber", "Ürün", "Dijital", "KAP"];
+const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "🎬 Video": "🎬 Video", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
 let lastNews = "Tümü"; try { lastNews = localStorage.getItem("isbankNews") || "Tümü"; } catch (e) {}
-if (lastNews === "🎬 Video") lastNews = "Tümü";
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
 let bkamp = null, blk = null, fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null, vids = [], vidsOk = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
-if (cat === "🎬 Video") cat = "Medya"; // Video sekmesi Medya › Reklam filmleri altına taşındı
 let finSec = "veri"; // Finansal bilgiler alt başlığı: veri · takvim · sunum
 if (cat === "📅 Takvim") { cat = "Finans"; finSec = "takvim"; }
 if (cat === "Kampanya") { cat = "Maximum"; try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); localStorage.setItem("isbankKamp", JSON.stringify({ ...k, kay: "isbank" })); } catch (e) {} } // eski Banka Kampanya → Kampanyalar › İş Bankası
@@ -1008,7 +1006,7 @@ const idsFor = (k) => {
   if (k === "Maximum") return KH && KH.isbank ? [...new Set(kTumu().filter((x) => x.ilk && x.ilk > "2000-01-01" && (Date.now() - new Date(x.ilk + "T00:00:00")) / 864e5 <= 3).map((x) => "k:" + x.url))].concat(Date.now() < new Date("2026-11-16T00:00:00+03:00") ? ["d:kampanya-yenilendi"] : []) : camps.map((c) => "c:" + c.baslik);
   if (k === "İşCep") return iscep ? iscep.surumler.map((v) => "v:" + v.surum) : [];
   if (k === "📰 Güncel") return live.map((x) => "g:" + (x.u || x.t));
-  if (k === "Medya") return vids.map((x) => "y:" + x.u); // kanalın yeni videoları Medya kutucuğunda sayı olarak görünür
+  if (k === "🎬 Video") return vids.map((x) => "y:" + x.u);
   if (k === "Finans") return fin ? ["f:" + fin.periods[fin.periods.length - 1]] : [];
   // Soru: son 21 günde eklenen sorular menüde sayı rozetiyle görünür
   if (k === "Soru") return (typeof ISQ !== "undefined" ? ISQ : []).filter((q) => q[5] && (Date.now() - new Date(q[5] + "T00:00:00")) / 864e5 <= 21).map((q) => "s:" + q[0]);
@@ -1043,7 +1041,7 @@ function renderChips() {
   $("subeBar").onclick = () => { cat = cat === "Finans" ? "Tümü" : "Finans"; try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); icerigeKay(); };
   const go = (k) => { cat = k; if (NEWS.includes(k)) { lastNews = k; try { localStorage.setItem("isbankNews", k); } catch (e) {} } try { localStorage.setItem("isbankCat", cat); } catch (e) {} renderList(); renderChips(); icerigeKay(); };
   const inNews = NEWS.includes(cat);
-  const nU = unseen("Tümü").length + unseen("📰 Güncel").length;
+  const nU = unseen("Tümü").length + unseen("📰 Güncel").length + unseen("🎬 Video").length;
   $("chips").innerHTML = MENU.map(([k, ic]) => {
     const on = k === "Haberler" ? inNews : k === cat;
     const u = k === "Haberler" ? nU : unseen(k).length;
@@ -1052,7 +1050,7 @@ function renderChips() {
   $("chips").querySelectorAll("button").forEach((b) => (b.onclick = () => go(b.dataset.k === "Haberler" ? (NEWS.includes(lastNews) ? lastNews : "Tümü") : b.dataset.k)));
   $("nsub").hidden = !inNews;
   const nb = (k) => { const u = k === cat ? 0 : unseen(k).length; return `<button type="button" data-n="${k}" class="${k === cat ? "on" : ""}">${NLBL[k]}${u ? `<b>${u > 9 ? "9+" : u}</b>` : ""}</button>`; };
-  $("nsub").innerHTML = inNews ? `<div class="tsat"><span class="tlab">📡 Kaynak</span><div class="tgrid">${["Tümü", "📰 Güncel"].map(nb).join("")}</div></div><div class="tsat"><span class="tlab">🏷️ Tür</span><div class="tgrid">${["Haber", "Ürün", "Dijital", "KAP"].map(nb).join("")}</div></div>` : "";
+  $("nsub").innerHTML = inNews ? `<div class="tsat"><span class="tlab">📡 Kaynak</span><div class="tgrid">${["Tümü", "📰 Güncel", "🎬 Video"].map(nb).join("")}</div></div><div class="tsat"><span class="tlab">🏷️ Tür</span><div class="tgrid">${["Haber", "Ürün", "Dijital", "KAP"].map(nb).join("")}</div></div>` : "";
   $("nsub").querySelectorAll("[data-n]").forEach((b) => (b.onclick = () => go(b.dataset.n)));
   altGuncelle();
 }
@@ -2271,16 +2269,14 @@ function renderMedya() {
   const fd = (d) => new Date(d).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   const sayfa = (u, ad) => `<a class="maxlink" href="${u}" target="_blank" rel="noopener">${ad} · isbank.com.tr ↗</a>`;
   if (medSec === "reklam") {
-    renderVideo();
     // Reklam filmleri: bankanın "Reklam Videoları" sayfasındaki ve kanalın reklam listelerindeki filmler (günde bir kez, scripts/isbank_medya.py);
-    // dokununca sayfada oynar. Kanalın diğer son videoları altta açılır kutuda kalır.
+    // dokununca sayfada oynar. Kanalın diğer son videoları Haberler › Video sekmesinde.
     const R = (MED && MED.reklam) || [];
     if (R.length) {
-      const kanal = $("list").innerHTML;
       $("upd").innerHTML = MED.guncelleme ? `🔄 Film listesi günde bir kez derlenir · son: <b>${fd(MED.guncelleme)}</b>` : "";
       $("list").innerHTML = `<div class="mdHero"><b>🎬 Reklam filmleri</b><span>Televizyonda yayımlanan filmler: bankanın kendi "Reklam Videoları" sayfasından ve YouTube kanalındaki reklam listesinden. Dokun, burada oynasın.</span></div>`
         + R.map((x) => `<div class="vdV rkV"><button type="button" class="vdTh rkTh" data-yt="${esc(x.id)}" aria-label="Oynat: ${esc(x.baslik || "Reklam filmi")}"><img src="https://i.ytimg.com/vi/${esc(x.id)}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"><span class="vdOyna"></span></button><div class="vdTx"><b>${esc(x.baslik || "Reklam filmi")}</b><a href="https://www.youtube.com/watch?v=${esc(x.id)}" target="_blank" rel="noopener">YouTube'da aç ↗</a></div></div>`).join("")
-        + `<details class="mdDig rkKanal"${vids.some((x) => isNew("y:" + x.u)) ? " open" : ""}><summary>📺 YouTube kanalından son videolar<small>Tanıtımlar, söyleşiler, etkinlikler · her saat güncellenir</small></summary>${kanal}</details>`
+        + `<a class="mdHab" href="#" data-git="🎬 Video"><b>📺 Kanalın diğer videoları</b><p>Tanıtımlar, söyleşiler, etkinlikler: YouTube kanalındaki bütün son videolar Haberler › Video sekmesinde, her saat güncellenir.</p><small>Video sekmesine git →</small></a>`
         + sayfa("https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari", "Bankanın sitesindeki reklam videoları");
       $("list").querySelectorAll("[data-yt]").forEach((b) => (b.onclick = () => {
         const f = document.createElement("iframe");
@@ -2290,6 +2286,7 @@ function renderMedya() {
       }));
       return;
     }
+    renderVideo();
     $("list").insertAdjacentHTML("afterbegin", `<div class="mdHero"><b>🎬 Reklam filmleri ve videolar</b><span>Bankanın resmi YouTube kanalından, her saat kendiliğinden. Dokununca YouTube'da açılır.</span></div>`);
     $("list").insertAdjacentHTML("beforeend", sayfa("https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari", "Tüm reklam videoları"));
     return;
@@ -2325,6 +2322,15 @@ function renderMedya() {
     + `<p class="note" style="text-align:center">Basında çıkan İş Bankası haberleri için 📰 Haberler bölümüne bak.</p>`;
 }
 const RESMI = [["▶️ YouTube", "https://www.youtube.com/user/turkiyeisbankasi"], ["📸 Instagram", "https://www.instagram.com/isbankasi/"], ["✖️ X", "https://x.com/isbankasi"], ["💼 LinkedIn", "https://www.linkedin.com/company/isbankasi"], ["👍 Facebook", "https://www.facebook.com/isbankasi"]];
+// Sayfa içi geçiş bağlantıları: data-git = sekme, data-md = Medya alt başlığı
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("[data-git]"); if (!b) return;
+  e.preventDefault(); cat = b.dataset.git;
+  if (NEWS.includes(cat)) { lastNews = cat; try { localStorage.setItem("isbankNews", cat); } catch (x) {} }
+  if (b.dataset.md) { medSec = b.dataset.md; try { localStorage.setItem("isbankMedya", medSec); } catch (x) {} }
+  try { localStorage.setItem("isbankCat", cat); } catch (x) {}
+  renderList(); renderChips(); icerigeKay();
+});
 function renderVideo() {
   if (liveUpd) $("upd").textContent = "Her saat otomatik · son: " + new Date(liveUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   const tarih = (d) => (Date.now() - new Date(d)) / 864e5 < 1 ? agoTxt(d) : new Date(d).toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
@@ -2341,7 +2347,7 @@ function renderVideo() {
   const kartlar = uzun.length ? `<div class="vdBas">🎬 VİDEOLAR</div>${uzun.map((x) => `<a class="vdV" href="${esc(x.u)}" target="_blank" rel="noopener"><div class="vdTh">${resim(x)}${yeni(x)}<span class="vdOyna"></span></div><div class="vdTx"><b>${esc(x.t)}</b><small>YouTube${x.d ? " · " + tarih(x.d) : ""}</small></div></a>`).join("")}` : "";
   // En yeni hangisiyse o bölüm üstte
   h += kisa.length && uzun.length && (uzun[0].d || "") > (kisa[0].d || "") ? kartlar + serit : serit + kartlar;
-  $("list").innerHTML = h + hesap
+  $("list").innerHTML = (cat === "🎬 Video" ? `<a class="mdHab" href="#" data-git="Medya" data-md="reklam"><b>🎬 Televizyon reklam filmleri</b><p>Bankanın reklam filmleri ayrı listede, sayfada oynar.</p><small>Medya › Reklam filmleri →</small></a>` : "") + h + hesap
     + `<p class="note" style="margin-top:8px">Bankanın resmi YouTube kanalındaki son videolar her saat otomatik gelir; dokununca YouTube'da açılır. Instagram, X, Facebook ve LinkedIn paylaşımları dışarıya açık bir akış sunmadığı için buraya otomatik alınamıyor, yukarıdaki bağlantılardan bakabilirsin.</p>`;
 }
 
@@ -2612,6 +2618,7 @@ function renderList() {
   $("tfil").hidden = cat !== "Maximum" && cat !== "İşCep" && cat !== "Black";
   renderSoon();
   if (cat === "📰 Güncel") return renderLive();
+  if (cat === "🎬 Video") return renderVideo();
   if (cat === "📅 Takvim") return renderTakvim();
   if (cat === "Finans") return renderFinans();
   if (cat === "Kampanya") return renderBankaKamp();
