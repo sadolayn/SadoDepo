@@ -620,6 +620,11 @@
   .stick { position: static !important; box-shadow: none !important; }
   .imini { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; align-items: center; gap: 10px; padding: 7px 16px; background: rgba(0,0,0,.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid #222; transform: translateY(-110%); transition: transform .28s ease; }
   .imini.on { transform: translateY(0); }
+  .imini { padding-left: max(16px, calc((100% - 560px) / 2)); padding-right: max(16px, calc((100% - 560px) / 2)); } /* bilgisayarda içerik sütunuyla hizalı */
+  .imini .cur { cursor: pointer; }
+  /* Menü paneli: ince çubuktan bütün bölümlere tek dokunuşla geçiş (sayfa başına dönmeden) */
+  .imenu { position: fixed; top: var(--iminiH, 0px); left: 0; right: 0; z-index: 41; padding: 10px max(16px, calc((100% - 560px) / 2)) 14px; background: rgba(0,0,0,.96); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid #222; box-shadow: 0 14px 28px rgba(0,0,0,.7); max-height: calc(100dvh - var(--iminiH, 0px)); overflow-y: auto; animation: altGel .18s ease-out; }
+  .imenu[hidden] { display: none; }
   .imini .ev { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex: 0 0 38px; border-radius: 11px; background: #161616; border: 1px solid #e0a24f; font-size: 19px; text-decoration: none; }
   .imini .cur { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--c, #fff); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .imini .cur i { font-style: normal; font-size: 21px; }
@@ -917,7 +922,8 @@ window.ataOyna = function (film, ozelNot, yas) {
   ataOyna(false, OZEL[md], md === "11-10");
 })();
 </script>
-<div class="imini" id="imini"><a class="ev" href="index.html" aria-label="Ana sayfa">🏠</a><div class="cur" id="iminiCur"></div><button type="button" id="iminiBtn">Menü ▴</button></div>
+<div class="imini" id="imini"><a class="ev" href="index.html" aria-label="Ana sayfa">🏠</a><div class="cur" id="iminiCur"></div><button type="button" id="iminiBtn" aria-expanded="false" aria-controls="imenu">Menü ▾</button></div>
+<div class="imenu" id="imenu" hidden></div>
 <div class="wrap">
   <div class="stick">
   <header>
@@ -2725,10 +2731,18 @@ function renderList() {
 // İnce çubuk: kalemler gözden çıkınca üstten süzülür; "Menü ▴" kalemlere geri götürür
 (function () {
   var s = document.querySelector(".stick"), m = document.getElementById("imini"); if (!s || !m) return; var on = false;
-  var f = function () { var yeni = s.getBoundingClientRect().bottom < 60; if (yeni !== on) { on = yeni; m.classList.toggle("on", on); }
+  var p = document.getElementById("imenu"), btn = document.getElementById("iminiBtn");
+  // "Menü ▾": sayfadaki menünün (Finansal bilgiler + 11 kutucuk) kopyası çubuğun altında açılır; dokunulan kutucuk asıl menüdeki karşılığını tıklar
+  function kapat() { if (p.hidden) return; p.hidden = true; btn.textContent = "Menü ▾"; btn.setAttribute("aria-expanded", "false"); }
+  function ac() { p.innerHTML = document.getElementById("chipbar").innerHTML.replace(/ id="[^"]*"/g, ""); p.hidden = false; btn.textContent = "Kapat ▴"; btn.setAttribute("aria-expanded", "true"); }
+  var f = function () { var yeni = s.getBoundingClientRect().bottom < 60; if (yeni !== on) { on = yeni; m.classList.toggle("on", on); if (!on) kapat(); }
     document.documentElement.style.setProperty("--iminiH", on ? m.offsetHeight + "px" : "0px"); };
   window.addEventListener("scroll", f, { passive: true }); window.addEventListener("resize", f); f();
-  document.getElementById("iminiBtn").onclick = function () { window.scrollTo({ top: 0, behavior: "smooth" }); };
+  btn.onclick = document.getElementById("iminiCur").onclick = function (e) { e.stopPropagation(); if (p.hidden) ac(); else kapat(); };
+  p.onclick = function (e) { var b = e.target.closest("button"); if (!b) return; kapat();
+    if (b.dataset.k) document.querySelector('#chips button[data-k="' + b.dataset.k + '"]').click(); else if (b.classList.contains("longbar")) document.getElementById("subeBar").click(); };
+  document.addEventListener("click", function (e) { if (!p.hidden && !p.contains(e.target)) kapat(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") kapat(); });
 })();
 </script>
 <script>
