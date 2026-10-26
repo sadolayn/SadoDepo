@@ -806,6 +806,9 @@
   .mdYapim b { color: #f0c64a; } .mdYapim span { display: block; margin-top: 3px; }
   .mdUyari { margin: 10px 0; padding: 10px 12px; border-radius: 12px; border: 1px solid #5a3a12; background: #1c1206; color: #ffd9a8; font-size: 12.5px; line-height: 1.45; }
   .karac { display: grid; gap: 7px; margin: 0 0 10px; }
+  .ksihnot { flex: 1 1 100%; display: flex; align-items: center; gap: 8px; margin: 6px 2px 2px; font-size: 12.5px; line-height: 1.4; color: #bff0d2; }
+  .ksihnot span { flex: 1; min-width: 0; }
+  .ksihnot button { flex: none; min-height: 34px; padding: 0 12px; border-radius: 11px; border: 1px solid #3fc283; background: #3fc283; color: #04140a; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
   .altkutu #tfil.kamp .kara { margin: 6px 0 2px; pointer-events: auto; }
   .altkutu.dar:not(.acik) #tfil.kamp .kara { margin: 4px 0 4px; flex: 1 1 100%; }
   .altkutu.dar:not(.acik) #tfil.kamp .kara button { display: inline-block !important; }
@@ -1609,8 +1612,12 @@ function renderKampanyalar() {
     + (L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, kKisa(ad), n, kKim === ad)).join("")}</div></div>` : "")
     + (L.length && !kOne ? `<div class="tsat kgr"><span class="tlab">💰 Ne kazanırım</span><div class="tgrid">${sb("data-ne", "", "📋", "Hepsi", neT.length, !kNe, "hep")}${neS.map(([ad, ic, n]) => sb("data-ne", ad, ic, ad, n, kNe === ad)).join("")}</div></div>`
       + `<div class="tsat kgr"><span class="tlab">🛍️ Nerede</span><div class="tgrid">${sb("data-nere", "", "📋", "Hepsi", nereT.length, !kNere, "hep")}${nereGor.map(([ad, ic, n]) => sb("data-nere", ad, ic, kKisa(ad), n, kNere === ad)).join("")}${nereGor.length < nereS.length || kKatAcik ? `<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Daha az" : `▾ ${nereS.length - nereGor.length} grup daha`}</button>` : ""}</div></div>` : "");
+  // "Bana uygun" açıkken süzgeç satırları gizlenir: sihirbaz üç sitenin hepsine kendi seçimleriyle bakar, Kaynak/Bölüm/Nerede onu etkilemez
+  if (kSih.acik) t.innerHTML = t.querySelector(".kara").outerHTML
+    + `<div class="ksihnot"><span>🧭 <b>Bana uygun</b> açık · seçimler aşağıda, üç siteye birden bakılır</span><button type="button" data-sihkapat="1">✕ Kapat</button></div>`;
   t.onclick = (e) => {
     const b = e.target.closest("button"); if (!b || b.closest(".kara")) return;
+    if (b.dataset.sihkapat) { kSih.acik = false; kAra = ""; renderKampanyalar(); icerigeKay(); return; }
     if (b.dataset.kac) { kKatAcik = !kKatAcik; renderKampanyalar(); return; }
     if (b.dataset.ky) { kKay = b.dataset.ky; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
     else if (b.dataset.sg) { kSeg = b.dataset.sg; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
@@ -1627,7 +1634,7 @@ function renderKampanyalar() {
     return;
   }
   // Üstte arama kutusu ve öneri sihirbazı; arama ya da sihirbaz açıkken süzgeçlerin yerine onların sonucu görünür
-  const ust = `<div class="karac"><button type="button" id="kSihirBtn" class="${kSih.acik ? "on" : ""}">🧭 Bana uygun kampanyalar</button></div>`;
+  const ust = `<div class="karac"${kSih.acik ? " hidden" : ""}><button type="button" id="kSihirBtn" class="${kSih.acik ? "on" : ""}">🧭 Bana uygun kampanyalar</button></div>`; // açıkken kapatma düğmesi üstteki kutuda
   t.classList.toggle("araniyor", !!kAra.trim());
   let govde = () => "";
   const bagla = () => {
