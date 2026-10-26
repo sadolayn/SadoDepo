@@ -250,8 +250,6 @@ if not yeni or len(yeni) < 0.5 * len(onceki):
     print(f"::warning::reklam: okunan {len(yeni)} (önceki {len(onceki)}) — eski liste korundu")
     yeni = onceki
 veri["reklam"] = yeni
-# Bankanın sayfasında YouTube'da olmayan, yalnızca kendi sitesinde oynayan film sayısı (sayfada "sitede N film daha" bağlantısı için)
-veri["reklam_sitede"] = max(0, SAY.get("sayfadaki mp4", 0) - len(EK)) if SAY.get("sayfadaki mp4") else eski.get("reklam_sitede", 0)
 print("sayfa yanıt kodları:", ",".join(map(str, DURUM)))
 os.makedirs("isbank", exist_ok=True)
 json.dump(veri, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
