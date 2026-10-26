@@ -1,8 +1,8 @@
 {
- "guncelleme": "2026-10-25T22:36",
+ "guncelleme": "2026-10-26T09:31",
  "isbank": {
   "bireysel": {
-   "toplam": 191,
+   "toplam": 188,
    "kategoriler": [
     {
      "ad": "İş’te Maaş’a Özel",
@@ -1114,18 +1114,9 @@
     {
      "ad": "Akaryakıt Kampanyaları",
      "slug": "akaryakit-kampanyalari",
-     "adet": 5,
+     "adet": 4,
      "url": "https://www.isbank.com.tr/kampanyalar/akaryakit-kampanyalari",
      "kampanyalar": [
-      {
-       "baslik": "Maximum’un 25. Yılına Özel 25 Ekim'de 250 TL MaxiPuan Fırsatı",
-       "bitis": "2026-10-25",
-       "ozet": "Maximum Kartınız ile akaryakıt istasyonlarından 25 Ekim tarihinde tek seferde yapacağınız 2.500 TL ve üzeri ilk akaryakıt ya da otogaz alışverişinize 250 TL MaxiPuan fırsatı.",
-       "url": "https://www.isbank.com.tr/kampanyalar/maximumun-25-yilina-ozel-25-ekimde-maxipuan-kampanyasi",
-       "ilk": "2000-01-01",
-       "ne": "MaxiPuan",
-       "nere": "Araç & Akaryakıt"
-      },
       {
        "baslik": "Shell İstasyonlarında 500 TL MaxiPuan Fırsatı",
        "bitis": "2026-11-15",
@@ -1330,7 +1321,7 @@
     {
      "ad": "Maximum Kart Kampanyaları",
      "slug": "maximum-kart-kampanyalari",
-     "adet": 4,
+     "adet": 3,
      "url": "https://www.isbank.com.tr/kampanyalar/maximum-kart-kampanyalari",
      "kampanyalar": [
       {
@@ -1341,15 +1332,6 @@
        "ilk": "2000-01-01",
        "ne": "Taksit",
        "nere": "Ödeme & Fatura"
-      },
-      {
-       "baslik": "MediaMarkt.com.tr'de MaxiPuan Fırsatı!",
-       "bitis": "2026-10-25",
-       "ozet": "İşCep'ten kampanyaya katılın, 19 - 25 Ekim 2026 tarihleri arasında Maximum Kart’ınızla www.mediamarkt.com.tr adresinden tek seferde yapacağınız 25.000 TL ve üzeri ilk alışverişte 2.000 TL MaxiPuan kazanın!",
-       "url": "https://www.isbank.com.tr/kampanyalar/mediamarkt-maxipuan-kampanyasi",
-       "ilk": "2000-01-01",
-       "ne": "MaxiPuan",
-       "nere": "Elektronik & Beyaz Eşya"
       },
       {
        "baslik": "Gap’de Vade Farksız 6 Taksit!",
@@ -1375,7 +1357,7 @@
     {
      "ad": "Bireysel Kredi Kampanyaları",
      "slug": "bireysel-kredi-kampanyalari",
-     "adet": 3,
+     "adet": 2,
      "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
      "kampanyalar": [
       {
@@ -1383,15 +1365,6 @@
        "bitis": "2026-10-28",
        "ozet": "Nakit ihtiyacınızı kolayca karşılayabileceğiniz Taksitli Ek Hesap, aylık %3,49’dan başlayan faiz oranıyla şimdi daha avantajlı!",
        "url": "https://www.isbank.com.tr/kampanyalar/indirimli-taksitli-ek-hesap-kampanyasi",
-       "ilk": "2000-01-01",
-       "ne": "Faiz & Kredi",
-       "nere": "Bankacılık"
-      },
-      {
-       "baslik": "Size özel faiz oranlarıyla Anında Kredi fırsatını kaçırmayın!",
-       "bitis": "2026-10-25",
-       "ozet": "Tüm ihtiyaçlarınız için %3,48'den başlayan faiz oranlı 36 ay vadeli Anında Kredi İşCep’te!",
-       "url": "https://www.isbank.com.tr/kampanyalar/iscep-aninda-kredide-sinirli-firsat",
        "ilk": "2000-01-01",
        "ne": "Faiz & Kredi",
        "nere": "Bankacılık"
@@ -1510,12 +1483,12 @@
    ]
   },
   "ticari": {
-   "toplam": 79,
+   "toplam": 78,
    "kategoriler": [
     {
      "ad": "Ticari Kredi Kartı Kampanyaları",
      "slug": "ticari-kart-kampanyalari",
-     "adet": 11,
+     "adet": 10,
      "url": "https://www.isbank.com.tr/kampanyalar/ticari-kart-kampanyalari?v=ticari",
      "kampanyalar": [
       {
@@ -1571,15 +1544,6 @@
        "ilk": "2000-01-01",
        "ne": "MaxiMil",
        "nere": "Market & Yemek"
-      },
-      {
-       "baslik": "İş Bankası TROY Ticari Kartınızı Trendyol'a Kaydedin 400 TL İndirim Kazanın",
-       "bitis": "2026-10-25",
-       "ozet": "İş Bankası TROY logolu ticari kartınızı Trendyol’a kaydedin, kayıtlı İş Bankası TROY logolu ticari kartınızla 3.000 TL ve üzeri tek seferlik alışverişinizde 400 TL indirim kazanın!",
-       "url": "https://www.isbank.com.tr/kampanyalar/is-bankasi-troy-ticari-kartini-trendyola-kaydedenlere-indirim-firsati",
-       "ilk": "2000-01-01",
-       "ne": "İndirim",
-       "nere": "Online Alışveriş"
       },
       {
        "baslik": "Offismekan‘da uzun dönemli ofis kiralamalarınıza özel %20 indirim ve 12 ay taksit fırsatı!",
@@ -2363,7 +2327,7 @@
  },
  "maximum": {
   "bireysel": {
-   "toplam": 219,
+   "toplam": 218,
    "kampanyalar": [
     {
      "baslik": "ETS’deki Seçili Oteller ve Turlarda 7.500 TL’ye Varan MaxiPuan Fırsatı!",
@@ -4400,7 +4364,7 @@
  },
  "maximiles": {
   "bireysel": {
-   "toplam": 60,
+   "toplam": 58,
    "kampanyalar": [
     {
      "baslik": "10.000 TL Ve Üzeri Market Alışverişinize 1.000 TL'ye Varan MaxiPuan!",
@@ -4483,16 +4447,6 @@
      "nere": "Eğitim & Kitap"
     },
     {
-     "baslik": "Giyim Ve Kozmetik MaxiPuan Kampanyası",
-     "bitis": "2026-10-31",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/giyim-ve-kozmetik-maxipuan-kampanyasi",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "MaxiPuan",
-     "nere": "Giyim & Kozmetik"
-    },
-    {
      "baslik": "Hepsiburada'da Peşin Fiyatına 6 Taksit Fırsatı!",
      "bitis": "2026-10-31",
      "ozet": "",
@@ -4500,16 +4454,6 @@
      "tv": 2,
      "ilk": "2000-01-01",
      "ne": "Taksit",
-     "nere": "Online Alışveriş"
-    },
-    {
-     "baslik": "İş Bankası TROY Kartını Trendyol’a Kaydedenlere 400 TL İndirim Fırsatı!",
-     "bitis": "2026-10-25",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/is-bankasi-troy-kartini-trenyola-kaydedenlere-400-tl-indirim-firsati",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "İndirim",
      "nere": "Online Alışveriş"
     },
     {
@@ -4581,16 +4525,6 @@
      "ilk": "2000-01-01",
      "ne": "MaxiMil",
      "nere": "Market & Yemek"
-    },
-    {
-     "baslik": "Maximiles Black İle Yurt Dışı Çıkış Harcı Ödemelerinizde %50’ye Varan İndirim!",
-     "bitis": "2026-10-31",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-black-ile-yurt-disi-cikis-harci-odemelerinizde-50ye-varan-indirim",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "MaxiMil",
-     "nere": "Seyahat"
     },
     {
      "baslik": "Maximiles Black'inize Özel Swissotel Açık Hava Sineması Biletlerinde %20 İndirim!",
@@ -4713,16 +4647,6 @@
      "nere": "Araç & Akaryakıt"
     },
     {
-     "baslik": "Maximum’un 25. Yılına Özel 25 Ekim'de 250 TL MaxiPuan Fırsatı",
-     "bitis": "2026-10-25",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/maximumun-25-yilina-ozel-25-ekim-de-250-tl-maxipuan-firsati",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "MaxiPuan",
-     "nere": "Araç & Akaryakıt"
-    },
-    {
      "baslik": "MediaMarkt'ta 9 Aya Varan Taksit Fırsatı!",
      "bitis": "2026-12-31",
      "ozet": "",
@@ -4803,16 +4727,6 @@
      "nere": "Ödeme & Fatura"
     },
     {
-     "baslik": "Samsung.com'da Seçili Beyaz Eşyalarda %15 İndirim!",
-     "bitis": "2026-10-31",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/samsung-com-da-secili-beyaz-esyalarda-15-indirim",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "İndirim",
-     "nere": "Elektronik & Beyaz Eşya"
-    },
-    {
      "baslik": "Taksitli E-Ticaret Alışverişlerinizde 1.000 TL'ye Varan MaxiPuan!",
      "bitis": "2026-10-31",
      "ozet": "",
@@ -4833,30 +4747,10 @@
      "nere": "Seyahat"
     },
     {
-     "baslik": "Yepy'de Peşin Fiyatına 3 Ve 6 Taksit Fırsatı!",
-     "bitis": "2026-10-31",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/yepy-de-pesin-fiyatina-taksit-firsati",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "Taksit",
-     "nere": "Online Alışveriş"
-    },
-    {
      "baslik": "Yolcu360'tan Araç Kiralamada İndirim Fırsatı!",
      "bitis": "2026-10-31",
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/yolcu360-tan-arac-kiralamada-indirim-firsati",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "İndirim",
-     "nere": "Araç & Akaryakıt"
-    },
-    {
-     "baslik": "Yolcu360'tan Yurt Dışında Araç Kiralamaya Özel Net %15 İndirim Fırsatı",
-     "bitis": "2026-10-31",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/yolcu360-tan-arac-kiralamaya-ozel-net-15-yurt-disi-indirimi",
      "tv": 2,
      "ilk": "2000-01-01",
      "ne": "İndirim",
@@ -4881,6 +4775,56 @@
      "ilk": "2000-01-01",
      "ne": "MaxiMil",
      "nere": "Seyahat"
+    },
+    {
+     "baslik": "Giyim Ve Kozmetik MaxiPuan Kampanyası",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/giyim-ve-kozmetik-maxipuan-kampanyasi",
+     "tv": 2,
+     "ilk": "2000-01-01",
+     "ne": "MaxiPuan",
+     "nere": "Giyim & Kozmetik"
+    },
+    {
+     "baslik": "Maximiles Black İle Yurt Dışı Çıkış Harcı Ödemelerinizde %50’ye Varan İndirim!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-black-ile-yurt-disi-cikis-harci-odemelerinizde-50ye-varan-indirim",
+     "tv": 2,
+     "ilk": "2000-01-01",
+     "ne": "MaxiMil",
+     "nere": "Seyahat"
+    },
+    {
+     "baslik": "Samsung.com'da Seçili Beyaz Eşyalarda %15 İndirim!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/samsung-com-da-secili-beyaz-esyalarda-15-indirim",
+     "tv": 2,
+     "ilk": "2000-01-01",
+     "ne": "İndirim",
+     "nere": "Elektronik & Beyaz Eşya"
+    },
+    {
+     "baslik": "Yepy'de Peşin Fiyatına 3 Ve 6 Taksit Fırsatı!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/yepy-de-pesin-fiyatina-taksit-firsati",
+     "tv": 2,
+     "ilk": "2000-01-01",
+     "ne": "Taksit",
+     "nere": "Online Alışveriş"
+    },
+    {
+     "baslik": "Yolcu360'tan Yurt Dışında Araç Kiralamaya Özel Net %15 İndirim Fırsatı",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/yolcu360-tan-arac-kiralamaya-ozel-net-15-yurt-disi-indirimi",
+     "tv": 2,
+     "ilk": "2000-01-01",
+     "ne": "İndirim",
+     "nere": "Araç & Akaryakıt"
     },
     {
      "baslik": "Amazon.com.tr'de Peşin Fiyatına 6 Taksit Fırsatı!",
@@ -5005,7 +4949,7 @@
    ]
   },
   "ticari": {
-   "toplam": 14,
+   "toplam": 13,
    "kampanyalar": [
     {
      "baslik": "İş Bankası Ticari Kredi Kartı Yeni Müşterilerine Özel Faizsiz Taksit Kampanyası",
@@ -5016,16 +4960,6 @@
      "ilk": "2000-01-01",
      "ne": "Taksit",
      "nere": "Bankacılık"
-    },
-    {
-     "baslik": "İş Bankası TROY Ticari Kartınızı Trendyol'a Kaydedin 400 TL İndirim Kazanın",
-     "bitis": "2026-10-25",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/is-bankasi-troy-ticari-kartinizi-trendyola-kaydedin-400-tl-indirim-kazanin",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "İndirim",
-     "nere": "Online Alışveriş"
     },
     {
      "baslik": "İş Bankası Visa Ticari Kart Sahiplerine Enterprise Araç Kiralamalarda İndirim Fırsatı!",
