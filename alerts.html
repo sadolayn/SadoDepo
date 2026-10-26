@@ -79,6 +79,8 @@
   .ab i { font-style: normal; font-size: 20px; line-height: 1.2; }
   .ab div { flex: 1; min-width: 0; } .ab div > b { display: block; font-size: 14px; word-break: break-all; } .ab span { display: block; font-size: 12.5px; color: #bdbdbd; line-height: 1.45; margin-top: 2px; } .ab small { display: block; font-size: 11.5px; color: var(--muted); margin-top: 3px; }
   .ab.ok { border-color: #1f5a3d; } .ab.wait { border-color: #4a3a14; } .ab.off { opacity: .7; }
+  .ab .abFark { display: block; margin-top: 8px; padding: 8px 10px; border-radius: 10px; background: #1d1608; border: 1px solid #5a4214; color: #f0d9a8; }
+  .ab .abFark .abG { display: block; width: 100%; margin: 8px 0 6px; padding: 9px 10px; border-radius: 10px; border: 0; background: var(--accent, #e0a24f); color: #000; font: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer; }
   .ab button { flex: none; background: none; border: 1px solid #333; color: #aaa; border-radius: 9px; padding: 5px 8px; font-size: 12px; cursor: pointer; }
   .msg.info { display: block; background: #1a1608; border: 1px solid #4a3a14; color: #f0d9a8; }
   .pv h3 { margin: 12px 0 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); }
@@ -321,7 +323,7 @@ function render() {
     SUGG.filter((s) => !low.includes(s.toLocaleLowerCase("tr")))
       .map((s) => `<button data-s="${esc(s)}">+ ${esc(s)}</button>`).join("");
   $("add").disabled = kws.length >= MAX;
-  blipsCiz(); bildirimGoster(); if (typeof renderPush === "function") renderPush();
+  blipsCiz(); bildirimGoster(); if (typeof renderPush === "function") renderPush(); if (typeof abCiz === "function") abCiz();
   const live = !!ENDPOINT;
   $("setupNote").style.display = live ? "none" : "block";
   $("preview").disabled = !live || !kws.length;
@@ -335,6 +337,7 @@ function addKw(v) {
   if (kws.some((k) => k.toLocaleLowerCase("tr") === v.toLocaleLowerCase("tr"))) return;
   kws.push(v.slice(0, 60));
   save(); render();
+  if (v.replace(/"/g, "").length <= 2) show("info", `"${v}" çok kısa; içinde bu harfler geçen alakasız haberler de gelebilir. Daha uzun bir kelime ya da ifade yazmanı öneririm.`);
 }
 
 function show(type, text) {
@@ -415,21 +418,36 @@ function aboneKaydet(email, s) {
   abYaz(L); abGoster();
 }
 const abTarih = (iso) => { if (!iso) return ""; const d = new Date(iso); return d.toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) + " " + d.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }); };
-async function abGoster() {
+// Radardaki kelimeler e-postadakinden farklıysa söylenir: e-posta kelimeleri ancak "Abone ol" + onay bağlantısıyla değişir
+const ayniKw = (a, b) => { const n = (L) => L.map((k) => String(k).trim().toLocaleLowerCase("tr")).filter(Boolean).sort().join("|"); return n(a) === n(b); };
+let abSon = [];
+function abCiz() {
   const L = abOku(), box = $("abon");
+  if (!box) return;
   if (!L.length) { box.innerHTML = ""; return; }
   const satir = (x, d) => {
     let cls = "wait", ic = "⏳", durum = "Onay bekleniyor", alt = "E-postandaki <b>Aboneliği onayla</b> bağlantısına tıkla. Gelmediyse spam / gereksiz klasörüne bak.";
     if (d && d.ok) {
-      if (d.status === "active") { cls = "ok"; ic = "✅"; durum = "Abonelik aktif"; alt = `Kelimeler: ${esc(d.keywords.split(" | ").join(", "))}<br>Her sabah 10:00'da, kelimelerine uyan <b>yeni haber varsa</b> özet gelir; haber yoksa o gün e-posta gelmez.` + (d.pending ? `<br>Yeni kelimelerin için onay bekleniyor.` : ""); }
+      if (d.status === "active") {
+        cls = "ok"; ic = "✅"; durum = "Abonelik aktif"; alt = `E-postadaki kelimeler: ${esc(d.keywords.split(" | ").join(", "))}<br>Her sabah 10:00'da, kelimelerine uyan <b>yeni haber varsa</b> özet gelir; haber yoksa o gün e-posta gelmez.`;
+        if (d.pending) alt += `<span class="abFark">⏳ <b>Onay bekleyen yeni kelimeler:</b> ${esc(d.pending.split(" | ").join(", "))}<br>E-postandaki <b>Aboneliği onayla</b> bağlantısına tıklayınca geçerli olur; o zamana kadar bülten eski kelimelerle gelir.</span>`;
+        else if (kws.length && !ayniKw(kws, d.keywords.split(" | "))) alt += `<span class="abFark">✏️ Radardaki kelimelerin bu e-postadakinden farklı. Sayfada kelime değiştirmek e-postayı değiştirmez.<button type="button" class="abG" data-guncel="${esc(x.email)}">📧 E-postayı da yeni kelimelerle güncelle</button>Sonra gelen onay e-postasındaki <b>Aboneliği onayla</b> bağlantısına tıkla.</span>`;
+      }
       else if (d.status === "unsub") { cls = "off"; ic = "🚫"; durum = "Abonelikten çıkıldı"; alt = "Yeniden abone olmak için yukarıdan kelimelerini seçip <b>Abone ol</b>'a bas."; }
     } else if (!x.s) { alt = "E-postana gelen bağlantıyı (<b>Aboneliği onayla</b> ya da <b>Aboneliğimi bu cihazda göster</b>) <b>bu cihazda</b> açınca durumun burada görünür. Gelmediyse spam / gereksiz klasörüne bak."; durum = "E-posta bekleniyor"; ic = "📬"; }
     return `<div class="ab ${cls}"><i>${ic}</i><div><b>${esc(x.email)}</b><span><b style="display:inline;font-size:12.5px">${durum}</b> · ${alt}</span>${d && d.lastSent ? `<small>📨 Son gönderim: ${abTarih(d.lastSent)}</small>` : ""}</div><button type="button" data-sil="${esc(x.email)}" title="Bu cihazdan listeden kaldır">✕</button></div>`;
   };
-  box.innerHTML = `<div class="abon"><h4>📬 BU CİHAZDAKİ ABONELİKLERİN</h4>${L.map((x) => satir(x, null)).join("")}</div>`;
-  const D = await Promise.all(L.map((x) => x.s ? fetch(ENDPOINT + "?action=status&s=" + encodeURIComponent(x.s)).then((r) => r.json()).catch(() => null) : null));
-  box.innerHTML = `<div class="abon"><h4>📬 BU CİHAZDAKİ ABONELİKLERİN</h4>${L.map((x, i) => satir(x, D[i])).join("")}</div>`;
+  box.innerHTML = `<div class="abon"><h4>📬 BU CİHAZDAKİ ABONELİKLERİN</h4>${L.map((x) => satir(x, abSon.find((y) => y.email === x.email)?.d || null)).join("")}</div>`;
   box.querySelectorAll("[data-sil]").forEach((b) => (b.onclick = () => { abYaz(abOku().filter((x) => x.email !== b.dataset.sil)); abGoster(); }));
+  box.querySelectorAll("[data-guncel]").forEach((b) => (b.onclick = () => { $("email").value = b.dataset.guncel; $("sub").click(); }));
+}
+async function abGoster() {
+  abCiz();
+  const L = abOku();
+  if (!L.length) return;
+  const D = await Promise.all(L.map((x) => x.s ? fetch(ENDPOINT + "?action=status&s=" + encodeURIComponent(x.s)).then((r) => r.json()).catch(() => null) : null));
+  abSon = L.map((x, i) => ({ email: x.email, d: D[i] }));
+  abCiz();
 }
 // E-postadaki "aboneliğimi göster" bağlantısıyla gelindiyse: bu cihaza kaydet, adresi temizle
 (() => {

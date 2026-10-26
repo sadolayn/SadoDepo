@@ -51,7 +51,8 @@ Ne değişir:
 
 1. Yeni bir Gmail hesabı aç (ör. "sadolayn.alerts").
 2. Kişisel hesapta: Apps Script projesini ve Drive'daki "Sadolayn Alerts — Aboneler" tablosunu yeni hesapla **Düzenleyici** olarak paylaş.
-3. Yeni hesapla script.google.com → projeyi aç → işlev listesinden **setup** → Çalıştır → izin ver.
+3. Yeni hesapla script.google.com → projeyi aç → `Code` dosyasının içeriğini silip bu klasördeki güncel `Code.gs`'in tamamını yapıştır → Kaydet
+   (bülten tarihi Türkçe olur: "26 October 2026" yerine "26 Ekim 2026"). Sonra işlev listesinden **setup** → Çalıştır → izin ver.
    Günlük 10:00 tetikleyicisi artık yeni hesap adına kurulur; bülten oradan gider.
 4. Yeni hesapla **Dağıt → Yeni dağıtım → Web uygulaması** (Şu kullanıcı olarak çalıştır: **Ben**, Erişim: **Herkes**) → yeni `…/exec` adresini Claude'a gönder
    (sitedeki `ENDPOINT` güncellenir; onay e-postaları da yeni hesaptan gider).

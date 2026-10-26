@@ -312,7 +312,10 @@ function dailyDigest() {
   const t0 = Date.now(), SURE = 4.5 * 60 * 1000;
   const sh = sheet_();
   const data = sh.getDataRange().getValues();
-  const dateStr = Utilities.formatDate(new Date(), CFG.TZ, 'd MMMM yyyy');
+  /* Ay adı Türkçe (formatDate 'MMMM' İngilizce veriyordu: "26 October 2026") */
+  const AY = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+  const gun = Utilities.formatDate(new Date(), CFG.TZ, 'd/M/yyyy').split('/');
+  const dateStr = gun[0] + ' ' + AY[Number(gun[1]) - 1] + ' ' + gun[2];
   const bugun = Utilities.formatDate(new Date(), CFG.TZ, 'yyyy-MM-dd');
   const gonderildi = v => v && Utilities.formatDate(new Date(v), CFG.TZ, 'yyyy-MM-dd') === bugun;
   const memo = {};
