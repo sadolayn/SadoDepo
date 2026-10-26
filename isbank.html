@@ -1720,7 +1720,9 @@ function kSihListe() {
   const S = kSih, P = (K_PROFIL[S.seg] || []).filter((p) => S.pro.includes(p[0])).map((p) => p[3]);
   const kimler = P.map((p) => p.kim).filter(Boolean), NE = S.ne || (P.find((p) => p.ne) || {}).ne || "";
   const nereler = [...new Set([...S.nere, ...P.flatMap((p) => p.nere || [])])], RE = P.map((p) => p.re).filter(Boolean);
-  return kTumu(S.seg).filter((k) => k.kim === "Herkes" || kimler.includes(k.kim)).map((k) => {
+  // Ticari'de "kim" sektördür (çiftçi, turizmci, esnaf…): o alanda harcadığını seçen o sektörün kampanyasını da görür
+  // (yoksa yalnızca "Tarım" seçen hiç kampanya görmüyordu). Bireyselde Black, Emekli, Maaşlı koşulları yalnızca seçilince gelir.
+  return kTumu(S.seg).filter((k) => k.kim === "Herkes" || kimler.includes(k.kim) || (S.seg === "ticari" && nereler.includes(k.nere))).map((k) => {
       const t = k.baslik + " " + (k.ozet || ""), reU = RE.some((r) => r.test(t)), nU = nereler.includes(k.nere), kU = kimler.includes(k.kim);
       // Kim olduğunu ya da nerede harcadığını seçtiyse yalnızca onlara uyanlar; "Ne kazanmak istersin" seçildiyse o türden olanlar
       const secim = kimler.length || nereler.length || RE.length;
