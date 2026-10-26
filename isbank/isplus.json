@@ -1,5 +1,5 @@
 {
-  "kontrol": "2026-10-19",
+  "kontrol": "2026-10-26",
   "kaynak": "https://www.isbank.com.tr/isplus",
   "ozet": "İşCep'i ve İş Bankası kartını kullandıkça kendiliğinden yükselen seviye programı. Başvuru gerekmez; kriterleri sağlayan müşteri otomatik dahil olur.",
   "seviyeler": [
@@ -9,7 +9,7 @@
   ],
   "ortak": "Son 30 günde en az 1 kez İşCep girişi",
   "ayricaliklar": [
-    { "ic": "💸", "ad": "Ücretsiz EFT/FAST (İşCep havaleleri zaten ücretsiz)", "v": ["ayda 2", "ayda 4", "ayda 6"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-ucretsiz-para-transferi-ayricaligi" },
+    { "ic": "💸", "ad": "Ücretsiz EFT/FAST (İşCep havaleleri zaten ücretsiz)", "v": ["ayda 4", "ayda 6", "ayda 8"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-ucretsiz-para-transferi-ayricaligi" },
     { "ic": "➕", "ad": "Ek Hesap faiz oranı", "v": ["%4,23", "%4,21", "%4,19"], "u": "https://www.isbank.com.tr/kampanyalar/ek-hesap-faiz-oraninda-indirim-ayricaligi" },
     { "ic": "🛒", "ad": "Market, kafe-restoran, giyim-kozmetik (ayın ilk alışverişi)", "v": ["%5", "%10", "%15"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-kafe-restoran-market-giyim-kozmetik-alisverislerinize-ozel-indirimler" },
     { "ic": "📚", "ad": "Kitap (ayın ilk alışverişi)", "v": ["–", "%10", "%15"], "u": "https://www.isbank.com.tr/kampanyalar/size-ozel-kitap-alisverislerinize-ozel-indirimler" },
