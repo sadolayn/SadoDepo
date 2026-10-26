@@ -625,6 +625,11 @@
   .imini .cur i { font-style: normal; font-size: 21px; }
   .imini button { flex: 0 0 auto; padding: 9px 13px; border-radius: 11px; border: 1px solid var(--line); background: #161616; color: #fff; font: inherit; font-size: 13.5px; font-weight: 700; }
   html, body { overflow-anchor: none; } /* kutu daralınca tarayıcı sayfayı başa sıçratmasın (yoksa kutu açılıp kapanarak takılıyor) */
+  /* Uzun alt başlık kutusu yapışmaz, sayfayla kayar; tamamen yukarı çıkınca yerine üstte tek satırlık sabit çubuk gelir (boşluğu #altIz tutar, içerik zıplamaz) */
+  .altkutu.uzun:not(.dar) { position: relative; top: auto; }
+  .altkutu.dar { position: fixed; top: var(--iminiH, 0px); margin: 0; animation: altGel .18s ease-out; }
+  @keyframes altGel { from { transform: translateY(-40%); opacity: 0; } }
+  #altkutu #nsub[hidden], #altkutu #tfil[hidden] { display: none !important; } /* daralmış kutuda başka sekmenin (ör. Kampanyalar arama) satırı görünmesin */
   .altkutu.dar.acik { max-height: calc(100dvh - var(--iminiH, 0px) - 10px); overflow-y: auto; scrollbar-width: thin; }
   .altkutu { position: sticky; top: var(--iminiH, 0px); z-index: 20; margin: -4px 0 12px; padding: 8px 8px 6px; border-radius: 14px; background: #070707; border: 1px solid color-mix(in srgb, var(--c, #e0a24f) 55%, #000); border-top: 3px solid var(--c, #e0a24f); box-shadow: 0 8px 18px rgba(0,0,0,.6); }
   .altkutu::before { content: ""; position: absolute; top: -10px; left: var(--ok, 50%); width: 14px; height: 14px; margin-left: -7px; background: var(--c, #e0a24f); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
@@ -1089,16 +1094,28 @@ function bolumeKay(el) {
   const h = $("imini").offsetHeight + ($("altkutu").hidden ? 0 : $("altkutu").offsetHeight) + 8;
   window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - h), behavior: "smooth" });
 }
-// Kaydırma: alt başlık kutusu yapışınca (ve 1 satırdan uzunsa) tek satıra iner; Şubeler'de kaydırdıkça doğru başlık yanar
+// Kaydırma: kısa alt başlık kutusu üstte yapışık durur. Uzun kutu (4'ten çok başlık) sayfayla kayar; tamamen yukarı çıkınca
+// yerine üstte tek satırlık sabit çubuk gelir (seçili başlık + "Değiştir"). Kutunun yerini #altIz tutar: içerik zıplamaz, kutu açılıp kapanarak titremez.
+// Şubeler'de kaydırdıkça doğru başlık yanar
 (function () {
   const k = $("altkutu"), iz = $("altIz");
   const say = () => [...k.querySelectorAll("#nsub button, #tfil button")].filter((b) => b.offsetParent || k.classList.contains("dar")).length;
-  let dar = false;
+  let dar = false, boy = 0;
+  function birak() { dar = false; k.classList.remove("dar", "acik"); k.style.left = k.style.width = ""; iz.style.height = ""; }
   function kontrol() {
-    if (k.hidden) { if (dar) { dar = false; k.classList.remove("dar", "acik"); } return; }
+    if (k.hidden) { if (dar) birak(); k.classList.remove("uzun"); return; }
     const ust = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--iminiH")) || 0;
-    const yapisik = iz.getBoundingClientRect().top < ust - 4, uzun = say() > 4;
-    if ((yapisik && uzun) !== dar) { dar = yapisik && uzun; k.classList.toggle("dar", dar); if (!dar) k.classList.remove("acik"); }
+    const uzun = dar || say() > 4;
+    k.classList.toggle("uzun", uzun);
+    const izr = iz.getBoundingClientRect();
+    if (!dar && uzun && izr.top + k.offsetHeight < ust + 24) {
+      // Kutu gözden çıktı: sabit çubuğa dönüşür, kapladığı yer #altIz'de kalır (liste aynı yerde durur)
+      const l0 = $("list").getBoundingClientRect().top;
+      boy = k.offsetHeight; dar = true;
+      k.classList.add("dar"); k.style.left = izr.left + "px"; k.style.width = izr.width + "px"; iz.style.height = boy + "px";
+      const d = $("list").getBoundingClientRect().top - l0; if (d) iz.style.height = boy - d + "px";
+    } else if (dar && izr.top + boy > ust + 34) birak(); // kutunun yeri yeniden göründü: kutu yerine döner
+    else if (dar) { k.style.left = izr.left + "px"; k.style.width = izr.width + "px"; } // ekran döndürülünce
     if (cat === "Şubeler") subeIz();
   }
   function subeIz() {
