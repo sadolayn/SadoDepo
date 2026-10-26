@@ -72,6 +72,7 @@
   .ysSer a::after { content: "◆"; margin: 0 12px; color: #6b5222; font-size: 9px; }
   .ysSer .ysNot { font-size: 11px; color: #8a7a5e; }
   .ysSer .ysSon { margin-right: 34px; }
+  .ysSer .ysDet { margin-right: 6px; color: #e9dcc0; }
   .ysSer .ysOnem { margin-right: 6px; padding: 1px 6px; border-radius: 5px; background: #d32f2f; color: #fff; font-size: 10.5px; font-weight: 800; letter-spacing: .5px; }
   @keyframes ysKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   /* Bilgisayarda "animasyonları azalt" açıksa da üst şerit kaysın (alttaki kayan yazı gibi), sadece biraz yavaş */
@@ -769,10 +770,13 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     ["🛒", "Market alışverişine 1.000 TL MaxiPuan", "31 Ekim'e kadar", "https://www.isbank.com.tr/kampanyalar/maximumdan-market-alisverislerinize-1000lira-maxipuan-kampanyasi", "2026-10-31", /market/],
     ["🤝", "İş Bankası'nı öner kampanyası", "öneren ve önerilene 500 TL MaxiPuan · 31 Ekim'e kadar", "https://www.isbank.com.tr/kampanyalar/is-bankasini-arkadasiniza-onerin-maxipuan-kazanin", "2026-10-31", /arkadaş/],
   ].filter((x) => !x[4] || new Date() <= new Date(x[4] + "T23:59:59"));
-  // Şeridin en başında ÖNEMLİ İş Bankası haberleri (KAP vb.): [simge, başlık, not, sitedeki yeri, son gün]; son günden sonra kendiliğinden kalkar
+  // Şeridin en başında ÖNEMLİ İş Bankası haberleri (KAP vb.): [simge, başlık, ayrıntı, kaynak, sitedeki yeri, son gün]; son günden sonra kendiliğinden kalkar.
+  // Ayrıntı KAP açıklamasındaki unvan ve görevlerle yazılır.
   const ONEMLI = [
-    ["🏛️", "İş Bankası'nda Genel Müdür Yardımcılığına 4 atama", "Ozan Uyar, Kenan Ayvacı, Zekai Mehmet Tuğtan, Murat Doğan · KAP, 26 Ekim", "isbank.html#kap", "2026-10-29"],
-  ].filter((x) => !x[4] || new Date() <= new Date(x[4] + "T23:59:59"));
+    ["🏛️", "İş Bankası Genel Müdür Yardımcılığı görevlerinde değişiklik:",
+      "TSKB Genel Müdürü Ozan Uyar, İş Yatırım Genel Müdürü Kenan Ayvacı, Anadolu Sigorta Genel Müdürü Zekai Mehmet Tuğtan ve İştirakler Bölümü Müdürü Murat Doğan, BDDK izinlerinin ardından Genel Müdür Yardımcısı olacak · Genel Müdür Yardımcılarından Sezgin Yılmaz Anadolu Hayat Emeklilik'te, Sezgin Lüle TSKB'de görev alacak; Gürler Özkök İç Sistemler Koordinatörü olacak",
+      "KAP · 26 Ekim", "isbank.html#kap", "2026-10-29"],
+  ].filter((x) => !x[5] || new Date() <= new Date(x[5] + "T23:59:59"));
   const kutu = document.getElementById("yeniS"), ser = document.getElementById("ysSer");
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   const kucuk = (t) => t.toLocaleLowerCase("tr");
@@ -799,13 +803,14 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     return secilen;
   }
   function ciz(haber) {
-    const onem = ONEMLI.map(([e, ad, not, u]) => `<a href="${esc(u)}" data-o="${esc(ad)}"><span class="ysOnem">ÖNEMLİ</span>${e}<b>${esc(ad)}</b><span class="ysNot">${esc(not)}</span></a>`).join("");
+    const onem = ONEMLI.map(([e, ad, det, kay, u]) => `<a href="${esc(u)}" data-o="${esc(ad)}"><span class="ysOnem">ÖNEMLİ</span>${e}<b>${esc(ad)}</b><span class="ysDet">${esc(det)}</span><span class="ysNot">${esc(kay)}</span></a>`).join("");
     const resmi = YENI.map(([e, ad, not, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener" data-r="${esc(ad)}">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("");
     const hb = haber.map((h) => `<a href="${esc(h.u)}" target="_blank" rel="noopener" data-h="${esc(h.t)}">📰<b>${esc(h.t)}</b><span class="ysNot">${esc(h.s)}</span></a>`).join("");
     if (!onem && !resmi && !hb) return;
     const tur = onem + resmi + hb + `<span class="ysNot ysSon">kaynak: İş Bankası ve haberler · kişisel derleme, resmî değil ↗</span>`;
     ser.innerHTML = tur + tur; // iki tur yan yana: kesintisiz döngü
-    ser.style.setProperty("--sure", Math.max(28, (ONEMLI.length * 1.6 + YENI.length + haber.length * 1.6) * 10) + "s");
+    // Hız yazının uzunluğuna göre: uzun ÖNEMLİ haber eklenince şerit hızlanmasın (saniyede ~40 piksel)
+    requestAnimationFrame(() => ser.style.setProperty("--sure", Math.max(28, Math.round(ser.scrollWidth / 2 / 40)) + "s"));
     kutu.hidden = false;
   }
   // Tıklama sayımı (anonim): GoatCounter'da "bolum-index/yeni-<ürün>" ve "bolum-index/haber-<başlığın başı>" sayılır; kim tıkladığı bilinmez
