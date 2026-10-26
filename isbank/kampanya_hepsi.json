@@ -1,8 +1,8 @@
 {
- "guncelleme": "2026-10-26T09:31",
+ "guncelleme": "2026-10-26T14:43",
  "isbank": {
   "bireysel": {
-   "toplam": 188,
+   "toplam": 187,
    "kategoriler": [
     {
      "ad": "İş’te Maaş’a Özel",
@@ -232,7 +232,7 @@
     {
      "ad": "İş Black Ayrıcalıkları",
      "slug": "is-black-ayricaliklari",
-     "adet": 34,
+     "adet": 33,
      "url": "https://www.isbank.com.tr/kampanyalar/is-black-ayricaliklari",
      "kampanyalar": [
       {
@@ -344,15 +344,6 @@
        "nere": "Araç & Akaryakıt"
       },
       {
-       "baslik": "Maximiles ve Maximiles Black Sahiplerine Özel % 100'e Varan İndirimli Lounge Ayrıcalığı",
-       "bitis": "2026-12-31",
-       "ozet": "Maximiles ve Maximiles Black ile seçili havaalanlarında %100 indirime varan lounge ayrıcalığından yararlanabilirsiniz.",
-       "url": "https://www.isbank.com.tr/kampanyalar/maximiles-ve-maximiles-black-sahiplerine-ozel-indirimli-lounge-ayricaligi",
-       "ilk": "2000-01-01",
-       "ne": "MaxiMil",
-       "nere": "Seyahat"
-      },
-      {
        "baslik": "İşCep Aracılığıyla Alınan Anadolu Sigorta Ürünlerine Özel İndirim",
        "bitis": "2026-12-31",
        "ozet": "Anadolu Sigorta kasko poliçelerinizde %15'e varan, Bireysel Sağlık Sigortasında %20’ye varan ve Anadolu Tamamlayıcı Sağlık Sigortasında %10'a varan, Modüler Konut Sigortası'nda %35, Yeni Nesil Konut Sigortası'nda %15…",
@@ -396,6 +387,15 @@
        "ilk": "2000-01-01",
        "ne": "İndirim",
        "nere": "Seyahat"
+      },
+      {
+       "baslik": "İş Black Yatırım Gündemi",
+       "bitis": "2026-12-31",
+       "ozet": "İş Portföy tarafından İş Black müşterilerine özel olarak hazırlanan İş Black Yatırım Gündemi sizinle.",
+       "url": "https://www.isbank.com.tr/kampanyalar/is-black-yatirim-gundemi",
+       "ilk": "2026-10-26",
+       "ne": "Ayrıcalık",
+       "nere": "Bankacılık"
       }
      ],
      "biten": 0
@@ -4785,9 +4785,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/giyim-ve-kozmetik-maxipuan-kampanyasi",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "MaxiPuan",
-     "nere": "Giyim & Kozmetik"
+     "nere": "Giyim & Kozmetik",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Maximiles Black İle Yurt Dışı Çıkış Harcı Ödemelerinizde %50’ye Varan İndirim!",
@@ -4795,9 +4795,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-black-ile-yurt-disi-cikis-harci-odemelerinizde-50ye-varan-indirim",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "MaxiMil",
-     "nere": "Seyahat"
+     "nere": "Seyahat",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Samsung.com'da Seçili Beyaz Eşyalarda %15 İndirim!",
@@ -4805,9 +4805,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/samsung-com-da-secili-beyaz-esyalarda-15-indirim",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "İndirim",
-     "nere": "Elektronik & Beyaz Eşya"
+     "nere": "Elektronik & Beyaz Eşya",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Yepy'de Peşin Fiyatına 3 Ve 6 Taksit Fırsatı!",
@@ -4815,9 +4815,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/yepy-de-pesin-fiyatina-taksit-firsati",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "Taksit",
-     "nere": "Online Alışveriş"
+     "nere": "Online Alışveriş",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Yolcu360'tan Yurt Dışında Araç Kiralamaya Özel Net %15 İndirim Fırsatı",
@@ -4825,9 +4825,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/yolcu360-tan-arac-kiralamaya-ozel-net-15-yurt-disi-indirimi",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "İndirim",
-     "nere": "Araç & Akaryakıt"
+     "nere": "Araç & Akaryakıt",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Amazon.com.tr'de Peşin Fiyatına 6 Taksit Fırsatı!",
@@ -4835,9 +4835,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/amazon-com-tr-de-6-taksit-firsati",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "Taksit",
-     "nere": "Online Alışveriş"
+     "nere": "Online Alışveriş",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "ETS'deki Seçili Otellerde 2026 Yaz Dönemi İçin Yapacağınız Rezervasyonlarınızda Anında %8 Ek İndirim",
@@ -4845,10 +4845,10 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/ets-deki-secili-otellerde-2026-yaz-donemi-icin-rezervasyonlarinizda-aninda-8-ek-indirim-kazanin",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "İndirim",
      "nere": "Seyahat",
-     "es": "~etsdekiseciliotellerde2026yazdonemiicinyapacaginizrezervasyonlarinizdaaninda%8ekindirim"
+     "es": "~etsdekiseciliotellerde2026yazdonemiicinyapacaginizrezervasyonlarinizdaaninda%8ekindirim",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Gap'te %10 İndirim!",
@@ -4856,9 +4856,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/gap-te-10-indirim",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "İndirim",
-     "nere": "Giyim & Kozmetik"
+     "nere": "Giyim & Kozmetik",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Lastikcim.com'da Michelin Lastik Alışverişinize 4.000 TL MaxiPuan Fırsatı",
@@ -4866,9 +4866,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/lastikcim-com-da-michelin-lastik-alisverisinize-4-000-tl-maxipuan-firsati",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "MaxiPuan",
-     "nere": "Araç & Akaryakıt"
+     "nere": "Araç & Akaryakıt",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Marks And Spencer'da %10 İndirim!",
@@ -4876,9 +4876,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/marks-and-spencer-da-10-indirim",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "İndirim",
-     "nere": "Giyim & Kozmetik"
+     "nere": "Giyim & Kozmetik",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "AdL'de 750 TL MaxiPuan!",
@@ -4886,9 +4886,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-adl-de-750-tl-maxipuan-kampanyasi",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "MaxiPuan",
-     "nere": "Giyim & Kozmetik"
+     "nere": "Giyim & Kozmetik",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Love My Body'de 750 TL MaxiPuan!",
@@ -4896,9 +4896,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-tan-love-my-body-de-750-tl-maxipuan-kampanyasi",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "MaxiPuan",
-     "nere": "Giyim & Kozmetik"
+     "nere": "Giyim & Kozmetik",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Metro Mağazalarında 300 TL MaxiPuan Fırsatı!",
@@ -4906,9 +4906,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/metro-magazalarinda-300-tl-maxipuan-firsati",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "MaxiPuan",
-     "nere": "Market & Yemek"
+     "nere": "Market & Yemek",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Miele'de Peşin Fiyatına 6 Taksit!",
@@ -4916,9 +4916,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/miele-de-pesin-fiyatina-6-taksit",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "Taksit",
-     "nere": "Elektronik & Beyaz Eşya"
+     "nere": "Elektronik & Beyaz Eşya",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Samsung.com'da Seçili Klimalarda %10 İndirim!",
@@ -4926,9 +4926,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/samsung-com-da-secili-klimalarda-10-indirim",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "İndirim",
-     "nere": "Elektronik & Beyaz Eşya"
+     "nere": "Elektronik & Beyaz Eşya",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Tefal.com.tr Ve Tefal Uygulamasında Seçili Ürünlerde %25 İndirim!",
@@ -4936,9 +4936,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/tefal-com-tr-ve-tefal-uygulamasinda-secili-urunlerde-25-indirim",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "İndirim",
-     "nere": "Elektronik & Beyaz Eşya"
+     "nere": "Elektronik & Beyaz Eşya",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Trendyol'da Peşin Fiyatına 6 Taksit Fırsatı!",
@@ -4946,9 +4946,9 @@
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/trendyol-da-pesin-fiyatina-6-taksit-firsati",
      "tv": 2,
-     "ilk": "2000-01-01",
      "ne": "Taksit",
-     "nere": "Online Alışveriş"
+     "nere": "Online Alışveriş",
+     "ilk": "2000-01-01"
     }
    ]
   },
