@@ -55,7 +55,13 @@ function sheet_() {
   const props = PropertiesService.getScriptProperties();
   let ss = null;
   const id = props.getProperty('SS');
-  if (id) { try { ss = SpreadsheetApp.openById(id); } catch (e) { ss = null; } }
+  if (id) {
+    try { ss = SpreadsheetApp.openById(id); }
+    catch (e) {
+      /* Tablo varken bu hesap açamıyorsa yeni boş tablo AÇILMAZ (aboneler kaybolmasın): önce tablo bu hesapla Düzenleyici olarak paylaşılmalı */
+      throw new Error('Abone tablosu açılamadı. "Sadolayn Alerts — Aboneler" tablosunu bu hesapla Düzenleyici olarak paylaşıp yeniden çalıştır. (Tablo kimliği: ' + id + ')');
+    }
+  }
   if (!ss) ss = SpreadsheetApp.getActiveSpreadsheet();
   if (!ss) ss = SpreadsheetApp.create('Sadolayn Alerts — Aboneler');
   props.setProperty('SS', ss.getId());
