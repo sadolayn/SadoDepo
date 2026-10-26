@@ -771,7 +771,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   ].filter((x) => !x[4] || new Date() <= new Date(x[4] + "T23:59:59"));
   // Şeridin en başında ÖNEMLİ İş Bankası haberleri (KAP vb.): [simge, başlık, not, sitedeki yeri, son gün]; son günden sonra kendiliğinden kalkar
   const ONEMLI = [
-    ["🏛️", "İş Bankası'nda 3 Genel Müdür Yardımcısı değişti", "KAP · 26 Ekim", "isbank.html#guncel", "2026-10-29"],
+    ["🏛️", "İş Bankası'nda Genel Müdür Yardımcılığına 4 atama", "Ozan Uyar, Kenan Ayvacı, Zekai Mehmet Tuğtan, Murat Doğan · KAP, 26 Ekim", "isbank.html#kap", "2026-10-29"],
   ].filter((x) => !x[4] || new Date() <= new Date(x[4] + "T23:59:59"));
   const kutu = document.getElementById("yeniS"), ser = document.getElementById("ysSer");
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
