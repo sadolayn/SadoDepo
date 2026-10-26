@@ -1,11 +1,13 @@
 // Yıldız — Batak, King ve Balayı King'de ortak bakiye. (Solitaire'de Yıldız yok; orada dilek tutulur.)
 // Bakiye "batakMP" anahtarında durur, böylece Batak'taki eski bakiye korunur. 1.000 Yıldız ve bir kerelik 2.000 Yıldız hediyeyle başlanır.
 // Oyun başında Yıldız konur; kazanan katını alır (kesinti yok). Yıldız yalnızca oyun içi skordur.
+// Dört kişilik tekli oyunlarda (King, Batak) sıraya göre: birinci 3 katını, ikinci Yıldızını geri alır; puan eşitse o sıraların payı bölünür.
 // Yıldız biterse 3 saat sonra İş Bankası sorusu gelir (isq.js); doğru cevap 1.000 Yıldız kazandırır.
 // Kullanım:
 //   Token.bakiye() · Token.fmt(n) · Token.yeter() · Token.koy(n) → true/false
 //   Token.secici(kok, oyun) → puan seçicisini kökün içine çizer; .deger() seçili tutarı verir
-//   Token.sonuc(oyun, konan, kisi, kat) → ödemeyi yapar (kat: 0 kaybetti, 1 iade, 2/3 kazandı), { pay, fee, durum, html }
+//   Token.sonuc(oyun, konan, kisi, kat, not) → ödemeyi yapar (kat: 0 kaybetti, 0–1 arası kısmi iade, 1 iade, 1'den büyük kazandı), { pay, fee, durum, html }
+//   Token.sira(skorlar, ben, carpanlar) → { kat, sira, esit }: sıraya göre çarpan (varsayılan [3, 1, 0, 0]); eşitlikte o sıraların ortalaması
 //   Token.kilit(modal, { goster, devam }) → Yıldız bittiyse bekleme ekranı ya da İş Bankası sorusu
 (function () {
   const KEY = "batakMP", KADEMELER = [100, 250, 500, 1000, 2500, 5000, 10000], FEE = 0, ODUL = 1000, BEKLE = 3 * 36e5, HEDIYE = 2000;
@@ -57,15 +59,26 @@
     return api;
   }
   function koy(n) { yukle(); if (!n || n > MP.bal) return false; MP.bal -= n; save(); return true; }
-  // Oyun sonu ödemesi. kisi: masadaki oyuncu sayısı (masa = konan × kisi); kat: 0 kaybetti, 1 iade, 2/3 kazandı
-  function sonuc(oyun, konan, kisi, kat) {
+  // Sıraya göre çarpan: skorlar büyükten küçüğe dizilir; "ben" (0 = oyuncu) kaçıncı, kaç kişiyle eşit. Eşitlikte o sıraların çarpanları ortalanır
+  // (ör. birincilik iki kişide: (3 + 1) / 2 = 2 kat; ikincilik iki kişide: (1 + 0) / 2 = yarısı geri).
+  function sira(skorlar, ben, carpanlar) {
+    const C = carpanlar || [3, 1, 0, 0], s = skorlar[ben || 0];
+    const once = skorlar.filter((x) => x > s).length, esit = skorlar.filter((x) => x === s).length;
+    let top = 0; for (let i = once; i < once + esit; i++) top += C[i] || 0;
+    return { kat: Math.round((top / esit) * 100) / 100, sira: once + 1, esit };
+  }
+  // Oyun sonu ödemesi. kisi: masadaki oyuncu sayısı (masa = konan × kisi); kat: 0 kaybetti, 0–1 kısmi iade, 1 iade, 1'den büyük kazandı.
+  // not: sonucun başına yazılan kısa ifade (ör. "🥈 İkinci oldun:")
+  function sonuc(oyun, konan, kisi, kat, not) {
     yukle();
     if (!konan) return { pay: 0, fee: 0, durum: "yok", html: "" };
-    const masa = konan * kisi, durum = kat > 1 ? "kazandi" : kat === 1 ? "berabere" : "kaybetti";
-    const ucret = 0, fee = 0, pay = konan * kat; // kesinti yok
+    const masa = konan * kisi, durum = kat > 1 ? "kazandi" : kat === 1 ? "berabere" : kat > 0 ? "kismi" : "kaybetti";
+    const ucret = 0, fee = 0, pay = Math.round(konan * kat); // kesinti yok
     MP.bal += pay; if (MP.bal >= KADEMELER[0]) MP.empty = 0; save();
-    const t = durum === "kazandi" ? `🎉 <b>${fmt(pay)}</b> Yıldız aldın (net <b>+${fmt(pay - konan)}</b>)!`
-      : durum === "berabere" ? `Berabere: ${fmt(konan)} Yıldız iade edildi.` : `Bu oyunda ${fmt(konan)} Yıldız kaybettin.`;
+    const on = not ? not + " " : "";
+    const t = durum === "kazandi" ? `${on || "🎉 "}<b>${fmt(pay)}</b> Yıldız aldın (net <b>+${fmt(pay - konan)}</b>)!`
+      : durum === "berabere" ? `${on || "Berabere: "}${fmt(konan)} Yıldızın geri geldi.`
+      : durum === "kismi" ? `${on}${fmt(pay)} Yıldız geri aldın (net −${fmt(konan - pay)}).` : `${on}Bu oyunda ${fmt(konan)} Yıldız kaybettin.`;
     return { pay, fee, ucret, masa, durum, html: `<div class="tkBox">${t}<br>⭐ Bakiye: <b>${fmt(MP.bal)}</b> Yıldız</div>` };
   }
   const kasa = (oyun) => (oku("tokenKasa", {})[oyun] || { oyun: 0, ucret: 0 });
@@ -119,7 +132,7 @@
     document.body ? t() : document.addEventListener("DOMContentLoaded", t);
   }
   window.Token = {
-    MP, KADEMELER, FEE, fmt, save, yukle, secenekler, secici, koy, sonuc, kasa, kilit,
+    MP, KADEMELER, FEE, fmt, save, yukle, secenekler, secici, koy, sonuc, sira, kasa, kilit,
     bakiye: () => yukle().bal,
     yeter: () => yukle().bal >= KADEMELER[0],
   };
