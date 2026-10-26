@@ -31,5 +31,6 @@ jobs:
           git add isbank/kampanya_hepsi.json isbank/kampanya_ilk.json
           git diff --cached --quiet && exit 0
           git commit -q -m "Kampanyalar güncellendi"
-          for i in 1 2 3; do git pull --rebase -q && git push -q && exit 0; sleep 5; done
+          # Toplama sürerken veri dosyası elle düzeltilmişse çakışma olur: bu turun taze verisi geçerli sayılır (-X theirs)
+          for i in 1 2 3; do (git pull --rebase -q -X theirs || { git rebase --abort; false; }) && git push -q && exit 0; sleep 5; done
           exit 1
