@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-10-25T18:40:00+03:00",
+ "guncelleme": "2026-10-26T06:56:27+03:00",
  "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
  "duyurular": [
   {
@@ -10,6 +10,15 @@
    "etki": "Politika faizi, mevduat ve kredi faizlerinin yönünü belirleyen temel orandır; bankaların fiyatlamalarında izlenir.",
    "onemli": true,
    "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Duyurular/Basin/2026/DUY2026-45"
+  },
+  {
+   "tarih": "2026-10-20",
+   "kurum": "SPK",
+   "baslik": "Yatırımcı Tazmin Merkezi'ndeki varlıkların iadesi e-Devlet'ten istenebilecek",
+   "ozet": "SPK i-SPK.83.1 sayılı ilke kararıyla, zamanaşımı nedeniyle Yatırımcı Tazmin Merkezi'ne (YTM) aktarılan nakit ve menkul kıymetlerin iadesi için başvuruların e-Devlet üzerinden yapılmasını esas aldı. Elektronik başvuru yapamayan mirasçı, vekil, vasi, müşterek hesap sahibi ve şirket yetkilileri için ayrı başvuru yolu belirlendi. Karar, e-Devlet başvurularının başladığı tarihte yürürlüğe girecek; tarih YTM sitesinde duyurulacak.",
+   "etki": "Unutulmuş yatırım hesabı YTM'ye devredilmiş müşteriler iade başvurusunu şubeye ya da aracı kuruma gitmeden yapabilecek.",
+   "onemli": false,
+   "url": "https://www.alomaliye.com/2026/10/21/yatirimci-tazmin-merkezi-ytm-iadelerinde-yeni-basvuru-esaslari/"
   },
   {
    "tarih": "2026-10-17",
@@ -34,7 +43,7 @@
    "tarih": "2026-10-07",
    "kurum": "TMSF",
    "baslik": "Tasfiye edilen fonlarda TMSF bünyesinde özel hesaplar açıldı, ilk ödemeler başladı",
-   "ozet": "Cumhurbaşkanı Yardımcısı TBMM'de fon tasfiyesini anlattı: TMSF bünyesinde her sorunlu fon için özel hesap açıldı, olağan tasfiyesi biten 17 fonda ödemeler 8 Ekim'de başladı. Tasfiye yönetimi 125 fonda Ziraat Bankası'na, 6 fonda İş Bankası'na verildi. Güncelleme: 1 milyon TL'ye kadar ara ödeme getiren kanun 22 Ekim'de TBMM'de kabul edildi; ödemeler Resmi Gazete'de yayımlanmasına bağlı.",
+   "ozet": "Cumhurbaşkanı Yardımcısı TBMM'de fon tasfiyesini anlattı: TMSF bünyesinde her sorunlu fon için özel hesap açıldı, olağan tasfiyesi biten 17 fonda ödemeler 8 Ekim'de başladı. Tasfiye yönetimi 125 fonda Ziraat Bankası'na, 6 fonda İş Bankası'na verildi. Güncelleme: 1 milyon TL'ye kadar ara ödeme getiren 7596 sayılı kanun 22 Ekim'de TBMM'de kabul edildi; 26 Ekim itibarıyla Resmi Gazete'de yayımlanmadı, ödemeler yayıma bağlı.",
    "etki": "Tasfiyedeki fonların yatırımcıları ödeme takvimini fonu aldıkları kurumdan ya da tasfiyeyi yürüten bankadan öğrenebilir; bu bankalarda yoğunluk olabilir.",
    "onemli": true,
    "url": "https://www.ntv.com.tr/turkiye/mecliste-gundem-fon-krizi-cumhurbaskani-yardimcisi-yilmaz-odeme-sureci-yarin-basliyor-1745251"
@@ -67,6 +76,15 @@
    "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Duyurular/Basin/2026/DUY2026-43"
   },
   {
+   "tarih": "2026-09-30",
+   "kurum": "SPK",
+   "baslik": "Tasfiyedeki fonların yatırımcılarına 1 milyon TL'ye kadar ara ödeme",
+   "ozet": "SPK, 17 Eylül'de tasfiyesine karar verilen dört portföy yönetim şirketinin fonlarında, mutabakatı tamamlanan yatırımcılara nihai tasfiye beklenmeden ara ödeme yapılmasını kararlaştırdı. Ödeme MKK'nın hesapladığı net yatırım tutarı kadar, en fazla 1 milyon TL olacak; uygulama para piyasası fonlarından başlıyor ve ara ödemede pay iadesi yapılmıyor.",
+   "etki": "Bu fonlara bankalar ya da aracı kurumlar üzerinden yatırım yapmış müşterilerin ilk ödemeleri ara ödeme yoluyla gelecek; pay iadesi nihai tasfiyede yapılacak.",
+   "onemli": false,
+   "url": "https://bloomberght.com/spkdan-tafsiye-edilen-fonlar-icin-ara-odeme-karari-3789902"
+  },
+  {
    "tarih": "2026-09-23",
    "kurum": "MASAK",
    "baslik": "Ön ödemeli kart ve e-parada basitleştirilmiş tedbir eşiği 5.500 TL'ye çıktı",
@@ -83,6 +101,15 @@
    "etki": "Bu fonlar TEFAS'ta alınıp satılamıyor; yatırımcılar tasfiye ve ödeme takvimini fonu aldıkları kurumdan ya da SPK/TEFAS duyurularından öğrenebilir.",
    "onemli": true,
    "url": "https://tr.investing.com/news/stock-market-news/spk-7-portfoy-yonetim-sirketinin-130-fonu-icin-tasfiye-karar-ald-4069549"
+  },
+  {
+   "tarih": "2026-09-17",
+   "kurum": "BDDK",
+   "baslik": "Bankaların geri aldığı kendi hisseleri sermayeden düşülmeyecek",
+   "ozet": "BDDK, Borsa İstanbul'da işlem gören halka açık bankaların 16 Eylül 2026'dan sonra borsadan geri aldığı kendi paylarının çekirdek sermayeden indirim kalemi olarak dikkate alınmamasına ve kredi ile piyasa riskine esas tutar hesabına katılmamasına karar verdi. Uygulama 31 Aralık 2026'ya kadar geçerli.",
+   "etki": "Halka açık bankalar hisse geri alımı yaparken sermaye yeterliliği oranları bu alımlardan olumsuz etkilenmeyecek.",
+   "onemli": true,
+   "url": "https://tr.euronews.com/business/2026/09/17/bddkdan-borsa-istanbul-onlemi-bankalara-esneklik-saglanacak"
   }
  ]
 }
