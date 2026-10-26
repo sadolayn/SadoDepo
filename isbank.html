@@ -2791,7 +2791,7 @@ function renderList() {
     // Video sekmesi sonradan eklendi: eski ziyaretçide 1 haftadan eski videolar okunmuş sayılsın
     if (!SEEN._yv) { vids.forEach((x) => { if (!x.d || (Date.now() - new Date(x.d)) / 864e5 > 7) SEEN["y:" + x.u] = 1; }); SEEN._yv = 1; seenSave(); }
     renderList(); renderChips(); ilkCizim = false;
-    if (/^#(yeni|maximum)$/.test(location.hash)) icerigeKay(); // ana sayfadaki kampanya etiketlerinden gelince liste görünsün
+    // Ana sayfadaki kampanya etiketlerinden gelinse de sayfa baştan açılır: İş Bankası Gündemi menüsü atlanmaz, Kampanyalar seçili hazır bekler
   } catch (e) {
     Ortak.hata("list", { ne: "İş Bankası gündemi" });
   }
