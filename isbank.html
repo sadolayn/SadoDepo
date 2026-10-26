@@ -1015,6 +1015,7 @@ let ayr = "black", ipl = null; try { ayr = localStorage.getItem("isbankAyr") || 
 if (location.hash === "#isplus") { cat = "Black"; ayr = "plus"; }
 // Ana sayfadaki kayan yazıdan gelince
 if (location.hash === "#iscep") cat = "İşCep";
+if (location.hash === "#guncel") { cat = "📰 Güncel"; lastNews = cat; } // ana sayfadaki kayan yazıdaki önemli haberden
 if (location.hash === "#black") { cat = "Black"; ayr = "black"; }
 if (location.hash === "#kampanya") cat = "Kampanya";
 

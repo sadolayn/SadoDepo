@@ -72,6 +72,7 @@
   .ysSer a::after { content: "◆"; margin: 0 12px; color: #6b5222; font-size: 9px; }
   .ysSer .ysNot { font-size: 11px; color: #8a7a5e; }
   .ysSer .ysSon { margin-right: 34px; }
+  .ysSer .ysOnem { margin-right: 6px; padding: 1px 6px; border-radius: 5px; background: #d32f2f; color: #fff; font-size: 10.5px; font-weight: 800; letter-spacing: .5px; }
   @keyframes ysKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   /* Bilgisayarda "animasyonları azalt" açıksa da üst şerit kaysın (alttaki kayan yazı gibi), sadece biraz yavaş */
   @media (prefers-reduced-motion: reduce) { .ysSer { animation-duration: calc(var(--sure, 40s) * 1.5); } .ysEt i { animation: none; } }
@@ -768,6 +769,10 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     ["🛒", "Market alışverişine 1.000 TL MaxiPuan", "31 Ekim'e kadar", "https://www.isbank.com.tr/kampanyalar/maximumdan-market-alisverislerinize-1000lira-maxipuan-kampanyasi", "2026-10-31", /market/],
     ["🤝", "İş Bankası'nı öner kampanyası", "öneren ve önerilene 500 TL MaxiPuan · 31 Ekim'e kadar", "https://www.isbank.com.tr/kampanyalar/is-bankasini-arkadasiniza-onerin-maxipuan-kazanin", "2026-10-31", /arkadaş/],
   ].filter((x) => !x[4] || new Date() <= new Date(x[4] + "T23:59:59"));
+  // Şeridin en başında ÖNEMLİ İş Bankası haberleri (KAP vb.): [simge, başlık, not, sitedeki yeri, son gün]; son günden sonra kendiliğinden kalkar
+  const ONEMLI = [
+    ["🏛️", "İş Bankası'nda 3 Genel Müdür Yardımcısı değişti", "KAP · 26 Ekim", "isbank.html#guncel", "2026-10-29"],
+  ].filter((x) => !x[4] || new Date() <= new Date(x[4] + "T23:59:59"));
   const kutu = document.getElementById("yeniS"), ser = document.getElementById("ysSer");
   const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   const kucuk = (t) => t.toLocaleLowerCase("tr");
@@ -794,16 +799,17 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     return secilen;
   }
   function ciz(haber) {
+    const onem = ONEMLI.map(([e, ad, not, u]) => `<a href="${esc(u)}" data-o="${esc(ad)}"><span class="ysOnem">ÖNEMLİ</span>${e}<b>${esc(ad)}</b><span class="ysNot">${esc(not)}</span></a>`).join("");
     const resmi = YENI.map(([e, ad, not, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener" data-r="${esc(ad)}">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("");
     const hb = haber.map((h) => `<a href="${esc(h.u)}" target="_blank" rel="noopener" data-h="${esc(h.t)}">📰<b>${esc(h.t)}</b><span class="ysNot">${esc(h.s)}</span></a>`).join("");
-    if (!resmi && !hb) return;
-    const tur = resmi + hb + `<span class="ysNot ysSon">kaynak: İş Bankası ve haberler · kişisel derleme, resmî değil ↗</span>`;
+    if (!onem && !resmi && !hb) return;
+    const tur = onem + resmi + hb + `<span class="ysNot ysSon">kaynak: İş Bankası ve haberler · kişisel derleme, resmî değil ↗</span>`;
     ser.innerHTML = tur + tur; // iki tur yan yana: kesintisiz döngü
-    ser.style.setProperty("--sure", Math.max(28, (YENI.length + haber.length * 1.6) * 10) + "s");
+    ser.style.setProperty("--sure", Math.max(28, (ONEMLI.length * 1.6 + YENI.length + haber.length * 1.6) * 10) + "s");
     kutu.hidden = false;
   }
   // Tıklama sayımı (anonim): GoatCounter'da "bolum-index/yeni-<ürün>" ve "bolum-index/haber-<başlığın başı>" sayılır; kim tıkladığı bilinmez
-  ser.addEventListener("click", (e) => { const a = e.target.closest("a[data-r],a[data-h]"); if (!a || !window.Rapor) return; Rapor.bolum(a.dataset.r ? "yeni-" + a.dataset.r : "haber-" + a.dataset.h); });
+  ser.addEventListener("click", (e) => { const a = e.target.closest("a[data-r],a[data-h],a[data-o]"); if (!a || !window.Rapor) return; Rapor.bolum(a.dataset.o ? "onemli-" + a.dataset.o : a.dataset.r ? "yeni-" + a.dataset.r : "haber-" + a.dataset.h); });
   ciz([]);
   Ortak.json("data/haberler.json").then((d) => { const h = haberSec(d && d.cats && d.cats.isbank); if (h.length) ciz(h); }).catch(() => {});
 })();
