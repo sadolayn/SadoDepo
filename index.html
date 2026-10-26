@@ -586,6 +586,10 @@
   window.addEventListener("appinstalled", () => ($("kur").hidden = true));
 })();
 </script>
+<script>
+// Ana sayfa iki adresten açılıyor (/SadoDepo/ ve ana ekrana eklenmiş uygulamada /SadoDepo/index.html): raporda tek satır olsun
+window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|\?)/, "/"); } };
+</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script src="yeni.js"></script>
 <script>
