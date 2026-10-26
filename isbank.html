@@ -806,6 +806,8 @@
   .mdYapim b { color: #f0c64a; } .mdYapim span { display: block; margin-top: 3px; }
   .mdUyari { margin: 10px 0; padding: 10px 12px; border-radius: 12px; border: 1px solid #5a3a12; background: #1c1206; color: #ffd9a8; font-size: 12.5px; line-height: 1.45; }
   .karac { display: grid; gap: 7px; margin: 0 0 10px; }
+  .knot { flex: 1 1 100%; margin: 2px 4px 4px; font-size: 11.5px; line-height: 1.4; color: #9aa3b5; }
+  .altkutu.dar:not(.acik) .knot, #tfil.araniyor .knot { display: none; }
   .ksihnot { flex: 1 1 100%; display: flex; align-items: center; gap: 8px; margin: 6px 2px 2px; font-size: 12.5px; line-height: 1.4; color: #bff0d2; }
   .ksihnot span { flex: 1; min-width: 0; }
   .ksihnot button { flex: none; min-height: 34px; padding: 0 12px; border-radius: 11px; border: 1px solid #3fc283; background: #3fc283; color: #04140a; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
@@ -1614,6 +1616,8 @@ function renderKampanyalar() {
   t.innerHTML = `<div class="kara"><i>🔎</i><input id="kAra" type="search" enterkeyhint="search" placeholder="Ara: ${esc(kOrnekler().slice(0, 3).join(", "))}… (Türkçe harf şart değil)" value="${esc(kAra)}" autocomplete="off"><button type="button" id="kAraSil"${kAra ? "" : " hidden"}>✕</button><button type="button" class="ksihk${kSih.acik ? " on" : ""}">🧭 Bana uygun</button></div>`
     + `<div class="tsat uc"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
     + `<div class="tsat uc"><span class="tlab">👥 Bölüm</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
+    // Sitelerdeki sayılar toplanınca ana sayfadaki "farklı kampanya" sayısı tutmaz: aynı kampanya birden çok sitede yayımlanabiliyor
+    + `<div class="knot">ℹ️ Aynı kampanya birden çok sitede olabilir: ${kSeg === "ticari" ? "Ticaride" : "Bireyselde"} ${Object.keys(K_KAY).reduce((a, k) => a + (say(k, kSeg) || 0), 0)} kayıt, ${new Set(kTumu(kSeg).map(kAyni)).size} farklı kampanya · tüm bölümlerde ${new Set(kTumu().map(kAyni)).size} farklı kampanya</div>`
     + (L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, kKisa(ad), n, kKim === ad)).join("")}</div></div>` : "")
     + (L.length && !kOne ? `<div class="tsat kgr"><span class="tlab">💰 Ne kazanırım</span><div class="tgrid">${sb("data-ne", "", "📋", "Hepsi", neT.length, !kNe, "hep")}${neS.map(([ad, ic, n]) => sb("data-ne", ad, ic, ad, n, kNe === ad)).join("")}</div></div>`
       + `<div class="tsat kgr"><span class="tlab">🛍️ Nerede</span><div class="tgrid">${sb("data-nere", "", "📋", "Hepsi", nereT.length, !kNere, "hep")}${nereGor.map(([ad, ic, n]) => sb("data-nere", ad, ic, kKisa(ad), n, kNere === ad)).join("")}${nereGor.length < nereS.length || kKatAcik ? `<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Daha az" : `▾ ${nereS.length - nereGor.length} grup daha`}</button>` : ""}</div></div>` : "");
