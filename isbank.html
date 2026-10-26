@@ -1759,7 +1759,8 @@ const kBugun = () => new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10
 let kSihOnceki = "";
 try { const x = JSON.parse(localStorage.getItem("isbankSihir") || "null"); if (x) { kSih = { ...kSih, ...x, acik: false }; kSihOnceki = x.son || ""; } } catch (e) {}
 function kSihKaydet() { try { localStorage.setItem("isbankSihir", JSON.stringify({ seg: kSih.seg, pro: kSih.pro, nere: kSih.nere, ne: kSih.ne, son: kBugun() })); } catch (e) {} }
-const kAyni = (k) => kKucuk(k.baslik).replace(/[^a-z0-9%]/g, "");
+// Aynı kampanya anahtarı: başlık (Türkçe harf, işaret farkı yok sayılır); başka sitede biraz farklı yazılmışsa toplayıcının verdiği ortak anahtar ("es")
+const kAyni = (k) => k.es || kKucuk(k.baslik).replace(/[^a-z0-9%]/g, "");
 // 🆕 Yeni gelenler: son 3 günde (İstanbul günüyle bugün, dün, evvelsi gün) listeye giren kampanyalar; üç site, bireysel ve ticari.
 // İki sitede birden yayımlanan kampanya bir kez, ilk görüldüğü günle. Ana sayfadaki "son 3 günde N yeni" ve Kampanyalar rozeti bu listeden.
 const kTrGun = (once) => new Date(Date.now() + 3 * 3600e3 - once * 864e5).toISOString().slice(0, 10); // İstanbul günü, "once" gün önce

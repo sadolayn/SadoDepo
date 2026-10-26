@@ -819,7 +819,7 @@
         var v = S[sg] || {}, L = v.kampanyalar || [].concat.apply([], (v.kategoriler || []).map(function (c) { return c.kampanyalar || []; }));
         L.forEach(function (k) {
           if (!k || !k.baslik || (k.bitis && k.bitis < bugun)) return;
-          var a = ayni(k.baslik), ilk = k.ilk && k.ilk > "2000-01-01" ? k.ilk : "0";
+          var a = k.es || ayni(k.baslik), ilk = k.ilk && k.ilk > "2000-01-01" ? k.ilk : "0";
           if (!(a in G) || ilk < G[a]) G[a] = ilk; // aynı kampanya birden çok yerdeyse ilk görüldüğü gün
         });
       });

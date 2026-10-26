@@ -419,24 +419,58 @@ if os.path.exists(OUT):
     try: eski = json.load(open(OUT, encoding="utf-8"))
     except Exception: eski = {}
 
+# İlk görülme hafızası: bağlantı → [ilk görüldüğü gün, son görüldüğü gün]. Kampanya bir gün listeden düşüp
+# (site eksik yüklenince) geri gelince "yeni" sanılmasın; 90 gündür görülmeyen kayıt silinir. Yalnızca bağlantı ve tarih tutulur.
+ILK = "isbank/kampanya_ilk.json"
+# Not: toplayıcı 24-25 Ekim 2026'da kuruldu; o günlerde ilk kez okunan kampanyalar (önceden sitede olup okunamayanlar) "yeni" sayılmadı
+_KATLA = str.maketrans("çğıöşüâîû", "cgiosuaiu")
+def _kelimeler(b):
+    t = re.sub(r"[’'`]", "", b.replace("İ", "i").replace("I", "ı").lower().translate(_KATLA))
+    return set(re.findall(r"[a-z0-9%]+", t))
+# Başlıklar arasında fark sayılmayan kelimeler (sitelerin yazım farkı: "%8'e varan … kazanın" / "%8 …", "Maximiles Business …")
+_DOLGU = {"varan", "firsati", "firsat", "kazanin", "ozel", "ek", "ile", "ve", "icin", "tl", "maximum", "maximiles", "business"}
+def _benzer(a, b):
+    """Aynı kampanyanın başka sitedeki yazımı mı: sayılar aynı, sayı ve dolgu kelimeleri dışında kelime farkı yok
+    ("…anında %8'e varan ek indirim kazanın!" ile "…Anında %8 Ek İndirim" aynı; "Zara" ile "Zara Home", "Slack" ile "Salesforce" farklı)."""
+    if set(re.findall(r"\d+", a.replace(".", ""))) != set(re.findall(r"\d+", b.replace(".", ""))): return False
+    A, B = _kelimeler(a), _kelimeler(b)
+    fark = {w for w in A ^ B if not re.search(r"\d", w)} - _DOLGU
+    return len(A & B) >= 3 and not fark
+
+def _kampanyalar(v, out):
+    if isinstance(v, dict):
+        if "url" in v and "baslik" in v: out.append(v)
+        for x in v.values(): _kampanyalar(x, out)
+    elif isinstance(v, list):
+        for x in v: _kampanyalar(x, out)
+    return out
+
 def ilk_tarih(yeni, eski_v):
-    """Her kampanyaya ilk görüldüğü günü yaz (YENİ rozeti için)."""
-    gor = {}
-    def topla(v):
-        if isinstance(v, dict):
-            if "url" in v and "ilk" in v: gor[v["url"]] = v["ilk"]
-            for x in v.values(): topla(x)
-        elif isinstance(v, list):
-            for x in v: topla(x)
-    topla(eski_v)
+    """Her kampanyaya ilk görüldüğü günü yaz (YENİ rozeti için): önce aynı bağlantı (önceki liste ya da hafıza),
+    yoksa önceki listede ya da başka sitede aynı kampanyanın benzer yazımı; hiçbiri yoksa bugün."""
+    try: hafiza = json.load(open(ILK, encoding="utf-8"))
+    except Exception: hafiza = {}
+    eskiler, yeniler = _kampanyalar(eski_v, []), _kampanyalar(yeni, [])
+    gor = {u: v[0] for u, v in hafiza.items()}
+    for k in eskiler:
+        if k.get("ilk"): gor[k["url"]] = min(k["ilk"], gor.get(k["url"], k["ilk"]))
     ilk_calisma = not gor
-    def isle(v):
-        if isinstance(v, dict):
-            if "url" in v and "baslik" in v: v["ilk"] = gor.get(v["url"], "2000-01-01" if ilk_calisma else bugun.isoformat())
-            for x in v.values(): isle(x)
-        elif isinstance(v, list):
-            for x in v: isle(x)
-    isle(yeni)
+    for k in yeniler:
+        k.pop("ilk", None)
+        if k["url"] in gor: k["ilk"] = gor[k["url"]]
+    bilinen = [(k["baslik"], k["ilk"]) for k in eskiler if k.get("ilk")] + [(k["baslik"], k["ilk"]) for k in yeniler if "ilk" in k]
+    benzer = 0
+    for k in yeniler:
+        if "ilk" in k: continue
+        aday = [i for b, i in bilinen if _benzer(b, k["baslik"])]
+        if aday: benzer += 1
+        k["ilk"] = min(aday) if aday else ("2000-01-01" if ilk_calisma else bugun.isoformat())
+    for k in yeniler:
+        hafiza[k["url"]] = [min(k["ilk"], hafiza.get(k["url"], [k["ilk"]])[0]), bugun.isoformat()]
+    sinir = (bugun - dt.timedelta(days=90)).isoformat()
+    hafiza = {u: v for u, v in sorted(hafiza.items()) if v[1] >= sinir}
+    json.dump(hafiza, open(ILK, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+    print(f"ilk görülme: hafızada {len(hafiza)}, benzer yazımdan {benzer}, bugün yeni {sum(1 for k in yeniler if k['ilk'] == bugun.isoformat())}")
 
 def adet(v):
     if not v: return 0
@@ -534,4 +568,27 @@ for kaynak in ("isbank", "maximum", "maximiles"):
                 if k.get(a): k[a] = normal(k[a])
 veri["gruplar"] = {b: [{"ad": a, "ikon": i} for a, i in g] for b, g in GRUPLAR.items()}
 os.makedirs("isbank", exist_ok=True)
+# Başka sitede biraz farklı yazılmış aynı kampanyalara ortak anahtar ("es"): sitede (arama, sayılar, yeni gelenler) bir kez sayılır.
+# Yalnızca grubu birden çok yazımdan oluşan kampanyalara yazılır; anahtar "~" ile başlar, başlık anahtarlarıyla karışmaz.
+def esdeger(veri):
+    T = _kampanyalar({k: veri.get(k) for k in ("isbank", "maximum", "maximiles")}, [])
+    basliklar = sorted({k["baslik"] for k in T})
+    kok = {b: b for b in basliklar}
+    def bul(b):
+        while kok[b] != b: b = kok[b]
+        return b
+    for i, a in enumerate(basliklar):
+        for b in basliklar[i + 1:]:
+            if _benzer(a, b): kok[bul(b)] = bul(a)
+    gruplar, es = {}, {}
+    for b in basliklar: gruplar.setdefault(bul(b), []).append(b)
+    for uyeler in gruplar.values():
+        anah = {re.sub(r"[^a-z0-9%]", "", re.sub(r"[’'`]", "", x.replace("İ", "i").replace("I", "ı").lower().translate(_KATLA))) for x in uyeler}
+        if len(anah) > 1:
+            for x in uyeler: es[x] = "~" + min(anah)
+    for k in T:
+        if k["baslik"] in es: k["es"] = es[k["baslik"]]
+        else: k.pop("es", None)
+    print(f"benzer yazım: {len(set(es.values()))} grup, {sum(1 for k in T if 'es' in k)} kayıt")
+esdeger(veri)
 json.dump(veri, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
