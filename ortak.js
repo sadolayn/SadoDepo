@@ -109,8 +109,17 @@
     b.style.cssText = "position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:80;width:44px;height:44px;border-radius:50%;border:1px solid #5a4320;background:rgba(12,12,12,.92);color:#e0a24f;font:700 20px/1 system-ui,sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.6);cursor:pointer;opacity:0;transform:translateY(12px);transition:opacity .25s,transform .25s;pointer-events:none";
     b.onclick = function () { window.scrollTo({ top: 0, behavior: "smooth" }); };
     document.body.appendChild(b);
-    var f = function () { var on = window.scrollY > innerHeight * 1.5 && document.body.scrollHeight > innerHeight * 2.5; b.style.opacity = on ? "1" : "0"; b.style.transform = on ? "none" : "translateY(12px)"; b.style.pointerEvents = on ? "auto" : "none"; };
-    window.addEventListener("scroll", f, { passive: true }); f();
+    // Bilgisayarda (geniş ekran) yazılı ve içerik sütununun hemen sağında durur; telefonda yuvarlak ↑
+    var yer = function () {
+      var genis = innerWidth >= 760, c = document.querySelector(".wrap") || document.querySelector(".mn"), sag = 14;
+      b.textContent = genis ? "↑ Başa dön" : "↑";
+      b.style.width = genis ? "auto" : "44px"; b.style.padding = genis ? "0 16px" : "0"; b.style.borderRadius = genis ? "999px" : "50%"; b.style.font = genis ? "700 15px/1 system-ui,sans-serif" : "700 20px/1 system-ui,sans-serif";
+      if (genis && c) { var r = c.getBoundingClientRect(); if (innerWidth - r.right > b.offsetWidth + 40) sag = Math.max(14, innerWidth - r.right - 18 - b.offsetWidth); }
+      b.style.right = sag + "px";
+    };
+    // 1 ekran (en çok 800 piksel) aşağı inince belirir; büyük ekranda da geç kalmasın
+    var f = function () { var esik = Math.min(innerHeight, 800), on = window.scrollY > esik && document.body.scrollHeight > innerHeight + esik * 1.2; b.style.opacity = on ? "1" : "0"; b.style.transform = on ? "none" : "translateY(12px)"; b.style.pointerEvents = on ? "auto" : "none"; };
+    window.addEventListener("scroll", f, { passive: true }); window.addEventListener("resize", function () { yer(); f(); }); yer(); f();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", yukari); else yukari();
 
