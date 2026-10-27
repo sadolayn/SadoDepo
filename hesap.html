@@ -326,6 +326,10 @@
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
   @font-face { font-family: "SadoEl"; font-weight: 600; font-display: swap; src: url(lib/caveat-600-latin-ext.woff2) format("woff2");
     unicode-range: U+0100-02AF, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: "SadoTus"; font-display: swap; src: url(lib/patrickhand-latin.woff2) format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: "SadoTus"; font-display: swap; src: url(lib/patrickhand-latin-ext.woff2) format("woff2");
+    unicode-range: U+0100-02AF, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF; }
   #tabs [data-t="klavye"] { --c: #a7c957; }
   @media (max-width: 500px) { .tabs { grid-template-columns: repeat(4, 1fr); } }
   .kv h2 { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
@@ -369,17 +373,35 @@
   .kvNav { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px; margin-top: 8px; }
   .kvNav button { height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 20px; font-weight: 800; cursor: pointer; }
   .kvNav span { text-align: center; font-size: 12px; color: var(--muted); }
-  .kvKagit { margin-top: 14px; background: #fbf7ec; color: #2c4fa8; border-radius: 4px; padding: 10px 14px 14px; box-shadow: 0 6px 20px rgba(0,0,0,.45);
-    background-image: repeating-linear-gradient(#fbf7ec 0 33px, #e3dac2 33px 34px); background-position: 0 6px; }
-  .kvKagit h3 { margin: 6px 0 0; font-family: "SadoEl", cursive; font-weight: 600; font-size: 24px; color: #a8741c; line-height: 34px; }
-  .kvSat { display: block; width: 100%; text-align: left; border: 0; background: none; color: inherit; font-family: "SadoEl", "Segoe Print", cursive; font-weight: 600; font-size: 21px; line-height: 34px; padding: 0 4px; cursor: pointer; border-radius: 6px; }
-  .kvSat .kvOk { color: #c0392b; }
   .kv kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border: 1px solid #a9b4dd; border-bottom-width: 3px; border-radius: 6px; background: #fff; color: #10246b;
     font: 800 14px/1.35 system-ui, sans-serif; text-align: center; vertical-align: 2px; }
   .kvNk kbd { font-size: 19px; padding: 3px 10px; min-width: 34px; border-radius: 8px; }
-  .kvSat kbd { margin-right: 1px; }
-  .kvSat.on { background: rgba(255,214,90,.45); }
-  .kvKagit .imza { text-align: right; color: #a8741c; font-family: "SadoEl", cursive; font-size: 20px; line-height: 34px; }
+  /* Spiralli defter sayfası: büyük tuş solda, çizgiler her satıra uzanır */
+  .kvDefSek { margin-top: 16px; grid-auto-flow: initial; grid-template-columns: repeat(3, 1fr); }
+  .kvDefter { position: relative; margin-top: 10px; color: #22339a; border-radius: 4px; padding: 12px 8px 14px 40px; box-shadow: 0 6px 20px rgba(0,0,0,.45);
+    background-color: #fdfdf7; background-image: linear-gradient(90deg, transparent 33px, rgba(214,76,76,.6) 33px 35px, transparent 35px), repeating-linear-gradient(#fdfdf7 0 29px, #c2d0ee 29px 30px); }
+  .kvDefter::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 20px;
+    background: radial-gradient(circle at 13px 15px, #222 0 3.6px, transparent 4.2px) 0 0 / 20px 30px repeat-y, radial-gradient(ellipse 9px 4px at 5px 15px, transparent 0 5px, #8d8d8d 5.5px 7px, transparent 7.5px) 0 0 / 20px 30px repeat-y; }
+  .kvDb { margin: 0 0 6px; font-family: "SadoEl", cursive; font-weight: 600; font-size: 30px; line-height: 1.1; color: #1d2f8f; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 5px; }
+  .kvDg { position: relative; display: grid; grid-template-columns: 42px minmax(0, 1fr); column-gap: 22px; align-items: center; }
+  .kvDs { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+  .kvDk { align-self: center; display: grid; place-items: center; min-height: 52px; padding: 4px 2px; border: 2.5px solid #2c3ea6; border-radius: 10px; background: #f4f6ff;
+    box-shadow: 3px 4px 0 #2c3ea6; font-family: "SadoEl", cursive; font-weight: 600; font-size: 25px; line-height: 1; color: #1d2f8f; text-align: center; }
+  .kvDk.uzun { font-size: 19px; }
+  .kvDl { min-width: 0; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 6px; }
+  .kvDl > li { display: contents; }
+  .kvDl .c, .kvDl .a { font-family: "SadoEl", "Segoe Print", cursive; font-weight: 600; font-size: 17.5px; line-height: 30px; }
+  .kvDl .c { color: #1d2f8f; white-space: nowrap; font-family: "SadoTus", "SadoEl", cursive; font-weight: 400; font-size: 16.5px; }
+  .kvDl .a { color: #2c4fa8; line-height: 1.15; padding: 6px 0 5px; overflow-wrap: break-word; }
+  .kvDl .a::before { content: "– "; color: #6b7cc4; }
+  .kvDl .grp { grid-column: 1 / -1; font-family: "SadoEl", cursive; font-weight: 600; font-size: 22px; color: #a8741c; line-height: 30px; }
+  .kvDl button.c { border: 0; background: none; padding: 0 4px; margin: 0 -4px; text-align: left; cursor: pointer; border-radius: 6px; }
+  .kvDl button.c.on, .kvDl button.c.on + .a { background: rgba(255,214,90,.5); }
+  .kvDnot { margin: 8px 0 0; font-family: "SadoEl", cursive; font-weight: 600; font-size: 17px; line-height: 1.2; color: #b5432f; }
+  @media (min-width: 440px) { .kvDg { grid-template-columns: 60px minmax(0, 1fr); column-gap: 30px; } .kvDk { font-size: 30px; min-height: 58px; } .kvDk.uzun { font-size: 22px; } .kvDl .a { font-size: 19px; } .kvDl .c { font-size: 20px; } }
+  .kvImza { display: flex; justify-content: flex-end; align-items: center; gap: 10px; margin-top: 12px; }
+  .kvImza img { height: 36px; width: auto; }
+  .kvImza span { font-family: "SadoEl", cursive; font-weight: 600; font-size: 21px; color: #a8741c; transform: rotate(-2deg); }
   /* Alt kodu ve AltGr */
   .kvAdim { margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; }
   .kvAdim b { color: var(--accent); }
@@ -610,12 +632,13 @@
     </div>
 
     <div class="card kv">
-      <h2>🗺️ Windows kısayol haritası</h2>
-      <p class="hint" style="margin:0 0 12px">Sarı tuşlara ya da alttaki listeye dokun; not kâğıdı o kısayolu anlatır.</p>
+      <h2>🗺️ Kısayol haritası ve defteri</h2>
+      <p class="hint" style="margin:0 0 12px">Sarı tuşlara ya da defterdeki ⊞ satırlarına dokun; not kâğıdı o kısayolu anlatır.</p>
       <div class="kvNot kvEl" id="kvNot" aria-live="polite"></div>
       <svg id="kvKlavye" role="img" aria-label="Türkçe Q klavye, seçili kısayolun tuşları sarı"></svg>
       <div class="kvNav"><button type="button" id="kvOnce" aria-label="Önceki kısayol">‹</button><span id="kvSira"></span><button type="button" id="kvSonra" aria-label="Sonraki kısayol">›</button></div>
-      <div class="kvKagit" id="kvKagit"></div>
+      <div class="seg kvDefSek" id="kvDefSek"><button type="button" class="on" data-d="win">⊞ Windows</button><button type="button" data-d="ctrl">Ctrl</button><button type="button" data-d="alt">Alt · Excel</button></div>
+      <div class="kvDefter" id="kvDefter"></div>
     </div>
 
     <div class="card kv">
@@ -1607,16 +1630,65 @@ setTimeout(makineBoyut, 60); if (document.fonts && document.fonts.ready) documen
     svg.setAttribute("aria-label", `Türkçe Q klavye; seçili kısayol ${s[2]}: ${s[3]}`);
     $k("kvNot").innerHTML = `<span class="kvNg">${kac(s[0])}</span><span class="kvNk">${tuslar(s[2])}</span><span class="kvNt">${kac(s[3])}${s[4] ? " · " + kac(s[4]) : ""}</span>`;
     $k("kvSira").textContent = `${sec + 1} / ${K.length}`;
-    document.querySelectorAll("#kvKagit .kvSat").forEach((b) => b.classList.toggle("on", +b.dataset.i === sec));
+    document.querySelectorAll("#kvDefter button.c").forEach((b) => b.classList.toggle("on", +b.dataset.i === sec));
   }
   const tuslar = (k) => k.split(" + ").map((x) => `<kbd>${kac(x)}</kbd>`).join("+");
-  // Kâğıttaki el yazısı liste
-  let kg = "", kh = "";
-  K.forEach((k, i) => { if (k[0] !== kg) { kg = k[0]; kh += `<h3>${kac(kg)}</h3>`; } kh += `<button type="button" class="kvSat" data-i="${i}">${tuslar(k[2])} <span class="kvOk">→</span> ${kac(k[3])}</button>`; });
-  $k("kvKagit").innerHTML = kh + `<div class="imza">bilgi paylaştıkça büyür ✍︎</div>`;
+  // Defter sayfaları: [büyük tuş, başlık, satırlar [tuşlar, ne yapar], dipnot]
+  const CTRL = [["Ctrl + A", "Tümünü seç"], ["Ctrl + C", "Kopyala"], ["Ctrl + V", "Yapıştır"], ["Ctrl + X", "Kes"], ["Ctrl + Z", "Geri al"], ["Ctrl + Y", "Yinele"],
+    ["Ctrl + S", "Kaydet"], ["Ctrl + P", "Yazdır"], ["Ctrl + F", "Bul"], ["Ctrl + H", "Bul ve değiştir (Word, Excel)"], ["Ctrl + N", "Yeni belge, yeni pencere"], ["Ctrl + O", "Aç"],
+    ["Ctrl + W", "Sekmeyi ya da belgeyi kapat"], ["Ctrl + T", "Yeni sekme (tarayıcı)"], ["Ctrl + Shift + T", "Kapanan sekmeyi geri getir ✨"], ["Ctrl + L", "Adres çubuğuna git"],
+    ["Ctrl + D", "Sık kullanılanlara ekle (tarayıcı)"], ["F5 · Ctrl + R", "Sayfayı yenile"], ["Ctrl + F5", "Önbelleği atlayıp yenile"], ["Ctrl + Shift + N", "Gizli pencere (Chrome, Edge)"],
+    ["Ctrl + + / −", "Yakınlaştır / uzaklaştır"], ["Ctrl + ← / →", "Bir kelime atla"], ["Ctrl + ⌫", "Bir kelime sil"], ["Ctrl + Home / End", "Başa / sona git"],
+    ["Ctrl + Shift + Esc", "Görev Yöneticisi"], ["Ctrl + Alt + Del", "Kilit ve güvenlik ekranı"], ["Ctrl + Esc", "Başlat menüsü"], ["Alt + Tab", "Pencereler arasında geç"], ["⊞ + Boşluk", "Klavye dilini değiştir"]];
+  const ALT = [["Alt", "Şerit harflerini göster"], ["Alt + =", "Otomatik toplam (Σ) ✨"], ["Alt + Enter", "Hücrede alt satıra geç"], ["Alt + ↓", "Açılır listeyi ya da filtreyi aç"],
+    ["Alt + F1", "Seçili veriden grafik"], ["Alt + Shift + F1", "Yeni çalışma sayfası"], ["Alt + F4", "Excel'i kapat"], ["Alt + F5", "Seçili veriyi yenile"], ["Ctrl + Alt + F5", "Tüm verileri yenile"],
+    ["Alt + F8", "Makrolar"], ["Alt + F11", "VBA düzenleyicisi"], ["Alt + F12", "Power Query (Microsoft 365)"], ["Alt + Shift + F10", "Hata denetimi menüsü"],
+    ["Alt + Page Up", "Bir ekran sola git"], ["Alt + Page Down", "Bir ekran sağa git"]];
+  const DEFTER = {
+    win: ["⊞", "Windows Tuşu Kısayolları", null, ""],
+    ctrl: ["Ctrl", "Genel Bilgisayar Kısayolları", CTRL, "Dil klavyesi Ctrl + Boşluk ile değil, ⊞ + Boşluk ya da sol Alt + Shift ile değişir."],
+    alt: ["Alt", "Excel'de Alt Kısayolları", ALT, "Alt'a basınca her sekmenin üstünde harfi çıkar. İngilizce Excel'de F Dosya, H Giriş, N Ekle, A Veri, W Görünüm; Türkçe Excel'de harfler farklı olabilir, ekranda yazanı takip et."],
+  };
+  let defter = "win";
+  const ince = (x) => kac(x).replace(/ \+ /g, "\u2009+\u2009").replace(/ \/ /g, "\u2009/\u2009");
+  function defterCiz() {
+    const [tus, bas, satir, dip] = DEFTER[defter];
+    let li = "";
+    if (satir) li = satir.map(([c, a]) => `<li><span class="c">${ince(c)}</span><span class="a">${kac(a)}</span></li>`).join("");
+    else {
+      let kg = "";
+      K.forEach((k, i) => {
+        if (k[0] !== kg) { kg = k[0]; li += `<li><span class="grp">${kac(kg)}</span></li>`; }
+        li += `<li><button type="button" class="c${i === sec ? " on" : ""}" data-i="${i}">${ince(k[2])}</button><span class="a">${kac(k[3])}</span></li>`;
+      });
+    }
+    $k("kvDefter").innerHTML = `<h3 class="kvDb">${kac(bas)}</h3><div class="kvDg"><svg class="kvDs" aria-hidden="true"></svg><div class="kvDk${tus.length > 3 ? " uzun" : ""}">${kac(tus)}</div><ul class="kvDl">${li}</ul></div>`
+      + (dip ? `<p class="kvDnot">✎ ${kac(dip)}</p>` : "") + `<div class="kvImza"><img src="img/logo.png" alt="Sadolayn"><span>Bilgi paylaştıkça büyür</span></div>`;
+    document.querySelectorAll("#kvDefSek button").forEach((b) => b.classList.toggle("on", b.dataset.d === defter));
+    requestAnimationFrame(cizgiler);
+  }
+  // Büyük tuştan her satıra el çizimi gibi eğri çizgi
+  function cizgiler() {
+    const g = $k("kvDefter").querySelector(".kvDg"); if (!g) return;
+    const R = g.getBoundingClientRect(); if (!R.width) return;
+    const k = g.querySelector(".kvDk").getBoundingClientRect(), C = [...g.querySelectorAll(".kvDl .c")];
+    const x0 = k.right - R.left + 1, n = C.length; let d = "", nokta = "";
+    C.forEach((c, i) => {
+      const b = c.getBoundingClientRect(), x1 = b.left - R.left - 7, y1 = b.top - R.top + 15;
+      const y0 = k.top - R.top + k.height * (0.15 + 0.7 * (n > 1 ? i / (n - 1) : 0.5)), c1 = x0 + (x1 - x0) * 0.75, c2 = x0 + (x1 - x0) * 0.2;
+      d += `M${x0.toFixed(1)} ${y0.toFixed(1)} C${c1.toFixed(1)} ${y0.toFixed(1)} ${c2.toFixed(1)} ${y1.toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)} `;
+      nokta += `<circle cx="${x1.toFixed(1)}" cy="${y1.toFixed(1)}" r="2.3"/>`;
+    });
+    const s = g.querySelector(".kvDs"); s.setAttribute("width", R.width); s.setAttribute("height", R.height);
+    s.innerHTML = `<path d="${d}" fill="none" stroke="#2c3ea6" stroke-width=".9" stroke-linecap="round" opacity=".6"/><g fill="#2c3ea6">${nokta}</g>`;
+  }
+  $k("kvDefSek").onclick = (e) => { const b = e.target.closest("[data-d]"); if (!b) return; defter = b.dataset.d; defterCiz(); };
+  if (window.ResizeObserver) new ResizeObserver(() => cizgiler()).observe($k("kvDefter"));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(cizgiler);
+  defterCiz();
   const git = (i) => { sec = (i + K.length) % K.length; klavye(); };
   $k("kvOnce").onclick = () => git(sec - 1); $k("kvSonra").onclick = () => git(sec + 1);
-  $k("kvKagit").onclick = (e) => { const b = e.target.closest(".kvSat"); if (!b) return; git(+b.dataset.i); $k("kvNot").scrollIntoView({ behavior: "smooth", block: "center" }); };
+  $k("kvDefter").onclick = (e) => { const b = e.target.closest("button.c[data-i]"); if (!b) return; git(+b.dataset.i); $k("kvNot").scrollIntoView({ behavior: "smooth", block: "center" }); };
   $k("kvKlavye").addEventListener("click", (e) => {
     const g = e.target.closest(".tus.var"); if (!g) return;
     const id = g.dataset.id, adaylar = K.map((k, i) => [k, i]).filter(([k]) => k[1].includes(id));
