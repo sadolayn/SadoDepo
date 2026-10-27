@@ -30,8 +30,16 @@
   .row .bar { grid-column: 1 / -1; height: 8px; border-radius: 4px; background: #1c1c1c; overflow: hidden; } .row .bar i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, #e0a24f, #3fc283); transition: width .5s; }
   .row b { font-variant-numeric: tabular-nums; }
   .empty { color: var(--muted); font-size: 14px; text-align: center; padding: 10px 0; }
-  .days { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding-top: 18px; }
+  .days { display: flex; align-items: flex-end; gap: 6px; height: 134px; padding-top: 18px; }
   .days div { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; font-size: 11px; color: var(--muted); }
+  .days small { font-size: 11px; color: var(--muted); margin-top: 1px; font-variant-numeric: tabular-nums; }
+  .kars { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: #141414; border: 1px solid var(--line); font-size: 15px; }
+  .kars b { font-size: 17px; } .kars.up b { color: var(--ok); } .kars.down b { color: #f0a35a; }
+  .kars p { margin: 4px 0 0; font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .hafta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; text-align: center; }
+  .hafta span { padding: 6px 2px; border-radius: 10px; background: #101010; border: 1px solid var(--line); font-size: 11px; color: var(--muted); }
+  .hafta span b { display: block; font-size: 15px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .hafta span.son { border-color: #6b5222; }
   .days i { display: block; width: 100%; border-radius: 6px 6px 2px 2px; background: linear-gradient(180deg, #f3d38a, #c9953c); min-height: 3px; transition: height .5s; }
   .days em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
   .days div.today i { background: linear-gradient(180deg, #9ff0c8, #3fc283); }
@@ -52,7 +60,7 @@
     <div class="dev"><div><b id="mob">0</b><span>📱 Telefon</span></div><div><b id="pc">0</b><span>💻 Bilgisayar</span></div></div>
   </div>
   <div class="card"><h2>Hangi sayfadalar?</h2><div id="pages"><div class="empty">–</div></div></div>
-  <div class="card"><h2>Son 7 gün · tekil ziyaretçi</h2><div class="days" id="days"></div><p class="note" id="gunNote" style="margin:10px 0 0"></p></div>
+  <div class="card"><h2>Son 7 gün · tekil ziyaretçi</h2><div class="days" id="days"></div><p class="note" id="gunNote" style="margin:10px 0 0"></p><div id="kars"></div></div>
   <div class="card">
     <label class="tog"><span>🙈 Bu cihazda beni sayma <small style="opacity:.7">(canlı sayaç ve sayfa raporu)</small></span><input type="checkbox" id="ben"></label>
     <p class="note" style="margin:8px 0 0">Açıkken bu cihazdaki ziyaretlerin canlı sayıya ve günlük sayaca eklenmez. Bu sayfa sitede hiçbir yerde bağlantılı değil; linki sadece sende.</p>
@@ -68,6 +76,10 @@ const benSay = (ben) => { try { localStorage.setItem("canli_ben", ben ? "1" : "0
 try { if (localStorage.getItem("canli_ben") === null) localStorage.setItem("canli_ben", "1"); benSay(localStorage.getItem("canli_ben") === "1"); $("ben").checked = localStorage.getItem("canli_ben") === "1"; } catch (e) {}
 $("ben").onchange = () => benSay($("ben").checked);
 const gunOf = (ms) => new Date(ms + 3 * 3600e3).toISOString().slice(0, 10);
+// Resmi tatiller (takvim.html ile aynı): tatil olan haftada ziyaretçi düşer, karşılaştırmada not düşülür
+const TATIL_SABIT = { "01-01": "Yılbaşı", "04-23": "23 Nisan", "05-01": "1 Mayıs", "05-19": "19 Mayıs", "07-15": "15 Temmuz", "08-30": "30 Ağustos", "10-28": "Cumhuriyet Bayramı", "10-29": "Cumhuriyet Bayramı" };
+const TATIL_DINI = { "Ramazan Bayramı": ["2026-03-19", "2026-03-22", "2027-03-08", "2027-03-11", "2028-02-25", "2028-02-28"], "Kurban Bayramı": ["2026-05-26", "2026-05-30", "2027-05-15", "2027-05-19", "2028-05-04", "2028-05-08"] };
+const tatil = (k) => TATIL_SABIT[k.slice(5)] || Object.keys(TATIL_DINI).find((ad) => { const t = TATIL_DINI[ad]; for (let i = 0; i < t.length; i += 2) if (k >= t[i] && k <= t[i + 1]) return true; return false; }) || "";
 try {
   const { initializeApp } = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`);
   const { getDatabase, ref, onValue } = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-database.js`);
@@ -86,12 +98,21 @@ try {
     $("pages").innerHTML = S.length ? S.map(([p, k]) => `<div class="row"><span>${AD[p] || "📄 " + p}</span><b>${k}</b><div class="bar"><i style="width:${(k / mx) * 100}%"></i></div></div>`).join("") : '<div class="empty">Şu an kimse yok</div>';
   }, (e) => { $("nSub").innerHTML = '<span class="err">Okuma izni yok: Firebase kurallarını yapıştırdın mı?</span>'; });
   onValue(ref(db, "gun"), (snap) => {
-    const G = snap.val() || {}, D = [];
-    for (let i = 6; i >= 0; i--) { const k = gunOf(Date.now() - i * 864e5); D.push([k, Math.max(0, Math.floor(Number(G[k]) || 0))]); }
+    const G = snap.val() || {}, D = [], say = (i) => Math.max(0, Math.floor(Number(G[gunOf(Date.now() - i * 864e5)]) || 0));
+    for (let i = 6; i >= 0; i--) { const k = gunOf(Date.now() - i * 864e5); D.push([k, say(i), say(i + 7)]); }
     const mx = Math.max(1, ...D.map((x) => x[1])), bugun = gunOf(Date.now());
-    $("days").innerHTML = D.map(([k, v]) => `<div class="${k === bugun ? "today" : ""}"><em>${v}</em><i style="height:${(v / mx) * 100}%"></i>${k === bugun ? "Bugün" : new Date(k + "T12:00:00").toLocaleDateString("tr-TR", { weekday: "short" })}</div>`).join("");
+    $("days").innerHTML = D.map(([k, v, g]) => `<div class="${k === bugun ? "today" : ""}"><em>${v}</em><i style="height:${(v / mx) * 100}%"></i>${k === bugun ? "Bugün" : new Date(k + "T12:00:00").toLocaleDateString("tr-TR", { weekday: "short" })}<small>${g}</small></div>`).join("");
     const top = D.reduce((a, b) => a + b[1], 0);
-    $("gunNote").textContent = `Son 7 günde toplam ${top} tekil ziyaret (her cihaz günde bir kez sayılır).`;
+    $("gunNote").textContent = `Son 7 günde toplam ${top} tekil ziyaret (her cihaz günde bir kez sayılır). Çubukların altındaki gri sayı geçen haftanın aynı günü.`;
+    // Geçen haftayla karşılaştırma: bugün bitmediği için dünden geriye 7 tam gün; ayrıca son 4 haftanın toplamı
+    const H = [0, 1, 2, 3].map((h) => { let t = 0, tt = ""; for (let i = 1 + h * 7; i <= 7 + h * 7; i++) { t += say(i); const k = gunOf(Date.now() - i * 864e5); if (!tt) tt = tatil(k); } return { t, tt, bas: gunOf(Date.now() - (7 + h * 7) * 864e5), bit: gunOf(Date.now() - (1 + h * 7) * 864e5) }; });
+    const [bu, once] = H, fark = once.t ? Math.round(((bu.t - once.t) / once.t) * 100) : null;
+    const kisa = (k) => new Date(k + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
+    if (fark === null) { $("kars").innerHTML = ""; return; }
+    const yon = Math.abs(fark) < 3 ? ["", "≈", "geçen haftayla <b>aynı</b>"] : fark > 0 ? ["up", "📈", `geçen haftadan <b>%${fark} fazla</b>`] : ["down", "📉", `geçen haftadan <b>%${-fark} az</b>`];
+    const tt = bu.tt || once.tt;
+    $("kars").innerHTML = `<div class="kars ${yon[0]}">${yon[1]} Son 7 tam gün ${yon[2]}<p>${bu.t} kişi (${kisa(bu.bas)}–${kisa(bu.bit)}) · önceki 7 gün ${once.t} kişi. Bugün bitmediği için hesaba katılmaz.${tt ? ` 🎉 Karşılaştırılan günlerde ${tt} tatili var; tatil olan haftada sayının düşük olması doğal.` : ""}</p></div>`
+      + (H.every((x) => x.t) ? `<div class="hafta">${H.slice().reverse().map((x, i) => `<span class="${i === 3 ? "son" : ""}"><b>${x.t}</b>${kisa(x.bas)}–${kisa(x.bit)}</span>`).join("")}</div><p class="note" style="margin:6px 0 0">Son 4 haftanın toplamları (7'şer tam gün, soldan sağa eskiden yeniye).</p>` : "");
   });
 } catch (e) { $("nSub").innerHTML = '<span class="err">Canlı servise bağlanılamadı.</span>'; }
 </script>
