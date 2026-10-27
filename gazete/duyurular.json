@@ -1,115 +1,125 @@
 {
- "guncelleme": "2026-10-26T06:56:27+03:00",
- "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
- "duyurular": [
-  {
-   "tarih": "2026-10-22",
-   "kurum": "TCMB",
-   "baslik": "Politika faizi %37'den %36'ya indirildi",
-   "ozet": "Para Politikası Kurulu bir hafta vadeli repo ihale faizini 100 baz puan indirerek %36'ya çekti. Gecelik borç verme faizi %39, gecelik borçlanma faizi %34,5 oldu.",
-   "etki": "Politika faizi, mevduat ve kredi faizlerinin yönünü belirleyen temel orandır; bankaların fiyatlamalarında izlenir.",
-   "onemli": true,
-   "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Duyurular/Basin/2026/DUY2026-45"
-  },
-  {
-   "tarih": "2026-10-20",
-   "kurum": "SPK",
-   "baslik": "Yatırımcı Tazmin Merkezi'ndeki varlıkların iadesi e-Devlet'ten istenebilecek",
-   "ozet": "SPK i-SPK.83.1 sayılı ilke kararıyla, zamanaşımı nedeniyle Yatırımcı Tazmin Merkezi'ne (YTM) aktarılan nakit ve menkul kıymetlerin iadesi için başvuruların e-Devlet üzerinden yapılmasını esas aldı. Elektronik başvuru yapamayan mirasçı, vekil, vasi, müşterek hesap sahibi ve şirket yetkilileri için ayrı başvuru yolu belirlendi. Karar, e-Devlet başvurularının başladığı tarihte yürürlüğe girecek; tarih YTM sitesinde duyurulacak.",
-   "etki": "Unutulmuş yatırım hesabı YTM'ye devredilmiş müşteriler iade başvurusunu şubeye ya da aracı kuruma gitmeden yapabilecek.",
-   "onemli": false,
-   "url": "https://www.alomaliye.com/2026/10/21/yatirimci-tazmin-merkezi-ytm-iadelerinde-yeni-basvuru-esaslari/"
-  },
-  {
-   "tarih": "2026-10-17",
-   "kurum": "MASAK",
-   "baslik": "BM yaptırım listeleri MASAK internet sitesinde yayımlanmaya başladı",
-   "ozet": "MASAK, BM Güvenlik Konseyi'nin terörün ve kitle imha silahlarının finansmanıyla ilgili malvarlığı dondurma kararlarını kendi internet sitesinden duyurmaya başladı; ilk uygulamada listeler yayımlandı. Dayanak, 23 Eylül 2026 tarihli Resmi Gazete'de yayımlanan genel tebliğ.",
-   "etki": "Bankalar başta olmak üzere yükümlüler listeleri düzenli izleyecek, listedeki kişi ve kurumların işlemlerini gecikmeksizin MASAK'a bildirip erteleme tedbiri alacak.",
-   "onemli": true,
-   "url": "https://finans.cnnturk.com/finans-haberler/masak-bmnin-mal-varligi-dondurma-kararlarini-internet-sitesinde-duyurmaya-basladi-3480696"
-  },
-  {
-   "tarih": "2026-10-15",
-   "kurum": "Ticaret Bakanlığı",
-   "baslik": "Perakende taksit kuralları değişti: yetki Ticaret Bakanlığı'nda",
-   "ozet": "Resmi Gazete 33401'deki yönetmelik değişikliğiyle genel 12 ay taksit tavanı yönetmelikten çıktı; konut dışı taksitli satışlarda vade ve sınırları artık Ticaret Bakanlığı belirliyor (BDDK kararlarıyla uyumlu). İlk adım: sıfır cep telefonunda 12 ay taksit sınırı 20 bin TL'den 40 bin TL'ye çıktı (üstü 3 ay), yenilenmiş telefonda tutar sınırı olmadan 12 ay (kartla taksitli satış; tüketici kredisi vadeleri BDDK'nın 1 Ekim kararında). Diğer ürünlerde değişiklik yok.",
-   "etki": "Kartlı taksitli satışlarda telefon taksit sınırları değişti; bundan sonraki taksit duyuruları Bakanlıktan gelecek.",
-   "onemli": true,
-   "url": "https://ticaret.gov.tr/haberler/ticaret-bakanligindan-bddk-kararlariyla-uyumlu-yeni-duzenleme-15-10-2026",
-   "gazete": "2026-10-15"
-  },
-  {
-   "tarih": "2026-10-07",
-   "kurum": "TMSF",
-   "baslik": "Tasfiye edilen fonlarda TMSF bünyesinde özel hesaplar açıldı, ilk ödemeler başladı",
-   "ozet": "Cumhurbaşkanı Yardımcısı TBMM'de fon tasfiyesini anlattı: TMSF bünyesinde her sorunlu fon için özel hesap açıldı, olağan tasfiyesi biten 17 fonda ödemeler 8 Ekim'de başladı. Tasfiye yönetimi 125 fonda Ziraat Bankası'na, 6 fonda İş Bankası'na verildi. Güncelleme: 1 milyon TL'ye kadar ara ödeme getiren 7596 sayılı kanun 22 Ekim'de TBMM'de kabul edildi; 26 Ekim itibarıyla Resmi Gazete'de yayımlanmadı, ödemeler yayıma bağlı.",
-   "etki": "Tasfiyedeki fonların yatırımcıları ödeme takvimini fonu aldıkları kurumdan ya da tasfiyeyi yürüten bankadan öğrenebilir; bu bankalarda yoğunluk olabilir.",
-   "onemli": true,
-   "url": "https://www.ntv.com.tr/turkiye/mecliste-gundem-fon-krizi-cumhurbaskani-yardimcisi-yilmaz-odeme-sureci-yarin-basliyor-1745251"
-  },
-  {
-   "tarih": "2026-10-03",
-   "kurum": "SPK",
-   "baslik": "Kredili işlemlerde özkaynak esnekliği 30 Ekim'e kadar uzatıldı",
-   "ozet": "SPK 2026/68 sayılı bültenle, kredili işlemlerde asgari %35 olan özkaynak oranının aracı kurumların risk politikasına göre %20'ye kadar uygulanabilmesini 30 Ekim 2026 seans sonuna kadar uzattı. Yeni oran getirilmedi, süre uzatıldı.",
-   "etki": "Kredili hisse işlemi yapan yatırımcılar için teminat tamamlama baskısı 30 Ekim'e kadar hafif kalıyor.",
-   "onemli": false,
-   "url": "https://hukukcularevi.com/spk-2026-68-bulteni-kredili-islem-ozkaynak-esnekligi-30-ekim-2026-uzatildi-65-1779-seri-v-65-m17-m18/"
-  },
-  {
-   "tarih": "2026-10-01",
-   "kurum": "BDDK",
-   "baslik": "Kart asgari ödeme eşiği 100 bin TL'ye çıktı; telefon kredisi vadeleri değişti",
-   "ozet": "Karar 11581: limiti 100 bin TL ve altındaki kartlarda asgari ödeme dönem borcunun %20'si, üstündekilerde %40'ı (eşik önce 50 bin TL idi). Karar 11582: fiyatı 40 bin TL ve altındaki sıfır cep telefonlarında tüketici kredisi vadesi 12 ay, üstünde 3 ay; yenilenmiş telefonlarda eşik 50 bin TL.",
-   "etki": "Limiti 50-100 bin TL arasındaki kart sahiplerinin asgari ödemesi yarıya iner; telefon kredisi vadeleri yeni sınırlarla verilir.",
-   "onemli": true,
-   "url": "https://www.bddk.org.tr/Mevzuat/Liste/56"
-  },
-  {
-   "tarih": "2026-10-01",
-   "kurum": "TCMB",
-   "baslik": "Zorunlu karşılıkta düzenleme: KOBİ kredisi büyüme sınırı %5'e çıktı",
-   "ozet": "KOBİ kredilerinde 8 haftalık büyüme sınırı %4,5'ten %5'e yükseltildi. TL zorunlu karşılıklarda bloke oranı, aktif büyüklüğü 500 milyar TL üstü bankalarda %40'tan %35'e, 100-500 milyar TL arası bankalarda %30'dan %15'e indirildi.",
-   "etki": "Bankaların KOBİ'lere kredi verme alanı genişler, likidite yönetimi rahatlar.",
-   "onemli": true,
-   "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Duyurular/Basin/2026/DUY2026-43"
-  },
-  {
-   "tarih": "2026-09-30",
-   "kurum": "SPK",
-   "baslik": "Tasfiyedeki fonların yatırımcılarına 1 milyon TL'ye kadar ara ödeme",
-   "ozet": "SPK, 17 Eylül'de tasfiyesine karar verilen dört portföy yönetim şirketinin fonlarında, mutabakatı tamamlanan yatırımcılara nihai tasfiye beklenmeden ara ödeme yapılmasını kararlaştırdı. Ödeme MKK'nın hesapladığı net yatırım tutarı kadar, en fazla 1 milyon TL olacak; uygulama para piyasası fonlarından başlıyor ve ara ödemede pay iadesi yapılmıyor.",
-   "etki": "Bu fonlara bankalar ya da aracı kurumlar üzerinden yatırım yapmış müşterilerin ilk ödemeleri ara ödeme yoluyla gelecek; pay iadesi nihai tasfiyede yapılacak.",
-   "onemli": false,
-   "url": "https://bloomberght.com/spkdan-tafsiye-edilen-fonlar-icin-ara-odeme-karari-3789902"
-  },
-  {
-   "tarih": "2026-09-23",
-   "kurum": "MASAK",
-   "baslik": "Ön ödemeli kart ve e-parada basitleştirilmiş tedbir eşiği 5.500 TL'ye çıktı",
-   "ozet": "Genel Tebliğ (Sıra No: 33) ile düşük riskli ürünlerde basitleştirilmiş tedbir eşikleri yükseltildi: ön ödemeli kart ve elektronik parada 2.750 TL'den 5.500 TL'ye, hayat sigortası yıllık priminde 10 bin TL'den 20 bin TL'ye. EFT/havale kimlik tespiti eşikleri değişmedi.",
-   "etki": "Düşük tutarlı ön ödemeli kart ve e-para işlemlerinde kimlik tespiti kolaylaşır; havale ve EFT kuralları aynı kalır.",
-   "onemli": true,
-   "url": "https://hukukcularevi.com/masak-limitleri-degisti-mi-23-eylul-2026-genel-teblig-33-34-on-odemeli-kart-5500-mobil-odeme-6500-eft-havale-bm-yaptirim-listesi/"
-  },
-  {
-   "tarih": "2026-09-17",
-   "kurum": "SPK",
-   "baslik": "7 portföy yönetim şirketinin 130 fonu için tasfiye kararı",
-   "ozet": "SPK, yedi portföy yönetim şirketinin kurucusu olduğu 130 yatırım fonunun tasfiyesine karar verdi ve bu şirketlerin TEFAS'taki tüm fonlarını alım ve satıma kapattı. Liste sonraki bültenle 131 fona güncellendi.",
-   "etki": "Bu fonlar TEFAS'ta alınıp satılamıyor; yatırımcılar tasfiye ve ödeme takvimini fonu aldıkları kurumdan ya da SPK/TEFAS duyurularından öğrenebilir.",
-   "onemli": true,
-   "url": "https://tr.investing.com/news/stock-market-news/spk-7-portfoy-yonetim-sirketinin-130-fonu-icin-tasfiye-karar-ald-4069549"
-  },
-  {
-   "tarih": "2026-09-17",
-   "kurum": "BDDK",
-   "baslik": "Bankaların geri aldığı kendi hisseleri sermayeden düşülmeyecek",
-   "ozet": "BDDK, Borsa İstanbul'da işlem gören halka açık bankaların 16 Eylül 2026'dan sonra borsadan geri aldığı kendi paylarının çekirdek sermayeden indirim kalemi olarak dikkate alınmamasına ve kredi ile piyasa riskine esas tutar hesabına katılmamasına karar verdi. Uygulama 31 Aralık 2026'ya kadar geçerli.",
-   "etki": "Halka açık bankalar hisse geri alımı yaparken sermaye yeterliliği oranları bu alımlardan olumsuz etkilenmeyecek.",
-   "onemli": true,
-   "url": "https://tr.euronews.com/business/2026/09/17/bddkdan-borsa-istanbul-onlemi-bankalara-esneklik-saglanacak"
-  }
- ]
+  "guncelleme": "2026-10-27T06:58:03+03:00",
+  "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
+  "duyurular": [
+    {
+      "tarih": "2026-10-26",
+      "kurum": "SPK",
+      "baslik": "Tera ve Pusula Portföy'ün faaliyetleri durduruldu, kalan tüm fonları tasfiyeye alındı",
+      "ozet": "SPK 2026/75 sayılı bültenle Tera Portföy ve Pusula Portföy'ün sermaye piyasası faaliyetlerini 6362 sayılı Kanun'un 97. maddesine göre geçici olarak durdurdu. İki şirketin 17 Eylül'de tasfiyeye alınmamış yatırım, gayrimenkul ve girişim sermayesi fonlarının da tasfiyesine karar verildi; Tera fonlarının tasfiyesi Türkiye İş Bankası'na, Pusula fonlarınınki T.C. Ziraat Bankası'na verildi. Fon sayısı ve ödeme takvimi açıklanmadı; haberlere göre bu fonlar 7596 sayılı ara ödeme kanununun kapsamında değil.",
+      "etki": "Tera fonlarının tasfiye işlemleri ve yatırımcı başvuruları İş Bankası üzerinden yürüyecek; gayrimenkul ve girişim sermayesi fonlarında nakde dönüş daha uzun sürebilir.",
+      "onemli": true,
+      "url": "https://www.ntv.com.tr/turkiye/spkdan-tera-portfoy-ve-pusula-portfoy-karari-faaliyetleri-gecici-olarak-durduruldu-1748082"
+    },
+    {
+      "tarih": "2026-10-22",
+      "kurum": "TCMB",
+      "baslik": "Politika faizi %37'den %36'ya indirildi",
+      "ozet": "Para Politikası Kurulu bir hafta vadeli repo ihale faizini 100 baz puan indirerek %36'ya çekti. Gecelik borç verme faizi %39, gecelik borçlanma faizi %34,5 oldu.",
+      "etki": "Politika faizi, mevduat ve kredi faizlerinin yönünü belirleyen temel orandır; bankaların fiyatlamalarında izlenir.",
+      "onemli": true,
+      "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Duyurular/Basin/2026/DUY2026-45"
+    },
+    {
+      "tarih": "2026-10-20",
+      "kurum": "SPK",
+      "baslik": "Yatırımcı Tazmin Merkezi'ndeki varlıkların iadesi e-Devlet'ten istenebilecek",
+      "ozet": "SPK i-SPK.83.1 sayılı ilke kararıyla, zamanaşımı nedeniyle Yatırımcı Tazmin Merkezi'ne (YTM) aktarılan nakit ve menkul kıymetlerin iadesi için başvuruların e-Devlet üzerinden yapılmasını esas aldı. Elektronik başvuru yapamayan mirasçı, vekil, vasi, müşterek hesap sahibi ve şirket yetkilileri için ayrı başvuru yolu belirlendi. Karar, e-Devlet başvurularının başladığı tarihte yürürlüğe girecek; tarih YTM sitesinde duyurulacak.",
+      "etki": "Unutulmuş yatırım hesabı YTM'ye devredilmiş müşteriler iade başvurusunu şubeye ya da aracı kuruma gitmeden yapabilecek.",
+      "onemli": false,
+      "url": "https://www.alomaliye.com/2026/10/21/yatirimci-tazmin-merkezi-ytm-iadelerinde-yeni-basvuru-esaslari/"
+    },
+    {
+      "tarih": "2026-10-17",
+      "kurum": "MASAK",
+      "baslik": "BM yaptırım listeleri MASAK internet sitesinde yayımlanmaya başladı",
+      "ozet": "MASAK, BM Güvenlik Konseyi'nin terörün ve kitle imha silahlarının finansmanıyla ilgili malvarlığı dondurma kararlarını kendi internet sitesinden duyurmaya başladı; ilk uygulamada listeler yayımlandı. Dayanak, 23 Eylül 2026 tarihli Resmi Gazete'de yayımlanan genel tebliğ.",
+      "etki": "Bankalar başta olmak üzere yükümlüler listeleri düzenli izleyecek, listedeki kişi ve kurumların işlemlerini gecikmeksizin MASAK'a bildirip erteleme tedbiri alacak.",
+      "onemli": true,
+      "url": "https://finans.cnnturk.com/finans-haberler/masak-bmnin-mal-varligi-dondurma-kararlarini-internet-sitesinde-duyurmaya-basladi-3480696"
+    },
+    {
+      "tarih": "2026-10-15",
+      "kurum": "Ticaret Bakanlığı",
+      "baslik": "Perakende taksit kuralları değişti: yetki Ticaret Bakanlığı'nda",
+      "ozet": "Resmi Gazete 33401'deki yönetmelik değişikliğiyle genel 12 ay taksit tavanı yönetmelikten çıktı; konut dışı taksitli satışlarda vade ve sınırları artık Ticaret Bakanlığı belirliyor (BDDK kararlarıyla uyumlu). İlk adım: sıfır cep telefonunda 12 ay taksit sınırı 20 bin TL'den 40 bin TL'ye çıktı (üstü 3 ay), yenilenmiş telefonda tutar sınırı olmadan 12 ay (kartla taksitli satış; tüketici kredisi vadeleri BDDK'nın 1 Ekim kararında). Diğer ürünlerde değişiklik yok.",
+      "etki": "Kartlı taksitli satışlarda telefon taksit sınırları değişti; bundan sonraki taksit duyuruları Bakanlıktan gelecek.",
+      "onemli": true,
+      "url": "https://ticaret.gov.tr/haberler/ticaret-bakanligindan-bddk-kararlariyla-uyumlu-yeni-duzenleme-15-10-2026",
+      "gazete": "2026-10-15"
+    },
+    {
+      "tarih": "2026-10-07",
+      "kurum": "TMSF",
+      "baslik": "Tasfiye edilen fonlarda TMSF bünyesinde özel hesaplar açıldı, ilk ödemeler başladı",
+      "ozet": "Cumhurbaşkanı Yardımcısı TBMM'de fon tasfiyesini anlattı: TMSF bünyesinde her sorunlu fon için özel hesap açıldı, olağan tasfiyesi biten 17 fonda ödemeler 8 Ekim'de başladı. Tasfiye yönetimi 125 fonda Ziraat Bankası'na, 6 fonda İş Bankası'na verildi. Güncelleme: 1 milyon TL'ye kadar ara ödeme ve sorumlulardan TMSF eliyle tahsilat getiren 7596 sayılı kanun 27 Ekim 2026'da Resmi Gazete'de yayımlanarak yürürlüğe girdi; ödeme takvimini SPK belirleyecek.",
+      "etki": "Tasfiyedeki fonların yatırımcıları ödeme takvimini fonu aldıkları kurumdan ya da tasfiyeyi yürüten bankadan öğrenebilir; bu bankalarda yoğunluk olabilir.",
+      "onemli": true,
+      "url": "https://www.ntv.com.tr/turkiye/mecliste-gundem-fon-krizi-cumhurbaskani-yardimcisi-yilmaz-odeme-sureci-yarin-basliyor-1745251",
+      "gazete": "2026-10-27"
+    },
+    {
+      "tarih": "2026-10-03",
+      "kurum": "SPK",
+      "baslik": "Kredili işlemlerde özkaynak esnekliği 30 Ekim'e kadar uzatıldı",
+      "ozet": "SPK 2026/68 sayılı bültenle, kredili işlemlerde asgari %35 olan özkaynak oranının aracı kurumların risk politikasına göre %20'ye kadar uygulanabilmesini 30 Ekim 2026 seans sonuna kadar uzattı. Yeni oran getirilmedi, süre uzatıldı.",
+      "etki": "Kredili hisse işlemi yapan yatırımcılar için teminat tamamlama baskısı 30 Ekim'e kadar hafif kalıyor.",
+      "onemli": false,
+      "url": "https://hukukcularevi.com/spk-2026-68-bulteni-kredili-islem-ozkaynak-esnekligi-30-ekim-2026-uzatildi-65-1779-seri-v-65-m17-m18/"
+    },
+    {
+      "tarih": "2026-10-01",
+      "kurum": "BDDK",
+      "baslik": "Kart asgari ödeme eşiği 100 bin TL'ye çıktı; telefon kredisi vadeleri değişti",
+      "ozet": "Karar 11581: limiti 100 bin TL ve altındaki kartlarda asgari ödeme dönem borcunun %20'si, üstündekilerde %40'ı (eşik önce 50 bin TL idi). Karar 11582: fiyatı 40 bin TL ve altındaki sıfır cep telefonlarında tüketici kredisi vadesi 12 ay, üstünde 3 ay; yenilenmiş telefonlarda eşik 50 bin TL.",
+      "etki": "Limiti 50-100 bin TL arasındaki kart sahiplerinin asgari ödemesi yarıya iner; telefon kredisi vadeleri yeni sınırlarla verilir.",
+      "onemli": true,
+      "url": "https://www.bddk.org.tr/Mevzuat/Liste/56"
+    },
+    {
+      "tarih": "2026-10-01",
+      "kurum": "TCMB",
+      "baslik": "Zorunlu karşılıkta düzenleme: KOBİ kredisi büyüme sınırı %5'e çıktı",
+      "ozet": "KOBİ kredilerinde 8 haftalık büyüme sınırı %4,5'ten %5'e yükseltildi. TL zorunlu karşılıklarda bloke oranı, aktif büyüklüğü 500 milyar TL üstü bankalarda %40'tan %35'e, 100-500 milyar TL arası bankalarda %30'dan %15'e indirildi.",
+      "etki": "Bankaların KOBİ'lere kredi verme alanı genişler, likidite yönetimi rahatlar.",
+      "onemli": true,
+      "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Duyurular/Basin/2026/DUY2026-43"
+    },
+    {
+      "tarih": "2026-09-30",
+      "kurum": "SPK",
+      "baslik": "Tasfiyedeki fonların yatırımcılarına 1 milyon TL'ye kadar ara ödeme",
+      "ozet": "SPK, 17 Eylül'de tasfiyesine karar verilen dört portföy yönetim şirketinin fonlarında, mutabakatı tamamlanan yatırımcılara nihai tasfiye beklenmeden ara ödeme yapılmasını kararlaştırdı. Ödeme MKK'nın hesapladığı net yatırım tutarı kadar, en fazla 1 milyon TL olacak; uygulama para piyasası fonlarından başlıyor ve ara ödemede pay iadesi yapılmıyor.",
+      "etki": "Bu fonlara bankalar ya da aracı kurumlar üzerinden yatırım yapmış müşterilerin ilk ödemeleri ara ödeme yoluyla gelecek; pay iadesi nihai tasfiyede yapılacak.",
+      "onemli": false,
+      "url": "https://bloomberght.com/spkdan-tafsiye-edilen-fonlar-icin-ara-odeme-karari-3789902"
+    },
+    {
+      "tarih": "2026-09-23",
+      "kurum": "MASAK",
+      "baslik": "Ön ödemeli kart ve e-parada basitleştirilmiş tedbir eşiği 5.500 TL'ye çıktı",
+      "ozet": "Genel Tebliğ (Sıra No: 33) ile düşük riskli ürünlerde basitleştirilmiş tedbir eşikleri yükseltildi: ön ödemeli kart ve elektronik parada 2.750 TL'den 5.500 TL'ye, hayat sigortası yıllık priminde 10 bin TL'den 20 bin TL'ye. EFT/havale kimlik tespiti eşikleri değişmedi.",
+      "etki": "Düşük tutarlı ön ödemeli kart ve e-para işlemlerinde kimlik tespiti kolaylaşır; havale ve EFT kuralları aynı kalır.",
+      "onemli": true,
+      "url": "https://hukukcularevi.com/masak-limitleri-degisti-mi-23-eylul-2026-genel-teblig-33-34-on-odemeli-kart-5500-mobil-odeme-6500-eft-havale-bm-yaptirim-listesi/"
+    },
+    {
+      "tarih": "2026-09-17",
+      "kurum": "SPK",
+      "baslik": "7 portföy yönetim şirketinin 130 fonu için tasfiye kararı",
+      "ozet": "SPK, yedi portföy yönetim şirketinin kurucusu olduğu 130 yatırım fonunun tasfiyesine karar verdi ve bu şirketlerin TEFAS'taki tüm fonlarını alım ve satıma kapattı. Liste sonraki bültenle 131 fona güncellendi.",
+      "etki": "Bu fonlar TEFAS'ta alınıp satılamıyor; yatırımcılar tasfiye ve ödeme takvimini fonu aldıkları kurumdan ya da SPK/TEFAS duyurularından öğrenebilir.",
+      "onemli": true,
+      "url": "https://tr.investing.com/news/stock-market-news/spk-7-portfoy-yonetim-sirketinin-130-fonu-icin-tasfiye-karar-ald-4069549"
+    },
+    {
+      "tarih": "2026-09-17",
+      "kurum": "BDDK",
+      "baslik": "Bankaların geri aldığı kendi hisseleri sermayeden düşülmeyecek",
+      "ozet": "BDDK, Borsa İstanbul'da işlem gören halka açık bankaların 16 Eylül 2026'dan sonra borsadan geri aldığı kendi paylarının çekirdek sermayeden indirim kalemi olarak dikkate alınmamasına ve kredi ile piyasa riskine esas tutar hesabına katılmamasına karar verdi. Uygulama 31 Aralık 2026'ya kadar geçerli.",
+      "etki": "Halka açık bankalar hisse geri alımı yaparken sermaye yeterliliği oranları bu alımlardan olumsuz etkilenmeyecek.",
+      "onemli": true,
+      "url": "https://tr.euronews.com/business/2026/09/17/bddkdan-borsa-istanbul-onlemi-bankalara-esneklik-saglanacak"
+    }
+  ]
 }
