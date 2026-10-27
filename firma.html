@@ -107,7 +107,7 @@
 
 <script>
 // Kaynaklar: [grup, ad, ne işe yarar, adres, arama adresi ({ad} / {vkn} yerine yazılır, yoksa ""), neyi kullanır ("ad", "vkn" ya da "vkn|ad": varsa vergi no, yoksa unvan), giriş notu]
-// Adresler 27.10.2026'da kontrol edildi; kurum adres değiştirirse burada güncellenir.
+// Adresler 27.10.2026'da arama sonuçlarındaki resmî sayfa başlıklarıyla eşleştirildi; kurum adres değiştirirse burada güncellenir.
 const GRUP = [
   ["risk", "⚠️ Risk sinyalleri", "konkordato, iflas, haciz, yasak"],
   ["sicil", "🏛️ Kimlik ve sicil", "unvan, ortaklar, adres, vergi kaydı"],
@@ -122,15 +122,16 @@ const KAYNAK = [
   ["risk", "Google'da resmî ilanlar", "Unvanın geçtiği ilan.gov.tr ilanlarını tek seferde tarar (konkordato, iflas, icra, tebligat). Google'ın bulduğu kadarıdır; kesin sonuç için yukarıdaki iki sayfaya da bak.", "https://www.google.com/search?q=site%3Ailan.gov.tr", "https://www.google.com/search?q=%22{ad}%22+site%3Ailan.gov.tr", "ad", ""],
   ["risk", "Kamu ihale yasaklıları", "EKAP'ta kamu ihalelerinden yasaklanan firma ve kişiler; unvan ya da vergi no ile sorgulanır.", "https://ekap.kik.gov.tr/EKAP/Yasaklilik/YasakliSorguVatandas.aspx", "", "vkn|ad", ""],
   ["risk", "Haberlerde risk taraması", "Google Haberler'de unvanla birlikte konkordato, iflas ya da haciz geçen haberler.", GN("konkordato"), GN("%22{ad}%22%20konkordato%20OR%20iflas%20OR%20haciz"), "ad", ""],
-  ["risk", "Malvarlığı dondurma kararları", "MASAK sayfasında Resmî Gazete'de yayımlanan malvarlığı dondurma kararlarının listesi.", "https://masak.hmb.gov.tr/malvarligi-dondurma-kararlari/", "", "", ""],
+  ["risk", "Malvarlığı dondurma kararları", "MASAK sayfasında Bakanlar Kurulu ve Cumhurbaşkanı kararıyla malvarlığı dondurulanlara ilişkin kararlar.", "https://masak.hmb.gov.tr/bkk-ile-malvarliklari-dondurulanlar", "", "", ""],
   ["sicil", "Ticaret Sicil Gazetesi", "Kuruluş, sermaye, ortak, adres, yetkili değişikliği ve tasfiye ilanları.", "https://www.ticaretsicil.gov.tr/view/hizlierisim/ilangoruntuleme.php", "", "ad", "ücretsiz üyelik ya da e-Devlet girişi"],
   ["sicil", "Firma haberlerde", "Google Haberler'de unvanın geçtiği son haberler: yatırım, ihale, ortaklık, dava…", "https://news.google.com/home?hl=tr&gl=TR&ceid=TR:tr", GN("%22{ad}%22"), "ad", ""],
   ["finans", "KAP · Kamuyu Aydınlatma Platformu", "Borsada işlem gören şirketse: özel durum açıklamaları, finansal tablolar, ortaklık yapısı.", "https://www.kap.org.tr/tr/bist-sirketler", "", "ad", ""],
-  ["finans", "Findeks Çek Raporu", "Karekodlu çekte keşidecinin geçmiş çek ödeme performansı.", "https://www.findeks.com/urunler/cek-raporu", "", "", "Findeks üyeliği gerekir"],
-  ["finans", "Bağımsız denetçi sorgulama", "Mali tabloları imzalayan denetçi ya da denetim kuruluşu KGK siciline kayıtlı mı (Denetçi / Denetim Kuruluşu Sorgulama).", "https://portal.kgk.gov.tr/", "", "", ""],
-  ["faal", "Marka ve patent", "Türk Patent'te firmanın marka, patent ve tasarım kayıtları; \"Kişi/Firma Adı\" alanına yapıştır.", "https://www.turkpatent.gov.tr/arastirma-yap?form=trademark", "", "ad", ""],
+  ["finans", "Findeks Karekodlu Çek Raporu", "Çekteki karekodu Findeks Mobil ile okutarak keşidecinin çek ödeme geçmişi ve çekin durumu.", "https://www.findeks.com/urunler/karekodlu-cek-raporu", "", "", "Findeks üyeliği gerekir"],
+  ["finans", "Bağımsız denetim kuruluşu sicili", "Mali tabloları denetleyen kuruluş KGK'nın resmî sicilinde kayıtlı mı.", "https://www.kgk.gov.tr/DynamicContentDetail/5217/Bag%CC%86%C4%B1ms%C4%B1z-Denetim-Kurulus%CC%A7u-Resmi-Sicili", "", "", ""],
+  ["faal", "Marka araştırma", "Türk Patent'te firmanın marka başvuru ve tescilleri; \"Firma Adı\" alanına yapıştır.", "https://www.turkpatent.gov.tr/arastirma-yap", "", "ad", ""],
+  ["faal", "İhracatçı birliği üyeliği", "TİM'de firmanın hangi ihracatçı birliğine üye olduğu; vergi no ile sorgulanır.", "https://tim.org.tr/tr/uyelik-sorgulama", "", "vkn", ""],
   ["faal", "Gemi bilgileri (Equasis)", "Denizcilik firmaları için: IMO numarasıyla gemi, sahiplik ve denetim geçmişi.", "https://www.equasis.org/EquasisWeb/public/HomePage", "", "", "ücretsiz üyelik gerekir"],
-  ["belge", "Vergi levhası doğrulama", "Firmanın verdiği vergi levhası gerçek mi: vergi no ve levhadaki onay kodu ile GİB'de doğrula.", "https://dijital.gib.gov.tr/vergiLevhasiDogrula", "", "vkn", ""],
+  ["belge", "GİB belge doğrulama", "Firmanın verdiği vergi levhası ya da borç durum yazısı gerçek mi: belgedeki kodla Dijital Vergi Dairesi'nde doğrula.", "https://dijital.gib.gov.tr/", "", "vkn", ""],
   ["belge", "e-Devlet belge doğrulama", "e-Devlet'ten alınmış barkodlu bir belgenin gerçek olup olmadığını barkod numarasıyla doğrula.", "https://www.turkiye.gov.tr/belge-dogrulama", "", "", ""],
 ];
 // "vkn|ad": vergi no yazılmışsa onu, yoksa unvanı kullanır
