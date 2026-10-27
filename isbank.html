@@ -80,6 +80,7 @@
   .camp .left.soon { background: rgba(239,106,76,.15); color: #ef6a4c; }
   .camp b { display: block; font-size: 16px; margin: 4px 0; }
   .camp p { margin: 0; font-size: 14px; color: #c9c9c9; }
+  .camp .klis { display: block; margin: 0 0 6px; font-size: 12.5px; line-height: 1.35; color: #ffd27a; }
   .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
   .stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
   .stat span { display: block; font-size: 12px; color: var(--muted); }
@@ -1547,14 +1548,28 @@ function kListe(kay, seg) {
   // Bitiş günü geçen kampanya, bir sonraki toplamayı beklemeden listeden düşer
   return ham.filter((k) => !(k.bitis && daysLeft(k.bitis) <= 0) && !gor.has(k.url) && gor.add(k.url)).map((k) => ({ ...k, ne: k.ne || "Ayrıcalık", nere: k.nere || "Genel", kim: kKimBul(k, seg, sl[k.url] || []) }));
 }
+// Metindeki başlangıç günü ("1 Eylül-30 Kasım 2026 tarihleri arasında" → 2026-09-01). Maximum/Maximiles metni kısa olduğundan aynı kampanyanın İş Bankası metninden de bakılır.
+const K_AYLAR = ["ocak", "subat", "mart", "nisan", "mayis", "haziran", "temmuz", "agustos", "eylul", "ekim", "kasim", "aralik"]; // kKucuk Türkçe harfleri sadeleştirir
+const K_BAS_RE = new RegExp(`(\\d{1,2})(?:\\s+(${K_AYLAR.join("|")}))?(?:\\s+(\\d{4}))?\\s*[-–]\\s*(\\d{1,2})\\s+(${K_AYLAR.join("|")})(?:\\s+(\\d{4}))?\\s*(?:tarihleri\\s+)?arasinda`);
+function kBasBul(k) {
+  const m = kKucuk(k.baslik + " " + (k.ozet || "")).match(K_BAS_RE); if (!m) return "";
+  const sa = K_AYLAR.indexOf(m[2] || m[5]) + 1, ba = K_AYLAR.indexOf(m[5]) + 1, by = +(m[6] || m[3] || (k.bitis || k.ilk || "").slice(0, 4)), sy = +(m[3] || (sa > ba ? by - 1 : by));
+  return sy > 2000 && +m[1] >= 1 && +m[1] <= 31 ? `${sy}-${String(sa).padStart(2, "0")}-${m[1].padStart(2, "0")}` : "";
+}
+function kBasla(k) {
+  if (!kBasla.m && KH && KH.isbank) { kBasla.m = new Map(); kTumu().forEach((x) => { const b = kBasBul(x); if (b && !kBasla.m.has(kAyni(x))) kBasla.m.set(kAyni(x), b); }); }
+  return (kBasla.m && kBasla.m.get(kAyni(k))) || kBasBul(k);
+}
 function kKart(k, renk, ticari) {
   const n = k.bitis ? daysLeft(k.bitis) : null, u = n != null && n <= 3, yeni = k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
+  // Yeni görünen ama metnindeki başlangıcı en az 7 gün önce olan kampanya: listeye sonradan eklenmiş, "yeni başladı" sanılmasın
+  const bas = yeni ? kBasla(k) : "", gec = bas && (new Date(k.ilk + "T00:00:00") - new Date(bas + "T00:00:00")) / 864e5 >= 7;
   const left = n == null ? "" : n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
   const bit = k.bitis ? new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : "";
   const kay = (Object.values(K_KAY).find((x) => k.url.includes(x[2])) || K_KAY.isbank)[2];
   return `<div class="camp${u ? " urgent" : ""}" style="--c:${renk}">
       <div class="top"><span class="tag">${kIkon("ne", k.ne)} ${esc(k.ne)} · ${kIkon("nere", k.nere)} ${esc(kKisa(k.nere))}${yeni ? '<span class="newtag">YENİ</span>' : ""}${ticari ? '<span class="ktic">🏢 Ticari</span>' : ""}</span>${left ? `<span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}">${left}</span>` : ""}</div>
-      <b>${esc(k.baslik)}</b>${k.ozet ? `<p>${esc(k.ozet)}</p>` : ""}
+      <b>${esc(k.baslik)}</b>${gec ? `<small class="klis">🗓️ Listeye yeni eklendi · kampanya metninde başlangıç ${new Date(bas + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}</small>` : ""}${k.ozet ? `<p>${esc(k.ozet)}</p>` : ""}
       <div class="cfoot"><span>${bit ? "Bitiş: " + bit : ""}</span><a class="clink" href="${esc(k.url)}" target="_blank" rel="noopener">${kay}'de koşullar ↗</a></div>
       <button type="button" class="kkop" data-kop="${esc(k.baslik + (bit ? " · son gün " + bit : "") + "\n" + k.url)}">🔗 Linki kopyala</button>
     </div>`;
