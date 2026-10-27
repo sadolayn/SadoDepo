@@ -993,14 +993,15 @@ const CATS = [
   ["Ürün", "var(--urun)", "🧾"],
   ["Dijital", "var(--dijital)", "💡"],
   ["KAP", "var(--kap)", "📢"],
+  ["👔 Atamalar", "#b48cf0", "👔"],
   ["Soru", "#e0a24f", "❓"],
   ["Finans", "#3a50f0", "📊"],
 ];
 const LBL = { "KTakvim": "Kampanya<br>takvimi", "Pazarama": "Pazarama", "Kartsiz": "Kartsız<br>öde", "Medya": "Medya", "Maximum": "Kampanyalar", "📰 Güncel": "Güncel", "📅 Takvim": "Takvim", "Soru": "Günün sorusu", "Tarihçe": "Tarihçe", "Kampanya": "Banka<small>Kampanya</small>", "Black": "İş Black<br>İş Plus", "Haberler": "Haberler<br><small>Güncel · KAP</small>" };
 // Ana menü: 5 + 4 kutucuk. Haber türleri (Tümü, Güncel, Video, Haber, Ürün, Dijital, KAP) "Haberler" altında ikinci sırada açılır.
 const MENU = [["Tarihçe", "🏛️"], ["İşCep", "📲"], ["Black", "🖤"], ["Maximum", "🎁"], ["KTakvim", "⏳"], ["Haberler", "📰"], ["Şubeler", "📍"], ["Pazarama", "🛒"], ["Kartsiz", "💳"], ["Medya", "📣"], ["Soru", "❓"]];
-const NEWS = ["Tümü", "📰 Güncel", "🎬 Video", "Haber", "Ürün", "Dijital", "KAP"];
-const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "🎬 Video": "🎬 Video", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP" };
+const NEWS = ["Tümü", "📰 Güncel", "🎬 Video", "Haber", "Ürün", "Dijital", "KAP", "👔 Atamalar"];
+const NLBL = { "Tümü": "📋 Tümü", "📰 Güncel": "⚡ Güncel", "🎬 Video": "🎬 Video", "Haber": "🗞️ Haber", "Ürün": "🧾 Ürün", "Dijital": "💡 Dijital", "KAP": "📢 KAP", "👔 Atamalar": "👔 Atamalar" };
 let lastNews = "Tümü"; try { lastNews = localStorage.getItem("isbankNews") || "Tümü"; } catch (e) {}
 const TUR = { MaxiPuan: "var(--maxipuan)", Taksit: "var(--taksit)", "İndirim": "var(--indirim)", Puan: "var(--puan)" };
 const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
@@ -1018,7 +1019,8 @@ if (location.hash === "#isplus") { cat = "Black"; ayr = "plus"; }
 // Ana sayfadaki kayan yazıdan gelince
 if (location.hash === "#iscep") cat = "İşCep";
 if (location.hash === "#guncel") { cat = "📰 Güncel"; lastNews = cat; } // ana sayfadaki kayan yazıdaki önemli haberden
-if (location.hash === "#kap") { cat = "KAP"; lastNews = cat; } // ana sayfadaki ÖNEMLİ KAP haberinden
+if (location.hash === "#kap") { cat = "KAP"; lastNews = cat; }
+if (location.hash === "#atamalar") { cat = "👔 Atamalar"; lastNews = cat; } // ana sayfadaki ÖNEMLİ atama haberinden
 if (location.hash === "#black") { cat = "Black"; ayr = "black"; }
 if (location.hash === "#kampanya") cat = "Kampanya";
 
@@ -1038,6 +1040,7 @@ const idsFor = (k) => {
   if (k === "Şubeler" || k === "Tarihçe" || k === "Black") return [];
   if (k === "Kampanya") return bkamp ? bkamp.kategoriler.flatMap((c) => c.kampanyalar.map((x) => "b:" + x.url)) : [];
   if (k === "📅 Takvim") return [];
+  if (k === "👔 Atamalar") return atamaListe().map((h) => "n:" + (h.url || h.baslik));
   return all.filter((h) => h.kategori === k).map((h) => "n:" + (h.url || h.baslik));
 };
 function seenInit() {
@@ -1075,7 +1078,7 @@ function renderChips() {
   $("chips").querySelectorAll("button").forEach((b) => (b.onclick = () => go(b.dataset.k === "Haberler" ? (NEWS.includes(lastNews) ? lastNews : "Tümü") : b.dataset.k)));
   $("nsub").hidden = !inNews;
   const nb = (k) => { const u = k === cat ? 0 : unseen(k).length; return `<button type="button" data-n="${k}" class="${k === cat ? "on" : ""}">${NLBL[k]}${u ? `<b>${u > 9 ? "9+" : u}</b>` : ""}</button>`; };
-  $("nsub").innerHTML = inNews ? `<div class="tsat"><span class="tlab">📡 Kaynak</span><div class="tgrid">${["Tümü", "📰 Güncel", "🎬 Video"].map(nb).join("")}</div></div><div class="tsat"><span class="tlab">🏷️ Tür</span><div class="tgrid">${["Haber", "Ürün", "Dijital", "KAP"].map(nb).join("")}</div></div>` : "";
+  $("nsub").innerHTML = inNews ? `<div class="tsat"><span class="tlab">📡 Kaynak</span><div class="tgrid">${["Tümü", "📰 Güncel", "🎬 Video"].map(nb).join("")}</div></div><div class="tsat"><span class="tlab">🏷️ Tür</span><div class="tgrid">${["Haber", "Ürün", "Dijital", "KAP", "👔 Atamalar"].map(nb).join("")}</div></div>` : "";
   $("nsub").querySelectorAll("[data-n]").forEach((b) => (b.onclick = () => go(b.dataset.n)));
   altGuncelle();
 }
@@ -2286,10 +2289,13 @@ function renderLive() {
 
 // ===== Gündem özeti: son 3 günün haberleri konulara ayrılır, yeni ürünler ve yaklaşan tarihler tek kartta (Tümü ve Güncel'in en üstünde) =====
 // Konular başlıktaki sözcüklerden kurala göre bulunur (yapay zekâ ya da yorum yok); bir haber ilk uyan konuya girer.
+// Üst düzey atama ve görev değişiklikleri (KAP ve haberler); hem özet konusu hem "👔 Atamalar" sekmesi bunu kullanır
+const ATAMA = /(^|[^a-zçğıöşü])atan(dı|mış|ması|acak|an|ır)|atama|görevlerinde değişiklik|görev değişikliği|görevine getiril|göreve (başla|getiril)|görevinden ayrıl|istifa|yeni genel müdür|genel müdür yardımcılığına|genel müdürlüğüne|kuruluna seçil|başkanlığına seçil|üst düzey (atama|değişiklik)|üst yönetimde değişi/;
 const GZ_KONU = [
-  ["emekli", "👵", "Emekli promosyonu", /emekli/],
+  ["atama", "👔", "Üst düzey atamalar", ATAMA, "👔 Atamalar"],
+  ["emekli", "👵", "Emekli promosyonu", /emekli(?!lik)/],
   ["kamp", "🎁", "Kampanya ve fırsatlar", /maxipuan|maximil|kampanya|fırsat|indirim|taksit|\bpuan\b|hediye|çekiliş/, "Maximum"],
-  ["dijital", "📲", "İşCep ve dijital", /işcep|iscep|mobil|dijital|uygulama|yapay zek|ajan|visa direct/, "İşCep"],
+  ["dijital", "📲", "İşCep ve dijital", /işcep|iscep|mobil|dijital|uygulama|yapay zek|ajan|visa direct/, "Dijital"],
   ["kredi", "💰", "Kredi, faiz ve mevduat", /kredi|faiz|konut|taşıt|mevduat|vadeli|altın hesab/],
   ["kart", "💳", "Kartlar", /maximum|maximiles|kart\b|kartı|kartla/],
   ["finans", "📈", "Hisse ve finansallar", /isctr|hisse|bilanço|finansal|net kâr|net kar|temettü|çeyrek|kap açıklama|halka arz|tahvil|sermaye/, "Finans"],
@@ -2306,6 +2312,15 @@ const gzBas = (t) => { const h = String(t || "").replace(/[^A-Za-zÇĞİÖŞÜç
   if (h.length < 12 || b / h.length < .6) return t;
   const k = trKucuk(t).replace(/(?<!\p{L})(iş bankası|işcep|türkiye|istanbul|ssk|bağ-kur|tl)(?!\p{L})/gu, (w) => ({ "iş bankası": "İş Bankası", işcep: "İşCep", türkiye: "Türkiye", istanbul: "İstanbul", ssk: "SSK", "bağ-kur": "Bağ-Kur", tl: "TL" }[w] || w));
   return k.replace(/(^|[.!?]\s+)(\S)/g, (m, a, c) => a + c.toLocaleUpperCase("tr-TR")); };
+const GZ_GIT = { "Dijital": "💡 Dijital haberler", "👔 Atamalar": "👔 Üst düzey atamalar" };
+// "👔 Atamalar" sekmesi: seçilmiş haberlerden (KAP dahil) ve saatlik haber akışından atama haberleri, yeniden eskiye
+function atamaListe() {
+  const A = all.filter((h) => ATAMA.test(trKucuk(h.baslik + " " + (h.ozet || ""))));
+  const gor = new Set(A.map((h) => h.url));
+  const L = live.filter((x) => x.t && x.u && ATAMA.test(trKucuk(x.t)) && !gor.has(x.u))
+    .map((x) => ({ baslik: gzBas(x.t), url: x.u, kaynak: x.s || "", tarih: String(x.d || "").slice(0, 10), ozet: "", kategori: "📰 Güncel" }));
+  return A.concat(L).sort((a, b) => String(b.tarih).localeCompare(String(a.tarih)));
+}
 let gzAcik = true; // sayfa her açılışta özet açık gelir; kapatılırsa yalnızca o ziyarette kapalı kalır
 function gundemOzet() {
   const simdi = Date.now(), gun = (d) => (simdi - new Date(d.length === 10 ? d + "T12:00:00" : d)) / 864e5;
@@ -2340,7 +2355,7 @@ function gundemOzet() {
   const gunAd = (t) => t.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "short" });
   const kalan = (f) => f === 0 ? "bugün" : f === 1 ? "yarın" : `${Math.round(f)} gün sonra`;
   return `<details class="gz"${gzAcik ? " open" : ""}><summary><b>📌 Gündem özeti</b><small>son 3 gün · ${H.length} haber</small><span class="gzOz">${ozet}</span></summary>`
-    + (konular.length ? `<div class="gzBas">KONULAR</div>${konular.map((k) => `<details class="gzK"><summary><i>${k.g[1]}</i><span><b>${esc(k.g[2])}</b><small>${esc(k.L[0].t)}</small></span><em>${k.L.length}</em></summary><div class="gzL">${k.L.slice(0, 6).map((x) => `<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t)}<small>${esc(x.s || "")}${x.d && x.d.length > 10 ? " · " + agoTxt(x.d) : x.d ? " · " + new Date(x.d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : ""}</small></a>`).join("")}${k.g[4] ? `<button type="button" class="gzGit" data-gz="${k.g[4]}">Sitede: ${esc(LBL[k.g[4]] ? LBL[k.g[4]].replace(/<br>/g, " ") : k.g[4] === "Finans" ? "Finansal bilgiler" : k.g[4])} ›</button>` : ""}</div></details>`).join("")}` : "")
+    + (konular.length ? `<div class="gzBas">KONULAR</div>${konular.map((k) => `<details class="gzK"><summary><i>${k.g[1]}</i><span><b>${esc(k.g[2])}</b><small>${esc(k.L[0].t)}</small></span><em>${k.L.length}</em></summary><div class="gzL">${k.L.slice(0, 6).map((x) => `<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t)}<small>${esc(x.s || "")}${x.d && x.d.length > 10 ? " · " + agoTxt(x.d) : x.d ? " · " + new Date(x.d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : ""}</small></a>`).join("")}${k.g[4] ? `<button type="button" class="gzGit" data-gz="${k.g[4]}">Sitede: ${esc(GZ_GIT[k.g[4]] || (LBL[k.g[4]] ? LBL[k.g[4]].replace(/<br>/g, " ") : k.g[4] === "Finans" ? "Finansal bilgiler" : k.g[4]))} ›</button>` : ""}</div></details>`).join("")}` : "")
     + (urun.length ? `<div class="gzBas">YENİ ÜRÜN VE HİZMETLER · son 2 hafta</div><div class="gzU">${urun.map((h) => `<a href="${esc(h.url)}" target="_blank" rel="noopener"><span>${h.kategori === "Dijital" ? "💡" : "🧾"}</span><b>${esc(h.baslik)}</b><small>${new Date(h.tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}</small></a>`).join("")}</div>` : "")
     + (tarihler.length ? `<div class="gzBas">YAKLAŞAN TARİHLER</div><div class="gzT">${tarihler.slice(0, 4).map((d) => `<a href="${esc(d.x.u)}" target="_blank" rel="noopener"><span class="${d.fark <= 3 ? "yakin" : ""}"><b>${esc(gunAd(d.t))}</b><small>${kalan(d.fark)}</small></span><p>${d.son ? "⏳ " : ""}${esc(d.x.t)}</p></a>`).join("")}</div>` : "")
     + `<p class="gzNot">Konular başlıklardaki sözcüklere göre kendiliğinden ayrılır; habere dokununca yayıncının sitesinde açılır.</p></details>`;
@@ -2348,7 +2363,8 @@ function gundemOzet() {
 function gundemBagla() {
   const g = $("list").querySelector(".gz"); if (!g) return;
   g.ontoggle = () => { gzAcik = g.open; };
-  g.querySelectorAll("[data-gz]").forEach((b) => (b.onclick = () => $("chips").querySelector(`[data-k="${b.dataset.gz}"]`) ? $("chips").querySelector(`[data-k="${b.dataset.gz}"]`).click() : (b.dataset.gz === "Finans" && $("subeBar").click())));
+  g.querySelectorAll("[data-gz]").forEach((b) => (b.onclick = () => { const z = b.dataset.gz, n = $("nsub").querySelector(`[data-n="${z}"]`), c = $("chips").querySelector(`[data-k="${z}"]`);
+    if (n) n.click(); else if (c) c.click(); else if (z === "Finans") $("subeBar").click(); }));
 }
 
 // ===== Video: bankanın resmi YouTube kanalındaki son paylaşımlar (yeni ürünler çoğu zaman önce burada tanıtılıyor) =====
@@ -2750,9 +2766,9 @@ function renderList() {
   if (cat === "Medya") return renderMedya();
   if (cat === "Şubeler") return renderSubeler();
   $("upd").textContent = [kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "", "seçilmiş haberler"].filter(Boolean).join(" · ");
-  const items = all.filter((h) => cat === "Tümü" || h.kategori === cat);
-  if (!items.length) { $("list").innerHTML = '<div class="empty">Bu kategoride henüz haber yok.</div>'; return; }
-  let html = cat === "Tümü" ? gundemOzet() : "", last = "";
+  const items = cat === "👔 Atamalar" ? atamaListe() : all.filter((h) => cat === "Tümü" || h.kategori === cat);
+  if (!items.length) { $("list").innerHTML = cat === "👔 Atamalar" ? '<div class="empty">Son dönemde üst düzey atama haberi yok. KAP\'a düşen atama ve görev değişiklikleri burada görünür.</div>' : '<div class="empty">Bu kategoride henüz haber yok.</div>'; return; }
+  let html = cat === "Tümü" ? gundemOzet() : cat === "👔 Atamalar" ? '<p class="note">👔 İş Bankası üst yönetimindeki atama ve görev değişiklikleri: KAP açıklamaları ve haberler bir arada. Habere dokununca kaynağında açılır.</p>' : "", last = "";
   for (const h of items) {
     if (h.tarih !== last) { html += `<div class="day">${esc(fmtDay(h.tarih))}</div>`; last = h.tarih; }
     html += `<a class="item" href="${esc(h.url)}" target="_blank" rel="noopener" style="--c:${color(h.kategori)}">
