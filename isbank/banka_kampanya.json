@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-10-26",
+ "kontrol": "2026-10-27",
  "kategoriler": [
   {
    "slug": "iste-maasa-ozel",
@@ -77,7 +77,7 @@
    "slug": "bireysel-kredi-kampanyalari",
    "ic": "🏦",
    "ad": "Bireysel kredi",
-   "adet": 2,
+   "adet": 1,
    "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
    "kampanyalar": [
     {
@@ -85,12 +85,6 @@
      "bitis": "2026-10-28",
      "ozet": "Nakit ihtiyacınızı kolayca karşılayabileceğiniz Taksitli Ek Hesap, aylık %3,49’dan başlayan faiz oranıyla şimdi daha avantajlı!",
      "url": "https://www.isbank.com.tr/kampanyalar/indirimli-taksitli-ek-hesap-kampanyasi"
-    },
-    {
-     "baslik": "Gürgençler Alışveriş Kredisi Kampanyası!",
-     "bitis": "2026-12-31",
-     "ozet": "Gürgençler’de %0’dan Başlayan Faiz Oranlarıyla En Avantajlı Ödeme Koşulları İş Bankası’nda!",
-     "url": "https://www.isbank.com.tr/kampanyalar/is-bankasindan-gurgenclere-ozel-yapacaginiz-alisverislerde-firsatlar"
     }
    ]
   },
@@ -209,7 +203,7 @@
    "slug": "bankamatik-karti-kampanyalari",
    "ic": "🏧",
    "ad": "Bankamatik kartı",
-   "adet": 2,
+   "adet": 1,
    "url": "https://www.isbank.com.tr/kampanyalar/bankamatik-karti-kampanyalari",
    "kampanyalar": [
     {
@@ -217,12 +211,6 @@
      "bitis": "2026-10-31",
      "ozet": "İlk İmza Bankamatik Kartı'nla yapacağın 250 TL ve üzeri alışverişlerinde %50 indirim kazan!",
      "url": "https://www.isbank.com.tr/kampanyalar/ilk-imza-bankamatik-kartina-alisverislerinde-indirim-firsati"
-    },
-    {
-     "baslik": "İşPay Bakiyenizi Yükleyin, Harcadıkça Kazanın",
-     "bitis": "2026-10-31",
-     "ozet": "İhtiyaç Kredisi veya Taksitli Ek Hesap ile İşPay’inize yüklediğiniz bakiyeyle, kampanya kapsamındaki harcamalarınızdan 25.000 TL'ye kadar nakit iade kazanabilir",
-     "url": "https://www.isbank.com.tr/kampanyalar/ispay-bakiyenizi-yukleyin-harcadikca-kazanin"
     }
    ]
   },

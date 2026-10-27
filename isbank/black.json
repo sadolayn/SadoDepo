@@ -3,9 +3,9 @@
   "https://www.isbank.com.tr/kampanyalar/is-black-ayricaliklari",
   "https://www.isbank.com.tr/is-black"
  ],
- "kontrol": "2026-10-26",
- "degisim": "2026-10-26",
- "hash": "b4ea3b58a6e7df9d",
+ "kontrol": "2026-10-27",
+ "degisim": "2026-10-27",
+ "hash": "a150173ab420e140",
  "kampanyalar": [
   {
    "baslik": "İş’te Maaş’a Özel (2)",
@@ -28,6 +28,11 @@
    "ilk": "2000-01-01"
   },
   {
+   "baslik": "İşPay Kampanyaları (3)",
+   "url": "https://www.isbank.com.tr/kampanyalar/ispay-kampanyalari",
+   "ilk": "2026-10-27"
+  },
+  {
    "baslik": "Fatura Kampanyaları (1)",
    "url": "https://www.isbank.com.tr/kampanyalar/fatura-kampanyalari",
    "ilk": "2000-01-01"
@@ -38,7 +43,7 @@
    "ilk": "2000-01-01"
   },
   {
-   "baslik": "Turizm Kampanyaları (6)",
+   "baslik": "Turizm Kampanyaları (5)",
    "url": "https://www.isbank.com.tr/kampanyalar/turizm-kampanyalari",
    "ilk": "2000-01-01"
   },
@@ -88,7 +93,7 @@
    "ilk": "2000-01-01"
   },
   {
-   "baslik": "Bankamatik Kartı Kampanyaları (2)",
+   "baslik": "Bankamatik Kartı Kampanyaları (1)",
    "url": "https://www.isbank.com.tr/kampanyalar/bankamatik-karti-kampanyalari",
    "ilk": "2000-01-01"
   },
@@ -98,7 +103,7 @@
    "ilk": "2000-01-01"
   },
   {
-   "baslik": "Bireysel Kredi Kampanyaları (2)",
+   "baslik": "Bireysel Kredi Kampanyaları (1)",
    "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
    "ilk": "2000-01-01"
   },
@@ -436,6 +441,7 @@
   "/kampanyalar/is-black-kultur-ve-sanat-harcamalarinizda-indirim-ayricaliklari": "2000-01-01",
   "/kampanyalar/swissotel-the-bosphorusda-secili-mekan-ve-etkinliklerde-indirim-ayricaligi": "2000-01-01",
   "/kampanyalar/is-black-plus-kart-sahiplerine-secili-kahve-dukkanlarinda-indirim-ayricaligi": "2000-01-01",
-  "/kampanyalar/avantajli-hisse-senedi-komisyon-oranlari-ayricaligi": "2026-10-23"
+  "/kampanyalar/avantajli-hisse-senedi-komisyon-oranlari-ayricaligi": "2026-10-23",
+  "/kampanyalar/ispay-kampanyalari": "2026-10-27"
  }
 }
