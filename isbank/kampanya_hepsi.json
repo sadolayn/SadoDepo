@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-10-27T09:31",
+ "guncelleme": "2026-10-27T13:44",
  "isbank": {
   "bireysel": {
    "toplam": 187,
@@ -1493,12 +1493,12 @@
    ]
   },
   "ticari": {
-   "toplam": 78,
+   "toplam": 79,
    "kategoriler": [
     {
      "ad": "Ticari Kredi Kartı Kampanyaları",
      "slug": "ticari-kart-kampanyalari",
-     "adet": 10,
+     "adet": 11,
      "url": "https://www.isbank.com.tr/kampanyalar/ticari-kart-kampanyalari?v=ticari",
      "kampanyalar": [
       {
@@ -1509,6 +1509,15 @@
        "ilk": "2000-01-01",
        "ne": "Taksit",
        "nere": "Ödeme & Fatura"
+      },
+      {
+       "baslik": "İşCep'ten Müşterisi Olanlara Özel İndirimli Ticari TNA Ayrıcalığı",
+       "bitis": "2026-11-30",
+       "ozet": "1 Eylül-30 Kasım 2026 tarihleri arasında İşCep’te yer alan “Müşteri Olmak İstiyorum” özelliğiyle İş Bankası müşterisi olun, ticari kredi kartınızla Kasım ayında 36.407 TL taksitle, 1.050 TL ücretle 3 ay vadeli 100.000…",
+       "url": "https://www.isbank.com.tr/kampanyalar/iscepten-musterimiz-olanlara-ozel-indirimli-ticari-tna-ayricaligi",
+       "ilk": "2026-10-27",
+       "ne": "İndirim",
+       "nere": "Bankacılık"
       },
       {
        "baslik": "TROY Ticari Kredi Kartlarına Özel Seçili Sektörlerde 2 Taksit Fırsatı!",
@@ -2338,7 +2347,7 @@
  },
  "maximum": {
   "bireysel": {
-   "toplam": 215,
+   "toplam": 216,
    "kampanyalar": [
     {
      "baslik": "ETS’deki Seçili Oteller ve Turlarda 7.500 TL’ye Varan MaxiPuan Fırsatı!",
@@ -2864,6 +2873,15 @@
      "nere": "Eğlence & Spor"
     },
     {
+     "baslik": "Amazon.com.tr'de Peşin Fiyatına 9 Taksit Fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "",
+     "url": "https://www.maximum.com.tr/kampanyalar/amazoncomtrde-taksit-firsati",
+     "ilk": "2000-01-01",
+     "ne": "Taksit",
+     "nere": "Online Alışveriş"
+    },
+    {
      "baslik": "Pull&Bear'da %10 İndirim!",
      "bitis": "2026-10-31",
      "ozet": "",
@@ -3213,15 +3231,6 @@
      "ilk": "2000-01-01",
      "ne": "MaxiPuan",
      "nere": "Giyim & Kozmetik"
-    },
-    {
-     "baslik": "Amazon.com.tr'de Peşin Fiyatına 6 Taksit Fırsatı!",
-     "bitis": "2026-10-31",
-     "ozet": "",
-     "url": "https://www.maximum.com.tr/kampanyalar/amazoncomtrde-taksit-firsati",
-     "ilk": "2000-01-01",
-     "ne": "Taksit",
-     "nere": "Online Alışveriş"
     },
     {
      "baslik": "Maximum’dan Vignetim’de yapacağınız e-vinyet ve otoyol bileti ödemelerinde %7 indirim fırsatı!",
@@ -4270,7 +4279,7 @@
    ]
   },
   "ticari": {
-   "toplam": 11,
+   "toplam": 12,
    "kampanyalar": [
     {
      "baslik": "Yeni Ticari Kredi Kartı Müşterilerine Hoş Geldin Kampanyası",
@@ -4306,6 +4315,15 @@
      "url": "https://www.maximum.com.tr/kampanyalar/ticari-bankamatik-kartiniz-ile-yapacaginiz-harcamalara-maxipuan-kampanyasi",
      "ilk": "2000-01-01",
      "ne": "MaxiPuan",
+     "nere": "Bankacılık"
+    },
+    {
+     "baslik": "İşCep'ten Müşterisi Olanlara Özel İndirimli Ticari TNA Ayrıcalığı",
+     "bitis": "2026-11-30",
+     "ozet": "Şimdi Taksitli Nakit Avans Kullan",
+     "url": "https://www.maximum.com.tr/kampanyalar/iscepten-musterimiz-olanlara-indirimli-ticari-tna-ayricaligi",
+     "ilk": "2026-10-27",
+     "ne": "İndirim",
      "nere": "Bankacılık"
     },
     {
@@ -4849,14 +4867,14 @@
      "nere": "Online Alışveriş"
     },
     {
-     "baslik": "Türk Hava Yolları’nda 6’ya Varan Taksit Fırsatı!",
+     "baslik": "Trendyol'da Peşin Fiyatına 6 Taksit Fırsatı!",
      "bitis": "2026-10-31",
      "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/turk-hava-yollarinda-6-taksit-firsati",
+     "url": "https://www.maximiles.com.tr/kampanyalar/trendyol-da-pesin-fiyatina-6-taksit-firsati",
      "tv": 2,
      "ilk": "2000-01-01",
      "ne": "Taksit",
-     "nere": "Seyahat"
+     "nere": "Online Alışveriş"
     },
     {
      "baslik": "Yepy'de Peşin Fiyatına 3 Ve 6 Taksit Fırsatı!",
@@ -4909,6 +4927,16 @@
      "nere": "Seyahat"
     },
     {
+     "baslik": "Türk Hava Yolları’nda 6’ya Varan Taksit Fırsatı!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/turk-hava-yollarinda-6-taksit-firsati",
+     "tv": 2,
+     "ne": "Taksit",
+     "nere": "Seyahat",
+     "ilk": "2000-01-01"
+    },
+    {
      "baslik": "ETS'deki Seçili Otellerde 2026 Yaz Dönemi İçin Yapacağınız Rezervasyonlarınızda Anında %8 Ek İndirim",
      "bitis": "2026-10-31",
      "ozet": "",
@@ -4948,21 +4976,11 @@
      "ne": "İndirim",
      "nere": "Elektronik & Beyaz Eşya",
      "ilk": "2000-01-01"
-    },
-    {
-     "baslik": "Trendyol'da Peşin Fiyatına 6 Taksit Fırsatı!",
-     "bitis": "2026-10-31",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/trendyol-da-pesin-fiyatina-6-taksit-firsati",
-     "tv": 2,
-     "ne": "Taksit",
-     "nere": "Online Alışveriş",
-     "ilk": "2000-01-01"
     }
    ]
   },
   "ticari": {
-   "toplam": 13,
+   "toplam": 14,
    "kampanyalar": [
     {
      "baslik": "İş Bankası Ticari Kredi Kartı Yeni Müşterilerine Özel Faizsiz Taksit Kampanyası",
@@ -4983,6 +5001,16 @@
      "ilk": "2000-01-01",
      "ne": "İndirim",
      "nere": "Araç & Akaryakıt"
+    },
+    {
+     "baslik": "İşCep'ten Müşterisi Olanlara Özel İndirimli Ticari TNA Ayrıcalığı",
+     "bitis": "2026-11-30",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/iscep-ten-musterimiz-olanlara-ozel-indirimli-ticari-tna-ayricaligi",
+     "tv": 2,
+     "ilk": "2026-10-27",
+     "ne": "İndirim",
+     "nere": "Bankacılık"
     },
     {
      "baslik": "Maximiles Business Startup Kredi Kart Sahiplerine Özel 200.000 USD'ye Varan Google Cloud Kredisi!",
