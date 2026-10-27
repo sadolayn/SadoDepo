@@ -1,7 +1,16 @@
 {
-  "guncelleme": "2026-10-27T06:58:03+03:00",
+  "guncelleme": "2026-10-27T11:20:00+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
+    {
+      "tarih": "2026-10-26",
+      "kurum": "TCMB",
+      "baslik": "Yıl sonuna kadar vadesi dolan tahvillerin ödemesi için verilen krediler büyüme sınırının dışında",
+      "ozet": "TCMB, bankalar dışındaki özel sektör şirketlerinin yurt içinde çıkardığı TL borçlanma araçlarından 2026 yılı sonuna kadar vadesi dolacak olanların geri ödemesi için kullandırılan TL kredileri, ticari kredi büyüme sınırının dışında tuttu. Haberlere göre amaç likidite yönetimini desteklemek ve kredi değerliliği yüksek ihraççıların banka finansmanına erişiminde büyüme sınırının yaratabileceği güçlüğü önlemek.",
+      "etki": "Bankalar bu amaçla kullandırdıkları kredileri büyüme sınırı hesabına katmayacak; haberlere göre istisna yalnızca vadesi gelen borçlanma araçlarının ödenmesine yönelik, bütün ticari kredileri ya da yeni tahvil ihraçlarını kapsayan genel bir gevşeme değil.",
+      "onemli": true,
+      "url": "https://www.cnbce.com/haberler/merkez-bankasindan-likidite-hamlesi-tl-ticari-kredi-buyume-sinirina-yeni-istisna-h40281"
+    },
     {
       "tarih": "2026-10-26",
       "kurum": "SPK",
