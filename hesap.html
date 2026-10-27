@@ -30,7 +30,7 @@
   header h1 { margin: 0; font-size: 20px; }
   .stick { position: sticky; top: 0; z-index: 30; background: #000; margin: 0 -14px 12px; padding: 10px 14px 8px; border-bottom: 1px solid transparent; transition: border-color .2s, box-shadow .2s; }
   .stick.stuck { border-bottom-color: #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); }
-  .tabs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
+  .tabs { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
   .tabs button { border: none; background: transparent; color: var(--muted); padding: 7px 1px; border-radius: 10px; font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; line-height: 1.2; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .tabs button b { display: block; font-size: 18px; margin-bottom: 2px; }
   .tabs button.on { background: var(--accent); color: #000; }
@@ -321,6 +321,73 @@
   #calc[data-skin="pastel"] .tape div span:first-child { color: #b07090; }
   #calc[data-skin="pastel"] .k::after { background: radial-gradient(closest-side, #fff, rgba(255,160,200,.95) 35%, rgba(240,120,170,.55) 62%, transparent); }
   #calc[data-skin="pastel"] .k.lit { filter: drop-shadow(0 0 10px rgba(255,150,200,.95)) drop-shadow(0 0 20px rgba(240,110,170,.6)); }
+  /* ===== Klavye ve karakter cebi ===== */
+  @font-face { font-family: "SadoEl"; font-weight: 600; font-display: swap; src: url(lib/caveat-600-latin.woff2) format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: "SadoEl"; font-weight: 600; font-display: swap; src: url(lib/caveat-600-latin-ext.woff2) format("woff2");
+    unicode-range: U+0100-02AF, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF; }
+  #tabs [data-t="klavye"] { --c: #a7c957; }
+  @media (max-width: 500px) { .tabs { grid-template-columns: repeat(4, 1fr); } }
+  .kv h2 { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .kvSek { grid-auto-flow: initial; grid-template-columns: repeat(5, 1fr); margin-bottom: 10px; }
+  .kvSek button { padding: 8px 2px; font-size: 12px; }
+  .kvGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 6px; }
+  .kvc { display: grid; place-items: center; gap: 1px; min-height: 58px; padding: 6px 2px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: inherit; cursor: pointer; transition: transform .08s; }
+  .kvc:active { transform: scale(.94); }
+  .kvc b { font-size: 22px; font-weight: 600; line-height: 1.1; }
+  .kvc small { font-size: 11px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .kvc.oldu { border-color: var(--ok); background: rgba(63,194,131,.14); }
+  .kvSon { margin-bottom: 12px; }
+  .kvSon > b { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .kvToast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); opacity: 0; pointer-events: none; z-index: 60;
+    background: #141414; color: #f2f2f2; border: 1px solid var(--accent); border-radius: 999px; padding: 10px 18px; font-size: 14px; font-weight: 700; box-shadow: 0 10px 26px rgba(0,0,0,.6); transition: opacity .18s, transform .18s; max-width: calc(100% - 32px); }
+  .kvToast.on { opacity: 1; transform: translate(-50%, 0); }
+  /* Emoji tuşları */
+  .kvTus { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 8px 0 4px; }
+  .kvCap { display: grid; place-items: center; min-width: 74px; height: 70px; padding: 0 12px; border-radius: 12px; background: linear-gradient(180deg, #2b2b2b, #161616); border: 1px solid #3a3a3a;
+    box-shadow: 0 5px 0 #050505, inset 0 1px 0 rgba(255,255,255,.08); color: #f2f2f2; font-size: 30px; font-weight: 700; line-height: 1; }
+  .kvCap small { display: block; font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 3px; }
+  .kvCap.nokta { font-size: 24px; } .kvCap.nokta span { display: grid; line-height: .95; text-align: center; }
+  .kvArti { font-size: 26px; color: var(--accent); font-weight: 800; }
+  .kvEl { font-family: "SadoEl", "Segoe Print", "Bradley Hand", cursive; font-weight: 600; }
+  .kvYon { text-align: center; color: #ffd27a; font-size: 22px; line-height: 1.15; margin: 6px 0 2px; transform: rotate(-1.5deg); }
+  .kvKonu { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .kvKonu button { border: 1px solid var(--line); background: var(--field); color: var(--ink); border-radius: 999px; padding: 8px 12px; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; min-height: 36px; }
+  .kvKonu button.oldu { border-color: var(--ok); }
+  .kvAra { font-size: 13px; color: var(--muted); margin: 12px 0 0; display: grid; gap: 4px; }
+  .kvAra b { color: var(--ink); }
+  /* Kısayol haritası */
+  .kvNot { position: relative; margin: 4px auto 0; max-width: 330px; background: #fff3a8; color: #1f3a93; border-radius: 3px; padding: 10px 14px 12px; transform: rotate(-1.2deg);
+    box-shadow: 0 8px 18px rgba(0,0,0,.5), inset 0 -10px 18px rgba(0,0,0,.05); text-align: center; }
+  .kvNot::before { content: ""; position: absolute; left: 50%; top: -9px; width: 70px; height: 18px; transform: translateX(-50%) rotate(2deg); background: rgba(255,255,255,.35); border: 1px solid rgba(255,255,255,.25); }
+  .kvNk { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; margin: 2px 0 6px; color: #10246b; font-size: 20px; font-weight: 800; font-family: system-ui, sans-serif; }
+  .kvNt { display: block; font-size: 23px; line-height: 1.15; }
+  .kvNg { display: block; font-size: 11px; color: #6b5f2a; font-family: system-ui, sans-serif; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 2px; }
+  #kvKlavye { display: block; width: 100%; height: auto; margin-top: 2px; overflow: visible; }
+  #kvKlavye .tus { cursor: default; }
+  #kvKlavye .tus.var { cursor: pointer; }
+  .kvNav { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px; margin-top: 8px; }
+  .kvNav button { height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 20px; font-weight: 800; cursor: pointer; }
+  .kvNav span { text-align: center; font-size: 12px; color: var(--muted); }
+  .kvKagit { margin-top: 14px; background: #fbf7ec; color: #2c4fa8; border-radius: 4px; padding: 10px 14px 14px; box-shadow: 0 6px 20px rgba(0,0,0,.45);
+    background-image: repeating-linear-gradient(#fbf7ec 0 33px, #e3dac2 33px 34px); background-position: 0 6px; }
+  .kvKagit h3 { margin: 6px 0 0; font-family: "SadoEl", cursive; font-weight: 600; font-size: 24px; color: #a8741c; line-height: 34px; }
+  .kvSat { display: block; width: 100%; text-align: left; border: 0; background: none; color: inherit; font-family: "SadoEl", "Segoe Print", cursive; font-weight: 600; font-size: 21px; line-height: 34px; padding: 0 4px; cursor: pointer; border-radius: 6px; }
+  .kvSat .kvOk { color: #c0392b; }
+  .kv kbd { display: inline-block; min-width: 22px; padding: 1px 6px; border: 1px solid #a9b4dd; border-bottom-width: 3px; border-radius: 6px; background: #fff; color: #10246b;
+    font: 800 14px/1.35 system-ui, sans-serif; text-align: center; vertical-align: 2px; }
+  .kvNk kbd { font-size: 19px; padding: 3px 10px; min-width: 34px; border-radius: 8px; }
+  .kvSat kbd { margin-right: 1px; }
+  .kvSat.on { background: rgba(255,214,90,.45); }
+  .kvKagit .imza { text-align: right; color: #a8741c; font-family: "SadoEl", cursive; font-size: 20px; line-height: 34px; }
+  /* Alt kodu ve AltGr */
+  .kvAdim { margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; }
+  .kvAdim b { color: var(--accent); }
+  .kvAlinti { margin: 12px 0 0; padding: 10px 14px; background: #fbf7ec; color: #2c4fa8; border-radius: 4px; transform: rotate(.6deg); font-size: 20px; line-height: 1.25; }
+  .kvAlinti small { display: block; font-family: system-ui, sans-serif; font-size: 11px; color: #8a7a55; font-weight: 700; margin-top: 4px; }
+  .kvAltgr { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; margin-top: 8px; }
+  .kvAltgr button { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: inherit; cursor: pointer; min-height: 40px; }
+  .kvAltgr button b { font-size: 20px; } .kvAltgr button small { font-size: 11.5px; color: var(--muted); font-weight: 700; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -344,6 +411,7 @@
       <button data-t="faiz" data-yeni="t-faiz|2026-10-17|•"><b>💵</b>Faiz</button>
       <button data-t="tarih" data-yeni="t-tarih|2026-10-17|•"><b>📆</b>Tarih</button>
       <button data-t="yuzde" data-yeni="t-yuzde|2026-10-17|•"><b>％</b>Yüzde</button>
+      <button data-t="klavye" data-yeni="t-klavye|2026-10-27|•"><b>⌨️</b>Klavye</button>
       <button data-t="bulmaca" data-yeni="t-bulmaca|2026-10-17|•"><b>🔢</b>Bulmaca</button>
     </div>
   </div>
@@ -514,6 +582,53 @@
         <div class="rlock"><span style="font-size:26px">🔒</span><div><b>Ayarın kilitli, için rahat olsun 😊</b><br>Cetvel artık bu telefona göre ölçüyor. Kaydırıcı kapalı olduğu için yanlışlıkla bozulmaz.</div></div>
         <div class="tapebar"><button id="calUnlock">🔓 Kilidi aç</button></div>
       </div>
+    </div>
+  </section>
+
+  <!-- ===== Klavye ve karakter cebi ===== -->
+  <section class="panel" id="klavye">
+    <div class="card kv">
+      <h2>✨ Tek dokunuşla kopyala</h2>
+      <p class="hint" style="margin:0 0 10px">Dokun, kopyalansın; sonra istediğin yere yapıştır. Altındaki küçük yazı, Windows'ta klavyeden nasıl yazılacağı.</p>
+      <div class="kvSon" id="kvSon" hidden><b>Son kullandıkların</b><div class="kvGrid" id="kvSonGrid"></div></div>
+      <div class="seg kvSek" id="kvSek"></div>
+      <div class="kvGrid" id="kvGrid"></div>
+    </div>
+
+    <div class="card kv">
+      <h2>😀 E-postaya bile emoji</h2>
+      <div class="kvTus" aria-label="Windows tuşu artı nokta tuşu">
+        <div class="kvCap">⊞<small>Windows</small></div>
+        <span class="kvArti">+</span>
+        <div class="kvCap nokta"><span>:<br>.</span><small>nokta</small></div>
+      </div>
+      <p class="kvYon kvEl">sağ Shift'in hemen solundaki,<br>üstünde iki nokta üst üste olan tuş ↑</p>
+      <p class="hint" style="font-size:13px">İkisine aynı anda bas, emoji paneli açılır. E-postanın <b>konu satırında</b>, Teams ya da Cisco mesajında, Excel hücresinde, her yazı yazılan yerde çalışır. Panelin üstündeki sekmelerde semboller ve ¯\_(ツ)_/¯ gibi yüz ifadeleri de var. Açıkken yazmaya başlarsan arar.</p>
+      <div class="kvAra"><span>🍏 Mac'te: <b>Control + Command + Boşluk</b></span><span>📱 Telefonda: klavyedeki <b>😊</b> tuşu</span></div>
+      <label style="margin-top:14px">Konu satırı için hazır başlangıçlar (dokun, kopyalansın)</label>
+      <div class="kvKonu" id="kvKonu"></div>
+    </div>
+
+    <div class="card kv">
+      <h2>🗺️ Windows kısayol haritası</h2>
+      <p class="hint" style="margin:0 0 12px">Sarı tuşlara ya da alttaki listeye dokun; not kâğıdı o kısayolu anlatır.</p>
+      <div class="kvNot kvEl" id="kvNot" aria-live="polite"></div>
+      <svg id="kvKlavye" role="img" aria-label="Türkçe Q klavye, seçili kısayolun tuşları sarı"></svg>
+      <div class="kvNav"><button type="button" id="kvOnce" aria-label="Önceki kısayol">‹</button><span id="kvSira"></span><button type="button" id="kvSonra" aria-label="Sonraki kısayol">›</button></div>
+      <div class="kvKagit" id="kvKagit"></div>
+    </div>
+
+    <div class="card kv">
+      <h2>⌨️ Alt kodu ve AltGr</h2>
+      <ol class="kvAdim">
+        <li><b>Num Lock</b> açık olsun.</li>
+        <li><b>Alt</b> tuşunu basılı tut.</li>
+        <li>Sağdaki sayı tuşlarından kodu yaz (ör. <b>0178</b>), Alt'ı bırak: <b>²</b></li>
+      </ol>
+      <p class="hint">Dizüstünde ayrı sayı tuşları yoksa Alt kodu çalışmayabilir; o zaman yukarıdan kopyala ya da Windows + nokta panelindeki semboller sekmesini kullan.</p>
+      <p class="kvAlinti kvEl">"Metrekare yazacağıma m² yazmak daha kestirme… ALT+0137 yaptım, hooop ‰. Elinizin altında bulunsun!"<small>Sadolayn'ın Excel'indeki nottan</small></p>
+      <label style="margin-top:14px">Türkçe Q klavyede AltGr ile (sağdaki Alt)</label>
+      <div class="kvAltgr" id="kvAltgr"></div>
     </div>
   </section>
 
@@ -1356,6 +1471,162 @@ setTimeout(makineBoyut, 60); if (document.fonts && document.fonts.ready) documen
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
+<script>
+// ===== Klavye ve karakter cebi =====
+(function () {
+  const $k = (id) => document.getElementById(id);
+  const kac = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+  // Kopyala + kısa bildirim
+  let tost, tostZ;
+  function bildir(m) {
+    if (!tost) { tost = document.createElement("div"); tost.className = "kvToast"; tost.setAttribute("role", "status"); document.body.appendChild(tost); }
+    tost.textContent = m; tost.classList.add("on"); clearTimeout(tostZ); tostZ = setTimeout(() => tost.classList.remove("on"), 1700);
+  }
+  async function kopyala(s, el) {
+    let ok = false;
+    try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(s); ok = true; } } catch (e) {}
+    if (!ok) {
+      const t = document.createElement("textarea"); t.value = s; t.setAttribute("readonly", ""); t.style.cssText = "position:fixed;top:-200px;opacity:0";
+      document.body.appendChild(t); t.select(); try { ok = document.execCommand("copy"); } catch (e) {} t.remove();
+    }
+    bildir(ok ? `“${s.trim()}” kopyalandı ✓` : "Kopyalanamadı; basılı tutup seçebilirsin");
+    if (ok && el) { el.classList.add("oldu"); setTimeout(() => el.classList.remove("oldu"), 700); }
+    return ok;
+  }
+
+  // Karakterler: [karakter, Windows'ta yazılışı]
+  const GRUP = [
+    ["📐", "Ölçü", [["m²", "m + Alt 0178"], ["m³", "m + Alt 0179"], ["cm²", ""], ["km²", ""], ["²", "Alt 0178"], ["³", "Alt 0179"], ["°", "Alt 0176"], ["°C", ""], ["±", "Alt 0177"], ["×", "Alt 0215"], ["÷", "Alt 0247"], ["½", "Alt 0189"], ["¼", "Alt 0188"], ["¾", "Alt 0190"], ["‰", "Alt 0137"], ["≈", ""], ["≠", ""], ["≤", ""], ["≥", ""], ["√", ""], ["∞", ""], ["π", ""], ["µ", "Alt 0181"]]],
+    ["💰", "Para", [["₺", "AltGr T"], ["€", "AltGr E"], ["$", "AltGr 4"], ["£", "Alt 0163"], ["¥", "Alt 0165"], ["@", "AltGr Q"], ["#", "AltGr 3"], ["©", "Alt 0169"], ["®", "Alt 0174"], ["™", "Alt 0153"], ["№", ""], ["§", "Alt 0167"]]],
+    ["✍️", "İşaret", [["“ ”", "Alt 0147 0148"], ["‘ ’", "Alt 0145 0146"], ["« »", "Alt 0171 0187"], ["—", "Alt 0151"], ["–", "Alt 0150"], ["…", "Alt 0133"], ["•", "Alt 0149"], ["·", "Alt 0183"], ["¿", "Alt 0191"], ["¡", "Alt 0161"], ["✓", ""], ["✔", ""], ["✗", ""], ["★", ""], ["☆", ""], ["❤", ""], ["♫", ""], ["☎", ""], ["✉", ""]]],
+    ["➡️", "Ok", [["→", ""], ["←", ""], ["↑", ""], ["↓", ""], ["↔", ""], ["⇒", ""], ["⇐", ""], ["⇔", ""], ["↗", ""], ["↘", ""], ["▶", ""], ["◀", ""], ["▲", ""], ["▼", ""], ["●", ""], ["○", ""], ["■", ""], ["□", ""], ["◆", ""]]],
+    ["🇹🇷", "Türkçe", [["Ç", "Alt 0199"], ["ç", "Alt 0231"], ["Ğ", "Alt 0208"], ["ğ", "Alt 0240"], ["İ", "Alt 0221"], ["ı", "Alt 0253"], ["Ö", "Alt 0214"], ["ö", "Alt 0246"], ["Ş", "Alt 0222"], ["ş", "Alt 0254"], ["Ü", "Alt 0220"], ["ü", "Alt 0252"]]],
+  ];
+  const yazilis = {}; GRUP.forEach((g) => g[2].forEach(([c, a]) => (yazilis[c] = a)));
+  // “ ” gibi çiftlerde ikisi birden kopyalanır, imleç arasına gelsin diye boşluksuz
+  const metni = (c) => (/^\S \S$/.test(c) ? c.replace(" ", "") : c);
+  const cip = (c) => `<button type="button" class="kvc" data-c="${kac(c)}" aria-label="${kac(c)} kopyala"><b>${kac(c)}</b>${yazilis[c] ? `<small>${kac(yazilis[c])}</small>` : "<small>&nbsp;</small>"}</button>`;
+
+  let grup = 0, son = [];
+  try { son = JSON.parse(localStorage.getItem("kvSon") || "[]").filter((c) => c in yazilis).slice(0, 10); } catch (e) {}
+  function ciz() {
+    $k("kvSek").innerHTML = GRUP.map((g, i) => `<button type="button" class="${i === grup ? "on" : ""}" data-g="${i}">${g[0]}<br>${g[1]}</button>`).join("");
+    $k("kvGrid").innerHTML = GRUP[grup][2].map(([c]) => cip(c)).join("") + (GRUP[grup][1] === "Türkçe" ? `<p class="hint" style="grid-column:1/-1;margin:2px 0 0">Bu Alt kodları Türkçe Windows'ta çalışır; yabancı klavyede Türkçe harf lazım olunca buradan kopyalamak en kolayı.</p>` : "");
+    $k("kvSon").hidden = !son.length; $k("kvSonGrid").innerHTML = son.map(cip).join("");
+  }
+  $k("kvSek").onclick = (e) => { const b = e.target.closest("[data-g]"); if (!b) return; grup = +b.dataset.g; ciz(); };
+  const cipTik = async (e) => {
+    const b = e.target.closest("[data-c]"); if (!b) return;
+    const c = b.dataset.c;
+    if (await kopyala(metni(c), b)) {
+      son = [c, ...son.filter((x) => x !== c)].slice(0, 10);
+      try { localStorage.setItem("kvSon", JSON.stringify(son)); } catch (x) {}
+      setTimeout(() => { $k("kvSon").hidden = false; $k("kvSonGrid").innerHTML = son.map(cip).join(""); }, 720);
+    }
+  };
+  $k("kvGrid").onclick = cipTik; $k("kvSonGrid").onclick = cipTik;
+  ciz();
+
+  // E-posta konu satırı başlangıçları
+  const KONU = ["📌 Hatırlatma: ", "✅ Tamamlandı: ", "⚠️ Önemli: ", "📅 Toplantı: ", "⏰ Son gün: ", "📎 Ekte: ", "🎉 Tebrikler! ", "🙏 Teşekkürler ", "🎂 İyi ki doğdun! ", "☕ Kahve molası?"];
+  $k("kvKonu").innerHTML = KONU.map((s) => `<button type="button" data-s="${kac(s)}">${kac(s.trim())}</button>`).join("");
+  $k("kvKonu").onclick = (e) => { const b = e.target.closest("[data-s]"); if (b) kopyala(b.dataset.s, b); };
+
+  // AltGr (Türkçe Q, Windows)
+  const ALTGR = [["@", "Q"], ["€", "E"], ["₺", "T"], ["#", "3"], ["$", "4"], ["{", "7"], ["[", "8"], ["]", "9"], ["}", "0"], ["\\", "*"], ["|", "-"], ["~", "Ü"]];
+  $k("kvAltgr").innerHTML = ALTGR.map(([c, t]) => `<button type="button" data-s="${kac(c)}" aria-label="${kac(c)} kopyala"><b>${kac(c)}</b><small>AltGr + ${kac(t)}</small></button>`).join("");
+  $k("kvAltgr").onclick = (e) => { const b = e.target.closest("[data-s]"); if (b) kopyala(b.dataset.s, b); };
+
+  // ----- Windows kısayol haritası: Türkçe Q klavye -----
+  // [kimlik, etiket, x, y, genişlik] (birim: 1 tuş)
+  const T = [];
+  const kimlik = (h) => (h === "İ" ? "inokta" : h.toLowerCase());
+  const sira = (y, x0, dizi) => { let x = x0; dizi.forEach(([id, et, w = 1]) => { T.push([id, et, x, y, w]); x += w; }); };
+  sira(0, 0, [["tirnak", '"'], ..."1234567890".split("").map((d) => [d, d]), ["yildiz", "*"], ["eksi", "-"], ["bs", "⌫", 2]]);
+  sira(1, 0, [["tab", "Tab", 1.5], ..."QWERTYUIOPĞÜ".split("").map((h) => [kimlik(h), h])]);
+  sira(2, 0, [["caps", "⇪", 1.75], ..."ASDFGHJKLŞİ".split("").map((h) => [kimlik(h), h]), ["virgul", ","]]);
+  sira(3, 0, [["shift", "Shift", 1.25], ["kucuk", "<"], ..."ZXCVBNMÖÇ".split("").map((h) => [kimlik(h), h]), ["nokta", ".:"], ["shiftR", "⇧", 0.75], ["up", "↑"], ["prtsc", "PrtSc"]]);
+  sira(4, 0, [["ctrl", "Ctrl", 1.25], ["win", "⊞", 1.25], ["alt", "Alt", 1.25], ["space", "", 6], ["altgr", "AltGr", 1.25], ["ctrlR", "Ctrl"], ["left", "←"], ["down", "↓"], ["right", "→"]]);
+  const TB = Object.fromEntries(T.map((t) => [t[0], t]));
+
+  // Kısayollar: [grup, tuşlar, tuşların yazılışı, başlık, not]
+  const K = [
+    ["Her gün", ["win", "l"], "⊞ + L", "Kilitle 🔒", "masadan kalkarken bas!"],
+    ["Her gün", ["win", "d"], "⊞ + D", "Masaüstü", "her şeyi indirir, tekrar basınca geri gelir"],
+    ["Her gün", ["win", "e"], "⊞ + E", "Dosya Gezgini", "klasörler bir tuşta"],
+    ["Her gün", ["win", "v"], "⊞ + V", "Pano geçmişi 📋", "son kopyaladıkların; ilk sefer 'Aç'a bas"],
+    ["Her gün", ["win", "nokta"], "⊞ + .", "Emoji paneli 😍", "e-posta konusunda bile!"],
+    ["Her gün", ["win", "shift", "s"], "⊞ + Shift + S", "Ekran alıntısı ✂️", "bölgeyi seç, Ctrl+V ile yapıştır"],
+    ["Her gün", ["win", "prtsc"], "⊞ + PrtSc", "Ekranı kaydet 📸", "Resimler › Ekran Görüntüleri"],
+    ["Pencereler", ["win", "left", "right"], "⊞ + ← / →", "Ekranı ikiye böl", "pencereyi sola ya da sağa yasla"],
+    ["Pencereler", ["win", "up"], "⊞ + ↑", "Tam ekran", "pencereyi büyütür"],
+    ["Pencereler", ["win", "m"], "⊞ + M", "Hepsini küçült", "masa bir anda toplanır"],
+    ["Pencereler", ["win", "tab"], "⊞ + Tab", "Görev görünümü", "açık her şey tek bakışta"],
+    ["Pencereler", ["win", "ctrl", "d"], "⊞ + Ctrl + D", "Yeni masaüstü", "işi ikinci masaya taşı"],
+    ["Pencereler", ["win", "1"], "⊞ + 1…9", "Görev çubuğu", "alttaki 1., 2., 3. uygulamayı açar"],
+    ["Araçlar", ["win", "i"], "⊞ + I", "Ayarlar ⚙️", ""],
+    ["Araçlar", ["win", "r"], "⊞ + R", "Çalıştır", "calc yaz, hesap makinesi gelir 😉"],
+    ["Araçlar", ["win", "s"], "⊞ + S", "Ara 🔍", "dosya, uygulama, ayar"],
+    ["Araçlar", ["win", "x"], "⊞ + X", "Gizli menü", "Görev Yöneticisi ve fazlası"],
+    ["Araçlar", ["win", "p"], "⊞ + P", "İkinci ekran", "toplantı odasında hayat kurtarır"],
+    ["Araçlar", ["win", "a"], "⊞ + A", "Hızlı ayarlar", "Wi-Fi, ses, parlaklık"],
+    ["Araçlar", ["win", "h"], "⊞ + H", "Sesle yazma 🎤", "konuş, o yazsın"],
+    ["Araçlar", ["win", "k"], "⊞ + K", "Ekrana yansıt", "kablosuz ekran ya da TV"],
+    ["Araçlar", ["win", "g"], "⊞ + G", "Ekran kaydı 🎬", "Game Bar açılır"],
+  ];
+  const MOD = new Set(["win", "shift", "ctrl", "alt"]);
+  let sec = 0;
+  const U = 10, PAY = 0.08, UST = 16;
+  function klavye() {
+    const s = K[sec], tus = new Set(s[1]), ana = s[1].filter((x) => !MOD.has(x));
+    const hedef = new Set(K.flatMap((k) => k[1].filter((x) => !MOD.has(x))));
+    let h = `<defs><linearGradient id="kvAltin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#e0a24f"/></linearGradient></defs>`;
+    T.forEach(([id, et, x, y, w]) => {
+      const on = tus.has(id), mod = on && MOD.has(id), ip = hedef.has(id) && !on;
+      const X = x * U + PAY * U / 2, Y = UST + y * U + PAY * U / 2, W = w * U - PAY * U, H = U - PAY * U;
+      const dolgu = on && !mod ? "url(#kvAltin)" : mod ? "#3a2d12" : ip ? "#24210f" : "#1b1b1b";
+      const cizgi = on ? "#ffd27a" : ip ? "#6d5f22" : "#353535", yazi = on && !mod ? "#111" : on ? "#ffd27a" : ip ? "#e6d79a" : "#bdbdbd";
+      const fs = et.length > 2 ? 3.8 : 5.2, iki = id === "prtsc";
+      h += `<g class="tus${hedef.has(id) ? " var" : ""}" data-id="${id}"><rect x="${X}" y="${Y}" width="${W}" height="${H}" rx="1.6" fill="${dolgu}" stroke="${cizgi}" stroke-width="${on ? 0.7 : 0.35}"/>`
+        + (iki ? `<text x="${X + W / 2}" y="${Y + H / 2 - 0.6}" font-size="3.3" text-anchor="middle" fill="${yazi}" font-weight="700" font-family="system-ui,sans-serif">Prt</text><text x="${X + W / 2}" y="${Y + H / 2 + 3.2}" font-size="3.3" text-anchor="middle" fill="${yazi}" font-weight="700" font-family="system-ui,sans-serif">Sc</text>`
+          : et ? `<text x="${X + W / 2}" y="${Y + H / 2 + fs * 0.36}" font-size="${fs}" text-anchor="middle" fill="${yazi}" font-weight="700" font-family="system-ui,sans-serif">${kac(et)}</text>` : "") + "</g>";
+    });
+    // ISO Enter (iki sıraya yayılan L biçimli tuş)
+    { const p = PAY * U / 2, a = 13.5 * U + p, b = 15 * U - p, c = 13.75 * U + p, y1 = UST + U + p, y2 = UST + 3 * U - p, ym = UST + 2 * U + p;
+      h += `<path d="M ${a} ${y1} H ${b} V ${y2} H ${c} V ${ym} H ${a} Z" fill="#1b1b1b" stroke="#353535" stroke-width="0.35" stroke-linejoin="round"/><text x="${(c + b) / 2}" y="${UST + 2 * U + 3}" font-size="5.2" text-anchor="middle" fill="#bdbdbd" font-weight="700" font-family="system-ui,sans-serif">⏎</text>`; }
+    // El çizimi ok: not kâğıdından ana tuşa
+    const t = TB[ana[0]], tx = (t[2] + t[4] / 2) * U, ty = UST + t[3] * U + 0.6, sx = 75 + (tx - 75) * 0.35;
+    const cx = sx + (tx - sx) * 0.15 + (tx < 75 ? -8 : 8), cy = (ty) * 0.45;
+    const yol = `M ${sx} 0 Q ${cx} ${cy} ${tx} ${ty - 1.2}`;
+    const ang = Math.atan2(ty - 1.2 - cy, tx - cx), a1 = ang + 2.6, a2 = ang - 2.6, L = 3.2;
+    const uc = `M ${tx + L * Math.cos(a1)} ${ty - 1.2 + L * Math.sin(a1)} L ${tx} ${ty - 1.2} L ${tx + L * Math.cos(a2)} ${ty - 1.2 + L * Math.sin(a2)}`;
+    h += `<path d="${yol}" fill="none" stroke="#000" stroke-opacity=".75" stroke-width="2.2" stroke-linecap="round"/><path d="${uc}" fill="none" stroke="#000" stroke-opacity=".75" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`
+      + `<path d="${yol}" fill="none" stroke="#ffd27a" stroke-width="0.9" stroke-linecap="round" stroke-dasharray="0"/><path d="${uc}" fill="none" stroke="#ffd27a" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>`;
+    const svg = $k("kvKlavye"); svg.setAttribute("viewBox", `-1 -1 152 ${UST + 5 * U + 2}`); svg.innerHTML = h;
+    svg.setAttribute("aria-label", `Türkçe Q klavye; seçili kısayol ${s[2]}: ${s[3]}`);
+    $k("kvNot").innerHTML = `<span class="kvNg">${kac(s[0])}</span><span class="kvNk">${tuslar(s[2])}</span><span class="kvNt">${kac(s[3])}${s[4] ? " · " + kac(s[4]) : ""}</span>`;
+    $k("kvSira").textContent = `${sec + 1} / ${K.length}`;
+    document.querySelectorAll("#kvKagit .kvSat").forEach((b) => b.classList.toggle("on", +b.dataset.i === sec));
+  }
+  const tuslar = (k) => k.split(" + ").map((x) => `<kbd>${kac(x)}</kbd>`).join("+");
+  // Kâğıttaki el yazısı liste
+  let kg = "", kh = "";
+  K.forEach((k, i) => { if (k[0] !== kg) { kg = k[0]; kh += `<h3>${kac(kg)}</h3>`; } kh += `<button type="button" class="kvSat" data-i="${i}">${tuslar(k[2])} <span class="kvOk">→</span> ${kac(k[3])}</button>`; });
+  $k("kvKagit").innerHTML = kh + `<div class="imza">bilgi paylaştıkça büyür ✍︎</div>`;
+  const git = (i) => { sec = (i + K.length) % K.length; klavye(); };
+  $k("kvOnce").onclick = () => git(sec - 1); $k("kvSonra").onclick = () => git(sec + 1);
+  $k("kvKagit").onclick = (e) => { const b = e.target.closest(".kvSat"); if (!b) return; git(+b.dataset.i); $k("kvNot").scrollIntoView({ behavior: "smooth", block: "center" }); };
+  $k("kvKlavye").addEventListener("click", (e) => {
+    const g = e.target.closest(".tus.var"); if (!g) return;
+    const id = g.dataset.id, adaylar = K.map((k, i) => [k, i]).filter(([k]) => k[1].includes(id));
+    if (!adaylar.length) return;
+    const sonraki = adaylar.find(([, i]) => i > sec && K[sec][1].includes(id)) || adaylar[0];
+    git(sonraki[1]);
+  });
+  git(4); // emoji paneliyle başla
+})();
+</script>
 <script src="yeni.js"></script>
 <script src="faizhatira.js"></script>
 </body>
