@@ -204,6 +204,14 @@ def oembed(vid):
     except Exception:
         return None
 
+def yayin(vid):
+    """Filmin YouTube'daki yayın günü (YYYY-AA-GG); önceki listede varsa yeniden sorulmaz."""
+    if ESKI_TARIH.get(vid): return ESKI_TARIH[vid]
+    b = yt_get(f"https://www.youtube.com/watch?v={vid}&hl=tr", 20)
+    m = re.search(r'"(?:publishDate|uploadDate)"\s*:\s*"(\d{4}-\d{2}-\d{2})', b) or re.search(r'itemprop="(?:datePublished|uploadDate)"\s+content="(\d{4}-\d{2}-\d{2})', b)
+    if m: SAY["tarihi okunan"] = SAY.get("tarihi okunan", 0) + 1
+    return m.group(1) if m else ""
+
 def reklam():
     ids = reklam_sayfa() or reklam_sayfa(get_tarayici)
     aday, gor = [], set()
@@ -218,7 +226,9 @@ def reklam():
             continue  # kaldırılmış ya da gizli film
         ok += 1
         t = re.sub(r"\bFlmi\b", "Filmi", re.sub(r"\s+", " ", t or ad)).strip()  # YouTube'daki yazım hatası
-        out.append({"id": vid, "baslik": t[:140], "kaynak": kay})
+        out.append({"id": vid, "baslik": t[:140], "kaynak": kay, "d": yayin(vid)})
+    # En yeni film üstte; tarihi okunamayanlar sayfadaki sırayla sona
+    out.sort(key=lambda x: x.get("d") or "", reverse=True)
     if aday and not ok:  # oEmbed hiç yanıt vermediyse adaylar adlarıyla alınır
         out = [{"id": v, "baslik": a[:140], "kaynak": k} for v, a, k in aday]
     SAY["yayındaki film"] = len(out)
@@ -229,6 +239,7 @@ eski = {}
 if os.path.exists(OUT):
     try: eski = json.load(open(OUT, encoding="utf-8"))
     except Exception: eski = {}
+ESKI_TARIH = {x.get("id"): x.get("d") for x in eski.get("reklam") or [] if x.get("d")}
 veri = {"guncelleme": dt.datetime.now(TR).strftime("%Y-%m-%dT%H:%M")}
 for ad, fn in [("sosyal", sosyal), ("haberler", haberler)]:
     yeni, yol = fn(), "düz"
