@@ -343,7 +343,7 @@
     <span style="width:52px"></span>
   </header>
 
-  <p class="note" style="margin:0 0 10px;font-size:12px;opacity:.75">ℹ️ Kişisel hesap yardımcısıdır; resmi teklif ya da bağlayıcı bilgi değildir. Kesin oran ve koşullar için şubeye ya da <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:var(--accent)">isbank.com.tr</a>'ye bak.</p>
+  <p class="note" style="margin:0 0 10px;font-size:12px;opacity:.75">ℹ️ Kişisel hesap yardımcısıdır; resmi teklif ya da bağlayıcı bilgi değildir. Kesin oran ve koşullar bankanın güncel tarifesine göre değişir; hesap bilgi amaçlıdır.</p>
 
   <div class="tabs">
     <div class="tlab t1">👤 Bireysel</div>
@@ -422,7 +422,7 @@
 
     <div class="card">
       <h2>🗓️ Taksitli Ek Hesap <span style="font-weight:400;font-size:13px;color:var(--muted)">· ek hesap limitinden</span></h2>
-      <p class="hint">Taksitli Ek Hesap: ek hesap limitinden 500 TL – 600.000 TL, 2–12 ay. Oran kullanım günü sabitlenir, vade boyunca değişmez; tahsis ücreti yok.</p>
+      <p class="hint">Taksitli Ek Hesap: ek hesap limitinden 500 TL – 600.000 TL, 2–12 ay. Oran kullanım günü sabitlenir, vade boyunca değişmez; tahsis ücreti yok. Tutar aralığı, vade ve ücretler bankaya göre değişir; güncel koşullar bankanın ürün sayfasında.</p>
       <label>Tutar</label>
       <div class="field"><input id="et_tutar" type="text" inputmode="decimal" value="50.000"><span class="unit">TL</span></div>
       <label>Vade</label>
@@ -435,7 +435,7 @@
     <div class="card" data-fy="et_faiz">
       <div class="big"><span id="et_lbl">12 ay · aylık taksit</span><b id="et_out">–</b></div>
       <div class="rows" id="et_rows"></div>
-      <p class="note" id="et_note">İlk taksit kullanımdan 30 gün sonra.</p>
+      <p class="note" id="et_note">İlk taksit kullanımdan 30 gün sonra (bankaya göre değişir).</p>
       <div class="tsbtns" style="margin-top:12px"><button type="button" id="et_copy" class="tscopy">📋 Özeti kopyala</button></div>
     </div>
     <p class="eksrc" id="e_src"></p>
@@ -529,7 +529,7 @@
         <div><label>Kullandırım tarihi</label><input id="t_bas" type="date" style="color-scheme:dark"></div>
         <div><label>İlk taksit tarihi</label><input id="t_ilk" type="date" style="color-scheme:dark"></div>
       </div>
-      <p class="hint" id="t_dnote" style="margin-top:6px">İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı.</p>
+      <p class="hint" id="t_dnote" style="margin-top:6px">İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı (bankaya göre değişir).</p>
       <div class="fyMsg ic" data-fymsg="t_faiz" hidden>✍️ <b>Faiz oranını gir</b>, hesap burada görünsün.<small>Oran kişiye ve kampanyaya göre değişir; hesap bilgi amaçlıdır.</small></div>
       <div id="t_sum" class="tsum" data-fy="t_faiz">
         <div class="tswarn" id="ts_warn" hidden></div>
@@ -640,7 +640,7 @@
         <div><label>Kullandırım tarihi</label><input id="ta_bas" type="date" style="color-scheme:dark"></div>
         <div><label>İlk taksit tarihi</label><input id="ta_ilk" type="date" style="color-scheme:dark"></div>
       </div>
-      <p class="hint" id="ta_dnote" style="margin-top:6px">İlk taksit tarihi kullandırımdan en az 5, en fazla 90 gün sonra olmalı.</p>
+      <p class="hint" id="ta_dnote" style="margin-top:6px">İlk taksit tarihi kullandırımdan en az 5, en fazla 90 gün sonra olmalı (bankaya göre değişir).</p>
       <div class="fyMsg ic" data-fymsg="ta_faiz" hidden>✍️ <b>Faiz oranını gir</b>, hesap burada görünsün.<small>Oran kişiye ve kampanyaya göre değişir; hesap bilgi amaçlıdır.</small></div>
       <div class="tsum" data-fy="ta_faiz">
         <div class="tswarn" id="ta_warn" hidden></div>
@@ -1305,7 +1305,7 @@ function calcTK() {
   $("t_ilk").min = ymd(addDays(bas, 5)); $("t_ilk").max = ymd(addDays(bas, 45));
   const gIlk = ilk ? dayDiff(bas, ilk) : NaN, okIlk = gIlk >= 5 && gIlk <= 45;
   $("t_dnote").innerHTML = okIlk || !ilk
-    ? `İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı.${ilk ? ` Şu an: <b>${gIlk} gün</b>.` : ""}`
+    ? `İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı (bankaya göre değişir).${ilk ? ` Şu an: <b>${gIlk} gün</b>.` : ""}`
     : `<span style="color:#ef8a5d">⚠️ İlk taksit tarihi kullandırım tarihinden en az 5, en fazla 45 gün sonra olmalı (şu an ${gIlk} gün). Uygun tarih: ${shortD(addDays(bas, 5))} – ${shortD(addDays(bas, 45))}.</span>`;
   if (!P || !n || !ilk || !okIlk) { $("ts_warn").hidden = true; ["ts_taksit", "ts_toplam", "ts_masraf", "ts_sig", "ts_net"].forEach((x) => ($(x).textContent = "–")); $("ts_ilk").textContent = ""; tkSummary = ""; $("t_out").textContent = "–"; rows("t_rows", []); rows("t_prows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
   const dues = []; for (let k = 0; k < n; k++) dues.push(addMonthsC(ilk, k));
@@ -1698,7 +1698,7 @@ function calcTasit() {
   $("ta_ilk").min = ymd(addDays(bas, 5)); $("ta_ilk").max = ymd(addDays(bas, 90));
   const gIlk = ilk ? dayDiff(bas, ilk) : NaN, okIlk = gIlk >= 5 && gIlk <= 90;
   $("ta_dnote").innerHTML = okIlk || !ilk
-    ? `İlk taksit tarihi kullandırımdan en az 5, en fazla 90 gün sonra olmalı.${ilk ? ` Şu an: <b>${gIlk} gün</b>.` : ""}`
+    ? `İlk taksit tarihi kullandırımdan en az 5, en fazla 90 gün sonra olmalı (bankaya göre değişir).${ilk ? ` Şu an: <b>${gIlk} gün</b>.` : ""}`
     : `<span style="color:#ef8a5d">⚠️ İlk taksit tarihi kullandırımdan en az 5, en fazla 90 gün sonra olmalı (şu an ${gIlk} gün). Uygun tarih: ${shortD(addDays(bas, 5))} – ${shortD(addDays(bas, 90))}.</span>`;
   // Uyarılar
   let w = "";
@@ -2429,7 +2429,7 @@ renderCekList();
     $("et_lbl").textContent = `${n} ay · aylık taksit`;
     $("et_out").textContent = tl(t);
     rows("et_rows", [["Toplam geri ödeme", tl(top), "total"], ["Toplam faiz", tl(sF)], ["KKDF + BSMV", tl(sV)], ["Efektif aylık maliyet", "%" + (re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })]]);
-    $("et_note").textContent = (P < 500 || P > 600000 ? "⚠️ Taksitli kullanım 500 TL – 600.000 TL arası ve ek hesap limiti kadar. " : "") + "İlk taksit kullanımdan 30 gün sonra.";
+    $("et_note").textContent = (P < 500 || P > 600000 ? "⚠️ Taksitli kullanım 500 TL – 600.000 TL arası ve ek hesap limiti kadar. " : "") + "İlk taksit kullanımdan 30 gün sonra (bankaya göre değişir).";
     tOzet = ozetMetni("TAKSİTLİ NAKİT AVANS ÖZETİ (Ek Hesaba bağlı)", [[`Tutar: ${tl(P)}`, `Vade: ${n} ay`, `Aylık faiz oranı: %${f2(r * 100)}`], [`Aylık taksit tutarı: ${tl(t)}`, `Toplam geri ödeme: ${tl(top)}`], [`Toplam faiz: ${tl(sF)}`, `KKDF + BSMV: ${tl(sV)}`, `Efektif aylık maliyet: %${(re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })}`]], "Oran kullanım günü sabitlenir, vade boyunca değişmez.");
     const K = EK.kampanya, kEl = $("et_kamp");
     if (K && bugun >= (K.bas || "") && bugun <= K.bit) { kEl.hidden = false; kEl.href = K.url; kEl.innerHTML = `🎉 <b>${K.ad}</b> · son gün ${trh(K.bit)}: ${K.oran} ↗`; } else kEl.hidden = true;

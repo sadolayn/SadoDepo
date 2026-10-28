@@ -2140,7 +2140,7 @@ function ytTable(i) {
   const rows = finRows(i).map(([ad, bu, once, tur, iyi]) =>
     `<tr><td>${esc(ad)}</td><td class="now">${ytFmt(bu, tur)}</td><td class="old">${ytFmt(once, tur)}</td><td>${chgCell(bu, once, tur, iyi)}</td></tr>`).join("");
   return `<table class="yt"><thead><tr><th>Kalem</th><th>${pLabel(P[i])}</th><th>${j >= 0 ? pLabel(P[j]) : "–"}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
-    <div class="yt-note">Bankanın kendi yayımladığı resmi veri. Tutarlar TL (trn = trilyon, mlr = milyar). Yeşil iyiye, kırmızı kötüye işaret eder. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.</div>`;
+    <div class="yt-note">Bankanın kendi yayımladığı resmi veri. Tutarlar TL (trn = trilyon, mlr = milyar). Renk yalnızca artış/azalış yönünü gösterir, yorum değildir. Yatırım tavsiyesi değildir. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.</div>`;
 }
 function bindYt() {
   const c = document.getElementById("ytChips");
@@ -2176,7 +2176,8 @@ function yatHtml() {
   if (y) {
     h += `<div class="day" id="sunumBox" style="margin-top:22px">📄 Yatırımcı sunumu</div><div class="facts" style="margin-top:6px"><ul>${y.paylar.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
       <a class="maxlink" href="${esc(y.pdf)}" target="_blank" rel="noopener">📄 Yatırımcı sunumunu aç (PDF) ↗</a>
-      <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(y.ir)}" target="_blank" rel="noopener">Yatırımcı ilişkileri sayfası ↗</a>`;
+      <a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(y.ir)}" target="_blank" rel="noopener">Yatırımcı ilişkileri sayfası ↗</a>
+      <div class="yt-note">Yatırım tavsiyesi değildir; veriler bankanın kamuya açık yatırımcı sunumundan.</div>`;
   }
   return h;
 }
