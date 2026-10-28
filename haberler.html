@@ -225,6 +225,8 @@ function ppkKart() {
   return `<div class="sbar">🏦 <span class="st"><b>TCMB ${d}: politika faizi %${esc(String(L.rate).replace(".", ","))}</b><small>${esc(dg)} · PPK kararı · <a href="${esc(L.url || "https://www.tcmb.gov.tr")}" target="_blank" rel="noopener">karar metni ↗</a></small></span></div>`;
 }
 function trendCards() {
+  // Gündem kartları yalnızca Gündem sekmesinde: başka sekmede üstte hep aynı kartlar kalınca seçilen sekmenin haberleri ekranın altında kalıyor, sekme değişmemiş gibi görünüyordu
+  if (!story && cat !== "gundem") return "";
   if (story) { const s = TR.stories.find((x) => x.id === story); return `<div class="sbar">🔥 <span class="st"><b>${esc(s.head)}</b><small>${s.n} haber · ${s.srcN} kaynak · aynı konu</small></span><button id="xStory">Kapat ✕</button></div>`; }
   const cards = [];
   for (const x of TR.sec) {
