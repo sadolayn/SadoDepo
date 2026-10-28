@@ -1245,8 +1245,16 @@ const ODE_K = [
     not: "Etstur sitesinde ödeme adımında <b>İşPay</b>'i seç ya da İşCep › Hayatım › Seyahatim › Etstur'dan öde.", u: "https://www.isbank.com.tr/kampanyalar/etsde-iscep-seyahatime-ozel-ek-maxipuan-firsati" },
 ];
 const kGun = (k) => daysLeft(k.bitis);
+// Ödeme yolu kutucukları menünün altındaki yapışkan alt başlık kutusunda durur: dokununca sayfa kayar ama kutucuklar kaybolmaz
+function odeTiles(K) {
+  const t = $("tfil"), tag = (o) => K.filter((k) => k.yollar.includes(o.ic));
+  t.innerHTML = ODE.map((o, i) => { const n = tag(o).length; return `<button type="button" data-go="ode${i}" class="mt" style="--c:${o.yeni ? "#3fc283" : n ? "#e0a24f" : "#5aa9f0"};grid-column:span 12"><i>${o.ic}</i><span>${esc(o.k)}</span>${o.yeni ? "<em>🆕</em>" : n ? `<em>🎁${n}</em>` : ""}</button>`; }).join("");
+  t.className = "tfil mtiles ipm"; t.hidden = false;
+  t.onclick = (e) => { const b = e.target.closest("button[data-go]"); if (!b) return; t.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); const el = $(b.dataset.go); if (el) bolumeGit(el); };
+}
 function odeHtml() {
   const K = ODE_K.filter((k) => kGun(k) > 0);
+  odeTiles(K);
   const known = new Set(K.map((k) => k.u));
   const L = camps.filter((c) => !known.has(c.url) && /temassız|temassiz|karekod|qr|maxsticker|saat ile|yüz ile|işpay|ispay/i.test(c.baslik + " " + c.ozet));
   const tag = (o) => K.filter((k) => k.yollar.includes(o.ic));
@@ -1257,7 +1265,6 @@ function odeHtml() {
       <p>${k.not}</p><small>${new Date(k.bas + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })} – ${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })} · koşullar ↗</small></a>`; };
   return `<div class="pay-hero"><b>📲 Kartsız öde, kazan</b><span>Telefon, saat, karekod, MaxSticker, yüz ya da İşPay… Kartsız ödemeye özel kampanyalar ve hangi yolun nerede geçtiği tek yerde.</span>
       ${K.length ? `<div class="hsum"><b>${K.length}</b> kampanya · toplam <b>${K.reduce((t, k) => t + k.tl, 0).toLocaleString("tr-TR")} TL</b>'ye varan MaxiPuan</div>` : ""}</div>
-    <div class="otiles six">${ODE.map((o, i) => { const t = tag(o).length; return `<button type="button" class="ot${o.yeni ? " pay" : ""}${t ? " kz-on" : ""}" data-go="ode${i}"><i>${o.ic}</i><span>${o.k}</span>${o.yeni ? '<em class="y">YENİ</em>' : t ? `<em>🎁${t}</em>` : ""}</button>`; }).join("")}</div>
     <div class="ohead" style="margin-top:4px">🎁 Kartsız ödemeye kampanyalar<span>Kartın üstüne dokun, resmi kampanya sayfası açılır</span></div>
     ${K.map(kCard).join("")}
     ${L.length ? `<div class="ocard">${L.map((c) => `<a class="omini olnk" href="${esc(c.url || "https://www.maximum.com.tr/kampanyalar")}" target="_blank" rel="noopener"><span>${esc(c.baslik)}&nbsp;<i class="oarr">↗</i></span><small>${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></a>`).join("")}</div>` : ""}
@@ -2757,7 +2764,7 @@ function bindFact() {
 function renderList() {
   window.Rapor && Rapor.bolum(cat.replace(/<[^>]+>/g, ""));
   markSeen(cat);
-  $("tfil").hidden = cat !== "Maximum" && cat !== "İşCep" && cat !== "Black";
+  $("tfil").hidden = cat !== "Maximum" && cat !== "İşCep" && cat !== "Black" && cat !== "Kartsiz";
   renderSoon();
   if (cat === "📰 Güncel") return renderLive();
   if (cat === "🎬 Video") return renderVideo();
