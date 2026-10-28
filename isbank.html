@@ -572,6 +572,7 @@
   .aiQ cite { display: block; margin-top: 10px; font-style: normal; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #a8874c; }
   @keyframes aiFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   .aiSkip { position: absolute; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); padding: 7px 14px; border-radius: 99px; border: 1px solid #3a2f1c; background: transparent; color: #8a7a5a; font: inherit; font-size: 13px; cursor: pointer; }
+  .aiOzel .trb { width: 1.45em; height: .97em; vertical-align: -.14em; border-radius: 2px; margin-right: .3em; box-shadow: 0 0 0 1px rgba(255,255,255,.25); }
   .aiOzel { margin-bottom: 18px; padding: 7px 16px; border-radius: 99px; border: 1px solid #5a1f1f; background: rgba(200,30,40,.14); color: #f3c0c0; font-size: 13.5px; font-weight: 600; text-align: center; opacity: 0; animation: aiFade 1.2s .6s ease forwards; }
   .aiOzel.yas { border-color: #3a3a3a; background: rgba(255,255,255,.05); color: #d8d8d8; }
   .ataIntro.go .aiImg img { opacity: 1; animation: aiRise 8.5s .6s cubic-bezier(.45,.05,.35,1) both; }
@@ -920,7 +921,9 @@ window.ataOyna = function (film, ozelNot, yas) {
 (function () {
   var t = new Date(), md = ("0" + (t.getMonth() + 1)).slice(-2) + "-" + ("0" + t.getDate()).slice(-2), gun = t.getFullYear() + "-" + md;
   var pzt = new Date(t.getFullYear(), t.getMonth(), t.getDate() - ((t.getDay() + 6) % 7)), hafta = pzt.getFullYear() + "-" + (pzt.getMonth() + 1) + "-" + pzt.getDate();
-  var OZEL = { "10-28": "🇹🇷 Cumhuriyet Bayramı arifesi · 29 Ekim'e hazırlanıyoruz", "10-29": "🇹🇷 Cumhuriyet Bayramımız kutlu olsun", "11-10": "🖤 10 Kasım · Saygı ve özlemle anıyoruz", "05-19": "🇹🇷 19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı kutlu olsun", "04-23": "🇹🇷 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı kutlu olsun", "08-30": "🇹🇷 30 Ağustos Zafer Bayramı kutlu olsun", "08-26": "🏛️ 26 Ağustos 1924 · İş Bankası'nın kuruluş yıl dönümü (" + (t.getFullYear() - 1924) + ". yıl)" };
+  // Bayrak emojisi Windows'ta "TR" harfleri olarak görünüyor; onun yerine küçük SVG bayrak
+  var TRB = '<svg class="trb" viewBox="0 0 30 20" aria-label="Türk bayrağı" role="img"><rect width="30" height="20" fill="#E30A17"/><circle cx="11" cy="10" r="5" fill="#fff"/><circle cx="12.25" cy="10" r="4" fill="#E30A17"/><polygon fill="#fff" points="14.80,10.00 16.49,9.41 16.53,7.62 17.61,9.05 19.32,8.53 18.30,10.00 19.32,11.47 17.61,10.95 16.53,12.38 16.49,10.59"/></svg>';
+  var OZEL = { "10-28": TRB + " Cumhuriyet Bayramı arifesi · 29 Ekim'e hazırlanıyoruz", "10-29": TRB + " Cumhuriyet Bayramımız kutlu olsun", "11-10": "🖤 10 Kasım · Saygı ve özlemle anıyoruz", "05-19": TRB + " 19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı kutlu olsun", "04-23": TRB + " 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı kutlu olsun", "08-30": TRB + " 30 Ağustos Zafer Bayramı kutlu olsun", "08-26": "🏛️ 26 Ağustos 1924 · İş Bankası'nın kuruluş yıl dönümü (" + (t.getFullYear() - 1924) + ". yıl)" };
   var goster = false, A = {};
   try { A = JSON.parse(localStorage.getItem("ataIntro2") || "{}"); } catch (e) {}
   if (!A.ilk) goster = true;
