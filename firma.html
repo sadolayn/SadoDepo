@@ -29,8 +29,13 @@
   header h1 { margin: 0; font-size: 20px; }
   .giris { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; font-size: 13.5px; line-height: 1.5; color: #cfcfcf; margin-bottom: 6px; }
   .giris b { color: var(--ink); }
-  .sek { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; }
-  .sek a { font-size: 12.5px; font-weight: 700; color: #ffd27a; background: #1a140a; border: 1px solid #5a4520; border-radius: 999px; padding: 6px 11px; text-decoration: none; min-height: 30px; display: inline-flex; align-items: center; }
+  .sek { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0 4px; }
+  .sek a { --c: var(--s-gold, #e0a24f); display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 2px 10px; padding: 10px 12px; border-radius: 14px; text-decoration: none; min-height: 58px;
+    border: 1px solid color-mix(in srgb, var(--c) 50%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 26%, #000), color-mix(in srgb, var(--c) 6%, #060606)); color: #f2f2f2; }
+  .sek a i { grid-row: span 2; font-style: normal; font-size: 24px; line-height: 1; }
+  .sek a b { font-size: 14px; line-height: 1.2; }
+  .sek a small { font-size: 11.5px; color: color-mix(in srgb, var(--c) 45%, #fff); font-weight: 600; }
+  .sek a:active { transform: scale(.97); }
   h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; margin: 22px 0 8px; font-family: Georgia, serif; font-style: italic; font-weight: 600; font-size: 20px; color: var(--accent); scroll-margin-top: 10px; }
   h2 small { font-family: system-ui, sans-serif; font-style: normal; font-size: 12px; color: var(--muted); font-weight: 600; }
   .ky { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; }
@@ -68,12 +73,12 @@
 <script>
 // Bölümler ve kaynaklar: [bölüm, ad, neye bakılır, adres, giriş notu]. Firma adı/sorgu yok; herkese açık resmî adresler ve tarafsız açıklama.
 const GRUP = [
-  ["ilan", "📜 Resmî ilanlar", "Basın İlan Kurumu ve kamu kurumlarının yayınları"],
-  ["kurum", "🏢 Kurum siteleri", "Sadolayn Excel'indeki menü: giriş sayfaları"],
-  ["sicil", "🏛️ Kimlik ve sicil", "unvan, ortaklar, adres"],
-  ["finans", "📊 Finans ve piyasa", "halka açık şirket, çek, denetim"],
-  ["faal", "🏭 Faaliyet ve sektör", "marka, ihracat, lisans, denizcilik"],
-  ["belge", "🧾 Belge doğrulama", "firmanın getirdiği belge gerçek mi"],
+  ["ilan", "📜 Resmî ilanlar", "Basın İlan Kurumu ve kamu kurumlarının yayınları", "var(--s-red)"],
+  ["kurum", "🏢 Kurum siteleri", "Sadolayn Excel'indeki menü: giriş sayfaları", "var(--s-blue)"],
+  ["sicil", "🏛️ Kimlik ve sicil", "unvan, ortaklar, adres, vergi kaydı", "var(--s-purple)"],
+  ["finans", "📊 Finans ve piyasa", "halka açık şirket, çek, denetim", "var(--s-green)"],
+  ["faal", "🏭 Faaliyet ve sektör", "marka, ihracat, lisans, yetki belgesi", "var(--s-orange)"],
+  ["belge", "🧾 Belge doğrulama", "firmanın getirdiği belge gerçek mi", "var(--s-teal)"],
 ];
 const KAYNAK = [
   ["ilan", "ilan.gov.tr · Konkordato ve mühlet ilanları", "İİK 288 kapsamındaki geçici ve kesin mühlet, alacaklılara çağrı ve tasdik ilanları. Sayfadaki arama kutusuna unvan yazılır; yayın süresi biten ilanlar sitede görünmeyebilir.", "https://www.ilan.gov.tr/ilan/kategori/49/konkordato-ve-muhlet-iik-288inci-md-", ""],
@@ -84,6 +89,7 @@ const KAYNAK = [
   ["ilan", "MASAK · Malvarlığı dondurma kararları", "Bakanlar Kurulu ve Cumhurbaşkanı kararıyla malvarlığı dondurulanlara ilişkin resmî liste.", "https://masak.hmb.gov.tr/bkk-ile-malvarliklari-dondurulanlar", ""],
   ["sicil", "Ticaret Sicil Gazetesi", "Kuruluş, sermaye, ortak, adres, yetkili değişikliği ve tasfiye ilanları.", "https://www.ticaretsicil.gov.tr/view/hizlierisim/ilangoruntuleme.php", "ücretsiz üyelik ya da e-Devlet girişi"],
   ["sicil", "ESBİS · Esnaf sicil", "Şirket değil esnafsa kaydı burada: esnaf ve sanatkâr sicil bilgileri.", "https://esbis.ticaret.gov.tr/", "e-Devlet girişi"],
+  ["sicil", "e-Devlet · Vergi kimlik numarası sorgulama", "Vergi no ile unvan ve bağlı vergi dairesi eşleşiyor mu; firmanın verdiği bilgiyle karşılaştırılır.", "https://www.turkiye.gov.tr/gib-intvrg-vergi-kimlik-numarasi-sorgulama", "e-Devlet girişi"],
   ["sicil", "GİB · e-Fatura kayıtlı kullanıcı sorgulama", "Vergi no ile firma e-Fatura mükellefi mi; faal olduğuna dair iyi bir işaret.", "https://ebelge.gib.gov.tr/efaturakayitlikullanicilar.html", ""],
   ["finans", "KAP · Kamuyu Aydınlatma Platformu", "Borsada işlem gören şirketse: özel durum açıklamaları, finansal tablolar, ortaklık yapısı.", "https://www.kap.org.tr/tr/bist-sirketler", ""],
   ["finans", "Findeks · Karekodlu Çek Raporu", "Çekteki karekodu Findeks Mobil ile okutarak keşidecinin çek ödeme geçmişi ve çekin durumu.", "https://www.findeks.com/urunler/karekodlu-cek-raporu", "Findeks üyeliği"],
@@ -107,7 +113,9 @@ const KAYNAK = [
   ["kurum", "EKAP (yeni sürüm)", "Elektronik Kamu Alımları Platformu'nun yeni sitesi: ihaleler, duyurular ve sorgular.", "https://ekapv2.kik.gov.tr/", ""],
 ];
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-document.getElementById("sek").innerHTML = GRUP.map(([g, bas]) => `<a href="#${g}">${esc(bas)}</a>`).join("");
+// Bölüm kutucukları: simge, ad ve bağlantı sayısı; her bölümün kendi rengi (theme.css paleti)
+document.getElementById("sek").innerHTML = GRUP.map(([g, bas, , renk]) => { const [ic, ...ad] = bas.split(" "), n = KAYNAK.filter((k) => k[0] === g).length;
+  return `<a href="#${g}" style="--c:${renk}"><i>${ic}</i><b>${esc(ad.join(" "))}</b><small>${n} bağlantı</small></a>`; }).join("");
 document.getElementById("liste").innerHTML = GRUP.map(([g, bas, alt]) => {
   const L = KAYNAK.filter((k) => k[0] === g);
   return L.length ? `<h2 id="${g}">${esc(bas)}<small>${esc(alt)}</small></h2>` + L.map((k) => `<div class="ky"><div><b>${esc(k[1])}</b><p>${esc(k[2])}</p>${k[4] ? `<span class="gir">🔐 ${esc(k[4])}</span>` : ""}</div><a class="git" href="${esc(k[3])}" target="_blank" rel="noopener">Aç ↗</a></div>`).join("") : "";
