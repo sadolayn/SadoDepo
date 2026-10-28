@@ -27,27 +27,31 @@
   .wrap { max-width: 560px; margin: 0 auto; }
   header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   header h1 { margin: 0; font-size: 20px; }
-  .giris { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; font-size: 13.5px; line-height: 1.5; color: #cfcfcf; margin-bottom: 6px; }
+  .giris { font-size: 13px; line-height: 1.5; color: #b9b9b9; margin: 0 2px 10px; }
   .giris b { color: var(--ink); }
-  .profBas { display: block; margin: 12px 0 6px; font-size: 13px; font-weight: 700; color: var(--accent); }
-  .profBas small { font-weight: 500; color: var(--muted); }
-  .prof { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .prof::-webkit-scrollbar { display: none; }
-  .prof button { flex: 0 0 auto; min-height: 36px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--field); color: #d8d8d8; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
-  .prof button.on { background: var(--accent); border-color: var(--accent); color: #000; }
-  .profNot { margin: 8px 0 0; padding: 9px 12px; border-radius: 10px; background: #141008; border: 1px solid #5a4520; color: #ffd9a3; font-size: 13px; line-height: 1.45; }
-  .sek { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0 4px; }
-  .sek a { --c: var(--s-gold, #e0a24f); display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 2px 10px; padding: 10px 12px; border-radius: 14px; text-decoration: none; min-height: 58px;
-    border: 1px solid color-mix(in srgb, var(--c) 50%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 26%, #000), color-mix(in srgb, var(--c) 6%, #060606)); color: #f2f2f2; }
-  .sek a i { grid-row: span 2; font-style: normal; font-size: 24px; line-height: 1; }
-  .sek a b { font-size: 14px; line-height: 1.2; }
-  .sek a small { font-size: 11.5px; color: color-mix(in srgb, var(--c) 45%, #fff); font-weight: 600; }
-  .sek a:active { transform: scale(.97); }
-  h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; margin: 22px 0 8px; font-family: Georgia, serif; font-style: italic; font-weight: 600; font-size: 20px; color: var(--accent); scroll-margin-top: 10px; }
+  .ust { position: sticky; top: 0; z-index: 20; background: var(--bg); margin: 0 -16px; padding: 8px 16px 10px; border-bottom: 1px solid #1a1a1a; box-shadow: 0 8px 16px rgba(0,0,0,.5); }
+  .ara { position: relative; }
+  .ara input { width: 100%; min-height: 46px; padding: 10px 40px 10px 40px; border-radius: 14px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: inherit; font-size: 16px; outline: none; }
+  .ara input:focus { border-color: var(--accent); }
+  .ara::before { content: "🔎"; position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+  .ara button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 10px; background: #262626; color: #ddd; font-size: 15px; cursor: pointer; }
+  .sek { display: flex; gap: 6px; overflow-x: auto; margin-top: 8px; padding-bottom: 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+  .sek::-webkit-scrollbar { display: none; }
+  .sek button { --c: #e0a24f; flex: 0 0 auto; scroll-snap-align: start; display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 6px 12px; border-radius: 999px; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; white-space: nowrap;
+    border: 1px solid color-mix(in srgb, var(--c) 45%, #000); background: color-mix(in srgb, var(--c) 14%, #0a0a0a); color: color-mix(in srgb, var(--c) 40%, #fff); }
+  .sek button em { font-style: normal; font-size: 11.5px; padding: 1px 6px; border-radius: 999px; background: color-mix(in srgb, var(--c) 30%, #000); }
+  .sek button.on { background: var(--c); border-color: var(--c); color: #000; }
+  .sek button.on em { background: rgba(0,0,0,.2); }
+  .bos { padding: 18px 14px; text-align: center; color: var(--muted); font-size: 14px; line-height: 1.5; background: var(--card); border: 1px dashed var(--line); border-radius: 14px; }
+  .bos button { margin-top: 10px; min-height: 38px; padding: 6px 14px; border-radius: 12px; border: 1px solid var(--accent); background: #1a140a; color: #ffd27a; font: inherit; font-weight: 700; cursor: pointer; }
+  .sonuc { margin: 12px 2px 6px; font-size: 12.5px; color: var(--muted); }
+  .grpEt { display: inline-block; margin-top: 6px; font-size: 11px; font-weight: 700; color: color-mix(in srgb, var(--c) 55%, #fff); }
+  mark { background: rgba(224,162,79,.35); color: inherit; border-radius: 3px; padding: 0 1px; }
+  h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; margin: 16px 0 8px; font-family: Georgia, serif; font-style: italic; font-weight: 600; font-size: 20px; color: var(--accent); scroll-margin-top: 10px; }
   h2 small { font-family: system-ui, sans-serif; font-style: normal; font-size: 12px; color: var(--muted); font-weight: 600; }
   .ky { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; }
   .ky b { display: block; font-size: 15.5px; }
-  .ky p { margin: 3px 0 0; font-size: 13px; line-height: 1.45; color: #bdbdbd; }
+  .ky p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; color: #bdbdbd; }
   .ky .gir { display: inline-block; margin-top: 7px; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #171717; border: 1px solid #24405f; color: #9fc4f0; }
   .git { display: inline-flex; align-items: center; justify-content: center; min-width: 64px; min-height: 40px; padding: 0 12px; border-radius: 12px; background: #1a140a; border: 1px solid var(--accent); color: #ffd27a; font-weight: 800; font-size: 14px; text-decoration: none; white-space: nowrap; }
   .note { font-size: 12px; color: var(--muted); line-height: 1.55; margin-top: 18px; }
@@ -66,11 +70,11 @@
     <span style="width:46px"></span>
   </header>
 
-  <div class="giris">
-    Bir firmayı tanımak isteyene <b>yol gösterir</b>: hangi bilgiye hangi resmî siteden bakılır. Sorgu ilgili sitede, senin tarafından yapılır.
-    Bu sayfa firma hakkında bilgi vermez, sorgu yapmaz, hiçbir şey kaydetmez; yalnızca adres listesidir.
+  <p class="giris">Bir firmayı tanımak için hangi bilgiye <b>hangi resmî siteden</b> bakılır. Sorguyu ilgili sitede sen yaparsın; bu sayfa firma hakkında bilgi vermez, hiçbir şey kaydetmez.</p>
+  <div class="ust">
+    <div class="ara"><input id="ara" type="text" enterkeyhint="search" placeholder="Ne arıyorsun? ör. vergi, konkordato, SGK" autocomplete="off" aria-label="Kaynaklarda ara"><button type="button" id="araSil" hidden aria-label="Aramayı temizle">✕</button></div>
+    <nav class="sek" id="sek" aria-label="Bölümler"></nav>
   </div>
-  <nav class="sek" id="sek" aria-label="Bölümler"></nav>
 
   <div id="liste"></div>
 
@@ -140,17 +144,43 @@ const KAYNAK = [
   ["kurum", "EKAP (yeni sürüm)", "Elektronik Kamu Alımları Platformu'nun yeni sitesi: ihaleler, duyurular ve sorgular.", "https://ekapv2.kik.gov.tr/", "", ["tuzel", "sahis", "kobi", "insaat", "nakliye"]],
 ];
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-// Firma türüne göre süzme kaldırıldı (28.10.2026): bir kaynağın gözden kaçmaması için her zaman tüm liste görünür; "kimler için" etiketleri ileride gerekirse diye duruyor
-const uyar = () => true;
+// Türkçe harf ve büyük/küçük farkı gözetmeden arama
+const sade = (t) => String(t).toLocaleLowerCase("tr").replace(/[çğıöşüâî]/g, (h) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i" })[h]);
+// Sık aranan kısaltma ve eş anlamlar: aranan kelime bunlardan biriyse karşılığı da aranır
+const ES = { sgk: "sosyal guvenlik", ssk: "sgk", vkn: "vergi", levha: "vergi levhasi", icra: "e-satis", ihale: "ekap", yasakli: "yasak", mersis: "ticaret sicil", gazete: "resmi gazete", cek: "findeks", denetim: "kgk", borsa: "kap", ihracat: "tim", marka: "patent", insaat: "muteahhit", muteahhit: "muteahhit", gida: "gida", gemi: "equasis", enerji: "epdk" };
+let sec = (location.hash || "").slice(1);
+if (!GRUP.some((g) => g[0] === sec)) sec = GRUP[0][0];
+const kart = (k, q) => {
+  const vurgu = (t) => { let h = esc(t); if (!q) return h; q.forEach((w) => { if (w.length < 2) return; const s = sade(t); let out = "", i = 0, j; const ham = t; while ((j = sade(ham).indexOf(w, i)) >= 0) { out += esc(ham.slice(i, j)) + "<mark>" + esc(ham.slice(j, j + w.length)) + "</mark>"; i = j + w.length; } h = i ? out + esc(ham.slice(i)) : h; }); return h; };
+  const g = GRUP.find((x) => x[0] === k[0]);
+  return `<div class="ky"><div><b>${q ? vurgu(k[1]) : esc(k[1])}</b><p>${q ? vurgu(k[2]) : esc(k[2])}</p>${k[4] ? `<span class="gir">🔐 ${esc(k[4])}</span>` : ""}${q ? `<span class="grpEt" style="display:block;--c:${g[3]}">${esc(g[1])}</span>` : ""}</div><a class="git" href="${esc(k[3])}" target="_blank" rel="noopener">Aç ↗</a></div>`;
+};
 function ciz() {
-  const G = GRUP;
-  document.getElementById("sek").innerHTML = G.map(([g, bas, , renk]) => { const [ic, ...ad] = bas.split(" "), n = KAYNAK.filter((k) => k[0] === g && uyar(k)).length;
-    return `<a href="#${g}" style="--c:${renk}"><i>${ic}</i><b>${esc(ad.join(" "))}</b><small>${n} bağlantı</small></a>`; }).join("");
-  document.getElementById("liste").innerHTML = G.map(([g, bas, alt]) => {
-    const L = KAYNAK.filter((k) => k[0] === g && uyar(k));
-    return `<h2 id="${g}">${esc(bas)}<small>${esc(alt)}</small></h2>` + L.map((k) => `<div class="ky"><div><b>${esc(k[1])}</b><p>${esc(k[2])}</p>${k[4] ? `<span class="gir">🔐 ${esc(k[4])}</span>` : ""}</div><a class="git" href="${esc(k[3])}" target="_blank" rel="noopener">Aç ↗</a></div>`).join("");
-  }).join("");
+  const ham = document.getElementById("ara").value.trim(), q = sade(ham).split(/\s+/).filter(Boolean);
+  document.getElementById("araSil").hidden = !ham;
+  document.getElementById("sek").innerHTML = GRUP.map(([g, bas, , renk]) => { const [ic, ...ad] = bas.split(" "), n = KAYNAK.filter((k) => k[0] === g).length;
+    return `<button type="button" data-g="${g}" class="${!q.length && g === sec ? "on" : ""}" style="--c:${renk}">${ic} ${esc(ad.join(" "))} <em>${n}</em></button>`; }).join("");
+  const L = document.getElementById("liste");
+  if (q.length) {
+    const genis = q.map((w) => [w, ...(ES[w] ? [ES[w]] : [])]);
+    const S = KAYNAK.filter((k) => { const metin = sade(k[1] + " " + k[2] + " " + (GRUP.find((g) => g[0] === k[0]) || [])[1]); return genis.every((ws) => ws.some((w) => metin.includes(w))); });
+    L.innerHTML = S.length ? `<p class="sonuc">“${esc(ham)}” için ${S.length} kaynak</p>` + S.map((k) => kart(k, q)).join("")
+      : `<div class="bos">“${esc(ham)}” ile eşleşen kaynak yok.<br>Aradığın sorgu burada yoksa kurumun ana sayfasından başlayabilirsin.<br><button type="button" data-g="kurum">🏢 Kurum siteleri</button></div>`;
+    return;
+  }
+  const [g, bas, alt] = GRUP.find((x) => x[0] === sec);
+  L.innerHTML = `<h2 id="${g}">${esc(bas)}<small>${esc(alt)}</small></h2>` + KAYNAK.filter((k) => k[0] === g).map((k) => kart(k)).join("");
 }
+function bolum(g) {
+  sec = g; document.getElementById("ara").value = ""; ciz();
+  try { history.replaceState(null, "", "#" + g); } catch (e) {}
+  const b = document.querySelector(`#sek [data-g="${g}"]`); if (b) b.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  const ust = document.querySelector(".ust"), y = document.getElementById("liste").getBoundingClientRect().top + scrollY - ust.offsetHeight - 4;
+  if (scrollY > y) window.scrollTo({ top: y, behavior: "smooth" });
+}
+document.addEventListener("click", (e) => { const b = e.target.closest("[data-g]"); if (b) bolum(b.dataset.g); });
+document.getElementById("ara").addEventListener("input", ciz);
+document.getElementById("araSil").onclick = () => { const i = document.getElementById("ara"); i.value = ""; ciz(); i.focus(); };
 ciz();
 </script>
 </body>
