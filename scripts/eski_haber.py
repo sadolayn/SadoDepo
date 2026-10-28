@@ -2,7 +2,7 @@
 Google Haberler bazen yıllar önceki bir yazıyı yeni tarihle akışa veriyor (25 Ekim 2026'da 2018 tarihli
 "İşCep'ten yeni yıl kampanyası" böyle girdi). İki katman: başlıkta eski yıl; gerçek haber sayfasındaki yayın tarihi.
 Yalnızca haber sitelerine gidilir, sayfadan sadece tarih okunur, hiçbir şey kaydedilmez."""
-import re, json, base64, urllib.request, urllib.parse, datetime as dt
+import re, json, base64, urllib.request, urllib.parse, urllib.error, datetime as dt
 
 UA2 = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128 Safari/537.36",
        "Accept": "text/html,*/*", "Accept-Language": "tr-TR,tr;q=0.9"}
@@ -38,24 +38,36 @@ def gn_coz(u):
         return m2.group(1) if m2 else ""
     except Exception: return ""
 
-TARIH_RE = [re.compile(p, re.I) for p in (
-    r'property=["\']article:published_time["\'][^>]*content=["\']([^"\']+)', r'content=["\']([^"\']+)["\'][^>]*property=["\']article:published_time',
-    r'"datePublished"\s*:\s*"([^"]+)"', r'itemprop=["\']datePublished["\'][^>]*content=["\']([^"\']+)',
-    r'name=["\'](?:pubdate|publish-date|publishdate|publish_date|DC\.date\.issued)["\'][^>]*content=["\']([^"\']+)', r'<time[^>]+datetime=["\']([^"\']+)')]
+# Yayın tarihi kalıpları, güvenilirden gevşeğe: meta etiketleri ve JSON-LD; sonra <time>; en son tarih/date sınıflı bir öğenin içindeki
+# "28.10.2026" ya da "28 Ekim 2026" yazısı (sayfanın başka yerindeki tarihler alınmaz; yanlışlıkla taze haberi elememek için)
+AYLAR = "ocak|şubat|subat|mart|nisan|mayıs|mayis|haziran|temmuz|ağustos|agustos|eylül|eylul|ekim|kasım|kasim|aralık|aralik"
+AY_NO = {a: i // 2 + 1 for i, a in enumerate("ocak|ocak|şubat|subat|mart|mart|nisan|nisan|mayıs|mayis|haziran|haziran|temmuz|temmuz|ağustos|agustos|eylül|eylul|ekim|ekim|kasım|kasim|aralık|aralik".split("|"))}
+TARIH_RE = [re.compile(p, re.I | re.S) for p in (
+    r'(?:property|name)=["\'](?:article:published_time|article:published|og:article:published_time|publish-date|publishdate|publish_date|pubdate|published_time|parsely-pub-date|sailthru\.date|DC\.date(?:\.issued)?|dcterms\.created|date)["\'][^>]*content=["\']([^"\']+)',
+    r'content=["\']([^"\']+)["\'][^>]*(?:property|name)=["\'](?:article:published_time|article:published|publish-date|publishdate|pubdate|published_time)',
+    r'"(?:datePublished|dateCreated|uploadDate)"\s*:\s*"([^"]+)"',
+    r'itemprop=["\']datePublished["\'][^>]*(?:content|datetime)=["\']([^"\']+)',
+    r'<time[^>]+datetime=["\']([^"\']+)',
+    r'class=["\'][^"\']*(?:tarih|date|time|pub|yayin|yayın)[^"\']*["\'][^>]*>(?:\s*<[^>]+>)*\s*((?:\d{1,2}[./]\d{1,2}[./]\d{4})|(?:\d{1,2}\s+(?:' + AYLAR + r')\s+\d{4}))')]
 
 def tarih_ayikla(s):
     s = (s or "").strip()
     m = re.match(r"(\d{4})-(\d{2})-(\d{2})", s)
     if m: return m.group(0)
     m = re.match(r"(\d{1,2})[./](\d{1,2})[./](\d{4})", s)
-    return f"{m.group(3)}-{int(m.group(2)):02d}-{int(m.group(1)):02d}" if m else ""
+    if m: return f"{m.group(3)}-{int(m.group(2)):02d}-{int(m.group(1)):02d}"
+    m = re.match(r"(\d{1,2})\s+(" + AYLAR + r")\s+(\d{4})", s, re.I)
+    if m: return f"{m.group(3)}-{AY_NO[m.group(2).lower()]:02d}-{int(m.group(1)):02d}"
+    return ""
 
 def yayin_tarihi(url):
-    """Haber sayfasındaki yayın tarihi (YYYY-AA-GG); bulunamazsa ""."""
+    """Haber sayfasındaki yayın tarihi (YYYY-AA-GG) ve okunamadıysa nedeni: ("2026-10-27", "") / ("", "http403") / ("", "bicim")."""
     try:
-        raw = urllib.request.urlopen(urllib.request.Request(url, headers=UA2), timeout=12).read(300000).decode("utf8", "ignore")
-    except Exception: return ""
-    return tarih_bul(raw)
+        raw = urllib.request.urlopen(urllib.request.Request(url, headers=UA2), timeout=12).read(400000).decode("utf8", "ignore")
+    except urllib.error.HTTPError as e: return "", f"http{e.code}"
+    except Exception: return "", "baglanti"
+    t = tarih_bul(raw)
+    return t, "" if t else "bicim"
 
 def tarih_bul(raw):
     for rx in TARIH_RE:
@@ -70,7 +82,8 @@ def eski_mi(x, cache, simdi, sinir_gun=60):
     if eski_baslik(x.get("t"), simdi): return True, {"p": "", "n": "baslik"}
     v = cache.get(x.get("u"))
     if v is None:
-        r = gn_coz(x.get("u")); p = yayin_tarihi(r) if r else ""
+        r = gn_coz(x.get("u")); p, n = yayin_tarihi(r) if r else ("", "adres")
         v = {"p": p, "r": r[:300]}
+        if n: v["n"] = n  # okunamama nedeni: adres (Google adresi çözülemedi), httpNNN, baglanti, bicim
     sinir = (simdi - dt.timedelta(days=sinir_gun)).strftime("%Y-%m-%d")
     return bool(v.get("p")) and v["p"] < sinir, v

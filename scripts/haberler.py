@@ -215,7 +215,10 @@ for x, e, v in _sonuc:
     if e: _elenen += 1
     else: _kalan.append(x)
 cats["isbank"] = _kalan
-print(f"İş Bankası eski haber süzgeci: {_bak} yeni adrese bakıldı, {_elenen} haber elendi, {len(_kalan)} kaldı")
+_neden = {}
+for x, e, v in _sonuc:
+    if v and v.get("n") and x["u"] not in _tarih: _neden[v["n"]] = _neden.get(v["n"], 0) + 1
+print(f"İş Bankası eski haber süzgeci: {_bak} yeni adrese bakıldı, {_elenen} haber elendi, {len(_kalan)} kaldı" + (f"; tarih okunamadı: {', '.join(f'{k}×{n}' for k, n in _neden.items())}" if _neden else ""))
 tar = [x for x in cats.get("tarim", []) if TARIM_RE.search(low(x["t"]))]
 for c, items in cats.items():
     if c not in ("tarim", "okul", "yz"): tar += [x for x in items if TARIM_RE.search(low(x["t"]))]
