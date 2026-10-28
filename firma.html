@@ -70,9 +70,6 @@
     Bir firmayı tanımak isteyene <b>yol gösterir</b>: hangi bilgiye hangi resmî siteden bakılır. Sorgu ilgili sitede, senin tarafından yapılır.
     Bu sayfa firma hakkında bilgi vermez, sorgu yapmaz, hiçbir şey kaydetmez; yalnızca adres listesidir.
   </div>
-  <label class="profBas">Firma kim? <small>seçince yalnızca ona uygun kaynaklar kalır</small></label>
-  <div class="prof" id="prof" role="group" aria-label="Firma türü"></div>
-  <p class="profNot" id="profNot" hidden></p>
   <nav class="sek" id="sek" aria-label="Bölümler"></nav>
 
   <div id="liste"></div>
@@ -134,13 +131,10 @@ const KAYNAK = [
   ["kurum", "EKAP (yeni sürüm)", "Elektronik Kamu Alımları Platformu'nun yeni sitesi: ihaleler, duyurular ve sorgular.", "https://ekapv2.kik.gov.tr/", "", ["tuzel", "sahis", "kobi", "insaat", "nakliye"]],
 ];
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-let profil = "hepsi";
-const uyar = (k) => profil === "hepsi" || k[5].includes("hepsi") || k[5].includes(profil);
+// Firma türüne göre süzme kaldırıldı (28.10.2026): bir kaynağın gözden kaçmaması için her zaman tüm liste görünür; "kimler için" etiketleri ileride gerekirse diye duruyor
+const uyar = () => true;
 function ciz() {
-  document.getElementById("prof").innerHTML = PROFIL.map(([k, ic, ad]) => `<button type="button" class="${k === profil ? "on" : ""}" data-p="${k}">${ic} ${esc(ad)}</button>`).join("");
-  const not = PROFIL_NOT[profil];
-  document.getElementById("profNot").innerHTML = not ? `✎ ${esc(not)}` : ""; document.getElementById("profNot").hidden = !not;
-  const G = GRUP.filter(([g]) => KAYNAK.some((k) => k[0] === g && uyar(k)));
+  const G = GRUP;
   document.getElementById("sek").innerHTML = G.map(([g, bas, , renk]) => { const [ic, ...ad] = bas.split(" "), n = KAYNAK.filter((k) => k[0] === g && uyar(k)).length;
     return `<a href="#${g}" style="--c:${renk}"><i>${ic}</i><b>${esc(ad.join(" "))}</b><small>${n} bağlantı</small></a>`; }).join("");
   document.getElementById("liste").innerHTML = G.map(([g, bas, alt]) => {
@@ -148,7 +142,6 @@ function ciz() {
     return `<h2 id="${g}">${esc(bas)}<small>${esc(alt)}</small></h2>` + L.map((k) => `<div class="ky"><div><b>${esc(k[1])}</b><p>${esc(k[2])}</p>${k[4] ? `<span class="gir">🔐 ${esc(k[4])}</span>` : ""}</div><a class="git" href="${esc(k[3])}" target="_blank" rel="noopener">Aç ↗</a></div>`).join("");
   }).join("");
 }
-document.getElementById("prof").onclick = (e) => { const b = e.target.closest("[data-p]"); if (!b) return; profil = b.dataset.p; ciz(); };
 ciz();
 </script>
 </body>
