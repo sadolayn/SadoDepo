@@ -29,6 +29,13 @@
   header h1 { margin: 0; font-size: 20px; }
   .giris { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; font-size: 13.5px; line-height: 1.5; color: #cfcfcf; margin-bottom: 6px; }
   .giris b { color: var(--ink); }
+  .profBas { display: block; margin: 12px 0 6px; font-size: 13px; font-weight: 700; color: var(--accent); }
+  .profBas small { font-weight: 500; color: var(--muted); }
+  .prof { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .prof::-webkit-scrollbar { display: none; }
+  .prof button { flex: 0 0 auto; min-height: 36px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--field); color: #d8d8d8; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .prof button.on { background: var(--accent); border-color: var(--accent); color: #000; }
+  .profNot { margin: 8px 0 0; padding: 9px 12px; border-radius: 10px; background: #141008; border: 1px solid #5a4520; color: #ffd9a3; font-size: 13px; line-height: 1.45; }
   .sek { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 12px 0 4px; }
   .sek a { --c: var(--s-gold, #e0a24f); display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 2px 10px; padding: 10px 12px; border-radius: 14px; text-decoration: none; min-height: 58px;
     border: 1px solid color-mix(in srgb, var(--c) 50%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 26%, #000), color-mix(in srgb, var(--c) 6%, #060606)); color: #f2f2f2; }
@@ -63,6 +70,9 @@
     Bir firmayı tanımak isteyene <b>yol gösterir</b>: hangi bilgiye hangi resmî siteden bakılır. Sorgu ilgili sitede, senin tarafından yapılır.
     Bu sayfa firma hakkında bilgi vermez, sorgu yapmaz, hiçbir şey kaydetmez; yalnızca adres listesidir.
   </div>
+  <label class="profBas">Firma kim? <small>seçince yalnızca ona uygun kaynaklar kalır</small></label>
+  <div class="prof" id="prof" role="group" aria-label="Firma türü"></div>
+  <p class="profNot" id="profNot" hidden></p>
   <nav class="sek" id="sek" aria-label="Bölümler"></nav>
 
   <div id="liste"></div>
@@ -71,53 +81,75 @@
 </div>
 
 <script>
-// Bölümler ve kaynaklar: [bölüm, ad, neye bakılır, adres, giriş notu]. Firma adı/sorgu yok; herkese açık resmî adresler ve tarafsız açıklama.
+// Kaynaklar: [bölüm, ad, neye bakılır, adres, giriş notu, kimler için]. Firma adı/sorgu yok; herkese açık resmî adresler, tarafsız açıklama.
+// "Kimler için" etiketleri üstteki profil düğmelerini besler: hepsi = her firma; tuzel, sahis, esnaf, ciftci, kobi, ihracatci, nakliye, insaat, deniz, enerji
 const GRUP = [
-  ["ilan", "📜 Resmî ilanlar", "Basın İlan Kurumu ve kamu kurumlarının yayınları", "var(--s-red)"],
-  ["kurum", "🏢 Kurum siteleri", "Sadolayn Excel'indeki menü: giriş sayfaları", "var(--s-blue)"],
-  ["sicil", "🏛️ Kimlik ve sicil", "unvan, ortaklar, adres, vergi kaydı", "var(--s-purple)"],
-  ["finans", "📊 Finans ve piyasa", "halka açık şirket, çek, denetim", "var(--s-green)"],
-  ["faal", "🏭 Faaliyet ve sektör", "marka, ihracat, lisans, yetki belgesi", "var(--s-orange)"],
+  ["ilan", "📜 Resmî ilanlar", "konkordato, iflas, icra satışı, tebligat", "var(--s-red)"],
+  ["yasak", "🚫 Yasaklılar ve kararlar", "ihale yasağı, malvarlığı dondurma", "var(--s-orange)"],
+  ["sicil", "🏛️ Sicil ve kimlik", "unvan, ortaklar, vergi kaydı, halka açık şirket", "var(--s-purple)"],
   ["belge", "🧾 Belge doğrulama", "firmanın getirdiği belge gerçek mi", "var(--s-teal)"],
+  ["finans", "📊 Çek ve denetim", "çek geçmişi, bağımsız denetim", "var(--s-green)"],
+  ["yetki", "🎖️ Yetki ve lisanslar", "sektöre göre izin, belge, üyelik", "var(--s-yellow)"],
+  ["kurum", "🏢 Kurum siteleri", "ana giriş sayfaları", "var(--s-blue)"],
 ];
+const PROFIL = [
+  ["hepsi", "🏷️", "Hepsi"], ["tuzel", "🏢", "Şirket (tüzel kişi)"], ["sahis", "👤", "Şahıs firması"], ["esnaf", "🔧", "Esnaf"], ["ciftci", "🌾", "Çiftçi"],
+  ["kobi", "🏪", "KOBİ"], ["ihracatci", "🚢", "İhracatçı"], ["nakliye", "🚛", "Nakliyeci"], ["insaat", "🏗️", "İnşaatçı"], ["deniz", "⚓", "Denizcilik"], ["enerji", "⚡", "Enerji"],
+];
+// Profil notu: o profilde özellikle nereye bakılır (bilgi, yorum değil)
+const PROFIL_NOT = {
+  sahis: "Şahıs firmasında sicil kaydı gerçek kişinin adına olur; Ticaret Sicil Gazetesi ve vergi kaydı yine geçerlidir.",
+  esnaf: "Esnafın sicil kaydı ESBİS'te tutulur; kayıt yalnızca esnafın kendisi ve odalar tarafından görülebildiği için bu sayfada bağlantısı yok. Belgesini doğrulamak için e-Devlet belge doğrulama kullanılır.",
+  ciftci: "Çiftçi Kayıt Sistemi (ÇKS) belgesi çiftçinin kendisi tarafından e-Devlet'ten alınır; getirdiği belge e-Devlet belge doğrulama ile kontrol edilir. Ticaret borsası kaydı için TOBB.",
+  kobi: "KOBİ beyannamesi ve KOSGEB kaydı firmanın kendisine görünür; dışarıdan bakılabilen kaynaklar sicil, ilan ve belge doğrulamadır.",
+};
 const KAYNAK = [
-  ["ilan", "ilan.gov.tr · Konkordato ve mühlet ilanları", "İİK 288 kapsamındaki geçici ve kesin mühlet, alacaklılara çağrı ve tasdik ilanları. Sayfadaki arama kutusuna unvan yazılır; yayın süresi biten ilanlar sitede görünmeyebilir.", "https://www.ilan.gov.tr/ilan/kategori/49/konkordato-ve-muhlet-iik-288inci-md-", ""],
-  ["ilan", "ilan.gov.tr · İflas ve tasfiye ilanları", "İflasın açılması, alacak kaydı ve sıra cetveli ilanları.", "https://www.ilan.gov.tr/ilan/kategori/50/iflas-ve-tasfiye-ilanlari", ""],
-  ["ilan", "EKAP · Kamu ihale yasaklıları", "Kamu ihalelerinden yasaklanan firma ve kişiler; unvan ya da vergi no ile sorgulanır.", "https://ekapv2.kik.gov.tr/sorgulamalar/yasak-sorgulama", ""],
-  ["ilan", "UYAP e-Satış", "İcra ve iflas müdürlüklerinin satışa çıkardığı taşınır ve taşınmazlar; firmanın malları satışta mı.", "https://esatis.uyap.gov.tr/", "e-Devlet ya da SMS ile giriş"],
-  ["ilan", "EKAP · İhale sonuç ilanları", "Firma hangi kamu ihalelerini almış; kamu müşterisi var mı.", "https://ekap.kik.gov.tr/ekap/ortak/ksp/kspsonucilaniarama.aspx", ""],
-  ["ilan", "MASAK · Malvarlığı dondurma kararları", "Bakanlar Kurulu ve Cumhurbaşkanı kararıyla malvarlığı dondurulanlara ilişkin resmî liste.", "https://masak.hmb.gov.tr/bkk-ile-malvarliklari-dondurulanlar", ""],
-  ["sicil", "Ticaret Sicil Gazetesi", "Kuruluş, sermaye, ortak, adres, yetkili değişikliği ve tasfiye ilanları.", "https://www.ticaretsicil.gov.tr/view/hizlierisim/ilangoruntuleme.php", "ücretsiz üyelik ya da e-Devlet girişi"],
-  ["sicil", "GİB · Vergi kimlik numarası sorgulama", "Vergi no ile unvan ve bağlı vergi dairesi eşleşiyor mu; firmanın verdiği bilgiyle karşılaştırılır.", "https://dijital.gib.gov.tr/portal/vknsorgulama", ""],
-  ["finans", "KAP · Kamuyu Aydınlatma Platformu", "Borsada işlem gören şirketse: özel durum açıklamaları, finansal tablolar, ortaklık yapısı.", "https://www.kap.org.tr/tr/bist-sirketler", ""],
-  ["finans", "Findeks · Karekodlu Çek Raporu", "Çekteki karekodu Findeks Mobil ile okutarak keşidecinin çek ödeme geçmişi ve çekin durumu.", "https://www.findeks.com/urunler/karekodlu-cek-raporu", "Findeks üyeliği"],
-  ["finans", "KGK · Bağımsız denetim kuruluşu sicili", "Mali tabloları denetleyen kuruluş KGK'nın resmî sicilinde kayıtlı mı.", "https://www.kgk.gov.tr/DynamicContentDetail/5217/Bag%CC%86%C4%B1ms%C4%B1z-Denetim-Kurulus%CC%A7u-Resmi-Sicili", ""],
-  ["faal", "Türk Patent · Marka araştırma", "Firmanın marka başvuru ve tescilleri; \"Firma Adı\" alanına yazılır.", "https://www.turkpatent.gov.tr/arastirma-yap", ""],
-  ["faal", "TİM · İhracatçı birliği üyeliği", "Firmanın hangi ihracatçı birliğine üye olduğu; vergi no ile sorgulanır.", "https://tim.org.tr/tr/uyelik-sorgulama", ""],
-  ["faal", "TİM · İlk 1000 İhracatçı", "Türkiye'nin ilk 1000 ihracatçısı listesi (2025 araştırması).", "https://tim.org.tr/tr/turkiyenin-ilk-1000-ihracatci-arastirmasi-2025", ""],
-  ["faal", "Ulaştırma · Yetki belgesi sorgulama", "Nakliyeci için: K1, L2, R2 gibi taşımacılık yetki belgesi var mı, geçerli mi (tüzel kişi).", "https://www.turkiye.gov.tr/ulastirma-ve-altyapi-yetki-belgesi-sorgulama-tuzel-kisi", "e-Devlet girişi"],
-  ["faal", "ÇŞB · Müteahhit bilgileri sorgulama", "İnşaatçı için: yapı müteahhidi yetki belge grubu ve belge durumu; vergi no ile sorgulanır.", "https://www.turkiye.gov.tr/csb-muteahhit-bilgileri-sorgulama", "e-Devlet girişi"],
-  ["faal", "Equasis · Gemi bilgileri", "Denizcilik firmaları için: IMO numarasıyla gemi, sahiplik ve denetim geçmişi.", "https://www.equasis.org/EquasisWeb/public/HomePage", "ücretsiz üyelik"],
-  ["belge", "GİB · Belge doğrulama", "Vergi levhası ya da borç durum yazısı gerçek mi: belgedeki kodla Dijital Vergi Dairesi'nde doğrulanır.", "https://dijital.gib.gov.tr/", ""],
-  ["belge", "GİB · Vergi borcu yoktur / mükellefiyet yazısı doğrulama", "Firmanın verdiği vergi borcu yoktur ya da mükellefiyet durum yazısı gerçek mi: vergi no, dilekçe no ve güvenlik koduyla doğrulanır.", "https://dijital.gib.gov.tr/dogrulamalar/mukellefiyetDogrulama", ""],
-  ["belge", "SGK · Borcu yoktur belgesi doğrulama", "İşyerinin SGK borcu yoktur belgesi gerçek mi: e-Devlet'teki doğrulama hizmetiyle barkod numarasından kontrol edilir.", "https://www.turkiye.gov.tr/sosyal-guvenlik-isyeri-kaydi-borcu-yoktur-belgesi-dogrulama", "e-Devlet girişi"],
-  ["belge", "e-Devlet · Belge doğrulama", "e-Devlet'ten alınmış barkodlu herhangi bir belgenin gerçek olup olmadığı barkod numarasıyla doğrulanır.", "https://www.turkiye.gov.tr/belge-dogrulama", ""],
-  ["kurum", "e-Devlet Kapısı", "Kurumların sorgu ve belge hizmetleri tek kapıdan.", "https://www.turkiye.gov.tr/", "e-Devlet girişi"],
-  ["kurum", "ilan.gov.tr", "Resmî ilanların tamamı: emlak, icra, ihale, tebligat, iflas.", "https://www.ilan.gov.tr/", ""],
-  ["kurum", "TOBB", "Oda ve borsa üyeliği, kapasite raporu ve sanayi veritabanı.", "https://www.tobb.org.tr/", ""],
-  ["kurum", "TSE · Belgeli firma arama", "Firmanın TSE belgeleri var mı, geçerli mi; firma adıyla aranır.", "https://basvuruportal.tse.org.tr/genel/firmaarama.aspx", ""],
-  ["kurum", "EPDK", "Elektrik, doğal gaz, petrol ve LPG lisans sahipleri; lisans sorgulama site menüsünde.", "https://www.epdk.gov.tr/", ""],
-  ["kurum", "İMEAK Deniz Ticaret Odası", "Denizcilik firmalarının oda kaydı ve üye bilgileri.", "https://www.denizticaretodasi.org.tr/", ""],
-  ["kurum", "EKAP (yeni sürüm)", "Elektronik Kamu Alımları Platformu'nun yeni sitesi: ihaleler, duyurular ve sorgular.", "https://ekapv2.kik.gov.tr/", ""],
+  ["ilan", "ilan.gov.tr · Konkordato ve mühlet ilanları", "İİK 288 kapsamındaki geçici ve kesin mühlet, alacaklılara çağrı ve tasdik ilanları. Sayfadaki arama kutusuna unvan yazılır; yayın süresi biten ilanlar sitede görünmeyebilir.", "https://www.ilan.gov.tr/ilan/kategori/49/konkordato-ve-muhlet-iik-288inci-md-", "", ["hepsi"]],
+  ["ilan", "ilan.gov.tr · İflas ve tasfiye ilanları", "İflasın açılması, alacak kaydı ve sıra cetveli ilanları.", "https://www.ilan.gov.tr/ilan/kategori/50/iflas-ve-tasfiye-ilanlari", "", ["hepsi"]],
+  ["ilan", "UYAP e-Satış", "İcra ve iflas müdürlüklerinin satışa çıkardığı taşınır ve taşınmazlar; firmanın malları satışta mı.", "https://esatis.uyap.gov.tr/", "e-Devlet ya da SMS ile giriş", ["hepsi"]],
+  ["ilan", "EKAP · İhale sonuç ilanları", "Firma hangi kamu ihalelerini almış; kamu müşterisi var mı.", "https://ekap.kik.gov.tr/ekap/ortak/ksp/kspsonucilaniarama.aspx", "", ["tuzel", "sahis", "kobi", "insaat", "nakliye"]],
+  ["yasak", "EKAP · Kamu ihale yasaklıları", "Kamu ihalelerinden yasaklanan firma ve kişiler; unvan ya da vergi no ile sorgulanır.", "https://ekapv2.kik.gov.tr/sorgulamalar/yasak-sorgulama", "", ["hepsi"]],
+  ["yasak", "MASAK · Malvarlığı dondurma kararları", "Bakanlar Kurulu ve Cumhurbaşkanı kararıyla malvarlığı dondurulanlara ilişkin resmî liste.", "https://masak.hmb.gov.tr/bkk-ile-malvarliklari-dondurulanlar", "", ["hepsi"]],
+  ["sicil", "Ticaret Sicil Gazetesi", "Kuruluş, sermaye, ortak, adres, yetkili değişikliği ve tasfiye ilanları.", "https://www.ticaretsicil.gov.tr/view/hizlierisim/ilangoruntuleme.php", "ücretsiz üyelik ya da e-Devlet girişi", ["tuzel", "sahis", "kobi", "ihracatci", "nakliye", "insaat", "deniz", "enerji"]],
+  ["sicil", "GİB · Vergi kimlik numarası sorgulama", "Vergi no ile unvan ve bağlı vergi dairesi eşleşiyor mu; firmanın verdiği bilgiyle karşılaştırılır.", "https://dijital.gib.gov.tr/portal/vknsorgulama", "", ["hepsi"]],
+  ["sicil", "KAP · Kamuyu Aydınlatma Platformu", "Borsada işlem gören şirketse: özel durum açıklamaları, finansal tablolar, ortaklık yapısı.", "https://www.kap.org.tr/tr/bist-sirketler", "", ["tuzel"]],
+  ["belge", "GİB · Belge doğrulama", "Vergi levhası ya da borç durum yazısı gerçek mi: belgedeki kodla Dijital Vergi Dairesi'nde doğrulanır.", "https://dijital.gib.gov.tr/", "", ["hepsi"]],
+  ["belge", "GİB · Vergi borcu yoktur / mükellefiyet yazısı doğrulama", "Firmanın verdiği vergi borcu yoktur ya da mükellefiyet durum yazısı gerçek mi: vergi no, dilekçe no ve güvenlik koduyla doğrulanır.", "https://dijital.gib.gov.tr/dogrulamalar/mukellefiyetDogrulama", "", ["hepsi"]],
+  ["belge", "SGK · Borcu yoktur belgesi doğrulama", "İşyerinin SGK borcu yoktur belgesi gerçek mi: e-Devlet'teki doğrulama hizmetiyle barkod numarasından kontrol edilir.", "https://www.turkiye.gov.tr/sosyal-guvenlik-isyeri-kaydi-borcu-yoktur-belgesi-dogrulama", "e-Devlet girişi", ["hepsi"]],
+  ["belge", "e-Devlet · Belge doğrulama", "e-Devlet'ten alınmış barkodlu herhangi bir belgenin (ÇKS, oda kaydı, faaliyet belgesi…) gerçek olup olmadığı barkod numarasıyla doğrulanır.", "https://www.turkiye.gov.tr/belge-dogrulama", "", ["hepsi"]],
+  ["finans", "Findeks · Karekodlu Çek Raporu", "Çekteki karekodu Findeks Mobil ile okutarak keşidecinin çek ödeme geçmişi ve çekin durumu.", "https://www.findeks.com/urunler/karekodlu-cek-raporu", "Findeks üyeliği", ["hepsi"]],
+  ["finans", "KGK · Bağımsız denetim kuruluşu sicili", "Mali tabloları denetleyen kuruluş KGK'nın resmî sicilinde kayıtlı mı.", "https://www.kgk.gov.tr/DynamicContentDetail/5217/Bag%CC%86%C4%B1ms%C4%B1z-Denetim-Kurulus%CC%A7u-Resmi-Sicili", "", ["tuzel"]],
+  ["yetki", "Türk Patent · Marka araştırma", "Firmanın marka başvuru ve tescilleri; \"Firma Adı\" alanına yazılır.", "https://www.turkpatent.gov.tr/arastirma-yap", "", ["tuzel", "sahis", "kobi", "ihracatci"]],
+  ["yetki", "TSE · Belgeli firma arama", "Firmanın TSE belgeleri var mı, geçerli mi; firma adıyla aranır.", "https://basvuruportal.tse.org.tr/genel/firmaarama.aspx", "", ["tuzel", "sahis", "kobi", "ihracatci", "insaat"]],
+  ["yetki", "TİM · İhracatçı birliği üyeliği", "Firmanın hangi ihracatçı birliğine üye olduğu; vergi no ile sorgulanır.", "https://tim.org.tr/tr/uyelik-sorgulama", "", ["ihracatci"]],
+  ["yetki", "TİM · İlk 1000 İhracatçı", "Türkiye'nin ilk 1000 ihracatçısı listesi (2025 araştırması).", "https://tim.org.tr/tr/turkiyenin-ilk-1000-ihracatci-arastirmasi-2025", "", ["ihracatci"]],
+  ["yetki", "Ulaştırma · Yetki belgesi sorgulama", "K1, L2, R2 gibi taşımacılık yetki belgesi var mı, geçerli mi (tüzel kişi).", "https://www.turkiye.gov.tr/ulastirma-ve-altyapi-yetki-belgesi-sorgulama-tuzel-kisi", "e-Devlet girişi", ["nakliye"]],
+  ["yetki", "ÇŞB · Müteahhit bilgileri sorgulama", "Yapı müteahhidi yetki belge grubu ve belge durumu; vergi no ile sorgulanır.", "https://www.turkiye.gov.tr/csb-muteahhit-bilgileri-sorgulama", "e-Devlet girişi", ["insaat"]],
+  ["yetki", "EPDK", "Elektrik, doğal gaz, petrol ve LPG lisans sahipleri; lisans sorgulama site menüsünde.", "https://www.epdk.gov.tr/", "", ["enerji"]],
+  ["yetki", "Equasis · Gemi bilgileri", "IMO numarasıyla gemi, sahiplik ve denetim geçmişi.", "https://www.equasis.org/EquasisWeb/public/HomePage", "ücretsiz üyelik", ["deniz"]],
+  ["yetki", "İMEAK Deniz Ticaret Odası", "Denizcilik firmalarının oda kaydı ve üye bilgileri.", "https://www.denizticaretodasi.org.tr/", "", ["deniz"]],
+  ["kurum", "e-Devlet Kapısı", "Kurumların sorgu ve belge hizmetleri tek kapıdan.", "https://www.turkiye.gov.tr/", "e-Devlet girişi", ["hepsi"]],
+  ["kurum", "ilan.gov.tr", "Resmî ilanların tamamı: emlak, icra, ihale, tebligat, iflas.", "https://www.ilan.gov.tr/", "", ["hepsi"]],
+  ["kurum", "TOBB", "Oda ve borsa üyeliği, kapasite raporu ve sanayi veritabanı; çiftçi için ticaret borsası kaydı.", "https://www.tobb.org.tr/", "", ["tuzel", "sahis", "kobi", "ciftci", "ihracatci"]],
+  ["kurum", "EKAP (yeni sürüm)", "Elektronik Kamu Alımları Platformu'nun yeni sitesi: ihaleler, duyurular ve sorgular.", "https://ekapv2.kik.gov.tr/", "", ["tuzel", "sahis", "kobi", "insaat", "nakliye"]],
 ];
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-// Bölüm kutucukları: simge, ad ve bağlantı sayısı; her bölümün kendi rengi (theme.css paleti)
-document.getElementById("sek").innerHTML = GRUP.map(([g, bas, , renk]) => { const [ic, ...ad] = bas.split(" "), n = KAYNAK.filter((k) => k[0] === g).length;
-  return `<a href="#${g}" style="--c:${renk}"><i>${ic}</i><b>${esc(ad.join(" "))}</b><small>${n} bağlantı</small></a>`; }).join("");
-document.getElementById("liste").innerHTML = GRUP.map(([g, bas, alt]) => {
-  const L = KAYNAK.filter((k) => k[0] === g);
-  return L.length ? `<h2 id="${g}">${esc(bas)}<small>${esc(alt)}</small></h2>` + L.map((k) => `<div class="ky"><div><b>${esc(k[1])}</b><p>${esc(k[2])}</p>${k[4] ? `<span class="gir">🔐 ${esc(k[4])}</span>` : ""}</div><a class="git" href="${esc(k[3])}" target="_blank" rel="noopener">Aç ↗</a></div>`).join("") : "";
-}).join("");
+let profil = "hepsi";
+const uyar = (k) => profil === "hepsi" || k[5].includes("hepsi") || k[5].includes(profil);
+function ciz() {
+  document.getElementById("prof").innerHTML = PROFIL.map(([k, ic, ad]) => `<button type="button" class="${k === profil ? "on" : ""}" data-p="${k}">${ic} ${esc(ad)}</button>`).join("");
+  const not = PROFIL_NOT[profil];
+  document.getElementById("profNot").innerHTML = not ? `✎ ${esc(not)}` : ""; document.getElementById("profNot").hidden = !not;
+  const G = GRUP.filter(([g]) => KAYNAK.some((k) => k[0] === g && uyar(k)));
+  document.getElementById("sek").innerHTML = G.map(([g, bas, , renk]) => { const [ic, ...ad] = bas.split(" "), n = KAYNAK.filter((k) => k[0] === g && uyar(k)).length;
+    return `<a href="#${g}" style="--c:${renk}"><i>${ic}</i><b>${esc(ad.join(" "))}</b><small>${n} bağlantı</small></a>`; }).join("");
+  document.getElementById("liste").innerHTML = G.map(([g, bas, alt]) => {
+    const L = KAYNAK.filter((k) => k[0] === g && uyar(k));
+    return `<h2 id="${g}">${esc(bas)}<small>${esc(alt)}</small></h2>` + L.map((k) => `<div class="ky"><div><b>${esc(k[1])}</b><p>${esc(k[2])}</p>${k[4] ? `<span class="gir">🔐 ${esc(k[4])}</span>` : ""}</div><a class="git" href="${esc(k[3])}" target="_blank" rel="noopener">Aç ↗</a></div>`).join("");
+  }).join("");
+}
+document.getElementById("prof").onclick = (e) => { const b = e.target.closest("[data-p]"); if (!b) return; profil = b.dataset.p; ciz(); };
+ciz();
 </script>
 </body>
 </html>
