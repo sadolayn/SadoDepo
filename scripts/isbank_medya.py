@@ -122,6 +122,7 @@ YT_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/53
          "Accept-Language": "tr-TR,tr;q=0.9", "Cookie": "CONSENT=YES+1; SOCS=CAI"}
 YT_ID = r'(?:youtube(?:-nocookie)?\.com\\?/(?:embed\\?/|watch\?v=|v\\?/|shorts\\?/)|youtu\.be\\?/)([A-Za-z0-9_-]{11})'
 SAY = {}  # kayda yalnızca sayılar basılır
+AKIS_TARIH = {}  # oynatma listesi akışından: film kimliği → yayın günü
 # Bankanın sayfasında YouTube yerine video dosyası olarak duran ama resmi kanalda da bulunan filmler (adı arama sonucuyla doğrulandı)
 EK = ["3abDmZx6Wzk"]  # Türkiye İş Bankası - 96. Yıl Reklam Filmi
 
@@ -185,6 +186,9 @@ def reklam_listeleri():
     SAY["oynatma listesi"], SAY["reklam listesi"] = len(tum), len(sec)
     out = []
     for pid in sec[:4]:
+        # Listenin akışındaki yayın günleri (YouTube video sayfasını sunuculara vermiyor, akış veriyor)
+        for e in re.finditer(r"(?s)<entry>.*?<yt:videoId>([\w-]{11})</yt:videoId>.*?<published>(\d{4}-\d{2}-\d{2})", yt_get(f"https://www.youtube.com/feeds/videos.xml?playlist_id={pid}")):
+            AKIS_TARIH.setdefault(e.group(1), e.group(2))
         d, n = yt_veri(yt_get(f"https://www.youtube.com/playlist?list={pid}&hl=tr")), 0
         for o in gez(d or {}):
             v = o.get("playlistVideoRenderer")
@@ -207,9 +211,12 @@ def oembed(vid):
 def yayin(vid):
     """Filmin YouTube'daki yayın günü (YYYY-AA-GG); önceki listede varsa yeniden sorulmaz."""
     if ESKI_TARIH.get(vid): return ESKI_TARIH[vid]
+    if AKIS_TARIH.get(vid):
+        SAY["tarihi akıştan"] = SAY.get("tarihi akıştan", 0) + 1
+        return AKIS_TARIH[vid]
     b = yt_get(f"https://www.youtube.com/watch?v={vid}&hl=tr", 20)
     m = re.search(r'"(?:publishDate|uploadDate)"\s*:\s*"(\d{4}-\d{2}-\d{2})', b) or re.search(r'itemprop="(?:datePublished|uploadDate)"\s+content="(\d{4}-\d{2}-\d{2})', b)
-    if m: SAY["tarihi okunan"] = SAY.get("tarihi okunan", 0) + 1
+    if m: SAY["tarihi sayfadan"] = SAY.get("tarihi okunan", 0) + 1
     return m.group(1) if m else ""
 
 def reklam():
