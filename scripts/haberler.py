@@ -108,7 +108,11 @@ ISB_RE = re.compile(r"iş ?bankası|işbank|isbank|işcep|iscep|isctr|maximiles|
 
 # Tarım (İş Bankası tarım kredileri dahil)
 TARIM_FEEDS = [("Google Haberler", GN(q)) for q in ['tarım', 'çiftçi', '"tarım kredisi" OR "tarımsal kredi"', '"İş Bankası" tarım OR çiftçi OR "Tarım Kart" OR üretici', '"İmece Kart" OR "İmece Mobil" OR "Çiftçi Kadın İmece"', 'hasat OR rekolte', '"Tarım ve Orman Bakanlığı"', 'hayvancılık OR süt fiyatı']]
-TARIM_RE = re.compile(r"imece kart|imece mobil|tarım kart|tarım|tarim|çiftçi|ciftci|hasat|rekolte|hayvancılık|besici|zirai|ziraat|tohum|gübre|sulama|buğday|fındık|pamuk|zeytin|çiğ süt|\btmo\b|kuraklık|don vurdu|tarla", re.I)
+TARIM_RE = re.compile(r"imece kart|imece mobil|tarım kart|tarım|tarim|çiftçi|ciftci|hasat|rekolte|hayvancılık|besici|zirai|ziraat|tohum|gübre|sulama|buğday|fındık|pamuk|zeytin|çiğ süt|\btmo\b|kuraklık|don vurdu|\btarla", re.I)
+# Tarımla ilgisi olmayan "Çiftçi"ler: İçişleri Bakanı Mustafa Çiftçi'nin haberleri ve Ziraat Türkiye Kupası (futbol) eşleşmeden önce silinir
+TARIM_DIS = re.compile(r"(?:içişleri bakanı|bakanı|bakanlar|bakan|başkan|mustafa)\s+(?:mustafa\s+)?çiftçi\w*|\bçiftçi(?:['’]\w*|:)|^çiftçi,|"
+                       r"\bçiftçi ile\b|çiftçi ve gürlek|gürlek ve çiftçi|ziraat (?:bankası )?türkiye kupası", re.I)
+tarim_mi = lambda t: bool(TARIM_RE.search(TARIM_DIS.sub(" ", t)))
 # Yapay zeka
 YZ_FEEDS = [("Google Haberler", GN(q)) for q in ['"yapay zeka"', '"yapay zekâ"', 'ChatGPT OR OpenAI OR Gemini OR Anthropic OR Claude', '"üretken yapay zeka" OR "büyük dil modeli"']]
 YZ_RE = re.compile(r"yapay ?zek[aâ]|\bai\b|chatgpt|openai|gemini|anthropic|claude|copilot|dil modeli|llm|nvidia", re.I)
@@ -229,9 +233,9 @@ _neden = {}
 for x, e, v in _sonuc:
     if v and v.get("n") and x["u"] not in _tarih: _neden[v["n"]] = _neden.get(v["n"], 0) + 1
 print(f"İş Bankası eski haber süzgeci: {_bak} yeni adrese bakıldı, {_elenen} haber elendi, {len(_kalan)} kaldı" + (f"; tarih okunamadı: {', '.join(f'{k}×{n}' for k, n in _neden.items())}" if _neden else ""))
-tar = [x for x in cats.get("tarim", []) if TARIM_RE.search(low(x["t"]))]
+tar = [x for x in cats.get("tarim", []) if tarim_mi(low(x["t"]))]
 for c, items in cats.items():
-    if c not in ("tarim", "okul", "yz"): tar += [x for x in items if TARIM_RE.search(low(x["t"]))]
+    if c not in ("tarim", "okul", "yz"): tar += [x for x in items if tarim_mi(low(x["t"]))]
 cats["tarim"] = tar
 yz = [x for x in cats.get("yz", []) if YZ_RE.search(low(x["t"]))]
 for c, items in cats.items():
