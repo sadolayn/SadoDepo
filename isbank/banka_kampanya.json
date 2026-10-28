@@ -7,7 +7,20 @@
    "ad": "Maaşını İş'e taşıyanlara",
    "adet": 2,
    "url": "https://www.isbank.com.tr/kampanyalar/iste-maasa-ozel",
-   "kampanyalar": []
+   "kampanyalar": [
+    {
+     "baslik": "Maaşını İş Bankası’ndan alan müşterilerine özel %4,19 İndirimli Faiz Oranı ile Ek Hesap!",
+     "bitis": "2026-10-31",
+     "ozet": "Maaşınızı İş Bankası’ndan alıyorsanız nakde ihtiyacınız olduğunda İş Bankası Ek Hesap limitinizi 1 Ocak 2026 – 31 Ekim 2026 tarihleri arasında %4,19 indirimli f",
+     "url": "https://www.isbank.com.tr/kampanyalar/maasini-is-bankasindan-alan-musterilerimize-ozel-indirimli-faiz-orani-ile-ek-hesap"
+    },
+    {
+     "baslik": "Anadolu Sigorta’dan Fırsatlarla, İş’te Maaş Yanınızda!",
+     "bitis": "2026-12-31",
+     "ozet": "​Maaşınız İş Bankası hesabınıza yatıyorsa, Anadolu Sigorta’dan fırsatlar elinizin altında! İş Bankası aracılığıyla 31 Aralık 2026’ya kadar Anadolu Sigorta’dan y",
+     "url": "https://www.isbank.com.tr/kampanyalar/anadolu-sigortadan-firsatlarla-iste-maas-yaninizda"
+    }
+   ]
   },
   {
    "slug": "emeklilere-ozel",
@@ -15,15 +28,65 @@
    "ad": "Emeklilere özel",
    "adet": 7,
    "url": "https://www.isbank.com.tr/kampanyalar/emeklilere-ozel",
-   "kampanyalar": []
+   "kampanyalar": [
+    {
+     "baslik": "Emekli Maaşını İş Bankası’ndan alan müşterilerine özel %4,19 İndirimli Faiz Oranı ile Ek Hesap!",
+     "bitis": "2026-10-31",
+     "ozet": "Emekli maaşınızı İş Bankası’ndan alıyorsanız nakde ihtiyacınız olduğunda İş Bankası Ek Hesap limitinizi 1 Ocak 2026 – 31 Ekim 2026 tarihleri arasında %4,19 indi",
+     "url": "https://www.isbank.com.tr/kampanyalar/emekli-maasini-is-bankasindan-alan-musterilerimize-ozel-indirimli-faiz-orani-ile-ek-hesap"
+    },
+    {
+     "baslik": "Emeklilere Özel Anadolu Sigorta’da Avantajlı Teklifler!",
+     "bitis": "2026-12-31",
+     "ozet": "SGK emekli maaşınızı İş Bankası’ndan alıyorsanız, Anadolu Sigorta’da avantajlı teklifler sizi bekliyor! İş Bankası aracılığıyla 31 Aralık 2026’ya kadar Anadolu ",
+     "url": "https://www.isbank.com.tr/kampanyalar/emeklilere-ozel-anadolu-sigortada-avantajli-teklifler"
+    },
+    {
+     "baslik": "Emekli maaşını İş Bankası’ndan alan SGK emeklilerinin fatura talimatlarına MaxiPuan Fırsatı!",
+     "bitis": "2026-10-31",
+     "ozet": "​SGK (Emekli Sandığı, SSK ve Bağ-Kur) emekli maaşını İş Bankası'ndan almak için talimat veren veya halihazırda emekli maaşını İş Bankası'ndan alan emekli müşter",
+     "url": "https://www.isbank.com.tr/kampanyalar/emekli-maasini-is-bankasina-tasiyan-sgk-emeklilerine-ilk-fatura-talimatlarina-maxipuan-firsati"
+    },
+    {
+     "baslik": "Emekli Maaş Müşterilerinin İlk Kredi Kartı Başvurusuna Özel MaxiPuan Fırsatı!",
+     "bitis": "2026-10-31",
+     "ozet": "1 Ekim – 31 Ekim 2026 tarihleri arasında ilk kez İş Bankası bireysel kredi kartına başvuran emekli maaş müşterileri, 31 Mart 2027' ye kadar yapacakları aylık 10",
+     "url": "https://www.isbank.com.tr/kampanyalar/emekli-maas-musterilerimizin-ilk-kredi-karti-basvurusuna-ozel-maxipuan"
+    },
+    {
+     "baslik": "İlk defa Bankamatik kartı alan Emekli Maaş müşterilerinin alışverişlerinde MaxiPuan fırsatı!",
+     "bitis": "2026-10-31",
+     "ozet": "​İlk defa alacağınız Bankamatik Kartı'nızla her ay yapacağınız 10.000 TL ve üzeri alışverişlerinizde 6 ay boyunca 500 TL toplamda 3.000 TL’ye varan MaxiPuan fır",
+     "url": "https://www.isbank.com.tr/kampanyalar/ilk-defa-bankamatik-karti-alan-emekli-maas-musterilerimizin-alisverislerinde-maxipuan-firsati"
+    },
+    {
+     "baslik": "SGK Emeklilerine Kasko veya Konut Sigortası’nda 1000 TL MaxiPuan Fırsatı İş Bankası’nda!",
+     "bitis": "2026-10-31",
+     "ozet": "​SGK (Emekli Sandığı, SSK ve Bağ-Kur) emekli maaşını İş Bankası'ndan almak için talimat veren veya halihazırda emekli maaşını İş Bankası'ndan alan emekli müşter",
+     "url": "https://www.isbank.com.tr/kampanyalar/kasko-veya-konut-sigortasi-yaptiran-sgk-emeklilerine-maxipuan-firsati"
+    },
+    {
+     "baslik": "Bireysel Emeklilik Hesabı Açtıran SGK emeklilerine MaxiPuan fırsatı!",
+     "bitis": "2026-10-31",
+     "ozet": "SGK (Emekli Sandığı, SSK ve Bağ-Kur) emekli maaşını İş Bankası'ndan almak için talimat veren veya halihazırda emekli maaşını İş Bankası'ndan alan emekli müşteri",
+     "url": "https://www.isbank.com.tr/kampanyalar/bireysel-emeklilik-hesabi-actiran-sgk-emeklilerine-maxipuan-firsati"
+    }
+   ]
   },
   {
    "slug": "bireysel-kredi-kampanyalari",
    "ic": "🏦",
    "ad": "Bireysel kredi",
-   "adet": 1,
+   "adet": 2,
    "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
-   "kampanyalar": []
+   "kampanyalar": [
+    {
+     "baslik": "Krediniz İş Bankası’ndan, Şarj Hediyeniz Togg’dan!",
+     "bitis": "2026-11-30",
+     "ozet": "Hayalinizdeki Togg’a avantajlı finansman imkânlarıyla ulaşırken, şarj hediyeniz de Togg’dan! İş Bankası’nın 1.700.000 TL’ye varan Togg Taşıt Kredisi imkânından ",
+     "url": "https://www.isbank.com.tr/kampanyalar/togga-ozel-tasit-kredisi-is-bankasinda"
+    }
+   ]
   },
   {
    "slug": "bireysel-emeklilik",
@@ -31,7 +94,32 @@
    "ad": "BES ve sigorta",
    "adet": 4,
    "url": "https://www.isbank.com.tr/kampanyalar/bireysel-emeklilik",
-   "kampanyalar": []
+   "kampanyalar": [
+    {
+     "baslik": "İşCep Aracım Kullanıcıları Kasko Sigortasında Avantajlı!",
+     "bitis": "2026-12-31",
+     "ozet": "İşCep Aracım uygulamasında kayıtlı aracı olan İşCep kullanıcıları, İş Bankası aracılığıyla 31 Aralık 2026’ya kadar Anadolu Sigorta’dan yeni yaptıracakları Kasko",
+     "url": "https://www.isbank.com.tr/kampanyalar/iscep-aracim-kullanicilari-kasko-sigortasinda-avantajli"
+    },
+    {
+     "baslik": "Anadolu Hayat Emeklilik ve Anadolu Sigorta İş Birliğinin Kazandıran Fırsatları İş Bankası’nda!",
+     "bitis": "2026-12-31",
+     "ozet": "Anadolu Hayat Emeklilik’ten bireysel emeklilik veya sigorta ürünleri bulunan İş Bankası müşterileri, Anadolu Sigorta’nın poliçelerinde de indirim avantajlarında",
+     "url": "https://www.isbank.com.tr/kampanyalar/anadolu-hayat-emeklilik-ve-anadolu-sigorta-isbirliginin-firsatlari-is-bankasinda"
+    },
+    {
+     "baslik": "Anadolu Hayat Emeklilik Müşterileri İş Bankası'ndan Kasa Kiralarken Ayrıcalıklı!",
+     "bitis": "2026-12-31",
+     "ozet": "Kasanızın kullanımı için teslim edilen iki anahtarın kaybolması riskine karşı yeni kasa açılışında bir defaya mahsus ödenen ve kasa kullanımınızı sonlandırırken",
+     "url": "https://www.isbank.com.tr/kampanyalar/anadolu-hayat-emeklilik-musterileri-kasa-kiralarkende-ayricalikli"
+    },
+    {
+     "baslik": "TROY logolu Bireysel Kredi Kartları ile Anadolu Hayat Emeklilik Ek Katkı Payı Ödemelerine 2 ve 3 Ay Faizsiz Taksitlendirme Kampanyası",
+     "bitis": "2026-11-30",
+     "ozet": "16 Ekim - 30 Kasım 2026 tarihleri arasında İşCep, AHE Mobil ya da Şubelerinden TROY logolu İş Bankası bireysel kredi kartınızla yapacağınız Anadolu Hayat Emekli",
+     "url": "https://www.isbank.com.tr/kampanyalar/troy-ile-anadolu-hayat-emeklilik-ek-katki-payi-odemelerinize-faizsiz-taksitlendirme-firsati"
+    }
+   ]
   },
   {
    "slug": "fatura-kampanyalari",
@@ -39,7 +127,14 @@
    "ad": "Fatura talimatı",
    "adet": 1,
    "url": "https://www.isbank.com.tr/kampanyalar/fatura-kampanyalari",
-   "kampanyalar": []
+   "kampanyalar": [
+    {
+     "baslik": "Vereceğiniz fatura talimatınız ile MaxiPuan Kazanın!",
+     "bitis": "2026-10-31",
+     "ozet": "31 Ekim'e kadar İş Bankası Vadesiz TL hesabınızdan ilk kez vereceğiniz iki adet fatura ödeme talimatınıza 750 TL MaxiPuan kazanın, faturalarınız gecikmeksizin ö",
+     "url": "https://www.isbank.com.tr/kampanyalar/vereceginiz-fatura-talimatiniz-ile-maxipuan-kazanin"
+    }
+   ]
   },
   {
    "slug": "iscep-kampanyalari",
@@ -47,7 +142,62 @@
    "ad": "İşCep'e özel",
    "adet": 9,
    "url": "https://www.isbank.com.tr/kampanyalar/iscep-kampanyalari",
-   "kampanyalar": []
+   "kampanyalar": [
+    {
+     "baslik": "İş Bankası’nı arkadaşınıza önerin hem siz hem de arkadaşınız 500 TL MaxiPuan kazanın!",
+     "bitis": "2026-10-31",
+     "ozet": "İş Bankası’nı arkadaşınıza önerin, İşCep’ten müşteri olsun, hem siz hem de arkadaşınız 500 TL MaxiPuan kazanın!",
+     "url": "https://www.isbank.com.tr/kampanyalar/is-bankasini-arkadasiniza-onerin-maxipuan-kazanin"
+    },
+    {
+     "baslik": "İşCep Hayatım'da Evim Menüsüne Özel Kiralarsın ile Elektronik Cihaz Kiralamada %10 İndirim!",
+     "bitis": "2026-12-31",
+     "ozet": "VR gözlüklerden telefonlara, akıllı saatlerden bebek bakım ürünlerine kadar kısa süreli ihtiyaç duyabileceğiniz veya denemek isteyebileceğiniz ürünler Kiralarsı",
+     "url": "https://www.isbank.com.tr/kampanyalar/iscep-hayatimda-evim-menusune-ozel-indirim-firsati"
+    },
+    {
+     "baslik": "İşCep Aracım'da Rent Go uygulaması ile araç kiralamada %40 indirim fırsatını kaçırmayın!",
+     "bitis": "2026-12-31",
+     "ozet": "Rent Go araç kiralama hizmeti %40 indirim fırsatıyla İşCep Aracım’da!",
+     "url": "https://www.isbank.com.tr/kampanyalar/rent-go-arac-kiralama-kampanyasi"
+    },
+    {
+     "baslik": "İşCep'ten İş Bankalı olanlara Avantajlı Hisse Senedi Komisyon Ayrıcalığı!",
+     "bitis": "2026-10-31",
+     "ozet": "İşCep’ten İş Bankası müşterisi olun, yatırım hesabı açarak hisse senedi işlemlerinizde %0,05 komisyon oranı ayrıcalığından yararlanın!",
+     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-is-bankali-olanlara-avantajli-hisse-senedi-komisyon-ayricaligi"
+    },
+    {
+     "baslik": "İşCep'ten İş Bankalı Olanlar 1 Ay Boyunca Faizsiz Ek Hesap Ayrıcalığından Yararlanıyor!",
+     "bitis": "2026-10-31",
+     "ozet": "İşCep’ten İş Bankası müşterisi olun, 30.000 TL’ye varan faizsiz Ek Hesap ayrıcalığından yararlanın!",
+     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-isbankali-olanlar-1ay-boyunca-faizsiz-ek-hesap-ayricaligindan-yararlaniyor"
+    },
+    {
+     "baslik": "İşCep'ten İş Bankalı Olanlara Faizsiz Taksitli Nakit Avans Ayrıcalığı!",
+     "bitis": "2026-10-31",
+     "ozet": "İşCep’ten İş Bankası müşterisi olun, 25.000 TL’ye varan Faizsiz Taksitli Nakit Avans ayrıcalığından yararlanın!",
+     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-isbankali-olanlara-faizsiz-taksitli-nakit-avans-ayricaligi"
+    },
+    {
+     "baslik": "İşCep’ten İş Bankası müşterisi olun ilk fatura talimatınız ile 300 TL MaxiPuan kazanın!",
+     "bitis": "2026-10-31",
+     "ozet": "Siz de İşCep’te yer alan “Müşteri Olmak İstiyorum” özelliğiyle İş Bankası müşterisi olun, ilk fatura ödeme talimatınıza 300 TL MaxiPuan kazanın!",
+     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-is-bankasi-musterisi-olun-ilk-fatura-talimatiniz-ile-maxipuan-kazanin"
+    },
+    {
+     "baslik": "İşCep Evim'e Özel KonutKonfor Harcamalarınıza %20 İndirim Fırsatı!",
+     "bitis": "2026-12-31",
+     "ozet": "İşCep Hayatım Evim’de Konut Hizmetleri Menüsünden Yapacağınız KonutKonfor Harcamalarınıza %20 İndirim Fırsatı!",
+     "url": "https://www.isbank.com.tr/kampanyalar/isceple-hayatim-evimde-konutkonfor-harcamalariniza-indirim-firsati"
+    },
+    {
+     "baslik": "İşCep Aracım'da Servis Bakım Hizmeti menüsünden yapacağınız GOS harcamalarınıza %10’dan başlayan İndirim Fırsatı!",
+     "bitis": "2026-12-31",
+     "ozet": "İşCep Hayatım › Aracım alanında bulunan GOS ile Aracınıza ait Periyodik Bakım Servis Ücretlerinde %10 İndirim sizleri bekliyor!",
+     "url": "https://www.isbank.com.tr/kampanyalar/iscep-aracim-menusunden-yapacaginiz-garantili-oto-servis-harcamalariniza-indirim-firsati"
+    }
+   ]
   },
   {
    "slug": "bankamatik-karti-kampanyalari",
@@ -55,7 +205,14 @@
    "ad": "Bankamatik kartı",
    "adet": 1,
    "url": "https://www.isbank.com.tr/kampanyalar/bankamatik-karti-kampanyalari",
-   "kampanyalar": []
+   "kampanyalar": [
+    {
+     "baslik": "İlk İmza Bankamatik Kartı'na alışverişlerinde %50 indirim fırsatı!",
+     "bitis": "2026-10-31",
+     "ozet": "İlk İmza Bankamatik Kartı'nla yapacağın 250 TL ve üzeri alışverişlerinde %50 indirim kazan!",
+     "url": "https://www.isbank.com.tr/kampanyalar/ilk-imza-bankamatik-kartina-alisverislerinde-indirim-firsati"
+    }
+   ]
   },
   {
    "slug": "diger-kampanyalar",
