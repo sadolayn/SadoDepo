@@ -82,12 +82,12 @@
 // "Kimler için" etiketleri üstteki profil düğmelerini besler: hepsi = her firma; tuzel, sahis, esnaf, ciftci, kobi, ihracatci, nakliye, insaat, deniz, enerji
 const GRUP = [
   ["ilan", "📜 Resmî ilanlar", "konkordato, iflas, icra satışı, tebligat", "var(--s-red)"],
-  ["kurum", "🏢 Kurum siteleri", "ana giriş sayfaları", "var(--s-blue)"],
+  ["kurum", "🏢 Kurum siteleri", "kurumların ana sayfaları; aradığın sorgu bu sayfada yoksa buradan başla", "var(--s-blue)"],
   ["yasak", "🚫 Yasaklılar ve kararlar", "ihale yasağı, malvarlığı dondurma", "var(--s-orange)"],
   ["sicil", "🏛️ Sicil ve kimlik", "unvan, ortaklar, vergi kaydı, halka açık şirket", "var(--s-purple)"],
   ["belge", "🧾 Belge doğrulama", "firmanın getirdiği belge gerçek mi", "var(--s-teal)"],
   ["yetki", "🎖️ Yetki ve lisanslar", "sektöre göre izin, belge, üyelik", "var(--s-yellow)"],
-  ["finans", "📊 Çek ve denetim", "çek geçmişi, bağımsız denetim", "var(--s-green)"],
+  ["finans", "📊 Finansal yetki ve denetim", "çek geçmişi, bağımsız denetim, finansal kuruluş izinleri", "var(--s-green)"],
 ];
 const PROFIL = [
   ["hepsi", "🏷️", "Hepsi"], ["tuzel", "🏢", "Şirket (tüzel kişi)"], ["sahis", "👤", "Şahıs firması"], ["esnaf", "🔧", "Esnaf"], ["ciftci", "🌾", "Çiftçi"],
@@ -103,13 +103,14 @@ const PROFIL_NOT = {
 const KAYNAK = [
   ["ilan", "ilan.gov.tr · Konkordato ve mühlet ilanları", "İİK 288 kapsamındaki geçici ve kesin mühlet, alacaklılara çağrı ve tasdik ilanları. Sayfadaki arama kutusuna unvan yazılır; yayın süresi biten ilanlar sitede görünmeyebilir.", "https://www.ilan.gov.tr/ilan/kategori/49/konkordato-ve-muhlet-iik-288inci-md-", "", ["hepsi"]],
   ["ilan", "ilan.gov.tr · İflas ve tasfiye ilanları", "İflasın açılması, alacak kaydı ve sıra cetveli ilanları.", "https://www.ilan.gov.tr/ilan/kategori/50/iflas-ve-tasfiye-ilanlari", "", ["hepsi"]],
+  ["ilan", "Resmî Gazete", "Kanun, karar ve yönetmelikler; ilan bölümünde yargı ve artırma-eksiltme ilanları. Arşivden tarihe göre bakılır.", "https://www.resmigazete.gov.tr/", "", ["hepsi"]],
   ["ilan", "UYAP e-Satış", "İcra ve iflas müdürlüklerinin satışa çıkardığı taşınır ve taşınmazlar; firmanın malları satışta mı.", "https://esatis.uyap.gov.tr/", "e-Devlet ya da SMS ile giriş", ["hepsi"]],
   ["ilan", "EKAP · İhale sonuç ilanları", "Firma hangi kamu ihalelerini almış; kamu müşterisi var mı.", "https://ekap.kik.gov.tr/ekap/ortak/ksp/kspsonucilaniarama.aspx", "", ["tuzel", "sahis", "kobi", "insaat", "nakliye"]],
   ["yasak", "EKAP · Kamu ihale yasaklıları", "Kamu ihalelerinden yasaklanan firma ve kişiler; unvan ya da vergi no ile sorgulanır.", "https://ekapv2.kik.gov.tr/sorgulamalar/yasak-sorgulama", "", ["hepsi"]],
   ["yasak", "MASAK · Malvarlığı dondurma kararları", "Bakanlar Kurulu ve Cumhurbaşkanı kararıyla malvarlığı dondurulanlara ilişkin resmî liste.", "https://masak.hmb.gov.tr/bkk-ile-malvarliklari-dondurulanlar", "", ["hepsi"]],
   ["sicil", "Ticaret Sicil Gazetesi", "Kuruluş, sermaye, ortak, adres, yetkili değişikliği ve tasfiye ilanları.", "https://www.ticaretsicil.gov.tr/view/hizlierisim/ilangoruntuleme.php", "ücretsiz üyelik ya da e-Devlet girişi", ["tuzel", "sahis", "kobi", "ihracatci", "nakliye", "insaat", "deniz", "enerji"]],
   ["sicil", "GİB · Vergi kimlik numarası doğrulama", "Firmanın verdiği vergi no ile unvanı ve bağlı vergi dairesi eşleşiyor mu.", "https://dijital.gib.gov.tr/portal/vkndogrulama", "Dijital Vergi Dairesi şifresi ya da e-Devlet girişi", ["hepsi"]],
-  ["sicil", "KAP · Kamuyu Aydınlatma Platformu", "Borsada işlem gören şirketse: özel durum açıklamaları, finansal tablolar, ortaklık yapısı.", "https://www.kap.org.tr/tr/bist-sirketler", "", ["tuzel"]],
+  ["finans", "KAP · Kamuyu Aydınlatma Platformu", "Borsada işlem gören şirketse: özel durum açıklamaları, finansal tablolar, ortaklık yapısı.", "https://www.kap.org.tr/tr/bist-sirketler", "", ["tuzel"]],
   ["belge", "GİB · e-Belge doğrulama", "Firmanın kestiği e-Fatura ya da e-Arşiv fatura gerçek mi.", "https://dijital.gib.gov.tr/dogrulamalar/eBelgeDogrulama", "", ["hepsi"]],
   ["belge", "GİB · e-Vergi levhası sorgulama / doğrulama", "Firmanın verdiği vergi levhası gerçek mi; giriş yapınca doğrudan levha sorgulama ekranı açılır.", "https://dijital.gib.gov.tr/portal/login?redirectUrl=eVergiLevhasiSorgulamaDogrulama", "Dijital Vergi Dairesi şifresi ya da e-Devlet girişi", ["hepsi"]],
   ["belge", "GİB · Mükellefiyet yazısı / borç durum yazısı doğrulama", "Firmanın verdiği mükellefiyet ya da vergi borcu durum yazısı gerçek mi: vergi no, dilekçe no ve güvenlik koduyla.", "https://dijital.gib.gov.tr/dogrulamalar/mukellefiyetDogrulama", "", ["hepsi"]],
@@ -119,6 +120,9 @@ const KAYNAK = [
   ["belge", "SGK · Tescil ve hizmet dökümü doğrulama", "Firmanın verdiği SGK tescil ya da hizmet dökümü belgesi gerçek mi: belgedeki PDF kodu ve güvenlik koduyla doğrulanır; giriş gerekmez.", "https://uyg.sgk.gov.tr/SGKHizmetDokumuDogrulamaWEB/", "", ["hepsi"]],
   ["belge", "e-Devlet · Belge doğrulama (SGK borcu yoktur dahil)", "e-Devlet'ten alınmış barkodlu her belge burada doğrulanır: SGK borcu yoktur belgesi, nakliyecinin K1/L2/R2 yetki belgesi, ÇKS, oda kaydı, faaliyet belgesi… Bu belgeleri firma kendi e-Devlet'inden barkodlu alır; belgedeki barkod numarası yazılır, giriş gerekmez.", "https://www.turkiye.gov.tr/belge-dogrulama", "", ["hepsi"]],
   ["finans", "Findeks · Karekodlu Çek Raporu", "Çekteki karekodu Findeks Mobil ile okutarak keşidecinin çek ödeme geçmişi ve çekin durumu.", "https://www.findeks.com/urunler/karekodlu-cek-raporu", "Findeks üyeliği", ["hepsi"]],
+  ["finans", "BDDK · Bankacılık Düzenleme ve Denetleme Kurumu", "Bankalar ve BDDK'nın izin verdiği finansal kuruluşlar (finansal kiralama, faktoring, finansman şirketleri vb.); firma izinli bir kuruluş mu, kurum listelerinden bakılır.", "https://www.bddk.org.tr/", "", ["tuzel"]],
+  ["finans", "SPK · Sermaye Piyasası Kurulu", "Sermaye piyasası kurumları, faaliyet izinleri, haftalık bülten ve duyurular.", "https://spk.gov.tr/", "", ["tuzel"]],
+  ["finans", "TCMB · Türkiye Cumhuriyet Merkez Bankası", "Ödeme ve elektronik para kuruluşları, finansal istatistikler ve düzenlemeler.", "https://www.tcmb.gov.tr/", "", ["tuzel"]],
   ["finans", "KGK · Bağımsız denetim kuruluşu sicili", "Mali tabloları denetleyen kuruluş KGK'nın resmî sicilinde kayıtlı mı.", "https://www.kgk.gov.tr/DynamicContentDetail/5217/Bag%CC%86%C4%B1ms%C4%B1z-Denetim-Kurulus%CC%A7u-Resmi-Sicili", "", ["tuzel"]],
   ["yetki", "Türk Patent · Marka araştırma", "Firmanın marka başvuru ve tescilleri; \"Firma Adı\" alanına yazılır.", "https://www.turkpatent.gov.tr/arastirma-yap", "", ["tuzel", "sahis", "kobi", "ihracatci"]],
   ["yetki", "TSE · Belgeli firma arama", "Firmanın TSE belgeleri var mı, geçerli mi; firma adıyla aranır.", "https://basvuruportal.tse.org.tr/genel/firmaarama.aspx", "", ["tuzel", "sahis", "kobi", "ihracatci", "insaat"]],
