@@ -5,6 +5,7 @@ import json, re, html, urllib.request, datetime as dt, os, sys, time
 from email.utils import parsedate_to_datetime
 from concurrent.futures import ThreadPoolExecutor
 import xml.etree.ElementTree as ET
+from eski_haber import eski_mi  # scripts/eski_haber.py: Google'ın yeni diye verdiği yıllar önceki haberleri eler
 
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128 Safari/537.36",
       "Accept": "application/rss+xml,application/xml,text/xml,*/*"}
@@ -194,6 +195,27 @@ ISB_OLUMSUZ = re.compile(r"protesto|eylem|yürü(?:dü|yüş)|slogan|grev|sendik
                          r"kara para|usulsüz|zimmet|haciz|icra|tazminat|işten çıkar|kovul|istifa|zarar et|çakıldı|sert düş|kriz|ihlal|suç", re.I)
 for c in list(cats):
     cats[c] = [x for x in cats[c] if not (ISB_RE.search(low(x["t"])) and ISB_OLUMSUZ.search(low(x["t"])))]
+# Eski haber süzgeci (yalnızca İş Bankası sekmesi): başlıkta eski yıl ya da haber sayfasındaki yayın tarihi 60 günden eskiyse elenir.
+# Adres çözme sonuçları isb_tarih'te saklanır (haber başına bir kez bakılır); turda en çok 12 yeni adrese bakılır, kalanı sonraki tur.
+# Tarih okunamazsa haber gösterilir; süzgeç bir şey bozarsa haberler yine listelenir.
+_tarih = {k: v for k, v in (_eski.get("isb_tarih") or {}).items() if isinstance(v, dict)}
+isb_tarih, _bak, _elenen, _kalan = {}, 0, 0, []
+def _eski_kontrol(x):
+    global _bak
+    if x["u"] not in _tarih:
+        if _bak >= 12: return x, None, None
+        _bak += 1
+    try: e, v = eski_mi(x, _tarih, NOW)
+    except Exception: e, v = False, None
+    return x, e, v
+with ThreadPoolExecutor(6) as ex:
+    _sonuc = list(ex.map(_eski_kontrol, cats["isbank"]))
+for x, e, v in _sonuc:
+    if v is not None: isb_tarih[x["u"]] = v
+    if e: _elenen += 1
+    else: _kalan.append(x)
+cats["isbank"] = _kalan
+print(f"İş Bankası eski haber süzgeci: {_bak} yeni adrese bakıldı, {_elenen} haber elendi, {len(_kalan)} kaldı")
 tar = [x for x in cats.get("tarim", []) if TARIM_RE.search(low(x["t"]))]
 for c, items in cats.items():
     if c not in ("tarim", "okul", "yz"): tar += [x for x in items if TARIM_RE.search(low(x["t"]))]
@@ -229,5 +251,5 @@ if total < 20: sys.exit(f"::error::Çok az haber ({total})")
 os.makedirs("data", exist_ok=True)
 print(f"::notice::isbvideo: {len(isbvideo)} (yeni alınan {len(yt_items)})")
 print("::notice::yazarlar: " + ", ".join(f"{y['n']}:{len(y['items'])}" for y in yazarlar))
-json.dump({"updated": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"), "cats": cats, "yazarlar": yazarlar, "isbvideo": isbvideo, "isbvideo_ok": isbvideo_ok}, open("data/haberler.json", "w"), ensure_ascii=False, separators=(",", ":"))
+json.dump({"updated": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"), "cats": cats, "yazarlar": yazarlar, "isbvideo": isbvideo, "isbvideo_ok": isbvideo_ok, "isb_tarih": isb_tarih}, open("data/haberler.json", "w"), ensure_ascii=False, separators=(",", ":"))
 print("yazıldı", total)
