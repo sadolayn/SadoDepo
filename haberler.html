@@ -248,7 +248,7 @@ function render() {
   if (isY && yaz && !YZ.some((y) => y.k === yaz)) yaz = "";
   $("alert").innerHTML = ppkKart() + (isY ? `<div class="chips yz">${[["", "Hepsi"], ...YZ.map((y) => [y.k, y.n])].map(([k, n]) => `<span class="chip ${k === yaz ? "on" : ""}" data-y="${k}">${esc(n)}</span>`).join("")}</div>` : trendCards());
   const st = story && TR.stories.find((x) => x.id === story);
-  const items = st ? st.items : isY ? YZ.filter((y) => !yaz || y.k === yaz).flatMap((y) => y.items.map((x) => ({ ...x, a: y.n }))).sort((a, b) => (b.d || "").localeCompare(a.d || "")) : (D.cats[cat] || []);
+  const items = st ? st.items : isY ? YZ.filter((y) => !yaz || y.k === yaz).flatMap((y) => y.items.map((x) => ({ ...x, a: y.n }))).sort((a, b) => (b.d || "").localeCompare(a.d || "")) : cat === "isbank" ? (D.cats[cat] || []).filter((x) => !Ortak.tikTuzagi(x.t)) : (D.cats[cat] || []); // İş Bankası sekmesinde tık tuzağı başlıklar elenir
   const srcs = [...new Set(items.map((x) => x.s))].sort((a, b) => a.localeCompare(b, "tr"));
   const cur = $("src").value;
   $("src").innerHTML = `<option value="">Tüm kaynaklar</option>` + srcs.map((s) => `<option ${s === cur ? "selected" : ""}>${esc(s)}</option>`).join("");

@@ -36,6 +36,16 @@
   }
 
   window.Ortak = {
+    // Tık tuzağı başlık: ünlem/soru işareti, çoğu büyük harf, hisse/forum/"hızlı olun" kalıpları.
+    // İş Bankası haber listelerinde (isbank.html Güncel, haberler.html İş Bankası) elenir; ana sayfanın kendi süzgeci var.
+    tikTuzagi: function (t) {
+      t = String(t || "");
+      if (/[!?]/.test(t)) return true;
+      var harf = t.replace(/[^A-Za-zÇĞİÖŞÜçğıöşü]/g, ""), buyuk = harf.replace(/[^A-ZÇĞİÖŞÜ]/g, "").length;
+      if (harf.length > 12 && buyuk / harf.length > 0.45) return true;
+      var k = t.replace(/İ/g, "i").replace(/I/g, "ı").toLowerCase();
+      return /hisse|borsa|temettü|hedef fiyat|teknik analiz|forum|isctr|hızlı ol|son dakika|kaçırma|şok |flaş|bomba|müjde|(^|\s)işte\s/.test(k);
+    },
     json: function (url, opt) {
       var u = url + (url.indexOf("?") < 0 ? "?" : "&") + "t=" + Date.now();
       return fetch(u, Object.assign({ cache: "no-store" }, opt || {})).then(function (r) {
