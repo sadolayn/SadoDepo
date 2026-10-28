@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-10-27",
+ "kontrol": "2026-10-28",
  "kategoriler": [
   {
    "slug": "iste-maasa-ozel",
@@ -79,14 +79,7 @@
    "ad": "Bireysel kredi",
    "adet": 1,
    "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
-   "kampanyalar": [
-    {
-     "baslik": "Avantajlı %3,49’dan Başlayan Faiz Oranıyla, Taksitli Ek Hesap Kullanma Fırsatı İş Bankası’nda!",
-     "bitis": "2026-10-28",
-     "ozet": "Nakit ihtiyacınızı kolayca karşılayabileceğiniz Taksitli Ek Hesap, aylık %3,49’dan başlayan faiz oranıyla şimdi daha avantajlı!",
-     "url": "https://www.isbank.com.tr/kampanyalar/indirimli-taksitli-ek-hesap-kampanyasi"
-    }
-   ]
+   "kampanyalar": []
   },
   {
    "slug": "bireysel-emeklilik",
