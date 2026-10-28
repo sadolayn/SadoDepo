@@ -607,7 +607,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   const bugunTR = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);
   // Önemli duyuru (ÖNEMLİ rozeti, PPK satırından hemen sonra): Resmi Gazete sayfasındaki "yapım aşamasında" kutusuna gider
   const dizi = [
-    ["https://www.youtube.com/watch?v=MRZzkgn4gwk", "<svg class=\"kyTrb\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><rect width=\"30\" height=\"20\" fill=\"#e30a17\"/><circle cx=\"11\" cy=\"10\" r=\"5\" fill=\"#fff\"/><circle cx=\"12.25\" cy=\"10\" r=\"4\" fill=\"#e30a17\"/><polygon points=\"16.2,10 19.9,8.8 17.6,11.9 17.6,8.1 19.9,11.2\" fill=\"#fff\"/></svg><b>Cumhuriyet Bayramımız kutlu olsun!</b> İş Bankası'nın 29 Ekim videosu YouTube'da <b class=\"gir\">İzle</b>", "2026-10-30", "onem"],
+    ["video", "<svg class=\"kyTrb\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><rect width=\"30\" height=\"20\" fill=\"#e30a17\"/><circle cx=\"11\" cy=\"10\" r=\"5\" fill=\"#fff\"/><circle cx=\"12.25\" cy=\"10\" r=\"4\" fill=\"#e30a17\"/><polygon points=\"16.2,10 19.9,8.8 17.6,11.9 17.6,8.1 19.9,11.2\" fill=\"#fff\"/></svg><b>Cumhuriyet Bayramımız kutlu olsun!</b> İş Bankası'nın 29 Ekim videosu <b class=\"gir\">İş Bankası Gündemi › Video</b>", "2026-10-30", "onem"],
     ["gazete.html#2026-10-15", "<b class=\"yn\">ÖNEMLİ</b>📜 Resmi Gazete (15 Ekim): taksit yetkisi artık <b>Ticaret Bakanlığı</b>'nda · sıfır telefonda 12 ay taksit sınırı <b>40 bin TL</b> oldu <b class=\"gir\">Ayrıntı</b>", "2026-11-30", "onem"],
     ["maximum", "🎁 Kampanyaları bulmak hiç bu kadar kolay olmamıştı: İş Bankası, Maximum ve Maximiles tek ekranda; arama, takvim ve <b>Bana uygun</b> <b class=\"gir\">İş Bankası Gündemi › Kampanyalar</b>", "2026-11-30"],
     ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
@@ -631,7 +631,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     if (!yeni.length) return;
     const e = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     dizi.unshift(...yeni.map((x) => ["gazete.html?kurum", `<b class="yn">ÖNEMLİ</b>🏛️ ${e(x.kurum)}: ${e(x.baslik)} <b class="gir">Ayrıntı</b>`, "", "onem"]));
-    dizi.sort((a, b) => /^http/.test(b[0]) - /^http/.test(a[0])); // bayram videosu yine en başta
+    dizi.sort((a, b) => (b[0] === "video") - (a[0] === "video")); // bayram videosu yine en başta
     ciz();
   }).catch(() => {});
   window.Kayan = { ppk: (o) => { if ((o && o.html) === (ppk && ppk.html)) { ppk = o; return; } ppk = o; ciz(); } };
@@ -639,7 +639,6 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     const o = e.target.closest(".kyOge"); const h = o ? o.dataset.h : "iscep";
     e.preventDefault();
     if (h === "ppk") { ppk && ppk.tap && ppk.tap(); return; }
-    if (/^https?:/.test(h)) { window.Rapor && Rapor.bolum("kayan-video"); window.open(h, "_blank", "noopener"); return; }
     if (h.includes(".html")) { window.Rapor && Rapor.bolum(h.includes("kurum") ? "kayan-kurum" : "kayan-gazete-yakinda"); location.href = h; return; }
     window.Rapor && Rapor.bolum("kayan-" + h); location.href = "isbank.html#" + h;
   });
