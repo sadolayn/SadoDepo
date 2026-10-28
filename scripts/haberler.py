@@ -107,8 +107,8 @@ ISB_FEEDS = [("Google Haberler", GN(q)) for q in ['"İş Bankası"', '"İşbank"
 ISB_RE = re.compile(r"iş ?bankası|işbank|isbank|işcep|iscep|isctr|maximiles|maxipuan|maximum kart|maximum mobil|türkiye iş bankası", re.I)
 
 # Tarım (İş Bankası tarım kredileri dahil)
-TARIM_FEEDS = [("Google Haberler", GN(q)) for q in ['tarım', 'çiftçi', '"tarım kredisi" OR "tarımsal kredi"', '"İş Bankası" tarım OR çiftçi OR "Tarım Kart" OR üretici', 'hasat OR rekolte', '"Tarım ve Orman Bakanlığı"', 'hayvancılık OR süt fiyatı']]
-TARIM_RE = re.compile(r"tarım|tarim|çiftçi|ciftci|hasat|rekolte|hayvancılık|besici|zirai|ziraat|tohum|gübre|sulama|buğday|fındık|pamuk|zeytin|çiğ süt|\btmo\b|kuraklık|don vurdu|tarla", re.I)
+TARIM_FEEDS = [("Google Haberler", GN(q)) for q in ['tarım', 'çiftçi', '"tarım kredisi" OR "tarımsal kredi"', '"İş Bankası" tarım OR çiftçi OR "Tarım Kart" OR üretici', '"İmece Kart" OR "İmece Mobil" OR "Çiftçi Kadın İmece"', 'hasat OR rekolte', '"Tarım ve Orman Bakanlığı"', 'hayvancılık OR süt fiyatı']]
+TARIM_RE = re.compile(r"imece kart|imece mobil|tarım kart|tarım|tarim|çiftçi|ciftci|hasat|rekolte|hayvancılık|besici|zirai|ziraat|tohum|gübre|sulama|buğday|fındık|pamuk|zeytin|çiğ süt|\btmo\b|kuraklık|don vurdu|tarla", re.I)
 # Yapay zeka
 YZ_FEEDS = [("Google Haberler", GN(q)) for q in ['"yapay zeka"', '"yapay zekâ"', 'ChatGPT OR OpenAI OR Gemini OR Anthropic OR Claude', '"üretken yapay zeka" OR "büyük dil modeli"']]
 YZ_RE = re.compile(r"yapay ?zek[aâ]|\bai\b|chatgpt|openai|gemini|anthropic|claude|copilot|dil modeli|llm|nvidia", re.I)
@@ -142,7 +142,6 @@ YAZARLAR = [
   ("mahfi", "Mahfi Eğilmez", '"Mahfi Eğilmez"', [("Kendi Kendine Ekonomi", "https://www.mahfiegilmez.com/feeds/posts/default?alt=rss")]),
   ("aliekber", "Ali Ekber Yıldırım", '"Ali Ekber Yıldırım"', []),
   ("irfan", "İrfan Donat", '"İrfan Donat"', []),
-  ("ece", "Ece Üner", '"Ece Üner"', []),
 ]
 YAZAR_AGE = dt.timedelta(days=14)
 GNY = lambda q: "https://news.google.com/rss/search?q=" + urllib.parse.quote(q + " when:14d") + "&hl=tr&gl=TR&ceid=TR:tr"
@@ -178,6 +177,13 @@ for cat, src, items, err in res:
             cats.setdefault(EKONOMIM_ROUTE.get(seg, "ekonomi"), []).append(x)
         continue
     cats.setdefault(cat, []).extend(items)
+# Genel akışlardan (Bloomberg HT gibi) Ekonomi'ye düşen cihaz tanıtımları Teknoloji'ye taşınır; piyasa/şirket haberi olanlar kalır
+CIHAZ_RE = re.compile(r"macbook|iphone|ipad|apple watch|airpods|galaxy [a-z]?\d|galaxy (?:fold|flip|tab)|pixel \d|playstation|xbox|nintendo|ekran kartı|işlemci|akıllı saat|kulaklık", re.I)
+EKO_RE = re.compile(r"hisse|borsa|piyasa|ihracat|ithalat|vergi|gelir|kâr|kar açıkla|zarar|yatırım|değer kaybı|piyasa değeri|milyar|gümrük|üretim|fabrika|tarife", re.I)
+_eko = cats.get("ekonomi", [])
+_cihaz = [x for x in _eko if CIHAZ_RE.search(x["t"]) and not EKO_RE.search(x["t"].lower())]
+cats["ekonomi"] = [x for x in _eko if x not in _cihaz]
+cats.setdefault("teknoloji", []).extend(_cihaz)
 # Okul tatili kategorisi: arama sonuçları + tüm kategorilerdeki eşleşen başlıklar
 okul = [x for x in cats.get("okul", []) if OKUL_RE.search(x["t"].lower())]
 for c, items in cats.items():
@@ -187,6 +193,10 @@ low = lambda t: t.replace("İ", "i").replace("I", "ı").lower()
 isb = [x for x in cats.get("isbank", []) if ISB_RE.search(low(x["t"]))]
 for c, items in cats.items():
     if c not in ("isbank", "okul"): isb += [x for x in items if ISB_RE.search(low(x["t"]))]
+# Haber 7 İş Bankası sekmesine alınmaz: Google bu sitenin yıllar önceki yazılarını sık sık yeni tarihle veriyor
+# (2017'deki "The Banker" haberi 28 Ekim 2026'da böyle geldi) ve site tarih kontrolüne "çok istek" (429) diye kapanıyor
+ESKI_VEREN = re.compile(r"haber ?7", re.I)
+isb = [x for x in isb if not ESKI_VEREN.search(x.get("s") or "") and "haber7.com" not in x.get("u", "")]
 cats["isbank"] = isb
 # Banka hakkında olumsuz başlıklar (dava, protesto, şikâyet, soruşturma, arıza, dolandırıcılık…) hiçbir kategoride gösterilmez:
 # bu sayfa banka gündemini derler, tartışma ya da şikâyet aktarmaz
@@ -198,7 +208,7 @@ for c in list(cats):
 # Eski haber süzgeci (yalnızca İş Bankası sekmesi): başlıkta eski yıl ya da haber sayfasındaki yayın tarihi 60 günden eskiyse elenir.
 # Adres çözme sonuçları isb_tarih'te saklanır (haber başına bir kez bakılır); turda en çok 12 yeni adrese bakılır, kalanı sonraki tur.
 # Tarih okunamazsa haber gösterilir; süzgeç bir şey bozarsa haberler yine listelenir.
-_tarih = {k: v for k, v in (_eski.get("isb_tarih") or {}).items() if isinstance(v, dict)}
+_tarih = {k: v for k, v in (_eski.get("isb_tarih") or {}).items() if isinstance(v, dict) and v.get("n") not in ("http429", "baglanti")}  # geçici hatalar yeniden denenir
 isb_tarih, _bak, _elenen, _kalan = {}, 0, 0, []
 def _eski_kontrol(x):
     global _bak
