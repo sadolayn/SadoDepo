@@ -81,13 +81,13 @@
 // Kaynaklar: [bölüm, ad, neye bakılır, adres, giriş notu, kimler için]. Firma adı/sorgu yok; herkese açık resmî adresler, tarafsız açıklama.
 // "Kimler için" etiketleri üstteki profil düğmelerini besler: hepsi = her firma; tuzel, sahis, esnaf, ciftci, kobi, ihracatci, nakliye, insaat, deniz, enerji
 const GRUP = [
-  ["ilan", "📜 Resmî ilanlar", "konkordato, iflas, icra satışı, tebligat", "var(--s-red)"],
+  ["ilan", "📜 Resmî ilanlar", "konkordato, iflas, icra satışı ve kamu ihalesi ilanları; çoğunda firma adıyla aranır", "var(--s-red)"],
   ["kurum", "🏢 Kurum siteleri", "kurumların ana sayfaları; aradığın sorgu bu sayfada yoksa buradan başla", "var(--s-blue)"],
-  ["yasak", "🚫 Yasaklılar ve kararlar", "ihale yasağı, malvarlığı dondurma", "var(--s-orange)"],
-  ["sicil", "🏛️ Sicil ve kimlik", "unvan, ortaklar, vergi kaydı, halka açık şirket", "var(--s-purple)"],
-  ["belge", "🧾 Belge doğrulama", "firmanın getirdiği belge gerçek mi", "var(--s-teal)"],
-  ["yetki", "🎖️ Yetki ve lisanslar", "sektöre göre izin, belge, üyelik", "var(--s-yellow)"],
-  ["finans", "📊 Finansal yetki ve denetim", "çek geçmişi, bağımsız denetim, finansal kuruluş izinleri", "var(--s-green)"],
+  ["yasak", "🚫 Yasaklılar ve kararlar", "kamu ihale yasağı ve malvarlığı dondurma; adı resmî listelerde geçiyor mu", "var(--s-orange)"],
+  ["sicil", "🏛️ Sicil ve kimlik", "kuruluş, ortaklar, yetkililer ve vergi kaydı", "var(--s-purple)"],
+  ["belge", "🧾 Belge doğrulama", "firmanın getirdiği belge gerçek mi: barkod ya da doğrulama koduyla", "var(--s-teal)"],
+  ["yetki", "🎖️ Yetki ve lisanslar", "sektörüne göre izin, belge, lisans ve üyelik", "var(--s-yellow)"],
+  ["finans", "📊 Finansal yetki ve denetim", "halka açık şirket bilgisi, bağımsız denetim, çek geçmişi ve finans kuruluşu izinleri", "var(--s-green)"],
 ];
 const PROFIL = [
   ["hepsi", "🏷️", "Hepsi"], ["tuzel", "🏢", "Şirket (tüzel kişi)"], ["sahis", "👤", "Şahıs firması"], ["esnaf", "🔧", "Esnaf"], ["ciftci", "🌾", "Çiftçi"],
@@ -136,6 +136,7 @@ const KAYNAK = [
   ["kurum", "e-Devlet Kapısı", "Kurumların sorgu ve belge hizmetleri tek kapıdan.", "https://www.turkiye.gov.tr/", "e-Devlet girişi", ["hepsi"]],
   ["kurum", "ilan.gov.tr", "Resmî ilanların tamamı: emlak, icra, ihale, tebligat, iflas.", "https://www.ilan.gov.tr/", "", ["hepsi"]],
   ["kurum", "TOBB", "Oda ve borsa üyeliği, kapasite raporu ve sanayi veritabanı; çiftçi için ticaret borsası kaydı.", "https://www.tobb.org.tr/", "", ["tuzel", "sahis", "kobi", "ciftci", "ihracatci"]],
+  ["kurum", "MASAK · Mali Suçları Araştırma Kurulu", "Suç gelirlerinin aklanması ve terörün finansmanıyla mücadele: mevzuat, yükümlülükler ve duyurular.", "https://masak.hmb.gov.tr/", "", ["hepsi"]],
   ["kurum", "EKAP (yeni sürüm)", "Elektronik Kamu Alımları Platformu'nun yeni sitesi: ihaleler, duyurular ve sorgular.", "https://ekapv2.kik.gov.tr/", "", ["tuzel", "sahis", "kobi", "insaat", "nakliye"]],
 ];
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
