@@ -1,8 +1,8 @@
 {
- "guncelleme": "2026-10-27T13:44",
+ "guncelleme": "2026-10-28T14:27",
  "isbank": {
   "bireysel": {
-   "toplam": 187,
+   "toplam": 188,
    "kategoriler": [
     {
      "ad": "İş’te Maaş’a Özel",
@@ -1376,15 +1376,24 @@
     {
      "ad": "Bireysel Kredi Kampanyaları",
      "slug": "bireysel-kredi-kampanyalari",
-     "adet": 1,
+     "adet": 2,
      "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
      "kampanyalar": [
       {
        "baslik": "Avantajlı %3,49’dan Başlayan Faiz Oranıyla, Taksitli Ek Hesap Kullanma Fırsatı İş Bankası’nda!",
-       "bitis": "2026-10-28",
+       "bitis": "2026-11-06",
        "ozet": "Nakit ihtiyacınızı kolayca karşılayabileceğiniz Taksitli Ek Hesap, aylık %3,49’dan başlayan faiz oranıyla şimdi daha avantajlı!",
        "url": "https://www.isbank.com.tr/kampanyalar/indirimli-taksitli-ek-hesap-kampanyasi",
        "ilk": "2000-01-01",
+       "ne": "Faiz & Kredi",
+       "nere": "Bankacılık"
+      },
+      {
+       "baslik": "Krediniz İş Bankası’ndan, Şarj Hediyeniz Togg’dan!",
+       "bitis": "2026-11-30",
+       "ozet": "Hayalinizdeki Togg’a avantajlı finansman imkânlarıyla ulaşırken, şarj hediyeniz de Togg’dan! İş Bankası’nın 1.700.000 TL’ye varan Togg Taşıt Kredisi imkânından yararlanabilir, Togg’dan 1 yıllık Trugo şarj hediyesi…",
+       "url": "https://www.isbank.com.tr/kampanyalar/togga-ozel-tasit-kredisi-is-bankasinda",
+       "ilk": "2026-10-28",
        "ne": "Faiz & Kredi",
        "nere": "Bankacılık"
       }
@@ -1656,7 +1665,7 @@
       },
       {
        "baslik": "Eczacılara 3'lü Kazanç Paketi",
-       "bitis": "2026-11-02",
+       "bitis": "2026-10-31",
        "ozet": "Eczacı müşterileri bankacılık hizmetlerinde İş Bankası’yla çalışarak kazançlı çıkıyor; Eczacıya 3’lü kazanç paketi ile ücretsiz havale/EFT ve masrafsız çek karnesi ayrıcalıklarından yararlanıyor.",
        "url": "https://www.isbank.com.tr/kampanyalar/eczacilara-3lu-kazanc-paketi",
        "ilk": "2000-01-01",
@@ -1665,7 +1674,7 @@
       },
       {
        "baslik": "SGK ödemesini İş Bankası'na getiren Eczacı Müşterilerine Özel MaxiPuan Kampanyası",
-       "bitis": "2026-11-02",
+       "bitis": "2026-12-02",
        "ozet": "SGK ödemelerini İş Bankası aracılığıyla alan eczacı müşterileri, 6.500 TL’ye varan MaxiPuan kazanma ayrıcalığından yararlanıyor.",
        "url": "https://www.isbank.com.tr/kampanyalar/sgk-odemesi-getiren-eczaciya-maxipuan",
        "ilk": "2000-01-01",
@@ -2347,7 +2356,7 @@
  },
  "maximum": {
   "bireysel": {
-   "toplam": 216,
+   "toplam": 217,
    "kampanyalar": [
     {
      "baslik": "ETS’deki Seçili Oteller ve Turlarda 7.500 TL’ye Varan MaxiPuan Fırsatı!",
@@ -4980,7 +4989,7 @@
    ]
   },
   "ticari": {
-   "toplam": 14,
+   "toplam": 15,
    "kampanyalar": [
     {
      "baslik": "İş Bankası Ticari Kredi Kartı Yeni Müşterilerine Özel Faizsiz Taksit Kampanyası",
@@ -5011,6 +5020,16 @@
      "ilk": "2026-10-27",
      "ne": "İndirim",
      "nere": "Bankacılık"
+    },
+    {
+     "baslik": "Maximiles Business Ve Turizm Kartlar İle Restoranlarda %10 İndirim Ayrıcalığı!",
+     "bitis": "2026-10-31",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-business-kart-ile-restoranlarda-10-indirim-ayricaligi",
+     "tv": 2,
+     "ilk": "2000-01-01",
+     "ne": "MaxiMil",
+     "nere": "Market & Yemek"
     },
     {
      "baslik": "Maximiles Business Startup Kredi Kart Sahiplerine Özel 200.000 USD'ye Varan Google Cloud Kredisi!",
