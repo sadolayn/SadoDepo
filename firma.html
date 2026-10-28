@@ -35,9 +35,10 @@
   .ara input:focus { border-color: var(--accent); }
   .ara::before { content: "🔎"; position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
   .ara button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 10px; background: #262626; color: #ddd; font-size: 15px; cursor: pointer; }
-  .sek { display: flex; gap: 6px; overflow-x: auto; margin-top: 8px; padding-bottom: 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+  /* Bölümlerin hepsi aynı anda görünsün: yana kaydırma yok, satıra sığmayan alta geçer */
+  .sek { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .sek::-webkit-scrollbar { display: none; }
-  .sek button { --c: #e0a24f; flex: 0 0 auto; scroll-snap-align: start; display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 6px 12px; border-radius: 999px; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; white-space: nowrap;
+  .sek button { --c: #e0a24f; flex: 1 1 auto; justify-content: center; display: inline-flex; align-items: center; gap: 5px; min-height: 34px; padding: 4px 10px; border-radius: 999px; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap;
     border: 1px solid color-mix(in srgb, var(--c) 45%, #000); background: color-mix(in srgb, var(--c) 14%, #0a0a0a); color: color-mix(in srgb, var(--c) 40%, #fff); }
   .sek button em { font-style: normal; font-size: 11.5px; padding: 1px 6px; border-radius: 999px; background: color-mix(in srgb, var(--c) 30%, #000); }
   .sek button.on { background: var(--c); border-color: var(--c); color: #000; }
@@ -174,7 +175,6 @@ function ciz() {
 function bolum(g) {
   sec = g; document.getElementById("ara").value = ""; ciz();
   try { history.replaceState(null, "", "#" + g); } catch (e) {}
-  const b = document.querySelector(`#sek [data-g="${g}"]`); if (b) b.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
   const ust = document.querySelector(".ust"), y = document.getElementById("liste").getBoundingClientRect().top + scrollY - ust.offsetHeight - 4;
   if (scrollY > y) window.scrollTo({ top: y, behavior: "smooth" });
 }
