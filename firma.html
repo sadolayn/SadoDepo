@@ -114,6 +114,7 @@ const GRUP = [
   ["finans", "📊 Finans ve piyasa", "halka açık şirket, çek, denetim"],
   ["faal", "🏭 Faaliyet ve sektör", "kapasite, marka, lisans, ihracat"],
   ["belge", "🧾 Belge doğrulama", "firmanın getirdiği belge gerçek mi"],
+  ["kurum", "🏢 Kurum siteleri", "Sadolayn Excel'indeki menü: giriş sayfaları"],
 ];
 const GN = (q) => `https://news.google.com/search?q=${q}&hl=tr&gl=TR&ceid=TR:tr`;
 const KAYNAK = [
@@ -133,6 +134,15 @@ const KAYNAK = [
   ["faal", "Gemi bilgileri (Equasis)", "Denizcilik firmaları için: IMO numarasıyla gemi, sahiplik ve denetim geçmişi.", "https://www.equasis.org/EquasisWeb/public/HomePage", "", "", "ücretsiz üyelik gerekir"],
   ["belge", "GİB belge doğrulama", "Firmanın verdiği vergi levhası ya da borç durum yazısı gerçek mi: belgedeki kodla Dijital Vergi Dairesi'nde doğrula.", "https://dijital.gib.gov.tr/", "", "vkn", ""],
   ["belge", "e-Devlet belge doğrulama", "e-Devlet'ten alınmış barkodlu bir belgenin gerçek olup olmadığını barkod numarasıyla doğrula.", "https://www.turkiye.gov.tr/belge-dogrulama", "", "", ""],
+  // Kurum siteleri: Sadolayn'ın Excel menüsündeki düğmeler (28.10.2026 ekran görüntüleriyle eşleştirildi)
+  ["kurum", "e-Devlet Kapısı", "Kurumların sorgu ve belge hizmetleri tek kapıdan; çoğu hizmet e-Devlet girişi ister.", "https://www.turkiye.gov.tr/", "", "", "e-Devlet girişi"],
+  ["kurum", "ilan.gov.tr", "Resmî ilanların tamamı: emlak, icra, ihale, tebligat, iflas. Üstteki arama kutusuna unvanı yapıştır.", "https://www.ilan.gov.tr/", "", "ad", ""],
+  ["kurum", "TOBB", "Oda ve borsa üyeliği, kapasite raporu ve sanayi veritabanı bu siteden.", "https://www.tobb.org.tr/", "", "", ""],
+  ["kurum", "TSE Online Sorgulamalar", "TSE belgeli firma, belge ve rapor sorgulamaları (\"Belgeli Firma Sorgulama\" satırı).", "https://basvuruportal.tse.org.tr/Genel/Sorgulamalar", "", "ad", ""],
+  ["kurum", "EPDK", "Elektrik, doğal gaz, petrol ve LPG lisans sahipleri; lisans sorgulama site menüsünde.", "https://www.epdk.gov.tr/", "", "", ""],
+  ["kurum", "TİM · İlk 1000 İhracatçı", "Türkiye'nin ilk 1000 ihracatçısı listesi (2025 araştırması); listede unvanı ara.", "https://tim.org.tr/tr/turkiyenin-ilk-1000-ihracatci-arastirmasi-2025", "", "ad", ""],
+  ["kurum", "İMEAK Deniz Ticaret Odası", "Denizcilik firmalarının oda kaydı ve üye bilgileri.", "https://www.denizticaretodasi.org.tr/", "", "", ""],
+  ["kurum", "EKAP (yeni sürüm)", "Elektronik Kamu Alımları Platformu'nun yeni sitesi: ihaleler, duyurular ve sorgular.", "https://ekapv2.kik.gov.tr/", "", "", ""],
 ];
 // "vkn|ad": vergi no yazılmışsa onu, yoksa unvanı kullanır
 const alan = (k, v) => (k[5] || "").split("|").find((x) => v[x]) || "";
