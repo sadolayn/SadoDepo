@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yol Gösteren</title>
+<meta name="description" content="Bilgi paylaştıkça büyür">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SADOLAYN">
+<meta property="og:title" content="Yol Gösteren · SADOLAYN">
+<meta property="og:description" content="“Bilgi paylaştıkça büyür”">
+<meta property="og:url" content="https://sadolayn.github.io/SadoDepo/firma.html">
+<meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sadolayn — Bilgi paylaştıkça büyür">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<style>
+  :root { --bg: #000; --card: #0d0d0d; --field: #161616; --ink: #f2f2f2; --muted: #8a8a8a; --accent: #e0a24f; --line: #262626; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 12px 16px 32px; }
+  .wrap { max-width: 560px; margin: 0 auto; }
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  header h1 { margin: 0; font-size: 20px; }
+  .giris { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; font-size: 13.5px; line-height: 1.5; color: #cfcfcf; margin-bottom: 6px; }
+  .giris b { color: var(--ink); }
+  .sek { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 4px; }
+  .sek a { font-size: 12.5px; font-weight: 700; color: #ffd27a; background: #1a140a; border: 1px solid #5a4520; border-radius: 999px; padding: 6px 11px; text-decoration: none; min-height: 30px; display: inline-flex; align-items: center; }
+  h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; margin: 22px 0 8px; font-family: Georgia, serif; font-style: italic; font-weight: 600; font-size: 20px; color: var(--accent); scroll-margin-top: 10px; }
+  h2 small { font-family: system-ui, sans-serif; font-style: normal; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .ky { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; }
+  .ky b { display: block; font-size: 15.5px; }
+  .ky p { margin: 3px 0 0; font-size: 13px; line-height: 1.45; color: #bdbdbd; }
+  .ky .gir { display: inline-block; margin-top: 7px; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #171717; border: 1px solid #24405f; color: #9fc4f0; }
+  .git { display: inline-flex; align-items: center; justify-content: center; min-width: 64px; min-height: 40px; padding: 0 12px; border-radius: 12px; background: #1a140a; border: 1px solid var(--accent); color: #ffd27a; font-weight: 800; font-size: 14px; text-decoration: none; white-space: nowrap; }
+  .note { font-size: 12px; color: var(--muted); line-height: 1.55; margin-top: 18px; }
+</style>
+<script src="pwa.js"></script>
+<script src="ortak.js"></script>
+<script src="rapor.js"></script>
+<script type="module" src="sayac.js"></script>
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
+    <h1>🧭 Yol Gösteren</h1>
+    <span style="width:46px"></span>
+  </header>
+
+  <div class="giris">
+    Bir firmayı tanımak isteyene <b>yol gösterir</b>: hangi bilgiye hangi resmî siteden bakılır. Sorgu ilgili sitede, senin tarafından yapılır.
+    Bu sayfa firma hakkında bilgi vermez, sorgu yapmaz, hiçbir şey kaydetmez; yalnızca adres listesidir.
+  </div>
+  <nav class="sek" id="sek" aria-label="Bölümler"></nav>
+
+  <div id="liste"></div>
+
+  <p class="note">Kaynakların sahibi ilgili kurumlardır; Sadolayn bu sitelerle bağlantılı değildir, içeriklerinden sorumlu değildir. Bazı sorgular e-Devlet ya da üyelik girişi ister. Adresler 28 Ekim 2026'da kontrol edildi; kurum adres değiştirirse burada güncellenir.</p>
+</div>
+
+<script>
+// Bölümler ve kaynaklar: [bölüm, ad, neye bakılır, adres, giriş notu]. Firma adı/sorgu yok; herkese açık resmî adresler ve tarafsız açıklama.
+const GRUP = [
+  ["ilan", "📜 Resmî ilanlar", "Basın İlan Kurumu ve kamu kurumlarının yayınları"],
+  ["kurum", "🏢 Kurum siteleri", "Sadolayn Excel'indeki menü: giriş sayfaları"],
+  ["sicil", "🏛️ Kimlik ve sicil", "unvan, ortaklar, adres"],
+  ["finans", "📊 Finans ve piyasa", "halka açık şirket, çek, denetim"],
+  ["faal", "🏭 Faaliyet ve sektör", "marka, ihracat, lisans, denizcilik"],
+  ["belge", "🧾 Belge doğrulama", "firmanın getirdiği belge gerçek mi"],
+];
+const KAYNAK = [
+  ["ilan", "ilan.gov.tr · Konkordato ve mühlet ilanları", "İİK 288 kapsamındaki geçici ve kesin mühlet, alacaklılara çağrı ve tasdik ilanları. Sayfadaki arama kutusuna unvan yazılır; yayın süresi biten ilanlar sitede görünmeyebilir.", "https://www.ilan.gov.tr/ilan/kategori/49/konkordato-ve-muhlet-iik-288inci-md-", ""],
+  ["ilan", "ilan.gov.tr · İflas ve tasfiye ilanları", "İflasın açılması, alacak kaydı ve sıra cetveli ilanları.", "https://www.ilan.gov.tr/ilan/kategori/50/iflas-ve-tasfiye-ilanlari", ""],
+  ["ilan", "EKAP · Kamu ihale yasaklıları", "Kamu ihalelerinden yasaklanan firma ve kişiler; unvan ya da vergi no ile sorgulanır.", "https://ekap.kik.gov.tr/EKAP/Yasaklilik/YasakliSorguVatandas.aspx", ""],
+  ["ilan", "UYAP e-Satış", "İcra ve iflas müdürlüklerinin satışa çıkardığı taşınır ve taşınmazlar; firmanın malları satışta mı.", "https://esatis.uyap.gov.tr/", ""],
+  ["ilan", "EKAP · İhale sonuç ilanları", "Firma hangi kamu ihalelerini almış; kamu müşterisi var mı.", "https://ekap.kik.gov.tr/ekap/ortak/ksp/kspsonucilaniarama.aspx", ""],
+  ["ilan", "MASAK · Malvarlığı dondurma kararları", "Bakanlar Kurulu ve Cumhurbaşkanı kararıyla malvarlığı dondurulanlara ilişkin resmî liste.", "https://masak.hmb.gov.tr/bkk-ile-malvarliklari-dondurulanlar", ""],
+  ["sicil", "Ticaret Sicil Gazetesi", "Kuruluş, sermaye, ortak, adres, yetkili değişikliği ve tasfiye ilanları.", "https://www.ticaretsicil.gov.tr/view/hizlierisim/ilangoruntuleme.php", "ücretsiz üyelik ya da e-Devlet girişi"],
+  ["sicil", "ESBİS · Esnaf sicil", "Şirket değil esnafsa kaydı burada: esnaf ve sanatkâr sicil bilgileri.", "https://esbis.ticaret.gov.tr/", "e-Devlet girişi"],
+  ["sicil", "GİB · e-Fatura kayıtlı kullanıcı sorgulama", "Vergi no ile firma e-Fatura mükellefi mi; faal olduğuna dair iyi bir işaret.", "https://ebelge.gib.gov.tr/efaturakayitlikullanicilar.html", ""],
+  ["finans", "KAP · Kamuyu Aydınlatma Platformu", "Borsada işlem gören şirketse: özel durum açıklamaları, finansal tablolar, ortaklık yapısı.", "https://www.kap.org.tr/tr/bist-sirketler", ""],
+  ["finans", "Findeks · Karekodlu Çek Raporu", "Çekteki karekodu Findeks Mobil ile okutarak keşidecinin çek ödeme geçmişi ve çekin durumu.", "https://www.findeks.com/urunler/karekodlu-cek-raporu", "Findeks üyeliği"],
+  ["finans", "KGK · Bağımsız denetim kuruluşu sicili", "Mali tabloları denetleyen kuruluş KGK'nın resmî sicilinde kayıtlı mı.", "https://www.kgk.gov.tr/DynamicContentDetail/5217/Bag%CC%86%C4%B1ms%C4%B1z-Denetim-Kurulus%CC%A7u-Resmi-Sicili", ""],
+  ["faal", "Türk Patent · Marka araştırma", "Firmanın marka başvuru ve tescilleri; \"Firma Adı\" alanına yazılır.", "https://www.turkpatent.gov.tr/arastirma-yap", ""],
+  ["faal", "TİM · İhracatçı birliği üyeliği", "Firmanın hangi ihracatçı birliğine üye olduğu; vergi no ile sorgulanır.", "https://tim.org.tr/tr/uyelik-sorgulama", ""],
+  ["faal", "TİM · İlk 1000 İhracatçı", "Türkiye'nin ilk 1000 ihracatçısı listesi (2025 araştırması).", "https://tim.org.tr/tr/turkiyenin-ilk-1000-ihracatci-arastirmasi-2025", ""],
+  ["faal", "Ulaştırma · Yetki belgesi sorgulama", "Nakliyeci için: K1, L2, R2 gibi taşımacılık yetki belgesi var mı, geçerli mi (tüzel kişi).", "https://www.turkiye.gov.tr/ulastirma-ve-altyapi-yetki-belgesi-sorgulama-tuzel-kisi", "e-Devlet girişi"],
+  ["faal", "ÇŞB · Müteahhit bilgileri sorgulama", "İnşaatçı için: yapı müteahhidi yetki belge grubu ve belge durumu; vergi no ile sorgulanır.", "https://www.turkiye.gov.tr/csb-muteahhit-bilgileri-sorgulama", "e-Devlet girişi"],
+  ["faal", "Equasis · Gemi bilgileri", "Denizcilik firmaları için: IMO numarasıyla gemi, sahiplik ve denetim geçmişi.", "https://www.equasis.org/EquasisWeb/public/HomePage", "ücretsiz üyelik"],
+  ["belge", "GİB · Belge doğrulama", "Vergi levhası ya da borç durum yazısı gerçek mi: belgedeki kodla Dijital Vergi Dairesi'nde doğrulanır.", "https://dijital.gib.gov.tr/", ""],
+  ["belge", "GİB · Vergi borcu yoktur / mükellefiyet yazısı doğrulama", "Firmanın verdiği vergi borcu yoktur ya da mükellefiyet durum yazısı gerçek mi: vergi no, dilekçe no ve güvenlik koduyla doğrulanır.", "https://dijital.gib.gov.tr/dogrulamalar/mukellefiyetDogrulama", ""],
+  ["belge", "SGK · Borcu yoktur belgesi doğrulama", "İşyerinin SGK borcu yoktur belgesi gerçek mi: e-Devlet'teki doğrulama hizmetiyle barkod numarasından kontrol edilir.", "https://www.turkiye.gov.tr/sosyal-guvenlik-isyeri-kaydi-borcu-yoktur-belgesi-dogrulama", "e-Devlet girişi"],
+  ["belge", "e-Devlet · Belge doğrulama", "e-Devlet'ten alınmış barkodlu herhangi bir belgenin gerçek olup olmadığı barkod numarasıyla doğrulanır.", "https://www.turkiye.gov.tr/belge-dogrulama", ""],
+  ["kurum", "e-Devlet Kapısı", "Kurumların sorgu ve belge hizmetleri tek kapıdan.", "https://www.turkiye.gov.tr/", "e-Devlet girişi"],
+  ["kurum", "ilan.gov.tr", "Resmî ilanların tamamı: emlak, icra, ihale, tebligat, iflas.", "https://www.ilan.gov.tr/", ""],
+  ["kurum", "TOBB", "Oda ve borsa üyeliği, kapasite raporu ve sanayi veritabanı.", "https://www.tobb.org.tr/", ""],
+  ["kurum", "TSE · Online Sorgulamalar", "TSE belgeli firma, belge ve rapor sorgulamaları.", "https://basvuruportal.tse.org.tr/Genel/Sorgulamalar", ""],
+  ["kurum", "EPDK", "Elektrik, doğal gaz, petrol ve LPG lisans sahipleri; lisans sorgulama site menüsünde.", "https://www.epdk.gov.tr/", ""],
+  ["kurum", "İMEAK Deniz Ticaret Odası", "Denizcilik firmalarının oda kaydı ve üye bilgileri.", "https://www.denizticaretodasi.org.tr/", ""],
+  ["kurum", "EKAP (yeni sürüm)", "Elektronik Kamu Alımları Platformu'nun yeni sitesi: ihaleler, duyurular ve sorgular.", "https://ekapv2.kik.gov.tr/", ""],
+];
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+document.getElementById("sek").innerHTML = GRUP.map(([g, bas]) => `<a href="#${g}">${esc(bas)}</a>`).join("");
+document.getElementById("liste").innerHTML = GRUP.map(([g, bas, alt]) => {
+  const L = KAYNAK.filter((k) => k[0] === g);
+  return L.length ? `<h2 id="${g}">${esc(bas)}<small>${esc(alt)}</small></h2>` + L.map((k) => `<div class="ky"><div><b>${esc(k[1])}</b><p>${esc(k[2])}</p>${k[4] ? `<span class="gir">🔐 ${esc(k[4])}</span>` : ""}</div><a class="git" href="${esc(k[3])}" target="_blank" rel="noopener">Aç ↗</a></div>`).join("") : "";
+}).join("");
+</script>
+</body>
+</html>
