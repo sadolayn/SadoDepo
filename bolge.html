@@ -43,7 +43,7 @@
   .oner button { display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 12px; border: 0; border-bottom: 1px solid #2a1a0e; background: #1a120b; color: var(--c2); font-size: 15px; text-align: left; cursor: pointer; }
   .oner button:first-child { border-radius: 12px 12px 0 0; } .oner button:last-child { border-radius: 0 0 12px 12px; border-bottom: 0; } .oner button:only-child { border-radius: 12px; }
   .oner button small { color: #a5876f; } .oner > small { padding: 4px 2px; }
-  .cipler { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; } .cipler::-webkit-scrollbar { display: none; }
+  .cipler { display: flex; flex-wrap: wrap; gap: 6px; } /* hepsi görünsün: yana kaydırma yok */
   .cipler button { flex: none; min-height: 36px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--cz); background: var(--k2); color: var(--c2); font-size: 13px; cursor: pointer; }
   .not { color: #ffb38f; }
   .yer { padding: 14px; border-radius: 18px; background: #2c1608; border: 1px solid var(--c); display: flex; flex-direction: column; gap: 10px; }
@@ -102,7 +102,7 @@
     </section>
 
     <section class="kart" aria-label="Konular" style="margin-top:14px">
-      <div class="kBas"><h2>Konular <small>Google Haberler'de açılır</small></h2><button type="button" id="kSure" class="kSure" aria-label="Süreyi değiştir"></button></div>
+      <div class="kBas"><h2>Konular <small>başlığında konu geçen haberler</small></h2><button type="button" id="kSure" class="kSure" aria-label="Süreyi değiştir"></button></div>
       <div id="konular" class="konular"></div>
     </section>
 
@@ -112,7 +112,7 @@
     </section>
 
     <section class="kart" id="komsuK" aria-label="Diğer ilçeler" style="margin-top:14px" hidden>
-      <h2 id="komsuB"></h2>
+      <h2 id="komsuB"></h2><small>A'dan Z'ye · dokununca o ilçe seçilir</small>
       <div class="cipler" id="komsu"></div>
     </section>
   </div>
@@ -166,7 +166,10 @@ const sakla = () => { try { localStorage.setItem("bolgem", JSON.stringify(S)); }
 const yerAd = () => S.elle || [S.ilce, S.il].filter(Boolean).join(", ");
 const yerAra = () => S.elle || (S.ilce ? `"${S.ilce}" ${S.il}` : `${S.il} haberleri`);
 const yerHarita = () => S.elle || [S.ilce, S.il].filter(Boolean).join(" ");
-const gn = (ek) => `https://news.google.com/search?q=${encodeURIComponent(yerAra() + (ek ? " (" + ek + ")" : "") + " when:" + (S.sure === "1d" ? "1d" : "7d"))}&hl=tr&gl=TR&ceid=TR:tr`;
+// Konu kelimeleri BAŞLIKTA aranır (intitle:). Google kelimeyi hiçbir haberde bulamayınca sessizce atıp yalnızca yere uyan haberleri
+// gösteriyordu ("vefat" aramasına kalori denetimi haberi geliyordu); başlık şartıyla ya ilgili haber gelir ya da liste boş kalır.
+const baslikta = (ek) => ek.split(" OR ").map((t) => "intitle:" + t.trim()).join(" OR ");
+const gn = (ek) => `https://news.google.com/search?q=${encodeURIComponent(yerAra() + (ek ? " (" + baslikta(ek) + ")" : "") + " when:" + (S.sure === "1d" ? "1d" : "7d"))}&hl=tr&gl=TR&ceid=TR:tr`;
 const gm = (ne) => `https://www.google.com/maps/search/${encodeURIComponent(ne + " " + yerHarita())}`;
 
 function sec(y) {
@@ -201,7 +204,7 @@ function ciz() {
     ["🏭", "Organize sanayi ve fabrikalar", "bölgenin üretim noktaları", "organize sanayi bölgesi"],
   ].map(([ic, b, d, q]) => `<a href="${esc(gm(q))}" target="_blank" rel="noopener"><span>${ic}</span><div><b>${b} ↗</b><small>${d}</small></div></a>`).join("");
   // Aynı ildeki diğer ilçeler
-  const L = !S.elle && S.il && ILMAP ? (ILMAP[S.il] || []).filter((c) => c !== S.ilce) : [];
+  const L = !S.elle && S.il && ILMAP ? (ILMAP[S.il] || []).filter((c) => c !== S.ilce).sort((a, b) => a.localeCompare(b, "tr")) : [];
   $("komsuK").hidden = !L.length;
   if (L.length) {
     $("komsuB").textContent = `${S.il}'${ilEk(S.il)} ${S.ilce ? "diğer " : ""}ilçeleri`;
