@@ -358,7 +358,7 @@
     <button data-tab="tic"><i>📦</i><span>Taksitli<br>Ticari</span></button>
     <button data-tab="cek"><i>🧾</i><span>Çek İskonto<br>&amp; Valör</span></button>
     <button data-tab="tarim"><i>🌾</i><span>Tarım<br>Kredisi</span></button>
-    <a class="tlink" href="takvim.html#vergi">🧾 Vergi takvimi → Takvim sayfasında</a>
+    <a class="tlink" href="takvim.html#vergi" style="display:inline-block;min-height:24px;line-height:24px">🧾 Vergi takvimi → Takvim sayfasında</a>
   </div>
   </div>
 
@@ -1271,8 +1271,8 @@ function tkPlan(B, per, T, r, kkdf, bsmv, closeLast) {
     let t = R2(ana + f + kk + bs);
     if (last && j > 0 && per[j].fac === 1 && Math.abs(t - T) < Math.max(1, T * 0.0005)) {
       const rem = R2(T - t);
-      if (kkdf > 0) kk = R2(kk + rem); else if (bsmv > 0) bs = R2(bs + rem); else f = R2(f + rem);
-      t = T;
+      // Kuruş farkı faiz/vergiyi eksiye düşürecekse (ör. %0 faiz) sabitleme yapılmaz; son taksit birkaç kuruş küçük kalır
+      if (kkdf > 0 && kk + rem >= 0) { kk = R2(kk + rem); t = T; } else if (bsmv > 0 && bs + rem >= 0) { bs = R2(bs + rem); t = T; } else if (f + rem >= 0) { f = R2(f + rem); t = T; }
     }
     bal = R2(Math.max(0, bal - ana));
     out.push({ d: per[j].d, g: per[j].g, t, ana, f, kk, bs, bal });
@@ -1383,8 +1383,8 @@ function tkState(c, at) {
   return { k, B, last, g: onDue ? plan[k].g : g, acc, onDue, eski: plan.slice(k).reduce((a, x) => a + x.t, 0) };
 }
 // Yeni plan dönemleri: işlem tarihinden ilk taksite kırık dönem (yeni kredi gibi), sonra tam aylar
-function mkPer(from, first, cnt) {
-  const ds = []; for (let j = 0; j < cnt; j++) ds.push(addMonthsC(first, j));
+function mkPer(from, first, cnt, gun) { // gun: asıl planın taksit günü (Şubat'ta 28'e düşse bile sonraki aylarda geri döner)
+  const ds = []; for (let j = 0; j < cnt; j++) { const d = addMonthsC(first, j); if (gun) d.setDate(Math.min(gun, new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate())); ds.push(d); }
   const g1 = dayDiff(from, first), tam = ymd(addMonthsC(from, 1)) === ymd(first);
   return ds.map((d, j) => j === 0 ? { d, fac: tam ? 1 : g1 / 30, g: g1 } : { d, fac: 1, g: 30 });
 }
@@ -1416,7 +1416,7 @@ function calcAO(c) {
     const f0 = st.onDue ? k + 1 : k, cnt = n - f0;
     if (cnt <= 0) return clearA(`Seçilen tarih son taksit günü; kalan borç için ${tl(kapama)} ödenmeli.`);
     const B2 = R2(B - (X - acc));
-    const per = mkPer(at, dues[f0], cnt);
+    const per = mkPer(at, dues[f0], cnt, new Date(dues[0]).getDate());
     const v = $("ao_sec").value === "v";
     const T = v ? taksit : solveT(B2, per, r, kkdf, bsmv);
     const p = tkPlan(B2, per, T, r, kkdf, bsmv, true);
@@ -1450,7 +1450,7 @@ function calcAO(c) {
     const BC = R2(B - (pes - acc));
     if (BC <= 0.005) return clearY("Peşin tutar kalan borcu kapatıyor.");
     const yFirst = st.onDue ? (dues[k + 1] || addMonthsC(at, 1)) : dues[k];
-    const per = mkPer(at, yFirst, yn);
+    const per = mkPer(at, yFirst, yn, new Date(dues[0]).getDate());
     const T = solveT(BC, per, yr, kkdf, bsmv);
     const p = tkPlan(BC, per, T, yr, kkdf, bsmv, true);
     const fark = pes + sumT(p) - eski;
@@ -1503,10 +1503,10 @@ function calcKK() {
   const TB = [[0, "30.000 TL altı", 3.25, 3.55], [30000, "30.000 – 180.000 TL", 3.75, 4.05], [180001, "180.000 TL üstü", 4.25, 4.55]];
   $("k_note").innerHTML = `<b>Oranlar neden değişiyor?</b> TCMB azami faizi <b>dönem borcunun tutarına göre</b> üç dilimde belirliyor. Dönem borcunu değiştirince dilim değişirse oranlar da kendiliğinden değişir${kkManual ? " (şu an oranları elle girdin, otomatik seçim kapalı)" : ""}:
     <table class="ltvtab" style="margin-top:6px"><tr><th>Dönem borcu</th><th>Akdi</th><th>Gecikme</th></tr>${TB.map((r) => `<tr class="${!kkManual && r[1] === t[2] ? "on" : ""}"><td>${r[1]}</td><td>%${nfx(r[2])}</td><td>%${nfx(r[3])}</td></tr>`).join("")}</table>
-    <span style="display:block;margin-top:4px">📌 <b>maximum.com.tr'de yayımlanan oranlar:</b> Maximum kartlarda akdi faiz %3,25 / %3,75 / %4,25 (aylık, BSMV-KKDF hariç; <a href="https://www.maximum.com.tr/harcama-taksitlendirme" target="_blank" rel="noopener" style="color:var(--accent)">maximum.com.tr ↗</a>). Gecikme faizi de TCMB üst sınırında. Oranlar TCMB\'nin 1 Ekim 2026 tablosuyla aynı; kesin oran hesap özetinde yazar.</span>`;
+    <span style="display:block;margin-top:4px">📌 <b>maximum.com.tr'de yayımlanan oranlar:</b> Maximum kartlarda akdi faiz %3,25 / %3,75 / %4,25 (aylık, BSMV-KKDF hariç; <a href="https://www.maximum.com.tr/harcama-taksitlendirme" target="_blank" rel="noopener" style="color:var(--accent)">maximum.com.tr ↗</a>). Oranlar TCMB\'nin 1 Ekim 2026 tablosuyla aynı; kesin oran hesap özetinde yazar.</span>`;
   $("k_out").textContent = tl(top);
   $("k_lim").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.a === num("k_asg")));
-  $("k_oto").innerHTML = `<span>✓</span><span>Oranlar otomatik: <b>akdi %${nfx(ra * 100)}</b> · <b>gecikme %${nfx(rg * 100)}</b> · asgari %${nfx(num("k_asg"))} · ${g} gün · BSMV+KKDF %${nfx(v * 100)}${kkManual ? " (elle girildi)" : ` <span style="opacity:.75">(dönem borcu ${t[2]} dilimi, İş Bankası oranı)</span>`}. Sadece borcu, ödenen tutarı ve limiti girmen yeter.</span>`;
+  $("k_oto").innerHTML = `<span>✓</span><span>Oranlar otomatik: <b>akdi %${nfx(ra * 100)}</b> · <b>gecikme %${nfx(rg * 100)}</b> · asgari %${nfx(num("k_asg"))} · ${g} gün · BSMV+KKDF %${nfx(v * 100)}${kkManual ? " (elle girildi)" : ` <span style="opacity:.75">(dönem borcu ${t[2]} dilimi, maximum.com.tr'de yayımlanan oran)</span>`}. Sadece borcu, ödenen tutarı ve limiti girmen yeter.</span>`;
   rows("k_rows", [
     ["Asgari ödeme", tl(asg)],
     [O >= asg ? "Asgari ödendi ✓" : "Ödenmeyen asgari", O >= asg ? "" : tl(asg - O), O >= asg ? "pos" : "neg"],
@@ -1997,7 +1997,7 @@ function calcTic() {
   $("tc_dnote").innerHTML = ilk && ilk > bas && gun > 45
     ? `<span style="color:#ef8a5d">⚠️ İlk taksit kredi veriliş tarihinden en fazla <b>45 gün</b> sonra olabilir; ${kay || ymd(ilkK) !== ymd(ilk) ? `iş gününe kaymış hâliyle (${shortD(ilkK)}) ` : ""}şu an <b>${gun} gün</b>. ${shortD(bas)} için en geç ${shortD(addDays(bas, 45))} seç (iş günü olmalı).</span>`
     : ok ? `İlk taksite <b>${gun} gün</b>. ` + (kay ? `${shortD(ilk)} ${ilk.toLocaleDateString("tr-TR", { weekday: "long" })} olduğu için ilk taksit <b>${shortD(ilkK)}</b> tarihine kayar. ` : "") + `Ödeme günü: her ayın <b>${ilk.getDate()}.</b> günü; hafta sonu ya da bayrama denk gelirse ilk iş günü.`  +
-    (!kay && isHoliday(addDays(ilk, -1)) && ilk.getDate() > 1 ? `<br><span style="color:#e0a24f">💡 Sözleşmedeki ödeme günü ${shortD(addDays(ilk, -1))} ise (tatil olduğu için planda ${shortD(ilk)} görünür) burada da ${shortD(addDays(ilk, -1))} gir; yoksa sonraki taksit günleri kayar.</span>` : "") : '<span style="color:#ef8a5d">⚠️ Ödeme başlangıç tarihi kredi veriliş tarihinden sonra olmalı.</span>';
+    (!kay && isHoliday(addDays(ilk, -1)) && ilk.getDate() > 1 ? `<br><span style="color:#e0a24f">💡 Sözleşmedeki ödeme günü ${shortD(addDays(ilk, -1))} ise (tatil ya da hafta sonu olduğu için planda ${shortD(ilk)} görünür) burada da ${shortD(addDays(ilk, -1))} gir; yoksa sonraki taksit günleri kayar.</span>` : "") : '<span style="color:#ef8a5d">⚠️ Ödeme başlangıç tarihi kredi veriliş tarihinden sonra olmalı.</span>';
   const clear = () => { ["tcs_taksit", "tcs_faiz", "tcs_vergi", "tcs_toplam"].forEach((x) => ($(x).textContent = "–")); $("tcs_ilk").textContent = ""; $("tc_out").textContent = "–"; rows("tc_rows", []); $("tc_plan").innerHTML = ""; tcLast = null; tcSummary = ""; };
   if (!P || !n || n > 600 || !ok) return clear();
   const { T, plan, dues, g } = tcCore(P, r, n, bsmv, kkdf, bas, ilk);
@@ -2359,7 +2359,8 @@ renderCekList();
   const trh = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
   const bugun = ymd(new Date());
   const gunFark = (a, b) => Math.round((new Date(b + "T12:00:00") - new Date(a + "T12:00:00")) / 864e5);
-  const lnk = (u, t) => u ? `<a href="${u}" target="_blank" rel="noopener">${t} ↗</a>` : t;
+  const escB = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const lnk = (u, t) => u ? `<a href="${escB(u)}" target="_blank" rel="noopener">${escB(t)} ↗</a>` : escB(t);
   let oranElle = false, tOranElle = false, vade = 12, secili = null; // secili: hangi düğmeye basıldı (aynı orana sahip düğmelerden yalnızca o yansın)
   // Dönemli oranlar: maaş kampanyası + JSON'dan gelen ek kampanyalar ({ad, oran, bas, bit, url}). Süresi dolan kendiliğinden gizlenir.
   const donemli = () => [EK.maasli && { id: "maasli", ad: "Maaşı İş Bankası'na yatanlar", oran: EK.maasli, bas: EK.maasli_bas, bit: EK.maasli_bit, url: EK.link_maasli }]
@@ -2373,7 +2374,7 @@ renderCekList();
     donemli().filter(aktif).forEach((k) => L.push([k.oran, k.ad, k.id]));
     const r = num("e_faiz");
     if (secili && !L.some((x) => x[2] === secili && Math.abs(r - x[0]) < 1e-9)) secili = null;
-    $("e_oranlar").innerHTML = L.map(([v, ad, id]) => `<button type="button" data-r="${v}" data-id="${id}" class="${Math.abs(r - v) < 1e-9 && (!secili || secili === id) ? "on" : ""}">%${f2(v)}<small>${ad}</small></button>`).join("");
+    $("e_oranlar").innerHTML = L.map(([v, ad, id]) => `<button type="button" data-r="${v}" data-id="${id}" class="${Math.abs(r - v) < 1e-9 && (!secili || secili === id) ? "on" : ""}">%${f2(v)}<small>${escB(ad)}</small></button>`).join("");
     $("e_oranlar").querySelectorAll("button").forEach((b) => (b.onclick = () => { $("e_faiz").value = f2(+b.dataset.r); oranElle = true; secili = b.dataset.id; calcEk(); }));
     $("e_oranlarNot") && $("e_oranlarNot").remove();
     const n = document.createElement("div"); n.id = "e_oranlarNot"; n.className = "ekoran";
@@ -2382,7 +2383,7 @@ renderCekList();
     if (EK.isplus) P.push(lnk(EK.link_isplus, "İş Plus: " + Object.entries(EK.isplus).map(([a, v]) => `${a} %${f2(v)}`).join(" · ")));
     if (EK.black) P.push(lnk(EK.link_black, `İş Black %${f2(EK.black.Black)} · Black Plus %${f2(EK.black["Black Plus"])}`));
     const biten = donemli().filter((k) => k.bit && bugun > k.bit && gunFark(k.bit, bugun) <= 30);
-    n.innerHTML = `<b>Kaynaklar:</b> ${P.join(" · ")}. Bu indirimler taksitli kullanıma geçmez; taksitli için ayrı dönemsel kampanya olabilir.` + biten.map((k) => `<br>⏹️ ${k.ad} için %${f2(k.oran)} kampanyası sona erdi (son gün ${trh(k.bit)}); artık standart oran geçerli.`).join("");
+    n.innerHTML = `<b>Kaynaklar:</b> ${P.join(" · ")}. Bu indirimler taksitli kullanıma geçmez; taksitli için ayrı dönemsel kampanya olabilir.` + biten.map((k) => `<br>⏹️ ${escB(k.ad)} için %${f2(k.oran)} kampanyası sona erdi (son gün ${trh(k.bit)}); artık standart oran geçerli.`).join("");
     $("e_oranlar").after(n);
   }
   function gunler(g) {
@@ -2432,7 +2433,7 @@ renderCekList();
     $("et_note").textContent = (P < 500 || P > 600000 ? "⚠️ Taksitli kullanım 500 TL – 600.000 TL arası ve ek hesap limiti kadar. " : "") + "İlk taksit kullanımdan 30 gün sonra (bankaya göre değişir).";
     tOzet = ozetMetni("TAKSİTLİ NAKİT AVANS ÖZETİ (Ek Hesaba bağlı)", [[`Tutar: ${tl(P)}`, `Vade: ${n} ay`, `Aylık faiz oranı: %${f2(r * 100)}`], [`Aylık taksit tutarı: ${tl(t)}`, `Toplam geri ödeme: ${tl(top)}`], [`Toplam faiz: ${tl(sF)}`, `KKDF + BSMV: ${tl(sV)}`, `Efektif aylık maliyet: %${(re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })}`]], "Oran kullanım günü sabitlenir, vade boyunca değişmez.");
     const K = EK.kampanya, kEl = $("et_kamp");
-    if (K && bugun >= (K.bas || "") && bugun <= K.bit) { kEl.hidden = false; kEl.href = K.url; kEl.innerHTML = `🎉 <b>${K.ad}</b> · son gün ${trh(K.bit)}: ${K.oran} ↗`; } else kEl.hidden = true;
+    if (K && bugun >= (K.bas || "") && bugun <= K.bit) { kEl.hidden = false; kEl.href = K.url; kEl.innerHTML = `🎉 <b>${escB(K.ad)}</b> · son gün ${trh(K.bit)}: ${escB(K.oran)} ↗`; } else kEl.hidden = true;
   };
   function src() {
     $("e_src").innerHTML = `Faiz oranı kendiliğinden gelmez; sana uygulanan oranı yaz. Düğmelerdeki oranlar <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr</a>'de herkese açık yayımlanan genel oranlardır (son kontrol: ${new Date(EK.kontrol + "T12:00:00").toLocaleDateString("tr-TR")}); kişiye uygulanan oran farklı olabilir. Hesap bilgi amaçlıdır.`;

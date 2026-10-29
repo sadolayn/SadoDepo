@@ -419,7 +419,7 @@ function showMissing(date) {
   const resmi = `https://www.resmigazete.gov.tr/eskiler/${y}/${m}/${y}${m}${d}.htm`;
   $("content").innerHTML = `<div class="hero"><div class="date">${esc(fmtDate(date))}</div>
     <p style="color:var(--muted);margin-top:6px">Bu gün için hazırlanmış bir özet yok. Özetler ${esc(fmtDate(dates[dates.length - 1]))} tarihinden itibaren tutuluyor.</p>
-    <p style="margin-top:12px"><a href="${resmi}" target="_blank" rel="noopener" style="color:var(--accent)">Resmi Gazete'nin bu günkü sayısını aç ›</a></p></div>`;
+    <p style="margin-top:12px"><a href="${resmi}" target="_blank" rel="noopener" style="color:var(--accent)">Resmi Gazete'nin o günkü sayısını aç ›</a></p></div>`;
   $("prev").disabled = true; $("next").disabled = true;
 }
 
@@ -467,7 +467,7 @@ async function show(date) {
     }
     const src = (g.kaynaklar || []).map((k) => `<li><a href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.ad)}</a></li>`).join("");
     html += `<div class="sec links"><h2>Kaynaklar</h2><ul style="padding-left:18px;margin:6px 0 10px">
-      <li><a href="${resmi}" target="_blank" rel="noopener">Resmi Gazete'nin bu günkü sayısı</a></li>${src}</ul>
+      <li><a href="${resmi}" target="_blank" rel="noopener">Resmi Gazete'nin o günkü sayısı</a></li>${src}</ul>
       <div style="margin-bottom:10px">Bu sayfa haber kaynaklarından hazırlanan bir özettir; resmi metin için Resmi Gazete'ye bakın.</div></div>`;
     $("content").innerHTML = html;
   } catch (e) {

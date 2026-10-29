@@ -149,7 +149,7 @@ const VTK = {
   emk: { def: 1, max: 12, lvl: "o", txt: "🏠 <b>Emlak ve ÇTV'de taksit kampanyası genelde yok</b>, kartla tek çekim ödenir (ÇTV belediye POS'u üzerinden Vergi Kart ile de ödenebilir). Taksit seçersen standart kart faizi işler." },
   gv: { def: 1, max: 12, lvl: "o", txt: "💼 <b>Gelir vergisinde taksit kampanyaya bağlı</b>; kampanya yoksa kartla tek çekim. Taksit seçersen standart kart faizi işler." },
   tic: { def: 1, max: 4, lvl: "o", txt: "🏢 <b>Ticari vergilerde taksit dönemsel kampanyaya bağlı.</b> İş Bankası ticari kredi kartlarıyla geçmiş kampanyalarda 2–4 ay faizsiz taksit verildi (gib.gov.tr veya banka kanalı, taksitlendirme İşCep / Maximum İşyerim'den). <b>Vergi Kart</b>: tek çekim, ayda iki hesap kesimi (15'i ve 28'i). Kampanya yoksa standart oran." },
-  sgk: { def: 2, max: 2, lvl: "o", txt: "👷 <b>SGK primi:</b> ticari kartla 5.000 TL ve üzeri ödemeye 2 ay faizsiz taksit kampanyası uygulandı (2025, talep İşCep'ten, hesap kesiminden önce). Kartla SGK ödemesinde <b>%3,10 + BSMV komisyon</b> (en az 4,94 TL + BSMV) alınır; taksit kampanyası komisyonu kapsamaz. SGK'da gecikme cezası ve gecikme zammı ayrı kurallarla hesaplanır; aşağıdaki gecikme tutarı yaklaşıktır." },
+  sgk: { def: 2, max: 2, lvl: "o", txt: "👷 <b>SGK primi:</b> 2025'te ticari kartla 5.000 TL ve üzeri ödemeye 2 ay faizsiz taksit kampanyası uygulanmıştı (geçmiş kampanya; bugün geçerli olup olmadığını kampanya sayfasından kontrol et). Kartla SGK ödemesinde <b>%3,10 + BSMV komisyon</b> (en az 4,94 TL + BSMV) alınır; taksit kampanyası komisyonu kapsamaz. SGK'da gecikme cezası ve gecikme zammı ayrı kurallarla hesaplanır; aşağıdaki gecikme tutarı yaklaşıktır." },
 };
 const vtkOf = (e) => (e.k.startsWith("mtv") ? VTK.mtv : e.k.startsWith("emk") ? VTK.emk : e.k.startsWith("gv") ? VTK.gv : e.k === "sgk" ? VTK.sgk : VTK.tic);
 const AYLAR_TR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
@@ -192,7 +192,7 @@ function calcVergiPlan(today) {
   const top = taksit * n, ek = top - T;
   const gz = T * GZ_AYLIK / 100 * g / 30;
   const tk = e ? vtkOf(e) : null;
-  $("v_tk").innerHTML = tk ? `<div class="valert ${n > tk.max || (tk.lvl !== "g" && n > 1 && !r) ? "r" : tk.lvl}" style="margin-top:8px">${tk.txt}${n > tk.max ? `<br>⚠️ Seçilen ${n} taksit bu vergi için kampanyalı taksit sayısını (${tk.max}) aşıyor.` : tk.lvl !== "g" && n > 1 && !r ? "<br>⚠️ Aktif kampanya yoksa bu taksit faizsiz olmaz; faiz oranını gir." : ""}<br><a href="https://www.isbank.com.tr/kampanyalar" target="_blank" rel="noopener" style="color:var(--accent)">Güncel kampanyaları kontrol et ↗</a></div>` : "";
+  $("v_tk").innerHTML = tk ? `<div class="valert ${n > tk.max || (tk.lvl !== "g" && n > 1 && !r) ? "r" : tk.lvl}" style="margin-top:8px">${tk.txt}${n > tk.max ? `<br>⚠️ Seçilen ${n} taksit geçmiş kampanyalardaki taksit sayısını (${tk.max}) aşıyor.` : tk.lvl !== "g" && n > 1 && !r ? "<br>⚠️ Aktif kampanya yoksa bu taksit faizsiz olmaz; faiz oranını gir." : ""}<br><a href="https://www.isbank.com.tr/kampanyalar" target="_blank" rel="noopener" style="color:var(--accent)">Güncel kampanyaları kontrol et ↗</a></div>` : "";
   const kom = e && e.k === "sgk" ? Math.max(4.94, T * 0.031) * 1.05 : 0;
   $("v_lbl").textContent = n === 1 ? "Tek çekim" : `${n} taksit · aylık`;
   $("v_out").textContent = tl(taksit);

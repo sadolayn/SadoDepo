@@ -596,7 +596,7 @@
       <p class="hint" style="margin-top:0">Her telefonun ekran yoğunluğu farklıdır. Bir banka kartını aşağıdaki çerçevenin üstüne yatay koy ve kaydırıcıyla çerçeveyi kartın genişliğine eşitle (kart genişliği her yerde 85,6 mm). Ayar bu cihazda hatırlanır.</p>
       <div id="calOpen">
         <div class="card-cal" id="cardBox">💳 Kartı buraya yatır<br>çerçeve = kart genişliği</div>
-        <input type="range" id="cal" min="2" max="12" step="0.01">
+        <input type="range" id="cal" min="2" max="12" step="0.01" aria-label="Cetvel ayarı">
         <div class="rnudge" id="calNudge" hidden>👌 Kart çerçeveye tam oturduysa ayarı <b>kilitle</b>; yanlışlıkla kaydırıp bozmazsın.</div>
         <div class="tapebar"><button id="calLock" style="border-color:var(--ok);color:var(--ok)">🔒 Ayarı kilitle</button><button id="calReset">Varsayılana dön</button></div>
       </div>
@@ -950,7 +950,7 @@ function calcF() {
   // Vade iki yıla yayılıyorsa (ör. 2027 → 2028) artık yılı da söyle
   const end = addD(a, g || 0), span = []; for (let y = yr; y <= end.getFullYear(); y++) if (isLeap(y)) span.push(y);
   $("fLeap").innerHTML = kr
-    ? `📅 <b>${yr}</b> ${isLeap(yr) ? "artık yıl (366 gün)" : "artık yıl değil (365 gün)"}. Kredide fark etmez: yıl her zaman <b>360 gün</b> sayılır, faiz ÷ <b>36.000</b>.`
+    ? `📅 <b>${yr}</b> ${isLeap(yr) ? "artık yıl (366 gün)" : "artık yıl değil (365 gün)"}. Kredi hesabında yıl genellikle <b>360 gün</b> sayılır, faiz ÷ <b>36.000</b>.`
     : `📅 <b>${yr}</b> ${isLeap(yr) ? "<b>artık yıl</b> → yıl 366 gün, faiz ÷ <b>36.600</b>" : "artık yıl değil → yıl 365 gün, faiz ÷ <b>36.500</b>"}.${isLeap(yr) ? "" : ` Sonraki artık yıl: <b>${nx}</b> (÷ 36.600).`}${span.length && !isLeap(yr) ? ` <br>⚠️ Vade ${span.join(", ")} yılına sarkıyor.` : ""}`;
   $("fKrBox").hidden = !kr; $("fStBox").hidden = kr;
   fMarkChip();
@@ -1347,7 +1347,7 @@ $("mTop").onclick = () => { mLockD = null; mTopOn = false; $("mLock").innerHTML 
 
 // ===== Sayı Bulmaca =====
 const BM = { n: 4, lvl: 2, mine: "", ai: "", cand: [], all: [], me: [], aiL: [], over: false, tur: 1 };
-const BMLV = { 1: "Sadolayn rahat oynar: sadece son ipuçlarını hatırlar.", 2: "Sadolayn tüm ipuçlarını kullanır ama tahminlerini şansa bırakır.", 3: "Sadolayn her tahmini en çok olasılığı eleyecek şekilde hesaplar. Bol şans!" };
+const BMLV = { 1: "Sadolayn rahat oynar: sadece son ipuçlarını hatırlar.", 2: "Sadolayn tüm ipuçlarını kullanır, uyan sayılar arasından rastgele seçer.", 3: "Sadolayn her tahmini en çok olasılığı eleyecek şekilde hesaplar. Bol şans!" };
 const distinct = (s) => new Set(s).size === s.length;
 const validNum = (s, n) => new RegExp(`^[1-9]\\d{${n - 1}}$`).test(s) && distinct(s);
 function randNum(n) { const d = "0123456789".split(""); let s; do { for (let i = d.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [d[i], d[j]] = [d[j], d[i]]; } s = d.slice(0, n).join(""); } while (s[0] === "0"); return s; }
