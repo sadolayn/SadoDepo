@@ -105,6 +105,8 @@
   .ykur .ybas { display:flex; align-items:baseline; gap:8px; } .ykur .ybas b { font-size:17px; color:#ffdcc4; }
   .ykur .ykon { flex:none; min-height:42px; padding:0 12px; border-radius:12px; border:1px solid #f0975a; background:#2c1608; color:#ffdcc4; font:inherit; font-size:13.5px; font-weight:700; cursor:pointer; }
   .ykur .ynot { color:#ffb38f; }
+  .ykur .ygn { display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:44px; padding:0 12px; border-radius:12px; background:#1a120b; border:1px dashed #5a3a22; color:#ffdcc4; font-size:14px; font-weight:600; text-decoration:none; }
+  .ykur .ygn small { font-size:11.5px; font-weight:400; color:#c9a88c; }
   #cats .chip[data-k="tarim"] { --c:#a8c94a; --d:#1c2408; --t:#e8f5c4; }
   #cats .chip[data-k="yz"] { --c:#b48cf0; --d:#1f1235; --t:#e6d8ff; }
   #cats .chip[data-k="okul"] { --c:#f0c64a; --d:#2a2208; --t:#fbecc0; }
@@ -187,6 +189,8 @@ function yerelKur() {
   const dugme = `<button type="button" id="yKonum" class="ykon">📍 ${b ? "Konumu yenile" : "Konumumu kullan"}</button>`;
   return `<div class="ykur">${b ? `<div class="ybas"><b>📍 ${esc(b.ad)}</b><small>${YS.konum ? "konumundan" : "seçtiğin yer"}</small></div>` : `<small>Bulunduğun ilçenin haberleri için konumunu kullan ya da listeden seç.</small>`}`
     + `<div class="yr">${dugme}${kutu}</div>${yNot ? `<small class="ynot">${esc(yNot)}</small>` : ""}`
+    // Daha fazlası: Google Haberler'de o yerin araması (kaynakları Google gösterir; bu sayfa yalnızca beş köklü gazeteyi listeler)
+    + (b ? `<a class="ygn" href="https://news.google.com/search?q=${encodeURIComponent((b.ilce ? `"${b.ilce.ad}" ${b.il.ad}` : `${b.il.ad} haberleri`) + " when:7d")}&amp;hl=tr&amp;gl=TR&amp;ceid=TR:tr" target="_blank" rel="noopener">Google Haberler'de ${esc(b.ilce ? b.ilce.ad : b.il.ad)} ↗<small>yerel siteler dahil</small></a>` : "")
     + `<small>Her sabah bir kez derlenir · son ${YD.gun} gün · Yeni Asır, Posta, Milliyet, Hürriyet, NTV. Pilot: şimdilik Aydın.</small></div>`;
 }
 function yerelKonum() {
