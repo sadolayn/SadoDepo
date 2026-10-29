@@ -127,13 +127,18 @@
       <div class="liste" id="harita"></div>
     </section>
 
+    <section class="kart" aria-label="Kurum telefonları" style="margin-top:14px">
+      <h2>Kurum telefonları <small>dokun, numarayı gör, ara</small></h2>
+      <div class="izgara" id="kurum" style="--g:#4fd1c5"></div>
+    </section>
+
     <section class="kart" id="komsuK" aria-label="Diğer ilçeler" style="margin-top:14px" hidden>
       <h2 id="komsuB"></h2><small>A'dan Z'ye · dokununca o ilçe seçilir</small>
       <div class="cipler" id="komsu"></div>
     </section>
   </div>
 
-  <p class="note">Haberleri ve kaynakları Google Haberler, işletmeleri ve puanlarını Google Haritalar gösterir; Sadolayn bu içeriklerden sorumlu değildir. Konum yalnızca il / ilçe adını bulmak için bir kez OpenStreetMap'e sorulur, kaydedilmez. Son baktığın yerler yalnızca bu cihazda tutulur. İl ve ilçe listesi: PTT posta kodu listesi (turkey-neighbourhoods, MIT).</p>
+  <p class="note">Haberleri ve kaynakları Google Haberler; kurum, işletme bilgilerini ve telefonları Google Haritalar gösterir; Sadolayn bu içeriklerden sorumlu değildir. Konum yalnızca il / ilçe adını bulmak için bir kez OpenStreetMap'e sorulur, kaydedilmez. Son baktığın yerler yalnızca bu cihazda tutulur. İl ve ilçe listesi: PTT posta kodu listesi (turkey-neighbourhoods, MIT).</p>
 </div>
 
 <script>
@@ -221,6 +226,8 @@ const sorgu = (ek) => "when:" + S.sure + " " + yerSorgu() + (ek ? " (" + baslikt
 const gunAd = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
 const donem = () => { const b = new Date(), a = new Date(b - { "1d": 1, "7d": 7, "30d": 30 }[S.sure] * 864e5); return gunAd(a) + " – " + gunAd(b); };
 const gn = (ek) => `https://news.google.com/search?q=${encodeURIComponent(sorgu(ek))}&hl=tr&gl=TR&ceid=TR:tr`;
+// Kurum adı yerin ardından: "Nazilli Kaymakamlığı Aydın", "Aydın Valiliği"
+const gmK = (ne) => `https://www.google.com/maps/search/${encodeURIComponent(S.elle ? S.elle + " " + ne : S.ilce && S.ilce !== "Merkez" ? `${S.ilce} ${ne} ${S.il}` : `${S.il} ${ne}`)}`;
 const gm = (ne) => `https://www.google.com/maps/search/${encodeURIComponent(ne + " " + yerHarita())}`;
 
 function sec(y) {
@@ -252,9 +259,24 @@ function ciz() {
   $("harita").innerHTML = [
     ["🏦", "İş Bankası şubeleri", "adres, çalışma saatleri, puanlar ve yorumlar", "Türkiye İş Bankası"],
     ["🏧", "İş Bankası bankamatikleri", "bölgedeki İş Bankası ATM'leri", "İş Bankası ATM"],
-    ["🏛️", "Bölgedeki diğer bankalar", "şubeler ve puanlar", "banka"],
     ["🏭", "Organize sanayi ve fabrikalar", "bölgenin üretim noktaları", "organize sanayi bölgesi"],
   ].map(([ic, b, d, q]) => `<a href="${esc(gm(q))}" target="_blank" rel="noopener"><span>${ic}</span><div><b>${b} ↗</b><small>${d}</small></div></a>`).join("");
+  // Şube müdürünün sık aradığı kurumlar: numara yazılmaz, Google Haritalar'da kurumun kartı (telefon ve "Ara" düğmesi) açılır
+  const ilceVar = S.ilce && S.ilce !== "Merkez";
+  $("kurum").innerHTML = [
+    ["🏛️", ilceVar ? "Kaymakamlık" : "Valilik", ilceVar ? "Kaymakamlığı" : "Valiliği"],
+    ["🏢", "Belediye", "Belediyesi"],
+    ["🧾", "Vergi dairesi", "Vergi Dairesi"],
+    ["📜", "Tapu müdürlüğü", "Tapu Müdürlüğü"],
+    ["🛡️", "SGK", "SGK"],
+    ["✍️", "Noter", "Noter"],
+    ["⚖️", "Adliye & icra", "Adliyesi"],
+    ["💼", "İŞKUR", "İŞKUR"],
+    ["🤝", "Ticaret odası", "Ticaret Odası"],
+    ["🧰", "Esnaf odası", "Esnaf ve Sanatkarlar Odası"],
+    ["🌾", "Ziraat odası", "Ziraat Odası"],
+    ["🚜", "Tarım müdürlüğü", "Tarım ve Orman Müdürlüğü"],
+  ].map(([ic, n, q]) => `<a href="${esc(gmK(q))}" target="_blank" rel="noopener"><span class="ik">${ic}</span><span class="ad">${esc(n)}</span><span class="ok">📞</span></a>`).join("");
   // Aynı ildeki diğer ilçeler
   const L = !S.elle && S.il && ILMAP ? (ILMAP[S.il] || []).filter((c) => c !== S.ilce).sort((a, b) => a.localeCompare(b, "tr")) : [];
   $("komsuK").hidden = !L.length;
