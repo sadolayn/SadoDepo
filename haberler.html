@@ -99,15 +99,24 @@
   #cats .chip[data-k="gundem"] { --c:#ef8a4c; --d:#2e1508; --t:#ffd9c2; }
   #cats .chip[data-k="isbank"] { --c:#4a63ff; --d:#0c1240; --t:#c9d2ff; }
   #cats .chip[data-k="yerel"] { --c:#f0975a; --d:#2c1608; --t:#ffdcc4; }
-  .ykur { margin-bottom:12px; padding:12px; border-radius:14px; background:#120d08; border:1px solid #5a3a22; display:flex; flex-direction:column; gap:10px; }
-  .ykur .yr { display:flex; gap:8px; } .ykur .yform { flex:1; min-width:0; display:flex; gap:6px; } .ykur .yform input { flex:1; min-width:0; }
-  .ykur .yform button { flex:none; min-height:42px; padding:0 14px; border-radius:12px; border:0; background:#f0975a; color:#1a0d04; font:inherit; font-weight:700; cursor:pointer; }
+  .ykur { margin-bottom:12px; padding:16px; border-radius:18px; background:#120d08; border:1px solid #5a3a22; display:flex; flex-direction:column; gap:12px; }
   .ykur small { font-size:12px; color:#c9a88c; line-height:1.4; }
-  .ykur .ybas { display:flex; align-items:baseline; gap:8px; } .ykur .ybas b { font-size:17px; color:#ffdcc4; }
-  .ykur .ykon { flex:none; min-height:42px; padding:0 12px; border-radius:12px; border:1px solid #f0975a; background:#2c1608; color:#ffdcc4; font:inherit; font-size:13.5px; font-weight:700; cursor:pointer; }
+  .yHead { display:flex; flex-direction:column; gap:4px; } .yHead b { font-size:18px; color:#ffdcc4; } .yHead small { font-size:13px; }
+  .ySonuc { display:flex; flex-direction:column; gap:10px; padding:12px; border-radius:14px; background:#2c1608; border:1px solid #f0975a; }
+  .ySat { display:flex; align-items:baseline; gap:8px; } .yAd { font-size:20px; font-weight:700; color:#fff; } .ySat small { flex:1; }
+  .ySat button { align-self:center; width:32px; height:32px; border-radius:50%; border:0; background:rgba(255,255,255,.08); color:#ffdcc4; font-size:14px; cursor:pointer; }
+  .yBtn { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .yBtn a { display:flex; align-items:center; justify-content:center; min-height:48px; border-radius:12px; background:#f0975a; color:#1a0d04; font-size:15px; font-weight:700; text-decoration:none; }
+  .yBtn a + a { background:transparent; border:1px solid #f0975a; color:#ffdcc4; }
+  .ykur .ykon { width:100%; min-height:46px; border-radius:12px; border:1px solid #f0975a; background:#1a120b; color:#ffdcc4; font:inherit; font-size:15px; font-weight:700; cursor:pointer; }
+  .ykur .ykon.ana { background:#f0975a; color:#1a0d04; }
   .ykur .ynot { color:#ffb38f; }
-  .ykur .ygn { display:flex; align-items:center; justify-content:space-between; gap:8px; min-height:52px; padding:0 14px; border-radius:12px; background:#f0975a; color:#1a0d04; font-size:15px; font-weight:700; text-decoration:none; }
-  .ykur .ygn small { font-size:12px; font-weight:600; color:#3a1d08; }
+  .yAyrac { display:flex; align-items:center; gap:10px; } .yAyrac i { flex:1; height:1px; background:#3a2616; } .yAyrac span { font-size:12px; color:#8a6a52; }
+  .ykur .yform { display:flex; gap:6px; } .ykur .yform input { flex:1; min-width:0; }
+  .ykur .yform button { flex:none; min-height:44px; padding:0 16px; border-radius:12px; border:1px solid #5a3a22; background:#1a120b; color:#ffdcc4; font:inherit; font-weight:700; cursor:pointer; }
+  .ySon { display:flex; flex-wrap:wrap; align-items:center; gap:6px; } .ySon small { width:100%; }
+  .ySon button { min-height:36px; padding:0 12px; border-radius:99px; border:1px solid #3a2616; background:#1a120b; color:#ffdcc4; font:inherit; font-size:13px; cursor:pointer; }
+  .ykur .yAlt { font-size:11.5px; color:#8a6a52; }
   #cats .chip[data-k="tarim"] { --c:#a8c94a; --d:#1c2408; --t:#e8f5c4; }
   #cats .chip[data-k="yz"] { --c:#b48cf0; --d:#1f1235; --t:#e6d8ff; }
   #cats .chip[data-k="okul"] { --c:#f0c64a; --d:#2a2208; --t:#fbecc0; }
@@ -174,22 +183,25 @@ const dayLabel = (iso) => {
 const fold = (s) => s.toLocaleLowerCase("tr");
 // ---------- Yerel: bu sayfa haber derlemez, listelemez. Konumdan (Hava Durumu'ndaki gibi OpenStreetMap'ten yalnızca il/ilçe adı) ya da
 // yazılan il/ilçeyle Google Haberler'deki aramaya yönlendirir; haberleri ve kaynakları Google gösterir. Yer yalnızca bu cihazda tutulur ----------
-let YS = { il: "", ilce: "", elle: "", konum: false }, yNot = "";
+let YS = { il: "", ilce: "", elle: "", konum: false, son: [] }, yNot = "";
 try { const v = JSON.parse(localStorage.getItem("haber_yerel2") || "null"); if (v && typeof v === "object") YS = { ...YS, ...v }; } catch (e) {}
+if (!Array.isArray(YS.son)) YS.son = [];
 const ySakla = () => { try { localStorage.setItem("haber_yerel2", JSON.stringify(YS)); } catch (e) {} };
 const yerAd = () => YS.elle || [YS.ilce, YS.il].filter(Boolean).join(", ");
 const yerAra = () => YS.elle || (YS.ilce ? `"${YS.ilce}" ${YS.il}` : `${YS.il} haberleri`);
+const gnUrl = (sure) => `https://news.google.com/search?q=${encodeURIComponent(yerAra() + " when:" + sure)}&amp;hl=tr&amp;gl=TR&amp;ceid=TR:tr`;
+// Seçilen yer "son baktıkların" listesine (en fazla 3) girer
+function yerSec(y) { YS = { ...YS, il: y.il || "", ilce: y.ilce || "", elle: y.elle || "", konum: !!y.konum }; const ad = yerAd(); YS.son = [{ il: YS.il, ilce: YS.ilce, elle: YS.elle, ad }, ...YS.son.filter((x) => x.ad !== ad)].slice(0, 3); ySakla(); yNot = ""; render(); }
 function yerelKur() {
   if (cat !== "yerel" || story) return "";
-  const ad = yerAd();
-  return `<div class="ykur">`
-    + (ad ? `<div class="ybas"><b>📍 ${esc(ad)}</b><small>${YS.konum ? "konumundan" : "yazdığın yer"}</small></div>`
-      + `<a class="ygn" href="https://news.google.com/search?q=${encodeURIComponent(yerAra() + " when:7d")}&amp;hl=tr&amp;gl=TR&amp;ceid=TR:tr" target="_blank" rel="noopener"><span style="white-space:nowrap">Google Haberler'de aç ↗</span><small>son 7 gün</small></a>`
-      : `<small>Bulunduğun yerin haberleri için konumunu kullan ya da il / ilçe yaz.</small>`)
-    + `<div class="yr"><button type="button" id="yKonum" class="ykon">📍 ${YS.konum ? "Konumu yenile" : "Konumumu bul"}</button>`
-    + `<form id="yForm" class="yform"><input id="yYaz" type="search" enterkeyhint="go" placeholder="İl / ilçe yaz" aria-label="İl ya da ilçe" autocomplete="off"><button type="submit">Aç</button></form></div>`
-    + (yNot ? `<small class="ynot">${esc(yNot)}</small>` : "")
-    + `<small>Haberleri ve kaynakları Google Haberler gösterir; bu sayfa haber derlemez. Konum yalnızca il/ilçe adını bulmak için kullanılır, kaydedilmez.</small></div>`;
+  const ad = yerAd(), son = YS.son.filter((x) => x.ad !== ad);
+  const ust = `<div class="yHead"><b>📍 Bölgendeki haberler</b><small>Konumunu bul ya da il / ilçe yaz; haberler Google Haberler'de açılır.</small></div>`;
+  const sonuc = ad ? `<div class="ySonuc"><div class="ySat"><span class="yAd">${esc(ad)}</span><small>${YS.konum ? "konumundan" : "aradığın yer"}</small><button type="button" id="ySil" aria-label="Yeri temizle">✕</button></div>`
+    + `<div class="yBtn"><a href="${gnUrl("1d")}" target="_blank" rel="noopener">Son 24 saat ↗</a><a href="${gnUrl("7d")}" target="_blank" rel="noopener">Son 7 gün ↗</a></div></div>` : "";
+  const bul = `<button type="button" id="yKonum" class="ykon ${ad ? "" : "ana"}">📍 ${YS.konum ? "Konumumu yenile" : "Konumumu bul"}</button>`;
+  const yaz = `<div class="yAyrac"><i></i><span>ya da</span><i></i></div><form id="yForm" class="yform"><input id="yYaz" type="search" enterkeyhint="search" placeholder="İl / ilçe yaz, ör. Germencik" aria-label="İl ya da ilçe" autocomplete="off"><button type="submit">Ara</button></form>`;
+  const kisa = son.length ? `<div class="ySon"><small>Son baktıkların</small>${son.map((x, k) => `<button type="button" data-son="${k}">${esc(x.ad)}</button>`).join("")}</div>` : "";
+  return `<div class="ykur">${ust}${sonuc}${bul}${yNot ? `<small class="ynot">${esc(yNot)}</small>` : ""}${yaz}${kisa}<small class="yAlt">Bu sayfa haber derlemez; konum yalnızca il/ilçe adını bulmak için kullanılır, kaydedilmez.</small></div>`;
 }
 function yerelKonum() {
   if (!navigator.geolocation) { yNot = "Bu tarayıcı konum vermiyor; il / ilçe yazabilirsin."; render(); return; }
@@ -199,7 +211,7 @@ function yerelKonum() {
       const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json&accept-language=tr&zoom=10`);
       const a = (await r.json()).address || {}, il = a.province || a.state || "", ilce = a.town || a.county || a.city || a.district || "";
       if (!il && !ilce) throw 0;
-      YS = { il, ilce: fold(ilce) === fold(il) ? "" : ilce, elle: "", konum: true }; ySakla(); yNot = ""; render();
+      yerSec({ il, ilce: fold(ilce) === fold(il) ? "" : ilce, konum: true });
     } catch (e) { yNot = "Konumdan yer bulunamadı; il / ilçe yazabilirsin."; render(); }
   }, () => { yNot = "Konum izni verilmedi; il / ilçe yazabilirsin."; render(); }, { timeout: 15000, maximumAge: 600000 });
 }
@@ -298,8 +310,9 @@ function render() {
   $("alert").innerHTML = ppkKart() + tarimKose() + yerelKur() + (cat === "yerel" && !story ? "" : isY ? `<div class="chips yz">${[["", "Hepsi"], ...YZ.map((y) => [y.k, y.n])].map(([k, n]) => `<span class="chip ${k === yaz ? "on" : ""}" data-y="${k}">${esc(n)}</span>`).join("")}</div>` : trendCards());
   // Yerel sekmesinde haber listesi yok: yalnızca yer kutusu ve Google Haberler bağlantısı
   const sat = document.querySelector(".stick .row");
-  if (cat === "yerel" && !story) { if (sat) sat.style.display = "none"; $("list").innerHTML = ""; $("list").style.display = "none"; return; }
-  if (sat) sat.style.display = ""; $("list").style.display = "";
+  const not_ = document.querySelector("p.note");
+  if (cat === "yerel" && !story) { if (sat) sat.style.display = "none"; $("list").innerHTML = ""; $("list").style.display = "none"; if (not_) not_.style.display = "none"; return; }
+  if (sat) sat.style.display = ""; $("list").style.display = ""; if (not_) not_.style.display = "";
   const st = story && TR.stories.find((x) => x.id === story);
   const items = st ? st.items : isY ? YZ.filter((y) => !yaz || y.k === yaz).flatMap((y) => y.items.map((x) => ({ ...x, a: y.n }))).sort((a, b) => (b.d || "").localeCompare(a.d || "")) : cat === "isbank" ? (D.cats[cat] || []).filter((x) => !Ortak.tikTuzagi(x.t)) : (D.cats[cat] || []); // İş Bankası sekmesinde tık tuzağı başlıklar elenir
   const srcs = [...new Set(items.map((x) => x.s))].sort((a, b) => a.localeCompare(b, "tr"));
@@ -319,6 +332,8 @@ function render() {
 }
 $("alert").onclick = (e) => {
   if (e.target.closest("#yKonum")) { yerelKonum(); return; }
+  if (e.target.closest("#ySil")) { YS = { ...YS, il: "", ilce: "", elle: "", konum: false }; ySakla(); render(); return; }
+  const sb = e.target.closest("[data-son]"); if (sb) { const ad = yerAd(), x = YS.son.filter((y) => y.ad !== ad)[+sb.dataset.son]; if (x) yerSec(x); return; }
   if (e.target.closest("#xStory")) { story = null; $("src").value = ""; render(); return; }
   if (e.target.closest("#more")) { showAll = !showAll; render(); return; }
   const y = e.target.closest("[data-y]"); if (y) { yaz = y.dataset.y; try { localStorage.setItem("haber_yaz", yaz); } catch (er) {} $("src").value = ""; render(); return; }
@@ -331,7 +346,7 @@ $("src").onchange = render;
 $("alert").addEventListener("submit", (e) => {
   if (e.target.id !== "yForm") return; e.preventDefault();
   const t = $("yYaz").value.trim(); if (!t) return;
-  YS = { il: "", ilce: "", elle: t, konum: false }; ySakla(); yNot = ""; render();
+  yerSec({ elle: t });
 });
 $("q").addEventListener("input", render);
 Ortak.json("data/ppk.json").then((j) => { PPKJ = j; if (typeof D !== "undefined" && D) render(); }).catch(() => {});
