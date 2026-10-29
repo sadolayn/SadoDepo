@@ -343,6 +343,7 @@
     <div class="rows">
       <a class="row" href="gazete.html" data-yeni="gazete2|2026-10-22|YENİLENDİ"><span class="ik">📜</span><div><div class="t">Resmi Gazete</div><div class="d">Her sabah özet: bankacılığı ilgilendiren kararlar ve atamalar; BDDK, TCMB, SPK duyuruları takvimde</div></div><span class="ok">›</span></a>
       <a class="row" href="haberler.html" data-yeni="yerel|2026-10-29|YENİLENDİ"><span class="ik">📰</span><div><div class="t">Güncel Haberler</div><div class="d">Her saat yenilenir: gündem, ekonomi, İş Bankası, yapay zekâ, spor… ve yeni <b>Yerel</b>: konumunla ilçenin haberlerine ulaş</div></div><span class="ok">›</span></a>
+      <a class="row" id="yerelKisa" href="haberler.html#yerel" style="display:none"><span class="ik">📍</span><div><div class="t" id="yerelKisaT">Bölgendeki haberler</div><div class="d">Son baktığın yerin haberleri · Google Haberler'de açılır</div></div><span class="ok">›</span></a>
       <a class="row alr" href="alerts.html" data-yeni="alertsPush|2026-10-18|YENİ · BİLDİRİM"><span class="ik">🔔<i></i></span><div><div class="t">Sadolayn Alerts</div><div class="d">Takip ettiğin kelimeleri seç; her sabah 10:00'da ilgili haberler e-postana ve <b>telefonuna</b> gelsin</div></div><span class="ok">›</span></a>
     </div>
 
@@ -930,6 +931,16 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   el.addEventListener("click", kapat);
   var img = el.querySelector("img"), basla = function () { if (el.classList.contains("go")) return; el.classList.add("go"); z.push(setTimeout(kapat, 12500)); };
   if (img.complete && img.naturalWidth) basla(); else { img.addEventListener("load", basla); img.addEventListener("error", kapat); z.push(setTimeout(basla, 4000)); }
+})();
+</script>
+<script>
+// Güncel Haberler › Yerel'de son bakılan yer varsa ana sayfada kısa yol (yalnızca bu cihazdaki seçim)
+(function () {
+  try {
+    var y = JSON.parse(localStorage.getItem("haber_yerel2") || "null"), ad = y && (y.elle || y.ilce || y.il);
+    if (!ad) return;
+    var a = document.getElementById("yerelKisa"); document.getElementById("yerelKisaT").textContent = ad + " haberleri"; a.style.display = "";
+  } catch (e) {}
 })();
 </script>
 </body>

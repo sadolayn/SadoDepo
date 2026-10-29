@@ -273,6 +273,7 @@
   .sfy { font-size: 11.5px; color: #9fb3cc; margin: 4px 0 0 34px; }
   .sfa { display: flex; gap: 6px; margin: 7px 0 0 34px; flex-wrap: wrap; } .sfa a { font-size: 12px; padding: 5px 9px; border-radius: 9px; border: 1px solid var(--line); background: #161616; color: var(--ink); text-decoration: none; }
   .sfl { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; } .sfl a { text-align: center; padding: 9px 4px; border-radius: 10px; border: 1px solid #3a50f0; color: #cfdcff; font-size: 12.5px; font-weight: 700; text-decoration: none; } .sfl a + a { border-color: var(--accent); color: var(--accent); }
+  .sfl a:nth-child(3) { grid-column: 1 / -1; }
   [hidden] { display: none !important; }
   .mapcard { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-bottom: 8px; }
   .mapcard iframe { display: block; width: 100%; height: 340px; border: 0; }
@@ -2037,10 +2038,12 @@ async function sfLoad() {
   if (!SF.place || !$("sfbody")) return;
   const { lat, lon } = SF.place, ll = `${(+lat).toFixed(5)},${(+lon).toFixed(5)}`, pn = sfPn();
   $("sfpl").innerHTML = `📍 <b>${esc(SF.place.name)}</b>`;
+  // Bölge haberleri: ziyaret öncesi o yerde ne olmuş (Google Haberler; "Bornova, İzmir" → "Bornova" İzmir)
+  const pp = pn && pn !== "Bulunduğun yer" ? pn.split(",").map((x) => x.trim()).filter(Boolean) : [], hq = pp.length ? `"${pp[0]}"${pp[1] ? " " + pp[1] : ""}` : "";
   const gq = "Türkiye İş Bankası" + (SF.atm ? " bankamatik" : "") + (pn && pn !== "Bulunduğun yer" ? " " + pn : "");
   const z = SF.r <= 1000 ? 15 : SF.r <= 3000 ? 13 : SF.r <= 5000 ? 12 : 11; // harita seçilen mesafeyi kapsasın
   const gUrl = `https://www.google.com/maps/search/${encodeURIComponent(gq)}/@${ll},${z}z`;
-  const links = `<div class="sfl"><a href="${gUrl}" target="_blank" rel="noopener">🗺️ Google Haritalar'da aç</a><a href="https://www.isbank.com.tr/sube-ve-bankamatikler" target="_blank" rel="noopener">🏦 isbank.com.tr'de ara</a></div>`;
+  const links = `<div class="sfl"><a href="${gUrl}" target="_blank" rel="noopener">🗺️ Google Haritalar'da aç</a><a href="https://www.isbank.com.tr/sube-ve-bankamatikler" target="_blank" rel="noopener">🏦 isbank.com.tr'de ara</a>${hq ? `<a href="https://news.google.com/search?q=${encodeURIComponent(hq + " when:7d")}&amp;hl=tr&amp;gl=TR&amp;ceid=TR:tr" target="_blank" rel="noopener">📰 ${esc(pn.split(",")[0])} haberleri</a>` : ""}</div>`;
   const gMap = `<div class="mapcard"><iframe title="İş Bankası şubeleri" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=${encodeURIComponent(gq)}&ll=${ll}&sll=${ll}&z=${z}&hl=tr&output=embed"></iframe></div>`;
   if (SF.mode === "g") { $("sfbody").innerHTML = gMap + links; return; }
   $("sfbody").innerHTML = '<div class="sfmsg"><span class="sfsp"></span> Şubeler aranıyor…</div>';
