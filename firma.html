@@ -38,6 +38,7 @@
   .ara { position: relative; flex: 1; min-width: 0; }
   .ara input { width: 100%; min-height: 46px; padding: 10px 40px 10px 40px; border-radius: 14px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: inherit; font-size: 16px; outline: none; }
   .ara input:focus { border-color: var(--accent); }
+  .ara input::placeholder { color: #c9a25e; opacity: .9; }
   .ara::before { content: "🔎"; position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
   .ara button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 10px; background: #262626; color: #ddd; font-size: 15px; cursor: pointer; }
     border: 1px solid color-mix(in srgb, var(--c) 45%, #000); background: color-mix(in srgb, var(--c) 14%, #0a0a0a); color: color-mix(in srgb, var(--c) 40%, #fff); }
@@ -71,7 +72,7 @@
 
   <p class="giris">Bir firmayı tanımak için hangi bilgiye <b>hangi resmî siteden</b> bakılır. Sorguyu ilgili sitede sen yaparsın; bu sayfa firma hakkında bilgi vermez, hiçbir şey kaydetmez.</p>
   <div class="ust">
-    <div class="arSat"><select id="kay" aria-label="Kaynak seç"><option value="">Tüm kaynaklar</option></select><div class="ara"><input id="ara" type="text" enterkeyhint="search" placeholder="Ara: vergi, SGK…" autocomplete="off" aria-label="Kaynaklarda ara"><button type="button" id="araSil" hidden aria-label="Aramayı temizle">✕</button></div></div>
+    <div class="arSat"><select id="kay" aria-label="Kaynak seç"><option value="">Tüm kaynaklar</option></select><div class="ara"><input id="ara" type="text" enterkeyhint="search" placeholder="Ara: konkordato, vergi levhası, SGK borcu…" autocomplete="off" aria-label="Kaynaklarda ara"><button type="button" id="araSil" hidden aria-label="Aramayı temizle">✕</button></div></div>
   </div>
 
   <div id="liste"></div>
@@ -190,6 +191,21 @@ document.getElementById("ara").addEventListener("input", ciz);
 const ara = document.getElementById("ara"), kay = document.getElementById("kay");
 kay.innerHTML = `<option value="">Tüm kaynaklar</option>` + [...KAYNAK].sort(AZ).map((k) => `<option value="${esc(k[1])}">${esc(k[1])}</option>`).join("");
 kay.addEventListener("change", () => { ara.value = ""; ciz(); if (kay.value) document.getElementById("liste").scrollIntoView({ block: "nearest" }); });
+// Arama kutusunda örnekler sırayla yazılıp silinir (ne aranabileceği görünsün); kutuya dokununca ya da yazınca durur
+(() => {
+  const ORN = ["konkordato", "iflas", "vergi levhası", "SGK borcu yoktur", "ihale yasaklı", "icra", "marka", "müteahhit", "karekodlu çek", "e-Fatura", "ihracatçı", "Ticaret Sicil Gazetesi"]; // her biri aramada sonuç verir
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { ara.placeholder = "Ara: " + ORN.slice(0, 4).join(", ") + "…"; return; }
+  let i = 0, n = 0, sil = false, bekle = 0;
+  setInterval(() => {
+    if (document.activeElement === ara || ara.value) { ara.placeholder = "Ne arıyorsun?"; return; }
+    if (bekle) { bekle--; return; }
+    const w = ORN[i];
+    n += sil ? -1 : 1;
+    if (n >= w.length) { sil = true; bekle = 18; }
+    else if (n <= 0) { sil = false; i = (i + 1) % ORN.length; bekle = 3; }
+    ara.placeholder = w.slice(0, Math.max(0, n)) + (sil || n >= w.length ? "" : "▏");
+  }, 70);
+})();
 document.getElementById("araSil").onclick = () => { const i = document.getElementById("ara"); i.value = ""; ciz(); i.focus(); };
 ciz();
 { const g = (location.hash || "").slice(1); if (GRUP.some((x) => x[0] === g)) setTimeout(() => bolum(g, 1), 300); } // eski #bölüm adresleri o başlığa kayar
