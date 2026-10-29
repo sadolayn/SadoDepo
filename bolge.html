@@ -172,8 +172,9 @@ function ciz() {
   $("tum").href = gn("");
   $("konular").innerHTML = KONU.map(([ic, n, q]) => `<a href="${esc(gn(q))}" target="_blank" rel="noopener"><span>${ic}</span>${esc(n)}</a>`).join("");
   $("harita").innerHTML = [
-    ["🏦", "Bölgedeki bankalar", "şubeler, puanlar ve yorumlar", "banka"],
-    ["🏧", "ATM'ler", "bölgedeki bankamatikler", "ATM"],
+    ["🏦", "İş Bankası şubeleri", "adres, çalışma saatleri, puanlar ve yorumlar", "Türkiye İş Bankası"],
+    ["🏧", "İş Bankası bankamatikleri", "bölgedeki İş Bankası ATM'leri", "İş Bankası ATM"],
+    ["🏛️", "Bölgedeki tüm bankalar", "diğer bankaların şubeleri ve puanları", "banka"],
     ["🏭", "Organize sanayi ve fabrikalar", "bölgenin üretim noktaları", "organize sanayi bölgesi"],
   ].map(([ic, b, d, q]) => `<a href="${esc(gm(q))}" target="_blank" rel="noopener"><span>${ic}</span><div><b>${b} ↗</b><small>${d}</small></div></a>`).join("");
   // Aynı ildeki diğer ilçeler
