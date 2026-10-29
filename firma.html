@@ -31,6 +31,11 @@
   .giris b { color: var(--ink); }
   .ust { position: sticky; top: 0; z-index: 20; background: var(--bg); margin: 0 -16px; padding: 8px 16px 10px; border-bottom: 1px solid #1a1a1a; box-shadow: 0 8px 16px rgba(0,0,0,.5); }
   .ara { position: relative; }
+  .oner { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 30; max-height: 55vh; overflow-y: auto; padding: 6px; border-radius: 14px; border: 1px solid var(--line); background: #141414; box-shadow: 0 12px 28px rgba(0,0,0,.6); }
+  .oner small { display: block; padding: 4px 8px 6px; font-size: 11.5px; color: #8a8a8a; }
+  .ara .oner button { position: static; transform: none; width: 100%; height: auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 10px; border: 0; border-radius: 10px; background: transparent; color: var(--ink); font: inherit; font-size: 14px; text-align: left; cursor: pointer; }
+  .ara .oner button + button { border-top: 1px solid #1f1f1f; border-radius: 0; }
+  .oner button b { font-weight: 600; } .oner button i { flex: none; font-style: normal; font-size: 11px; font-weight: 700; color: color-mix(in srgb, var(--c) 60%, #fff); }
   .ara input { width: 100%; min-height: 46px; padding: 10px 40px 10px 40px; border-radius: 14px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: inherit; font-size: 16px; outline: none; }
   .ara input:focus { border-color: var(--accent); }
   .ara::before { content: "🔎"; position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
@@ -73,7 +78,7 @@
 
   <p class="giris">Bir firmayı tanımak için hangi bilgiye <b>hangi resmî siteden</b> bakılır. Sorguyu ilgili sitede sen yaparsın; bu sayfa firma hakkında bilgi vermez, hiçbir şey kaydetmez.</p>
   <div class="ust">
-    <div class="ara"><input id="ara" type="text" enterkeyhint="search" placeholder="Ne arıyorsun? ör. vergi, konkordato, SGK" autocomplete="off" aria-label="Kaynaklarda ara"><button type="button" id="araSil" hidden aria-label="Aramayı temizle">✕</button></div>
+    <div class="ara"><input id="ara" type="text" enterkeyhint="search" placeholder="Ne arıyorsun? ör. vergi, konkordato, SGK" autocomplete="off" aria-label="Kaynaklarda ara"><button type="button" id="araSil" hidden aria-label="Aramayı temizle">✕</button><div class="oner" id="oner" hidden></div></div>
     <nav class="sek" id="sek" aria-label="Bölümler"></nav>
   </div>
 
@@ -149,8 +154,8 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const sade = (t) => String(t).toLocaleLowerCase("tr").replace(/[çğıöşüâî]/g, (h) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i" })[h]);
 // Sık aranan kısaltma ve eş anlamlar: aranan kelime bunlardan biriyse karşılığı da aranır
 const ES = { sgk: "sosyal guvenlik", ssk: "sgk", vkn: "vergi", levha: "vergi levhasi", icra: "e-satis", ihale: "ekap", yasakli: "yasak", mersis: "ticaret sicil", gazete: "resmi gazete", cek: "findeks", denetim: "kgk", borsa: "kap", ihracat: "tim", marka: "patent", insaat: "muteahhit", muteahhit: "muteahhit", gida: "gida", gemi: "equasis", enerji: "epdk" };
-// "Hepsi": bütün kaynaklar A'dan Z'ye, her birinde bölüm etiketi; düğmelerin başında
-const HEPSI = ["hepsi", "📋 Hepsi", "bütün kaynaklar A'dan Z'ye; her kartta hangi bölümden olduğu yazar", "#e0a24f"];
+// "Hepsi": bütün bölümler sırasıyla alt alta; düğmelerin başında
+const HEPSI = ["hepsi", "📋 Hepsi", "bütün bölümler alt alta", "#e0a24f"];
 // Yarım genişlikteki düğmeye sığmayan bölüm adlarının kısası (başlıklar uzun hâliyle kalır)
 const KISA = { yasak: "🚫 Yasaklılar", finans: "📊 Finans ve denetim" };
 const AZ = (a, b) => a[1].localeCompare(b[1], "tr");
@@ -169,13 +174,13 @@ function ciz() {
   const L = document.getElementById("liste");
   if (q.length) {
     const genis = q.map((w) => [w, ...(ES[w] ? [ES[w]] : [])]);
-    const S = KAYNAK.filter((k) => { const metin = sade(k[1] + " " + k[2] + " " + (GRUP.find((g) => g[0] === k[0]) || [])[1]); return genis.every((ws) => ws.some((w) => metin.includes(w))); }).sort(AZ);
+    const S = KAYNAK.filter((k) => { const metin = sade(k[1] + " " + k[2] + " " + (GRUP.find((g) => g[0] === k[0]) || [])[1]); return genis.every((ws) => ws.some((w) => metin.includes(w))); });
     L.innerHTML = S.length ? `<p class="sonuc">“${esc(ham)}” için ${S.length} kaynak</p>` + S.map((k) => kart(k, q)).join("")
       : `<div class="bos">“${esc(ham)}” ile eşleşen kaynak yok.<br>Aradığın sorgu burada yoksa kurumun ana sayfasından başlayabilirsin.<br><button type="button" data-g="kurum">🏢 Kurum siteleri</button></div>`;
     return;
   }
   if (sec === "hepsi") {
-    L.innerHTML = `<h2 id="hepsi">${esc(HEPSI[1])}<small>${KAYNAK.length} kaynak · ${esc(HEPSI[2])}</small></h2>` + [...KAYNAK].sort(AZ).map((k) => kart(k, null, 1)).join("");
+    L.innerHTML = GRUP.map(([g, bas, alt]) => `<h2 id="${g}">${esc(bas)}<small>${esc(alt)}</small></h2>` + KAYNAK.filter((k) => k[0] === g).map((k) => kart(k)).join("")).join("");
     return;
   }
   const [g, bas, alt] = GRUP.find((x) => x[0] === sec);
@@ -189,9 +194,26 @@ function bolum(g) {
 }
 document.addEventListener("click", (e) => { const b = e.target.closest("[data-g]"); if (b) bolum(b.dataset.g); });
 document.getElementById("ara").addEventListener("input", ciz);
-// Arama kutusuna dokununca liste "Hepsi"ye geçer: yazmadan önce bütün satırlar A'dan Z'ye görünür, yazdıkça süzülür
-document.getElementById("ara").addEventListener("focus", () => { if (sec !== "hepsi" && !document.getElementById("ara").value.trim()) { sec = "hepsi"; ciz(); try { history.replaceState(null, "", "#hepsi"); } catch (e) {} } });
-document.getElementById("araSil").onclick = () => { const i = document.getElementById("ara"); i.value = ""; ciz(); i.focus(); };
+// Arama kutusuna dokununca açılır liste: kaynak adları A'dan Z'ye (haberlerdeki "Tüm kaynaklar" listesi gibi); yazdıkça süzülür,
+// birine dokununca o kaynak açılır. Sayfadaki sıralama değişmez.
+const ara = document.getElementById("ara"), oner = document.getElementById("oner");
+function onerCiz() {
+  const q = sade(ara.value.trim()).split(/\s+/).filter(Boolean);
+  const L = [...KAYNAK].filter((k) => q.every((w) => sade(k[1]).includes(w))).sort(AZ);
+  oner.innerHTML = L.length ? `<small>${L.length} kaynak · A'dan Z'ye</small>` + L.map((k) => { const g = GRUP.find((x) => x[0] === k[0]); return `<button type="button" data-ad="${esc(k[1])}" style="--c:${g[3]}"><b>${esc(k[1])}</b><i>${esc((KISA[g[0]] || g[1]))}</i></button>`; }).join("") : "";
+  oner.hidden = !L.length;
+  // Klavye açıkken liste görünen alanın içinde kalsın (alt satırlar klavyenin arkasına düşmesin)
+  const vv = window.visualViewport, alt = vv ? vv.height + vv.offsetTop : innerHeight;
+  oner.style.maxHeight = Math.max(160, alt - ara.getBoundingClientRect().bottom - 14) + "px";
+}
+if (window.visualViewport) visualViewport.addEventListener("resize", () => { if (!oner.hidden) onerCiz(); });
+ara.addEventListener("focus", onerCiz);
+ara.addEventListener("input", onerCiz);
+ara.addEventListener("blur", () => setTimeout(() => (oner.hidden = true), 200));
+ara.addEventListener("keydown", (e) => { if (e.key === "Escape" || e.key === "Enter") { oner.hidden = true; ara.blur(); } });
+oner.addEventListener("pointerdown", (e) => e.preventDefault()); // dokunurken kutu odağı kaybetmesin
+oner.addEventListener("click", (e) => { const b = e.target.closest("[data-ad]"); if (!b) return; ara.value = b.dataset.ad; oner.hidden = true; ara.blur(); ciz(); });
+document.getElementById("araSil").onclick = () => { const i = document.getElementById("ara"); i.value = ""; ciz(); i.focus(); onerCiz(); };
 ciz();
 </script>
 </body>
