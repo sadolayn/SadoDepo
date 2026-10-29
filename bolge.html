@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bölgem</title>
+<meta name="description" content="Bilgi paylaştıkça büyür">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SADOLAYN">
+<meta property="og:title" content="Bölgem · SADOLAYN">
+<meta property="og:description" content="“Bilgi paylaştıkça büyür”">
+<meta property="og:url" content="https://sadolayn.github.io/SadoDepo/bolge.html">
+<meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sadolayn — Bilgi paylaştıkça büyür">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<style>
+  :root { --bg: #000; --ink: #f2f2f2; --muted: #8a8a8a; --c: #f0975a; --c2: #ffdcc4; --k1: #120d08; --k2: #1a0d04; --cz: #4a2c18; --field: #161616; --line: #262626; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; padding: 12px 16px 32px; }
+  .wrap { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+  header { display: flex; align-items: center; justify-content: space-between; }
+  header h1 { margin: 0; font-size: 20px; }
+  .giris { font-size: 13px; line-height: 1.5; color: #b9b9b9; margin: 0 2px; }
+  .kart { padding: 14px; border-radius: 18px; background: var(--k1); border: 1px solid #5a3a22; display: flex; flex-direction: column; gap: 10px; }
+  .kart h2 { margin: 0; font-size: 15px; color: var(--c2); display: flex; align-items: baseline; gap: 8px; }
+  .kart h2 small { font-size: 12px; font-weight: 400; color: #a5876f; }
+  small { font-size: 12px; color: #c9a88c; line-height: 1.4; }
+  button, input { font: inherit; }
+  .konum { width: 100%; min-height: 48px; border-radius: 12px; border: 0; background: var(--c); color: #1a0d04; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .konum.ikinci { background: transparent; border: 1px solid var(--c); color: var(--c2); }
+  .ara { display: flex; gap: 6px; }
+  .ara input { flex: 1; min-width: 0; min-height: 46px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font-size: 16px; outline: none; }
+  .ara input:focus { border-color: var(--c); }
+  .ara button { flex: none; min-height: 46px; padding: 0 16px; border-radius: 12px; border: 1px solid #5a3a22; background: var(--k2); color: var(--c2); font-weight: 700; cursor: pointer; }
+  .oner { display: flex; flex-direction: column; } .oner:empty { display: none; }
+  .oner button { display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 12px; border: 0; border-bottom: 1px solid #2a1a0e; background: #1a120b; color: var(--c2); font-size: 15px; text-align: left; cursor: pointer; }
+  .oner button:first-child { border-radius: 12px 12px 0 0; } .oner button:last-child { border-radius: 0 0 12px 12px; border-bottom: 0; } .oner button:only-child { border-radius: 12px; }
+  .oner button small { color: #a5876f; } .oner > small { padding: 4px 2px; }
+  .cipler { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; } .cipler::-webkit-scrollbar { display: none; }
+  .cipler button { flex: none; min-height: 36px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--cz); background: var(--k2); color: var(--c2); font-size: 13px; cursor: pointer; }
+  .not { color: #ffb38f; }
+  .yer { padding: 14px; border-radius: 18px; background: #2c1608; border: 1px solid var(--c); display: flex; flex-direction: column; gap: 10px; }
+  .yerUst { display: flex; align-items: center; gap: 8px; } .yerAd { flex: 1; min-width: 0; font-size: 22px; font-weight: 800; color: #fff; }
+  .yerUst small { flex: none; } .yerUst button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: rgba(255,255,255,.08); color: var(--c2); cursor: pointer; }
+  .sure { display: grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 12px; background: var(--k2); }
+  .sure button { min-height: 38px; border: 0; border-radius: 10px; background: transparent; color: #c9a88c; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .sure button.on { background: #3a1f0c; color: var(--c2); }
+  .tum { display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 12px; background: var(--c); color: #1a0d04; font-size: 16px; font-weight: 800; text-decoration: none; }
+  .izgara { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .izgara a { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 10px; border-radius: 12px; background: var(--k2); border: 1px solid var(--cz); color: var(--c2); font-size: 13.5px; font-weight: 600; line-height: 1.2; text-decoration: none; }
+  .izgara a span { font-size: 17px; flex: none; }
+  .liste { display: flex; flex-direction: column; gap: 6px; }
+  .liste a { display: flex; align-items: center; gap: 10px; min-height: 54px; padding: 8px 12px; border-radius: 12px; background: var(--k2); border: 1px solid var(--cz); color: var(--c2); text-decoration: none; }
+  .liste a span { font-size: 20px; flex: none; } .liste a b { display: block; font-size: 14.5px; } .liste a small { display: block; font-size: 12px; color: #a5876f; }
+  .note { font-size: 12px; color: var(--muted); line-height: 1.55; margin: 4px 2px 0; }
+  [hidden] { display: none !important; }
+</style>
+<script src="pwa.js"></script>
+<script src="ortak.js"></script>
+<script src="rapor.js"></script>
+<script type="module" src="sayac.js"></script>
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
+    <h1>📍 Bölgem</h1>
+    <span style="width:46px"></span>
+  </header>
+  <p class="giris">Bulunduğun ya da sorumlu olduğun il / ilçede <b>neler oluyor</b>: atamalar, vefatlar, yatırımlar, açılışlar… Haberleri ve kaynakları Google gösterir; bu sayfa haber derlemez.</p>
+
+  <section class="kart" aria-label="Yer seç">
+    <button type="button" id="konum" class="konum">📍 Konumumu bul</button>
+    <form id="form" class="ara"><input id="yaz" type="search" enterkeyhint="search" placeholder="İl / ilçe yaz, ör. Germencik" aria-label="İl ya da ilçe" autocomplete="off"><button type="submit">Ara</button></form>
+    <div class="oner" id="oner"></div>
+    <small class="not" id="not" hidden></small>
+    <div id="son" hidden><small>Son baktıkların</small><div class="cipler" id="sonL"></div></div>
+  </section>
+
+  <div id="secili" hidden>
+    <section class="yer" aria-label="Seçilen yer">
+      <div class="yerUst"><span class="yerAd" id="yerAd"></span><small id="yerNe"></small><button type="button" id="sil" aria-label="Yeri temizle">✕</button></div>
+      <div class="sure" role="group" aria-label="Süre"><button type="button" data-sure="1d">Son 24 saat</button><button type="button" data-sure="7d">Son 7 gün</button></div>
+      <a class="tum" id="tum" target="_blank" rel="noopener">Bölgenin tüm haberleri ↗</a>
+    </section>
+
+    <section class="kart" aria-label="Konular" style="margin-top:14px">
+      <h2>Konular <small>dokununca Google Haberler'de açılır</small></h2>
+      <div class="izgara" id="konular"></div>
+    </section>
+
+    <section class="kart" aria-label="Bölgede" style="margin-top:14px">
+      <h2>Bölgede <small>Google Haritalar</small></h2>
+      <div class="liste" id="harita"></div>
+    </section>
+
+    <section class="kart" id="komsuK" aria-label="Diğer ilçeler" style="margin-top:14px" hidden>
+      <h2 id="komsuB"></h2>
+      <div class="cipler" id="komsu"></div>
+    </section>
+  </div>
+
+  <p class="note">Haberleri ve kaynakları Google Haberler, işletmeleri ve puanlarını Google Haritalar gösterir; Sadolayn bu içeriklerden sorumlu değildir. Konum yalnızca il / ilçe adını bulmak için bir kez OpenStreetMap'e sorulur, kaydedilmez. Son baktığın yerler yalnızca bu cihazda tutulur. İl ve ilçe listesi: PTT posta kodu listesi (turkey-neighbourhoods, MIT).</p>
+</div>
+
+<script>
+// Bölgem: şube ve bölge müdürünün kendi il / ilçesinde olanları izlemesi için. Haber derlenmez, listelenmez;
+// her düğme Google Haberler'de (ya da Haritalar'da) o yerin aramasını açar. Yer yalnızca bu cihazda tutulur (localStorage).
+const $ = (x) => document.getElementById(x);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const sade = (t) => String(t).toLocaleLowerCase("tr").replace(/[çğıöşüâî]/g, (h) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i" })[h]);
+const fold = (t) => String(t || "").toLocaleLowerCase("tr");
+// Tamlama eki: Aydın'ın, İzmir'in, İstanbul'un, Muğla'nın
+const ilEk = (ad) => { const k = ad.toLocaleLowerCase("tr"), v = (k.match(/[aeıioöuü]/g) || ["e"]).pop(), u = { a: "ın", ı: "ın", e: "in", i: "in", o: "un", u: "un", ö: "ün", ü: "ün" }[v]; return (/[aeıioöuü]$/.test(k) ? "n" : "") + u; };
+
+// Bir banka müdürünün bölgesinde bilmek isteyeceği konular: [simge, ad, Google Haberler'de aranacak kelimeler]
+const KONU = [
+  ["👔", "Atama", 'atandı OR "göreve başladı" OR "görev değişikliği" OR "yeni müdür"'],
+  ["🕊️", "Vefat", 'vefat OR "cenaze töreni" OR "son yolculuğuna" OR "toprağa verildi"'],
+  ["🏭", "Sanayi & yatırım", 'fabrika OR yatırım OR "organize sanayi" OR OSB OR tesis'],
+  ["🚢", "İhracat & ticaret", 'ihracat OR ithalat OR "dış ticaret" OR ihracatçı'],
+  ["🌾", "Tarım", 'hasat OR rekolte OR çiftçi OR üretici OR dolu OR "zirai don"'],
+  ["🏪", "Açılış", '"açılış töreni" OR "hizmete açıldı" OR "açılışı yapıldı" OR "yeni işletme"'],
+  ["🏛️", "Belediye & ihale", 'belediye OR ihale OR "meclis kararı" OR altyapı'],
+  ["🏗️", "İnşaat & konut", '"konut projesi" OR "kentsel dönüşüm" OR imar OR "temel atma"'],
+  ["🤝", "Oda & borsa", '"ticaret odası" OR "ticaret borsası" OR "esnaf odası" OR "sanayi odası"'],
+  ["💼", "İstihdam", 'istihdam OR "iş fuarı" OR İŞKUR OR "personel alımı"'],
+  ["🏨", "Turizm", 'turizm OR otel OR turist OR "sezon"'],
+  ["🏆", "Ödül & başarı", '"ödül aldı" OR "ödülüne layık" OR "ödülü verildi" OR birincilik'],
+  ["🎪", "Fuar & etkinlik", 'fuar OR festival OR zirve OR panel OR şenlik'],
+  ["⚠️", "Afet & kesinti", 'sel OR deprem OR "elektrik kesintisi" OR "su kesintisi" OR fırtına'],
+];
+
+let S = { il: "", ilce: "", elle: "", konum: false, son: [], sure: "7d" }, IL = null, ILMAP = null, ON = [];
+try { const v = JSON.parse(localStorage.getItem("bolgem") || localStorage.getItem("haber_yerel2") || "null"); if (v && typeof v === "object") S = { ...S, ...v }; } catch (e) {}
+if (!Array.isArray(S.son)) S.son = [];
+const sakla = () => { try { localStorage.setItem("bolgem", JSON.stringify(S)); } catch (e) {} };
+const yerAd = () => S.elle || [S.ilce, S.il].filter(Boolean).join(", ");
+const yerAra = () => S.elle || (S.ilce ? `"${S.ilce}" ${S.il}` : `${S.il} haberleri`);
+const yerHarita = () => S.elle || [S.ilce, S.il].filter(Boolean).join(" ");
+const gn = (ek) => `https://news.google.com/search?q=${encodeURIComponent(yerAra() + (ek ? " (" + ek + ")" : "") + " when:" + (S.sure === "1d" ? "1d" : "7d"))}&hl=tr&gl=TR&ceid=TR:tr`;
+const gm = (ne) => `https://www.google.com/maps/search/${encodeURIComponent(ne + " " + yerHarita())}`;
+
+function sec(y) {
+  S = { ...S, il: y.il || "", ilce: y.ilce || "", elle: y.elle || "", konum: !!y.konum };
+  const ad = yerAd(); S.son = [{ il: S.il, ilce: S.ilce, elle: S.elle, ad }, ...S.son.filter((x) => x.ad !== ad)].slice(0, 4);
+  sakla(); $("yaz").value = ""; $("oner").innerHTML = ""; ON = []; mesaj(""); ciz();
+  if (S.il && !ILMAP) ilYukle(); // komşu ilçeler için liste
+  window.Rapor && Rapor.bolum("bolgem");
+}
+const mesaj = (t) => { $("not").textContent = t; $("not").hidden = !t; };
+
+function ciz() {
+  const ad = yerAd();
+  $("konum").textContent = "📍 " + (S.konum && ad ? "Konumumu yenile" : "Konumumu bul");
+  $("konum").classList.toggle("ikinci", !!ad);
+  const son = S.son.filter((x) => x.ad !== ad);
+  $("son").hidden = !son.length;
+  $("sonL").innerHTML = son.map((x, k) => `<button type="button" data-son="${k}">${esc(x.ad)}</button>`).join("");
+  $("secili").hidden = !ad;
+  if (!ad) return;
+  $("yerAd").textContent = ad; $("yerNe").textContent = S.konum ? "konumundan" : "aradığın yer";
+  document.querySelectorAll("[data-sure]").forEach((b) => b.classList.toggle("on", b.dataset.sure === (S.sure === "1d" ? "1d" : "7d")));
+  $("tum").href = gn("");
+  $("konular").innerHTML = KONU.map(([ic, n, q]) => `<a href="${esc(gn(q))}" target="_blank" rel="noopener"><span>${ic}</span>${esc(n)}</a>`).join("");
+  $("harita").innerHTML = [
+    ["🏦", "Bölgedeki bankalar", "şubeler, puanlar ve yorumlar", "banka"],
+    ["🏧", "ATM'ler", "bölgedeki bankamatikler", "ATM"],
+    ["🏭", "Organize sanayi ve fabrikalar", "bölgenin üretim noktaları", "organize sanayi bölgesi"],
+  ].map(([ic, b, d, q]) => `<a href="${esc(gm(q))}" target="_blank" rel="noopener"><span>${ic}</span><div><b>${b} ↗</b><small>${d}</small></div></a>`).join("");
+  // Aynı ildeki diğer ilçeler
+  const L = !S.elle && S.il && ILMAP ? (ILMAP[S.il] || []).filter((c) => c !== S.ilce) : [];
+  $("komsuK").hidden = !L.length;
+  if (L.length) {
+    $("komsuB").textContent = `${S.il}'${ilEk(S.il)} ${S.ilce ? "diğer " : ""}ilçeleri`;
+    $("komsu").innerHTML = (S.ilce ? `<button type="button" data-kom="">${esc(S.il)} geneli</button>` : "") + L.map((c) => `<button type="button" data-kom="${esc(c)}">${esc(c)}</button>`).join("");
+  }
+}
+
+// İl / ilçe önerisi: 81 il, 973 ilçe (data/ililce.json); Türkçe harf gerekmez ("cine" → Çine · Aydın), internete sorulmaz
+function ilYukle() {
+  if (!IL) IL = Ortak.json("data/ililce.json").then((j) => { ILMAP = j; ciz(); return Object.entries(j).flatMap(([il, ic]) => [{ il, ilce: "", s: sade(il) }, ...ic.map((c) => ({ il, ilce: c, s: sade(c) }))]); }).catch(() => []);
+  return IL;
+}
+async function oner() {
+  const q = sade($("yaz").value).trim();
+  if (q.length < 2) { $("oner").innerHTML = ""; ON = []; return; }
+  const L = await ilYukle();
+  if (sade($("yaz").value).trim() !== q) return;
+  ON = L.map((x) => ({ ...x, p: x.s.startsWith(q) ? 0 : x.s.includes(q) ? 1 : sade(x.il).startsWith(q) && x.ilce ? 2 : 9 })).filter((x) => x.p < 9)
+    .sort((a, b) => a.p - b.p || (a.ilce ? 1 : 0) - (b.ilce ? 1 : 0) || a.s.localeCompare(b.s)).slice(0, 8);
+  $("oner").innerHTML = ON.length ? ON.map((x, k) => `<button type="button" data-on="${k}"><b>${esc(x.ilce || x.il)}</b><small>${x.ilce ? esc(x.il) : "il geneli"}</small></button>`).join("")
+    : `<small>Eşleşen il ya da ilçe yok; "Ara" ile yazdığın gibi aranır.</small>`;
+}
+
+function konumBul() {
+  if (!navigator.geolocation) { mesaj("Bu tarayıcı konum vermiyor; il / ilçe yazabilirsin."); return; }
+  mesaj("Konum bulunuyor…");
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json&accept-language=tr&zoom=10`);
+      const a = (await r.json()).address || {}, il = a.province || a.state || "", ilce = a.town || a.county || a.city || a.district || "";
+      if (!il && !ilce) throw 0;
+      sec({ il, ilce: fold(ilce) === fold(il) ? "" : ilce, konum: true });
+    } catch (e) { mesaj("Konumdan yer bulunamadı; il / ilçe yazabilirsin."); }
+  }, () => mesaj("Konum izni verilmedi; il / ilçe yazabilirsin."), { timeout: 15000, maximumAge: 600000 });
+}
+
+$("konum").onclick = konumBul;
+$("yaz").addEventListener("input", oner);
+$("yaz").addEventListener("focus", ilYukle);
+$("form").onsubmit = (e) => {
+  e.preventDefault();
+  const t = $("yaz").value.trim(); if (!t) return;
+  if (ON.length) { const x = ON[0]; sec({ il: x.il, ilce: x.ilce }); return; } // önerilerden ilki
+  sec({ elle: t });
+};
+document.addEventListener("click", (e) => {
+  const on = e.target.closest("[data-on]"); if (on) { const x = ON[+on.dataset.on]; if (x) sec({ il: x.il, ilce: x.ilce }); return; }
+  const sn = e.target.closest("[data-son]"); if (sn) { const x = S.son.filter((y) => y.ad !== yerAd())[+sn.dataset.son]; if (x) sec(x); return; }
+  const km = e.target.closest("[data-kom]"); if (km) { sec({ il: S.il, ilce: km.dataset.kom }); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  const su = e.target.closest("[data-sure]"); if (su) { S.sure = su.dataset.sure; sakla(); ciz(); return; }
+  if (e.target.closest("#sil")) { S = { ...S, il: "", ilce: "", elle: "", konum: false }; sakla(); ciz(); }
+});
+ciz();
+if (S.il) ilYukle(); // komşu ilçeler için
+</script>
+</body>
+</html>
