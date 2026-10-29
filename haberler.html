@@ -80,7 +80,7 @@
   .n .fire.l2 { background:#2b0f06; color:#ff8a4c; border-color:#7a2e14; }
   .n.hot { box-shadow:inset 3px 0 0 #ff6a3d; margin-left:-14px; padding-left:14px; }
   .sbar { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding:10px 12px; border-radius:14px; background:#1c0b05; border:1px solid #ff6a3d; color:#ffd9c7; font-size:13.5px; }
-  .sbar.tkose { background:#0f1a08; border-color:#8bc34a; color:#e3f2c8; } .sbar.tkose small { color:#a5c48a; } .sbar.tkose small a { color:#c5e1a5; font-weight:600; text-decoration:none; }
+  .sbar.tkose { text-decoration:none; background:#0f1a08; border-color:#8bc34a; color:#e3f2c8; } .sbar.tkose small { color:#a5c48a; } .sbar.tkose small a { color:#c5e1a5; font-weight:600; text-decoration:none; }
   .sbar .st { flex:1; min-width:0; }
   .sbar b { font-weight:600; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.3; }
   .sbar small { display:block; font-size:11.5px; color:#d39a80; margin-top:2px; } .sbar small a { color:#ffb38f; display:inline-block; padding:5px 0; margin:-5px 0; }
@@ -228,7 +228,7 @@ function ppkKart() {
 // Tarım sekmesinde sabit İş Bankası köşesi: haber olmasa da bankanın tarım ürünlerine giden resmî bağlantılar
 function tarimKose() {
   if (story || cat !== "tarim") return "";
-  return `<div class="sbar tkose">🌾 <span class="st"><b>İş Bankası'ndan tarım</b><small><a href="https://www.isbank.com.tr/is-ticari/imece-kart" target="_blank" rel="noopener">İmece Kart ↗</a> · <a href="https://www.isbank.com.tr/is-ticari/imece-mobil" target="_blank" rel="noopener">İmeceMobil ↗</a> · <a href="https://www.isbank.com.tr/is-ticari/ciftci-kadin-imece-kart" target="_blank" rel="noopener">Çiftçi Kadın İmece Kart ↗</a></small></span></div>`;
+  return `<a class="sbar tkose" href="https://www.isbank.com.tr/is-ticari/tarim-bankaciligi" target="_blank" rel="noopener">🌾 <span class="st"><b>İş Bankası Tarım Bankacılığı ↗</b><small>İmece Kart, İmeceMobil ve tarım kredileri bankanın tek sayfasında</small></span></a>`;
 }
 function trendCards() {
   // Gündem kartları yalnızca Gündem sekmesinde: başka sekmede üstte hep aynı kartlar kalınca seçilen sekmenin haberleri ekranın altında kalıyor, sekme değişmemiş gibi görünüyordu
