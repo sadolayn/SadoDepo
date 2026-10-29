@@ -23,37 +23,43 @@ jobs:
                   r=ET.fromstring(urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=20).read())
                   return [ (it.findtext("title") or "") for it in r.findall(".//item")]
               except Exception as e: return ["HATA "+str(e)[:60]]
-          K={
-           "Atama":['atandı','"göreve başladı"','"görevine başladı"','"görev değişikliği"','"yeni müdür"'],
-           "Vefat":['vefat','"cenaze töreni"','"son yolculuğuna"','"toprağa verildi"'],
-           "OSB":['"organize sanayi"','OSB'],
-           "Afet":['sel','deprem','"elektrik kesintisi"','"su kesintisi"','fırtına'],
-           "Tarım":['hasat','rekolte','çiftçi','çiftçiler','"zirai don"'],
-          }
           SL="aeıioöuü"
-          def ekler(ad):
+          def bul(ad):
               k=ad.lower().replace("I","ı").replace("İ","i"); v=[c for c in k if c in SL][-1]
-              son=k[-1] in SL; sert=k[-1] in "çfhkpsşt"
-              kal = v in "aıou"
-              d=("t" if sert else "d")+("a" if kal else "e")
-              gen=("n" if son else "")+{"a":"ın","ı":"ın","o":"un","u":"un","e":"in","i":"in","ö":"ün","ü":"ün"}[v]
-              dat=("y" if son else "")+("a" if kal else "e")
-              li="l"+{"a":"ı","ı":"ı","o":"u","u":"u","e":"i","i":"i","ö":"ü","ü":"ü"}[v]
-              return [f'"{ad}\'{d}"',f'"{ad}\'{d}ki"',f'"{ad}\'{gen}"',f'"{ad}\'{dat}"',f'"{ad}\'{d}n"',f'{ad}{li}',f'"{ad} Valiliği"',f'"{ad} Valisi"',f'"{ad} Belediyesi"',f'"{ad} Büyükşehir"']
-          K={"Atama":K["Atama"],"Vefat":K["Vefat"],
-             "Tarım":['hasat','rekolte','çiftçiler','çiftçilere','"zirai don"','"dolu yağışı"'],
-             "Afet":['sel','deprem','"elektrik kesintisi"','"su kesintisi"','"fırtına uyarısı"'],"Tüm":[]}
-          def yer(ilce,il,bel):
-              if not ilce:
-                  e=ekler(il); f=[e[0],e[1],f'"{il} Valiliği"',f'"{il} Büyükşehir"']
-                  return "("+" OR ".join("intitle:"+x for x in f)+")"
-              if bel: return f'intitle:"{ilce}" intitle:"{il}"'
-              return f'intitle:"{ilce}" {il}'
-          YER=[("Çay","Afyonkarahisar",1),("Kale","Denizli",1),("Pazar","Rize",1),("Bor","Niğde",1),("","Aydın",0),("","İzmir",0),("Nazilli","Aydın",0)]
-          for ilce,il,bel in YER:
-              for k,ws in K.items():
-                  grp=(" ("+" OR ".join("intitle:"+w for w in ws)+")") if ws else ""
-                  Q=yer(ilce,il,bel)+grp+" when:30d"
-                  t=ara(Q); time.sleep(1)
-                  print(f"### {ilce or il}/{k} F: {len(t)} sonuç  [{len(Q.split())} kelime]  {Q[:100]}")
-                  for x in t[:7]: print("   -",x[:110])
+              d=("t" if k[-1] in "çfhkpsşt" else "d")+("a" if v in "aıou" else "e")
+              return f"{ad}'{d}"
+          BS={"Aydın","İzmir","Denizli","Manisa"}
+          AL={"Afyonkarahisar":"Afyon"}
+          def ilg(il, tek=False):
+              b=bul(il)
+              if tek: return f'intitle:"{b}"'
+              f=[f'"{b}"',f'"{b}ki"',f'"{il} Valiliği"',f'"{il} Valisi"',f'"{il} Büyükşehir"' if il in BS else f'"{il} Belediyesi"']
+              if il in AL: f.append(f'"{bul(AL[il])}"')
+              return "("+" OR ".join("intitle:"+x for x in f)+")"
+          def grp(ws): return (" ("+" OR ".join("intitle:"+w for w in ws)+")") if ws else ""
+          def go(ad,Q,n=5):
+              t=ara(Q); time.sleep(1)
+              print(f"### {ad}: {len(t)} sonuç [{len(Q.split())} kelime] {Q[:90]}")
+              for x in t[:n]: print("   -",x[:105])
+          T={"Maaş":['"maaş promosyonu"','"promosyon anlaşması"','"promosyon ihalesi"','"banka promosyonu"'],
+             "OSB":['"organize sanayi"','OSB'],
+             "Vefat":['vefat','"cenaze töreni"','"son yolculuğuna"','"toprağa verildi"'],
+             "Ödül":['"ödül aldı"','"ödülünü aldı"','"ödülüne layık"','"ödülü verildi"']}
+          print("=== küçük il, 5 kalıp vs tek kalıp")
+          for il in ["Bayburt","Kilis","Ardahan","Tunceli"]:
+              for k,ws in T.items():
+                  for s in ["1d","7d"]:
+                      go(f"{il}/{k}/{s}/5", ilg(il)+grp(ws)+" when:"+s, 3)
+                  go(f"{il}/{k}/1d/tek", ilg(il,True)+grp(ws)+" when:1d", 3)
+          print("=== Aydın atama terimleri tek tek (30g)")
+          for w in ['atandı','atama','"göreve başladı"','"görevine başladı"','"görev değişikliği"','"yeni müdür"','"görevden alındı"','"yeni başkan"']:
+              go("Aydın/"+w, ilg("Aydın")+grp([w])+" when:30d", 6)
+          print("=== Efeler (belirsiz) ve alias")
+          go("Efeler/Tüm", 'intitle:"Efeler" intitle:"Aydın" when:30d', 8)
+          go("Efeler/Afet", 'intitle:"Efeler" intitle:"Aydın"'+grp(['sel','deprem','"elektrik kesintisi"','"su kesintisi"','"fırtına uyarısı"'])+" when:30d", 5)
+          go("Afyon/Tüm", ilg("Afyonkarahisar")+" when:7d", 8)
+          go("Güney/Tüm", 'intitle:"Güney" intitle:"Denizli" when:30d', 6)
+          go("Beşiktaş/Vefat", 'intitle:"Beşiktaş" intitle:"İstanbul"'+grp(T["Vefat"])+" when:30d", 6)
+          go("İncirliova/Maaş/7d", 'intitle:"İncirliova" Aydın'+grp(T["Maaş"])+" when:7d", 5)
+          go("Aydın/Maaş/30d", ilg("Aydın")+grp(T["Maaş"])+" when:30d", 6)
+          go("İzmir/OSB/7d", ilg("İzmir")+grp(T["OSB"])+" when:7d", 6)
