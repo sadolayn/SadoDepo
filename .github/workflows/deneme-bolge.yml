@@ -40,15 +40,20 @@ jobs:
               dat=("y" if son else "")+("a" if kal else "e")
               li="l"+{"a":"ı","ı":"ı","o":"u","u":"u","e":"i","i":"i","ö":"ü","ü":"ü"}[v]
               return [f'"{ad}\'{d}"',f'"{ad}\'{d}ki"',f'"{ad}\'{gen}"',f'"{ad}\'{dat}"',f'"{ad}\'{d}n"',f'{ad}{li}',f'"{ad} Valiliği"',f'"{ad} Valisi"',f'"{ad} Belediyesi"',f'"{ad} Büyükşehir"']
-          K["Maaş"]=['"maaş promosyonu"','"promosyon anlaşması"','"promosyon ihalesi"']
-          K["Tüm"]=[]
-          YER=[("İncirliova","Aydın"),("Efeler","Aydın"),("Nazilli","Aydın"),("Aydın",""),("İzmir",""),("Ankara",""),("Bornova","İzmir")]
-          for ilce,il in YER:
+          K={"Atama":K["Atama"],"Vefat":K["Vefat"],
+             "Tarım":['hasat','rekolte','çiftçiler','çiftçilere','"zirai don"','"dolu yağışı"'],
+             "Afet":['sel','deprem','"elektrik kesintisi"','"su kesintisi"','"fırtına uyarısı"'],"Tüm":[]}
+          def yer(ilce,il,bel):
+              if not ilce: e=ekler(il); return "("+" OR ".join("intitle:"+x for x in [e[0],e[2],e[5]])+")"
+              if bel:
+                  e=ekler(ilce); f=[e[0],e[2],f'"{ilce} ilçesi"',f'"{ilce} Kaymakamı"',f'"{ilce} Belediyesi"']
+                  return "("+" OR ".join("intitle:"+x for x in f)+f") {il}"
+              return f'intitle:"{ilce}" {il}'
+          YER=[("Çay","Afyonkarahisar",1),("Kale","Denizli",1),("Pazar","Rize",1),("Gölbaşı","Ankara",1),("Bor","Niğde",1),("","Aydın",0),("","İzmir",0)]
+          for ilce,il,bel in YER:
               for k,ws in K.items():
                   grp=(" ("+" OR ".join("intitle:"+w for w in ws)+")") if ws else ""
-                  if il: Q=f'intitle:"{ilce}" {il}{grp} when:7d'
-                  else:
-                      e=ekler(ilce); Q="("+" OR ".join("intitle:"+x for x in [e[0],e[2],e[5]])+")"+grp+" when:7d"
+                  Q=yer(ilce,il,bel)+grp+" when:30d"
                   t=ara(Q); time.sleep(1)
-                  print(f"### {ilce}/{k} D: {len(t)} sonuç  [{len(Q.split())} kelime]  {Q[:90]}")
-                  for x in t[:8]: print("   -",x[:110])
+                  print(f"### {ilce or il}/{k} E: {len(t)} sonuç  [{len(Q.split())} kelime]  {Q[:100]}")
+                  for x in t[:7]: print("   -",x[:110])
