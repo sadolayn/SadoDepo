@@ -467,7 +467,7 @@ async function show(date) {
     }
     const src = (g.kaynaklar || []).map((k) => `<li><a href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.ad)}</a></li>`).join("");
     html += `<div class="sec links"><h2>Kaynaklar</h2><ul style="padding-left:18px;margin:6px 0 10px">
-      <li><a href="${resmi}" target="_blank" rel="noopener">Resmi Gazete'nin o günkü sayısı</a></li>${src}</ul>
+      ${g.yayimlanmadi ? "" : `<li><a href="${resmi}" target="_blank" rel="noopener">Resmi Gazete'nin o günkü sayısı</a></li>`}${src}</ul>
       <div style="margin-bottom:10px">Bu sayfa haber kaynaklarından hazırlanan bir özettir; resmi metin için Resmi Gazete'ye bakın.</div></div>`;
     $("content").innerHTML = html;
   } catch (e) {
