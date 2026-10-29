@@ -23,13 +23,13 @@
       "Mavi": 4.21,
       "Lacivert": 4.19
     },
-    "kontrol": "2026-10-26",
+    "kontrol": "2026-10-29",
     "link": "https://www.isbank.com.tr/ek-hesap",
     "taksit_max": 12,
     "kampanya": {
       "ad": "İndirimli Taksitli Ek Hesap",
       "bas": "2026-10-16",
-      "bit": "2026-10-28",
+      "bit": "2026-11-06",
       "oran": "%3,49'dan başlayan indirimli oranlarla, 2–12 ay",
       "url": "https://www.isbank.com.tr/kampanyalar/indirimli-taksitli-ek-hesap-kampanyasi"
     },
@@ -41,6 +41,14 @@
     "link_maasli": "https://www.isbank.com.tr/kampanyalar/maasini-is-bankasindan-alan-musterilerimize-ozel-indirimli-faiz-orani-ile-ek-hesap",
     "link_isplus": "https://www.isbank.com.tr/kampanyalar/ek-hesap-faiz-oraninda-indirim-ayricaligi",
     "link_black": "https://www.isbank.com.tr/ek-hesap-faiz-oraninda-indirim-ayricaligi",
-    "ekler": []
+    "ekler": [
+      {
+        "ad": "Emekli maaşı İş Bankası'na yatanlar",
+        "oran": 4.19,
+        "bas": "2026-01-01",
+        "bit": "2026-10-31",
+        "url": "https://www.isbank.com.tr/kampanyalar/emekli-maasini-is-bankasindan-alan-musterilerimize-ozel-indirimli-faiz-orani-ile-ek-hesap"
+      }
+    ]
   }
 }
