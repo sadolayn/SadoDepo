@@ -924,7 +924,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   el.innerHTML = '<div class="aiTop"></div><div class="aiOzel">' + not + '</div>' + (yil ? '<div class="aiYil"><i></i><span>1923 – ' + t.getUTCFullYear() + ' · ' + yil + '. yıl</span><i></i></div>' : "") +
     '<div class="aiImg"><span class="aiGlow"></span><img src="img/ataturk.jpg" alt="Mustafa Kemal Atatürk" decoding="async"></div>' +
     '<blockquote class="aiQ">Sermayenin azlığına bakarak cesaretiniz kırılmasın! Böyle kurumlar için en kuvvetli sermaye; zekâ, dikkat, iffettir; teknik ve metodik çalışmasını bilmektir. Bu inançla işe sarılınız, mutlaka başarırsınız!<cite>Mustafa Kemal Atatürk</cite></blockquote>' +
-    '<button type="button" class="aiSkip">Geç ›</button><div class="aiImza">Sadolayn</div><div class="aiKaynak">Fotoğraf: Wikimedia Commons, Ataturk1930s.jpg (kamu malı)</div>';
+    '<button type="button" class="aiSkip">Geç ›</button><div class="aiImza">Sadolayn</div>';
   document.body.appendChild(el); document.documentElement.style.overflow = "hidden";
   var bitti = false, z = [], kapat = function () { if (bitti) return; bitti = true; z.forEach(clearTimeout); el.classList.add("out"); document.documentElement.style.overflow = ""; setTimeout(function () { el.remove(); }, 900); };
   el.addEventListener("click", kapat);

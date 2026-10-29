@@ -897,7 +897,7 @@ window.ataOyna = function (film, ozelNot, yas) {
     '<div class="aiImg"><span class="aiGlow"></span><img src="img/ataturk.jpg" alt="Mustafa Kemal Atatürk" decoding="async"></div>' +
     '<blockquote class="aiQ">Sermayenin azlığına bakarak cesaretiniz kırılmasın! Böyle kurumlar için en kuvvetli sermaye; zekâ, dikkat, iffettir; teknik ve metodik çalışmasını bilmektir. Bu inançla işe sarılınız, mutlaka başarırsınız!<cite>Mustafa Kemal Atatürk</cite></blockquote>' +
     (film ? '<div class="aiSahne" id="aiSahne"></div><div class="aiNok">' + SAHNE.map(function () { return "<i></i>"; }).join("") + "</div>" : "") +
-    '<button type="button" class="aiSkip">' + (film ? "Kapat ✕" : "Geç ›") + '</button><div class="aiImza">Sadolayn</div><div class="aiKaynak">Fotoğraf: Wikimedia Commons, Ataturk1930s.jpg (kamu malı)</div>';
+    '<button type="button" class="aiSkip">' + (film ? "Kapat ✕" : "Geç ›") + '</button><div class="aiImza">Sadolayn</div>';
   document.body.appendChild(el); document.documentElement.style.overflow = "hidden";
   var bitti = false, zam = [], kapat = function () { if (bitti) return; bitti = true; zam.forEach(clearTimeout); el.classList.add("out"); document.documentElement.style.overflow = ""; setTimeout(function () { el.remove(); }, 900); };
   if (film) el.querySelector(".aiSkip").onclick = kapat; else el.addEventListener("click", kapat);
