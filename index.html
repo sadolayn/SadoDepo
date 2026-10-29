@@ -224,6 +224,9 @@
   .quote span { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; font-size: 12.5px; color: var(--muted); letter-spacing: 3px; }
   .quote span::before, .quote span::after { content: ""; width: 28px; height: 1px; background: linear-gradient(90deg, transparent, #5a4320); }
   .quote span::after { background: linear-gradient(90deg, #5a4320, transparent); }
+  .aiYil { display: flex; align-items: center; gap: 10px; margin: -6px 0 16px; opacity: 0; animation: aiFade 1.4s 1.8s ease forwards; }
+  .aiYil span { font-family: Georgia, serif; font-size: 13px; letter-spacing: 3px; color: #e0a24f; white-space: nowrap; }
+  .aiYil i { display: block; width: 34px; height: 1px; background: linear-gradient(90deg, transparent, #b98a3e); } .aiYil i:last-child { transform: scaleX(-1); }
   /* ===== Özel gün açılışı (isbank.html'deki Atatürk açılışının ana sayfa sürümü; marka satırı yok) ===== */
   .ataIntro { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 22px; cursor: pointer; transition: opacity .9s ease, transform .9s ease; }
   .aiKaynak { position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; font-size: 11px; color: #8a8a8a; }
@@ -916,7 +919,9 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   try { if (!zorla && localStorage.getItem("anaOzel") === gun) return; localStorage.setItem("anaOzel", gun); } catch (e) {}
   if (zorla) history.replaceState(null, "", location.pathname + location.hash);
   var el = document.createElement("div"); el.className = "ataIntro";
-  el.innerHTML = '<div class="aiTop"></div><div class="aiOzel">' + not + '</div>' +
+  // 29 Ekim: altında Cumhuriyet'in kaçıncı yılı (1923'ten bu yana), altın satır
+  var yil = md === "10-29" || zorla ? t.getUTCFullYear() - 1923 : 0;
+  el.innerHTML = '<div class="aiTop"></div><div class="aiOzel">' + not + '</div>' + (yil ? '<div class="aiYil"><i></i><span>1923 – ' + t.getUTCFullYear() + ' · ' + yil + '. yıl</span><i></i></div>' : "") +
     '<div class="aiImg"><span class="aiGlow"></span><img src="img/ataturk.jpg" alt="Mustafa Kemal Atatürk" decoding="async"></div>' +
     '<blockquote class="aiQ">Sermayenin azlığına bakarak cesaretiniz kırılmasın! Böyle kurumlar için en kuvvetli sermaye; zekâ, dikkat, iffettir; teknik ve metodik çalışmasını bilmektir. Bu inançla işe sarılınız, mutlaka başarırsınız!<cite>Mustafa Kemal Atatürk</cite></blockquote>' +
     '<button type="button" class="aiSkip">Geç ›</button><div class="aiImza">Sadolayn</div><div class="aiKaynak">Fotoğraf: Wikimedia Commons, Ataturk1930s.jpg (kamu malı)</div>';
