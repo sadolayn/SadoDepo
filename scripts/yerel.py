@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128 Safari/537.36"}
 NOW = dt.datetime.now(dt.timezone.utc)
-GUN = 3  # son 3 günün başlıkları (yerelde haber seyrek)
+GUN = 7  # son 7 günün başlıkları (küçük ilçelerde başlığında adı geçen haber seyrek)
 
 # Kaynaklar: [kısa ad, görünen ad, alan adı, il sayfası, ilçe sayfası kalıbı ({il}, {ilce}: adresteki yazım)]
 KAYNAK = [
