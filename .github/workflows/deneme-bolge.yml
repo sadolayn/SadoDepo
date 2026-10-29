@@ -40,15 +40,15 @@ jobs:
               dat=("y" if son else "")+("a" if kal else "e")
               li="l"+{"a":"ı","ı":"ı","o":"u","u":"u","e":"i","i":"i","ö":"ü","ü":"ü"}[v]
               return [f'"{ad}\'{d}"',f'"{ad}\'{d}ki"',f'"{ad}\'{gen}"',f'"{ad}\'{dat}"',f'"{ad}\'{d}n"',f'{ad}{li}',f'"{ad} Valiliği"',f'"{ad} Valisi"',f'"{ad} Belediyesi"',f'"{ad} Büyükşehir"']
-          NEG="-lig -ligi -maç -maçı -voleybol -futbol"
-          K["Atama"]=K["Atama"]
-          YER=[("İncirliova","Aydın"),("Bozdoğan","Aydın"),("Efeler","Aydın"),("Köşk","Aydın"),("Aydın",""),("İzmir",""),("Bornova","İzmir")]
+          K["Maaş"]=['"maaş promosyonu"','"promosyon anlaşması"','"promosyon ihalesi"']
+          K["Tüm"]=[]
+          YER=[("İncirliova","Aydın"),("Efeler","Aydın"),("Nazilli","Aydın"),("Aydın",""),("İzmir",""),("Ankara",""),("Bornova","İzmir")]
           for ilce,il in YER:
               for k,ws in K.items():
-                  grp=" OR ".join("intitle:"+w for w in ws)
-                  neg=NEG+(" -kayyım -kayyum" if k=="Atama" else "")
-                  if il: Q=f'intitle:"{ilce}" {il} ({grp}) {neg} when:7d'
-                  else: Q="("+" OR ".join("intitle:"+e for e in ekler(ilce))+f") ({grp}) {neg} when:7d"
+                  grp=(" ("+" OR ".join("intitle:"+w for w in ws)+")") if ws else ""
+                  if il: Q=f'intitle:"{ilce}" {il}{grp} when:7d'
+                  else:
+                      e=ekler(ilce); Q="("+" OR ".join("intitle:"+x for x in [e[0],e[2],e[5]])+")"+grp+" when:7d"
                   t=ara(Q); time.sleep(1)
-                  print(f"### {ilce}/{k} C: {len(t)} sonuç  [{len(Q.split())} kelime]")
+                  print(f"### {ilce}/{k} D: {len(t)} sonuç  [{len(Q.split())} kelime]  {Q[:90]}")
                   for x in t[:8]: print("   -",x[:110])
