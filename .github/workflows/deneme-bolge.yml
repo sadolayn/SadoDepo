@@ -42,19 +42,16 @@ jobs:
                   print(f"   WEB: {len(d)} tarih (sayfa {L}), {len(ew)} eski; en eski {min(d).date() if d else '-'}")
           G=[["Atama", "atandı OR atama OR \"göreve başladı\" OR \"görevine başladı\" OR \"göreve getirildi\" OR \"başkanlığına seçildi\" OR \"müdürlüğüne atandı\""], ["Vefat", "vefat OR \"cenaze töreni\" OR \"yolculuğuna uğurlandı\" OR \"toprağa verildi\""], ["Ödül & başarı", "\"ödül aldı\" OR \"ödülünü aldı\" OR \"ödülüne layık\" OR \"ödülü verildi\""], ["Organize sanayi", "OSB OR \"sanayi bölgesi\""], ["Sanayi & yatırım", "fabrika OR yatırım OR \"üretim tesisi\" OR kapasite"], ["İhracat & ticaret", "ihracat OR ithalat OR ihracatçı OR ihracatçılar"], ["Maaş promosyonu", "promosyon OR promosyonu OR \"promosyon anlaşması\" OR \"promosyon ihalesi\""], ["Açılış", "\"açılış töreni\" OR \"hizmete açıldı\" OR \"hizmete girdi\" OR \"açılışı yapıldı\" OR \"açılışını yaptı\""], ["İstihdam", "istihdam OR İŞKUR OR \"kariyer fuarı\" OR \"işçi alımı\""], ["Belediye & ihale", "belediye OR ihale OR \"meclis kararı\" OR altyapı"], ["İnşaat & konut", "\"konut projesi\" OR \"kentsel dönüşüm\" OR imar OR TOKİ OR \"temeli atıldı\""], ["Oda & borsa", "\"ticaret odası\" OR \"ticaret borsası\" OR \"esnaf odası\" OR \"sanayi odası\""], ["Tarım", "hasat OR hasadı OR rekolte OR çiftçiler OR çiftçilere OR tarımsal OR \"zirai don\""], ["Turizm", "turizm OR turist OR turistler OR \"turizm sezonu\" OR \"doluluk oranı\""], ["Fuar & etkinlik", "fuar OR festival OR şenlik OR panel OR sempozyum"], ["Afet & kesinti", "sel OR deprem OR kesintisi OR heyelan OR hortum OR \"orman yangını\""]]
           YENI={"Seçim & kongre": "seçildi OR \"güven tazeledi\" OR kongresi OR \"genel kurulu\"", "Seçim2": "\"güven tazeledi\" OR \"yeniden seçildi\" OR \"başkanı seçildi\" OR \"genel kurulda\"", "Ulaşım & yol": "ulaşım OR köprü OR otoyol OR havalimanı OR \"çevre yolu\" OR \"duble yol\"", "Eğitim & sağlık": "hastane OR \"devlet hastanesi\" OR okul OR üniversite", "Konkordato": "konkordato OR iflas OR \"icradan satılık\""}
-          P='intitle:"İzmir\'de"'
           def g(q): return " ("+" OR ".join("intitle:"+x.strip() for x in q.split(" OR "))+")"
-          print("=== İzmir 7 gün: when:7d / after:")
-          for n,q in [("Tüm","")]+G:
-              ek=g(q) if q else ""
-              ozet("İzmir/"+n+"/when", P+ek+" when:7d", 7, 2)
-              ozet("İzmir/"+n+"/after", P+ek+" after:2026-10-22", 7, 1, False)
-          print("=== Nazilli 1 gün")
-          for n,q in [("Tüm",""),("Vefat",dict(G)["Vefat"])]:
-              ek=g(q) if q else ""
-              ozet("Nazilli/"+n+"/when1d", 'intitle:"Nazilli" Aydın'+ek+" when:1d", 1, 3)
-              ozet("Nazilli/"+n+"/after", 'intitle:"Nazilli" Aydın'+ek+" after:2026-10-28", 1, 3)
-          print("=== Yeni konular, 30 gün")
-          for yer in ['intitle:"İzmir\'de"','intitle:"Aydın\'da"','intitle:"Nazilli" Aydın','intitle:"İncirliova" Aydın','intitle:"Efeler" intitle:"Aydın"','intitle:"Bayburt\'ta"']:
-              for n,q in YENI.items():
-                  ozet(yer.split('"')[1]+"/"+n, yer+g(q)+" when:30d", 30, 6, False)
+          A=dict(G)["Atama"]
+          A6='atandı OR atama OR "göreve başladı" OR "görevine başladı" OR "göreve getirildi" OR "başkanlığına seçildi"'
+          K2='"güven tazeledi" OR "yeniden seçildi" OR "başkanı seçildi" OR "genel kurulu"'
+          KO='konkordato OR iflas OR "icradan satılık"'
+          for yer,ad in [('intitle:"İzmir\'de"',"İzmir"),('intitle:"Aydın\'da"',"Aydın"),('intitle:"Efeler" intitle:"Aydın"',"Efeler"),('intitle:"Kale" intitle:"Denizli"',"Kale"),('intitle:"Nazilli" Aydın',"Nazilli")]:
+              for gun in (7,30):
+                  ozet(f"{ad}/Atama/sonda/{gun}", yer+g(A)+f" when:{gun}d", gun, 1, False)
+                  ozet(f"{ad}/Atama/başta/{gun}", f"when:{gun}d "+yer+g(A), gun, 4, False)
+                  ozet(f"{ad}/Atama6/sonda/{gun}", yer+g(A6)+f" when:{gun}d", gun, 1, False)
+              ozet(f"{ad}/Kongre/başta/30", "when:30d "+yer+g(K2), 30, 4, False)
+              ozet(f"{ad}/Konkordato/başta/30", "when:30d "+yer+g(KO), 30, 4, False)
+              ozet(f"{ad}/Tüm/başta/7", "when:7d "+yer, 7, 3, False)
