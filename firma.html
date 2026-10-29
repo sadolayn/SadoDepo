@@ -36,9 +36,9 @@
   .ara::before { content: "🔎"; position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
   .ara button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 10px; background: #262626; color: #ddd; font-size: 15px; cursor: pointer; }
   /* Bölümlerin hepsi aynı anda görünsün: yana kaydırma yok, satıra sığmayan alta geçer */
-  .sek { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .sek { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
   .sek::-webkit-scrollbar { display: none; }
-  .sek button { --c: #e0a24f; flex: 1 1 auto; justify-content: center; display: inline-flex; align-items: center; gap: 5px; min-height: 34px; padding: 4px 10px; border-radius: 999px; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap;
+  .sek button { --c: #e0a24f; min-width: 0; justify-content: center; display: inline-flex; align-items: center; gap: 5px; min-height: 36px; padding: 4px 8px; border-radius: 999px; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     border: 1px solid color-mix(in srgb, var(--c) 45%, #000); background: color-mix(in srgb, var(--c) 14%, #0a0a0a); color: color-mix(in srgb, var(--c) 40%, #fff); }
   .sek button em { font-style: normal; font-size: 11.5px; padding: 1px 6px; border-radius: 999px; background: color-mix(in srgb, var(--c) 30%, #000); }
   .sek button.on { background: var(--c); border-color: var(--c); color: #000; }
@@ -149,24 +149,33 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const sade = (t) => String(t).toLocaleLowerCase("tr").replace(/[çğıöşüâî]/g, (h) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i" })[h]);
 // Sık aranan kısaltma ve eş anlamlar: aranan kelime bunlardan biriyse karşılığı da aranır
 const ES = { sgk: "sosyal guvenlik", ssk: "sgk", vkn: "vergi", levha: "vergi levhasi", icra: "e-satis", ihale: "ekap", yasakli: "yasak", mersis: "ticaret sicil", gazete: "resmi gazete", cek: "findeks", denetim: "kgk", borsa: "kap", ihracat: "tim", marka: "patent", insaat: "muteahhit", muteahhit: "muteahhit", gida: "gida", gemi: "equasis", enerji: "epdk" };
+// "Hepsi": bütün kaynaklar A'dan Z'ye, her birinde bölüm etiketi; düğmelerin başında
+const HEPSI = ["hepsi", "📋 Hepsi", "bütün kaynaklar A'dan Z'ye; her kartta hangi bölümden olduğu yazar", "#e0a24f"];
+// Yarım genişlikteki düğmeye sığmayan bölüm adlarının kısası (başlıklar uzun hâliyle kalır)
+const KISA = { yasak: "🚫 Yasaklılar", finans: "📊 Finans ve denetim" };
+const AZ = (a, b) => a[1].localeCompare(b[1], "tr");
 let sec = (location.hash || "").slice(1);
-if (!GRUP.some((g) => g[0] === sec)) sec = GRUP[0][0];
-const kart = (k, q) => {
+if (sec !== "hepsi" && !GRUP.some((g) => g[0] === sec)) sec = "hepsi";
+const kart = (k, q, et) => {
   const vurgu = (t) => { let h = esc(t); if (!q) return h; q.forEach((w) => { if (w.length < 2) return; const s = sade(t); let out = "", i = 0, j; const ham = t; while ((j = sade(ham).indexOf(w, i)) >= 0) { out += esc(ham.slice(i, j)) + "<mark>" + esc(ham.slice(j, j + w.length)) + "</mark>"; i = j + w.length; } h = i ? out + esc(ham.slice(i)) : h; }); return h; };
   const g = GRUP.find((x) => x[0] === k[0]);
-  return `<div class="ky"><div><b>${q ? vurgu(k[1]) : esc(k[1])}</b><p>${q ? vurgu(k[2]) : esc(k[2])}</p>${k[4] ? `<span class="gir">🔐 ${esc(k[4])}</span>` : ""}${q ? `<span class="grpEt" style="display:block;--c:${g[3]}">${esc(g[1])}</span>` : ""}</div><a class="git" href="${esc(k[3])}" target="_blank" rel="noopener">Aç ↗</a></div>`;
+  return `<div class="ky"><div><b>${q ? vurgu(k[1]) : esc(k[1])}</b><p>${q ? vurgu(k[2]) : esc(k[2])}</p>${k[4] ? `<span class="gir">🔐 ${esc(k[4])}</span>` : ""}${q || et ? `<span class="grpEt" style="display:block;--c:${g[3]}">${esc(g[1])}</span>` : ""}</div><a class="git" href="${esc(k[3])}" target="_blank" rel="noopener">Aç ↗</a></div>`;
 };
 function ciz() {
   const ham = document.getElementById("ara").value.trim(), q = sade(ham).split(/\s+/).filter(Boolean);
   document.getElementById("araSil").hidden = !ham;
-  document.getElementById("sek").innerHTML = GRUP.map(([g, bas, , renk]) => { const [ic, ...ad] = bas.split(" "), n = KAYNAK.filter((k) => k[0] === g).length;
+  document.getElementById("sek").innerHTML = [HEPSI, ...GRUP].map(([g, bas, , renk]) => { const [ic, ...ad] = (KISA[g] || bas).split(" "), n = g === "hepsi" ? KAYNAK.length : KAYNAK.filter((k) => k[0] === g).length;
     return `<button type="button" data-g="${g}" class="${!q.length && g === sec ? "on" : ""}" style="--c:${renk}">${ic} ${esc(ad.join(" "))} <em>${n}</em></button>`; }).join("");
   const L = document.getElementById("liste");
   if (q.length) {
     const genis = q.map((w) => [w, ...(ES[w] ? [ES[w]] : [])]);
-    const S = KAYNAK.filter((k) => { const metin = sade(k[1] + " " + k[2] + " " + (GRUP.find((g) => g[0] === k[0]) || [])[1]); return genis.every((ws) => ws.some((w) => metin.includes(w))); });
+    const S = KAYNAK.filter((k) => { const metin = sade(k[1] + " " + k[2] + " " + (GRUP.find((g) => g[0] === k[0]) || [])[1]); return genis.every((ws) => ws.some((w) => metin.includes(w))); }).sort(AZ);
     L.innerHTML = S.length ? `<p class="sonuc">“${esc(ham)}” için ${S.length} kaynak</p>` + S.map((k) => kart(k, q)).join("")
       : `<div class="bos">“${esc(ham)}” ile eşleşen kaynak yok.<br>Aradığın sorgu burada yoksa kurumun ana sayfasından başlayabilirsin.<br><button type="button" data-g="kurum">🏢 Kurum siteleri</button></div>`;
+    return;
+  }
+  if (sec === "hepsi") {
+    L.innerHTML = `<h2 id="hepsi">${esc(HEPSI[1])}<small>${KAYNAK.length} kaynak · ${esc(HEPSI[2])}</small></h2>` + [...KAYNAK].sort(AZ).map((k) => kart(k, null, 1)).join("");
     return;
   }
   const [g, bas, alt] = GRUP.find((x) => x[0] === sec);
@@ -180,6 +189,8 @@ function bolum(g) {
 }
 document.addEventListener("click", (e) => { const b = e.target.closest("[data-g]"); if (b) bolum(b.dataset.g); });
 document.getElementById("ara").addEventListener("input", ciz);
+// Arama kutusuna dokununca liste "Hepsi"ye geçer: yazmadan önce bütün satırlar A'dan Z'ye görünür, yazdıkça süzülür
+document.getElementById("ara").addEventListener("focus", () => { if (sec !== "hepsi" && !document.getElementById("ara").value.trim()) { sec = "hepsi"; ciz(); try { history.replaceState(null, "", "#hepsi"); } catch (e) {} } });
 document.getElementById("araSil").onclick = () => { const i = document.getElementById("ara"); i.value = ""; ciz(); i.focus(); };
 ciz();
 </script>
