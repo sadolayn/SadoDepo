@@ -30,22 +30,17 @@
   .giris { font-size: 13px; line-height: 1.5; color: #b9b9b9; margin: 0 2px 10px; }
   .giris b { color: var(--ink); }
   .ust { position: sticky; top: 0; z-index: 20; background: var(--bg); margin: 0 -16px; padding: 8px 16px 10px; border-bottom: 1px solid #1a1a1a; box-shadow: 0 8px 16px rgba(0,0,0,.5); }
-  .arSat { display: flex; gap: 8px; }
-  .arSat select { flex: 0 0 42%; min-width: 0; min-height: 46px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: inherit; font-size: 15px; outline: none; -webkit-appearance: none; appearance: none; text-overflow: ellipsis; }
+  /* Üstte yalnızca "Tüm kaynaklar" ve arama, alt alta; bölümler listede başlık olarak sırayla durur */
+  .arSat { display: flex; flex-direction: column; gap: 8px; }
+  .arSat select { width: 100%; min-width: 0; min-height: 46px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: inherit; font-size: 15px; outline: none; -webkit-appearance: none; appearance: none; text-overflow: ellipsis; }
+  .arSat select { padding-right: 38px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23e0a24f' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-size: 12px 8px; }
   .arSat select:focus { border-color: var(--accent); }
   .ara { position: relative; flex: 1; min-width: 0; }
   .ara input { width: 100%; min-height: 46px; padding: 10px 40px 10px 40px; border-radius: 14px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: inherit; font-size: 16px; outline: none; }
   .ara input:focus { border-color: var(--accent); }
   .ara::before { content: "🔎"; position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
   .ara button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 10px; background: #262626; color: #ddd; font-size: 15px; cursor: pointer; }
-  /* Bölümlerin hepsi aynı anda görünsün: yana kaydırma yok, satıra sığmayan alta geçer */
-  .sek { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
-  .sek::-webkit-scrollbar { display: none; }
-  .sek button { --c: #e0a24f; min-width: 0; justify-content: center; display: inline-flex; align-items: center; gap: 5px; min-height: 36px; padding: 4px 8px; border-radius: 999px; font: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     border: 1px solid color-mix(in srgb, var(--c) 45%, #000); background: color-mix(in srgb, var(--c) 14%, #0a0a0a); color: color-mix(in srgb, var(--c) 40%, #fff); }
-  .sek button em { font-style: normal; font-size: 11.5px; padding: 1px 6px; border-radius: 999px; background: color-mix(in srgb, var(--c) 30%, #000); }
-  .sek button.on { background: var(--c); border-color: var(--c); color: #000; }
-  .sek button.on em { background: rgba(0,0,0,.2); }
   .bos { padding: 18px 14px; text-align: center; color: var(--muted); font-size: 14px; line-height: 1.5; background: var(--card); border: 1px dashed var(--line); border-radius: 14px; }
   .bos button { margin-top: 10px; min-height: 38px; padding: 6px 14px; border-radius: 12px; border: 1px solid var(--accent); background: #1a140a; color: #ffd27a; font: inherit; font-weight: 700; cursor: pointer; }
   .sonuc { margin: 12px 2px 6px; font-size: 12.5px; color: var(--muted); }
@@ -77,7 +72,6 @@
   <p class="giris">Bir firmayı tanımak için hangi bilgiye <b>hangi resmî siteden</b> bakılır. Sorguyu ilgili sitede sen yaparsın; bu sayfa firma hakkında bilgi vermez, hiçbir şey kaydetmez.</p>
   <div class="ust">
     <div class="arSat"><select id="kay" aria-label="Kaynak seç"><option value="">Tüm kaynaklar</option></select><div class="ara"><input id="ara" type="text" enterkeyhint="search" placeholder="Ara: vergi, SGK…" autocomplete="off" aria-label="Kaynaklarda ara"><button type="button" id="araSil" hidden aria-label="Aramayı temizle">✕</button></div></div>
-    <nav class="sek" id="sek" aria-label="Bölümler"></nav>
   </div>
 
   <div id="liste"></div>
@@ -152,13 +146,8 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 const sade = (t) => String(t).toLocaleLowerCase("tr").replace(/[çğıöşüâî]/g, (h) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i" })[h]);
 // Sık aranan kısaltma ve eş anlamlar: aranan kelime bunlardan biriyse karşılığı da aranır
 const ES = { sgk: "sosyal guvenlik", ssk: "sgk", vkn: "vergi", levha: "vergi levhasi", icra: "e-satis", ihale: "ekap", yasakli: "yasak", mersis: "ticaret sicil", gazete: "resmi gazete", cek: "findeks", denetim: "kgk", borsa: "kap", ihracat: "tim", marka: "patent", insaat: "muteahhit", muteahhit: "muteahhit", gida: "gida", gemi: "equasis", enerji: "epdk" };
-// "Hepsi": bütün bölümler sırasıyla alt alta; düğmelerin başında
-const HEPSI = ["hepsi", "📋 Hepsi", "bütün bölümler alt alta", "#e0a24f"];
-// Yarım genişlikteki düğmeye sığmayan bölüm adlarının kısası (başlıklar uzun hâliyle kalır)
-const KISA = { yasak: "🚫 Yasaklılar", finans: "📊 Finans ve denetim" };
 const AZ = (a, b) => a[1].localeCompare(b[1], "tr");
-let sec = (location.hash || "").slice(1);
-if (sec !== "hepsi" && !GRUP.some((g) => g[0] === sec)) sec = "hepsi";
+const sec = "hepsi"; // bölüm düğmeleri kalktı: liste hep bütün bölümleri sırayla gösterir
 const kart = (k, q, et) => {
   const vurgu = (t) => { let h = esc(t); if (!q) return h; q.forEach((w) => { if (w.length < 2) return; const s = sade(t); let out = "", i = 0, j; const ham = t; while ((j = sade(ham).indexOf(w, i)) >= 0) { out += esc(ham.slice(i, j)) + "<mark>" + esc(ham.slice(j, j + w.length)) + "</mark>"; i = j + w.length; } h = i ? out + esc(ham.slice(i)) : h; }); return h; };
   const g = GRUP.find((x) => x[0] === k[0]);
@@ -167,8 +156,7 @@ const kart = (k, q, et) => {
 function ciz() {
   const ham = document.getElementById("ara").value.trim(), q = sade(ham).split(/\s+/).filter(Boolean);
   document.getElementById("araSil").hidden = !ham;
-  document.getElementById("sek").innerHTML = [HEPSI, ...GRUP].map(([g, bas, , renk]) => { const [ic, ...ad] = (KISA[g] || bas).split(" "), n = g === "hepsi" ? KAYNAK.length : KAYNAK.filter((k) => k[0] === g).length;
-    return `<button type="button" data-g="${g}" class="${!q.length && !kay.value && g === sec ? "on" : ""}" style="--c:${renk}">${ic} ${esc(ad.join(" "))} <em>${n}</em></button>`; }).join("");
+
   const L = document.getElementById("liste");
   if (q.length && kay.value) kay.value = "";
   if (kay.value) {
@@ -189,11 +177,12 @@ function ciz() {
   const [g, bas, alt] = GRUP.find((x) => x[0] === sec);
   L.innerHTML = `<h2 id="${g}">${esc(bas)}<small>${esc(alt)}</small></h2>` + KAYNAK.filter((k) => k[0] === g).map((k) => kart(k)).join("");
 }
-function bolum(g) {
-  sec = g; document.getElementById("ara").value = ""; kay.value = ""; ciz();
-  try { history.replaceState(null, "", "#" + g); } catch (e) {}
-  const ust = document.querySelector(".ust"), y = document.getElementById("liste").getBoundingClientRect().top + scrollY - ust.offsetHeight - 4;
-  if (scrollY > y) window.scrollTo({ top: y, behavior: "smooth" });
+// Bölüme git: aramayı ve seçimi temizler, listede o bölümün başlığına kayar (ör. "Kurum siteleri" önerisi, eski #bolum adresleri)
+function bolum(g, anlik) {
+  document.getElementById("ara").value = ""; kay.value = ""; ciz();
+  const h = document.getElementById(g); if (!h) return;
+  const ust = document.querySelector(".ust");
+  window.scrollTo({ top: h.getBoundingClientRect().top + scrollY - ust.offsetHeight - 8, behavior: anlik ? "auto" : "smooth" });
 }
 document.addEventListener("click", (e) => { const b = e.target.closest("[data-g]"); if (b) bolum(b.dataset.g); });
 document.getElementById("ara").addEventListener("input", ciz);
@@ -203,6 +192,7 @@ kay.innerHTML = `<option value="">Tüm kaynaklar</option>` + [...KAYNAK].sort(AZ
 kay.addEventListener("change", () => { ara.value = ""; ciz(); if (kay.value) document.getElementById("liste").scrollIntoView({ block: "nearest" }); });
 document.getElementById("araSil").onclick = () => { const i = document.getElementById("ara"); i.value = ""; ciz(); i.focus(); };
 ciz();
+{ const g = (location.hash || "").slice(1); if (GRUP.some((x) => x[0] === g)) setTimeout(() => bolum(g, 1), 300); } // eski #bölüm adresleri o başlığa kayar
 </script>
 </body>
 </html>
