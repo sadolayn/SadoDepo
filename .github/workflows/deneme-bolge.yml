@@ -30,14 +30,25 @@ jobs:
            "Afet":['sel','deprem','"elektrik kesintisi"','"su kesintisi"','fırtına'],
            "Tarım":['hasat','rekolte','çiftçi','çiftçiler','"zirai don"'],
           }
-          YER=[("İncirliova","Aydın"),("Nazilli","Aydın"),("Efeler","Aydın"),("Aydın",""),("Bornova","İzmir")]
+          SL="aeıioöuü"
+          def ekler(ad):
+              k=ad.lower().replace("I","ı").replace("İ","i"); v=[c for c in k if c in SL][-1]
+              son=k[-1] in SL; sert=k[-1] in "çfhkpsşt"
+              kal = v in "aıou"
+              d=("t" if sert else "d")+("a" if kal else "e")
+              gen=("n" if son else "")+{"a":"ın","ı":"ın","o":"un","u":"un","e":"in","i":"in","ö":"ün","ü":"ün"}[v]
+              dat=("y" if son else "")+("a" if kal else "e")
+              li="l"+{"a":"ı","ı":"ı","o":"u","u":"u","e":"i","i":"i","ö":"ü","ü":"ü"}[v]
+              return [f'"{ad}\'{d}"',f'"{ad}\'{d}ki"',f'"{ad}\'{gen}"',f'"{ad}\'{dat}"',f'"{ad}\'{d}n"',f'{ad}{li}',f'"{ad} Valiliği"',f'"{ad} Valisi"',f'"{ad} Belediyesi"',f'"{ad} Büyükşehir"']
+          NEG="-lig -ligi -maç -maçı -voleybol -futbol"
+          K["Atama"]=K["Atama"]
+          YER=[("İncirliova","Aydın"),("Bozdoğan","Aydın"),("Efeler","Aydın"),("Köşk","Aydın"),("Aydın",""),("İzmir",""),("Bornova","İzmir")]
           for ilce,il in YER:
               for k,ws in K.items():
                   grp=" OR ".join("intitle:"+w for w in ws)
-                  A=(f'"{ilce}" {il} ({grp}) when:7d' if il else f'{ilce} haberleri ({grp}) when:7d')
-                  B=f'intitle:"{ilce}" ({grp}) when:7d'
-                  C=f'allintitle: {ilce} {ws[0]} when:7d'
-                  for ad,q in (("A-simdiki",A),("B-yer-baslikta",B)):
-                      t=ara(q); time.sleep(1)
-                      print(f"### {ilce}/{k} {ad}: {len(t)} sonuç")
-                      for x in t[:6]: print("   -",x[:110])
+                  neg=NEG+(" -kayyım -kayyum" if k=="Atama" else "")
+                  if il: Q=f'intitle:"{ilce}" {il} ({grp}) {neg} when:7d'
+                  else: Q="("+" OR ".join("intitle:"+e for e in ekler(ilce))+f") ({grp}) {neg} when:7d"
+                  t=ara(Q); time.sleep(1)
+                  print(f"### {ilce}/{k} C: {len(t)} sonuç  [{len(Q.split())} kelime]")
+                  for x in t[:8]: print("   -",x[:110])
