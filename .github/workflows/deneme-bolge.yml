@@ -1,0 +1,60 @@
+# GEÇİCİ: Bölgem süre ve yeni konu denemesi (yalnızca Google Haberler başlık ve tarihleri okunur; iş bitince silinecek)
+name: Deneme Bolgem
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dene:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Aramalar
+        shell: python
+        run: |
+          import urllib.request, urllib.parse, xml.etree.ElementTree as ET, time, re, email.utils, datetime as D
+          UA={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36","Accept-Language":"tr-TR,tr;q=0.9"}
+          NOW=D.datetime.now(D.timezone.utc)
+          def rss(q):
+              u="https://news.google.com/rss/search?q="+urllib.parse.quote(q)+"&hl=tr&gl=TR&ceid=TR:tr"
+              try:
+                  r=ET.fromstring(urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=20).read())
+                  return [((it.findtext("title") or ""), email.utils.parsedate_to_datetime(it.findtext("pubDate"))) for it in r.findall(".//item")]
+              except Exception as e: return [("HATA "+str(e)[:60], NOW)]
+          def web(q):
+              u="https://news.google.com/search?q="+urllib.parse.quote(q)+"&hl=tr&gl=TR&ceid=TR:tr"
+              try:
+                  h=urllib.request.urlopen(urllib.request.Request(u,headers=UA),timeout=20).read().decode("utf8","replace")
+                  return [D.datetime.fromisoformat(x.replace("Z","+00:00")) for x in re.findall(r'datetime="([^"]+)"',h)], len(h)
+              except Exception as e: return [], str(e)[:60]
+          def ozet(ad,q,gun,n=3,w=True):
+              t=rss(q); time.sleep(1)
+              eski=[x for x in t if (NOW-x[1]).days>=gun+1]
+              print(f"### {ad}: rss {len(t)} sonuç, {len(eski)} tanesi {gun} günden eski  | {q[:90]}")
+              for x in eski[:3]: print("   ESKİ", x[1].date(), x[0][:90])
+              for x in t[:n]: print("   -", x[1].date(), x[0][:95])
+              if w:
+                  d,L=web(q); time.sleep(1)
+                  ew=[x for x in d if (NOW-x).days>=gun+1]
+                  print(f"   WEB: {len(d)} tarih (sayfa {L}), {len(ew)} eski; en eski {min(d).date() if d else '-'}")
+          G=[["Atama", "atandı OR atama OR \"göreve başladı\" OR \"görevine başladı\" OR \"göreve getirildi\" OR \"başkanlığına seçildi\" OR \"müdürlüğüne atandı\""], ["Vefat", "vefat OR \"cenaze töreni\" OR \"yolculuğuna uğurlandı\" OR \"toprağa verildi\""], ["Ödül & başarı", "\"ödül aldı\" OR \"ödülünü aldı\" OR \"ödülüne layık\" OR \"ödülü verildi\""], ["Organize sanayi", "OSB OR \"sanayi bölgesi\""], ["Sanayi & yatırım", "fabrika OR yatırım OR \"üretim tesisi\" OR kapasite"], ["İhracat & ticaret", "ihracat OR ithalat OR ihracatçı OR ihracatçılar"], ["Maaş promosyonu", "promosyon OR promosyonu OR \"promosyon anlaşması\" OR \"promosyon ihalesi\""], ["Açılış", "\"açılış töreni\" OR \"hizmete açıldı\" OR \"hizmete girdi\" OR \"açılışı yapıldı\" OR \"açılışını yaptı\""], ["İstihdam", "istihdam OR İŞKUR OR \"kariyer fuarı\" OR \"işçi alımı\""], ["Belediye & ihale", "belediye OR ihale OR \"meclis kararı\" OR altyapı"], ["İnşaat & konut", "\"konut projesi\" OR \"kentsel dönüşüm\" OR imar OR TOKİ OR \"temeli atıldı\""], ["Oda & borsa", "\"ticaret odası\" OR \"ticaret borsası\" OR \"esnaf odası\" OR \"sanayi odası\""], ["Tarım", "hasat OR hasadı OR rekolte OR çiftçiler OR çiftçilere OR tarımsal OR \"zirai don\""], ["Turizm", "turizm OR turist OR turistler OR \"turizm sezonu\" OR \"doluluk oranı\""], ["Fuar & etkinlik", "fuar OR festival OR şenlik OR panel OR sempozyum"], ["Afet & kesinti", "sel OR deprem OR kesintisi OR heyelan OR hortum OR \"orman yangını\""]]
+          YENI={"Seçim & kongre": "seçildi OR \"güven tazeledi\" OR kongresi OR \"genel kurulu\"", "Seçim2": "\"güven tazeledi\" OR \"yeniden seçildi\" OR \"başkanı seçildi\" OR \"genel kurulda\"", "Ulaşım & yol": "ulaşım OR köprü OR otoyol OR havalimanı OR \"çevre yolu\" OR \"duble yol\"", "Eğitim & sağlık": "hastane OR \"devlet hastanesi\" OR okul OR üniversite", "Konkordato": "konkordato OR iflas OR \"icradan satılık\""}
+          P='intitle:"İzmir\'de"'
+          def g(q): return " ("+" OR ".join("intitle:"+x.strip() for x in q.split(" OR "))+")"
+          print("=== İzmir 7 gün: when:7d / after:")
+          for n,q in [("Tüm","")]+G:
+              ek=g(q) if q else ""
+              ozet("İzmir/"+n+"/when", P+ek+" when:7d", 7, 2)
+              ozet("İzmir/"+n+"/after", P+ek+" after:2026-10-22", 7, 1, False)
+          print("=== Nazilli 1 gün")
+          for n,q in [("Tüm",""),("Vefat",dict(G)["Vefat"])]:
+              ek=g(q) if q else ""
+              ozet("Nazilli/"+n+"/when1d", 'intitle:"Nazilli" Aydın'+ek+" when:1d", 1, 3)
+              ozet("Nazilli/"+n+"/after", 'intitle:"Nazilli" Aydın'+ek+" after:2026-10-28", 1, 3)
+          print("=== Yeni konular, 30 gün")
+          for yer in ['intitle:"İzmir\'de"','intitle:"Aydın\'da"','intitle:"Nazilli" Aydın','intitle:"İncirliova" Aydın','intitle:"Efeler" intitle:"Aydın"','intitle:"Bayburt\'ta"']:
+              for n,q in YENI.items():
+                  ozet(yer.split('"')[1]+"/"+n, yer+g(q)+" when:30d", 30, 6, False)
