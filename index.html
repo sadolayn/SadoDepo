@@ -224,6 +224,57 @@
   .quote span { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; font-size: 12.5px; color: var(--muted); letter-spacing: 3px; }
   .quote span::before, .quote span::after { content: ""; width: 28px; height: 1px; background: linear-gradient(90deg, transparent, #5a4320); }
   .quote span::after { background: linear-gradient(90deg, #5a4320, transparent); }
+  /* ===== Özel gün açılışı (isbank.html'deki Atatürk açılışının ana sayfa sürümü; marka satırı yok) ===== */
+  .ataIntro { position: fixed; inset: 0; z-index: 9999; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 22px; cursor: pointer; transition: opacity .9s ease, transform .9s ease; }
+  .aiKaynak { position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; font-size: 11px; color: #8a8a8a; }
+  .ataIntro.out { opacity: 0; transform: scale(1.04); pointer-events: none; }
+  .aiImg { position: relative; width: min(62vw, 300px); aspect-ratio: 500 / 674; -webkit-mask: radial-gradient(ellipse 52% 50% at 50% 42%, #000 45%, transparent 100%); mask: radial-gradient(ellipse 52% 50% at 50% 42%, #000 45%, transparent 100%); }
+  .aiImg img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) sepia(.55) brightness(0) contrast(1.3); opacity: 0; }
+  @keyframes aiRise { 0% { opacity: 1; filter: grayscale(1) sepia(.55) brightness(0) contrast(1.6); transform: scale(1.06); } 1%, 10% { filter: grayscale(1) sepia(.55) brightness(0) contrast(1.6); transform: scale(1.06); } 35% { filter: grayscale(1) sepia(.55) brightness(.1) contrast(1.6); } 68% { filter: grayscale(1) sepia(.55) brightness(.45) contrast(1.45); } 100% { filter: grayscale(1) sepia(.5) brightness(.95) contrast(1.15); transform: scale(1); } }
+  .aiQ { max-width: 460px; margin: 18px 0 0; text-align: center; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: clamp(14px, 3.9vw, 17px); line-height: 1.6; color: #e9d3a4; opacity: 0;  }
+  .aiQ cite { display: block; margin-top: 10px; font-style: normal; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #a8874c; }
+  @keyframes aiFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .aiSkip { position: absolute; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); padding: 7px 14px; border-radius: 99px; border: 1px solid #3a2f1c; background: transparent; color: #8a7a5a; font: inherit; font-size: 13px; cursor: pointer; }
+  .aiOzel .trb { width: 1.45em; height: .97em; vertical-align: -.14em; border-radius: 2px; margin-right: .3em; box-shadow: 0 0 0 1px rgba(255,255,255,.25); }
+  .aiOzel { margin-bottom: 18px; padding: 7px 16px; border-radius: 99px; border: 1px solid #5a1f1f; background: rgba(200,30,40,.14); color: #f3c0c0; font-size: 13.5px; font-weight: 600; text-align: center; opacity: 0; animation: aiFade 1.2s .6s ease forwards; }
+  .aiOzel.yas { border-color: #3a3a3a; background: rgba(255,255,255,.05); color: #d8d8d8; }
+  .ataIntro.go .aiImg img { opacity: 1; animation: aiRise 8.5s .6s cubic-bezier(.45,.05,.35,1) both; }
+  .ataIntro.go .aiQ { animation: aiFade 2s 6.2s ease forwards; }
+  .ataIntro.go .aiOzel { animation-delay: .8s; }
+  /* Açılış: kapkara değil; üstte marka satırı ve portrenin yerinde altın bir ışıltı hemen görünür */
+  .aiTop { position: absolute; top: max(22px, env(safe-area-inset-top)); left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; animation: aiFade 1s .1s both; }
+  .aiTop span { font-family: Georgia, serif; font-style: italic; font-weight: 700; letter-spacing: 4px; font-size: 15px; color: #c9a050; }
+  .aiTop i { display: block; height: 1px; width: 0; background: linear-gradient(90deg, transparent, #e0a24f, transparent); animation: aiLine 1.6s .3s ease-out forwards; }
+  .aiTop b { font-size: 11px; font-weight: 600; letter-spacing: 2px; color: #7a6a4a; text-transform: uppercase; }
+  @keyframes aiLine { to { width: 180px; } }
+  .aiGlow { position: absolute; z-index: 2; pointer-events: none; mix-blend-mode: screen; inset: 8% 14% 20%; border-radius: 50%; background: radial-gradient(closest-side, rgba(224,162,79,.28), rgba(224,162,79,0)); animation: aiPulse 2.4s ease-in-out infinite; }
+  @keyframes aiPulse { 50% { opacity: .45; transform: scale(.94); } }
+  .ataIntro.go .aiGlow { animation: aiGlowOut 7s ease forwards; }
+  @keyframes aiGlowOut { 0% { opacity: 1; } 60% { opacity: .6; } 100% { opacity: 0; } }
+  .aiImg img { position: relative; z-index: 1; }
+  .ataIntro.go .aiImg img { animation-name: aiRise2 !important; }
+  @keyframes aiRise2 { 0% { opacity: 1; filter: grayscale(1) sepia(.55) brightness(.07) contrast(1.6); transform: scale(1.05); } 35% { filter: grayscale(1) sepia(.55) brightness(.2) contrast(1.55); } 68% { filter: grayscale(1) sepia(.55) brightness(.5) contrast(1.4); } 100% { opacity: 1; filter: grayscale(1) sepia(.5) brightness(.95) contrast(1.15); transform: scale(1); } }
+  /* Film */
+  .ataIntro.film { cursor: default; }
+  .ataIntro.film.sahnede .aiQ { animation: aiOut .8s forwards !important; }
+  @keyframes aiOut { to { opacity: 0; transform: translateY(-6px); height: 0; margin: 0; } }
+  .aiSahne { max-width: 420px; min-height: 96px; margin-top: 14px; text-align: center; opacity: 0; }
+  .aiSahne.on { animation: aiFade 1.2s ease forwards; }
+  .aiSahne b { display: block; font-family: Georgia, serif; font-size: 19px; color: #f3dca8; margin-bottom: 8px; }
+  .aiSahne span { display: block; font-size: 15px; line-height: 1.55; color: #d9c9a8; }
+  .aiSahne.son b { font-style: italic; font-size: 22px; }
+  .aiNok { display: flex; gap: 6px; margin-top: 12px; } .aiNok i { width: 7px; height: 7px; border-radius: 50%; background: #3a3022; transition: background .4s; } .aiNok i.on { background: #e0a24f; }
+  /* Başlık akışın içinde: portreyle asla üst üste binmez */
+  .ataIntro { justify-content: flex-start; padding-top: max(26px, env(safe-area-inset-top)); overflow-y: auto; }
+  .aiTop { position: static !important; margin: 0 0 auto; padding-bottom: 14px; }
+  .aiTop span { font-family: Georgia, serif !important; font-style: normal !important; font-weight: 700; letter-spacing: 3px !important; font-size: 13px !important; text-transform: uppercase; color: #c9a050 !important; }
+  .aiImg { flex: none; width: min(62vw, 300px, 42vh) !important; margin-top: auto; }
+  .aiQ, .aiSahne { flex: none; }
+  .ataIntro > .aiNok { margin-bottom: auto; }
+  .ataIntro:not(.film) .aiQ { margin-bottom: auto; }
+  .ataIntro.film .aiSahne { margin-bottom: 0; }
+  .aiImza { position: absolute; left: 18px; bottom: max(22px, env(safe-area-inset-bottom)); font-family: Georgia, serif; font-style: italic; font-size: 13px; letter-spacing: 2px; color: #6b5a3a; opacity: 0; animation: aiFade 1.5s 1s forwards; }
+  .ataIntro.film.sahnede .aiQ { display: none; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -851,6 +902,29 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     // Etikete dokununca: sayı Kampanyalar'a, "yeni" Kampanyalar › Yeni gelenler'e götürür (kartın geri kalanı İş Bankası Gündemi'ni açar)
     el.addEventListener("click", function (e) { var s = e.target.closest("[data-git]"); if (!s) return; e.preventDefault(); location.href = "isbank.html#" + s.dataset.git; });
   }).catch(function () {});
+})();
+</script>
+<script>
+// Özel gün açılışı: bugün 29 Ekim ise ana sayfaya ilk girişte (günde bir kez) bayrak, Atatürk ve sözü; dokununca ya da 12 sn sonra kapanır.
+// ?ata ile her zaman denenebilir. Hareketi azaltmayı seçenlere gösterilmez.
+(function () {
+  var t = new Date(Date.now() + 3 * 3600e3), gun = t.toISOString().slice(0, 10), md = gun.slice(5);
+  var TRB = '<svg class="trb" viewBox="0 0 30 20" aria-label="Türk bayrağı" role="img"><rect width="30" height="20" fill="#E30A17"/><circle cx="11" cy="10" r="5" fill="#fff"/><circle cx="12.25" cy="10" r="4" fill="#E30A17"/><polygon fill="#fff" points="14.80,10.00 16.49,9.41 16.53,7.62 17.61,9.05 19.32,8.53 18.30,10.00 19.32,11.47 17.61,10.95 16.53,12.38 16.49,10.59"/></svg>';
+  var OZEL = { "10-29": TRB + " Cumhuriyet Bayramımız kutlu olsun" };
+  var zorla = /[?&]ata\b/.test(location.search), not = OZEL[md] || (zorla ? OZEL["10-29"] : "");
+  if (!not || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  try { if (!zorla && localStorage.getItem("anaOzel") === gun) return; localStorage.setItem("anaOzel", gun); } catch (e) {}
+  if (zorla) history.replaceState(null, "", location.pathname + location.hash);
+  var el = document.createElement("div"); el.className = "ataIntro";
+  el.innerHTML = '<div class="aiTop"></div><div class="aiOzel">' + not + '</div>' +
+    '<div class="aiImg"><span class="aiGlow"></span><img src="img/ataturk.jpg" alt="Mustafa Kemal Atatürk" decoding="async"></div>' +
+    '<blockquote class="aiQ">Sermayenin azlığına bakarak cesaretiniz kırılmasın! Böyle kurumlar için en kuvvetli sermaye; zekâ, dikkat, iffettir; teknik ve metodik çalışmasını bilmektir. Bu inançla işe sarılınız, mutlaka başarırsınız!<cite>Mustafa Kemal Atatürk</cite></blockquote>' +
+    '<button type="button" class="aiSkip">Geç ›</button><div class="aiImza">Sadolayn</div><div class="aiKaynak">Fotoğraf: Wikimedia Commons, Ataturk1930s.jpg (kamu malı)</div>';
+  document.body.appendChild(el); document.documentElement.style.overflow = "hidden";
+  var bitti = false, z = [], kapat = function () { if (bitti) return; bitti = true; z.forEach(clearTimeout); el.classList.add("out"); document.documentElement.style.overflow = ""; setTimeout(function () { el.remove(); }, 900); };
+  el.addEventListener("click", kapat);
+  var img = el.querySelector("img"), basla = function () { if (el.classList.contains("go")) return; el.classList.add("go"); z.push(setTimeout(kapat, 12500)); };
+  if (img.complete && img.naturalWidth) basla(); else { img.addEventListener("load", basla); img.addEventListener("error", kapat); z.push(setTimeout(basla, 4000)); }
 })();
 </script>
 </body>

@@ -930,6 +930,8 @@ window.ataOyna = function (film, ozelNot, yas) {
   if (!A.ilk) goster = true;
   if (A.hafta !== hafta) goster = true;
   if (OZEL[md] && A.ozel !== gun) goster = true;
+  // Ana sayfa özel gün açılışını bugün zaten gösterdiyse burada tekrarlanmaz
+  try { if (OZEL[md] && localStorage.getItem("anaOzel") === gun) { goster = false; A.ilk = 1; A.hafta = hafta; A.ozel = gun; localStorage.setItem("ataIntro2", JSON.stringify(A)); } } catch (e) {}
   if (/[?&]ata\b/.test(location.search)) { goster = true; history.replaceState(null, "", location.pathname + location.hash); }
   if (!goster || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   A.ilk = 1; A.hafta = hafta; if (OZEL[md]) A.ozel = gun;
