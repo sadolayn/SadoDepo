@@ -118,6 +118,10 @@
   .yAyrac { display:flex; align-items:center; gap:10px; } .yAyrac i { flex:1; height:1px; background:#3a2616; } .yAyrac span { font-size:12px; color:#8a6a52; }
   .ykur .yform { display:flex; gap:6px; } .ykur .yform input { flex:1; min-width:0; }
   .ykur .yform button { flex:none; min-height:44px; padding:0 16px; border-radius:12px; border:1px solid #5a3a22; background:#1a120b; color:#ffdcc4; font:inherit; font-weight:700; cursor:pointer; }
+  .yOner { display:flex; flex-direction:column; margin-top:-6px; } .yOner:empty { display:none; }
+  .yOner button { display:flex; align-items:center; gap:8px; min-height:46px; padding:0 12px; border:0; border-bottom:1px solid #2a1a0e; background:#1a120b; color:#ffdcc4; font:inherit; font-size:15px; text-align:left; cursor:pointer; }
+  .yOner button:first-child { border-radius:12px 12px 0 0; } .yOner button:last-child { border-radius:0 0 12px 12px; border-bottom:0; } .yOner button:only-child { border-radius:12px; }
+  .yOner button small { color:#a5876f; } .yOner > small { padding:6px 2px; }
   .ySon { display:flex; flex-wrap:wrap; align-items:center; gap:6px; } .ySon small { width:100%; }
   .ySon button { min-height:36px; padding:0 12px; border-radius:99px; border:1px solid #3a2616; background:#1a120b; color:#ffdcc4; font:inherit; font-size:13px; cursor:pointer; }
   .ykur .yAlt { font-size:11.5px; color:#8a6a52; }
@@ -216,9 +220,25 @@ function yerelKur() {
     + `<a class="yTum" href="${gnUrl("")}" target="_blank" rel="noopener">Tüm haberler ↗</a>`
     + `<div class="yKonu">${YKONU.map(([ic, ad, q]) => `<a href="${gnUrl(q)}" target="_blank" rel="noopener"><span>${ic}</span>${esc(ad)}</a>`).join("")}</div></div>` : "";
   const bul = `<button type="button" id="yKonum" class="ykon ${ad ? "" : "ana"}">📍 ${YS.konum ? "Konumumu yenile" : "Konumumu bul"}</button>`;
-  const yaz = `<div class="yAyrac"><i></i><span>ya da</span><i></i></div><form id="yForm" class="yform"><input id="yYaz" type="search" enterkeyhint="search" placeholder="İl / ilçe yaz, ör. Germencik" aria-label="İl ya da ilçe" autocomplete="off"><button type="submit">Ara</button></form>`;
+  const yaz = `<div class="yAyrac"><i></i><span>ya da</span><i></i></div><form id="yForm" class="yform"><input id="yYaz" type="search" enterkeyhint="search" placeholder="İl / ilçe yaz, ör. Germencik" aria-label="İl ya da ilçe" autocomplete="off"><button type="submit">Ara</button></form><div class="yOner" id="yOner"></div>`;
   const kisa = son.length ? `<div class="ySon"><small>Son baktıkların</small>${son.map((x, k) => `<button type="button" data-son="${k}">${esc(x.ad)}</button>`).join("")}</div>` : "";
   return `<div class="ykur">${ust}${sonuc}${bul}${yNot ? `<small class="ynot">${esc(yNot)}</small>` : ""}${yaz}${kisa}<small class="yAlt">Bu sayfa haber derlemez; konum yalnızca il/ilçe adını bulmak için kullanılır, kaydedilmez.</small></div>`;
+}
+// İl/ilçe önerisi: 81 il ve 973 ilçe (data/ililce.json; PTT posta kodu listesinden, turkey-neighbourhoods paketi, MIT).
+// Türkçe harf gerekmez ("cine" → Çine · Aydın); internete sorulmaz, yazdıkça anında süzülür.
+let IL = null;
+const sadeT = (t) => String(t).toLocaleLowerCase("tr").replace(/[çğıöşüâî]/g, (h) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i" })[h]);
+function ilYukle() { if (!IL) IL = Ortak.json("data/ililce.json").then((j) => Object.entries(j).flatMap(([il, ic]) => [{ il, ilce: "", s: sadeT(il) }, ...ic.map((c) => ({ il, ilce: c, s: sadeT(c) }))])).catch(() => []); return IL; }
+let YON = [];
+async function yerOner() {
+  const kutu = $("yOner"), q = sadeT(($("yYaz") || {}).value || "").trim(); if (!kutu) return;
+  if (q.length < 2) { kutu.innerHTML = ""; YON = []; return; }
+  const L = await ilYukle();
+  if (sadeT($("yYaz").value).trim() !== q) return; // bu arada yazı değiştiyse eski sonucu basma
+  YON = L.map((x) => ({ ...x, p: x.s.startsWith(q) ? 0 : x.s.includes(q) ? 1 : sadeT(x.il).startsWith(q) && x.ilce ? 2 : 9 })).filter((x) => x.p < 9)
+    .sort((a, b) => a.p - b.p || (a.ilce ? 1 : 0) - (b.ilce ? 1 : 0) || a.s.localeCompare(b.s)).slice(0, 8);
+  kutu.innerHTML = YON.length ? YON.map((x, k) => `<button type="button" data-on="${k}"><b>${esc(x.ilce || x.il)}</b><small>${x.ilce ? esc(x.il) : "il geneli"}</small></button>`).join("")
+    : `<small>Eşleşen il ya da ilçe yok; "Ara" ile yazdığın gibi aranır.</small>`;
 }
 function yerelKonum() {
   if (!navigator.geolocation) { yNot = "Bu tarayıcı konum vermiyor; il / ilçe yazabilirsin."; render(); return; }
@@ -349,6 +369,7 @@ function render() {
 }
 $("alert").onclick = (e) => {
   if (e.target.closest("#yKonum")) { yerelKonum(); return; }
+  const on = e.target.closest("[data-on]"); if (on) { const x = YON[+on.dataset.on]; YON = []; if (x) yerSec({ il: x.il, ilce: x.ilce }); return; }
   const su = e.target.closest("[data-sure]"); if (su) { YS.sure = su.dataset.sure; ySakla(); render(); return; }
   if (e.target.closest("#ySil")) { YS = { ...YS, il: "", ilce: "", elle: "", konum: false }; ySakla(); render(); return; }
   const sb = e.target.closest("[data-son]"); if (sb) { const ad = yerAd(), x = YS.son.filter((y) => y.ad !== ad)[+sb.dataset.son]; if (x) yerSec(x); return; }
@@ -361,9 +382,12 @@ $("alert").onclick = (e) => {
 };
 $("cats").onclick = (e) => { const c = e.target.closest(".chip"); if (!c) return; cat = c.dataset.k; story = null; $("src").value = ""; try { localStorage.setItem("haber_cat", cat); } catch (er) {} render(); window.scrollTo(0, 0); };
 $("src").onchange = render;
+$("alert").addEventListener("input", (e) => { if (e.target.id === "yYaz") yerOner(); });
+$("alert").addEventListener("focusin", (e) => { if (e.target.id === "yYaz") ilYukle(); });
 $("alert").addEventListener("submit", (e) => {
   if (e.target.id !== "yForm") return; e.preventDefault();
   const t = $("yYaz").value.trim(); if (!t) return;
+  if (YON.length) { const x = YON[0]; YON = []; yerSec({ il: x.il, ilce: x.ilce }); return; } // önerilerden ilki
   yerSec({ elle: t });
 });
 $("q").addEventListener("input", render);
