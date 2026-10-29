@@ -57,12 +57,14 @@
   .yerUst small { flex: none; } .yerUst button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: rgba(255,255,255,.08); color: var(--c2); cursor: pointer; }
   .sure { display: grid; grid-template-columns: repeat(3, 1fr); padding: 3px; border-radius: 12px; background: var(--k2); }
   .sure button { min-height: 38px; border: 0; border-radius: 10px; background: transparent; color: #c9a88c; font-size: 14px; font-weight: 600; cursor: pointer; }
-  .sure button.on { background: #3a1f0c; color: var(--c2); }
+  .sure button.on { background: var(--c); color: #1a0d04; font-weight: 800; }
   .tum { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 58px; border-radius: 12px; background: var(--c); color: #1a0d04; font-size: 16px; font-weight: 800; text-decoration: none; }
   .tum small { font-size: 12px; font-weight: 700; color: #4a2410; }
   .kBas { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .kSure { flex: none; min-height: 32px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--c); background: #2c1608; color: var(--c2); font-size: 12.5px; font-weight: 700; cursor: pointer; }
   .ipucu { color: #a5876f; margin: 0 2px; }
+  .donem { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 12px; background: rgba(240, 151, 90, .12); border: 1px solid rgba(240, 151, 90, .4); color: var(--c2); font-size: 13px; line-height: 1.35; }
+  .donem b { color: #fff; }
   .konular { display: flex; flex-direction: column; gap: 12px; }
   .grpB { display: flex; align-items: center; gap: 8px; margin: 0 2px 6px; font-size: 11.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--g); }
   .grpB::after { content: ""; flex: 1; height: 1px; background: color-mix(in srgb, var(--g) 30%, transparent); }
@@ -110,6 +112,7 @@
 
     <section class="kart" aria-label="Konular" style="margin-top:14px">
       <div class="kBas"><h2>Konular <small>başlığında yer ve konu geçen haberler</small></h2><button type="button" id="kSure" class="kSure" aria-label="Süreyi değiştir"></button></div>
+      <div class="donem" id="donem"></div>
       <div id="konular" class="konular"></div>
       <small class="ipucu">Liste boş gelirse o sürede o konuda haber çıkmamış demektir; süreyi uzatabilirsin.</small>
     </section>
@@ -140,13 +143,15 @@ const ilEk = (ad) => { const k = ad.toLocaleLowerCase("tr"), v = (k.match(/[aeı
 
 // Bir banka müdürünün bölgesinde bilmek isteyeceği konular, dört grupta: [grup, renk, [[simge, ad, Google Haberler'de aranacak kelimeler]]]
 // Kelimeler başka anlama kaymasın diye seçildi: "çiftçi" yerine "çiftçiler" (Bakan Çiftçi); "dolu" ("coşku dolu"), "fırtına" ("fırtına gibi"),
-// "otel" (otel odasında yakalandı), "sağanak" (hava tahminleri), "sezon", "birincilik", "zirve" çıkarıldı. Az sonuç olunca Google tırnaklı ifadeyi ilk kelimesine gevşetiyor ("yeni başkan" → YENİ Parti,
-// "son yolculuğuna" → "son", "organize sanayi" → "organize suç"); bu yüzden ifadeler ayırt edici bir kelimeyle başlar.
+// "otel" (otel odasında yakalandı), "sağanak" (hava tahminleri), "sezon", "birincilik", "zirve" çıkarıldı. Google ~32 kelimeyi aşan sorgunun
+// sonunu kesiyor; kesilen ifade ilk kelimesine düşüyordu ("yeni başkan" → YENİ Parti). Bu yüzden her konu en fazla Atama kadar uzun
+// (en uzun yer kalıbıyla, Efeler + Aydın, denendi) ve ifadeler ayırt edici bir kelimeyle başlar ("organize sanayi" → "organize suç" olmasın).
 const GRUP = [
   ["İnsanlar", "#b48cf0", [
-    ["👔", "Atama", 'atandı OR atama OR "göreve başladı" OR "görevine başladı" OR "göreve getirildi" OR "başkanlığına seçildi" OR "müdürlüğüne atandı"'],
+    ["👔", "Atama", 'atandı OR atama OR "göreve başladı" OR "görevine başladı" OR "göreve getirildi" OR "başkanlığına seçildi"'],
     ["🕊️", "Vefat", 'vefat OR "cenaze töreni" OR "yolculuğuna uğurlandı" OR "toprağa verildi"'],
     ["🏆", "Ödül & başarı", '"ödül aldı" OR "ödülünü aldı" OR "ödülüne layık" OR "ödülü verildi"'],
+    ["🗳️", "Kongre & seçim", '"güven tazeledi" OR "yeniden seçildi" OR "başkanı seçildi" OR "genel kurulu"'],
   ]],
   ["İş dünyası", "#3fc283", [
     ["🏭", "Organize sanayi", 'OSB OR "sanayi bölgesi"'],
@@ -154,22 +159,23 @@ const GRUP = [
     ["🚢", "İhracat & ticaret", 'ihracat OR ithalat OR ihracatçı OR ihracatçılar'],
     ["💳", "Maaş promosyonu", 'promosyon OR promosyonu OR "promosyon anlaşması" OR "promosyon ihalesi"'],
     ["🏪", "Açılış", '"açılış töreni" OR "hizmete açıldı" OR "hizmete girdi" OR "açılışı yapıldı" OR "açılışını yaptı"'],
-    ["💼", "İstihdam", 'istihdam OR İŞKUR OR "kariyer fuarı" OR "işçi alımı"'],
+    ["⚖️", "Konkordato & iflas", 'konkordato OR iflas OR "icradan satılık"'],
   ]],
   ["Kamu & şehir", "#5aa9f0", [
     ["🏛️", "Belediye & ihale", 'belediye OR ihale OR "meclis kararı" OR altyapı'],
     ["🏗️", "İnşaat & konut", '"konut projesi" OR "kentsel dönüşüm" OR imar OR TOKİ OR "temeli atıldı"'],
     ["🤝", "Oda & borsa", '"ticaret odası" OR "ticaret borsası" OR "esnaf odası" OR "sanayi odası"'],
+    ["💼", "İstihdam", 'istihdam OR İŞKUR OR "kariyer fuarı" OR "işçi alımı"'],
   ]],
   ["Bölge hayatı", "#f0c64a", [
-    ["🌾", "Tarım", 'hasat OR hasadı OR rekolte OR çiftçiler OR çiftçilere OR tarımsal OR "zirai don"'],
+    ["🌾", "Tarım", 'hasat OR hasadı OR rekolte OR çiftçiler OR tarımsal OR "zirai don"'],
     ["🏨", "Turizm", 'turizm OR turist OR turistler OR "turizm sezonu" OR "doluluk oranı"'],
     ["🎪", "Fuar & etkinlik", 'fuar OR festival OR şenlik OR panel OR sempozyum'],
     ["⚠️", "Afet & kesinti", 'sel OR deprem OR kesintisi OR heyelan OR hortum OR "orman yangını"'],
   ]],
 ];
 
-let S = { il: "", ilce: "", elle: "", konum: false, son: [], sure: "7d" }, IL = null, ILMAP = null, ON = [];
+let S = { il: "", ilce: "", elle: "", konum: false, son: [], sure: "30d" }, IL = null, ILMAP = null, ON = [];
 try { const v = JSON.parse(localStorage.getItem("bolgem") || localStorage.getItem("haber_yerel2") || "null"); if (v && typeof v === "object") S = { ...S, ...v }; } catch (e) {}
 if (!Array.isArray(S.son)) S.son = [];
 const sakla = () => { try { localStorage.setItem("bolgem", JSON.stringify(S)); } catch (e) {} };
@@ -184,7 +190,7 @@ const yerHarita = () => S.elle || [S.ilce, S.il].filter(Boolean).join(" ");
 // - Eksi işareti (-lig) süreyi bozuyor, 32 kelimeyi aşan sorgu gevşiyor; ikisi de kullanılmaz.
 // - Başka bir kelime, kişi, kulüp ya da başka ilin ilçesi olan adlarda (Çay, Kale, Pazar, Güney, Efeler, Beşiktaş…) il adı da başlıkta aranır.
 const SURE = { "1d": "Son 24 saat", "7d": "Son 7 gün", "30d": "Son 30 gün" };
-if (!SURE[S.sure]) S.sure = "7d";
+if (!SURE[S.sure]) S.sure = "30d";
 const AYNI = new Set(("Aladağ,Çukurova,İmamoğlu,Karataş,Seyhan,Ceyhan,Dinar,Hamur,Güzelyurt,Bala,Çubuk,Evren,Kalecik,Yenimahalle,Kepez,Elmalı,Gazipaşa,"
   + "Efeler,Köşk,Bozdoğan,Marmara,Karesi,Ulus,Söğüt,Genç,Bucak,Nilüfer,Osmangazi,Yıldırım,Orta,Eldivan,Kızılırmak,Çerkeş,Alaca,Kargı,Laçin,"
   + "Güney,Çardak,Babadağ,Bağlar,Çınar,Dicle,Eğil,Hani,Kulp,Meriç,Maden,Keban,Olur,Horasan,Aziziye,İnönü,Köse,Belen,Defne,Aralık,Atabey,"
@@ -205,7 +211,10 @@ function yerSorgu() {
   return `intitle:"${deEk(il)}"`;
 }
 const baslikta = (ek) => ek.split(" OR ").map((t) => "intitle:" + t.trim()).join(" OR ");
-const sorgu = (ek) => yerSorgu() + (ek ? " (" + baslikta(ek) + ")" : "") + " when:" + S.sure;
+// Süre başta: Google uzun sorgunun sonunu kesiyor; "when:" sonda kalınca uzun Atama aramasında 7 gün seçiliyken Ağustos haberleri geliyordu
+const sorgu = (ek) => "when:" + S.sure + " " + yerSorgu() + (ek ? " (" + baslikta(ek) + ")" : "");
+const gunAd = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+const donem = () => { const b = new Date(), a = new Date(b - { "1d": 1, "7d": 7, "30d": 30 }[S.sure] * 864e5); return gunAd(a) + " – " + gunAd(b); };
 const gn = (ek) => `https://news.google.com/search?q=${encodeURIComponent(sorgu(ek))}&hl=tr&gl=TR&ceid=TR:tr`;
 const gm = (ne) => `https://www.google.com/maps/search/${encodeURIComponent(ne + " " + yerHarita())}`;
 
@@ -231,8 +240,9 @@ function ciz() {
   document.querySelectorAll("[data-sure]").forEach((b) => b.classList.toggle("on", b.dataset.sure === S.sure));
   $("tum").href = gn("");
   const sureAd = SURE[S.sure];
-  $("tum").innerHTML = `Bölgenin tüm haberleri ↗<small>${sureAd}</small>`;
+  $("tum").innerHTML = `Bölgenin tüm haberleri ↗<small>${sureAd} · ${donem()}</small>`;
   $("kSure").textContent = "⏱ " + sureAd;
+  $("donem").innerHTML = `📅 <span><b>${donem()}</b> arası haberler</span>`;
   $("konular").innerHTML = GRUP.map(([g, renk, L]) => `<div class="grp" style="--g:${renk}"><div class="grpB">${esc(g)}</div><div class="izgara">${L.map(([ic, n, q]) => `<a href="${esc(gn(q))}" target="_blank" rel="noopener"><span class="ik">${ic}</span><span class="ad">${esc(n)}</span><span class="ok">↗</span></a>`).join("")}</div></div>`).join("");
   $("harita").innerHTML = [
     ["🏦", "İş Bankası şubeleri", "adres, çalışma saatleri, puanlar ve yorumlar", "Türkiye İş Bankası"],
