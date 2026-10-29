@@ -20,16 +20,17 @@ KAYNAK = [
   ["hurriyet", "Hürriyet", "hurriyet.com.tr", "https://www.hurriyet.com.tr/haberleri/{il}", "https://www.hurriyet.com.tr/{il}/{ilce}-haberleri/"],
   ["ntv", "NTV", "ntv.com.tr", "https://www.ntv.com.tr/{il}", "https://www.ntv.com.tr/haberleri/{il}-{ilce}"],
 ]
-# Yerler: [kısa ad (adresteki yazım), görünen ad, arama]. Arama, adı başka anlama da gelen yerlerde daraltılır
-# ("Aydın" bir soyadı, "Köşk" bir yapı, "Yenipazar" Bilecik'te de bir ilçe).
-IL = ["aydin", "Aydın", "Aydın'da OR Aydın'ın OR Aydınlı OR \"Aydın Büyükşehir\" OR \"Aydın Valisi\" OR \"Aydın Valiliği\""]
+# Yerler: [kısa ad (adresteki yazım), görünen ad, başlıkta aranacak biçim (düzenli ifade, küçük harf)].
+# Arama BAŞLIKTA yapılır: gazetelerin her haber sayfasının menüsünde bütün ilçe adları yazdığı için metinde arama alakasız haber getiriyor.
+# Adı başka anlama da gelen yerler daraltılır ("Aydın" bir soyadı, "Köşk" Çankaya Köşkü de olabilir, "Yenipazar" Bilecik'te de var).
+IL = ["aydin", "Aydın", r"aydın['’]|aydınlı|aydın büyükşehir|aydın valil|aydın valisi|aydın il "]
 ILCE = [
-  ["bozdogan", "Bozdoğan", "Bozdoğan"], ["buharkent", "Buharkent", "Buharkent"], ["cine", "Çine", "Çine"],
-  ["didim", "Didim", "Didim"], ["efeler", "Efeler", "Efeler"], ["germencik", "Germencik", "Germencik"],
-  ["incirliova", "İncirliova", "İncirliova"], ["karacasu", "Karacasu", "Karacasu"], ["karpuzlu", "Karpuzlu", "Karpuzlu"],
-  ["kocarli", "Koçarlı", "Koçarlı"], ["kosk", "Köşk", "\"Köşk Belediye\" OR Köşk'te OR Köşk'ün OR \"Köşk ilçe\""],
-  ["kusadasi", "Kuşadası", "Kuşadası"], ["kuyucak", "Kuyucak", "Kuyucak"], ["nazilli", "Nazilli", "Nazilli"],
-  ["soke", "Söke", "Söke"], ["sultanhisar", "Sultanhisar", "Sultanhisar"], ["yenipazar", "Yenipazar", "Yenipazar Aydın"],
+  ["bozdogan", "Bozdoğan", r"bozdoğan"], ["buharkent", "Buharkent", r"buharkent"], ["cine", "Çine", r"\bçine"],
+  ["didim", "Didim", r"didim"], ["efeler", "Efeler", r"efeler['’ ]"], ["germencik", "Germencik", r"germencik"],
+  ["incirliova", "İncirliova", r"incirliova"], ["karacasu", "Karacasu", r"karacasu"], ["karpuzlu", "Karpuzlu", r"karpuzlu"],
+  ["kocarli", "Koçarlı", r"koçarlı"], ["kosk", "Köşk", r"köşk['’](?:te|de|ün|e)|köşk belediye|köşk ilçe"],
+  ["kusadasi", "Kuşadası", r"kuşadası"], ["kuyucak", "Kuyucak", r"kuyucak"], ["nazilli", "Nazilli", r"nazilli"],
+  ["soke", "Söke", r"\bsöke"], ["sultanhisar", "Sultanhisar", r"sultanhisar"], ["yenipazar", "Yenipazar", r"yenipazar(?!.*bilecik)"],
 ]
 # İş Bankası hakkında olumsuz başlıklar burada da gösterilmez (scripts/haberler.py ile aynı kural)
 ISB_RE = re.compile(r"iş ?bankası|işbank|isbank|işcep|iscep|isctr|maximiles|maxipuan|maximum kart", re.I)
@@ -37,8 +38,12 @@ ISB_OLUMSUZ = re.compile(r"protesto|eylem|grev|sendika|dava|mahkeme|ceza|soruşt
                          r"hack|siber saldırı|sızıntı|çöktü|arıza|kesinti(?!siz)|tepki|rüşvet|usulsüz|zimmet|haciz|icra|tazminat|işten çıkar|kriz|ihlal|suç", re.I)
 low = lambda t: t.replace("İ", "i").replace("I", "ı").lower()
 
-def ara(sorgu, alan):
-    q = f"({sorgu}) site:{alan} when:{GUN}d"
+# Gazetelerin başlığa eklediği bölüm adları ("Aydın Haberleri - … - Yerel Haberler", "… - Gündem Haberleri") atılır
+ON_EK = re.compile(r"^[^-–]{2,40}Haberleri\s+[-–]\s+")
+SON_EK = re.compile(r"\s+[-–]\s+[^-–]{2,40}Haber(?:ler(?:i)?)?\s*$")
+
+def ara(ad, alan):
+    q = f"intitle:\"{ad}\" site:{alan} when:{GUN}d"
     url = "https://news.google.com/rss/search?q=" + urllib.parse.quote(q) + "&hl=tr&gl=TR&ceid=TR:tr"
     raw = urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=20).read()
     out = []
@@ -49,6 +54,7 @@ def ara(sorgu, alan):
         u = (it.findtext("link") or "").strip()
         try: d = parsedate_to_datetime(it.findtext("pubDate")).astimezone(dt.timezone.utc)
         except Exception: d = None
+        t = SON_EK.sub("", ON_EK.sub("", t)).strip()
         if not t or not u.startswith("http") or (d and NOW - d > dt.timedelta(days=GUN)): continue
         if ISB_RE.search(low(t)) and ISB_OLUMSUZ.search(low(t)): continue
         out.append({"t": t[:200], "u": u, "d": d.strftime("%Y-%m-%dT%H:%M:%SZ") if d else None})
@@ -57,7 +63,7 @@ def ara(sorgu, alan):
 def is_(args):
     yer, kay = args
     for den in range(2):
-        try: return yer[0], kay[0], ara(yer[2], kay[2]), None
+        try: return yer[0], kay[0], [x for x in ara(yer[1], kay[2]) if re.search(yer[2], low(x["t"]))], None
         except Exception as e: err = str(e)[:80]; time.sleep(3)
     return yer[0], kay[0], [], err
 
@@ -80,6 +86,13 @@ for yk, kk, items, err in sonuc:
         gor.add(k); temiz.append(x)
     haber.setdefault(yk, {})[kk] = temiz[:10]
     say += len(temiz[:10])
+# Aydın geneli: başlığında Aydın geçenler + bütün ilçelerin haberleri, kaynak başına en yeni 15
+for kk, *_ in KAYNAK:
+    hepsi, gor = [], set()
+    for yk in [IL[0]] + [c[0] for c in ILCE]:
+        for x in haber.get(yk, {}).get(kk, []):
+            if x["u"] not in gor: gor.add(x["u"]); hepsi.append(x)
+    haber[IL[0]][kk] = sorted(hepsi, key=lambda x: x["d"] or "", reverse=True)[:15]
 print(f"Yerel: {len(yerler)} yer × {len(KAYNAK)} kaynak, {say} başlık, {hata} arama alınamadı")
 if hata > len(sonuc) // 2 and eski: raise SystemExit("::error::Aramaların yarısından çoğu alınamadı; dosya değiştirilmedi")
 os.makedirs("data", exist_ok=True)
