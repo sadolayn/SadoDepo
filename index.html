@@ -937,7 +937,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 // Bölgem'de son bakılan yer varsa satırın açıklamasında görünür (yalnızca bu cihazdaki seçim)
 (function () {
   try {
-    var y = JSON.parse(localStorage.getItem("bolgem") || localStorage.getItem("haber_yerel2") || "null"), ad = y && (y.elle || [y.ilce, y.il].filter(Boolean).join(", "));
+    var y = JSON.parse(localStorage.getItem("bolgem") || localStorage.getItem("haber_yerel2") || "null"), ad = y && [y.elle || y.ilce, y.il].filter(Boolean).join(", ");
     var d = document.getElementById("bolgemD"); if (!ad || !d) return;
     d.textContent = ""; var b = document.createElement("b"); b.style.color = "#ffdcc4"; b.textContent = ad;
     d.appendChild(b); d.appendChild(document.createTextNode(" · atama, vefat, yatırım, konkordato ve bölgedeki bankalar"));

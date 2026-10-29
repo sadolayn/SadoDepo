@@ -193,8 +193,9 @@ let S = { il: "", ilce: "", elle: "", konum: false, son: [], sure: "30d" }, IL =
 try { const v = JSON.parse(localStorage.getItem("bolgem") || localStorage.getItem("haber_yerel2") || "null"); if (v && typeof v === "object") S = { ...S, ...v }; } catch (e) {}
 if (!Array.isArray(S.son)) S.son = [];
 const sakla = () => { try { localStorage.setItem("bolgem", JSON.stringify(S)); } catch (e) {} };
-const yerAd = () => S.elle || [S.ilce, S.il].filter(Boolean).join(", ");
-const yerHarita = () => S.elle || [S.ilce, S.il].filter(Boolean).join(" ");
+// Semt de yazılabilir: "Hatay İzmir" → elle: Hatay, il: İzmir (İzmir'deki Hatay semti, Hatay ili değil)
+const yerAd = () => [S.elle || S.ilce, S.il].filter(Boolean).join(", ");
+const yerHarita = () => [S.elle || S.ilce, S.il].filter(Boolean).join(" ");
 // Google Haberler sorgusu: yer de konu da BAŞLIKTA aranır (intitle:). Ekim 2026 denemelerinde görülenler:
 // - Yer metinde aranınca site menüsünde ya da kaynak adında geçen ilçe ("… - Aydın Ses Gazetesi") başka yerin haberini getiriyordu.
 // - Google konu kelimesini bulamayınca onu atıp yalnızca yere uyan haberleri gösteriyordu; başlık şartıyla ya ilgili haber gelir ya da liste boş kalır.
@@ -219,7 +220,7 @@ const kucuk = (t) => String(t).toLocaleLowerCase("tr");
 const deEk = (ad) => { const k = kucuk(ad), v = (k.match(/[aeıioöuü]/g) || ["e"]).pop(); return ad + "'" + (/[çfhkpsşt]$/.test(k) ? "t" : "d") + (/[aıou]/.test(v) ? "a" : "e"); };
 const belirsiz = (c) => c.length <= 3 || AYNI.has(c) || (!!ILMAP && Object.values(ILMAP).filter((L) => L.includes(c)).length > 1);
 function yerSorgu() {
-  if (S.elle) return `intitle:"${S.elle.replace(/"/g, "")}"`;
+  if (S.elle) { const e = S.elle.replace(/"/g, ""); return !S.il ? `intitle:"${e}"` : belirsiz(e) || (ILMAP && ILMAP[e]) ? `intitle:"${e}" intitle:"${S.il}"` : `intitle:"${e}" ${S.il}`; }
   const il = S.il, ilce = S.ilce === "Merkez" ? "" : S.ilce;
   if (ilce) return belirsiz(ilce) ? `intitle:"${ilce}" intitle:"${il}"` : `intitle:"${ilce}" ${il}`;
   return `intitle:"${deEk(il)}"`;
@@ -231,7 +232,8 @@ const gunAd = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "lon
 const donem = () => { const b = new Date(), a = new Date(b - { "1d": 1, "7d": 7, "30d": 30 }[S.sure] * 864e5); return gunAd(a) + " – " + gunAd(b); };
 const gn = (ek) => `https://news.google.com/search?q=${encodeURIComponent(sorgu(ek))}&hl=tr&gl=TR&ceid=TR:tr`;
 // Kurum adı yerin ardından: "Nazilli Kaymakamlığı Aydın", "Aydın Valiliği"
-const gmK = (ne) => `https://www.google.com/maps/search/${encodeURIComponent(S.elle ? S.elle + " " + ne : S.ilce && S.ilce !== "Merkez" ? `${S.ilce} ${ne} ${S.il}` : `${S.il} ${ne}`)}`;
+// Semtte kaymakamlık yok: valilik il adıyla aranır ("İzmir Valiliği"), diğer kurumlar semt + il ("Hatay Vergi Dairesi İzmir")
+const gmK = (ne) => { const y = S.elle || (S.ilce !== "Merkez" && S.ilce); return `https://www.google.com/maps/search/${encodeURIComponent(!S.il ? S.elle + " " + ne : y && ne !== "Valiliği" ? `${y} ${ne} ${S.il}` : `${S.il} ${ne}`)}`; };
 const gm = (ne) => `https://www.google.com/maps/search/${encodeURIComponent(ne + " " + yerHarita())}`;
 
 function sec(y) {
@@ -282,11 +284,12 @@ function ciz() {
     ["🚜", "Tarım müdürlüğü", "Tarım ve Orman Müdürlüğü"],
   ].map(([ic, n, q]) => `<a href="${esc(gmK(q))}" target="_blank" rel="noopener"><span class="ik">${ic}</span><span class="ad">${esc(n)}</span><span class="ok">📞</span></a>`).join("");
   // Aynı ildeki diğer ilçeler
-  const L = !S.elle && S.il && ILMAP ? (ILMAP[S.il] || []).filter((c) => c !== S.ilce).sort((a, b) => a.localeCompare(b, "tr")) : [];
+  const L = S.il && ILMAP ? (ILMAP[S.il] || []).filter((c) => c !== S.ilce).sort((a, b) => a.localeCompare(b, "tr")) : [];
   $("komsuK").hidden = !L.length;
   if (L.length) {
     $("komsuB").textContent = `${S.il}'${ilEk(S.il)} ${S.ilce ? "diğer " : ""}ilçeleri`;
-    $("komsu").innerHTML = (S.ilce ? `<button type="button" data-kom="">${esc(S.il)} geneli</button>` : "") + L.map((c) => `<button type="button" data-kom="${esc(c)}">${esc(c)}</button>`).join("");
+    const ust = S.ilce || S.elle;
+    $("komsu").innerHTML = (ust ? `<button type="button" data-kom="">${esc(S.il)} geneli</button>` : "") + L.map((c) => `<button type="button" data-kom="${esc(c)}">${esc(c)}</button>`).join("");
   }
 }
 
@@ -310,8 +313,13 @@ async function oner() {
 function coz(t, L) {
   const q = " " + sade(t).replace(/[^a-z0-9]+/g, " ").trim() + " ", var_ = (s) => q.includes(" " + s + " ");
   const ic = L.filter((x) => x.ilce && var_(x.s)), il = L.filter((x) => !x.ilce && var_(x.s));
-  const x = ic.find((c) => il.some((i) => i.il === c.il)) || (ic.length === 1 ? ic[0] : null) || il[0];
-  return x ? { il: x.il, ilce: x.ilce } : null;
+  const x = ic.find((c) => il.some((i) => i.il === c.il)) || (ic.length === 1 ? ic[0] : null);
+  if (x) return { il: x.il, ilce: x.ilce };
+  if (!il.length) return null;
+  // İl adının yanında kalan kelimeler o ildeki bir semttir; iki il adı varsa sondaki il sayılır ("Hatay İzmir" → İzmir'deki Hatay)
+  const k = t.trim().split(/[\s,]+/), j = k.map((w) => sade(w)).findLastIndex((w) => il.some((i) => i.s === w));
+  const y = il.find((i) => i.s === sade(k[j])), elle = k.filter((w, n) => n !== j).join(" ");
+  return elle ? { il: y.il, elle } : { il: y.il };
 }
 
 function konumBul() {
