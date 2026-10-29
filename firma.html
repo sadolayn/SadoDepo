@@ -197,7 +197,7 @@ kay.addEventListener("change", () => { ara.value = ""; ciz(); if (kay.value) doc
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) { ara.placeholder = "Ara: " + ORN.slice(0, 4).join(", ") + "…"; return; }
   let i = 0, n = 0, sil = false, bekle = 0;
   setInterval(() => {
-    if (document.activeElement === ara || ara.value) { ara.placeholder = "Ne arıyorsun?"; return; }
+    if (document.activeElement === ara || ara.value) { ara.placeholder = "Ne arıyorsun? ör. konkordato"; return; }
     if (bekle) { bekle--; return; }
     const w = ORN[i];
     n += sil ? -1 : 1;
