@@ -2038,8 +2038,9 @@ async function sfLoad() {
   if (!SF.place || !$("sfbody")) return;
   const { lat, lon } = SF.place, ll = `${(+lat).toFixed(5)},${(+lon).toFixed(5)}`, pn = sfPn();
   $("sfpl").innerHTML = `📍 <b>${esc(SF.place.name)}</b>`;
-  // Bölge haberleri: ziyaret öncesi o yerde ne olmuş (Google Haberler; "Bornova, İzmir" → "Bornova" İzmir)
-  const pp = pn && pn !== "Bulunduğun yer" ? pn.split(",").map((x) => x.trim()).filter(Boolean) : [], hq = pp.length ? `"${pp[0]}"${pp[1] ? " " + pp[1] : ""}` : "";
+  // Bölge haberleri: ziyaret öncesi o yerde ne olmuş (Google Haberler; "Bornova, İzmir" → intitle:"Bornova" İzmir).
+  // Yer adı başlıkta aranır; metinde aranınca site menüsünde ya da kaynak adında geçen ilçe başka yerin haberini getiriyordu (Bölgem'deki denemeler)
+  const pp = pn && pn !== "Bulunduğun yer" ? pn.split(",").map((x) => x.trim()).filter(Boolean) : [], hq = pp.length ? `intitle:"${pp[0]}"${pp[1] ? " " + pp[1] : ""}` : "";
   const gq = "Türkiye İş Bankası" + (SF.atm ? " bankamatik" : "") + (pn && pn !== "Bulunduğun yer" ? " " + pn : "");
   const z = SF.r <= 1000 ? 15 : SF.r <= 3000 ? 13 : SF.r <= 5000 ? 12 : 11; // harita seçilen mesafeyi kapsasın
   const gUrl = `https://www.google.com/maps/search/${encodeURIComponent(gq)}/@${ll},${z}z`;
