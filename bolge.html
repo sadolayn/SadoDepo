@@ -157,6 +157,7 @@ const ilEk = (ad) => { const k = ad.toLocaleLowerCase("tr"), v = (k.match(/[aeı
 // sonunu kesiyor; kesilen ifade ilk kelimesine düşüyordu ("yeni başkan" → YENİ Parti). Bu yüzden her konu en fazla Atama kadar uzun
 // (en uzun yer kalıbıyla, Efeler + Aydın, denendi) ve ifadeler ayırt edici bir kelimeyle başlar ("organize sanayi" → "organize suç" olmasın).
 // Trafik kazası (Ekim 2026): bölgedeki yol kapanmaları, müşteri ya da çalışanı etkileyen kazalar için; "kazası" iş kazalarını da getirir.
+// Afet & kesinti "ulaşıma kapandı"yı da arar (kar, sel, heyelan, yol çalışması); ayrı Yol & ulaşım düğmesi küçük ilçelerde boş kalırdı. Sorgu Atama kadar uzun.
 // Dolandırıcılık: bölgede yayılan yöntemleri (sahte polis, telefon dolandırıcılığı) önceden bilmek için.
 const GRUP = [
   ["İnsanlar", "#b48cf0", [
@@ -183,7 +184,7 @@ const GRUP = [
     ["🌾", "Tarım", 'hasat OR hasadı OR rekolte OR çiftçiler OR tarımsal OR "zirai don"'],
     ["🏨", "Turizm", 'turizm OR turist OR turistler OR "turizm sezonu" OR "doluluk oranı"'],
     ["🎪", "Fuar & etkinlik", 'fuar OR festival OR şenlik OR panel OR sempozyum'],
-    ["⚠️", "Afet & kesinti", 'sel OR deprem OR kesintisi OR heyelan OR hortum OR "orman yangını"'],
+    ["⚠️", "Afet & kesinti", 'sel OR deprem OR kesintisi OR heyelan OR hortum OR "orman yangını" OR "ulaşıma kapandı"'],
     ["🚗", "Trafik kazası", 'kaza OR kazada OR kazası OR "zincirleme kaza" OR devrildi'],
     ["🚨", "Dolandırıcılık", 'dolandırıcılık OR dolandırıcı OR dolandırıcılar OR dolandırıldı OR "sahte polis"'],
   ]],
