@@ -35,7 +35,8 @@
   button, input { font: inherit; }
   .konum { width: 100%; min-height: 48px; border-radius: 12px; border: 0; background: var(--c); color: #1a0d04; font-size: 15px; font-weight: 700; cursor: pointer; }
   .konum.ikinci { background: transparent; border: 1px solid var(--c); color: var(--c2); }
-  .ara { display: flex; gap: 6px; }
+  .ara { display: flex; gap: 6px; scroll-margin-top: 10px; }
+  body.yaziyor { padding-bottom: 75vh; } /* sayfa kısa olsa da kutu yukarı kayabilsin */
   /* Arama kutusu turuncu şeritle belirgin; yönlendirme cümlesi kutunun içinde, altında yazma alanı */
   .kutu { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding: 8px 14px 6px; border-radius: 12px; border: 2px solid var(--c); background: var(--field); box-shadow: 0 0 0 3px rgba(240, 151, 90, .14); cursor: text; }
   .kutu:focus-within { box-shadow: 0 0 0 4px rgba(240, 151, 90, .32); }
@@ -99,9 +100,9 @@
   <p class="giris">Bulunduğun ya da sorumlu olduğun il / ilçede <b>neler oluyor</b>: atamalar, vefatlar, yatırımlar, açılışlar… Haberleri ve kaynakları Google gösterir; bu sayfa haber derlemez.</p>
 
   <section class="kart" aria-label="Yer seç">
-    <button type="button" id="konum" class="konum">📍 Konumumu bul</button>
     <form id="form" class="ara"><label class="kutu" for="yaz"><span class="yazNot">İl / ilçe yaz ya da bakmak istediğin konumu yazabilirsin</span><input id="yaz" type="search" enterkeyhint="search" placeholder="ör. İncirliova" autocomplete="off"></label><button type="submit">Ara</button></form>
     <div class="oner" id="oner"></div>
+    <button type="button" id="konum" class="konum">📍 Konum bul</button>
     <small class="not" id="not" hidden></small>
     <div id="son" hidden><div class="sonBas"><small>Son baktıkların</small><button type="button" id="sonHepsi">Tümünü temizle</button></div><div class="cipler" id="sonL"></div></div>
   </section>
@@ -232,7 +233,7 @@ const mesaj = (t) => { $("not").textContent = t; $("not").hidden = !t; };
 
 function ciz() {
   const ad = yerAd();
-  $("konum").textContent = "📍 " + (S.konum && ad ? "Konumumu yenile" : "Konumumu bul");
+  $("konum").textContent = "📍 Konum bul";
   $("konum").classList.toggle("ikinci", !!ad);
   const son = S.son.filter((x) => x.ad !== ad);
   $("son").hidden = !son.length;
@@ -302,6 +303,9 @@ function konumBul() {
 $("konum").onclick = konumBul;
 $("yaz").addEventListener("input", oner);
 $("yaz").addEventListener("focus", ilYukle);
+// Yazarken öneriler klavyenin altında kalmasın: kutu ekranın üstüne kayar
+$("yaz").addEventListener("focus", () => { document.body.classList.add("yaziyor"); setTimeout(() => $("form").scrollIntoView({ block: "start", behavior: "smooth" }), 250); });
+$("yaz").addEventListener("blur", () => setTimeout(() => { if (document.activeElement !== $("yaz")) document.body.classList.remove("yaziyor"); }, 400));
 $("form").onsubmit = async (e) => {
   e.preventDefault();
   const t = $("yaz").value.trim(); if (!t) return;
