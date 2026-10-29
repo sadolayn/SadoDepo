@@ -38,11 +38,11 @@
   .ara { display: flex; gap: 6px; scroll-margin-top: 10px; }
   body.yaziyor { padding-bottom: 75vh; } /* sayfa kısa olsa da kutu yukarı kayabilsin */
   /* Arama kutusu turuncu şeritle belirgin; yönlendirme cümlesi kutunun içinde, altında yazma alanı */
-  .kutu { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding: 8px 14px 6px; border-radius: 12px; border: 2px solid var(--c); background: var(--field); box-shadow: 0 0 0 3px rgba(240, 151, 90, .14); cursor: text; }
+  .kutu { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; border: 2px solid var(--c); background: var(--field); box-shadow: 0 0 0 3px rgba(240, 151, 90, .14); cursor: text; }
   .kutu:focus-within { box-shadow: 0 0 0 4px rgba(240, 151, 90, .32); }
-  .yazNot { font-size: 12.5px; color: #e0b896; line-height: 1.35; }
-  .ara input { width: 100%; min-height: 30px; padding: 0; border: 0; background: none; color: var(--ink); font-size: 16px; outline: none; }
-  .ara button { flex: none; min-height: 46px; padding: 0 16px; border-radius: 12px; border: 1px solid #5a3a22; background: var(--k2); color: var(--c2); font-weight: 700; cursor: pointer; }
+  .kutu .ik { flex: none; font-size: 16px; }
+  .ara input::placeholder { color: #b8957a; }
+  .ara input { width: 100%; min-height: 50px; padding: 0; border: 0; background: none; color: var(--ink); font-size: 16px; outline: none; }
   .oner { display: flex; flex-direction: column; } .oner:empty { display: none; }
   .oner button { display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 12px; border: 0; border-bottom: 1px solid #2a1a0e; background: #1a120b; color: var(--c2); font-size: 15px; text-align: left; cursor: pointer; }
   .oner button:first-child { border-radius: 12px 12px 0 0; } .oner button:last-child { border-radius: 0 0 12px 12px; border-bottom: 0; } .oner button:only-child { border-radius: 12px; }
@@ -100,7 +100,7 @@
   <p class="giris">Bulunduğun ya da sorumlu olduğun il / ilçede <b>neler oluyor</b>: atamalar, vefatlar, yatırımlar, açılışlar… Haberleri ve kaynakları Google gösterir; bu sayfa haber derlemez.</p>
 
   <section class="kart" aria-label="Yer seç">
-    <form id="form" class="ara"><label class="kutu" for="yaz"><span class="yazNot">İl / ilçe yaz ya da bakmak istediğin konumu yazabilirsin</span><input id="yaz" type="search" enterkeyhint="search" placeholder="ör. İncirliova" autocomplete="off"></label><button type="submit">Ara</button></form>
+    <form id="form" class="ara"><label class="kutu" for="yaz"><span class="ik">🔎</span><input id="yaz" type="search" enterkeyhint="search" placeholder="İl, ilçe ya da konum · ör. İncirliova" aria-label="İl, ilçe ya da bakmak istediğin konum" autocomplete="off"></label></form>
     <div class="oner" id="oner"></div>
     <button type="button" id="konum" class="konum">📍 Konum bul</button>
     <small class="not" id="not" hidden></small>
