@@ -98,7 +98,7 @@
     <h1>📍 Bölge Nabzı<small>Bölgendeki haberler, tek dokunuşla</small></h1>
     <span style="width:46px"></span>
   </header>
-  <p class="giris">Bulunduğun ya da sorumlu olduğun il / ilçede <b>neler oluyor</b>: atamalar, vefatlar, yatırımlar, açılışlar, kazalar… Haberleri ve kaynakları Google gösterir; bu sayfa haber derlemez.</p>
+  <p class="giris">Bulunduğun ya da sorumlu olduğun il / ilçede <b>neler oluyor</b>: atamalar, vefatlar, yatırımlar, açılışlar, kazalar, dolandırıcılık… Haberleri ve kaynakları Google gösterir; bu sayfa haber derlemez.</p>
 
   <section class="kart" aria-label="Yer seç">
     <form id="form" class="ara"><label class="kutu" for="yaz"><span class="ik">🔎</span><input id="yaz" type="search" enterkeyhint="search" placeholder="İl, ilçe ya da konum · ör. İncirliova" aria-label="İl, ilçe ya da bakmak istediğin konum" autocomplete="off"></label></form>
@@ -157,6 +157,7 @@ const ilEk = (ad) => { const k = ad.toLocaleLowerCase("tr"), v = (k.match(/[aeı
 // sonunu kesiyor; kesilen ifade ilk kelimesine düşüyordu ("yeni başkan" → YENİ Parti). Bu yüzden her konu en fazla Atama kadar uzun
 // (en uzun yer kalıbıyla, Efeler + Aydın, denendi) ve ifadeler ayırt edici bir kelimeyle başlar ("organize sanayi" → "organize suç" olmasın).
 // Trafik kazası (Ekim 2026): bölgedeki yol kapanmaları, müşteri ya da çalışanı etkileyen kazalar için; "kazası" iş kazalarını da getirir.
+// Dolandırıcılık: bölgede yayılan yöntemleri (sahte polis, telefon dolandırıcılığı) önceden bilmek için.
 const GRUP = [
   ["İnsanlar", "#b48cf0", [
     ["👔", "Atama", 'atandı OR atama OR "göreve başladı" OR "görevine başladı" OR "göreve getirildi" OR "başkanlığına seçildi"'],
@@ -184,6 +185,7 @@ const GRUP = [
     ["🎪", "Fuar & etkinlik", 'fuar OR festival OR şenlik OR panel OR sempozyum'],
     ["⚠️", "Afet & kesinti", 'sel OR deprem OR kesintisi OR heyelan OR hortum OR "orman yangını"'],
     ["🚗", "Trafik kazası", 'kaza OR kazada OR kazası OR "zincirleme kaza" OR devrildi'],
+    ["🚨", "Dolandırıcılık", 'dolandırıcılık OR dolandırıcı OR dolandırıcılar OR dolandırıldı OR "sahte polis"'],
   ]],
 ];
 
