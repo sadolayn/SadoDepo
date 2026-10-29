@@ -45,21 +45,13 @@ jobs:
              "OSB":['"organize sanayi"','OSB'],
              "Vefat":['vefat','"cenaze töreni"','"son yolculuğuna"','"toprağa verildi"'],
              "Ödül":['"ödül aldı"','"ödülünü aldı"','"ödülüne layık"','"ödülü verildi"']}
-          print("=== küçük il, 5 kalıp vs tek kalıp")
-          for il in ["Bayburt","Kilis","Ardahan","Tunceli"]:
-              for k,ws in T.items():
-                  for s in ["1d","7d"]:
-                      go(f"{il}/{k}/{s}/5", ilg(il)+grp(ws)+" when:"+s, 3)
-                  go(f"{il}/{k}/1d/tek", ilg(il,True)+grp(ws)+" when:1d", 3)
-          print("=== Aydın atama terimleri tek tek (30g)")
-          for w in ['atandı','atama','"göreve başladı"','"görevine başladı"','"görev değişikliği"','"yeni müdür"','"görevden alındı"','"yeni başkan"']:
-              go("Aydın/"+w, ilg("Aydın")+grp([w])+" when:30d", 6)
-          print("=== Efeler (belirsiz) ve alias")
-          go("Efeler/Tüm", 'intitle:"Efeler" intitle:"Aydın" when:30d', 8)
-          go("Efeler/Afet", 'intitle:"Efeler" intitle:"Aydın"'+grp(['sel','deprem','"elektrik kesintisi"','"su kesintisi"','"fırtına uyarısı"'])+" when:30d", 5)
-          go("Afyon/Tüm", ilg("Afyonkarahisar")+" when:7d", 8)
-          go("Güney/Tüm", 'intitle:"Güney" intitle:"Denizli" when:30d', 6)
-          go("Beşiktaş/Vefat", 'intitle:"Beşiktaş" intitle:"İstanbul"'+grp(T["Vefat"])+" when:30d", 6)
-          go("İncirliova/Maaş/7d", 'intitle:"İncirliova" Aydın'+grp(T["Maaş"])+" when:7d", 5)
-          go("Aydın/Maaş/30d", ilg("Aydın")+grp(T["Maaş"])+" when:30d", 6)
-          go("İzmir/OSB/7d", ilg("İzmir")+grp(T["OSB"])+" when:7d", 6)
+          A1=['atandı','"göreve başladı"','"görevine başladı"','"görev değişikliği"','"yeni müdür"']
+          A2=['atandı','atama','"göreve başladı"','"görevine başladı"','"yeni başkan"','"görev değişimi"']
+          V=T["Vefat"]
+          for il in ["Aydın","İzmir","Bayburt","Ardahan","Tunceli"]:
+              for vn,yq in [("tek",ilg(il,True)),("cıplak",f'intitle:"{il}"')]:
+                  for k,ws in [("A1",A1),("A2",A2),("Vefat",V),("Tüm",[])]:
+                      go(f"{il}/{vn}/{k}/7d", yq+grp(ws)+" when:7d", 6 if il in ("Aydın","Bayburt") else 4)
+          for c in ["İncirliova","Germencik","Söke"]:
+              for k,ws in [("A2",A2),("Vefat",V)]:
+                  go(f"{c}/{k}/30d", f'intitle:"{c}" Aydın'+grp(ws)+" when:30d", 5)
