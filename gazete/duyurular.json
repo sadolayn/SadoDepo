@@ -1,5 +1,5 @@
 {
-  "guncelleme": "2026-10-29T06:54:34+03:00",
+  "guncelleme": "2026-10-30T07:01:27+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
     {
@@ -29,6 +29,15 @@
       "etki": "SPK, Tera fonlarının tasfiyesini İş Bankası'na verdi (Pusula fonları Ziraat Bankası'nda); yatırımcıya ödemenin nasıl ve ne zaman yapılacağı henüz açıklanmadı. Gayrimenkul ve girişim sermayesi fonlarının varlıkları (bina, arsa, şirket payı) borsadaki hisse gibi hızlı satılamadığı için bu fonlarda nakde dönüş daha uzun sürebilir.",
       "onemli": true,
       "url": "https://www.ntv.com.tr/turkiye/spkdan-tera-portfoy-ve-pusula-portfoy-karari-faaliyetleri-gecici-olarak-durduruldu-1748082"
+    },
+    {
+      "tarih": "2026-10-26",
+      "kurum": "SPK",
+      "baslik": "Profesyonel müşteri olma eşikleri beş kat artırıldı",
+      "ozet": "SPK 2026/74 sayılı bültendeki i-SPK.37.10 sayılı ilke kararıyla, talebe dayalı profesyonel müşteri sayılmak için aranan finansal varlık toplamını 10 milyon TL'den 50 milyon TL'ye, işlem hacmini 5 milyon TL'den 25 milyon TL'ye çıkardı; tüzel kişiler için tutarlar da yeniden belirlendi ve nitelikli yatırımcı şartları buna göre güncellendi. Gayrimenkul ve girişim sermayesi yatırım fonlarının nitelikli yatırımcılarına tanınan istisna kaldırıldı; bu yatırımcılar da genel tutarlara tabi oldu.",
+      "etki": "SPK'ya göre önceki düzenlemeyle finansal tutarlar nedeniyle profesyonel ya da nitelikli yatırımcı sayılan müşteriler bu sıfatı sağladıklarını yatırım kuruluşuna yazılı ya da elektronik ortamda belgelemek zorunda; belgelemeyenler nitelikli yatırımcıya özel araçlarda yalnızca satış emri verebilecek. Belgeleme için son tarih bültende belirtilmedi.",
+      "onemli": false,
+      "url": "https://spk.gov.tr/data/6adf00818f95db2330f22009/2026-74.pdf"
     },
     {
       "tarih": "2026-10-22",
