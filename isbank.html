@@ -1369,7 +1369,7 @@ function blackHtml() {
 let bkSec = ""; try { bkSec = localStorage.getItem("isbankBk") || ""; } catch (e) {}
 function renderBankaKamp() {
   const fd = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
-  $("upd").innerHTML = `🔄 İş Bankası kampanyaları her gün kontrol edilir${bkamp ? ` · son kontrol <b>${fd(bkamp.kontrol)}</b>` : ""}`;
+  $("upd").innerHTML = `🔄 İş Bankası kampanyaları her gün kontrol edilir${bkamp ? ` · son kontrol <b>${fd(bkamp.kontrol)}</b>` : ""}<br>ℹ️ Liste, bankaların kendi kampanya sayfalarında o gün yayında olanları gösterir; katılım koşulları ve süresi için kampanyanın kendi sayfası esastır.`;
   // Bitiş günü geçen kampanya, ertesi sabahki derlemeyi beklemeden listeden düşer; sayı da ona göre azalır, boş kalan kategori gizlenir
   const K0 = ((bkamp && bkamp.kategoriler) || []).map((c) => { const L = c.kampanyalar.filter((x) => !x.bitis || daysLeft(x.bitis) >= 1);
     return { ...c, kampanyalar: L, adet: c.adet != null ? Math.max(L.length, c.adet - (c.kampanyalar.length - L.length)) : c.adet }; }).filter((c) => c.kampanyalar.length);
@@ -1632,7 +1632,7 @@ function kOneHtml(L, renk) {
 function renderKampanyalar() {
   if (!KH || !KH.isbank) return renderCamps(); // veri gelene kadar eski düzen
   const fd = (t) => new Date(t).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
-  $("upd").innerHTML = `🔄 isbank.com.tr, maximum.com.tr ve maximiles.com.tr'den her sabah kendiliğinden alınır · son: <b>${fd(KH.guncelleme)}</b>`;
+  $("upd").innerHTML = `🔄 isbank.com.tr, maximum.com.tr ve maximiles.com.tr'den günde iki kez kendiliğinden alınır · son: <b>${fd(KH.guncelleme)}</b><br>ℹ️ Liste, bankaların kendi kampanya sayfalarında o gün yayında olanları gösterir; katılım koşulları ve süresi için kampanyanın kendi sayfası esastır.`;
   const sb = (attr, v, ic, ad, n, on, cls) => `<button type="button" ${attr}="${esc(v)}" class="${on ? "on" : ""}${cls ? " " + cls : ""}"><span class="ka"><i>${ic}</i>${esc(ad)}</span>${n != null ? `<b>${n} adet</b>` : ""}</button>`;
   const say = (kay, seg) => { const l = kListe(kay, seg); return l ? l.length : null; };
   const L = kListe(kKay, kSeg) || [], [, kayAd, kayDom, renk] = K_KAY[kKay];
