@@ -142,7 +142,7 @@ const KAYNAK = [
   ["kurum", "MASAK · Mali Suçları Araştırma Kurulu", "Suç gelirlerinin aklanması ve terörün finansmanıyla mücadele: mevzuat, yükümlülükler ve duyurular.", "https://masak.hmb.gov.tr/", "", ["hepsi"]],
   ["kurum", "EKAP (yeni sürüm)", "Elektronik Kamu Alımları Platformu'nun yeni sitesi: ihaleler, duyurular ve sorgular.", "https://ekapv2.kik.gov.tr/", "", ["tuzel", "sahis", "kobi", "insaat", "nakliye"]],
 ];
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 // Türkçe harf ve büyük/küçük farkı gözetmeden arama
 const sade = (t) => String(t).toLocaleLowerCase("tr").replace(/[çğıöşüâî]/g, (h) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i" })[h]);
 // Sık aranan kısaltma ve eş anlamlar: aranan kelime bunlardan biriyse karşılığı da aranır

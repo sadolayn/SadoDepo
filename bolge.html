@@ -145,7 +145,7 @@
 // Bölgem: şube ve bölge müdürünün kendi il / ilçesinde olanları izlemesi için. Haber derlenmez, listelenmez;
 // her düğme Google'ın Haberler sekmesinde (ya da Haritalar'da) o yerin aramasını açar. Yer yalnızca bu cihazda tutulur (localStorage).
 const $ = (x) => document.getElementById(x);
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const sade = (t) => String(t).toLocaleLowerCase("tr").replace(/[çğıöşüâî]/g, (h) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i" })[h]);
 const fold = (t) => String(t || "").toLocaleLowerCase("tr");
 // Tamlama eki: Aydın'ın, İzmir'in, İstanbul'un, Muğla'nın

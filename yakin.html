@@ -447,7 +447,7 @@ async function openCat(k) {
     $("plist").innerHTML = `<div class="msg">Yerler yüklenemedi (harita sunucusu yoğun olabilir). Biraz sonra tekrar dene.<br><br><a href="https://www.google.com/maps/search/${encodeURIComponent(c.n)}/@${lat},${lon},14z" target="_blank" rel="noopener" style="color:var(--accent)">Google Haritalar'da "${c.n}" ara ↗</a></div>`;
   }
 }
-const esc = (s) => String(s || "").replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[m]);
+const esc = (s) => String(s || "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[m]);
 
 function openFsUpdate() {
   const c = CAT[S.cat]; if (!c || !S.place) return;

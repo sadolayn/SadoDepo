@@ -433,7 +433,7 @@ const qEnd = () => new Date(qy, qn * 3 + 3, 0, 12);
 const isWork = (d) => d.getDay() !== 0 && d.getDay() !== 6 && !HOLIDAYS.has(keyOf(d));
 const workVal = (d) => (isWork(d) ? (HALF.has(keyOf(d)) ? 0.5 : 1) : 0);
 const fmt = (n) => (Math.round(n * 10) / 10).toLocaleString("tr-TR");
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 // Tür yardımcıları: adet (+/−), tutar (günlük tutarlar toplanır), bakiye (son bakiye), ortalama (çeyrek ortalama bakiyesi)
 const isAdet = (p) => !p.type || p.type === "adet";
 const isBal = (p) => p.type === "bakiye" || p.type === "ortalama";

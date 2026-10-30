@@ -986,7 +986,7 @@ window.ataOyna = function (film, ozelNot, yas) {
 <script src="isq.js"></script>
 <script>
 const $ = (x) => document.getElementById(x);
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const CATS = [
   ["Tarihçe", "#e0a24f", "🏛️"],
   ["Şubeler", "#3a50f0", "🏦"],

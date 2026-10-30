@@ -160,7 +160,7 @@
 
 <script>
 const $ = (x) => document.getElementById(x);
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const DEFAULT = { name: "İstanbul", admin: "Türkiye", lat: 41.0082, lon: 28.9784 };
 
 const WMO = {

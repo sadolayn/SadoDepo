@@ -204,6 +204,37 @@
   .tile .ik { font-size: 24px; line-height: 1; }
   .tile .t { font: 600 15.5px Georgia, "Times New Roman", serif; margin-top: auto; }
   .tile .d { font-size: 12px; color: var(--muted); line-height: 1.35; }
+  /* Arama + Favorilerim */
+  .ara { position: relative; margin: 4px 0 4px; }
+  .ara input { width: 100%; box-sizing: border-box; height: 46px; padding: 0 44px 0 42px; border-radius: 14px; border: 1px solid var(--line); background: #0b0b0b; color: var(--ink); font: 15px system-ui, -apple-system, "Segoe UI", sans-serif; outline: none; -webkit-appearance: none; appearance: none; }
+  .ara input::placeholder { color: #8a8a8a; }
+  .ara input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(224,162,79,.15); }
+  .ara input::-webkit-search-cancel-button { display: none; }
+  .araIk { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; opacity: .8; pointer-events: none; }
+  #araSil { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 50%; background: #1a1a1a; color: #cfcfcf; font-size: 14px; cursor: pointer; }
+  .araYok { margin: 14px 4px 0; letter-spacing: normal; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+  .mn .gizli { display: none !important; }
+  .fav h2 { justify-content: flex-start; }
+  .fav h2 .t { font: inherit; }
+  .fav h2 button { order: 2; border: 1px solid #5a4320; background: transparent; color: var(--accent); font: 600 12.5px system-ui, sans-serif; border-radius: 999px; padding: 5px 14px; min-height: 30px; cursor: pointer; font-style: normal; }
+  .fav h2 button[aria-pressed="true"] { background: var(--accent); color: #111; border-color: var(--accent); }
+  .favIp { margin: -2px 2px 0; letter-spacing: normal; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+  .favIp b { color: var(--accent); font-weight: 600; }
+  .favL { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .favL:empty { display: none; }
+  .fv { display: flex; align-items: center; gap: 10px; padding: 11px 12px; min-height: 48px; box-sizing: border-box; border-radius: 14px; border: 1px solid #3a2c15; background: linear-gradient(180deg, #0f0c07, #070707); color: var(--ink); text-decoration: none; }
+  .fv:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .fv:active { border-color: var(--accent); }
+  .fv i { font-style: normal; font-size: 20px; width: 24px; text-align: center; flex: none; }
+  .fv b { font: 600 14.5px Georgia, "Times New Roman", serif; line-height: 1.25; }
+  .mn .yld { display: none; }
+  .favDuz .mn :is(.one, .row, .tile) { position: relative; }
+  .favDuz .mn :is(.one, .row) { padding-right: 54px; }
+  .favDuz .mn .yld { display: flex; position: absolute; top: 50%; right: 10px; transform: translateY(-50%); width: 34px; height: 34px; border-radius: 50%; align-items: center; justify-content: center; background: #151515; border: 1px solid #3a3a3a; color: #8a8a8a; font-size: 17px; }
+  .favDuz .mn .tile .yld { top: 10px; transform: none; }
+  .favDuz .mn .secili .yld { background: var(--accent); border-color: var(--accent); color: #111; }
+  .favDuz .mn .row .ok { visibility: hidden; }
+
   .sep { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin: 10px 4px 0; }
   .quote {
     margin-top: 34px;
@@ -334,38 +365,49 @@
   </div>
   <!-- Ana menü: 4 başlık altında gruplu (İş Bankası kartı en üstte tek başına) -->
   <nav class="mn" aria-label="Ana menü">
-    <a class="one isb" href="isbank.html" data-yeni="isbank3|2026-10-21|YENİLENDİ">
+    <div class="ara" role="search">
+      <span class="araIk" aria-hidden="true">🔎</span>
+      <input type="search" id="araQ" placeholder="Ara: çek iskonto, mevduat, resmi gazete…" aria-label="Araçlarda ara" autocomplete="off" enterkeyhint="go">
+      <button type="button" id="araSil" aria-label="Aramayı temizle" hidden>✕</button>
+    </div>
+    <p class="araYok" id="araYok" hidden>Bulunamadı. Başka bir kelime dene ya da aşağıdaki öneri formundan yaz 🙂</p>
+    <section class="fav" id="fav" aria-label="Favorilerim">
+      <h2 data-yeni="favori|2026-10-30|YENİ"><span class="t">⭐ Favorilerim</span><button type="button" id="favDuz" aria-pressed="false">Seç</button></h2>
+      <p class="favIp" id="favIp">Sık kullandığın 5 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun.</p>
+      <div class="favL" id="favL"></div>
+    </section>
+    <a class="one isb" href="isbank.html" data-ara="kampanya maximum maximiles işcep iş black iş plus şube banka günün sorusu puan" data-yeni="isbank3|2026-10-21|YENİLENDİ">
       <div class="ik"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg></div>
       <div><div class="t">İş Bankası Gündemi</div><div class="d">Tüm kampanyalar tek yerde, sana uygun olanı bul; İşCep ipuçları, İş Black · İş Plus, haberler, şubeler ve günün sorusu · kişisel derleme</div><div class="canli" id="isbCanli" hidden></div></div>
     </a>
 
     <h2>Her sabah <small>güne başlarken</small></h2>
     <div class="rows">
-      <a class="row" href="gazete.html" data-yeni="gazete2|2026-10-22|YENİLENDİ"><span class="ik">📜</span><div><div class="t">Resmi Gazete</div><div class="d">Her sabah özet: bankacılığı ilgilendiren kararlar ve atamalar; BDDK, TCMB, SPK duyuruları takvimde</div></div><span class="ok">›</span></a>
-      <a class="row" href="haberler.html"><span class="ik">📰</span><div><div class="t">Güncel Haberler</div><div class="d">Her saat yenilenir: gündem, ekonomi, İş Bankası, yapay zekâ, spor… 9 başlık ve köşe yazarları</div></div><span class="ok">›</span></a>
-      <a class="row" href="bolge.html" data-yeni="bolgem|2026-10-29|YENİ"><span class="ik">📍</span><div><div class="t" id="bolgemT">Bölge Nabzı</div><div class="d" id="bolgemD">İlini ya da ilçeni seç: atama, vefat, yatırım, konkordato… bölgende neler oluyor</div></div><span class="ok">›</span></a>
-      <a class="row alr" href="alerts.html" data-yeni="alertsPush|2026-10-18|YENİ · BİLDİRİM"><span class="ik">🔔<i></i></span><div><div class="t">Sadolayn Alerts</div><div class="d">Takip ettiğin kelimeleri seç; her sabah 10:00'da ilgili haberler e-postana ve <b>telefonuna</b> gelsin</div></div><span class="ok">›</span></a>
+      <a class="row" href="gazete.html" data-ara="resmi gazete bddk tcmb spk masak yönetmelik tebliğ karar atama duyuru" data-yeni="gazete2|2026-10-22|YENİLENDİ"><span class="ik">📜</span><div><div class="t">Resmi Gazete</div><div class="d">Her sabah özet: bankacılığı ilgilendiren kararlar ve atamalar; BDDK, TCMB, SPK duyuruları takvimde</div></div><span class="ok">›</span></a>
+      <a class="row" href="haberler.html" data-ara="haber gündem ekonomi manşet spor yapay zeka köşe yazarı"><span class="ik">📰</span><div><div class="t">Güncel Haberler</div><div class="d">Her saat yenilenir: gündem, ekonomi, İş Bankası, yapay zekâ, spor… 9 başlık ve köşe yazarları</div></div><span class="ok">›</span></a>
+      <a class="row" href="bolge.html" data-ara="bölge nabzı il ilçe yerel haber şehir" data-yeni="bolgem|2026-10-29|YENİ"><span class="ik">📍</span><div><div class="t" id="bolgemT">Bölge Nabzı</div><div class="d" id="bolgemD">İlini ya da ilçeni seç: atama, vefat, yatırım, konkordato… bölgende neler oluyor</div></div><span class="ok">›</span></a>
+      <a class="row alr" href="alerts.html" data-ara="bildirim e-posta mail uyarı abonelik bülten kelime takip" data-yeni="alertsPush|2026-10-18|YENİ · BİLDİRİM"><span class="ik">🔔<i></i></span><div><div class="t">Sadolayn Alerts</div><div class="d">Takip ettiğin kelimeleri seç; her sabah 10:00'da ilgili haberler e-postana ve <b>telefonuna</b> gelsin</div></div><span class="ok">›</span></a>
     </div>
 
     <h2>Hesap ve ajanda</h2>
     <div class="rows">
-      <a class="row" href="banka.html" data-yeni="banka2|2026-10-20|YENİLENDİ"><span class="ik">🏦</span><div><div class="t">Bankacılık</div><div class="d">10 hesaplayıcı: mevduat getirisi, kredi taksiti, ek hesap, kart gecikme, çek iskonto… planı PDF olarak paylaş</div></div><span class="ok">›</span></a>
-      <a class="row" href="firma.html" data-yeni="yolgosteren|2026-10-28|YENİ"><span class="ik">🧭</span><div><div class="t">Yol Gösteren</div><div class="d">Firmayı tanımak için resmî kaynaklar tek yerde: ilanlar, sicil, vergi ve belge doğrulama</div></div><span class="ok">›</span></a>
-      <a class="row" href="gunce.html" data-yeni="gunce4|2026-10-22|YENİLENDİ"><span class="ik">📒</span><div><div class="t">Günce Tutma</div><div class="d">Çeyrek hedefini gir, her gün işaretle; kalanı, günlük gerekeni ve tutma ihtimalini gör, Excel'e aktar</div></div><span class="ok">›</span></a>
-      <a class="row" href="takvim.html" data-yeni="vergitk|2026-10-23|YENİLENDİ"><span class="ik">📅</span><div><div class="t">Takvim &amp; Ajanda</div><div class="d">Resmî ve dinî günler, iki tarih arası iş günü, vergi son günleri; ziyaret, toplantı ve izin ajandan</div></div><span class="ok">›</span></a>
+      <a class="row" href="banka.html" data-ara="hesaplayıcı mevduat getiri vadeli faiz stopaj kredi taksit tüketici konut taşıt tarım ticari ek hesap kmh bch rotatif kredi kartı gecikme çek iskonto iştira valör yapılandırma ara ödeme pdf" data-yeni="banka2|2026-10-20|YENİLENDİ"><span class="ik">🏦</span><div><div class="t">Bankacılık</div><div class="d">10 hesaplayıcı: mevduat getirisi, kredi taksiti, ek hesap, kart gecikme, çek iskonto… planı PDF olarak paylaş</div></div><span class="ok">›</span></a>
+      <a class="row" href="firma.html" data-ara="firma istihbarat şirket ticaret sicil gazetesi vergi levhası mersis belge doğrulama ilan yol gösteren" data-yeni="yolgosteren|2026-10-28|YENİ"><span class="ik">🧭</span><div><div class="t">Yol Gösteren</div><div class="d">Firmayı tanımak için resmî kaynaklar tek yerde: ilanlar, sicil, vergi ve belge doğrulama</div></div><span class="ok">›</span></a>
+      <a class="row" href="gunce.html" data-ara="günce hedef çeyrek performans takip excel adet satış" data-yeni="gunce4|2026-10-22|YENİLENDİ"><span class="ik">📒</span><div><div class="t">Günce Tutma</div><div class="d">Çeyrek hedefini gir, her gün işaretle; kalanı, günlük gerekeni ve tutma ihtimalini gör, Excel'e aktar</div></div><span class="ok">›</span></a>
+      <a class="row" href="takvim.html" data-ara="takvim ajanda tatil bayram resmi gün iş günü vergi son gün ziyaret toplantı izin" data-yeni="vergitk|2026-10-23|YENİLENDİ"><span class="ik">📅</span><div><div class="t">Takvim &amp; Ajanda</div><div class="d">Resmî ve dinî günler, iki tarih arası iş günü, vergi son günleri; ziyaret, toplantı ve izin ajandan</div></div><span class="ok">›</span></a>
     </div>
 
     <h2>Cebindeki araçlar</h2>
     <div class="tiles">
-      <a class="tile" href="piyasa.html"><span class="ik">💱</span><div class="t">Döviz &amp; Altın</div><div class="d">Kur ve altın; 1 ve 5 yıllık değişim, “alsaydım” hesabı</div></a>
-      <a class="tile" href="hesap.html" data-yeni="hesap-klavye|2026-10-27|YENİLENDİ"><span class="ik">🧮</span><div class="t">Hesaplamalar</div><div class="d">Faiz, yüzde, KDV/ÖTV, tapu harcı, tarih, cetvel, mesafe ve pratik kısayollar</div></a>
-      <a class="tile" href="yakin.html"><span class="ik">📍</span><div class="t">En Yakınımda</div><div class="d">Eczane, hastane, şube, ATM, toplanma alanı… 40'tan fazla yer</div></a>
-      <a class="tile" href="hava.html"><span class="ik">🌤️</span><div class="t">Hava Durumu</div><div class="d">Bulunduğun yer için saatlik ve 7 günlük tahmin</div></a>
+      <a class="tile" href="piyasa.html" data-ara="döviz kur dolar euro altın gram çeyrek borsa piyasa alsaydım"><span class="ik">💱</span><div class="t">Döviz &amp; Altın</div><div class="d">Kur ve altın; 1 ve 5 yıllık değişim, “alsaydım” hesabı</div></a>
+      <a class="tile" href="hesap.html" data-ara="hesaplama yüzde kdv ötv tapu harcı tarih gün ekle cetvel mesafe kısayol emoji alt kodu" data-yeni="hesap-klavye|2026-10-27|YENİLENDİ"><span class="ik">🧮</span><div class="t">Hesaplamalar</div><div class="d">Faiz, yüzde, KDV/ÖTV, tapu harcı, tarih, cetvel, mesafe ve pratik kısayollar</div></a>
+      <a class="tile" href="yakin.html" data-ara="yakın eczane nöbetçi hastane şube atm toplanma alanı harita"><span class="ik">📍</span><div class="t">En Yakınımda</div><div class="d">Eczane, hastane, şube, ATM, toplanma alanı… 40'tan fazla yer</div></a>
+      <a class="tile" href="hava.html" data-ara="hava durumu yağmur sıcaklık tahmin"><span class="ik">🌤️</span><div class="t">Hava Durumu</div><div class="d">Bulunduğun yer için saatlik ve 7 günlük tahmin</div></a>
     </div>
 
     <h2>Mola <small>boş vakitler için</small></h2>
     <div class="rows">
-      <a class="row" href="oyunlar.html" data-yeni="oyunlar|2026-10-17|YENİ OYUN"><span class="ik">🎮</span><div><div class="t">Oyunlar</div><div class="d">Batak, King, Balayı King, Tavla, Solitaire, UçUç ve bulmacalar; Sadolayn'a karşı oyna, Yıldız topla</div></div><span class="ok">›</span></a>
+      <a class="row" href="oyunlar.html" data-ara="oyun batak king balayı tavla solitaire uçuç bulmaca tahmin" data-yeni="oyunlar|2026-10-17|YENİ OYUN"><span class="ik">🎮</span><div><div class="t">Oyunlar</div><div class="d">Batak, King, Balayı King, Tavla, Solitaire, UçUç ve bulmacalar; Sadolayn'a karşı oyna, Yıldız topla</div></div><span class="ok">›</span></a>
     </div>
   </nav>
   <div class="quote">
@@ -714,7 +756,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   const fark = (a, b) => Math.round((Date.parse(b + "T00:00:00Z") - Date.parse(a + "T00:00:00Z")) / 864e5);
   const gunAy = (m) => { const d = new Date(m + "T12:00:00Z"); return `${d.getUTCDate()} ${AY[d.getUTCMonth()]}`; };
   const gunAyHafta = (m) => `${gunAy(m)} ${GUN[new Date(m + "T12:00:00Z").getUTCDay()]}`;
-  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   // Türkçe ek: sayının okunuşundaki son kelimeye göre (%37'de, %35,5'ten, %37'ye, %40'a)
   function son(x) {
     const B = ["sıfır", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz"], O = ["", "on", "yirmi", "otuz", "kırk", "elli", "altmış", "yetmiş", "seksen", "doksan"];
@@ -829,7 +871,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   const L = YENI.filter((x) => x[4] <= bugun && bugun <= son(x[4]));
   const kutu = document.getElementById("yeniS"), ser = document.getElementById("ysSer");
   if (!kutu || !ser || !L.length) return;
-  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const tur = L.map(([e, ad, not, u]) => `<a href="${esc(u)}" data-r="${esc(ad)}">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("") + `<span class="ysNot ysSon">sitede yeni ✦</span>`;
   ser.innerHTML = tur + tur; // iki tur yan yana: kesintisiz döngü
   requestAnimationFrame(() => ser.style.setProperty("--sure", Math.max(28, Math.round(ser.scrollWidth / 2 / 40)) + "s"));
@@ -902,6 +944,88 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     d.textContent = ""; var b = document.createElement("b"); b.style.color = "#ffdcc4"; b.textContent = ad;
     d.appendChild(b); d.appendChild(document.createTextNode(" · atama, vefat, yatırım, konkordato ve bölgedeki bankalar"));
   } catch (e) {}
+})();
+</script>
+<script>
+/* Ana sayfa: anlık arama + Favorilerim (en fazla 5, yalnızca bu cihazda saklanır) */
+(function () {
+  var nav = document.querySelector("nav.mn"); if (!nav) return;
+  var $ = function (id) { return document.getElementById(id); };
+  var q = $("araQ"), sil = $("araSil"), yok = $("araYok"), favS = $("fav"), favL = $("favL"), favIp = $("favIp"), duz = $("favDuz");
+  var KART = [].slice.call(nav.querySelectorAll("a.one, a.row, a.tile")).filter(function (a) { return !a.closest("#fav"); });
+  var norm = function (t) { return String(t || "").replace(/İ/g, "i").replace(/I/g, "ı").toLowerCase()
+    .replace(/[ıİ]/g, "i").replace(/ş/g, "s").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ö/g, "o").replace(/ç/g, "c").replace(/â/g, "a").replace(/î/g, "i").replace(/[^a-z0-9 ]+/g, " "); };
+  KART.forEach(function (a) {
+    var t = a.querySelector(".t"), d = a.querySelector(".d");
+    a._ara = norm((t ? t.textContent : "") + " " + (d ? d.textContent : "") + " " + (a.getAttribute("data-ara") || ""));
+    var y = document.createElement("span"); y.className = "yld"; y.setAttribute("aria-hidden", "true"); y.textContent = "☆"; a.appendChild(y);
+  });
+  // --- Arama
+  function ara() {
+    var k = norm(q.value).split(" ").filter(Boolean), say = 0, son = null;
+    sil.hidden = !q.value;
+    KART.forEach(function (a) {
+      var ok = !k.length || k.every(function (w) { return a._ara.indexOf(w) > -1; });
+      a.classList.toggle("gizli", !ok); if (ok) { say++; son = a; }
+    });
+    nav.querySelectorAll(".rows, .tiles").forEach(function (g) {
+      var bos = !g.querySelector("a:not(.gizli)"), h = g.previousElementSibling;
+      g.classList.toggle("gizli", bos); if (h && h.tagName === "H2") h.classList.toggle("gizli", bos);
+    });
+    favS.classList.toggle("gizli", k.length > 0);
+    yok.hidden = !k.length || say > 0;
+    return say === 1 ? son : null;
+  }
+  q.addEventListener("input", ara);
+  q.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { q.value = ""; ara(); }
+    if (e.key === "Enter") { var t = ara(); if (t) location.href = t.href; else q.blur(); }
+  });
+  sil.addEventListener("click", function () { q.value = ""; ara(); q.focus(); });
+  // --- Favoriler
+  var KEY = "anaFav", MAX = 5, F = [];
+  try { F = JSON.parse(localStorage.getItem(KEY) || "[]") || []; } catch (e) {}
+  var ad = function (a) { return a.getAttribute("href"); };
+  F = F.filter(function (h) { return KART.some(function (a) { return ad(a) === h; }); }).slice(0, MAX);
+  function kaydet() { try { localStorage.setItem(KEY, JSON.stringify(F)); } catch (e) {} }
+  function ciz() {
+    favL.textContent = "";
+    F.forEach(function (h) {
+      var a = KART.filter(function (x) { return ad(x) === h; })[0]; if (!a) return;
+      var ik = a.querySelector(".ik"), t = a.querySelector(".t");
+      var c = document.createElement("a"); c.className = "fv"; c.href = h;
+      var i = document.createElement("i"); i.setAttribute("aria-hidden", "true"); i.textContent = (ik && ik.textContent.trim()) || "🏛️";
+      var b = document.createElement("b"); b.textContent = t ? t.childNodes[0].textContent.trim() : h;
+      c.appendChild(i); c.appendChild(b); favL.appendChild(c);
+    });
+    var acik = document.body.classList.contains("favDuz");
+    favIp.hidden = !acik && F.length > 0;
+    favIp.innerHTML = acik ? "Sabitlemek istediğin araçlara dokun (en fazla 5). Bitince <b>Tamam</b>'a dokun."
+      : "Sık kullandığın 5 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun.";
+    duz.textContent = acik ? "Tamam ✓" : (F.length ? "Düzenle" : "Seç");
+    duz.setAttribute("aria-pressed", acik ? "true" : "false");
+    KART.forEach(function (a) {
+      var on = F.indexOf(ad(a)) > -1; a.classList.toggle("secili", on);
+      a.querySelector(".yld").textContent = on ? "★" : "☆";
+      if (acik) a.setAttribute("aria-pressed", on ? "true" : "false"); else a.removeAttribute("aria-pressed");
+    });
+  }
+  duz.addEventListener("click", function () {
+    document.body.classList.toggle("favDuz");
+    if (q.value) { q.value = ""; ara(); }
+    ciz();
+  });
+  nav.addEventListener("click", function (e) {
+    if (!document.body.classList.contains("favDuz")) return;
+    var a = e.target.closest("a"); if (!a || KART.indexOf(a) < 0) return;
+    e.preventDefault(); e.stopPropagation();
+    var h = ad(a), i = F.indexOf(h);
+    if (i > -1) F.splice(i, 1);
+    else if (F.length >= MAX) { favIp.innerHTML = "En fazla 5 araç sabitlenebilir; önce birini çıkar ⭐"; return; }
+    else F.push(h);
+    kaydet(); ciz();
+  }, true);
+  ciz();
 })();
 </script>
 </body>

@@ -269,7 +269,7 @@ const ENDPOINT = "https://script.google.com/macros/s/AKfycbzpXXh8_spElgVjX-6jC45
 })();
 
 const $ = (x) => document.getElementById(x);
-const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const MAX = 10;
 const SUGG = ["iş bankası", "yapay zeka", "TCMB faiz", "konut kredisi", "Maximum kampanya", "borsa istanbul", "altın fiyatları", "enflasyon", "KOBİ kredisi"];
 let kws = [];
