@@ -172,7 +172,6 @@
   .kd .et { margin-top: 6px; padding: 6px 9px; border-radius: 9px; background: rgba(240,198,74,.08); border: 1px solid rgba(240,198,74,.25); font-size: 12.5px; color: #f3dca8; }
   .kd .kl { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font-size: 13px; }
   .kd .kl a { color: #8fb0ff; text-decoration: none; font-weight: 700; } .kd .kl a.gz { color: var(--accent); }
-  .kd .kl button { min-height: 24px; padding: 0; border: 0; background: none; color: #8fb0ff; font: inherit; font-weight: 700; cursor: pointer; } .kd .kl button.ok { color: #3fc283; }
   .knot { font-size: 12px; color: var(--muted); text-align: center; margin: 6px 0 0; }
   .kteaser { display: flex; align-items: center; gap: 10px; width: 100%; margin-top: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid #2b4a8f; background: linear-gradient(160deg, #0f1d3d, #070d1c); color: #d6e2ff; font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
   .kteaser b { color: #fff; } .kteaser span { flex: 1; } .kteaser em { font-style: normal; font-weight: 800; color: #8fb0ff; }
@@ -288,7 +287,7 @@ function kurumKart(x) {
   const t = new Date(x.tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "short" });
   return `<div class="kd${x.onemli ? " onm" : ""}" style="--kc:${kc}"><div class="ku"><span class="kr">${ic} ${esc(KKISA[x.kurum] || x.kurum)}</span><span>${esc(t)}</span>${x.onemli ? '<span class="on">ÖNEMLİ</span>' : ""}${yeni ? '<span class="yn">YENİ</span>' : ""}</div>
     <h3>${esc(x.baslik)}</h3>${x.ozet ? `<p>${esc(x.ozet)}</p>` : ""}${x.etki ? `<div class="et">🏦 Bankacılığa etkisi: ${esc(x.etki)}</div>` : ""}
-    <div class="kl">${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${RESMI_RE.test(x.url) ? "Resmi duyuru ↗" : "Haber kaynağı ↗"}</a><button type="button" data-kopya="${esc(x.url)}">🔗 Linki kopyala</button>` : ""}${x.gazete ? `<a class="gz" href="#${esc(x.gazete)}" data-gun="${esc(x.gazete)}">📜 O günün Resmi Gazetesi</a>` : ""}</div></div>`;
+    <div class="kl">${x.url ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${RESMI_RE.test(x.url) ? "Resmi duyuru ↗" : "Haber kaynağı ↗"}</a>` : ""}${x.gazete ? `<a class="gz" href="#${esc(x.gazete)}" data-gun="${esc(x.gazete)}">📜 O günün Resmi Gazetesi</a>` : ""}</div></div>`;
 }
 function kTakvim() {
   const today = todayIso(), ilk = DUY.length ? DUY[DUY.length - 1].tarih.slice(0, 7) : today.slice(0, 7);
@@ -317,13 +316,6 @@ function kurumCiz() {
   const kp = $("kprev"), kn = $("knext"), ay = (n) => { const d = new Date(+kAy.slice(0, 4), +kAy.slice(5, 7) - 1 + n, 1); kAy = isoOf(d).slice(0, 7); kurumCiz(); };
   kp.onclick = () => ay(-1); kn.onclick = () => ay(1);
   const kx = $("kGunX"); if (kx) kx.onclick = () => { kGun = ""; kurumCiz(); };
-  // Linki kopyala: duyurunun bağlantısı panoya alınır (WhatsApp'a, e-postaya yapıştırmak için)
-  $("kurum").querySelectorAll("[data-kopya]").forEach((b) => (b.onclick = async () => {
-    const u = b.dataset.kopya;
-    try { await navigator.clipboard.writeText(u); } catch (e) { const t = document.createElement("textarea"); t.value = u; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
-    b.textContent = "✓ Kopyalandı"; b.classList.add("ok");
-    setTimeout(() => { b.textContent = "🔗 Linki kopyala"; b.classList.remove("ok"); }, 2000);
-  }));
   $("kurum").querySelectorAll("[data-gun]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); history.replaceState(null, "", "#" + a.dataset.gun); sekAc("gazete", true); show(a.dataset.gun); }));
 }
 // Son 24 saat şeridi: Resmi Gazete'deki bankacılık maddeleri + kurum duyuruları (iki bölümde de en üstte)
