@@ -164,6 +164,15 @@
   /* Pencere, tarayıcının araç çubukları arasında kalan görünür alana sığar; sığmazsa kaydırılır (vh yerine dvh) */
   .overlay, .ov { overflow-y: auto; overscroll-behavior: contain; }
   .modal { margin: auto; max-height: 92vh; max-height: calc(100dvh - 32px); overflow-y: auto; }
+  .ykSec { display: flex; align-items: center; gap: 10px; margin: 2px 0 10px; padding: 9px 12px; background: #141414; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; text-align: left; }
+  .ykSec input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .ykSec i { width: 42px; height: 24px; border-radius: 999px; background: #3a3a3a; flex: none; position: relative; transition: background .2s; }
+  .ykSec i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #bdbdbd; transition: transform .2s, background .2s; }
+  .ykSec input:checked + i { background: var(--accent); }
+  .ykSec input:checked + i::after { transform: translateX(18px); background: #fff7e6; }
+  .ykSec input:focus-visible + i { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .ykSec span { font-size: 14.5px; line-height: 1.35; }
+  .ykSec small { display: block; font-size: 12px; color: #9a9a9a; margin-top: 2px; }
   .mDet { text-align: left; margin: 0 0 8px; background: #141414; border: 1px solid var(--line); border-radius: 12px; padding: 5px 12px; }
   .mDet summary { cursor: pointer; font-size: 14px; font-weight: 600; padding: 5px 0; color: var(--accent); }
   .mDet .rules { margin: 6px 0 6px; }
@@ -234,7 +243,7 @@
 <script src="kartmasa.js?v=9" data-oyun="king"></script>
 <script src="isq.js"></script>
 <script src="token.js?v=3"></script>
-<script src="kingai.js?v=1"></script>
+<script src="kingai.js?v=2"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
@@ -284,7 +293,7 @@ const KURAL = () => `<ul class="rules">
       <li><b>Cezalar:</b> El almaz (el başı −50), Kupa almaz (kupa başı −30), Erkek almaz (papaz/vale −60), Kız almaz (kız −100), Rifki (kupa papazı −320), Son iki (son iki el −180).</li>
       <li><b>Rakipler:</b> Her hamlede olası kart dağılımlarını simüle ederek oynar ve birlikte senin puanını düşürmeye çalışır.</li>
       <li><b>Koz:</b> Aldığın her el +50. Her oyuncunun <b>ilk seçimi koz olamaz</b>; ilk turda herkes ceza seçer.</li>
-      <li>Renge uymak zorunlu. Koz oyununda renge uyarken de yükseltmek gerekir; renk yoksa koz atılır ve yükseltilir. Koz kırılmadan kozla açılmaz.</li>
+      <li>Renge uymak zorunlu. <b>Yükseltme</b> (başlarken seçilir) açıksa koz oyununda renge uyarken büyüğünü atmak zorundasın; kapalıysa renge uyman yeter, yalnızca koz açılınca yükseltilir. Renk yoksa koz atılır ve yerde koz varsa yükseltilir. Koz kırılmadan kozla açılmaz.</li>
       <li>Kupa almaz ve Rifki'de kupa kırılmadan kupayla açılmaz. Rifki'de yerde kupa As'ı varsa elindeki kupa Papaz'ı atmak zorunludur; Kız almaz'da yerde aynı rengin Papaz'ı ya da As'ı varsa o rengin Kız'ını atmak zorunludur.</li>
       <li>Ceza oyunlarında renk yoksa ceza kartı varsa onu atmak zorundasın (kupa, kız, erkek, rifki).</li>
       <li><b>Yıldız:</b> Oyuna Yıldız ayırarak başlarsın. Birinci olursan ayırdığının <b>3 katını</b>, ikinci olursan <b>Yıldızını geri</b> alırsın. Puanlar eşitse o sıraların payı eşit bölünür (birincilik paylaşılırsa ikiniz de 2 katını alırsınız). Bakiyen Batak ve Balayı King'le ortak; biterse 3 saat sonra İş Bankası sorusu gelir.</li>
@@ -320,6 +329,8 @@ let takenBy = {}; // ceza kartı → alan oyuncu (bu el)
 let voids = [{}, {}, {}, {}];
 let hands, trick, turn, tricksWon, taken, played, contract, trump, trumpBroken, heartsBroken, chooser, busy = false, phase = "idle";
 
+const ykKayit = () => { try { return localStorage.getItem("kingYuk") !== "0"; } catch (e) { return true; } };
+const yukOn = () => !(G && G.yuk === false); // eski kayıtlarda alan yok: zorunlu sayılır
 function newGame() {
   G = {
     round: 0,
@@ -415,7 +426,8 @@ function legal(hand) {
   const best = trickWinner(trick).card;
   const same = hand.filter((c) => c.s === led);
   if (same.length) {
-    if (contract === "koz" && best.s === led) {
+    // Yükseltmeli: renge uyarken büyüğünü atmak zorunlu. Yükseltmesiz: yalnızca koz açıldıysa yükseltilir.
+    if (contract === "koz" && best.s === led && (yukOn() || led === trump)) {
       const higher = same.filter((c) => c.r > best.r);
       if (higher.length) return higher;
     }
@@ -470,7 +482,7 @@ const GANG = 0.6;
 let kInfo = KingAI.newInfo();
 const kUtil = (sc, x) => sc[x] - (x !== 0 ? GANG * sc[0] : 0);
 const kState = () => ({ h: hands, trick: trick.map((t) => ({ p: t.p, card: t.card })), ct: contract, T: trump, tb: trumpBroken, hb: heartsBroken, played, v: voids, tw: tricksWon, tk: taken, turn });
-const aiPick = (p) => KingAI.pick(kState(), p, kInfo, kUtil, { ms: p === 2 ? 700 : 350 });
+const aiPick = (p) => (KingAI.yuk(yukOn()), KingAI.pick(kState(), p, kInfo, kUtil, { ms: p === 2 ? 700 : 350 }));
 function aiChoose(p) {
   const opts = [], left = 5 - G.kozCount[p] - G.cezaCount[p];
   // kozu erken harcamamak için küçük bir ceza (sonda zorunlu kalmasın diye dengelenir)
@@ -504,7 +516,7 @@ function renderPens() {
 }
 function renderInfo() {
   renderPens();
-  $("info").innerHTML = `<span style="white-space:nowrap">El: <b>${Math.min(G.round + 1, 20)}/20</b>${G.stake ? `<small style="font-size:11px"> · ⭐${Token.fmt(G.stake)}</small>` : ""}</span><br>${phase === "play" || phase === "end" ? `<b>${contractName(contract)}</b>` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
+  $("info").innerHTML = `<span style="white-space:nowrap">El: <b>${Math.min(G.round + 1, 20)}/20</b>${G.stake ? `<small style="font-size:11px"> · ⭐${Token.fmt(G.stake)}</small>` : ""}</span><br>${phase === "play" || phase === "end" ? `<b>${contractName(contract)}</b>${contract === "koz" ? `<small style="font-size:11px;color:#9a9a9a"> · ${yukOn() ? "yükseltmeli" : "yükseltmesiz"}</small>` : ""}` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
   $("scores").innerHTML = G.scores.map((s, p) => `<div>${NAMES[p]}<b class="${s < 0 ? "neg" : s > 0 ? "pos" : ""}">${s}</b></div>`).join("");
 }
 // Koltukta mini cetvel: 3 üçgen (ceza) + 2 daire (koz); söylenenler boyalı
@@ -867,6 +879,7 @@ function showRules(resume) {
   // Kısa pencere: Yıldız ve Başla üstte/altta hep görünür; isimler ve kurallar açılır kutuda
   $("modal").innerHTML = `<h2>👑 King</h2>
     ${resume ? (stake ? `<div class="tkBox">⭐ Ortada <b>${Token.fmt(stake)}</b> Yıldız var; oyunu bitirince sonucunu alırsın.</div>` : "") : '<div id="tkSec"></div><div class="tkNot">Birinciye <b>3 katı</b> · ikinciye iade · eşitlikte pay bölünür. Bakiyen Batak, King ve Balayı King\'de ortak.</div>'}
+    ${resume ? "" : `<label class="ykSec"><input type="checkbox" id="ykChk"${ykKayit() ? " checked" : ""}><i></i><span><b>Yükseltme zorunlu</b><small id="ykAcik"></small></span></label>`}
     <details class="mDet"><summary>👥 Oyuncu isimleri</summary>${ISIM.html([["ben", "Sen", "Senin adın"], ["sag", "Sadosan", "Sağındaki"], [null, "Sadolayn", "Karşındaki"], ["sol", "Sadocan", "Solundaki"]])}</details>
     <details class="mDet"><summary>📖 Kurallar</summary>${KURAL()}</details>
     <div class="tkAlt"><button class="btn" id="start">${resume ? "Devam et" : "Başla"}</button>
@@ -878,18 +891,22 @@ function showRules(resume) {
     $("fresh").onclick = () => showRules(false);
     return;
   }
+  const yk = $("ykChk"), ykYaz = () => ($("ykAcik").textContent = yk.checked ? "Koz oyununda renge uyarken büyüğünü atmak zorundasın" : "Renge uyman yeter; yalnızca koz açılınca yükseltilir");
+  yk.onchange = () => { ykYaz(); try { localStorage.setItem("kingYuk", yk.checked ? "1" : "0"); } catch (e) {} };
+  ykYaz();
   const sec = Token.secici($("tkSec"), "king");
   sec.onChange = (v) => ($("start").textContent = `Başla · ${Token.fmt(v)} Yıldız`); sec.sync();
   $("start").onclick = () => {
     const v = sec.deger();
     if (!Token.koy(v)) return showRules(false);
-    newGame(); G.stake = v; save();
+    newGame(); G.stake = v; G.yuk = yk.checked; KingAI.yuk(yukOn()); save();
     $("overlay").classList.remove("show"); newRound();
   };
 }
 
 const saved = load();
 if (saved) G = saved; else newGame();
+KingAI.yuk(yukOn());
 renderInfo();
 fitTable();
 showRules(!!saved && (saved.round > 0 || !!saved.stake));

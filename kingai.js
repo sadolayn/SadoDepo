@@ -17,6 +17,7 @@
   const beats = (a, b, S) => (a.s === b.s ? a.r > b.r : S.ct === "koz" && a.s === S.T);
   function winner(t, S) { let w = t[0]; for (const x of t) if (beats(x.card, w.card, S)) w = x; return w; }
   const isPen = (c, ct) => (ct === "kupa" && c.s === "♥") || (ct === "erkek" && (c.r === 13 || c.r === 11)) || (ct === "kiz" && c.r === 12) || (ct === "rifki" && c.s === "♥" && c.r === 13);
+  let YUK = true; // King ayarı: yükseltme zorunlu mu (king.html her hamleden önce bildirir)
   function legal(hand, S) {
     const ct = S.ct, trick = S.trick;
     if (!trick.length) {
@@ -27,7 +28,7 @@
     const led = trick[0].card.s, best = winner(trick, S).card;
     const same = hand.filter((c) => c.s === led);
     if (same.length) {
-      if (ct === "koz" && best.s === led) { const hi = same.filter((c) => c.r > best.r); if (hi.length) return hi; }
+      if (ct === "koz" && best.s === led && (YUK || led === S.T)) { const hi = same.filter((c) => c.r > best.r); if (hi.length) return hi; }
       if (ct === "rifki" && led === "♥") { const kh = same.find((c) => c.r === 13); if (kh && trick.some((t) => t.card.s === "♥" && t.card.r === 14)) return [kh]; }
       if (ct === "kiz") { const q = same.find((c) => c.r === 12); if (q && trick.some((t) => t.card.s === led && t.card.r > 12)) return [q]; }
       return same;
@@ -252,7 +253,7 @@
     return best;
   }
 
-  const API = { legal, observe, newInfo, pick, choose, policy, rollout, score, PUAN };
+  const API = { yuk: (v) => (YUK = v !== false), legal, observe, newInfo, pick, choose, policy, rollout, score, PUAN };
   if (typeof window !== "undefined") window.KingAI = API;
   if (typeof module !== "undefined") module.exports = API;
 })();
