@@ -89,6 +89,15 @@
   /* Pencere, tarayıcının araç çubukları arasında kalan görünür alana sığar; sığmazsa kaydırılır (vh yerine dvh) */
   .overlay, .ov { overflow-y: auto; overscroll-behavior: contain; }
   .modal { margin: auto; max-height: 92vh; max-height: calc(100dvh - 32px); overflow-y: auto; }
+  .ykSec { display: flex; align-items: center; gap: 10px; margin: 2px 0 10px; padding: 9px 12px; background: #141414; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; text-align: left; }
+  .ykSec input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .ykSec i { width: 42px; height: 24px; border-radius: 999px; background: #3a3a3a; flex: none; position: relative; transition: background .2s; }
+  .ykSec i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #bdbdbd; transition: transform .2s, background .2s; }
+  .ykSec input:checked + i { background: var(--accent); }
+  .ykSec input:checked + i::after { transform: translateX(18px); background: #fff7e6; }
+  .ykSec input:focus-visible + i { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .ykSec span { font-size: 14.5px; line-height: 1.35; }
+  .ykSec small { display: block; font-size: 12px; color: #9a9a9a; margin-top: 2px; }
   .mDet { text-align: left; margin: 0 0 8px; background: #141414; border: 1px solid var(--line); border-radius: 12px; padding: 5px 12px; }
   .mDet summary { cursor: pointer; font-size: 14px; font-weight: 600; padding: 5px 0; color: var(--accent); }
   .mDet .rules { margin: 6px 0 6px; }
@@ -99,7 +108,7 @@
 <script src="kartmasa.js?v=9" data-oyun="balayi"></script>
 <script src="isq.js"></script>
 <script src="token.js?v=3"></script>
-<script src="balayiai.js?v=1"></script>
+<script src="balayiai.js?v=2"></script>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
 <script src="rapor.js"></script>
@@ -137,7 +146,7 @@ const KURAL = () => `<ul class="rules">
       <li>Açık kartlar ve elindeki kartlar oynanabilir. Açık kart oynanınca altındaki kapalı kart açılır.</li>
       <li>${DEALS} el oynanır. Her oyuncu sırayla seçer ve her oyunu bir kez seçebilir: <b>♣ ×1, ♦ ×2, ♥ ×3, ♠ ×4, Kozsuz ×5</b>.</li>
       <li>Aldığın her el, oyunun çarpanı kadar puan. En çok puanı toplayan kazanır.</li>
-      <li>Renge uymak ve mümkünse yükseltmek zorunlu. Renk yoksa koz atılır. Koz kırılmadan kozla açılmaz.</li>
+      <li>Renge uymak zorunlu. <b>Yükseltme</b> (başlarken seçilir) açıksa renge uyarken mümkünse büyüğünü atmak zorundasın; kapalıysa renge uyman yeter, yalnızca koz açılınca yükseltilir. Renk yoksa koz atılır. Koz kırılmadan kozla açılmaz.</li>
       <li>Sadolayn'ın şansı biraz yaver gider: dağıtımda eline genellikle güçlü kartlar gelir 😉</li>
       <li><b>Yıldız:</b> Oyuna Yıldız ayırarak başlarsın. Kazanırsan ayırdığının <b>2 katını</b> alırsın, berabere biterse Yıldızın iade edilir. Bakiyen Batak ve King'le ortak; biterse 3 saat sonra İş Bankası sorusu gelir.</li>
     </ul>`;
@@ -171,6 +180,8 @@ const wait = (ms) => KartMasa.wait(ms);
 let G, hands, piles, trick, turn, tricksWon, played, game, trump, trumpBroken, chooser, phase = "idle", busy = false;
 let voids = [{}, {}];
 
+const ykKayit = () => { try { return localStorage.getItem("balayiYuk") !== "0"; } catch (e) { return true; } };
+const yukOn = () => !(G && G.yuk === false); // eski kayıtlarda alan yok: zorunlu sayılır
 function newGame() { G = { round: 0, scores: [0, 0], used: [[], []], history: [] }; save(); }
 function save() { try { localStorage.setItem("balayiGame", JSON.stringify(G)); } catch (e) {} }
 function load() {
@@ -208,6 +219,7 @@ function legal(p) {
   const lead = trick[0].card;
   const same = cs.filter((c) => c.s === lead.s);
   if (same.length) {
+    if (!yukOn() && lead.s !== trump) return same; // yükseltmesiz: renge uymak yeter (koz açıldıysa yine yükseltilir)
     const higher = same.filter((c) => c.r > lead.r);
     return higher.length ? higher : same; // renge uy, mümkünse yükselt
   }
@@ -220,14 +232,14 @@ function legal(p) {
 // yüzlerce kez dağıtıp her kartı elin sonuna kadar dener; oyun seçerken de her oyunu çarpanıyla tartar.
 let bInfo = BalayiAI.newInfo();
 const bState = () => ({ h: hands, pl: piles, trick: trick.map((t) => ({ p: t.p, card: t.card })), T: trump, tb: trumpBroken, played, tw: tricksWon, turn, v: voids });
-const botPick = (p) => BalayiAI.pick(bState(), p, bInfo, { ms: 650 });
-const botChoose = (p) => BalayiAI.choose(bState(), p, bInfo, GAMES.filter((g) => !G.used[p].includes(g.k)), { n: 150 });
+const botPick = (p) => (BalayiAI.yuk(yukOn()), BalayiAI.pick(bState(), p, bInfo, { ms: 650 }));
+const botChoose = (p) => (BalayiAI.yuk(yukOn()), BalayiAI.choose(bState(), p, bInfo, GAMES.filter((g) => !G.used[p].includes(g.k)), { n: 150 }));
 
 // ---------- Ekran ----------
 function setStatus(t) { $("status").innerHTML = t ? `<span>${t}</span>` : ""; }
 function gameName() { return game ? (GK[game].ad + (game !== "NT" ? " " + game : "") + ` ×${GK[game].x}`) : "–"; }
 function renderInfo() {
-  $("info").innerHTML = `<span style="white-space:nowrap">El: <b>${Math.min(G.round + 1, DEALS)}/${DEALS}</b>${G.stake ? `<small style="font-size:11px"> · ⭐${Token.fmt(G.stake)}</small>` : ""}</span><br>${phase === "play" || phase === "end" ? `<b>${game === "NT" ? "Kozsuz" : "Koz " + game}</b> ×${GK[game].x}` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
+  $("info").innerHTML = `<span style="white-space:nowrap">El: <b>${Math.min(G.round + 1, DEALS)}/${DEALS}</b>${G.stake ? `<small style="font-size:11px"> · ⭐${Token.fmt(G.stake)}</small>` : ""}</span><br>${phase === "play" || phase === "end" ? `<b>${game === "NT" ? "Kozsuz" : "Koz " + game}</b> ×${GK[game].x}<small style="font-size:11px;color:#9a9a9a"> · ${yukOn() ? "yükseltmeli" : "yükseltmesiz"}</small>` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
   $("scores").innerHTML = G.scores.map((s, p) => `<div>${NAMES[p]}<b class="${s > G.scores[1 - p] ? "pos" : ""}">${s}</b></div>`).join("");
 }
 function renderWho() {
@@ -427,6 +439,7 @@ function showRules(resume) {
   // Kısa pencere: Yıldız ve Başla üstte/altta hep görünür; isimler ve kurallar açılır kutuda
   $("modal").innerHTML = `<h2>💞 Balayı King</h2>
     ${resume ? (stake ? `<div class="tkBox">⭐ Ortada <b>${Token.fmt(stake)}</b> Yıldız var; oyunu bitirince sonucunu alırsın.</div>` : "") : '<div id="tkSec"></div><div class="tkNot">Kazanırsan <b>2 katı</b> · berabere biterse iade. Bakiyen Batak, King ve Balayı King\'de ortak.</div>'}
+    ${resume ? "" : `<label class="ykSec"><input type="checkbox" id="ykChk"${ykKayit() ? " checked" : ""}><i></i><span><b>Yükseltme zorunlu</b><small id="ykAcik"></small></span></label>`}
     <details class="mDet"><summary>👥 Oyuncu isimleri</summary>${ISIM.html([["ben", "Sen", "Senin adın"], [null, "Sadolayn", "Rakibin"]])}</details>
     <details class="mDet"><summary>📖 Kurallar</summary>${KURAL()}</details>
     <div class="tkAlt"><button class="btn" id="start">${resume ? "Devam et" : "Başla"}</button>
@@ -438,17 +451,21 @@ function showRules(resume) {
     $("fresh").onclick = () => showRules(false);
     return;
   }
+  const yk = $("ykChk"), ykYaz = () => ($("ykAcik").textContent = yk.checked ? "Renge uyarken mümkünse büyüğünü atmak zorundasın" : "Renge uyman yeter; yalnızca koz açılınca yükseltilir");
+  yk.onchange = () => { ykYaz(); try { localStorage.setItem("balayiYuk", yk.checked ? "1" : "0"); } catch (e) {} };
+  ykYaz();
   const sec = Token.secici($("tkSec"), "balayi");
   sec.onChange = (v) => ($("start").textContent = `Başla · ${Token.fmt(v)} Yıldız`); sec.sync();
   $("start").onclick = () => {
     const v = sec.deger();
     if (!Token.koy(v)) return showRules(false);
-    newGame(); G.stake = v; save();
+    newGame(); G.stake = v; G.yuk = yk.checked; BalayiAI.yuk(yukOn()); save();
     $("overlay").classList.remove("show"); newRound();
   };
 }
 const saved = load();
 if (saved) G = saved; else newGame();
+BalayiAI.yuk(yukOn());
 hands = [[], []]; piles = [[], []];
 renderInfo(); renderWho(); fit();
 let fitT; window.addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(() => { fit(); if (hands[0].length) render(); }, 120); });

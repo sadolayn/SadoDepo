@@ -14,13 +14,14 @@
   const tops = (S, p) => { const o = []; for (const st of S.pl[p]) if (st.length) o.push(st[st.length - 1]); return o; };
   const playable = (S, p) => S.h[p].concat(tops(S, p));
   const beats = (a, b, T) => (a.s === b.s ? a.r > b.r : !!T && a.s === T);
+  let YUK = true; // Balayı ayarı: yükseltme zorunlu mu (balayi.html bildirir)
   function legalOf(cs, S) {
     if (!S.trick.length) {
       if (S.T && !S.tb) { const nt = cs.filter((c) => c.s !== S.T); if (nt.length) return nt; }
       return cs;
     }
     const lead = S.trick[0].card, same = cs.filter((c) => c.s === lead.s);
-    if (same.length) { const hi = same.filter((c) => c.r > lead.r); return hi.length ? hi : same; }
+    if (same.length) { if (!YUK && lead.s !== S.T) return same; const hi = same.filter((c) => c.r > lead.r); return hi.length ? hi : same; }
     if (S.T) { const tr = cs.filter((c) => c.s === S.T); if (tr.length) return tr; }
     return cs;
   }
@@ -146,7 +147,7 @@
     return best;
   }
 
-  const API = { legal, observe, newInfo, pick, choose, policy, rollout, playable };
+  const API = { yuk: (v) => (YUK = v !== false), legal, observe, newInfo, pick, choose, policy, rollout, playable };
   if (typeof window !== "undefined") window.BalayiAI = API;
   if (typeof module !== "undefined") module.exports = API;
 })();
