@@ -227,6 +227,26 @@
   .fv:active { border-color: var(--accent); }
   .fv i { font-style: normal; font-size: 20px; width: 24px; text-align: center; flex: none; }
   .fv b { font: 600 14.5px Georgia, "Times New Roman", serif; line-height: 1.25; }
+  .fv span { display: flex; flex-direction: column; min-width: 0; }
+  .fv small { font: 11px system-ui, sans-serif; color: #9a9a9a; margin-top: 2px; }
+  .araAlt { display: flex; justify-content: flex-end; margin: 2px 2px 0; }
+  #azBtn { background: none; border: 0; color: var(--accent); font: 600 13px system-ui, sans-serif; padding: 6px 4px; min-height: 30px; cursor: pointer; letter-spacing: normal; }
+  #azBtn[aria-expanded="true"] { color: #f3dca8; }
+  .altL, .azP { margin-top: 8px; border-radius: 16px; border: 1px solid var(--line); background: #070707; overflow: hidden; }
+  .altL[hidden], .azP[hidden] { display: none; }
+  .altB { padding: 9px 14px 7px; font: italic 600 13.5px Georgia, "Times New Roman", serif; color: var(--accent); background: #0d0b07; border-bottom: 1px solid #1c1c1c; letter-spacing: normal; }
+  .azP .altB { position: sticky; top: 0; z-index: 1; font-size: 15px; }
+  .alt { display: flex; align-items: center; border-bottom: 1px solid #161616; }
+  .alt:last-child { border-bottom: 0; }
+  .alt a { flex: 1; display: flex; align-items: center; gap: 12px; min-width: 0; padding: 10px 6px 10px 14px; min-height: 48px; box-sizing: border-box; color: var(--ink); text-decoration: none; letter-spacing: normal; }
+  .alt a:active { background: #121212; }
+  .alt a > i { font-style: normal; font-size: 19px; width: 24px; text-align: center; flex: none; }
+  .alt a b { display: block; font: 600 15px Georgia, "Times New Roman", serif; }
+  .alt a small { display: block; font-size: 12px; color: #9a9a9a; margin-top: 1px; }
+  .alt .yb { flex: none; width: 44px; height: 44px; margin-right: 4px; border: 0; background: none; color: #8a8a8a; font-size: 19px; cursor: pointer; border-radius: 50%; }
+  .alt .yb[aria-pressed="true"] { color: var(--accent); }
+  .azKapat { display: block; width: 100%; padding: 12px; min-height: 44px; border: 0; border-top: 1px solid #1c1c1c; background: #0b0b0b; color: var(--accent); font: 600 13.5px system-ui, sans-serif; cursor: pointer; }
+  .altMsg { margin: 8px 4px 0; font-size: 13px; color: #f3dca8; letter-spacing: normal; }
   .mn .yld { display: none; }
   .favDuz .mn :is(.one, .row, .tile) { position: relative; }
   .favDuz .mn :is(.one, .row) { padding-right: 54px; }
@@ -370,10 +390,14 @@
       <input type="search" id="araQ" placeholder="Ara: çek iskonto, mevduat, resmi gazete…" aria-label="Araçlarda ara" autocomplete="off" enterkeyhint="go">
       <button type="button" id="araSil" aria-label="Aramayı temizle" hidden>✕</button>
     </div>
+    <div class="araAlt"><button type="button" id="azBtn" aria-expanded="false">🔤 Tüm araçlar A-Z ›</button></div>
+    <div class="altL" id="altL" hidden></div>
+    <div class="azP" id="azP" hidden></div>
+    <p class="altMsg" id="altMsg" hidden></p>
     <p class="araYok" id="araYok" hidden>Bulunamadı. Başka bir kelime dene ya da aşağıdaki öneri formundan yaz 🙂</p>
     <section class="fav" id="fav" aria-label="Favorilerim">
       <h2 data-yeni="favori|2026-10-30|YENİ"><span class="t">⭐ Favorilerim</span><button type="button" id="favDuz" aria-pressed="false">Seç</button></h2>
-      <p class="favIp" id="favIp">Sık kullandığın 5 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun.</p>
+      <p class="favIp" id="favIp">Sık kullandığın 6 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun. Aramadaki ☆ ile alt başlıkları da ekleyebilirsin.</p>
       <div class="favL" id="favL"></div>
     </section>
     <a class="one isb" href="isbank.html" data-ara="kampanya maximum maximiles işcep iş black iş plus şube banka günün sorusu puan" data-yeni="isbank3|2026-10-21|YENİLENDİ">
@@ -947,23 +971,138 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 })();
 </script>
 <script>
-/* Ana sayfa: anlık arama + Favorilerim (en fazla 5, yalnızca bu cihazda saklanır) */
+/* Ana sayfa: anlık arama (alt başlıklar dahil) + Tüm araçlar A-Z + Favorilerim (en fazla 6, yalnızca bu cihazda saklanır)
+   Yeni bir sekme/bölüm eklenince ALT listesine bir satır eklemek yeter: [başlık, ana bölüm, adres, simge, ek arama kelimeleri] */
 (function () {
   var nav = document.querySelector("nav.mn"); if (!nav) return;
   var $ = function (id) { return document.getElementById(id); };
   var q = $("araQ"), sil = $("araSil"), yok = $("araYok"), favS = $("fav"), favL = $("favL"), favIp = $("favIp"), duz = $("favDuz");
-  var KART = [].slice.call(nav.querySelectorAll("a.one, a.row, a.tile")).filter(function (a) { return !a.closest("#fav"); });
+  var altL = $("altL"), azP = $("azP"), azBtn = $("azBtn"), msg = $("altMsg");
+  var ALT = [
+    ["Vadeli Mevduat Getirisi", "Bankacılık", "banka.html#mev", "💰", "mevduat faiz stopaj vade"],
+    ["Tüketici Kredisi", "Bankacılık", "banka.html#tk", "🛍️", "ihtiyaç kredisi taksit"],
+    ["Ek Hesap Faizi", "Bankacılık", "banka.html#ek", "➕", "kmh kredili mevduat taksitli ek hesap"],
+    ["Kredi Kartı Gecikme Faizi", "Bankacılık", "banka.html#kk", "💳", "kart gecikme"],
+    ["Konut Kredisi", "Bankacılık", "banka.html#konut", "🏠", "ev ekspertiz"],
+    ["Taşıt Kredisi", "Bankacılık", "banka.html#tasit", "🚗", "araba araç"],
+    ["BCH Rotatif Kredi", "Bankacılık", "banka.html#bch", "🔄", "rotatif"],
+    ["Taksitli Ticari Kredi", "Bankacılık", "banka.html#tic", "📦", "ticari esnaf"],
+    ["Çek İskonto & Valör", "Bankacılık", "banka.html#cek", "🧾", "iştira valör takvimi"],
+    ["Tarım Kredisi", "Bankacılık", "banka.html#tarim", "🌾", "çiftçi"],
+    ["Hesap Makinesi", "Hesaplamalar", "hesap.html#calc", "🧮", ""],
+    ["Cetvel", "Hesaplamalar", "hesap.html#cetvel", "📏", "ölçü"],
+    ["Mesafe Ölçme", "Hesaplamalar", "hesap.html#mesafe", "📐", "uzaklık"],
+    ["Faiz Hesabı", "Hesaplamalar", "hesap.html#faiz", "💵", ""],
+    ["Tarih Hesabı", "Hesaplamalar", "hesap.html#tarih", "📆", "iki tarih arası gün ekle çıkar"],
+    ["Yüzde, KDV & Tapu Harcı", "Hesaplamalar", "hesap.html#yuzde", "％", "ötv vergi tapu harcı"],
+    ["Pratik Kısayollar", "Hesaplamalar", "hesap.html#klavye", "💡", "emoji alt kodu altgr klavye"],
+    ["Sayı Bulmaca", "Hesaplamalar", "hesap.html#bulmaca", "🔢", "oyun"],
+    ["Kampanyalar", "İş Bankası Gündemi", "isbank.html#maximum", "🎁", "maximum maximiles"],
+    ["Yeni Kampanyalar", "İş Bankası Gündemi", "isbank.html#yeni", "🆕", "son eklenen"],
+    ["Kampanya Takvimi", "İş Bankası Gündemi", "isbank.html#ktakvim", "⏳", "bitiş"],
+    ["İşCep İpuçları", "İş Bankası Gündemi", "isbank.html#iscep", "📲", "mobil"],
+    ["İş Black", "İş Bankası Gündemi", "isbank.html#black", "🖤", "maximiles black lounge"],
+    ["İş Plus", "İş Bankası Gündemi", "isbank.html#isplus", "➕", ""],
+    ["İş Bankası Haberleri", "İş Bankası Gündemi", "isbank.html#guncel", "📰", "güncel"],
+    ["KAP Bildirimleri", "İş Bankası Gündemi", "isbank.html#kap", "📢", "kamuyu aydınlatma"],
+    ["Atamalar", "İş Bankası Gündemi", "isbank.html#atamalar", "👔", "genel müdür yardımcısı"],
+    ["Videolar", "İş Bankası Gündemi", "isbank.html#video", "🎬", ""],
+    ["Şubeler", "İş Bankası Gündemi", "isbank.html#subeler", "📍", "şube adres"],
+    ["Kartsız Öde", "İş Bankası Gündemi", "isbank.html#kartsiz", "💳", ""],
+    ["Pazarama", "İş Bankası Gündemi", "isbank.html#pazarama", "🛒", ""],
+    ["Medya", "İş Bankası Gündemi", "isbank.html#medya", "📣", "reklam"],
+    ["Tarihçe", "İş Bankası Gündemi", "isbank.html#tarihce", "🏛️", "tarih atatürk"],
+    ["Günün Sorusu", "İş Bankası Gündemi", "isbank.html#soru", "❓", "bilgi yarışması"],
+    ["Kurum Duyuruları", "Resmi Gazete", "gazete.html#kurum", "🏛️", "bddk tcmb spk masak"],
+    ["Ajanda", "Takvim & Ajanda", "takvim.html#ajanda", "📝", "ziyaret toplantı izin"],
+    ["Vergi Takvimi", "Takvim & Ajanda", "takvim.html#vergi", "🧾", "beyanname son gün"],
+    ["İş Günü Hesabı", "Takvim & Ajanda", "takvim.html#hesap", "🗓️", "iki tarih arası"],
+    ["Yıllık Takvim", "Takvim & Ajanda", "takvim.html#yil", "📅", "tatil bayram"],
+    ["Eczane", "En Yakınımda", "yakin.html#eczane", "💊", "nöbetçi"],
+    ["Hastane", "En Yakınımda", "yakin.html#hastane", "🏥", "acil"],
+    ["İş Bankası Şubesi", "En Yakınımda", "yakin.html#isbank", "🏦", "şube"],
+    ["İş Bankası ATM", "En Yakınımda", "yakin.html#isatm", "🏧", "atm bankamatik"],
+    ["Tüm ATM'ler", "En Yakınımda", "yakin.html#atm", "🏧", "bankamatik"],
+    ["Toplanma Alanı", "En Yakınımda", "yakin.html#toplanma", "🟩", "deprem afad"],
+    ["Akaryakıt", "En Yakınımda", "yakin.html#akaryakit", "⛽", "benzin"],
+    ["Batak", "Oyunlar", "batak.html", "♠️", "kart"],
+    ["King", "Oyunlar", "king.html", "👑", "kart"],
+    ["Balayı King", "Oyunlar", "balayi.html", "💞", "kart iki kişilik"],
+    ["Tavla", "Oyunlar", "tavla.html", "🎲", ""],
+    ["Solitaire", "Oyunlar", "solitaire.html", "🃏", "kart"],
+    ["UçUç", "Oyunlar", "pilot.html", "✈️", ""],
+    ["Sayı Bilmecesi", "Oyunlar", "bilmece.html", "🧩", "bulmaca"],
+    ["Asal Tahmin", "Oyunlar", "tahmin.html", "🔮", ""]
+  ];
   var norm = function (t) { return String(t || "").replace(/İ/g, "i").replace(/I/g, "ı").toLowerCase()
-    .replace(/[ıİ]/g, "i").replace(/ş/g, "s").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ö/g, "o").replace(/ç/g, "c").replace(/â/g, "a").replace(/î/g, "i").replace(/[^a-z0-9 ]+/g, " "); };
+    .replace(/ı/g, "i").replace(/ş/g, "s").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ö/g, "o").replace(/ç/g, "c").replace(/â/g, "a").replace(/î/g, "i").replace(/[^a-z0-9 ]+/g, " "); };
+  var KART = [].slice.call(nav.querySelectorAll("a.one, a.row, a.tile")).filter(function (a) { return !a.closest("#fav"); });
+  var baslik = function (a) { var t = a.querySelector(".t"); return t ? t.childNodes[0].textContent.trim() : ""; };
+  // Tek katalog: ana kartlar + alt başlıklar (adres anahtardır)
+  var KAT = {};
   KART.forEach(function (a) {
-    var t = a.querySelector(".t"), d = a.querySelector(".d");
-    a._ara = norm((t ? t.textContent : "") + " " + (d ? d.textContent : "") + " " + (a.getAttribute("data-ara") || ""));
+    var d = a.querySelector(".d"), ik = a.querySelector(".ik"), h = a.getAttribute("href");
+    a._ara = norm(baslik(a) + " " + (d ? d.textContent : "") + " " + (a.getAttribute("data-ara") || ""));
+    KAT[h] = { ad: baslik(a), ust: "", h: h, ik: (ik && ik.textContent.trim()) || "🏛️", ana: true };
     var y = document.createElement("span"); y.className = "yld"; y.setAttribute("aria-hidden", "true"); y.textContent = "☆"; a.appendChild(y);
   });
-  // --- Arama
+  ALT.forEach(function (x) { KAT[x[2]] = { ad: x[0], ust: x[1], h: x[2], ik: x[3], ara: norm(x[0] + " " + x[1] + " " + x[4]), adN: norm(x[0]) }; });
+  // --- Favoriler
+  var KEY = "anaFav", MAX = 6, F = [];
+  try { F = JSON.parse(localStorage.getItem(KEY) || "[]") || []; } catch (e) {}
+  F = F.filter(function (h) { return KAT[h]; }).slice(0, MAX);
+  function kaydet() { try { localStorage.setItem(KEY, JSON.stringify(F)); } catch (e) {} }
+  function uyar(t) { msg.textContent = t; msg.hidden = !t; clearTimeout(uyar.t); if (t) uyar.t = setTimeout(function () { msg.hidden = true; }, 3500); }
+  function degis(h) {
+    var i = F.indexOf(h);
+    if (i > -1) F.splice(i, 1);
+    else if (F.length >= MAX) { uyar("En fazla 6 favori olabilir; önce birini çıkar ⭐"); favIp.hidden = false; favIp.textContent = "En fazla 6 favori olabilir; önce birini çıkar ⭐"; return false; }
+    else F.push(h);
+    kaydet(); ciz(); return true;
+  }
+  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function satir(k) { // arama sonucu ve A-Z satırı: bağlantı + yıldız
+    var r = el("div", "alt"), a = el("a"); a.href = k.h;
+    var i = el("i", "", k.ik); i.setAttribute("aria-hidden", "true");
+    var sp = el("span"); sp.appendChild(el("b", "", k.ad)); sp.appendChild(el("small", "", k.ust || "Ana bölüm"));
+    a.appendChild(i); a.appendChild(sp); r.appendChild(a);
+    var b = el("button", "yb"); b.type = "button"; b.setAttribute("data-fav", k.h); r.appendChild(b);
+    return r;
+  }
+  function yildizlar() {
+    [].forEach.call(document.querySelectorAll(".alt .yb"), function (b) {
+      var h = b.getAttribute("data-fav"), on = F.indexOf(h) > -1, ad = KAT[h] ? KAT[h].ad : "";
+      b.textContent = on ? "★" : "☆"; b.setAttribute("aria-pressed", on ? "true" : "false");
+      b.setAttribute("aria-label", ad + (on ? ": favorilerden çıkar" : ": favorilere ekle"));
+    });
+  }
+  function ciz() {
+    favL.textContent = "";
+    F.forEach(function (h) {
+      var k = KAT[h]; if (!k) return;
+      var c = el("a", "fv"); c.href = h;
+      var i = el("i", "", k.ik); i.setAttribute("aria-hidden", "true");
+      var sp = el("span"); sp.appendChild(el("b", "", k.ad)); if (k.ust) sp.appendChild(el("small", "", k.ust));
+      c.appendChild(i); c.appendChild(sp); favL.appendChild(c);
+    });
+    var acik = document.body.classList.contains("favDuz");
+    favIp.hidden = !acik && F.length > 0;
+    favIp.innerHTML = acik ? "Sabitlemek istediğin araçlara dokun (en fazla 6). Alt başlıklar için aramadaki ☆'a dokun. Bitince <b>Tamam</b>'a dokun."
+      : "Sık kullandığın 6 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun. Aramadaki ☆ ile alt başlıkları da ekleyebilirsin.";
+    duz.textContent = acik ? "Tamam ✓" : (F.length ? "Düzenle" : "Seç");
+    duz.setAttribute("aria-pressed", acik ? "true" : "false");
+    KART.forEach(function (a) {
+      var on = F.indexOf(a.getAttribute("href")) > -1; a.classList.toggle("secili", on);
+      a.querySelector(".yld").textContent = on ? "★" : "☆";
+      if (acik) a.setAttribute("aria-pressed", on ? "true" : "false"); else a.removeAttribute("aria-pressed");
+    });
+    yildizlar();
+  }
+  // --- Arama: ana kartları süzer, eşleşen alt başlıkları üstte "Doğrudan git" listesinde gösterir
   function ara() {
     var k = norm(q.value).split(" ").filter(Boolean), say = 0, son = null;
     sil.hidden = !q.value;
+    if (k.length && !azP.hidden) azKapa();
     KART.forEach(function (a) {
       var ok = !k.length || k.every(function (w) { return a._ara.indexOf(w) > -1; });
       a.classList.toggle("gizli", !ok); if (ok) { say++; son = a; }
@@ -973,43 +1112,50 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       g.classList.toggle("gizli", bos); if (h && h.tagName === "H2") h.classList.toggle("gizli", bos);
     });
     favS.classList.toggle("gizli", k.length > 0);
-    yok.hidden = !k.length || say > 0;
-    return say === 1 ? son : null;
+    altL.textContent = "";
+    var bul = !k.length ? [] : ALT.map(function (x) { return KAT[x[2]]; }).filter(function (x) { return k.every(function (w) { return x.ara.indexOf(w) > -1; }); });
+    bul.sort(function (a, b) { // adında geçenler önce, sonra alfabetik
+      var pa = k.every(function (w) { return a.adN.indexOf(w) > -1; }) ? 0 : 1, pb = k.every(function (w) { return b.adN.indexOf(w) > -1; }) ? 0 : 1;
+      return pa - pb || a.ad.localeCompare(b.ad, "tr");
+    });
+    bul = bul.slice(0, 8);
+    if (bul.length) { altL.appendChild(el("div", "altB", "Doğrudan git")); bul.forEach(function (x) { altL.appendChild(satir(x)); }); yildizlar(); }
+    altL.hidden = !bul.length;
+    yok.hidden = !k.length || say > 0 || bul.length > 0;
+    if (bul.length + say === 1) return bul[0] ? bul[0].h : son.href;
+    return null;
   }
   q.addEventListener("input", ara);
   q.addEventListener("keydown", function (e) {
     if (e.key === "Escape") { q.value = ""; ara(); }
-    if (e.key === "Enter") { var t = ara(); if (t) location.href = t.href; else q.blur(); }
+    if (e.key === "Enter") { var t = ara(); if (t) location.href = t; else q.blur(); }
   });
   sil.addEventListener("click", function () { q.value = ""; ara(); q.focus(); });
-  // --- Favoriler
-  var KEY = "anaFav", MAX = 5, F = [];
-  try { F = JSON.parse(localStorage.getItem(KEY) || "[]") || []; } catch (e) {}
-  var ad = function (a) { return a.getAttribute("href"); };
-  F = F.filter(function (h) { return KART.some(function (a) { return ad(a) === h; }); }).slice(0, MAX);
-  function kaydet() { try { localStorage.setItem(KEY, JSON.stringify(F)); } catch (e) {} }
-  function ciz() {
-    favL.textContent = "";
-    F.forEach(function (h) {
-      var a = KART.filter(function (x) { return ad(x) === h; })[0]; if (!a) return;
-      var ik = a.querySelector(".ik"), t = a.querySelector(".t");
-      var c = document.createElement("a"); c.className = "fv"; c.href = h;
-      var i = document.createElement("i"); i.setAttribute("aria-hidden", "true"); i.textContent = (ik && ik.textContent.trim()) || "🏛️";
-      var b = document.createElement("b"); b.textContent = t ? t.childNodes[0].textContent.trim() : h;
-      c.appendChild(i); c.appendChild(b); favL.appendChild(c);
+  // --- Tüm araçlar A-Z
+  function azKapa() { azP.hidden = true; azP.textContent = ""; azBtn.setAttribute("aria-expanded", "false"); azBtn.textContent = "🔤 Tüm araçlar A-Z ›"; }
+  azBtn.addEventListener("click", function () {
+    if (!azP.hidden) { azKapa(); return; }
+    if (q.value) { q.value = ""; ara(); }
+    var L = Object.keys(KAT).map(function (h) { return KAT[h]; }).sort(function (a, b) { return a.ad.localeCompare(b.ad, "tr"); });
+    var harf = "";
+    L.forEach(function (x) {
+      var h = x.ad.charAt(0).toLocaleUpperCase("tr");
+      if (!/[A-ZÇĞİÖŞÜ]/.test(h)) h = "#";
+      if (h !== harf) { harf = h; azP.appendChild(el("div", "altB", h)); }
+      azP.appendChild(satir(x));
     });
-    var acik = document.body.classList.contains("favDuz");
-    favIp.hidden = !acik && F.length > 0;
-    favIp.innerHTML = acik ? "Sabitlemek istediğin araçlara dokun (en fazla 5). Bitince <b>Tamam</b>'a dokun."
-      : "Sık kullandığın 5 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun.";
-    duz.textContent = acik ? "Tamam ✓" : (F.length ? "Düzenle" : "Seç");
-    duz.setAttribute("aria-pressed", acik ? "true" : "false");
-    KART.forEach(function (a) {
-      var on = F.indexOf(ad(a)) > -1; a.classList.toggle("secili", on);
-      a.querySelector(".yld").textContent = on ? "★" : "☆";
-      if (acik) a.setAttribute("aria-pressed", on ? "true" : "false"); else a.removeAttribute("aria-pressed");
-    });
-  }
+    var kp = el("button", "azKapat", "Listeyi kapat ✕"); kp.type = "button"; kp.onclick = function () { azKapa(); azBtn.scrollIntoView({ block: "center" }); };
+    azP.appendChild(kp);
+    azP.hidden = false; azBtn.setAttribute("aria-expanded", "true"); azBtn.textContent = "🔤 Tüm araçlar A-Z ✕";
+    yildizlar();
+  });
+  // Yıldız düğmeleri (arama sonuçları ve A-Z)
+  nav.addEventListener("click", function (e) {
+    var b = e.target.closest(".yb"); if (!b) return;
+    e.preventDefault();
+    var h = b.getAttribute("data-fav"), on = F.indexOf(h) > -1;
+    if (degis(h)) uyar(on ? "Favorilerden çıkarıldı" : "⭐ " + KAT[h].ad + " favorilere eklendi");
+  });
   duz.addEventListener("click", function () {
     document.body.classList.toggle("favDuz");
     if (q.value) { q.value = ""; ara(); }
@@ -1019,11 +1165,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     if (!document.body.classList.contains("favDuz")) return;
     var a = e.target.closest("a"); if (!a || KART.indexOf(a) < 0) return;
     e.preventDefault(); e.stopPropagation();
-    var h = ad(a), i = F.indexOf(h);
-    if (i > -1) F.splice(i, 1);
-    else if (F.length >= MAX) { favIp.innerHTML = "En fazla 5 araç sabitlenebilir; önce birini çıkar ⭐"; return; }
-    else F.push(h);
-    kaydet(); ciz();
+    degis(a.getAttribute("href"));
   }, true);
   ciz();
 })();

@@ -1222,6 +1222,7 @@ renderMonth(); showDetail(today); calc1(); calc2(); renderList(); renderYear(); 
 if (window.Vergi) Vergi.init({ el: $("vergi"), dayInfo: (d) => { const i = info(d); return { we: i.we, hol: i.full, half: i.half, name: (i.recs.find((r) => r.type !== "dini") || {}).name || "" }; } });
 if (location.hash === "#ajanda") document.querySelector('.tabs button[data-tab="ajanda"]').click();
 if (location.hash === "#vergi") document.querySelector('.tabs button[data-tab="vergi"]').click();
+{ const th = location.hash.slice(1); if (["yil", "hesap", "liste"].includes(th)) document.querySelector('.tabs button[data-tab="' + th + '"]').click(); } // ana sayfa aramasından gelince
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
