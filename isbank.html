@@ -1047,7 +1047,7 @@ const idsFor = (k) => {
   // Soru: son 21 günde eklenen sorular menüde sayı rozetiyle görünür
   if (k === "Soru") return (typeof ISQ !== "undefined" ? ISQ : []).filter((q) => q[5] && (Date.now() - new Date(q[5] + "T00:00:00")) / 864e5 <= 21).map((q) => "s:" + q[0]);
   if (k === "Şubeler" || k === "Tarihçe" || k === "Black") return [];
-  if (k === "Kampanya") return bkamp ? bkamp.kategoriler.flatMap((c) => c.kampanyalar.map((x) => "b:" + x.url)) : [];
+  if (k === "Kampanya") return bkamp ? bkamp.kategoriler.flatMap((c) => c.kampanyalar.filter((x) => !x.bitis || daysLeft(x.bitis) >= 1).map((x) => "b:" + x.url)) : [];
   if (k === "📅 Takvim") return [];
   if (k === "👔 Atamalar") return atamaListe().map((h) => "n:" + (h.url || h.baslik));
   return all.filter((h) => h.kategori === k).map((h) => "n:" + (h.url || h.baslik));
@@ -1370,7 +1370,9 @@ let bkSec = ""; try { bkSec = localStorage.getItem("isbankBk") || ""; } catch (e
 function renderBankaKamp() {
   const fd = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
   $("upd").innerHTML = `🔄 İş Bankası kampanyaları her gün kontrol edilir${bkamp ? ` · son kontrol <b>${fd(bkamp.kontrol)}</b>` : ""}`;
-  const K0 = (bkamp && bkamp.kategoriler) || [];
+  // Bitiş günü geçen kampanya, ertesi sabahki derlemeyi beklemeden listeden düşer; sayı da ona göre azalır, boş kalan kategori gizlenir
+  const K0 = ((bkamp && bkamp.kategoriler) || []).map((c) => { const L = c.kampanyalar.filter((x) => !x.bitis || daysLeft(x.bitis) >= 1);
+    return { ...c, kampanyalar: L, adet: c.adet != null ? Math.max(L.length, c.adet - (c.kampanyalar.length - L.length)) : c.adet }; }).filter((c) => c.kampanyalar.length);
   if (bkSec && !K0.some((c) => c.ad === bkSec)) bkSec = "";
   const t = $("tfil");
   t.className = "tfil sekme";
