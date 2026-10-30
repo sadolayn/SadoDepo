@@ -213,6 +213,7 @@
   #phand .card:first-child { margin-left: 0; }
   #phand .card.ok { transform: translateY(8px); }
   .table.ph .slot-n { top: 140px; }
+  .table.ph.kisa #phand { transform: scale(.64); }
   .seg button:disabled { opacity: .35; cursor: not-allowed; }
   .modal .btn { width: 100%; background: var(--accent); border-color: var(--accent); color: #000; }
   .rules { font-size: 13px; color: var(--muted); text-align: left; line-height: 1.5; margin: 0 0 14px; padding-left: 18px; }
@@ -441,6 +442,7 @@ function renderTrick(winnerP) {
     if (winnerP === t.p) el.classList.add("win");
     $("slot" + t.p).appendChild(el);
   }
+  masaDiz();
 }
 function handInto(elId, p) {
   const h = $(elId);
@@ -510,7 +512,24 @@ function renderHand() {
   $("table").classList.toggle("ph", showP);
   if (showP) handInto("phand", 2);
 }
-function render() { renderInfo(); renderSeats(); renderHand(); }
+function render() { renderInfo(); renderSeats(); renderHand(); masaDiz(); }
+// Ortadaki dört kart masanın o anki boyuna göre yerleşir: koltuklar ve eşinin açık eli arasındaki boşluğa artı şeklinde,
+// birbirine binmeden. Yer daralırsa kartlar 56 px'ten 40 px'e kadar küçülür (kısa ekran + eşli oyunda üst üste biniyordu, Ekim 2026).
+function masaDiz() {
+  const T = $("table"), tr = T.getBoundingClientRect();
+  if (!tr.height) return;
+  const r = (id) => $(id).getBoundingClientRect(), g = 6, ph = T.classList.contains("ph");
+  T.classList.toggle("kisa", ph && tr.height < 420);
+  // Eşin açık elinde oynanabilir kart 8 px aşağı iner (ölçekli 7 px); onun da altından başlanır
+  const ust = Math.max(r("seat2").bottom, ph ? r("phand").bottom + 7 : 0) - tr.top + g, alt = r("seat0").top - tr.top - g;
+  const sol = r("seat3").right - tr.left + g, sag = r("seat1").left - tr.left - g;
+  const w = Math.max(40, Math.min(56, Math.floor((alt - ust - g) / 2 / 1.45), Math.floor((sag - sol - 2 * g) / 3))), h = w * 1.45;
+  const cx = tr.width / 2, cy = (ust + alt) / 2;
+  const dy = Math.max(0, Math.min(40, (alt - ust - 2 * h - g) / 2)), dx = Math.max(0, Math.min(40, (sag - sol - 3 * w - 2 * g) / 2));
+  const yer = { 2: [cx - w / 2, cy - g / 2 - h - dy], 0: [cx - w / 2, cy + g / 2 + dy], 3: [cx - w / 2 - g - w - dx, cy - h / 2], 1: [cx + w / 2 + g + dx, cy - h / 2] };
+  for (const p in yer) { const e = $("slot" + p).style; e.setProperty("--cw", w + "px"); e.left = yer[p][0] + "px"; e.top = yer[p][1] + "px"; e.right = e.bottom = "auto"; e.transform = "none"; }
+}
+addEventListener("resize", () => masaDiz());
 
 // ---------- El dağıtımı ----------
 function newRound() {
