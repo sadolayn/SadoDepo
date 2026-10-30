@@ -4,8 +4,8 @@
   "https://www.isbank.com.tr/is-black"
  ],
  "kontrol": "2026-10-30",
- "degisim": "2026-10-28",
- "hash": "505852aad1150470",
+ "degisim": "2026-10-30",
+ "hash": "98b2bc9e3d2fe2f5",
  "kampanyalar": [
   {
    "baslik": "İş’te Maaş’a Özel (2)",
@@ -163,14 +163,14 @@
    "ilk": "2000-01-01"
   },
   {
-   "baslik": "İş Black'e Özel BES Planı Ayrıcalığı Bitiş Tarihi: 31.12.2026 İş Black'e Özel BES Planı ile giriş aidatı ödemeden devlet katkısı avantajıyla",
-   "url": "https://www.isbank.com.tr/kampanyalar/is-blacke-ozel-bes-plani-ayricaligi",
-   "ilk": "2000-01-01"
-  },
-  {
    "baslik": "Maximiles Black Sahiplerine Özel Otopark Ödemelerinde İndirim Bitiş Tarihi: 31.12.2026 Maximiles Black sahiplerine özel otopark ödemelerinde",
    "url": "https://www.isbank.com.tr/kampanyalar/maximiles-black-sahiplerine-ozel-otopark-odemelerinde-indirim",
    "ilk": "2000-01-01"
+  },
+  {
+   "baslik": "Maximiles ve Maximiles Black Sahiplerine Özel % 100'e Varan İndirimli Lounge Ayrıcalığı Bitiş Tarihi: 31.12.2026 Maximiles ve Maximiles Blac",
+   "url": "https://www.isbank.com.tr/kampanyalar/maximiles-ve-maximiles-black-sahiplerine-ozel-indirimli-lounge-ayricaligi",
+   "ilk": "2026-10-28"
   },
   {
    "baslik": "İşCep Aracılığıyla Alınan Anadolu Sigorta Ürünlerine Özel İndirim Bitiş Tarihi: 31.12.2026 Anadolu Sigorta kasko poliçelerinizde %15'e varan",
@@ -221,6 +221,11 @@
    "baslik": "Detaylı Bilgi",
    "url": "https://www.isbank.com.tr/kampanyalar/maximiles-black-sahiplerine-yurt-disi-cikis-harci-indirimi",
    "ilk": "2026-10-28"
+  },
+  {
+   "baslik": "Detaylı Bilgi",
+   "url": "https://www.isbank.com.tr/kampanyalar/is-blacke-ozel-bes-plani-ayricaligi",
+   "ilk": "2000-01-01"
   },
   {
    "baslik": "Detaylı Bilgi",
@@ -275,11 +280,6 @@
   {
    "baslik": "Detaylı Bilgi",
    "url": "https://www.isbank.com.tr/kampanyalar/is-black-kultur-ve-sanat-harcamalarinizda-indirim-ayricaliklari",
-   "ilk": "2026-10-28"
-  },
-  {
-   "baslik": "Detaylı Bilgi",
-   "url": "https://www.isbank.com.tr/kampanyalar/maximiles-ve-maximiles-black-sahiplerine-ozel-indirimli-lounge-ayricaligi",
    "ilk": "2026-10-28"
   },
   {
@@ -345,14 +345,14 @@
    "url": "https://www.isbank.com.tr/kampanyalar/secili-yapay-zeka-platformu-harcamalarina-ozel-indirim"
   },
   {
-   "baslik": "İş Black'e Özel BES Planı Ayrıcalığı",
-   "bitis": "2026-12-31",
-   "url": "https://www.isbank.com.tr/kampanyalar/is-blacke-ozel-bes-plani-ayricaligi"
-  },
-  {
    "baslik": "Maximiles Black Sahiplerine Özel Otopark Ödemelerinde İndirim",
    "bitis": "2026-12-31",
    "url": "https://www.isbank.com.tr/kampanyalar/maximiles-black-sahiplerine-ozel-otopark-odemelerinde-indirim"
+  },
+  {
+   "baslik": "Maximiles ve Maximiles Black Sahiplerine Özel % 100'e Varan İndirimli Lounge Ayrıcalığı",
+   "bitis": "2026-12-31",
+   "url": "https://www.isbank.com.tr/kampanyalar/maximiles-ve-maximiles-black-sahiplerine-ozel-indirimli-lounge-ayricaligi"
   },
   {
    "baslik": "İşCep Aracılığıyla Alınan Anadolu Sigorta Ürünlerine Özel İndirim",
