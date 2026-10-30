@@ -111,7 +111,7 @@
   <div id="secili" hidden>
     <section class="yer" aria-label="Seçilen yer">
       <div class="yerUst"><span class="yerAd" id="yerAd"></span><small id="yerNe"></small><button type="button" id="sil" aria-label="Yeri temizle">✕</button></div>
-      <div class="sure" role="group" aria-label="Süre"><button type="button" data-sure="1d">Son 24 saat</button><button type="button" data-sure="7d">Son 7 gün</button><button type="button" data-sure="30d">Son 30 gün</button></div>
+      <div class="sure" role="group" aria-label="Süre"><button type="button" data-sure="1d">Son 24 saat</button><button type="button" data-sure="7d">Son 7 gün</button><button type="button" data-sure="30d">Son 1 ay</button></div>
       <a class="tum" id="tum" target="_blank" rel="noopener">Bölgenin tüm haberleri ↗</a>
     </section>
 
@@ -138,12 +138,12 @@
     </section>
   </div>
 
-  <p class="note">Haberleri ve kaynakları Google Haberler; kurum, işletme bilgilerini ve telefonları Google Haritalar gösterir; Sadolayn bu içeriklerden sorumlu değildir. Konum yalnızca il / ilçe adını bulmak için bir kez OpenStreetMap'e sorulur, kaydedilmez. Son baktığın yerler yalnızca bu cihazda tutulur. İl ve ilçe listesi: PTT posta kodu listesi (turkey-neighbourhoods, MIT).</p>
+  <p class="note">Haberleri ve kaynakları Google; kurum, işletme bilgilerini ve telefonları Google Haritalar gösterir; Sadolayn bu içeriklerden sorumlu değildir. Konum yalnızca il / ilçe adını bulmak için bir kez OpenStreetMap'e sorulur, kaydedilmez. Son baktığın yerler yalnızca bu cihazda tutulur. İl ve ilçe listesi: PTT posta kodu listesi (turkey-neighbourhoods, MIT).</p>
 </div>
 
 <script>
 // Bölgem: şube ve bölge müdürünün kendi il / ilçesinde olanları izlemesi için. Haber derlenmez, listelenmez;
-// her düğme Google Haberler'de (ya da Haritalar'da) o yerin aramasını açar. Yer yalnızca bu cihazda tutulur (localStorage).
+// her düğme Google'ın Haberler sekmesinde (ya da Haritalar'da) o yerin aramasını açar. Yer yalnızca bu cihazda tutulur (localStorage).
 const $ = (x) => document.getElementById(x);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const sade = (t) => String(t).toLocaleLowerCase("tr").replace(/[çğıöşüâî]/g, (h) => ({ ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i" })[h]);
@@ -151,7 +151,7 @@ const fold = (t) => String(t || "").toLocaleLowerCase("tr");
 // Tamlama eki: Aydın'ın, İzmir'in, İstanbul'un, Muğla'nın
 const ilEk = (ad) => { const k = ad.toLocaleLowerCase("tr"), v = (k.match(/[aeıioöuü]/g) || ["e"]).pop(), u = { a: "ın", ı: "ın", e: "in", i: "in", o: "un", u: "un", ö: "ün", ü: "ün" }[v]; return (/[aeıioöuü]$/.test(k) ? "n" : "") + u; };
 
-// Bir banka müdürünün bölgesinde bilmek isteyeceği konular, dört grupta: [grup, renk, [[simge, ad, Google Haberler'de aranacak kelimeler]]]
+// Bir banka müdürünün bölgesinde bilmek isteyeceği konular, dört grupta: [grup, renk, [[simge, ad, başlıkta aranacak kelimeler]]]
 // Kelimeler başka anlama kaymasın diye seçildi: "çiftçi" yerine "çiftçiler" (Bakan Çiftçi); "dolu" ("coşku dolu"), "fırtına" ("fırtına gibi"),
 // "otel" (otel odasında yakalandı), "sağanak" (hava tahminleri), "sezon", "birincilik", "zirve" çıkarıldı. Google ~32 kelimeyi aşan sorgunun
 // sonunu kesiyor; kesilen ifade ilk kelimesine düşüyordu ("yeni başkan" → YENİ Parti). Bu yüzden her konu en fazla Atama kadar uzun
@@ -197,7 +197,7 @@ const sakla = () => { try { localStorage.setItem("bolgem", JSON.stringify(S)); }
 // Semt de yazılabilir: "Hatay İzmir" → elle: Hatay, il: İzmir (İzmir'deki Hatay semti, Hatay ili değil)
 const yerAd = () => [S.elle || S.ilce, S.il].filter(Boolean).join(", ");
 const yerHarita = () => [S.elle || S.ilce, S.il].filter(Boolean).join(" ");
-// Google Haberler sorgusu: yer de konu da BAŞLIKTA aranır (intitle:). Ekim 2026 denemelerinde görülenler:
+// Haber sorgusu: yer de konu da BAŞLIKTA aranır (intitle:). Ekim 2026 denemelerinde görülenler:
 // - Yer metinde aranınca site menüsünde ya da kaynak adında geçen ilçe ("… - Aydın Ses Gazetesi") başka yerin haberini getiriyordu.
 // - Google konu kelimesini bulamayınca onu atıp yalnızca yere uyan haberleri gösteriyordu; başlık şartıyla ya ilgili haber gelir ya da liste boş kalır.
 // - İl adı yalın aranınca soyadlara (Ertan Aydın), kulüplere ve kaynak adlarına ("Erzincan'da … - Bayburt Haber") takılıyordu;
@@ -205,7 +205,7 @@ const yerHarita = () => [S.elle || S.ilce, S.il].filter(Boolean).join(" ");
 // - Yer için birden çok kalıp OR ile verilince haber olmayan küçük illerde Google konuyu bırakıp alakasız haber dolduruyordu; yer hep tek kalıp.
 // - Eksi işareti (-lig) süreyi bozuyor, 32 kelimeyi aşan sorgu gevşiyor; ikisi de kullanılmaz.
 // - Başka bir kelime, kişi, kulüp ya da başka ilin ilçesi olan adlarda (Çay, Kale, Pazar, Güney, Efeler, Beşiktaş…) il adı da başlıkta aranır.
-const SURE = { "1d": "Son 24 saat", "7d": "Son 7 gün", "30d": "Son 30 gün" };
+const SURE = { "1d": "Son 24 saat", "7d": "Son 7 gün", "30d": "Son 1 ay" }; // "30d" anahtarı kayıtlı tercihler bozulmasın diye kaldı
 if (!SURE[S.sure]) S.sure = "30d";
 const AYNI = new Set(("Aladağ,Çukurova,İmamoğlu,Karataş,Seyhan,Ceyhan,Dinar,Hamur,Güzelyurt,Bala,Çubuk,Evren,Kalecik,Yenimahalle,Kepez,Elmalı,Gazipaşa,"
   + "Efeler,Köşk,Bozdoğan,Marmara,Karesi,Ulus,Söğüt,Genç,Bucak,Nilüfer,Osmangazi,Yıldırım,Orta,Eldivan,Kızılırmak,Çerkeş,Alaca,Kargı,Laçin,"
@@ -227,11 +227,13 @@ function yerSorgu() {
   return `intitle:"${deEk(il)}"`;
 }
 const baslikta = (ek) => ek.split(" OR ").map((t) => "intitle:" + t.trim()).join(" OR ");
-// Süre başta: Google uzun sorgunun sonunu kesiyor; "when:" sonda kalınca uzun Atama aramasında 7 gün seçiliyken Ağustos haberleri geliyordu
-const sorgu = (ek) => "when:" + S.sure + " " + yerSorgu() + (ek ? " (" + baslikta(ek) + ")" : "");
+// Haberler Google Arama'nın Haberler sekmesinde açılır (30 Ekim 2026): Google Haberler sonuçları alaka sırasıyla veriyor, tarihe göre
+// sıralanamıyordu (26 gün önceki haber 3 gün öncekinin üstünde). Arama sekmesinde süre tbs=qdr:d/w/m, tarihe göre sıra sbd:1 ile verilir;
+// "when:" kullanılmaz (Google Haberler'de sonda kalınca uzun sorguda kesiliyordu).
+const sorgu = (ek) => yerSorgu() + (ek ? " (" + baslikta(ek) + ")" : "");
 const gunAd = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
-const donem = () => { const b = new Date(), a = new Date(b - { "1d": 1, "7d": 7, "30d": 30 }[S.sure] * 864e5); return gunAd(a) + " – " + gunAd(b); };
-const gn = (ek) => `https://news.google.com/search?q=${encodeURIComponent(sorgu(ek))}&hl=tr&gl=TR&ceid=TR:tr`;
+const donem = () => { const b = new Date(), a = new Date(b - { "1d": 1, "7d": 7 }[S.sure] * 864e5 || b); if (S.sure === "30d") a.setMonth(a.getMonth() - 1); return gunAd(a) + " – " + gunAd(b); };
+const gn = (ek) => `https://www.google.com/search?tbm=nws&tbs=qdr:${{ "1d": "d", "7d": "w", "30d": "m" }[S.sure]},sbd:1&hl=tr&gl=tr&q=${encodeURIComponent(sorgu(ek))}`;
 // Kurum adı yerin ardından: "Nazilli Kaymakamlığı Aydın", "Aydın Valiliği"
 // Semtte kaymakamlık yok: valilik il adıyla aranır ("İzmir Valiliği"), diğer kurumlar semt + il ("Hatay Vergi Dairesi İzmir")
 const gmK = (ne) => { const y = S.elle || (S.ilce !== "Merkez" && S.ilce); return `https://www.google.com/maps/search/${encodeURIComponent(!S.il ? S.elle + " " + ne : y && ne !== "Valiliği" ? `${y} ${ne} ${S.il}` : `${S.il} ${ne}`)}`; };
@@ -261,7 +263,7 @@ function ciz() {
   const sureAd = SURE[S.sure];
   $("tum").innerHTML = `Bölgenin tüm haberleri ↗<small>${sureAd} · ${donem()}</small>`;
   $("kSure").textContent = "⏱ " + sureAd;
-  $("donem").innerHTML = `📅 <span><b>${donem()}</b> arası haberler</span>`;
+  $("donem").innerHTML = `📅 <span><b>${donem()}</b> arası haberler, en yeni üstte</span>`;
   $("konular").innerHTML = GRUP.map(([g, renk, L]) => `<div class="grp" style="--g:${renk}"><div class="grpB">${esc(g)}</div><div class="izgara">${L.map(([ic, n, q]) => `<a href="${esc(gn(q))}" target="_blank" rel="noopener"><span class="ik">${ic}</span><span class="ad">${esc(n)}</span><span class="ok">↗</span></a>`).join("")}</div></div>`).join("");
   $("harita").innerHTML = [
     ["🏦", "İş Bankası şubeleri", "adres, çalışma saatleri, puanlar ve yorumlar", "Türkiye İş Bankası"],
