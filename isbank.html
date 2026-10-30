@@ -764,6 +764,7 @@
   .altkutu #tfil.kamp .tsat .tlab::after { background: linear-gradient(90deg, color-mix(in srgb, var(--kk) 70%, transparent), transparent); }
   .altkutu #tfil.kamp .tsat:not(:first-child) .tlab::before { display: none; } /* Kaynak ortada; ötekiler sola yaslı, çizgi sağa uzar */
   .altkutu.dar:not(.acik) #tfil.kamp .tsat .tlab { display: none !important; }
+  .altkutu #tfil.kamp .tsat .tlab .tsay { margin-left: -4px; font-style: normal; font-weight: 600; letter-spacing: 0; color: #b9b9b9; } /* sayıların hangi seçime göre olduğu */
   .altkutu.dar:not(.acik) #tfil.kamp button.hep { display: none !important; }
   .altkutu.dar:not(.acik) #tfil.kamp .tsat.kgr:not(:has(.on:not(.hep))) { display: none !important; }
   .altkutu.dar:not(.acik) #tfil.kamp .tsat { margin-top: 0; }
@@ -1653,8 +1654,9 @@ function renderKampanyalar() {
   t.hidden = false;
   t.style.setProperty("--kk", renk); t.style.setProperty("--kz", K_KAY[kKay][4]); t.style.setProperty("--ky", K_KAY[kKay][5]);
   t.innerHTML = `<div class="kara"><i>🔎</i><input id="kAra" type="search" enterkeyhint="search" placeholder="Ara: ${esc(kOrnekler().slice(0, 3).join(", "))}… (Türkçe harf şart değil)" value="${esc(kAra)}" autocomplete="off"><button type="button" id="kAraSil"${kAra ? "" : " hidden"}>✕</button><button type="button" class="ksihk${kSih.acik ? " on" : ""}">🧭 Bana uygun</button></div>`
-    + `<div class="tsat uc"><span class="tlab">🏦 Kaynak</span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
-    + `<div class="tsat uc"><span class="tlab">👥 Bölüm</span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
+    + `<div class="tsat uc"><span class="tlab">🏦 Kaynak<em class="tsay">· ${kSeg === "ticari" ? "ticari" : "bireysel"}</em></span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
+    + `<div class="tsat uc"><span class="tlab">👥 Bölüm<em class="tsay">· ${esc(kayAd)}</em></span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
+    // Satır başlığındaki küçük yazı sayıların neye göre olduğunu söyler: Kaynak sayıları seçili bölümün, Bölüm sayıları seçili kaynağın
     // Sitelerdeki sayılar toplanınca ana sayfadaki "farklı kampanya" sayısı tutmaz: aynı kampanya birden çok sitede yayımlanabiliyor
     + `<div class="knot">ℹ️ Aynı kampanya birden çok sitede olabilir: ${kSeg === "ticari" ? "Ticaride" : "Bireyselde"} ${Object.keys(K_KAY).reduce((a, k) => a + (say(k, kSeg) || 0), 0)} kayıt, ${new Set(kTumu(kSeg).map(kAyni)).size} farklı kampanya · tüm bölümlerde ${new Set(kTumu().map(kAyni)).size} farklı kampanya</div>`
     + (L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, kKisa(ad), n, kKim === ad)).join("")}</div></div>` : "")
