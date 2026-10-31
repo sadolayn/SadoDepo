@@ -330,6 +330,44 @@
   .ataIntro.film .aiSahne { margin-bottom: 0; }
   .aiImza { position: absolute; left: 18px; bottom: max(22px, env(safe-area-inset-bottom)); font-family: Georgia, serif; font-style: italic; font-size: 13px; letter-spacing: 2px; color: #6b5a3a; opacity: 0; animation: aiFade 1.5s 1s forwards; }
   .ataIntro.film.sahnede .aiQ { display: none; }
+  /* ===== Açılış kartı: sabah tek bakışta kur, çeyrek, Gazete, PPK, takvim ve kampanyalar (dokununca küçülür) ===== */
+  .aclIc { padding: 0 12px 10px; }
+  .aclS { display: flex; gap: 10px; align-items: flex-start; padding: 10px 2px; border-top: 1px solid #262626; color: inherit; text-decoration: none; }
+  .aclS:first-child { border-top: 0; }
+  .aclS .ik { font-size: 18px; width: 24px; text-align: center; flex: none; }
+  .aclS .x { flex: 1; min-width: 0; font-size: 13.5px; line-height: 1.4; display: block; }
+  .aclS .x b { color: #f3d38a; }
+  .aclS .x small { display: block; color: #8a8a8a; font-size: 12px; margin-top: 2px; line-height: 1.4; }
+  .aclS .x small b { color: #d9c7a3; font-weight: 600; }
+  .aclS .ok { color: #6b5222; font-size: 18px; flex: none; }
+  .aclS .x > a { color: inherit; text-decoration: none; }
+  .aclBar { display: block; height: 6px; border-radius: 3px; background: #262626; margin-top: 6px; overflow: hidden; }
+  .aclBar i { display: block; height: 100%; background: linear-gradient(90deg, #f3d38a, #e0a24f); }
+  .aclK { border-top: 1px solid #262626; padding: 10px 2px 2px; }
+  .aclKB { display: flex; align-items: center; gap: 8px; }
+  .aclKB .x { font-size: 13.5px; font-weight: 600; }
+  .aclAlt { font-size: 11px; color: #8a8a8a; padding: 8px 2px 0; line-height: 1.5; }
+  .aclIc { padding: 6px 12px 12px; }
+  .acl[hidden] { display: none; }
+  .acl { border-top: 1px solid #2a2418; background: linear-gradient(180deg, rgba(224,162,79,.07), rgba(224,162,79,.01)); }
+  .row.acl .d b { color: #f3d38a; font-weight: 600; }
+  .row.aclR .ok { transition: transform .2s; }
+  .row.aclR.acik .ok { transform: rotate(90deg); }
+  .aclKB { font-size: 13.5px; font-weight: 600; margin-bottom: 8px; }
+  .aclTT { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .aclT { border-radius: 14px; padding: 12px 10px 10px; border: 1px solid #5a4320; background: linear-gradient(160deg, rgba(224,162,79,.16), rgba(224,162,79,.03)); min-width: 0; }
+  .aclT.yeni { border-color: #2f5f8f; background: linear-gradient(160deg, rgba(74,155,232,.18), rgba(74,155,232,.03)); }
+  .aclT .ust { display: flex; align-items: center; justify-content: space-between; }
+  .aclT .ic { font-size: 22px; }
+  .aclT .n { font: 700 34px/1 Georgia, "Times New Roman", serif; color: #f3d38a; }
+  .aclT.yeni .n { color: #9fd0ff; }
+  .aclT .ad { font-weight: 700; font-size: 14.5px; margin-top: 6px; }
+  .aclT .alt2 { font-size: 11.5px; color: #a89a80; margin-top: 1px; }
+  .aclT.yeni .alt2 { color: #8fa9c4; }
+  .aclT .sg { display: flex; flex-direction: column; gap: 5px; margin-top: 9px; }
+  .aclT .sg button { display: flex; justify-content: space-between; align-items: center; min-height: 32px; padding: 5px 9px; border-radius: 9px; border: 1px solid rgba(255,255,255,.08); background: rgba(0,0,0,.35); color: #e9dcc0; font: 12.5px system-ui, sans-serif; cursor: pointer; }
+  .aclT .sg button b { color: #fff; font-size: 14px; }
+  .aclT .sg button:active { border-color: #e0a24f; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -437,7 +475,14 @@
 
     <h2>Sabah brifingi <small>tek bakışta</small></h2>
     <div class="rows">
-      <a class="row acl" href="acilis.html" data-ara="açılış kartı sabah brifing çeyrek iş günü ppk bölge kampanya faiz kredi" data-yeni="acilis|2026-10-31|YENİ"><span class="ik">☕</span><div><div class="t">Açılış kartı</div><div class="d" id="aclD">Çeyrek, Resmi Gazete, bölgen, PPK ve kampanyalar tek ekranda</div></div><span class="ok">›</span></a>
+      <a class="row acl aclR" id="aclRow" href="#acilis" role="button" aria-expanded="false" aria-controls="acilis" data-ara="açılış kartı sabah brifing çeyrek iş günü ppk bölge kampanya faiz kredi" data-yeni="acilis2|2026-11-01|YENİLENDİ"><span class="ik">☕</span><div><div class="t">Açılış kartı</div><div class="d" id="aclD">Çeyrek, Resmi Gazete, bölgen, PPK ve kampanyalar</div></div><span class="ok">›</span></a>
+      <div class="acl" id="acilis" hidden>
+        <div class="aclIc">
+          <div id="aclSat"></div>
+          <div class="aclK" id="aclK" hidden></div>
+          <div class="aclAlt" id="aclAlt"></div>
+        </div>
+      </div>
     </div>
   </nav>
   <div class="quote">
@@ -723,24 +768,180 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>
-// Açılış kartı satırı: canlı özet (çeyrekte kalan iş günü · PPK) ve bugün bakıldı mı
+// ===== Açılış kartı =====
+// Sabah tek bakışta: çeyrek ve Günce hedefleri (bu cihazdaki gunce_v2), Resmi Gazete (gazete/),
+// PPK (data/ppk.json), takvim notu, Bölge Nabzı (seçili yer) ve kampanya sayıları (isbank/kampanya_hepsi.json).
+// Ana sayfada "Sabah brifingi" satırına dokununca yerinde açılır/kapanır; satırın altında kısa özet durur.
+// Veri alınamayan parça sessizce gizlenir.
 (function () {
-  var d = document.getElementById("aclD"); if (!d) return;
-  var T = ["2026-01-01","2026-03-20","2026-03-21","2026-03-22","2026-04-23","2026-05-01","2026-05-19","2026-05-27","2026-05-28","2026-05-29","2026-05-30","2026-07-15","2026-08-30","2026-10-29",
+  var K = document.getElementById("acilis"); if (!K || !window.fetch) return;
+  var $ = function (i) { return document.getElementById(i); };
+  var esc = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var oku = function (k, v) { try { var x = localStorage.getItem(k); return x == null ? v : x; } catch (e) { return v; } };
+  var yaz = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
+  var AY = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+  var GUNAD = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+  var pad = function (n) { return (n < 10 ? "0" : "") + n; };
+  var anah = function (d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
+  var gunAy = function (s) { var p = s.split("-"); return +p[2] + " " + AY[+p[1] - 1]; };
+  var BUGUN = new Date(); BUGUN.setHours(12, 0, 0, 0);
+  var B = anah(BUGUN);
+  var ekle = function (d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; };
+  var fark = function (s) { return Math.round((new Date(s + "T12:00:00") - BUGUN) / 864e5); };
+  // Resmi tatiller ve yarım günler (Günce ve Takvim'deki listeyle aynı)
+  var TATIL = ["2026-01-01","2026-03-20","2026-03-21","2026-03-22","2026-04-23","2026-05-01","2026-05-19","2026-05-27","2026-05-28","2026-05-29","2026-05-30","2026-07-15","2026-08-30","2026-10-29",
     "2027-01-01","2027-03-09","2027-03-10","2027-03-11","2027-04-23","2027-05-01","2027-05-16","2027-05-17","2027-05-18","2027-05-19","2027-07-15","2027-08-30","2027-10-29"];
-  var Y = ["2026-03-19","2026-05-26","2026-10-28","2027-03-08","2027-05-15","2027-10-28"];
-  var p = function (n) { return (n < 10 ? "0" : "") + n; }, k = function (x) { return x.getFullYear() + "-" + p(x.getMonth() + 1) + "-" + p(x.getDate()); };
-  var b = new Date(); b.setHours(12, 0, 0, 0); var B = k(b), son = new Date(b.getFullYear(), Math.floor(b.getMonth() / 3) * 3 + 3, 0, 12), kal = 0;
-  for (var x = new Date(b); x <= son; x.setDate(x.getDate() + 1)) if (x.getDay() % 6 && T.indexOf(k(x)) < 0) kal += Y.indexOf(k(x)) > -1 ? 0.5 : 1;
-  var P = [], gor = false; try { gor = localStorage.getItem("aclGordu") === B; } catch (e) {}
-  function yaz() { d.innerHTML = (gor ? "✅ Bugün baktın · " : "") + "📅 Çeyrekte <b>" + String(kal).replace(".", ",") + "</b> iş günü" + P.join(""); }
-  yaz();
-  Ortak.json("data/ppk.json").then(function (j) {
-    var m = (j.meetings || []).filter(function (x) { return x >= B; })[0]; if (!m) return;
-    var g = Math.round((new Date(m + "T12:00:00") - b) / 864e5); P = [" · 🏛️ PPK " + (g ? "<b>" + g + "</b> gün sonra" : "<b>bugün</b>")]; yaz();
+  var YARIM = ["2026-03-19","2026-05-26","2026-10-28","2027-03-08","2027-05-15","2027-10-28"];
+  var isG = function (d) { return d.getDay() !== 0 && d.getDay() !== 6 && TATIL.indexOf(anah(d)) < 0; };
+  var isV = function (d) { return isG(d) ? (YARIM.indexOf(anah(d)) > -1 ? 0.5 : 1) : 0; };
+  var sayi = function (n, k) { return n.toLocaleString("tr-TR", { minimumFractionDigits: k, maximumFractionDigits: k }); };
+
+
+
+  var goster = function () {};
+  var OZ = { gor: oku("aclGordu", "") === B ? "✅ Bugün baktın · " : "" }, alt = []; // küçükken görünen tek satır: çeyrek · PPK · kampanya
+  function ozetYaz() { $("aclAlt").innerHTML = alt.join("<br>"); $("aclD").innerHTML = (OZ.gor || "") + ["ceyrek", "ppk", "kamp"].map(function (k) { return OZ[k]; }).filter(Boolean).join(" · "); }
+
+  // ---- 2) Satırlar: çeyrek, Gazete, PPK, takvim (sırası sabit) ----
+  var SAT = {}, SIRA = ["ceyrek", "gazete", "bolge", "ppk", "takvim"];
+  function satir(ad, html) { SAT[ad] = html; $("aclSat").innerHTML = SIRA.map(function (k) { return SAT[k] || ""; }).join(""); goster(); }
+  function kalip(href, ik, x, dis) { return '<a class="aclS" href="' + href + '"' + (dis ? ' target="_blank" rel="noopener"' : "") + '><span class="ik" aria-hidden="true">' + ik + '</span><span class="x">' + x + '</span><span class="ok" aria-hidden="true">›</span></a>'; }
+
+  // Çeyrek: iş günü ilerlemesi + Günce hedefleri
+  (function () {
+    var qn = Math.floor(BUGUN.getMonth() / 3), y = BUGUN.getFullYear();
+    var bas = new Date(y, qn * 3, 1, 12), son = new Date(y, qn * 3 + 3, 0, 12), ger = 0, kal = 0;
+    for (var d = new Date(bas); d <= son; d = ekle(d, 1)) { if (d < BUGUN) ger += isV(d); else kal += isV(d); }
+    var top = ger + kal, yuz = top ? Math.round(ger / top * 100) : 0;
+    var h = "";
+    try {
+      var G = JSON.parse(localStorage.getItem("gunce_v2") || "null"), T = G && G.targets && G.targets[y + "-Q" + (qn + 1)];
+      if (G && T && Array.isArray(G.products)) {
+        var ay = [qn * 3, qn * 3 + 1, qn * 3 + 2], kisa = new Intl.NumberFormat("tr-TR", { notation: "compact", maximumFractionDigits: 1 });
+        var H = G.products.filter(function (p) { return Number(T[p.id]) > 0 && (!p.type || p.type === "adet" || p.type === "tutar"); }).map(function (p) {
+          var s = 0; Object.keys(G.days || {}).forEach(function (k) { var a = k.split("-"); if (+a[0] === y && ay.indexOf(+a[1] - 1) > -1) s += Number((G.days[k] || {})[p.id]) || 0; });
+          var f = function (n) { return p.type === "tutar" ? kisa.format(n).replace(/\s?B$/, " bin") : sayi(Math.round(n * 10) / 10, 0); };
+          return { ad: p.name, s: s, t: Number(T[p.id]), f: f };
+        }).sort(function (a, b) { return a.s / a.t - b.s / b.t; }).slice(0, 3);
+        if (H.length) h = "<small>🎯 " + H.map(function (o) { return esc(o.ad) + " <b>" + o.f(o.s) + "/" + o.f(o.t) + "</b>"; }).join(" · ") + "</small>";
+      }
+    } catch (e) {}
+    if (!h) h = "<small>Hedeflerini Günce'ye girersen burada görünür 🎯</small>";
+    OZ.ceyrek = "📅 Çeyrekte <b>" + sayi(kal, kal % 1 ? 1 : 0) + "</b> iş günü"; ozetYaz();
+    satir("ceyrek", kalip("gunce.html", "📅", "<b>" + (qn + 1) + ". çeyrek:</b> %" + yuz + "'si geride, <b>" + sayi(kal, kal % 1 ? 1 : 0) + " iş günü</b> kaldı" +
+      '<span class="aclBar"><i style="width:' + yuz + '%"></i></span>' + h));
+  })();
+
+  // Takvim notu
+  (function () {
+    var n = [], ilk = ekle(BUGUN, 1); while (!isG(ilk)) ilk = ekle(ilk, 1);
+    var ayAd = function (d) { return AY[d.getMonth()]; }, ayIs = function (y, m) { var s = 0; for (var d = new Date(y, m, 1, 12); d.getMonth() === m; d = ekle(d, 1)) s += isV(d); return s; };
+    var aySon = ekle(BUGUN, 1).getMonth() !== BUGUN.getMonth();
+    var sonIs = isG(BUGUN) && ilk.getMonth() !== BUGUN.getMonth();
+    var ana = "", alt2 = "";
+    if (!isG(BUGUN)) ana = (BUGUN.getDay() === 0 || BUGUN.getDay() === 6 ? "Hafta sonu" : "Bugün resmi tatil") + (aySon ? ", ay bugün bitiyor" : "") + " · sonraki iş günü <b>" + GUNAD[ilk.getDay()] + " " + ilk.getDate() + " " + ayAd(ilk) + "</b>";
+    else if (YARIM.indexOf(B) > -1) ana = "Bugün <b>arife, yarım gün</b>";
+    else if (sonIs) ana = "Bugün <b>ayın son iş günü</b>";
+    else if (!isG(ekle(BUGUN, 1)) && ekle(BUGUN, 1).getDay() !== 6) ana = "Yarın <b>resmi tatil</b> · sonraki iş günü " + GUNAD[ilk.getDay()] + " " + ilk.getDate() + " " + ayAd(ilk);
+    else { var k = 0; for (var d = new Date(BUGUN); d.getMonth() === BUGUN.getMonth(); d = ekle(d, 1)) if (d > BUGUN) k += isV(d); ana = ayAd(BUGUN) + " ayının bitmesine <b>" + sayi(k, k % 1 ? 1 : 0) + " iş günü</b> var"; }
+    if (ilk.getMonth() !== BUGUN.getMonth()) { var m = ilk.getMonth(), yy = ilk.getFullYear(), s = ayIs(yy, m); alt2 = "<small>" + AY[m] + "'da " + sayi(s, s % 1 ? 1 : 0) + " iş günü var</small>"; }
+    satir("takvim", kalip("takvim.html", "🗓️", ana + alt2));
+  })();
+
+  // Resmi Gazete
+  Ortak.json("gazete/index.json").then(function (L) {
+    var t = (L || [])[0]; if (!t) return;
+    return Ortak.json("gazete/" + t + ".json").then(function (g) {
+      var b = g.bankacilik || [], at = g.onemli_atamalar || [], gun = t === B ? "Bugünkü" : gunAy(t) + " tarihli";
+      var x = b.length ? gun + " Resmi Gazete'de bankacılığa dokunan <b>" + b.length + " başlık</b><small>" + esc(b[0].baslik) + (b.length > 1 ? " · +" + (b.length - 1) + " başlık daha" : "") + "</small>"
+        : gun + " Resmi Gazete'de bankacılığı doğrudan ilgilendiren <b>düzenleme yok</b>";
+      if (at.length) x += "<small>👔 " + at.length + " önemli atama</small>";
+      satir("gazete", kalip("gazete.html", "📜", x));
+      alt.push("Resmi Gazete " + gunAy(t) + (g.sayi ? ", sayı " + esc(g.sayi) : ""));
+      ozetYaz();
+    });
   }).catch(function () {});
+
+  // PPK
+  Ortak.json("data/ppk.json").then(function (J) {
+    var son = J.last || {}, sonra = (J.meetings || []).filter(function (m) { return m >= B; })[0];
+    if (!sonra && !son.date) return;
+    var g = sonra ? fark(sonra) : null, x;
+    if (sonra === B) x = "Bugün <b>PPK toplantı günü</b>";
+    else if (sonra) x = "Sonraki PPK: <b>" + gunAy(sonra) + "</b> (" + (g === 1 ? "yarın" : g + " gün sonra") + ")";
+    else x = "PPK takvimi";
+    if (son.date && son.rate != null) {
+      var c = Number(son.change) || 0, bp = Math.round(Math.abs(c) * 100);
+      x += "<small>Son karar " + gunAy(son.date) + ": politika faizi %" + sayi(son.rate, son.rate % 1 ? 2 : 0) + ", " + (c === 0 ? "değişmedi" : bp + " baz puan " + (c < 0 ? "indirim" : "artırım")) + " · kaynak TCMB</small>";
+    }
+    if (sonra) { OZ.ppk = "🏛️ PPK " + (g === 0 ? "<b>bugün</b>" : "<b>" + g + "</b> gün"); ozetYaz(); }
+    satir("ppk", kalip(son.url || "https://www.tcmb.gov.tr", "🏛️", x, true));
+  }).catch(function () {});
+
+  // ---- 3) Kampanyalar: yalnızca iki sayı, büyük ve net — Faiz & Kredi ve yeni gelenler (bireysel / ticari) ----
+  // Liste yok; dokununca İş Bankası Gündemi › Kampanyalar aynı süzgeçle açılır. "Yeni" orada da son 3 gün.
+  Ortak.json("isbank/kampanya_hepsi.json").then(function (KH) {
+    var ayni = function (t) { return (t || "").toLocaleLowerCase("tr").replace(/[’'`]/g, "").replace(/[çğıöşüâîû]/g, function (h) { return { ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" }[h]; }).replace(/[^a-z0-9%]/g, ""); };
+    var uc = anah(ekle(BUGUN, -2));
+    function say(seg) {
+      var G = {};
+      ["isbank", "maximum", "maximiles"].forEach(function (kay) {
+        var v = (KH[kay] || {})[seg] || {}, L = v.kampanyalar || [].concat.apply([], (v.kategoriler || []).map(function (c) { return c.kampanyalar || []; }));
+        L.forEach(function (k) {
+          if (!k || !k.baslik || (k.bitis && k.bitis < B)) return;
+          var a = k.es || ayni(k.baslik), ilk = k.ilk && k.ilk > "2000-01-01" ? k.ilk : "0";
+          if (!G[a]) G[a] = { ne: k.ne || "", ilk: ilk };
+          else { if (ilk < G[a].ilk) G[a].ilk = ilk; if (!G[a].ne && k.ne) G[a].ne = k.ne; }
+        });
+      });
+      var fk = 0, yn = 0; Object.keys(G).forEach(function (a) { if (G[a].ne === "Faiz & Kredi") fk++; if (G[a].ilk >= uc) yn++; });
+      return { fk: fk, yn: yn };
+    }
+    var Bi = say("bireysel"), Ti = say("ticari");
+    if (!Bi.fk && !Ti.fk && !Bi.yn && !Ti.yn) return;
+    function kutu(tur, ic, ad, alt, b, t) {
+      return '<div class="aclT ' + tur + '"><div class="ust"><span class="ic" aria-hidden="true">' + ic + '</span><b class="n">' + (b + t) + '</b></div><div class="ad">' + ad + '</div><div class="alt2">' + alt + "</div>" +
+        '<div class="sg"><button type="button" data-git="' + tur + '|bireysel">👤 Bireysel <b>' + b + '</b></button><button type="button" data-git="' + tur + '|ticari">🏢 Ticari <b>' + t + "</b></button></div></div>";
+    }
+    $("aclK").innerHTML = '<div class="aclKB">📣 Kampanyalar</div><div class="aclTT">' +
+      kutu("fk", "🏦", "Faiz &amp; Kredi", "şu an geçerli", Bi.fk, Ti.fk) + kutu("yeni", "🆕", "Yeni gelen", "son 3 günde", Bi.yn, Ti.yn) + "</div>";
+    $("aclK").hidden = false;
+    $("aclK").addEventListener("click", function (e) {
+      var b = e.target.closest("button[data-git]"); if (!b) return;
+      var p = b.dataset.git.split("|"), o = {}; try { o = JSON.parse(localStorage.getItem("isbankKamp") || "{}") || {}; } catch (x) {}
+      o.seg = p[1]; o.nere = ""; o.kim = ""; o.one = false; o.ne = p[0] === "fk" ? "Faiz & Kredi" : ""; if (p[0] === "fk") o.kay = "isbank";
+      yaz("isbankKamp", JSON.stringify(o));
+      if (window.Rapor) Rapor.bolum("acilis-" + p[0] + "-" + p[1]);
+      location.href = "isbank.html#" + (p[0] === "fk" ? "maximum" : "yeni");
+    });
+    OZ.kamp = "📣 Faiz & Kredi <b>" + (Bi.fk + Ti.fk) + "</b>"; ozetYaz();
+  }).catch(function () {});
+
+  // ---- 4) Bölge Nabzı: yalnızca seçili yer; ayrıntı Bölge Nabzı sayfasında ----
+  (function () {
+    var Y = null; try { Y = JSON.parse(localStorage.getItem("bolgem") || localStorage.getItem("haber_yerel2") || "null"); } catch (e) {}
+    var ad = Y && [Y.elle || Y.ilce, Y.il].filter(Boolean).join(", ");
+    satir("bolge", kalip("bolge.html", "📍", ad ? "Bölge Nabzı: <b>" + esc(ad) + "</b><small>Atama, vefat, yatırım, konkordato… bölgende neler oluyor</small>"
+      : "<b>Bölge Nabzı:</b> ilini ya da ilçeni seç<small>Bölgende neler olduğuna buradan geçersin</small>"));
+  })();
+
+  // ---- Aç / kapat: satıra dokununca kart yerinde açılır (tercih bu cihazda kalır); kayan yazıdan da açılır ----
+  var row = $("aclRow");
+  function durum(acik, kaydir) {
+    K.hidden = !acik; row.setAttribute("aria-expanded", acik ? "true" : "false"); row.classList.toggle("acik", acik);
+    if (acik) { yaz("aclGordu", B); OZ.gor = ""; ozetYaz(); }
+    if (acik && kaydir) row.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  durum(oku("aclAcik", "0") === "1");
+  row.addEventListener("click", function (e) {
+    e.preventDefault(); var a = K.hidden; durum(a); yaz("aclAcik", a ? "1" : "0");
+    if (window.Rapor) Rapor.bolum(a ? "acilis-ac" : "acilis-kapat");
+  });
+  window.Acilis = { ac: function () { durum(true, true); yaz("aclAcik", "1"); } };
+  if (location.hash === "#acilis") setTimeout(function () { window.Acilis.ac(); }, 300);
 })();
 </script>
+
 <script src="yeni.js"></script>
 <script>
 // Kayan yazı: ayrıntı vermeyen merak cümleleri, sonunda "hepsi ve daha fazlası İş Bankası Gündemi'nde".
@@ -755,7 +956,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   const dizi = [
     ["video", "<svg class=\"kyTrb\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><rect width=\"30\" height=\"20\" fill=\"#e30a17\"/><circle cx=\"11\" cy=\"10\" r=\"5\" fill=\"#fff\"/><circle cx=\"12.25\" cy=\"10\" r=\"4\" fill=\"#e30a17\"/><polygon points=\"16.2,10 19.9,8.8 17.6,11.9 17.6,8.1 19.9,11.2\" fill=\"#fff\"/></svg><b>Cumhuriyet Bayramımız kutlu olsun!</b> İş Bankası'nın 29 Ekim videosu <b class=\"gir\">İş Bankası Gündemi › Video</b>", "2026-10-29", "onem"],
     ["gazete.html#2026-10-15", "<b class=\"yn\">ÖNEMLİ</b>📜 Resmi Gazete (15 Ekim): taksit yetkisi artık <b>Ticaret Bakanlığı</b>'nda · sıfır telefonda 12 ay taksit sınırı <b>40 bin TL</b> oldu <b class=\"gir\">Ayrıntı</b>", "2026-11-30", "onem"],
-    ...(function () { try { return localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis.html", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
+    ...(function () { try { return localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
     ["maximum", "🎁 Kampanyaları bulmak hiç bu kadar kolay olmamıştı: İş Bankası, Maximum ve Maximiles tek ekranda; arama, takvim ve <b>Bana uygun</b> <b class=\"gir\">İş Bankası Gündemi › Kampanyalar</b>", "2026-11-30"],
     ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
           ];
@@ -784,7 +985,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     const o = e.target.closest(".kyOge"); const h = o ? o.dataset.h : "iscep";
     e.preventDefault();
     if (h === "ppk") { ppk && ppk.tap && ppk.tap(); return; }
-    if (h.includes(".html")) { window.Rapor && Rapor.bolum(h.includes("kurum") ? "kayan-kurum" : h === "acilis.html" ? "kayan-acilis" : "kayan-gazete-yakinda"); location.href = h; return; }
+    if (h === "acilis") { window.Rapor && Rapor.bolum("kayan-acilis"); window.Acilis && window.Acilis.ac(); return; }
+    if (h.includes(".html")) { window.Rapor && Rapor.bolum(h.includes("kurum") ? "kayan-kurum" : "kayan-gazete-yakinda"); location.href = h; return; }
     window.Rapor && Rapor.bolum("kayan-" + h); location.href = "isbank.html#" + h;
   });
 })();
