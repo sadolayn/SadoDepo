@@ -1023,6 +1023,9 @@ if (cat === "Kampanya") { cat = "Maximum"; try { const k = JSON.parse(localStora
 if (location.hash === "#maximum") cat = "Maximum"; // ana sayfadaki kampanya hatırlatıcısından gelince
 let kYeni = location.hash === "#yeni"; // ana sayfadaki "son 3 günde N yeni" etiketinden gelince: Kampanyalar › Yeni gelenler
 if (kYeni) cat = "Maximum";
+// Ana sayfadaki Açılış kartından (Faiz & Kredi / Yeni gelen kutuları): Kampanyalar açılır ve sayfa doğrudan süzülmüş listeye iner
+const kGit = location.hash === "#kliste" || location.hash === "#yeniliste";
+if (kGit) { cat = "Maximum"; if (location.hash === "#yeniliste") kYeni = true; }
 let ayr = "black", ipl = null; try { ayr = localStorage.getItem("isbankAyr") || "black"; } catch (e) {}
 if (location.hash === "#isplus") { cat = "Black"; ayr = "plus"; }
 // Ana sayfadaki kayan yazıdan gelince
@@ -2874,6 +2877,7 @@ function renderList() {
     // Video sekmesi sonradan eklendi: eski ziyaretçide 1 haftadan eski videolar okunmuş sayılsın
     if (!SEEN._yv) { vids.forEach((x) => { if (!x.d || (Date.now() - new Date(x.d)) / 864e5 > 7) SEEN["y:" + x.u] = 1; }); SEEN._yv = 1; seenSave(); }
     renderList(); renderChips(); ilkCizim = false;
+    if (kGit && cat === "Maximum" && $("kGovde")) setTimeout(() => bolumeGit($("kGovde")), 60);
     // Ana sayfadaki kampanya etiketlerinden gelinse de sayfa baştan açılır: İş Bankası Gündemi menüsü atlanmaz, Kampanyalar seçili hazır bekler
   } catch (e) {
     Ortak.hata("list", { ne: "İş Bankası gündemi" });

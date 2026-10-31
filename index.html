@@ -912,7 +912,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       o.seg = p[1]; o.nere = ""; o.kim = ""; o.one = false; o.ne = p[0] === "fk" ? "Faiz & Kredi" : ""; if (p[0] === "fk") o.kay = "isbank";
       yaz("isbankKamp", JSON.stringify(o));
       if (window.Rapor) Rapor.bolum("acilis-" + p[0] + "-" + p[1]);
-      location.href = "isbank.html#" + (p[0] === "fk" ? "maximum" : "yeni");
+      location.href = "isbank.html#" + (p[0] === "fk" ? "kliste" : "yeniliste"); // sayfa doğrudan süzülmüş listeye iner
     });
     OZ.kamp = "📣 Faiz & Kredi <b>" + (Bi.fk + Ti.fk) + "</b>"; ozetYaz();
   }).catch(function () {});
