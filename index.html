@@ -343,7 +343,20 @@
   .aclPG .br { display: block; font-size: 11px; color: #8a8a8a; }
   .aclPG i { display: block; font-style: normal; font-size: 11px; font-weight: 600; margin-top: 1px; }
   .aclPG .up { color: #5cc98a; } .aclPG .dn { color: #ff7b72; } .aclPG .eq { color: #8a8a8a; }
-  .aclPN { font-size: 11.5px; color: #8a8a8a; line-height: 1.45; margin-top: 7px; }
+  .aclPN { font-size: 11.5px; color: #8a8a8a; line-height: 1.45; margin-top: 8px; }
+  .aclPN summary { cursor: pointer; color: #b9a888; font-size: 12px; min-height: 24px; list-style: none; }
+  .aclPN summary::-webkit-details-marker { display: none; }
+  .aclPN summary::after { content: " ›"; } .aclPN[open] summary::after { content: " ⌄"; }
+  .aclPN[open] summary { margin-bottom: 4px; }
+  .aclSp { margin-top: 8px; padding: 9px 10px; border-radius: 12px; border: 1px solid #3a2f1c; background: rgba(224,162,79,.06); }
+  .aclSpB { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .aclSpB b { font-size: 13.5px; } .aclSpB small { font-size: 11.5px; color: #8a8a8a; }
+  .aclSpS { display: inline-flex; align-items: baseline; gap: 6px; }
+  .aclSpS i { font-style: normal; font-size: 17px; font-weight: 800; }
+  .aclSpS .up { color: #5cc98a; } .aclSpS .dn { color: #ff7b72; } .aclSpS .eq { color: #8a8a8a; }
+  .aclSpC { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .aclSpC button { min-height: 30px; padding: 4px 9px; border-radius: 999px; border: 1px solid #262626; background: #0d0d0d; color: #b9b9b9; font: 12px system-ui, sans-serif; cursor: pointer; }
+  .aclSpC button[aria-pressed="true"] { border-color: #e0a24f; background: rgba(224,162,79,.16); color: #f3d38a; }
   .aclS { display: flex; gap: 10px; align-items: flex-start; padding: 10px 2px; border-top: 1px solid #262626; color: inherit; text-decoration: none; }
   .aclS:first-child { border-top: 0; }
   .aclS .ik { font-size: 18px; width: 24px; text-align: center; flex: none; }
@@ -815,23 +828,41 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   function ozetYaz() { $("aclAlt").innerHTML = alt.join("<br>"); $("aclD").innerHTML = (OZ.gor || "") + ["ceyrek", "pf", "ppk"].map(function (k) { return OZ[k]; }).filter(Boolean).map(function (x) { return '<span style="white-space:nowrap">' + x + "</span>"; }).join(" · "); } // her parça bölünmeden satıra sığar
 
   // ---- 2) Satırlar: çeyrek, Gazete, PPK, takvim (sırası sabit) ----
-  var SAT = {}, SIRA = ["piyasa", "ceyrek", "gazete", "bolge", "ppk", "takvim"];
+  var SAT = {}, SIRA = ["ceyrek", "gazete", "bolge", "ppk", "takvim", "piyasa"]; // piyasa kampanyaların hemen üstünde
   function satir(ad, html) { SAT[ad] = html; $("aclSat").innerHTML = SIRA.map(function (k) { return SAT[k] || ""; }).join(""); goster(); }
   function kalip(href, ik, x, dis) { return '<a class="aclS" href="' + href + '"' + (dis ? ' target="_blank" rel="noopener"' : "") + '><span class="ik" aria-hidden="true">' + ik + '</span><span class="x">' + x + '</span><span class="ok" aria-hidden="true">›</span></a>'; }
 
   // Döviz & Emtia: döviz 1 birimin TL karşılığı; emtia uluslararası dolar fiyatı (ons / varil). Değişim bir önceki kapanışa göre, aynı birimde.
+  // Altında Sepetim: seçilen kalemlerin günlük değişimi, eşit ağırlıklı ve TL bazında (seçim bu cihazda kalır).
   Ortak.json("data/piyasa.json").then(function (P) {
-    var D = P.dates || [], OZ = 31.1034768, n = D.length;
-    var i1 = n - 1, i0 = n - 2; if (i0 < 0) return;
-    var KAL = [["usd", "💵 Dolar", "TL", 2, 0], ["eur", "💶 Euro", "TL", 2, 0], ["gbp", "💷 Sterlin", "TL", 2, 0], ["xau", "🥇 Altın", "$/ons", 0, OZ],
-      ["xag", "🥈 Gümüş", "$/ons", 2, OZ], ["xpt", "⚪ Platin", "$/ons", 0, OZ], ["xpd", "🔘 Paladyum", "$/ons", 0, OZ], ["brent", "🛢️ Petrol", "$/varil", 2, 1]];
-    var deg = function (k, i, kat) { var v = (P[k] || [])[i]; if (v == null) return null; return kat ? v * kat / P.usd[i] : v; }; // emtia: TL → dolar
-    var h = KAL.filter(function (x) { return deg(x[0], i1, x[4]) != null; }).map(function (x) {
-      var v = deg(x[0], i1, x[4]), o = deg(x[0], i0, x[4]), c = o ? (v - o) / o * 100 : 0, cl = Math.abs(c) < 0.005 ? "eq" : c > 0 ? "up" : "dn";
-      return '<a href="piyasa.html" class="' + (x[4] ? "em" : "") + '"><span class="ad">' + x[1] + "</span><b>" + (x[4] ? "$" : "₺") + sayi(v, x[3]) + '</b><span class="br">' + x[2] + '</span><i class="' + cl + '">' + (cl === "eq" ? "–" : (cl === "up" ? "▲ %" : "▼ %") + sayi(Math.abs(c), 2)) + "</i></a>";
+    var D = P.dates || [], OZ = 31.1034768, n = D.length, i1 = n - 1, i0 = n - 2; if (i0 < 0) return;
+    var KAL = [["usd", "💵", "Dolar", "TL", 2, 0], ["eur", "💶", "Euro", "TL", 2, 0], ["gbp", "💷", "Sterlin", "TL", 2, 0], ["xau", "🥇", "Altın", "$/ons", 0, OZ],
+      ["xag", "🥈", "Gümüş", "$/ons", 2, OZ], ["xpt", "⚪", "Platin", "$/ons", 0, OZ], ["xpd", "🔘", "Paladyum", "$/ons", 0, OZ], ["brent", "🛢️", "Petrol", "$/varil", 2, 1]]
+      .filter(function (x) { return P[x[0]] && P[x[0]][i1] != null && P[x[0]][i0] != null; });
+    var deg = function (k, i, kat) { var v = P[k][i]; return kat ? v * kat / P.usd[i] : v; }; // emtia: TL → dolar
+    var gTL = function (k) { return (P[k][i1] / P[k][i0] - 1) * 100; }; // sepet için TL bazında günlük değişim
+    var ok = function (c) { var cl = Math.abs(c) < 0.005 ? "eq" : c > 0 ? "up" : "dn"; return '<i class="' + cl + '">' + (cl === "eq" ? "–" : (cl === "up" ? "▲ %" : "▼ %") + sayi(Math.abs(c), 2)) + "</i>"; };
+    var SEP = (oku("aclSepet", "usd,eur,xau") || "").split(",").filter(function (k) { return KAL.some(function (x) { return x[0] === k; }); });
+    var h = KAL.map(function (x) {
+      var v = deg(x[0], i1, x[5]), o = deg(x[0], i0, x[5]);
+      return '<a href="piyasa.html" class="' + (x[5] ? "em" : "") + '"><span class="ad">' + x[1] + " " + x[2] + "</span><b>" + (x[5] ? "$" : "₺") + sayi(v, x[4]) + '</b><span class="br">' + x[3] + "</span>" + ok((v - o) / o * 100) + "</a>";
     }).join("");
-    satir("piyasa", '<div class="aclP"><a class="aclPB" href="piyasa.html"><b>💱 Döviz &amp; Emtia</b><small>' + gunAy(D[i1]) + " kapanışı ›</small></a>" +
-      '<div class="aclPG">' + h + '</div><div class="aclPN">Döviz: 1 birimin TL karşılığı. Emtia: uluslararası dolar fiyatı; altın, gümüş, platin ve paladyum 1 ons, petrol 1 varil Brent. ▲▼ bir önceki kapanışa göre, aynı birimde.</div></div>');
+    function sepet() {
+      var top = SEP.reduce(function (a, k) { return a + gTL(k); }, 0), c = SEP.length ? top / SEP.length : 0;
+      return '<div class="aclSp"><div class="aclSpB"><b>🧺 Sepetim</b>' + (SEP.length ? '<span class="aclSpS">' + ok(c) + "<small>bugün · TL bazında</small></span>" : '<small>Kalem seç, günlük değişimi görelim</small>') + "</div>" +
+        '<div class="aclSpC" role="group" aria-label="Sepete kalem seç">' + KAL.map(function (x) { return '<button type="button" data-sep="' + x[0] + '" aria-pressed="' + (SEP.indexOf(x[0]) > -1) + '">' + x[1] + " " + x[2] + "</button>"; }).join("") + "</div></div>";
+    }
+    function ciz() {
+      satir("piyasa", '<div class="aclP"><a class="aclPB" href="piyasa.html"><b>💱 Döviz &amp; Emtia</b><small>' + gunAy(D[i1]) + " kapanışı ›</small></a>" +
+        '<div class="aclPG">' + h + "</div>" + sepet() +
+        '<details class="aclPN"><summary>ℹ️ Değerler nasıl okunur?</summary>Döviz: 1 birimin TL karşılığı. Emtia: uluslararası dolar fiyatı; altın, gümüş, platin ve paladyum 1 ons, petrol 1 varil Brent. ▲▼ kutularda bir önceki kapanışa göre, kendi biriminde. Sepetim: seçilen kalemlerin günlük değişiminin eşit ağırlıklı ortalaması, hepsi TL bazında; yatırım tavsiyesi değildir.</details></div>');
+    }
+    $("aclSat").addEventListener("click", function (e) {
+      var b = e.target.closest("button[data-sep]"); if (!b) return;
+      var k = b.dataset.sep, i = SEP.indexOf(k); if (i > -1) SEP.splice(i, 1); else SEP.push(k);
+      yaz("aclSepet", SEP.join(",")); ciz();
+    });
+    ciz();
   }).catch(function () {});
 
   // Çeyrek: iş günü ilerlemesi + Günce hedefleri
