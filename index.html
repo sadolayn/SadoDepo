@@ -354,6 +354,11 @@
   .aclSpS { display: inline-flex; align-items: baseline; gap: 6px; }
   .aclSpS i { font-style: normal; font-size: 17px; font-weight: 800; }
   .aclSpS .up { color: #5cc98a; } .aclSpS .dn { color: #ff7b72; } .aclSpS .eq { color: #8a8a8a; }
+  .aclSpD { display: flex; margin-top: 8px; border: 1px solid #3a2f1c; border-radius: 10px; overflow: hidden; }
+  .aclSpD button { flex: 1; min-height: 30px; padding: 4px 0; border: 0; border-left: 1px solid #3a2f1c; background: none; color: #b9a888; font: 600 12px system-ui, sans-serif; cursor: pointer; }
+  .aclSpD button:first-child { border-left: 0; }
+  .aclSpD button[aria-pressed="true"] { background: #e0a24f; color: #1a1206; }
+  .aclSpT { font-size: 11px; color: #8a8a8a; margin-top: 5px; text-align: right; }
   .aclSpC { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
   .aclSpC button { min-height: 30px; padding: 4px 9px; border-radius: 999px; border: 1px solid #262626; background: #0d0d0d; color: #b9b9b9; font: 12px system-ui, sans-serif; cursor: pointer; }
   .aclSpC button[aria-pressed="true"] { border-color: #e0a24f; background: rgba(224,162,79,.16); color: #f3d38a; }
@@ -840,7 +845,16 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       ["xag", "🥈", "Gümüş", "$/ons", 2, OZ], ["xpt", "⚪", "Platin", "$/ons", 0, OZ], ["xpd", "🔘", "Paladyum", "$/ons", 0, OZ], ["brent", "🛢️", "Petrol", "$/varil", 2, 1]]
       .filter(function (x) { return P[x[0]] && P[x[0]][i1] != null && P[x[0]][i0] != null; });
     var deg = function (k, i, kat) { var v = P[k][i]; return kat ? v * kat / P.usd[i] : v; }; // emtia: TL → dolar
-    var gTL = function (k) { return (P[k][i1] / P[k][i0] - 1) * 100; }; // sepet için TL bazında günlük değişim
+    // Sepet dönemi: günlük, haftalık, aylık, 3 ay, 6 ay, 1 yıl (seçim bu cihazda kalır)
+    var DON = [["1g", "Gün", 0, "günlük"], ["1h", "Hafta", 7, "haftalık"], ["1a", "Ay", 1, "aylık"], ["3a", "3 Ay", 3, "3 aylık"], ["6a", "6 Ay", 6, "6 aylık"], ["1y", "Yıl", 12, "yıllık"]];
+    var don = oku("aclDonem", "1g"); if (!DON.some(function (x) { return x[0] === don; })) don = "1g";
+    function baz() { // dönemin başındaki kapanış: o güne ya da öncesine düşen son iş günü
+      if (don === "1g") return i0;
+      var x = DON.filter(function (d) { return d[0] === don; })[0], t = new Date(D[i1] + "T12:00:00");
+      if (don === "1h") t.setDate(t.getDate() - 7); else t.setMonth(t.getMonth() - x[2]);
+      var hedef = anah(t), i = i1; while (i > 0 && D[i] > hedef) i--; return i;
+    }
+    var gTL = function (k, b) { return (P[k][i1] / P[k][b] - 1) * 100; }; // sepet için TL bazında değişim
     var ok = function (c) { var cl = Math.abs(c) < 0.005 ? "eq" : c > 0 ? "up" : "dn"; return '<i class="' + cl + '">' + (cl === "eq" ? "–" : (cl === "up" ? "▲ %" : "▼ %") + sayi(Math.abs(c), 2)) + "</i>"; };
     var SEP = (oku("aclSepet", "usd,eur,xau") || "").split(",").filter(function (k) { return KAL.some(function (x) { return x[0] === k; }); });
     var h = KAL.map(function (x) {
@@ -848,16 +862,20 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       return '<a href="piyasa.html" class="' + (x[5] ? "em" : "") + '"><span class="ad">' + x[1] + " " + x[2] + "</span><b>" + (x[5] ? "$" : "₺") + sayi(v, x[4]) + '</b><span class="br">' + x[3] + "</span>" + ok((v - o) / o * 100) + "</a>";
     }).join("");
     function sepet() {
-      var top = SEP.reduce(function (a, k) { return a + gTL(k); }, 0), c = SEP.length ? top / SEP.length : 0;
-      return '<div class="aclSp"><div class="aclSpB"><b>🧺 Sepetim</b>' + (SEP.length ? '<span class="aclSpS">' + ok(c) + "<small>bugün · TL bazında</small></span>" : '<small>Kalem seç, günlük değişimi görelim</small>') + "</div>" +
+      var b = baz(), dx = DON.filter(function (d) { return d[0] === don; })[0];
+      var top = SEP.reduce(function (a, k) { return a + gTL(k, b); }, 0), c = SEP.length ? top / SEP.length : 0;
+      return '<div class="aclSp"><div class="aclSpB"><b>🧺 Sepetim</b>' + (SEP.length ? '<span class="aclSpS">' + ok(c) + "<small>" + dx[3] + " · TL</small></span>" : '<small>Kalem seç, değişimi görelim</small>') + "</div>" +
+        '<div class="aclSpD" role="group" aria-label="Dönem">' + DON.map(function (d) { return '<button type="button" data-don="' + d[0] + '" aria-pressed="' + (d[0] === don) + '">' + d[1] + "</button>"; }).join("") + "</div>" +
+        '<div class="aclSpT">' + gunAy(D[b]) + (D[b].slice(0, 4) !== D[i1].slice(0, 4) ? " " + D[b].slice(0, 4) : "") + " → " + gunAy(D[i1]) + " kapanışı</div>" +
         '<div class="aclSpC" role="group" aria-label="Sepete kalem seç">' + KAL.map(function (x) { return '<button type="button" data-sep="' + x[0] + '" aria-pressed="' + (SEP.indexOf(x[0]) > -1) + '">' + x[1] + " " + x[2] + "</button>"; }).join("") + "</div></div>";
     }
     function ciz() {
       satir("piyasa", '<div class="aclP"><a class="aclPB" href="piyasa.html"><b>💱 Döviz &amp; Emtia</b><small>' + gunAy(D[i1]) + " kapanışı ›</small></a>" +
         '<div class="aclPG">' + h + "</div>" + sepet() +
-        '<details class="aclPN"><summary>ℹ️ Değerler nasıl okunur?</summary>Döviz: 1 birimin TL karşılığı. Emtia: uluslararası dolar fiyatı; altın, gümüş, platin ve paladyum 1 ons, petrol 1 varil Brent. ▲▼ kutularda bir önceki kapanışa göre, kendi biriminde. Sepetim: seçilen kalemlerin günlük değişiminin eşit ağırlıklı ortalaması, hepsi TL bazında; yatırım tavsiyesi değildir.</details></div>');
+        '<details class="aclPN"><summary>ℹ️ Değerler nasıl okunur?</summary>Döviz: 1 birimin TL karşılığı. Emtia: uluslararası dolar fiyatı; altın, gümüş, platin ve paladyum 1 ons, petrol 1 varil Brent. ▲▼ kutularda bir önceki kapanışa göre, kendi biriminde. Sepetim: seçilen kalemlerin seçilen dönemdeki (gün, hafta, ay, 3 ay, 6 ay, yıl) değişiminin eşit ağırlıklı ortalaması, hepsi TL bazında; yatırım tavsiyesi değildir.</details></div>');
     }
     $("aclSat").addEventListener("click", function (e) {
+      var d = e.target.closest("button[data-don]"); if (d) { don = d.dataset.don; yaz("aclDonem", don); ciz(); return; }
       var b = e.target.closest("button[data-sep]"); if (!b) return;
       var k = b.dataset.sep, i = SEP.indexOf(k); if (i > -1) SEP.splice(i, 1); else SEP.push(k);
       yaz("aclSepet", SEP.join(",")); ciz();
