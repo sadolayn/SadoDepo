@@ -342,12 +342,6 @@
   .acl.kapali .aclOz { display: block; }
   .acl.kapali .aclIc { display: none; }
   .aclIc { padding: 0 12px 10px; }
-  .aclKur { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 4px; }
-  .aclKur a { background: #0d0d0d; border: 1px solid #262626; border-radius: 10px; padding: 7px 2px; text-align: center; color: inherit; text-decoration: none; min-width: 0; }
-  .aclKur small { display: block; font-size: 11px; color: #8a8a8a; white-space: nowrap; }
-  .aclKur b { display: block; font-size: 14.5px; margin: 2px 0 1px; white-space: nowrap; }
-  .aclKur i { font-style: normal; font-size: 11px; }
-  .aclKur .up { color: #5cc98a; } .aclKur .dn { color: #ff7b72; } .aclKur .eq { color: #8a8a8a; }
   .aclS { display: flex; gap: 10px; align-items: flex-start; padding: 10px 2px; border-top: 1px solid #262626; color: inherit; text-decoration: none; }
   .aclS:first-child { border-top: 0; }
   .aclS .ik { font-size: 18px; width: 24px; text-align: center; flex: none; }
@@ -356,6 +350,10 @@
   .aclS .x small { display: block; color: #8a8a8a; font-size: 12px; margin-top: 2px; line-height: 1.4; }
   .aclS .x small b { color: #d9c7a3; font-weight: 600; }
   .aclS .ok { color: #6b5222; font-size: 18px; flex: none; }
+  .aclS .x > a { color: inherit; text-decoration: none; }
+  .aclBol { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+  .aclBol a { display: inline-flex; align-items: center; min-height: 30px; padding: 4px 9px; border-radius: 999px; border: 1px solid #262626; background: #0d0d0d; color: #e9dcc0; font-size: 12px; text-decoration: none; }
+  .aclBol a:active { border-color: #e0a24f; }
   .aclBar { display: block; height: 6px; border-radius: 3px; background: #262626; margin-top: 6px; overflow: hidden; }
   .aclBar i { display: block; height: 100%; background: linear-gradient(90deg, #f3d38a, #e0a24f); }
   .aclK { border-top: 1px solid #262626; padding: 10px 2px 2px; }
@@ -378,6 +376,7 @@
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
+<script src="bolgesorgu.js"></script>
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
@@ -456,7 +455,6 @@
       <button type="button" class="aclBas" id="aclBtn" aria-expanded="true" aria-controls="aclIc" data-yeni="acilis|2026-10-31|YENİ"><span class="t">☕ Açılış kartı</span><span class="g" id="aclTar"></span><span class="ok" aria-hidden="true">▾</span></button>
       <div class="aclOz" id="aclOz"></div>
       <div class="aclIc" id="aclIc">
-        <div class="aclKur" id="aclKur"></div>
         <div id="aclSat"></div>
         <div class="aclK" id="aclK" hidden></div>
         <div class="aclAlt" id="aclAlt"></div>
@@ -774,8 +772,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>
 // ===== Açılış kartı =====
-// Sabah tek bakışta: kurlar (data/piyasa.json), çeyrek ve Günce hedefleri (bu cihazdaki gunce_v2), Resmi Gazete (gazete/),
-// PPK (data/ppk.json), takvim notu ve bireysel/ticari kampanyalar (isbank/kampanya_hepsi.json). Başlığa dokununca küçülür.
+// Sabah tek bakışta: çeyrek ve Günce hedefleri (bu cihazdaki gunce_v2), Resmi Gazete (gazete/),
+// PPK (data/ppk.json), takvim notu, Bölge Nabzı (bolgesorgu.js) ve bireysel/ticari kampanyalar (isbank/kampanya_hepsi.json). Başlığa dokununca küçülür.
 // Veri alınamayan parça sessizce gizlenir; hiçbiri alınamazsa kart hiç görünmez.
 (function () {
   var K = document.getElementById("acilis"); if (!K || !window.fetch) return;
@@ -809,33 +807,11 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   btn.addEventListener("click", function () { var k = !K.classList.contains("kapali"); durum(k); yaz("aclKapali", k ? "1" : "0"); if (window.Rapor) Rapor.bolum(k ? "acilis-kucult" : "acilis-ac"); });
 
   var goster = function () { K.hidden = false; };
-  var ozet = [], alt = [];
-  function ozetYaz() { $("aclOz").innerHTML = ozet.join(" · "); $("aclAlt").innerHTML = alt.join("<br>"); }
-
-  // ---- 1) Kurlar ----
-  Ortak.json("data/piyasa.json").then(function (P) {
-    var D = P.dates || [];
-    function iki(seri) { // son iki dolu değer
-      var s = P[seri] || [], a = null, b = null, t = null;
-      for (var i = Math.min(s.length, D.length) - 1; i >= 0; i--) { if (s[i] == null) continue; if (a == null) { a = s[i]; t = D[i]; } else { b = s[i]; break; } }
-      return a == null ? null : { v: a, o: b, t: t };
-    }
-    var u = iki("usd"), e = iki("eur"), x = iki("xau");
-    if (!u && !e && !x) return;
-    var C = 1.75 * 0.916; // çeyrek altın: 1,75 g, 22 ayar → has altın karşılığı
-    var L = [["Dolar", u, 2, 1], ["Euro", e, 2, 1], ["Gram altın", x, 0, 1], ["Çeyrek*", x, 0, C]];
-    $("aclKur").innerHTML = L.map(function (r) {
-      var o = r[1]; if (!o) return "";
-      var v = o.v * r[3], deg = o.o ? (o.v - o.o) / o.o * 100 : 0, s = Math.abs(deg) < 0.005 ? "eq" : deg > 0 ? "up" : "dn";
-      return '<a href="piyasa.html"><small>' + r[0] + "</small><b>" + sayi(v, r[2]) + '</b><i class="' + s + '">' + (s === "eq" ? "–" : (s === "up" ? "▲ %" : "▼ %") + sayi(Math.abs(deg), 2)) + "</i></a>";
-    }).join("");
-    if (u) ozet.push("$ <b>" + sayi(u.v, 2) + "</b>"); if (e) ozet.push("€ <b>" + sayi(e.v, 2) + "</b>"); if (x) ozet.push("gr <b>" + sayi(x.v, 0) + "</b>");
-    alt.unshift("Kurlar " + gunAy((u || x).t) + " kapanışı. *Çeyrek, gram fiyatından hesaplanan has altın değeridir (1,75 g · 22 ayar); kuyumcu fiyatı farklı olabilir.");
-    ozetYaz(); goster();
-  }).catch(function () {});
+  var OZ = {}, alt = []; // küçükken görünen tek satır: çeyrek · PPK · kampanya
+  function ozetYaz() { $("aclOz").innerHTML = ["ceyrek", "ppk", "kamp"].map(function (k) { return OZ[k]; }).filter(Boolean).join(" · "); $("aclAlt").innerHTML = alt.join("<br>"); }
 
   // ---- 2) Satırlar: çeyrek, Gazete, PPK, takvim (sırası sabit) ----
-  var SAT = {}, SIRA = ["ceyrek", "gazete", "ppk", "takvim"];
+  var SAT = {}, SIRA = ["ceyrek", "gazete", "bolge", "ppk", "takvim"];
   function satir(ad, html) { SAT[ad] = html; $("aclSat").innerHTML = SIRA.map(function (k) { return SAT[k] || ""; }).join(""); goster(); }
   function kalip(href, ik, x, dis) { return '<a class="aclS" href="' + href + '"' + (dis ? ' target="_blank" rel="noopener"' : "") + '><span class="ik" aria-hidden="true">' + ik + '</span><span class="x">' + x + '</span><span class="ok" aria-hidden="true">›</span></a>'; }
 
@@ -859,6 +835,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       }
     } catch (e) {}
     if (!h) h = "<small>Hedeflerini Günce'ye girersen burada görünür 🎯</small>";
+    OZ.ceyrek = "📅 <b>" + sayi(kal, kal % 1 ? 1 : 0) + "</b> iş günü"; ozetYaz();
     satir("ceyrek", kalip("gunce.html", "📅", "<b>" + (qn + 1) + ". çeyrek:</b> %" + yuz + "'si geride, <b>" + sayi(kal, kal % 1 ? 1 : 0) + " iş günü</b> kaldı" +
       '<span class="aclBar"><i style="width:' + yuz + '%"></i></span>' + h));
   })();
@@ -905,6 +882,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       var c = Number(son.change) || 0, bp = Math.round(Math.abs(c) * 100);
       x += "<small>Son karar " + gunAy(son.date) + ": politika faizi %" + sayi(son.rate, son.rate % 1 ? 2 : 0) + ", " + (c === 0 ? "değişmedi" : bp + " baz puan " + (c < 0 ? "indirim" : "artırım")) + " · kaynak TCMB</small>";
     }
+    if (sonra) { OZ.ppk = "🏛️ PPK " + (g === 0 ? "<b>bugün</b>" : "<b>" + g + "</b> gün"); ozetYaz(); }
     satir("ppk", kalip(son.url || "https://www.tcmb.gov.tr", "🏛️", x, true));
   }).catch(function () {});
 
@@ -961,8 +939,27 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
         yaz("isbankKamp", JSON.stringify(o));
       }
     });
+    OZ.kamp = "📣 Faiz & Kredi <b>" + (SEG.bireysel.filter(SEK.fk.f).length + SEG.ticari.filter(SEK.fk.f).length) + "</b>"; ozetYaz();
     ciz(); goster();
   }).catch(function () {});
+
+  // ---- 4) Bölge Nabzı: seçilen il/ilçe için son 24 saatin haber aramaları (Google Haberler sekmesi; haber derlenmez) ----
+  (function () {
+    var Y = null; try { Y = JSON.parse(localStorage.getItem("bolgem") || localStorage.getItem("haber_yerel2") || "null"); } catch (e) {}
+    var ad = Y && [Y.elle || Y.ilce, Y.il].filter(Boolean).join(", ");
+    if (!ad || !window.BolgeSorgu) { satir("bolge", kalip("bolge.html", "📍", "<b>Bölge Nabzı:</b> ilini ya da ilçeni seç, bölgende olanlar her sabah burada<small>Atama, konkordato, maaş promosyonu, dolandırıcılık…</small>")); return; }
+    var KONU = ["Atama", "Vefat", "Konkordato & iflas", "Maaş promosyonu", "Sanayi & yatırım", "Dolandırıcılık"], Q = {};
+    BolgeSorgu.GRUP.forEach(function (g) { g[2].forEach(function (k) { Q[k[1]] = k; }); });
+    function ciz(ILMAP) {
+      var cip = KONU.filter(function (k) { return Q[k]; }).map(function (k) {
+        return '<a href="' + esc(BolgeSorgu.gn(Y, ILMAP, Q[k][2], "1d")) + '" target="_blank" rel="noopener">' + Q[k][0] + " " + ({ "Konkordato & iflas": "Konkordato", "Maaş promosyonu": "Promosyon", "Sanayi & yatırım": "Yatırım" }[k] || k) + "</a>";
+      }).join("");
+      satir("bolge", '<div class="aclS"><span class="ik" aria-hidden="true">📍</span><span class="x"><a href="bolge.html"><b>' + esc(ad) + "</b> · son 24 saat</a>" +
+        '<span class="aclBol">' + cip + '</span></span><a class="ok" href="bolge.html" aria-label="Bölge Nabzı\'nı aç" style="text-decoration:none">›</a></div>');
+    }
+    ciz(null);
+    Ortak.json("data/ililce.json").then(ciz).catch(function () {}); // aynı adlı ilçeler için (bolge.html ile aynı sorgu)
+  })();
 })();
 </script>
 <script src="yeni.js"></script>
