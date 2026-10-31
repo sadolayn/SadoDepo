@@ -70,7 +70,7 @@
 <script type="module">
 const FB_DB = "https://sadolaynsadosan-default-rtdb.europe-west1.firebasedatabase.app", V = "10.12.2";
 const $ = (id) => document.getElementById(id);
-const AD = { index: "🏠 Ana sayfa", isbank: "🏛️ İş Bankası Gündemi", banka: "🏦 Bankacılık", hesap: "🧮 Hesaplamalar", gunce: "📒 Günce", gazete: "📜 Resmi Gazete", haberler: "📰 Güncel Haberler", oyunlar: "🎲 Oyunlar", batak: "♠️ Batak", king: "👑 King", tavla: "🎯 Tavla", solitaire: "🃏 Solitaire", pilot: "✈️ UçUç", tahmin: "🔢 Asal Tahmin", bilmece: "🧩 Sayı Bilmecesi", balayi: "💞 Balayı", hava: "🌤️ Hava", takvim: "📅 Takvim", yakin: "📍 En Yakınımda", piyasa: "💱 Döviz & Altın", alerts: "🔔 Sadolayn Alerts" };
+const AD = { index: "🏠 Ana sayfa", isbank: "🏛️ İş Bankası Gündemi", banka: "🏦 Bankacılık", hesap: "🧮 Hesaplamalar", gunce: "📒 Günce", gazete: "📜 Resmi Gazete", haberler: "📰 Güncel Haberler", oyunlar: "🎲 Oyunlar", batak: "♠️ Batak", king: "👑 King", tavla: "🎯 Tavla", solitaire: "🃏 Solitaire", pilot: "✈️ UçUç", tahmin: "🔢 Asal Tahmin", bilmece: "🧩 Sayı Bilmecesi", balayi: "💞 Balayı", hava: "🌤️ Hava", takvim: "📅 Takvim", yakin: "📍 En Yakınımda", piyasa: "💱 Döviz & Emtia", alerts: "🔔 Sadolayn Alerts" };
 // "Beni sayma" iki sayaca da uygulanır: canlı/tekil sayaç (canli_ben) ve GoatCounter sayfa raporu (skipgc = "t" görünce saymaz)
 const benSay = (ben) => { try { localStorage.setItem("canli_ben", ben ? "1" : "0"); if (ben) localStorage.setItem("skipgc", "t"); else localStorage.removeItem("skipgc"); } catch (e) {} };
 try { if (localStorage.getItem("canli_ben") === null) localStorage.setItem("canli_ben", "1"); benSay(localStorage.getItem("canli_ben") === "1"); $("ben").checked = localStorage.getItem("canli_ben") === "1"; } catch (e) {}
