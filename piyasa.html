@@ -57,7 +57,10 @@
   .tile .n { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; gap: 6px; }
   .tile .v { font-size: 20px; font-weight: 700; margin: 2px 0 2px; }
   .tile .v small { font-size: 12px; color: var(--muted); font-weight: 500; }
-  .tile .c { font-size: 11.5px; color: var(--muted); display: flex; gap: 8px; white-space: nowrap; }
+  .tile .c { font-size: 11.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 2px 8px; white-space: nowrap; }
+  .tile .c .g { font-weight: 700; }
+  .grid .tile { display: flex; flex-direction: column; justify-content: flex-start; }
+  .tile .usd { font-size: 12px; color: #b9a888; margin: -1px 0 3px; }
   .tile:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .up { color: var(--up); } .down { color: var(--down); }
 
@@ -298,10 +301,13 @@ function renderTiles() {
   const last = D.dates[N - 1];
   $("tiles").innerHTML = A.map((a) => {
     const v = D[a.k][N - 1], c1 = chgSince(a.k, shiftYears(last, -1)), c5 = chgSince(a.k, shiftYears(last, -5));
+    const cg = N > 1 && D[a.k][N - 2] ? (v / D[a.k][N - 2] - 1) * 100 : null; // günlük: bir önceki kapanışa göre
+    // Emtia: TL'nin yanında uluslararası dolar fiyatı (madenler 1 ons, petrol 1 varil)
+    const usd = a.u ? (v * (a.br ? 1 : 31.1034768)) / D.usd[N - 1] : null;
     return `<button class="tile ${S.sel === a.k ? "sel" : ""}" data-k="${a.k}">
       <div class="n"><span>${a.ic} ${a.n}</span><span>${a.u ? "TL" + a.u : a.s + "/TL"}</span></div>
-      <div class="v num">${nf(v, a.d)}</div>
-      <div class="c num"><span class="${cls(c1)}">1Y ${pct(c1, 0)}</span><span class="${cls(c5)}">5Y ${pct(c5, 0)}</span></div>
+      <div class="v num">${nf(v, a.d)}</div>${usd ? `<div class="usd num">$${nf(usd, usd < 100 || a.br ? 2 : 0)}/${a.br || "ons"}</div>` : ""}
+      <div class="c num">${cg != null ? `<span class="g ${cls(cg)}">1G ${pct(cg, 2)}</span>` : ""}<span class="${cls(c1)}">1Y ${pct(c1, 0)}</span><span class="${cls(c5)}">5Y ${pct(c5, 0)}</span></div>
     </button>`;
   }).join("");
 }
@@ -485,7 +491,7 @@ function build() {
   $("upd").textContent = `Son veri: ${fdate(last)} · güncelleme ${D.updated.slice(11)}`;
   $("app").innerHTML = `
   <div class="card"><h2>Güncel</h2><div class="grid" id="tiles"></div>
-    <div class="note" style="margin-top:8px">1Y: son 1 yıl, 5Y: son 5 yıl TL bazında değişim. Petrol: Brent ham petrolün varil fiyatı, TL'ye çevrilmiş. Bir kutuya dokununca grafiği açılır.</div></div>
+    <div class="note" style="margin-top:8px">1G: bir önceki kapanışa göre, 1Y: son 1 yıl, 5Y: son 5 yıl; değişimler TL bazında. Emtiada altta uluslararası dolar fiyatı da var (madenler 1 ons). Petrol: Brent ham petrolün varil fiyatı, TL'ye çevrilmiş. Bir kutuya dokununca grafiği açılır.</div></div>
 
   <div class="card"><div class="chead" id="chead"></div>
     <div class="chips" id="ranges">${["1Y", "3Y", "5Y", "Tümü"].map((r) => `<span class="chip" data-r="${r}">${r === "Tümü" ? "Tümü" : r.replace("Y", " yıl")}</span>`).join("")}</div>
