@@ -1655,9 +1655,9 @@ function renderKampanyalar() {
   t.hidden = false;
   t.style.setProperty("--kk", renk); t.style.setProperty("--kz", K_KAY[kKay][4]); t.style.setProperty("--ky", K_KAY[kKay][5]);
   t.innerHTML = `<div class="kara"><i>🔎</i><input id="kAra" type="search" enterkeyhint="search" placeholder="Ara: ${esc(kOrnekler().slice(0, 3).join(", "))}… (Türkçe harf şart değil)" value="${esc(kAra)}" autocomplete="off"><button type="button" id="kAraSil"${kAra ? "" : " hidden"}>✕</button><button type="button" class="ksihk${kSih.acik ? " on" : ""}">🧭 Bana uygun</button></div>`
-    + `<div class="tsat uc"><span class="tlab">🏦 Kaynak<em class="tsay">· ${kSeg === "ticari" ? "ticari" : "bireysel"}</em></span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, say(k, kSeg), kKay === k)).join("")}</div></div>`
+    + `<div class="tsat uc"><span class="tlab">🏦 Kaynak<em class="tsay">· toplam</em></span><div class="tgrid">${Object.entries(K_KAY).map(([k, [ic, ad]]) => sb("data-ky", k, ic, ad, (say(k, "bireysel") || 0) + (say(k, "ticari") || 0), kKay === k)).join("")}</div></div>`
     + `<div class="tsat uc"><span class="tlab">👥 Bölüm<em class="tsay">· ${esc(kayAd)}</em></span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
-    // Satır başlığındaki küçük yazı sayıların neye göre olduğunu söyler: Kaynak sayıları seçili bölümün, Bölüm sayıları seçili kaynağın
+    // Satır başlığındaki küçük yazı sayıların neye göre olduğunu söyler: Kaynak sayıları bireysel + ticari toplamı, Bölüm sayıları seçili kaynağın
     // Sitelerdeki sayılar toplanınca ana sayfadaki "farklı kampanya" sayısı tutmaz: aynı kampanya birden çok sitede yayımlanabiliyor
     + `<div class="knot">ℹ️ Aynı kampanya birden çok sitede olabilir: ${kSeg === "ticari" ? "Ticaride" : "Bireyselde"} ${Object.keys(K_KAY).reduce((a, k) => a + (say(k, kSeg) || 0), 0)} kayıt, ${new Set(kTumu(kSeg).map(kAyni)).size} farklı kampanya · tüm bölümlerde ${new Set(kTumu().map(kAyni)).size} farklı kampanya</div>`
     + (L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, kKisa(ad), n, kKim === ad)).join("")}</div></div>` : "")
@@ -1753,8 +1753,13 @@ function kOrnekler() {
 // Arama kuralları: her kelime geçmeli (Türkçe harf, büyük-küçük harf fark etmez). 3 harf ve kısası yalnızca sözcük başında aranır
 // ("ev" → "seviye", "fon" → "telefon" eşleşmesin); uzun kelime içinde de aranır ("puan" → MaxiPuan, "yakıt" → akaryakıt).
 // İş Bankası ve Maximum'da birlikte yayımlanan kampanya bir kez gösterilir. Sıra: başlıkta geçen önce, sonra bitişi yakın olan.
+// Ayıp sözcüklerle arama yapılmaz (sözcük içi eşleşmeyle "tıklayarak" gibi kampanyalar çıkıyordu). Kökler Türkçe harfsiz yazılır.
+const K_AYIP_TAM = new Set(["sik", "sikim", "am", "amk", "aq", "pic", "got", "gotun"]);
+const K_AYIP_KOK = ["yarak", "yarrak", "dalyarak", "orospu", "amcik", "amina", "sikis", "sikik", "siktir", "sikey", "siker", "yavsak", "pezevenk", "kaltak", "surtuk", "gotveren", "tasak", "ibne", "kahpe"];
+const kAyip = (w) => K_AYIP_TAM.has(w) || K_AYIP_KOK.some((k) => w.startsWith(k));
 function kAraHtml() {
   const q = kKucuk(kAra.trim()).split(/\s+/).filter((w) => /[a-z0-9]/.test(w)), ek = q.flatMap((w) => K_YAKIN[w] || []); // yalnızca işaretten oluşan kelime ("(", "&", "'") aranmaz
+  if (q.some((w) => kAyip(w.replace(/[^a-z0-9]/g, "")))) return `<div class="empty">Bu kelimeyle arama yapılmıyor.<span class="koneri">Bugün sonuç verenler: ${kOrnekler().slice(0, 5).map((w) => `<button type="button" data-ornek="${esc(w)}">${esc(w)}</button>`).join("")}</span></div>`;
   if (!q.length) return `<div class="empty">Aramak için harf ya da rakam yaz.<span class="koneri">Bugün sonuç verenler: ${kOrnekler().slice(0, 5).map((w) => `<button type="button" data-ornek="${esc(w)}">${esc(w)}</button>`).join("")}</span></div>`;
   const bas = (t) => " " + t.replace(/[^a-z0-9%&+]+/g, " ");
   const puan = (w, t, tb) => (tb.includes(" " + w) ? 3 : w.length > 3 && t.includes(w) ? 1 : 0); // sözcük başı 3, sözcük içi 1
