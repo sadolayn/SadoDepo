@@ -354,10 +354,11 @@
   .aclSpS { display: inline-flex; align-items: baseline; gap: 6px; }
   .aclSpS i { font-style: normal; font-size: 17px; font-weight: 800; }
   .aclSpS .up { color: #5cc98a; } .aclSpS .dn { color: #ff7b72; } .aclSpS .eq { color: #8a8a8a; }
-  .aclSpD { display: flex; margin-top: 8px; border: 1px solid #3a2f1c; border-radius: 10px; overflow: hidden; }
-  .aclSpD button { flex: 1; min-height: 30px; padding: 4px 0; border: 0; border-left: 1px solid #3a2f1c; background: none; color: #b9a888; font: 600 12px system-ui, sans-serif; cursor: pointer; }
-  .aclSpD button:first-child { border-left: 0; }
-  .aclSpD button[aria-pressed="true"] { background: #e0a24f; color: #1a1206; }
+  .aclSpB > b { flex: 1; }
+  .aclSpSel { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; color: #8a8a8a; white-space: nowrap; }
+  .aclSpSel select { appearance: none; -webkit-appearance: none; min-height: 30px; padding: 4px 22px 4px 9px; border-radius: 999px; border: 1px solid #e0a24f; color: #f3d38a; font: 600 12.5px system-ui, sans-serif; cursor: pointer;
+    background: rgba(224,162,79,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23e0a24f'/%3E%3C/svg%3E") no-repeat right 8px center; }
+  .aclSpSel select option { background: #111; color: #f2f2f2; }
   .aclSpT { font-size: 11px; color: #8a8a8a; margin-top: 5px; text-align: right; }
   .aclSpC { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
   .aclSpC button { min-height: 30px; padding: 4px 9px; border-radius: 999px; border: 1px solid #262626; background: #0d0d0d; color: #b9b9b9; font: 12px system-ui, sans-serif; cursor: pointer; }
@@ -864,8 +865,9 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     function sepet() {
       var b = baz(), dx = DON.filter(function (d) { return d[0] === don; })[0];
       var top = SEP.reduce(function (a, k) { return a + gTL(k, b); }, 0), c = SEP.length ? top / SEP.length : 0;
-      return '<div class="aclSp"><div class="aclSpB"><b>🧺 Sepetim</b>' + (SEP.length ? '<span class="aclSpS">' + ok(c) + "<small>" + dx[3] + " · TL</small></span>" : '<small>Kalem seç, değişimi görelim</small>') + "</div>" +
-        '<div class="aclSpD" role="group" aria-label="Dönem">' + DON.map(function (d) { return '<button type="button" data-don="' + d[0] + '" aria-pressed="' + (d[0] === don) + '">' + d[1] + "</button>"; }).join("") + "</div>" +
+      return '<div class="aclSp"><div class="aclSpB"><b>🧺 Sepetim</b>' + (SEP.length ? '<span class="aclSpS">' + ok(c) + "</span>" : "") +
+        // Dönem: "günlük ▾" yazısına dokununca seçim listesi açılır
+        '<label class="aclSpSel"><select id="aclDon" aria-label="Sepet dönemi">' + DON.map(function (d) { return '<option value="' + d[0] + '"' + (d[0] === don ? " selected" : "") + ">" + d[3] + "</option>"; }).join("") + "</select> · TL</label></div>" +
         '<div class="aclSpT">' + gunAy(D[b]) + (D[b].slice(0, 4) !== D[i1].slice(0, 4) ? " " + D[b].slice(0, 4) : "") + " → " + gunAy(D[i1]) + " kapanışı</div>" +
         '<div class="aclSpC" role="group" aria-label="Sepete kalem seç">' + KAL.map(function (x) { return '<button type="button" data-sep="' + x[0] + '" aria-pressed="' + (SEP.indexOf(x[0]) > -1) + '">' + x[1] + " " + x[2] + "</button>"; }).join("") + "</div></div>";
     }
@@ -874,8 +876,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
         '<div class="aclPG">' + h + "</div>" + sepet() +
         '<details class="aclPN"><summary>ℹ️ Değerler nasıl okunur?</summary>Döviz: 1 birimin TL karşılığı. Emtia: uluslararası dolar fiyatı; altın, gümüş, platin ve paladyum 1 ons, petrol 1 varil Brent. ▲▼ kutularda bir önceki kapanışa göre, kendi biriminde. Sepetim: seçilen kalemlerin seçilen dönemdeki (gün, hafta, ay, 3 ay, 6 ay, yıl) değişiminin eşit ağırlıklı ortalaması, hepsi TL bazında; yatırım tavsiyesi değildir.</details></div>');
     }
+    $("aclSat").addEventListener("change", function (e) { if (e.target.id !== "aclDon") return; don = e.target.value; yaz("aclDonem", don); ciz(); });
     $("aclSat").addEventListener("click", function (e) {
-      var d = e.target.closest("button[data-don]"); if (d) { don = d.dataset.don; yaz("aclDonem", don); ciz(); return; }
       var b = e.target.closest("button[data-sep]"); if (!b) return;
       var k = b.dataset.sep, i = SEP.indexOf(k); if (i > -1) SEP.splice(i, 1); else SEP.push(k);
       yaz("aclSepet", SEP.join(",")); ciz();
