@@ -2,6 +2,7 @@
 """Döviz ve kıymetli maden fiyatlarını (TL) toplayıp data/piyasa.json yazar.
 Kur: Avrupa Merkez Bankası referans kurları (frankfurter.app) — USD/TRY, EUR/TRY, GBP/TRY.
 Madenler: Yahoo Finance GC=F, SI=F, PL=F, PA=F (USD/ons) -> TL/gram (1 ons = 31.1034768 gr).
+Petrol: Yahoo Finance BZ=F (Brent vadeli, USD/varil) -> TL/varil; alınamazsa sayfada kutusu çıkmaz.
 Haftalık geçmiş (2020-11'den beri) + son 21 gün günlük."""
 import json, urllib.request, datetime as dt, sys, os
 from concurrent.futures import ThreadPoolExecutor
@@ -87,6 +88,20 @@ for m, sym in {"xau": "GC=F", "xag": "SI=F", "xpt": "PL=F", "xpd": "PA=F"}.items
             lb[m] = r; print(f"::notice::Yahoo {sym}: {len(r)} gün")
 if len(lb) < 4: sys.exit("::error::Maden verisi eksik: " + ",".join(lb))
 
+# Brent petrol (isteğe bağlı: alınamazsa diğer veriler yine yazılır)
+brent = yahoo_series("BZ=F")
+if brent and len(brent) > 500: print(f"::notice::Yahoo BZ=F: {len(brent)} gün")
+else: print("::warning::Brent alınamadı"); brent = None
+brent_d = sorted(brent) if brent else []
+def brent_on(d):  # o gün ya da öncesindeki son kapanış (tatil ve eksik günler için)
+    lo, hi = 0, len(brent_d) - 1
+    if not brent_d or d < brent_d[0]: return None
+    while lo < hi:
+        m = (lo + hi + 1) // 2
+        if brent_d[m] <= d: lo = m
+        else: hi = m - 1
+    return brent[brent_d[lo]]
+
 ok = {}
 last = {}
 for d0 in sorted(set().union(*[set(v) for v in lb.values()])):
@@ -102,7 +117,7 @@ with ThreadPoolExecutor(8) as ex:
         if v and dt.date.fromisoformat(k).weekday() < 5: ok[k] = v
 print(f"::notice::Toplam maden günü {len(ok)}, son {max(ok)}")
 
-cols = {k: [] for k in ["usd", "eur", "gbp", "xau", "xag", "xpt", "xpd"]}
+cols = {k: [] for k in ["usd", "eur", "gbp", "xau", "xag", "xpt", "xpd"] + (["brent"] if brent else [])}
 keep = []
 for s in sorted(ok):
     r = fx_on(s)
@@ -114,6 +129,8 @@ for s in sorted(ok):
     cols["gbp"].append(round(u / r["GBP"], 4))
     for m in ("xau", "xag", "xpt", "xpd"):
         cols[m].append(round(ok[s][m] * u / OZ, 3))
+    if brent:
+        b = brent_on(s); cols["brent"].append(round(b * u, 2) if b else None)
 
 def sample(s):
     i = min(range(len(keep)), key=lambda j: abs((dt.date.fromisoformat(keep[j]) - dt.date.fromisoformat(s)).days))
@@ -125,7 +142,7 @@ for s in ("2021-10-15", "2023-12-29", keep[-1]):
 
 out = {
     "updated": dt.datetime.now(dt.timezone(dt.timedelta(hours=3))).strftime("%Y-%m-%d %H:%M"),
-    "source": "Kurlar: Avrupa Merkez Bankası referans kurları (frankfurter.app). Madenler: Yahoo Finance altın, gümüş, platin, paladyum vadeli ons fiyatları, TL/gram'a çevrilmiştir.",
+    "source": "Kurlar: Avrupa Merkez Bankası referans kurları (frankfurter.app). Madenler: Yahoo Finance altın, gümüş, platin, paladyum vadeli ons fiyatları, TL/gram'a çevrilmiştir." + (" Petrol: Yahoo Finance Brent vadeli (USD/varil), TL/varil'e çevrilmiştir." if brent else ""),
     "dates": keep, **cols,
 }
 os.makedirs("data", exist_ok=True)

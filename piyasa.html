@@ -162,10 +162,11 @@ const A = [
   { k: "xag", n: "Gümüş", s: "gr", u: "/gr", d: 2, ic: "🥈" },
   { k: "xpt", n: "Platin", s: "gr", u: "/gr", d: 2, ic: "⚪" },
   { k: "xpd", n: "Paladyum", s: "gr", u: "/gr", d: 2, ic: "🔘" },
+  { k: "brent", n: "Petrol", s: "varil", u: "/varil", d: 0, ic: "🛢️", br: "varil" }, // veri alınamazsa kutusu çıkmaz
 ];
 const AK = Object.fromEntries(A.map((a) => [a.k, a]));
 let D = null, N = 0;
-const S = load("piyasa_v1", { sel: "xau", range: "5Y", tmode: "pct", amt: 100000, date: null, mode: "tek", w: { usd: 20, eur: 20, gbp: 0, xau: 40, xag: 10, xpt: 5, xpd: 5 } });
+const S = load("piyasa_v1", { sel: "xau", range: "5Y", tmode: "pct", amt: 100000, date: null, mode: "tek", w: { usd: 20, eur: 20, gbp: 0, xau: 40, xag: 10, xpt: 5, xpd: 5, brent: 0 } });
 
 function load(k, def) { try { return Object.assign(def, JSON.parse(localStorage.getItem(k) || "{}")); } catch (e) { return def; } }
 function save() { try { localStorage.setItem("piyasa_v1", JSON.stringify(S)); } catch (e) {} }
@@ -298,7 +299,7 @@ function renderTiles() {
   $("tiles").innerHTML = A.map((a) => {
     const v = D[a.k][N - 1], c1 = chgSince(a.k, shiftYears(last, -1)), c5 = chgSince(a.k, shiftYears(last, -5));
     return `<button class="tile ${S.sel === a.k ? "sel" : ""}" data-k="${a.k}">
-      <div class="n"><span>${a.ic} ${a.n}</span><span>${a.u ? "TL/gr" : a.s + "/TL"}</span></div>
+      <div class="n"><span>${a.ic} ${a.n}</span><span>${a.u ? "TL" + a.u : a.s + "/TL"}</span></div>
       <div class="v num">${nf(v, a.d)}</div>
       <div class="c num"><span class="${cls(c1)}">1Y ${pct(c1, 0)}</span><span class="${cls(c5)}">5Y ${pct(c5, 0)}</span></div>
     </button>`;
@@ -311,7 +312,7 @@ function renderChart() {
   const lo = idxOn(from), idx = sample(lo, N - 1);
   const ys = idx.map((i) => D[a.k][i]), xs = idx.map((i) => D.dates[i]);
   const ch = (D[a.k][N - 1] / D[a.k][lo] - 1) * 100;
-  $("chead").innerHTML = `<div><div style="font-size:13px;color:var(--muted)">${a.ic} ${a.n} ${a.u ? "(TL/gram)" : "(TL)"}</div><div class="big num">${nf(D[a.k][N - 1], a.d)} TL</div></div>
+  $("chead").innerHTML = `<div><div style="font-size:13px;color:var(--muted)">${a.ic} ${a.n} ${a.u ? "(TL/" + (a.br || "gram") + ")" : "(TL)"}</div><div class="big num">${nf(D[a.k][N - 1], a.d)} TL</div></div>
     <div class="chg num ${cls(ch)}" style="text-align:right">${arrow(ch)} ${pct(ch)}<div style="color:var(--muted);font-size:11px">${S.range === "Tümü" ? fdate(D.dates[0], { month: "short", year: "numeric" }) + "'den beri" : S.range.replace("Y", " yılda")}</div></div>`;
   document.querySelectorAll("#ranges .chip").forEach((c) => c.classList.toggle("on", c.dataset.r === S.range));
   drawLine($("chart"), xs, ys, (v) => nf(v, a.d) + " TL", { label: a.n + " fiyat grafiği" });
@@ -394,7 +395,7 @@ function renderSingle() {
     return `<div class="ri">
       <div class="a"><span class="rank">${r}.</span>${x.a.ic} ${x.a.n}</div>
       <div class="now num">${tl(x.now)}</div>
-      <div class="then num">O gün ${nf(x.units, 2)} ${x.a.u ? "gram" : x.a.s} alırdın · reel <span class="${cls(rp)}">${pct(rp)}</span></div>
+      <div class="then num">O gün ${nf(x.units, 2)} ${x.a.u ? x.a.br || "gram" : x.a.s} alırdın · reel <span class="${cls(rp)}">${pct(rp)}</span></div>
       <div class="pct num ${cls(x.p)}">${pct(x.p)}</div>
       <div class="bar"><i style="width:${(x.now / maxNow) * 100}%"></i></div>
     </div>`;
@@ -439,7 +440,7 @@ function renderBasket() {
     const rr = real((v / inv - 1) * 100, c);
     return `<div class="ri"${isT ? ' style="border-color:#7a2e28;background:rgba(224,71,58,.06)"' : ""}><div class="a">${a.ic} ${a.n} <span style="color:var(--muted);font-weight:500;font-size:12px">%${nf(wOf(a.k) * 100, 0)}</span></div>
       <div class="now num">${tl(v)}</div>
-      <div class="then num">${isT ? `Alım gücü bugün <b class="down">${tl(inv / (1 + c / 100))}</b>` : `${tl(inv)} → ${nf(units[a.k], 2)} ${a.u ? "gram" : a.s}`} · reel <span class="${cls(rr)}">${pct(rr)}</span></div>
+      <div class="then num">${isT ? `Alım gücü bugün <b class="down">${tl(inv / (1 + c / 100))}</b>` : `${tl(inv)} → ${nf(units[a.k], 2)} ${a.u ? a.br || "gram" : a.s}`} · reel <span class="${cls(rr)}">${pct(rr)}</span></div>
       <div class="pct num ${cls(v / inv - 1)}">${pct((v / inv - 1) * 100)}</div></div>`;
   }).join("");
   $("bres").innerHTML = `
@@ -484,7 +485,7 @@ function build() {
   $("upd").textContent = `Son veri: ${fdate(last)} · güncelleme ${D.updated.slice(11)}`;
   $("app").innerHTML = `
   <div class="card"><h2>Güncel</h2><div class="grid" id="tiles"></div>
-    <div class="note" style="margin-top:8px">1Y: son 1 yıl, 5Y: son 5 yıl TL bazında değişim. Bir kutuya dokununca grafiği açılır.</div></div>
+    <div class="note" style="margin-top:8px">1Y: son 1 yıl, 5Y: son 5 yıl TL bazında değişim. Petrol: Brent ham petrolün varil fiyatı, TL'ye çevrilmiş. Bir kutuya dokununca grafiği açılır.</div></div>
 
   <div class="card"><div class="chead" id="chead"></div>
     <div class="chips" id="ranges">${["1Y", "3Y", "5Y", "Tümü"].map((r) => `<span class="chip" data-r="${r}">${r === "Tümü" ? "Tümü" : r.replace("Y", " yıl")}</span>`).join("")}</div>
@@ -547,12 +548,12 @@ function build() {
   $("presets").onclick = (e) => {
     const b = e.target.closest("button"); if (!b) return;
     const P = {
-      esit: { usd: 15, eur: 15, gbp: 10, xau: 15, xag: 15, xpt: 10, xpd: 5, try: 15 },
-      klasik: { usd: 25, eur: 25, gbp: 0, xau: 50, xag: 0, xpt: 0, xpd: 0, try: 0 },
-      maden: { usd: 0, eur: 0, gbp: 0, xau: 55, xag: 25, xpt: 10, xpd: 10, try: 0 },
-      doviz: { usd: 40, eur: 40, gbp: 20, xau: 0, xag: 0, xpt: 0, xpd: 0, try: 0 },
-      tl: { usd: 0, eur: 0, gbp: 0, xau: 0, xag: 0, xpt: 0, xpd: 0, try: 100 },
-      sifir: { usd: 0, eur: 0, gbp: 0, xau: 0, xag: 0, xpt: 0, xpd: 0, try: 0 },
+      esit: { usd: 15, eur: 15, gbp: 10, xau: 15, xag: 15, xpt: 10, xpd: 5, brent: 0, try: 15 },
+      klasik: { usd: 25, eur: 25, gbp: 0, xau: 50, xag: 0, xpt: 0, xpd: 0, brent: 0, try: 0 },
+      maden: { usd: 0, eur: 0, gbp: 0, xau: 55, xag: 25, xpt: 10, xpd: 10, brent: 0, try: 0 },
+      doviz: { usd: 40, eur: 40, gbp: 20, xau: 0, xag: 0, xpt: 0, xpd: 0, brent: 0, try: 0 },
+      tl: { usd: 0, eur: 0, gbp: 0, xau: 0, xag: 0, xpt: 0, xpd: 0, brent: 0, try: 100 },
+      sifir: { usd: 0, eur: 0, gbp: 0, xau: 0, xag: 0, xpt: 0, xpd: 0, brent: 0, try: 0 },
     };
     S.w = { ...P[b.dataset.p] }; save(); renderBasket();
   };
@@ -563,7 +564,7 @@ function build() {
 
 const getJ = (u) => Ortak.json(u);
 Promise.all([getJ("data/piyasa.json"), getJ("data/tufe.json")])
-  .then(([j, t]) => { D = j; N = j.dates.length; buildCpi(t); build(); })
+  .then(([j, t]) => { D = j; N = j.dates.length; if (!Array.isArray(j.brent)) [A, BA].forEach((L) => { const i = L.findIndex((a) => a.k === "brent"); if (i > -1) L.splice(i, 1); }); buildCpi(t); build(); })
   .catch((e) => { console.error(e); Ortak.hata("app", { ne: "Piyasa verileri" }); $("upd").textContent = ""; });
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
