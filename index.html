@@ -800,7 +800,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 
   var goster = function () {};
   var OZ = { gor: oku("aclGordu", "") === B ? "✅ Bugün baktın · " : "" }, alt = []; // küçükken görünen tek satır: çeyrek · PPK · kampanya
-  function ozetYaz() { $("aclAlt").innerHTML = alt.join("<br>"); $("aclD").innerHTML = (OZ.gor || "") + ["ceyrek", "ppk", "kamp"].map(function (k) { return OZ[k]; }).filter(Boolean).join(" · "); }
+  function ozetYaz() { $("aclAlt").innerHTML = alt.join("<br>"); $("aclD").innerHTML = (OZ.gor || "") + ["ceyrek", "pf", "ppk"].map(function (k) { return OZ[k]; }).filter(Boolean).map(function (x) { return '<span style="white-space:nowrap">' + x + "</span>"; }).join(" · "); } // her parça bölünmeden satıra sığar
 
   // ---- 2) Satırlar: çeyrek, Gazete, PPK, takvim (sırası sabit) ----
   var SAT = {}, SIRA = ["ceyrek", "gazete", "bolge", "ppk", "takvim"];
@@ -874,7 +874,10 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       var c = Number(son.change) || 0, bp = Math.round(Math.abs(c) * 100);
       x += "<small>Son karar " + gunAy(son.date) + ": politika faizi %" + sayi(son.rate, son.rate % 1 ? 2 : 0) + ", " + (c === 0 ? "değişmedi" : bp + " baz puan " + (c < 0 ? "indirim" : "artırım")) + " · kaynak TCMB</small>";
     }
-    if (sonra) { OZ.ppk = "🏛️ PPK " + (g === 0 ? "<b>bugün</b>" : "<b>" + g + "</b> gün"); ozetYaz(); }
+    // Özet satırı: politika faizi (son PPK kararı, data/ppk.json) ve sonraki toplantıya kalan gün
+    if (son.rate != null) OZ.pf = "📈 Politika faizi <b>%" + sayi(son.rate, son.rate % 1 ? 2 : 0) + "</b>";
+    if (sonra) OZ.ppk = "🏛️ PPK " + (g === 0 ? "<b>bugün</b>" : "<b>" + g + "</b> gün");
+    ozetYaz();
     satir("ppk", kalip(son.url || "https://www.tcmb.gov.tr", "🏛️", x, true));
   }).catch(function () {});
 
@@ -914,7 +917,6 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       if (window.Rapor) Rapor.bolum("acilis-" + p[0] + "-" + p[1]);
       location.href = "isbank.html#" + (p[0] === "fk" ? "kliste" : "yeniliste"); // sayfa doğrudan süzülmüş listeye iner
     });
-    OZ.kamp = "📣 Faiz & Kredi <b>" + (Bi.fk + Ti.fk) + "</b>"; ozetYaz();
   }).catch(function () {});
 
   // ---- 4) Bölge Nabzı: yalnızca seçili yer; ayrıntı Bölge Nabzı sayfasında ----
