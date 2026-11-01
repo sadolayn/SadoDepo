@@ -624,7 +624,11 @@ function kKart(k, renk, ticari) {
       <div class="top"><span class="tag">${kIkon("ne", k.ne)} ${esc(k.ne)} · ${kIkon("nere", k.nere)} ${esc(kKisa(k.nere))}${yeni ? '<span class="newtag">YENİ</span>' : ""}${ticari ? '<span class="ktic">🏢 Ticari</span>' : ""}</span>${left ? `<span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}">${left}</span>` : ""}</div>
       <b>${esc(k.baslik)}</b>${gec ? `<small class="klis">🗓️ Listeye yeni eklendi · kampanya metninde başlangıç ${new Date(bas + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}</small>` : ""}${k.ozet ? `<p>${esc(k.ozet)}</p>` : ""}
       <div class="cfoot"><span>${bit ? "Bitiş: " + bit : ""}</span><a class="clink" href="${esc(k.url)}" target="_blank" rel="noopener">${kay}'de koşullar ↗</a></div>
-      ${(() => { const E = kEsler(k); return E.length ? `<div class="kalt">Aynı kampanya: ${E.map(([ky, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${K_KAY[ky][0]} ${K_KAY[ky][2]} ↗</a>`).join(" · ")}</div>` : ""; })()}
+      ${(() => { const E = kEsler(k); if (E.length) return `<div class="kalt">Aynı kampanya: ${E.map(([ky, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${K_KAY[ky][0]} ${K_KAY[ky][2]} ↗</a>`).join(" · ")}</div>`;
+        // Tek sitede yayımlanan kampanya: sayfası açılmazsa o sitenin kampanya listesi (kart orada görünür)
+        const sg = k._seg || (ticari ? "ticari" : kSeg), ky = Object.keys(K_KAY).find((x) => k.url.includes(K_KAY[x][2])) || "isbank";
+        const L = { isbank: "https://www.isbank.com.tr/kampanyalar" + (sg === "ticari" ? "/ticari-kart-kampanyalari?v=ticari" : ""), maximum: "https://www.maximum.com.tr/kampanyalar/" + sg, maximiles: "https://www.maximiles.com.tr/kampanyalar" }[ky];
+        return `<div class="kalt">Sayfa açılmazsa: <a href="${L}" target="_blank" rel="noopener">${K_KAY[ky][0]} ${K_KAY[ky][1]} kampanya listesi ↗</a></div>`; })()}
       <button type="button" class="kkop" data-kop="${esc(k.baslik + (bit ? " · son gün " + bit : "") + "\n" + k.url)}">🔗 Linki kopyala</button>
     </div>`;
 }
