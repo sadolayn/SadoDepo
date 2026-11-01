@@ -34,7 +34,7 @@ let finSec = "veri"; // Finansal bilgiler alt başlığı: veri · takvim · sun
 if (cat === "📅 Takvim") { cat = "Finans"; finSec = "takvim"; }
 if (cat === "Kampanya") { cat = "Maximum"; try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); localStorage.setItem("isbankKamp", JSON.stringify({ ...k, kay: "isbank" })); } catch (e) {} } // eski Banka Kampanya → Kampanyalar › İş Bankası
 if (location.hash === "#maximum") cat = "Maximum"; // ana sayfadaki kampanya hatırlatıcısından gelince
-let kYeni = location.hash === "#yeni"; // ana sayfadaki "son 3 günde N yeni" etiketinden gelince: Kampanyalar › Yeni gelenler
+let kYeni = location.hash === "#yeni"; // ana sayfadaki "son 5 günde N yeni" etiketinden gelince: Kampanyalar › Yeni gelenler
 if (kYeni) cat = "Maximum";
 // Ana sayfadaki Açılış kartından (Faiz & Kredi / Yeni gelen kutuları): Kampanyalar açılır ve sayfa doğrudan süzülmüş listeye iner
 const kGit = location.hash === "#kliste" || location.hash === "#yeniliste";
@@ -56,7 +56,7 @@ let SEEN = null, NEWNOW = new Set();
 try { SEEN = JSON.parse(localStorage.getItem("isbSeen2") || "null"); } catch (e) {}
 const idsFor = (k) => {
   if (k === "Tümü") return all.map((h) => "n:" + (h.url || h.baslik));
-  // Kampanyalar: son 3 günde listeye giren kampanyalar + 15 Kasım'a kadar "Kampanyalar yenilendi" duyurusu (bir kez açınca düşer)
+  // Kampanyalar: son 5 günde listeye giren kampanyalar + 15 Kasım'a kadar "Kampanyalar yenilendi" duyurusu (bir kez açınca düşer)
   if (k === "Maximum") return KH && KH.isbank ? kYeniListe().map((x) => "k:" + x.url).concat(Date.now() < new Date("2026-11-16T00:00:00+03:00") ? ["d:kampanya-yenilendi"] : []) : camps.map((c) => "c:" + c.baslik);
   if (k === "İşCep") return iscep ? iscep.surumler.map((v) => "v:" + v.surum) : [];
   if (k === "📰 Güncel") return live.map((x) => "g:" + (x.u || x.t));
@@ -621,7 +621,7 @@ function kEsler(k) {
   return E;
 }
 function kKart(k, renk, ticari) {
-  const n = k.bitis ? daysLeft(k.bitis) : null, u = n != null && n <= 3, yeni = k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
+  const n = k.bitis ? daysLeft(k.bitis) : null, u = n != null && n <= 3, yeni = k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 5;
   // Yeni görünen ama metnindeki başlangıcı en az 7 gün önce olan kampanya: listeye sonradan eklenmiş, "yeni başladı" sanılmasın
   const bas = yeni ? kBasla(k) : "", gec = bas && (new Date(k.ilk + "T00:00:00") - new Date(bas + "T00:00:00")) / 864e5 >= 7;
   const left = n == null ? "" : n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${sonN(n)} gün` : `Son ${sonN(n)} gün`;
@@ -663,7 +663,7 @@ function kOneHtml(L, renk) {
   const fmt = (n) => n.toLocaleString("tr-TR");
   const B = [
     ["🔥", "Bitiyor", "3 gün ya da daha az kaldı", L.filter((k) => gun(k) <= 3).sort((a, b) => gun(a) - gun(b)), (k) => (gun(k) <= 1 ? "Son gün" : `${sonN(gun(k))} gün`)],
-    ["🆕", "Yeni eklenen", "son 3 günde listeye yeni giren kampanyalar (yeni müşteriye özel demek değil)", L.filter((k) => k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3).sort((a, b) => b.ilk.localeCompare(a.ilk)), () => "YENİ"],
+    ["🆕", "Yeni eklenen", "son 5 günde listeye yeni giren kampanyalar (yeni müşteriye özel demek değil)", L.filter((k) => k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 5).sort((a, b) => b.ilk.localeCompare(a.ilk)), () => "YENİ"],
     ["💰", "En çok kazanç", "puan, mil ya da indirim olarak en yüksek TL tutarı", L.filter((k) => tl(k) >= 100).sort((a, b) => tl(b) - tl(a)), (k) => fmt(tl(k)) + " TL"],
     ["📆", "En uzun taksit", "taksit sayısına göre", L.filter((k) => tk(k) >= 2).sort((a, b) => tk(b) - tk(a)), (k) => tk(k) + " taksit"],
     ["🏷️", "En yüksek %", "indirim yüzdesine göre", L.filter((k) => yz(k) >= 5).sort((a, b) => yz(b) - yz(a)), (k) => "%" + yz(k)],
@@ -711,7 +711,7 @@ function renderKampanyalar() {
       + `<div class="tsat kgr"><span class="tlab">🛍️ Nerede</span><div class="tgrid">${sb("data-nere", "", "📋", "Hepsi", nereT.length, !kNere, "hep")}${nereGor.map(([ad, ic, n]) => sb("data-nere", ad, ic, kKisa(ad), n, kNere === ad)).join("")}${nereGor.length < nereS.length || kKatAcik ? `<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Daha az" : `▾ ${nereS.length - nereGor.length} grup daha`}</button>` : ""}</div></div>` : "");
   // "Bana uygun" ya da "Yeni gelenler" açıkken süzgeç satırları gizlenir: ikisi de üç sitenin hepsine bakar, Kaynak/Bölüm/Nerede onları etkilemez
   if (kYeni) t.innerHTML = t.querySelector(".kara").outerHTML
-    + `<div class="ksihnot kyeninot"><span>🆕 <b>Yeni gelenler</b> açık · son 3 gün, üç siteye birden bakılır</span><button type="button" data-sihkapat="1">✕ Kapat</button></div>`;
+    + `<div class="ksihnot kyeninot"><span>🆕 <b>Yeni gelenler</b> açık · son 5 gün, üç siteye birden bakılır</span><button type="button" data-sihkapat="1">✕ Kapat</button></div>`;
   else if (kSih.acik) t.innerHTML = t.querySelector(".kara").outerHTML
     + `<div class="ksihnot"><span>🧭 <b>Bana uygun</b> açık · seçimler aşağıda, üç siteye birden bakılır</span><button type="button" data-sihkapat="1">✕ Kapat</button></div>`;
   t.onclick = (e) => {
@@ -734,7 +734,7 @@ function renderKampanyalar() {
   }
   // Üstte arama kutusu ve öneri sihirbazı; arama ya da sihirbaz açıkken süzgeçlerin yerine onların sonucu görünür
   const yeniN = kYeniListe().length;
-  const ust = `<div class="karac"${kSih.acik || kYeni ? " hidden" : ""}><button type="button" id="kSihirBtn" class="${kSih.acik ? "on" : ""}">🧭 Bana uygun kampanyalar</button>${yeniN ? `<button type="button" id="kYeniBtn">🆕 Son 3 günde gelen <b>${yeniN}</b> kampanya</button>` : ""}</div>`; // açıkken kapatma düğmesi üstteki kutuda
+  const ust = `<div class="karac"${kSih.acik || kYeni ? " hidden" : ""}><button type="button" id="kSihirBtn" class="${kSih.acik ? "on" : ""}">🧭 Bana uygun kampanyalar</button>${yeniN ? `<button type="button" id="kYeniBtn">🆕 Son 5 günde gelen <b>${yeniN}</b> kampanya</button>` : ""}</div>`; // açıkken kapatma düğmesi üstteki kutuda
   t.classList.toggle("araniyor", !!kAra.trim());
   let govde = () => "";
   const bagla = () => {
@@ -862,11 +862,11 @@ function kSihKaydet() {
 const kSihAcKapa = () => { kSih = kSih.acik ? { ...kSih, acik: false } : { acik: true, seg: "bireysel", pro: [], nere: [], ne: "" }; };
 // Aynı kampanya anahtarı: başlık (Türkçe harf, işaret farkı yok sayılır); başka sitede biraz farklı yazılmışsa toplayıcının verdiği ortak anahtar ("es")
 const kAyni = (k) => k.es || kKucuk(k.baslik).replace(/[^a-z0-9%]/g, "");
-// 🆕 Yeni gelenler: son 3 günde (İstanbul günüyle bugün, dün, evvelsi gün) listeye giren kampanyalar; üç site, bireysel ve ticari.
-// İki sitede birden yayımlanan kampanya bir kez, ilk görüldüğü günle. Ana sayfadaki "son 3 günde N yeni" ve Kampanyalar rozeti bu listeden.
+// 🆕 Yeni gelenler: son 5 günde (İstanbul günüyle bugün ve önceki 4 gün; 1 Kasım 2026'da 3 günden 5'e çıkarıldı) listeye giren kampanyalar; üç site, bireysel ve ticari.
+// İki sitede birden yayımlanan kampanya bir kez, ilk görüldüğü günle. Ana sayfadaki "son 5 günde N yeni" ve Kampanyalar rozeti bu listeden.
 const kTrGun = (once) => new Date(Date.now() + 3 * 3600e3 - once * 864e5).toISOString().slice(0, 10); // İstanbul günü, "once" gün önce
 function kYeniListe() {
-  const sinir = kTrGun(2), G = new Map();
+  const sinir = kTrGun(4), G = new Map();
   kTumu().forEach((k) => {
     const a = kAyni(k), ilk = k.ilk && k.ilk > "2000-01-01" ? k.ilk : "0", x = G.get(a);
     if (!x) G.set(a, { ...k, _ilk: ilk }); else { if (x._kay !== k._kay) x._iki = true; if (ilk < x._ilk) x._ilk = ilk; }
@@ -875,10 +875,10 @@ function kYeniListe() {
 }
 function kYeniHtml() {
   const L = kYeniListe();
-  if (!L.length) return '<div class="empty">Son 3 günde yeni kampanya gelmedi. Liste her sabah üç siteden yeniden toplanır.</div>';
+  if (!L.length) return '<div class="empty">Son 5 günde yeni kampanya gelmedi. Liste her sabah üç siteden yeniden toplanır.</div>';
   const say = Object.keys(K_KAY).map((k) => [k, L.filter((x) => x._kay === k).length]).filter((x) => x[1]);
   const gunAd = (g) => (g === kTrGun(0) ? "Bugün" : g === kTrGun(1) ? "Dün" : new Date(g + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })) + " gelenler";
-  let h = `<div class="ksag" style="--kk:#3fc283"><div class="kyol">🆕 Son 3 günde gelen <b>${L.length} kampanya</b></div><small class="kdag">${say.map(([k, n]) => K_KAY[k][0] + " " + K_KAY[k][1] + " " + n).join(" · ")} · bireysel ve ticari birlikte</small></div>`, son = "";
+  let h = `<div class="ksag" style="--kk:#3fc283"><div class="kyol">🆕 Son 5 günde gelen <b>${L.length} kampanya</b></div><small class="kdag">${say.map(([k, n]) => K_KAY[k][0] + " " + K_KAY[k][1] + " " + n).join(" · ")} · bireysel ve ticari birlikte</small></div>`, son = "";
   L.forEach((k) => { if (k._ilk !== son) { h += `<div class="day">${gunAd(k._ilk)}</div>`; son = k._ilk; } h += kKart(k, K_KAY[k._kay][3], k._seg === "ticari"); });
   return h;
 }

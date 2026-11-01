@@ -961,10 +961,10 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   }).catch(function () {});
 
   // ---- 3) Kampanyalar: yalnızca iki sayı, büyük ve net — Faiz & Kredi ve yeni gelenler (bireysel / ticari) ----
-  // Liste yok; dokununca İş Bankası Gündemi › Kampanyalar aynı süzgeçle açılır. "Yeni" orada da son 3 gün.
+  // Liste yok; dokununca İş Bankası Gündemi › Kampanyalar aynı süzgeçle açılır. "Yeni" orada da son 5 gün.
   Ortak.json("isbank/kampanya_hepsi.json").then(function (KH) {
     var ayni = function (t) { return (t || "").toLocaleLowerCase("tr").replace(/[’'`]/g, "").replace(/[çğıöşüâîû]/g, function (h) { return { ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" }[h]; }).replace(/[^a-z0-9%]/g, ""); };
-    var uc = anah(ekle(BUGUN, -2));
+    var uc = anah(ekle(BUGUN, -4)); // son 5 gün
     function say(seg) {
       var G = {};
       ["isbank", "maximum", "maximiles"].forEach(function (kay) {
@@ -986,7 +986,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
         '<div class="sg"><button type="button" data-git="' + tur + '|bireysel">👤 Bireysel <b>' + b + '</b></button><button type="button" data-git="' + tur + '|ticari">🏢 Ticari <b>' + t + "</b></button></div></div>";
     }
     $("aclK").innerHTML = '<div class="aclKB">📣 Kampanyalar</div><div class="aclTT">' +
-      kutu("fk", "🏦", "Faiz &amp; Kredi", "şu an geçerli", Bi.fk, Ti.fk) + kutu("yeni", "🆕", "Yeni gelen", "son 3 günde", Bi.yn, Ti.yn) + "</div>";
+      kutu("fk", "🏦", "Faiz &amp; Kredi", "şu an geçerli", Bi.fk, Ti.fk) + kutu("yeni", "🆕", "Yeni gelen", "son 5 günde", Bi.yn, Ti.yn) + "</div>";
     $("aclK").hidden = false;
     $("aclK").addEventListener("click", function (e) {
       var b = e.target.closest("button[data-git]"); if (!b) return;
@@ -1038,7 +1038,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     ["video", "<svg class=\"kyTrb\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><rect width=\"30\" height=\"20\" fill=\"#e30a17\"/><circle cx=\"11\" cy=\"10\" r=\"5\" fill=\"#fff\"/><circle cx=\"12.25\" cy=\"10\" r=\"4\" fill=\"#e30a17\"/><polygon points=\"16.2,10 19.9,8.8 17.6,11.9 17.6,8.1 19.9,11.2\" fill=\"#fff\"/></svg><b>Cumhuriyet Bayramımız kutlu olsun!</b> İş Bankası'nın 29 Ekim videosu <b class=\"gir\">İş Bankası Gündemi › Video</b>", "2026-10-29", "onem"],
     ["gazete.html#2026-10-15", "<b class=\"yn\">ÖNEMLİ</b>📜 Resmi Gazete (15 Ekim): taksit yetkisi artık <b>Ticaret Bakanlığı</b>'nda · sıfır telefonda 12 ay taksit sınırı <b>40 bin TL</b> oldu <b class=\"gir\">Ayrıntı</b>", "2026-11-30", "onem"],
     // Ay başı hatırlatması (her ayın 1-5'i): yeni kampanyalara katılmayı unutma. İlk 3 gün "Yeni gelenler"e, sonra tüm kampanyalara gider
-    ...(+bugunTR.slice(8) <= 5 ? [[+bugunTR.slice(8) <= 3 ? "yeniliste" : "maximum", "🗓️ Yeni ay, yeni kampanyalar! " + ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"][+bugunTR.slice(5, 7) - 1] + " kampanyalarına katılmayı unutma 🎁 <b class=\"gir\">Güncel kampanyalar</b>"]] : []),
+    ...(+bugunTR.slice(8) <= 5 ? [[+bugunTR.slice(8) <= 5 ? "yeniliste" : "maximum", "🗓️ Yeni ay, yeni kampanyalar! " + ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"][+bugunTR.slice(5, 7) - 1] + " kampanyalarına katılmayı unutma 🎁 <b class=\"gir\">Güncel kampanyalar</b>"]] : []),
     ...(function () { try { return localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
     ["maximum", "🎁 Kampanyaları bulmak hiç bu kadar kolay olmamıştı: İş Bankası, Maximum ve Maximiles tek ekranda; arama, takvim ve <b>Bana uygun</b> <b class=\"gir\">İş Bankası Gündemi › Kampanyalar</b>", "2026-11-30"],
     ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
@@ -1223,7 +1223,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   var ayni = function (t) { return (t || "").toLocaleLowerCase("tr").replace(/[’'`]/g, "").replace(/[çğıöşüâîû]/g, function (h) { return { ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" }[h]; }).replace(/[^a-z0-9%]/g, ""); };
   var gun = function (once) { return new Date(Date.now() + 3 * 3600e3 - once * 864e5).toISOString().slice(0, 10); }; // İstanbul günü
   fetch("isbank/kampanya_hepsi.json", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(function (K) {
-    var bugun = gun(0), uc = gun(2), G = {};
+    var bugun = gun(0), uc = gun(4), G = {}; // son 5 gün
     ["isbank", "maximum", "maximiles"].forEach(function (kay) {
       var S = K[kay] || {};
       Object.keys(S).forEach(function (sg) {
@@ -1238,7 +1238,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     var n = 0, yb = 0, y3 = 0;
     Object.keys(G).forEach(function (a) { n++; if (G[a] === bugun) yb++; if (G[a] >= uc) y3++; });
     if (!n) return;
-    el.innerHTML = '<span data-git="maximum">🎁 <b>' + n.toLocaleString("tr-TR") + "</b> farklı kampanya</span>" + (y3 ? '<span class="y" data-git="yeni">🆕 son 3 günde <b>' + y3 + "</b> yeni" + (yb ? " · bugün <b>" + yb + "</b>" : "") + "</span>" : "") // açılan "Yeni gelenler" listesiyle aynı sayı;
+    el.innerHTML = '<span data-git="maximum">🎁 <b>' + n.toLocaleString("tr-TR") + "</b> farklı kampanya</span>" + (y3 ? '<span class="y" data-git="yeni">🆕 son 5 günde <b>' + y3 + "</b> yeni" + (yb ? " · bugün <b>" + yb + "</b>" : "") + "</span>" : "") // açılan "Yeni gelenler" listesiyle aynı sayı;
     el.hidden = false;
     // Etikete dokununca: sayı Kampanyalar'a, "yeni" Kampanyalar › Yeni gelenler'e götürür (kartın geri kalanı İş Bankası Gündemi'ni açar)
     el.addEventListener("click", function (e) { var s = e.target.closest("[data-git]"); if (!s) return; e.preventDefault(); location.href = "isbank.html#" + s.dataset.git; });
