@@ -133,6 +133,7 @@
   .csec { font-size: 12.5px; font-weight: 700; letter-spacing: .5px; color: var(--muted); margin: 14px 4px 6px; text-transform: uppercase; } .csec b { color: var(--ink); margin-left: 4px; }
   .csec.new { color: #ff8a80; } .csec.ok { color: #7ee2a8; }
   .cfoot .clink { color: var(--accent); font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .kalt { margin-top: 6px; font-size: 12px; color: var(--muted); line-height: 1.7; } .kalt a { color: #d9c7a3; font-weight: 600; text-decoration: none; white-space: nowrap; }
   .cfoot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--muted); }
   .jbtn { border: 1px solid #444; background: #161616; color: #ddd; border-radius: 999px; padding: 6px 11px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
   .jbtn.on { border-color: #2f9a55; background: rgba(63,194,131,.15); color: #7ee2a8; }

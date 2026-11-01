@@ -600,6 +600,19 @@ function kBasla(k) {
   if (!kBasla.m && KH && KH.isbank) { kBasla.m = new Map(); kTumu().forEach((x) => { const b = kBasBul(x); if (b && !kBasla.m.has(kAyni(x))) kBasla.m.set(kAyni(x), b); }); }
   return (kBasla.m && kBasla.m.get(kAyni(k))) || kBasBul(k);
 }
+// Aynı kampanya başka sitede de yayımlandıysa kartta onun bağlantısı da olsun: biri açılmazsa öbürü açılır
+// (1 Kasım 2026: Maximum'un yeni kasım kampanyalarının sayfaları "Kampanya Bulunamadı" veriyordu; İş Bankası ve Maximiles'taki sayfalar açıktı)
+let kEsBellek = null;
+function kEsler(k) {
+  if (!KH || !KH.isbank) return [];
+  if (!kEsBellek || kEsBellek.v !== KH) {
+    const m = {};
+    Object.keys(K_KAY).forEach((kay) => ["bireysel", "ticari"].forEach((sg) => (kListe(kay, sg) || []).forEach((x) => { const a = kAyni(x); (m[a] = m[a] || {})[kay] = m[a][kay] || x.url; })));
+    kEsBellek = { v: KH, m };
+  }
+  const kendi = Object.keys(K_KAY).find((x) => k.url.includes(K_KAY[x][2]));
+  return Object.entries(kEsBellek.m[kAyni(k)] || {}).filter(([kay, u]) => kay !== kendi && u !== k.url);
+}
 function kKart(k, renk, ticari) {
   const n = k.bitis ? daysLeft(k.bitis) : null, u = n != null && n <= 3, yeni = k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
   // Yeni görünen ama metnindeki başlangıcı en az 7 gün önce olan kampanya: listeye sonradan eklenmiş, "yeni başladı" sanılmasın
@@ -611,6 +624,7 @@ function kKart(k, renk, ticari) {
       <div class="top"><span class="tag">${kIkon("ne", k.ne)} ${esc(k.ne)} · ${kIkon("nere", k.nere)} ${esc(kKisa(k.nere))}${yeni ? '<span class="newtag">YENİ</span>' : ""}${ticari ? '<span class="ktic">🏢 Ticari</span>' : ""}</span>${left ? `<span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}">${left}</span>` : ""}</div>
       <b>${esc(k.baslik)}</b>${gec ? `<small class="klis">🗓️ Listeye yeni eklendi · kampanya metninde başlangıç ${new Date(bas + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}</small>` : ""}${k.ozet ? `<p>${esc(k.ozet)}</p>` : ""}
       <div class="cfoot"><span>${bit ? "Bitiş: " + bit : ""}</span><a class="clink" href="${esc(k.url)}" target="_blank" rel="noopener">${kay}'de koşullar ↗</a></div>
+      ${(() => { const E = kEsler(k); return E.length ? `<div class="kalt">Aynı kampanya: ${E.map(([ky, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${K_KAY[ky][0]} ${K_KAY[ky][2]} ↗</a>`).join(" · ")}</div>` : ""; })()}
       <button type="button" class="kkop" data-kop="${esc(k.baslik + (bit ? " · son gün " + bit : "") + "\n" + k.url)}">🔗 Linki kopyala</button>
     </div>`;
 }
