@@ -1204,7 +1204,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   const kutu = document.getElementById("yeniS"), ser = document.getElementById("ysSer");
   if (!kutu || !ser || !L.length) return;
   const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-  const tur = L.map(([e, ad, not, u]) => `<a href="${esc(u)}" data-r="${esc(ad)}">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("") + `<span class="ysNot ysSon">sitede yeni ✦</span>`;
+  const tur = '<span style="display:inline-block;width:22px"></span>' + L.map(([e, ad, not, u]) => `<a href="${esc(u)}" data-r="${esc(ad)}">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("") + `<span class="ysNot ysSon">sitede yeni ✦</span>`;
   ser.innerHTML = tur + tur; // iki tur yan yana: kesintisiz döngü
   requestAnimationFrame(() => ser.style.setProperty("--sure", Math.max(28, Math.round(ser.scrollWidth / 2 / 40)) + "s"));
   kutu.hidden = false;
