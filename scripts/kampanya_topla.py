@@ -233,7 +233,7 @@ def m_detay(url):
     b = get(url)
     if not b: return None
     t = temiz(b)
-    if re.search(r"(?i)kampanya\s+bulunamad", metin(t)[:4000]): return None  # detay sayfası henüz yayında değil
+    if re.search(r"(?i)kampanya\s+bulunamad", metin(t)): return None  # detay sayfası henüz yayında değil
     h1 = re.search(r"(?is)<h1[^>]*>(.*?)</h1>", t)
     baslik = metin(h1.group(1)) if h1 else ""
     ozet = ""
@@ -247,19 +247,25 @@ def m_detay(url):
     if BOS_OZET.search(ozet) or (baslik and ozet.lower().startswith(baslik.lower()[:30])): ozet = ""
     return kisalt(ozet, 220)
 
+def m_bos_ozet(ozet, baslik):
+    """Açıklama başlığı yeniden söylüyorsa (ETS sayfasının meta description'ı başlığın aynısıydı) bilgi katmaz, boş sayılır."""
+    if not ozet: return True
+    A, B = _kelimeler(ozet), _kelimeler(baslik)
+    return len(A - B) <= 2
+
 def m_ozetler(lst):
     """Açıklaması boş Maximum kampanyalarına kendi sayfasından kısa açıklama; önce hafıza, sonra (sınırlı sayıda) sayfa."""
     bilinen = {k["url"]: k for seg_ in ("bireysel", "ticari") for k in ((eski.get("maximum") or {}).get(seg_) or {}).get("kampanyalar", []) if k.get("oz")}
     for k in lst:
         if k.get("ozet"): continue
-        if k["url"] in bilinen:
+        if k["url"] in bilinen and not (bilinen[k["url"]].get("ozet") and m_bos_ozet(bilinen[k["url"]]["ozet"], k["baslik"])):
             k["ozet"], k["oz"] = bilinen[k["url"]].get("ozet", ""), 1
             continue
         if M_ACILAN[0] >= M_SINIR or k["url"].rstrip("/").endswith("/kampanyalar"): continue
         M_ACILAN[0] += 1
         o = m_detay(k["url"])
         if o is None: continue
-        k["ozet"], k["oz"] = o, 1
+        k["ozet"], k["oz"] = ("" if m_bos_ozet(o, k["baslik"]) else o), 1
     # Birçok kampanyada birebir aynı çıkan açıklama sitenin genel tanıtım yazısıdır, kampanya açıklaması değil
     say = {}
     for k in lst:
