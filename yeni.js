@@ -3,7 +3,7 @@
 // Etiket "•" ise yalnızca kırmızı nokta konur (küçük sekmeler için).
 // Kullanıcı öğeye dokununca o tarihli değişiklik görülmüş sayılır; 21 gün sonra rozet kendiliğinden kalkar.
 (function () {
-  var KEY = "yeniGoruldu", GUN = 21;
+  var KEY = "yeniGoruldu", GUN = 7;
   var S = {}; try { S = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}
   var css = document.createElement("style");
   css.textContent = ".yeniB{display:inline-block;margin-left:7px;padding:1px 6px;border-radius:6px;background:#d32f2f;color:#fff;font-size:11px;font-weight:800;letter-spacing:.5px;vertical-align:2px;line-height:1.5;animation:yeniP 1.8s ease-in-out infinite}" +
