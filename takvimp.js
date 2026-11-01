@@ -1,0 +1,751 @@
+// ================= Veri =================
+const YEARS = [2026, 2027, 2028];
+const FIXED = [
+  ["01-01", "Yılbaşı", "tam"],
+  ["04-23", "Ulusal Egemenlik ve Çocuk Bayramı", "tam"],
+  ["05-01", "Emek ve Dayanışma Günü", "tam"],
+  ["05-19", "Atatürk'ü Anma, Gençlik ve Spor Bayramı", "tam"],
+  ["07-15", "Demokrasi ve Millî Birlik Günü", "tam"],
+  ["08-30", "Zafer Bayramı", "tam"],
+  ["10-28", "Cumhuriyet Bayramı arifesi", "yarim"],
+  ["10-29", "Cumhuriyet Bayramı", "tam"],
+];
+const RELIGIOUS = {
+  2026: [
+    ["03-19", "Ramazan Bayramı arifesi", "yarim"],
+    ["03-20", "Ramazan Bayramı 1. gün", "tam"],
+    ["03-21", "Ramazan Bayramı 2. gün", "tam"],
+    ["03-22", "Ramazan Bayramı 3. gün", "tam"],
+    ["05-26", "Kurban Bayramı arifesi", "yarim"],
+    ["05-27", "Kurban Bayramı 1. gün", "tam"],
+    ["05-28", "Kurban Bayramı 2. gün", "tam"],
+    ["05-29", "Kurban Bayramı 3. gün", "tam"],
+    ["05-30", "Kurban Bayramı 4. gün", "tam"],
+  ],
+  2027: [
+    ["03-08", "Ramazan Bayramı arifesi", "yarim"],
+    ["03-09", "Ramazan Bayramı 1. gün", "tam"],
+    ["03-10", "Ramazan Bayramı 2. gün", "tam"],
+    ["03-11", "Ramazan Bayramı 3. gün", "tam"],
+    ["05-15", "Kurban Bayramı arifesi", "yarim"],
+    ["05-16", "Kurban Bayramı 1. gün", "tam"],
+    ["05-17", "Kurban Bayramı 2. gün", "tam"],
+    ["05-18", "Kurban Bayramı 3. gün", "tam"],
+    ["05-19", "Kurban Bayramı 4. gün", "tam"],
+  ],
+  2028: [
+    ["02-25", "Ramazan Bayramı arifesi", "yarim"],
+    ["02-26", "Ramazan Bayramı 1. gün", "tam"],
+    ["02-27", "Ramazan Bayramı 2. gün", "tam"],
+    ["02-28", "Ramazan Bayramı 3. gün", "tam"],
+    ["05-04", "Kurban Bayramı arifesi", "yarim"],
+    ["05-05", "Kurban Bayramı 1. gün", "tam"],
+    ["05-06", "Kurban Bayramı 2. gün", "tam"],
+    ["05-07", "Kurban Bayramı 3. gün", "tam"],
+    ["05-08", "Kurban Bayramı 4. gün", "tam"],
+  ],
+};
+// Tatil olmayan dini günler (Diyanet)
+const DINI = {
+  2026: [
+    ["01-15", "Miraç Kandili"],
+    ["02-02", "Berat Kandili"],
+    ["02-19", "Ramazan başlangıcı"],
+    ["03-16", "Kadir Gecesi"],
+    ["06-16", "Hicri Yılbaşı"],
+    ["06-25", "Aşure Günü"],
+    ["08-24", "Mevlid Kandili"],
+    ["12-10", "Üç Ayların başlangıcı · Regaip Kandili"],
+  ],
+  2027: [],
+  2028: [],
+};
+
+// Tarih anahtarı → kayıtlar
+const DAYS = new Map();
+function add(key, name, type) { if (!DAYS.has(key)) DAYS.set(key, []); DAYS.get(key).push({ name, type }); }
+for (const y of YEARS) {
+  for (const [md, n, t] of FIXED) add(`${y}-${md}`, n, t);
+  for (const [md, n, t] of RELIGIOUS[y] || []) add(`${y}-${md}`, n, t);
+  for (const [md, n] of DINI[y] || []) add(`${y}-${md}`, n, "dini");
+}
+
+const $ = (x) => document.getElementById(x);
+const pad = (n) => String(n).padStart(2, "0");
+const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parse = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d, 12); };
+const MI = "OŞMNMHTAEEKA";
+const MONTHS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+const DOW = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+const fmtLong = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
+
+function info(d) {
+  const recs = DAYS.get(keyOf(d)) || [];
+  const we = d.getDay() === 0 || d.getDay() === 6;
+  const full = recs.some((r) => r.type === "tam");
+  const half = !full && recs.some((r) => r.type === "yarim");
+  const dini = recs.filter((r) => r.type === "dini");
+  return { recs, we, full, half, dini };
+}
+// İş günü değeri: 1, 0.5 ya da 0
+function workValue(d, halfVal) {
+  const i = info(d);
+  if (i.we || i.full) return 0;
+  if (i.half) return halfVal;
+  return 1;
+}
+const inRange = (d) => YEARS.includes(d.getFullYear());
+// İki tarih arası (dahil) gün dağılımı: iş günü (yarım günler dahil), hafta içi tatil, yarım gün, hafta sonu
+function sayGun(a, b) {
+  const o = { work: 0, hol: 0, half: 0, we: 0, total: 0 };
+  for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) {
+    const i = info(d); o.total++;
+    if (i.we) o.we++; else if (i.full) o.hol++; else { o.work++; if (i.half) o.half++; }
+  }
+  return o;
+}
+const ozetHTML = (o) => `<b style="color:var(--work)">${o.work}</b> iş günü${o.half ? ` <span style="color:var(--half)">(${o.half} yarım)</span>` : ""} · <b>${o.we}</b> hafta sonu${o.hol ? ` · <b style="color:var(--hol)">${o.hol}</b> resmî/dinî tatil` : ""}`;
+
+// ================= Aylık görünüm =================
+const today = new Date(); today.setHours(12, 0, 0, 0);
+let view = new Date(today.getFullYear(), today.getMonth(), 1, 12);
+let selected = null;
+
+function renderMonth() {
+  const y = view.getFullYear(), m = view.getMonth();
+  $("mTitle").textContent = `${MONTHS[m]} ${y}`;
+  $("mSub").textContent = inRange(view) ? "" : "Bu yıl için bayram tarihleri yüklenmedi";
+  const g = $("grid");
+  g.innerHTML = "";
+  const first = new Date(y, m, 1, 12);
+  const offset = (first.getDay() + 6) % 7;
+  for (let i = 0; i < offset; i++) g.insertAdjacentHTML("beforeend", '<div class="day empty"></div>');
+  const days = new Date(y, m + 1, 0).getDate();
+  let work = 0, hol = 0, halfC = 0;
+  const monthItems = [];
+  for (let d = 1; d <= days; d++) {
+    const dt = new Date(y, m, d, 12);
+    const i = info(dt);
+    const cls = ["day"];
+    if (i.we) cls.push("we");
+    if (i.full) cls.push("hol");
+    if (i.half) cls.push("half");
+    if (keyOf(dt) === keyOf(today)) cls.push("today");
+    if (selected && keyOf(dt) === keyOf(selected)) cls.push("sel");
+    const pm = dayMarks(dt, i);
+    cls.push(...pm.cls);
+    const el = document.createElement("div");
+    el.className = cls.join(" ");
+    el.innerHTML = `${d}${i.dini.length ? '<i class="d"></i>' : ""}${pm.dots}`;
+    el.onclick = () => { selected = dt; renderMonth(); showDetail(dt); };
+    g.appendChild(el);
+    const v = workValue(dt, 1);
+    if (!i.we && !i.full) work++;
+    if (!i.we && i.full) hol++;
+    if (!i.we && i.half) halfC++;
+    for (const r of i.recs) monthItems.push({ dt, ...r });
+  }
+  $("sWork").textContent = work;
+  $("sHol").textContent = hol;
+  $("sHalf").textContent = halfC;
+  const weC = days - work - hol;
+  $("sWe").textContent = weC;
+  $("sTot").innerHTML = `${work} iş günü + ${hol} hafta içi tatil + ${weC} hafta sonu = <b>${days} gün</b>${halfC ? ` · yarım günler iş gününe dahil` : ""}`;
+  const mEnd = new Date(y, m + 1, 0, 12), mStart = new Date(y, m, 1, 12);
+  $("sKalan").innerHTML = mEnd < today ? "" : `⏳ ${mStart > today ? "Ayın tamamı" : "Bugünden ay sonuna"} (${sayGun(mStart > today ? mStart : today, mEnd).total} gün): ${ozetHTML(sayGun(mStart > today ? mStart : today, mEnd))}`;
+  $("sumTitle").textContent = `${MONTHS[m]} ${y} özeti`;
+  ppkAy(y, m);
+  $("mList").innerHTML = monthItems.length ? monthItems.map((x) => itemHTML(x)).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmi tatil ya da dini gün yok.</div>';
+  const mine = A.items.filter((x) => x.d <= keyOf(mEnd) && (x.e || x.d) >= keyOf(mStart)).sort(byDate);
+  if (mine.length) $("mList").innerHTML += `<div class="mgrp" style="color:#c9b4f7">Ajandam · ${MONTHS[m]}</div>` + mine.map((x) => aItemHTML(x)).join("");
+}
+function itemHTML(x, isNext) {
+  const tag = x.type === "tam" ? '<span class="tag t1">Tatil</span>' : x.type === "yarim" ? '<span class="tag t2">Yarım gün</span>' : '<span class="tag t3">Dini gün</span>';
+  const diff = Math.round((x.dt - today) / 86400000);
+  const left = diff > 0 ? `${diff} gün kaldı` : diff === 0 ? "Bugün" : "";
+  const cls = "it" + (diff < 0 ? " past" : "") + (isNext ? " nx" : "");
+  return `<div class="${cls}"><div class="dt"><b>${x.dt.getDate()}</b><span>${MONTHS[x.dt.getMonth()].slice(0, 3)}</span></div>
+    <div class="nm">${x.name}<small>${x.dt.toLocaleDateString("tr-TR", { weekday: "long" })}${left ? " · " + left : ""}</small></div>${tag}</div>`;
+}
+function showDetail(d) {
+  const i = info(d);
+  let txt = `<b>${fmtLong(d)}</b><br>`;
+  if (i.recs.length) txt += i.recs.map((r) => r.name + (r.type === "yarim" ? " (öğleden sonra tatil)" : "")).join("<br>") + "<br>";
+  txt += i.we ? "Hafta sonu" : i.full ? "Resmi tatil — iş günü değil" : i.half ? "Yarım iş günü" : "İş günü";
+  if (!inRange(d)) txt += "<br><span style='color:var(--muted);font-size:12px'>Bu yıl için bayram tarihleri yüklenmedi.</span>";
+  const vg = vergiGun(d);
+  if (vg.length) txt += `<div style="margin-top:6px;font-size:13px">${vg.map((e) => `${e.ic} <b style="color:${e.c === "b" && !e.both ? "#e0a24f" : "#8fb0ff"}">${e.n}</b> — son gün`).join("<br>")}<br><a href="#vergi" onclick="document.querySelector('.tabs button[data-tab=vergi]').click();return false" style="color:var(--accent);font-size:12px">Vergi sekmesinde ödeme planı →</a></div>`;
+  $("detail").innerHTML = txt;
+  const k = keyOf(d), mine = A.items.filter((x) => x.d <= k && (x.e || x.d) >= k).sort(byDate);
+  $("dItems").innerHTML = mine.map((x) => aItemHTML(x, k)).join("");
+}
+$("dows").innerHTML = DOW.map((d) => `<div class="dow">${d}</div>`).join("");
+$("mtBtn").onclick = () => { view = new Date(today.getFullYear(), today.getMonth(), 1, 12); selected = today; renderMonth(); showDetail(today); };
+$("prev").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1, 12); renderMonth(); };
+$("next").onclick = () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1, 12); renderMonth(); };
+
+// ================= İş günü hesaplama =================
+const halfVal = () => Number($("hHalf").value);
+const fmtN = (n) => n.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
+function calc1() {
+  if (!$("h1a").value || !$("h1b").value) return;
+  let a = parse($("h1a").value), b = parse($("h1b").value);
+  let sign = 1;
+  if (b < a) { [a, b] = [b, a]; sign = -1; }
+  let work = 0, we = 0, hol = 0, half = 0, total = 0, outside = false;
+  for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) {
+    total++;
+    if (!inRange(d)) outside = true;
+    const i = info(d);
+    if (i.we) we++; else if (i.full) hol++; else if (i.half) half++;
+    work += workValue(d, halfVal());
+  }
+  $("h1out").textContent = fmtN(work * sign) + " gün";
+  const sh = (x) => x.toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
+  $("hb1l").textContent = sh(a) + " – " + sh(b); $("hb1").textContent = fmtN(work * sign) + " iş günü";
+  $("h1rows").innerHTML = [
+    ["Toplam takvim günü", total],
+    ["Hafta sonu", we],
+    ["Hafta içi resmi tatil", hol],
+    ["Yarım gün (arife)", half],
+  ].map(([k, v]) => `<div><span>${k}</span><span>${v}</span></div>`).join("") +
+    (outside ? `<div><span style="color:var(--half)">Not</span><span style="color:var(--half);font-size:12px;text-align:right">2026–2028 dışındaki bayramlar hesaba katılmadı</span></div>` : "");
+}
+function calc2() {
+  if (!$("h2a").value) return;
+  const n = Math.max(0, Math.floor(Number($("h2n").value) || 0));
+  const dir = Number($("h2dir").value);
+  const d = parse($("h2a").value);
+  let count = 0, skipped = [], outside = false, guard = 0;
+  while (count < n && guard++ < 3000) {
+    d.setDate(d.getDate() + dir);
+    if (!inRange(d)) outside = true;
+    const v = workValue(d, halfVal() === 0 ? 0 : 1);
+    if (v > 0) count++;
+    else { const i = info(d); if (!i.we) skipped.push(`${d.getDate()} ${MONTHS[d.getMonth()]} · ${i.recs.map((r) => r.name).join(", ")}`); }
+  }
+  $("h2lbl").textContent = `${n} iş günü ${dir > 0 ? "sonrası" : "öncesi"}`;
+  $("h2out").textContent = d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+  $("hb2l").textContent = $("h2lbl").textContent; $("hb2").textContent = d.toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric", weekday: "short" });
+  $("h2q").querySelectorAll("button").forEach((b) => b.classList.toggle("active", Number(b.textContent) === n));
+  $("h2rows").innerHTML = `<div><span>Gün</span><span>${d.toLocaleDateString("tr-TR", { weekday: "long" })}</span></div>` +
+    (skipped.length ? `<div style="display:block"><span>Atlanan tatiller</span><br><span style="font-size:13px;color:var(--ink)">${skipped.join("<br>")}</span></div>` : "") +
+    (outside ? `<div><span style="color:var(--half)">Not</span><span style="color:var(--half);font-size:12px;text-align:right">2026–2028 dışındaki bayramlar hesaba katılmadı</span></div>` : "");
+}
+["h1a", "h1b", "hHalf"].forEach((x) => $(x).addEventListener("input", () => { calc1(); calc2(); }));
+["h2a", "h2n", "h2dir"].forEach((x) => $(x).addEventListener("input", calc2));
+$("h2q").querySelectorAll("button").forEach((b) => (b.onclick = () => { $("h2n").value = b.textContent; calc2(); }));
+$("h1q").querySelectorAll("button").forEach((b) => (b.onclick = () => {
+  const a = $("h1a").value ? parse($("h1a").value) : new Date(today), q = b.dataset.q; let e;
+  if (q === "m") e = new Date(a.getFullYear(), a.getMonth() + 1, 0, 12);
+  else if (q === "nm") e = new Date(a.getFullYear(), a.getMonth() + 2, 0, 12);
+  else if (q === "y") e = new Date(a.getFullYear(), 11, 31, 12);
+  else { e = new Date(a); e.setDate(e.getDate() + Number(q)); }
+  $("h1b").value = keyOf(e); calc1(); calc2();
+}));
+
+// ================= Liste =================
+let listYear = YEARS.includes(today.getFullYear()) ? today.getFullYear() : YEARS[0];
+let listF = "all";
+$("lf").querySelectorAll("button").forEach((b) => (b.onclick = () => {
+  listF = b.dataset.f; $("lf").querySelectorAll("button").forEach((x) => x.classList.toggle("active", x === b)); renderList();
+}));
+$("nextBtn").onclick = () => {
+  const el = document.querySelector("#yList .it.nx");
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  else { listYear = YEARS.find((y) => y > listYear) || listYear; renderList(); }
+};
+function renderList() {
+  $("yearsel").innerHTML = YEARS.map((y) => `<button data-y="${y}" class="${y === listYear ? "active" : ""}">${y}</button>`).join("");
+  $("yearsel").querySelectorAll("button").forEach((b) => (b.onclick = () => { listYear = Number(b.dataset.y); renderList(); }));
+  const items = [];
+  for (const [k, recs] of DAYS) if (k.startsWith(listYear + "-")) for (const r of recs) items.push({ dt: parse(k), ...r });
+  items.sort((a, b) => a.dt - b.dt);
+  // Sıradaki tatil/dini gün (tüm yıllar)
+  const allUp = [];
+  for (const [k, recs] of DAYS) for (const r of recs) { const dt = parse(k); if (dt >= today) allUp.push({ dt, ...r }); }
+  allUp.sort((a, b) => a.dt - b.dt);
+  const nx = allUp[0];
+  if (nx) {
+    const dd = Math.round((nx.dt - today) / 86400000);
+    $("nextBtn").innerHTML = `⏭ Sıradaki: <b>${nx.name}</b> · ${nx.dt.getDate()} ${MONTHS[nx.dt.getMonth()]} ${nx.dt.getFullYear()} · ${dd ? dd + " gün kaldı" : "Bugün"}`;
+    $("nextBtn").style.display = "";
+  } else $("nextBtn").style.display = "none";
+  let wd = 0; // hafta içine denk gelen tam tatil sayısı
+  const seen = new Set();
+  for (const x of items) if (x.type === "tam" && !seen.has(keyOf(x.dt))) { seen.add(keyOf(x.dt)); if (x.dt.getDay() % 6 !== 0) wd++; }
+  const shown = items.filter((x) => listF === "all" ? true : listF === "up" ? x.dt >= today : x.type === listF);
+  const note = !(DINI[listYear] || []).length ? `<div style="font-size:12px;color:var(--muted);padding:8px 0 4px">${listYear} kandil tarihleri Diyanet takvimi netleşince eklenecek.</div>` : "";
+  $("yList").innerHTML = `<div style="font-size:13px;color:var(--muted);padding-bottom:6px">${listYear} yılında hafta içine denk gelen <b style="color:var(--hol)">${wd}</b> tam gün tatil var.</div>` + shown.map((x) => itemHTML(x, nx && keyOf(x.dt) === keyOf(nx.dt) && x.name === nx.name)).join("") +
+    (shown.length ? "" : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu filtrede gün yok.</div>') + note;
+}
+
+// ================= Yıllık görünüm =================
+let yYear = YEARS.includes(today.getFullYear()) ? today.getFullYear() : YEARS[0];
+function renderYear() {
+  $("yearsel2").innerHTML = YEARS.map((y) => `<button data-y="${y}" class="${y === yYear ? "active" : ""}">${y}</button>`).join("");
+  $("yearsel2").querySelectorAll("button").forEach((b) => (b.onclick = () => { yYear = Number(b.dataset.y); renderYear(); }));
+  let tw = 0, th = 0, thf = 0;
+  let html = "";
+  for (let m = 0; m < 12; m++) {
+    const first = new Date(yYear, m, 1, 12);
+    const off = (first.getDay() + 6) % 7;
+    const days = new Date(yYear, m + 1, 0).getDate();
+    let cells = ["P", "S", "Ç", "P", "C", "C", "P"].map((d) => `<div class="h">${d}</div>`).join("");
+    for (let i = 0; i < off; i++) cells += "<div></div>";
+    let w = 0;
+    for (let d = 1; d <= days; d++) {
+      const dt = new Date(yYear, m, d, 12);
+      const i = info(dt);
+      const c = [];
+      if (i.we) c.push("we");
+      if (i.full) c.push("hol");
+      if (i.half) c.push("half");
+      if (i.dini.length) c.push("dn");
+      if (keyOf(dt) === keyOf(today)) c.push("td");
+      const pm = dayMarks(dt, i); if (pm.cls.some((x) => x === "iz")) c.push("iz"); else if (pm.cls.some((x) => x === "dg")) c.push("dg"); if (pm.dots) c.push("nt");
+      if (!i.we && !i.full) w++;
+      if (!i.we && i.full) th++;
+      if (!i.we && i.half) thf++;
+      cells += `<div class="${c.join(" ")}">${d}</div>`;
+    }
+    tw += w;
+    const cur = yYear === today.getFullYear() && m === today.getMonth();
+    html += `<div class="mini${cur ? " cur" : ""}" data-m="${m}"><div class="mn">${MONTHS[m]}<span>${w} iş günü</span></div><div class="mg">${cells}</div></div>`;
+  }
+  $("ygrid").innerHTML = html;
+  $("ygrid").querySelectorAll(".mini").forEach((el) => (el.onclick = () => {
+    view = new Date(yYear, Number(el.dataset.m), 1, 12);
+    renderMonth();
+    document.querySelector('.tabs button[data-tab="ay"]').click();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }));
+  $("ySumTitle").textContent = "";
+  $("yWork").textContent = tw; $("yHol").textContent = th; $("yHalf").textContent = thf;
+  const yDays = (new Date(yYear + 1, 0, 1) - new Date(yYear, 0, 1)) / 864e5, yWe = Math.round(yDays) - tw - th;
+  $("yWe").textContent = yWe;
+  $("yTot").innerHTML = `${tw} iş günü + ${th} hafta içi tatil + ${yWe} hafta sonu = <b>${Math.round(yDays)} gün</b>${thf ? ` · ${thf} yarım gün iş gününe dahil` : ""}`;
+  const yEnd = new Date(yYear, 11, 31, 12), yStart = new Date(yYear, 0, 1, 12);
+  if (yEnd < today) $("yKalan").innerHTML = "";
+  else { const st = yStart > today ? yStart : today, o = sayGun(st, yEnd); $("yKalan").innerHTML = `⏳ ${yStart > today ? "Yılın tamamı" : "Bugünden yıl sonuna"} (${o.total} gün): ${ozetHTML(o)}`; }
+}
+
+
+// ================= Ajanda (yalnızca bu cihazda) =================
+const AKEY = "sado_ajanda1";
+const TYPES = {
+  not: { ic: "📝", ad: "Not", c: "var(--not)", ph: "Örn. Faturayı öde", tl: "Başlık" },
+  arama: { ic: "📞", ad: "Arama", c: "var(--rdv)", ph: "Örn. Randevu teyidi", tl: "Konu" },
+  ziyaret: { ic: "🏢", ad: "Ziyaret", c: "var(--zyr)", ph: "Örn. Arkadaş ziyareti", tl: "Konu" },
+  toplanti: { ic: "👥", ad: "Toplantı", c: "var(--tpl)", ph: "Örn. Veli toplantısı", tl: "Konu" },
+  randevu: { ic: "⏰", ad: "Randevu", c: "var(--rdv)", ph: "", tl: "Konu" },
+  izin: { ic: "🏖️", ad: "Yıllık izin", c: "var(--izin)", ph: "Örn. Yaz tatili", tl: "Açıklama" },
+  diger: { ic: "🗂️", ad: "İzin", c: "var(--dgr)", ph: "", tl: "Açıklama" },
+};
+const IZK = { yillik: "Yıllık izin", idari: "Mazeret izni", ozur: "Sağlık izni", diger: "Diğer izin" };
+const WORK = new Set(["arama", "ziyaret", "toplanti", "randevu"]);
+const izAd = (x) => (x.t === "izin" ? "Yıllık izin" : IZK[x.k] || "Diğer izin");
+const tAd = (x) => (isRange(x) ? izAd(x) : (TYPES[x.t] || TYPES.not).ad);
+let A = { items: [], hak: {}, dev: {} };
+try { const j = JSON.parse(localStorage.getItem(AKEY) || "null"); if (j && Array.isArray(j.items)) A = { items: j.items, hak: j.hak || {}, dev: j.dev || {} }; } catch (e) {}
+function saveA() { try { localStorage.setItem(AKEY, JSON.stringify(A)); } catch (e) { atoast("Kaydedilemedi: tarayıcı depolamaya izin vermiyor"); } }
+const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const byDate = (a, b) => (a.d + (a.tm || "99")).localeCompare(b.d + (b.tm || "99"));
+const isRange = (x) => x.t === "izin" || x.t === "diger";
+const shD = (k) => { const d = parse(k); return `${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}`; };
+const fmtG = (n) => n.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
+function atoast(t) { const el = $("aToast"); el.textContent = t; el.classList.add("show"); clearTimeout(atoast._t); atoast._t = setTimeout(() => el.classList.remove("show"), 2400); }
+
+// İzin günü: hafta sonu ve resmi tatiller sayılmaz, arife yarım gün
+function izinCalc(x, year) {
+  const o = { gun: 0, past: 0, fut: 0, we: 0, hol: [], half: [], outside: false, days: 0, mon: Array(12).fill(0) };
+  if (!x.d) return o;
+  const a = parse(x.d), b = parse(x.e && x.e >= x.d ? x.e : x.d), single = !x.e || x.e === x.d;
+  for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) {
+    if (year && d.getFullYear() !== year) continue;
+    o.days++;
+    if (!inRange(d)) o.outside = true;
+    const i = info(d);
+    let v = 0;
+    if (i.we) o.we++;
+    else if (i.full) o.hol.push(`${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)} ${i.recs.find((r) => r.type === "tam").name}`);
+    else if (i.half) { v = 0.5; o.half.push(`${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}`); }
+    else v = single && x.half ? 0.5 : 1;
+    o.gun += v; o.mon[d.getMonth()] += v;
+    if (d <= today) o.past += v; else o.fut += v;
+  }
+  return o;
+}
+function izinYil(y) {
+  const hak = Number(A.hak[y]) || 0, dev = Number(A.dev[y]) || 0;
+  let kul = 0, pln = 0, diger = 0;
+  const aylik = Array(12).fill(0);
+  for (const x of A.items) {
+    if (!isRange(x)) continue;
+    const c = izinCalc(x, y);
+    if (x.t === "izin") { kul += c.past; pln += c.fut; c.mon.forEach((v, i) => (aylik[i] += v)); } else diger += c.gun;
+  }
+  return { hak, dev, top: hak + dev, kul, pln, kal: hak + dev - kul - pln, diger, aylik };
+}
+// Takvim hücresi: izin alt çizgi, not ve işler sağ üstte nokta (resmi tatil renklerinden ayrı)
+// Vergi takvimi (vergi.js): o gün son günü olan vergiler
+let VG_CACHE = null;
+function vergiGun(d) {
+  if (!window.Vergi) return [];
+  const y = d.getFullYear();
+  if (!VG_CACHE || VG_CACHE.y !== y) VG_CACHE = { y, map: {} , list: Vergi.events(new Date(y - 1, 11, 1, 12), new Date(y + 1, 1, 1, 12)) };
+  const k = keyOf(d);
+  if (!(k in VG_CACHE.map)) VG_CACHE.map[k] = VG_CACHE.list.filter((e) => keyOf(e.d) === k);
+  return VG_CACHE.map[k];
+}
+function dayMarks(dt, i) {
+  const k = keyOf(dt), cls = [];
+  let n = false, w = false;
+  for (const x of A.items) {
+    if (x.d > k || (x.e || x.d) < k) continue;
+    if (x.t === "izin") cls.push(i.we || i.full ? "iz0" : "iz");
+    else if (x.t === "diger") cls.push(i.we || i.full ? "dg0" : "dg");
+    else if (WORK.has(x.t)) w = true; else n = true;
+  }
+  const iz = cls.includes("iz") ? ["iz"] : cls.includes("dg") ? ["dg"] : cls.includes("iz0") ? ["iz0"] : cls.includes("dg0") ? ["dg0"] : [];
+  const vg = vergiGun(dt), vb = vg.some((e) => e.c === "b" || e.both), vt = vg.some((e) => e.c === "t" || e.both);
+  return { cls: iz, dots: n || w || vb || vt ? `<span class="pm">${n ? "<u class='n'></u>" : ""}${w ? "<u class='r'></u>" : ""}${vb ? "<u class='vb'></u>" : ""}${vt ? "<u class='vt'></u>" : ""}</span>` : "" };
+}
+function aItemHTML(x, onDay) {
+  const T = TYPES[x.t] || TYPES.not, rng = isRange(x), past = (x.e || x.d) < keyOf(today);
+  let sub = "", gn = "";
+  if (rng) {
+    const c = izinCalc(x);
+    sub = (x.e && x.e !== x.d ? `${shD(x.d)} – ${shD(x.e)} · ${c.days} gün` : parse(x.d).toLocaleDateString("tr-TR", { day: "numeric", month: "short", weekday: "short" }) + (x.half ? " · yarım gün" : "")) + (x.ti ? " · " + izAd(x) : "");
+    if (c.hol.length) sub += ` · ${c.hol.length} resmi tatil hariç`;
+    gn = `<span class="gn">${fmtG(c.gun)} iş günü</span>`;
+  } else {
+    sub = (onDay ? T.ad : parse(x.d).toLocaleDateString("tr-TR", { day: "numeric", month: "short", weekday: "short" })) + (x.tm ? " · " + x.tm : "") + (x.n ? " · " + x.n : "");
+    gn = `${x.tm && !onDay ? `<span class="gn">${x.tm}</span>` : ""}<button class="okb" type="button" data-ok="${x.id}" aria-label="Tamamlandı olarak işaretle">✓</button>`;
+  }
+  return `<div class="ai${x.ok ? " done" : ""}${past && !onDay && !(!rng && !x.ok) ? " past" : ""}" style="--c:${T.c}" data-aid="${x.id}"><span class="ic">${T.ic}</span><div class="tx">${esc(x.ti || tAd(x))}<small>${esc(sub)}</small></div>${gn}</div>`;
+}
+document.addEventListener("click", (e) => {
+  const ok = e.target.closest("[data-ok]");
+  if (ok) { const x = A.items.find((y) => y.id === ok.dataset.ok); if (x) { if (x.ok) delete x.ok; else x.ok = 1; saveA(); renderAll(); atoast(x.ok ? "Tamamlandı ✓" : "Bekleyene alındı"); } return; }
+  const el = e.target.closest("[data-aid]"); if (el) openSheet(null, A.items.find((x) => x.id === el.dataset.aid));
+});
+
+// ---------- Ekle / düzenle ----------
+let sEdit = null, sT = "not", sK = "yillik";
+const sIt = () => (sT === "izin" ? (sK === "yillik" ? "izin" : "diger") : sT);
+function setType(t) {
+  sT = t;
+  $("sType").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.t === t));
+  $("sIz").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.k === sK));
+  const rng = t === "izin", T = TYPES[rng ? "izin" : t];
+  $("sIz").hidden = !rng;
+  $("sKvkk").hidden = !(t === "arama" || t === "ziyaret");
+  $("sTitle").placeholder = rng ? (sK === "yillik" ? "Örn. Yaz tatili" : "İsteğe bağlı") : T.ph;
+  $("sTitleL").innerHTML = rng ? 'Açıklama <span style="opacity:.6">(isteğe bağlı)</span>' : T.tl;
+  $("sDL").textContent = rng ? "Başlangıç" : "Tarih";
+  $("sEW").hidden = !rng; $("sTW").hidden = !WORK.has(t);
+  $("sDW").classList.toggle("full", t === "not");
+  $("sOkW").style.display = rng ? "none" : "";
+  if (rng && !$("sE").value) $("sE").value = $("sD").value;
+  sCalc();
+}
+function sCalc() {
+  const rng = sT === "izin";
+  const single = !$("sE").value || $("sE").value === $("sD").value;
+  $("sHalfW").style.display = rng && single ? "" : "none";
+  $("sIcs").hidden = !WORK.has(sT);
+  if (!rng || !$("sD").value) { $("sCalc").innerHTML = ""; return; }
+  if ($("sE").value && $("sE").value < $("sD").value) { $("sCalc").innerHTML = '<span class="wn">⚠️ Bitiş tarihi başlangıçtan önce olamaz.</span>'; return; }
+  const q = { t: sIt(), d: $("sD").value, e: $("sE").value, half: $("sHalf").checked }, c = izinCalc(q);
+  let h = `<b>${fmtG(c.gun)} iş günü</b> ${IZK[sK].toLowerCase()} · ${c.days} takvim günü`;
+  if (c.we) h += `<br>🗓 ${c.we} gün hafta sonu — sayılmadı`;
+  if (c.hol.length) h += `<br><span class="sk">🇹🇷 Resmi tatil sayılmadı: ${esc(c.hol.join(", "))}</span>`;
+  if (c.half.length) h += `<br><span class="wn">◐ Arife yarım gün sayıldı: ${c.half.join(", ")}</span>`;
+  if (c.outside) h += `<br><span class="wn">2026–2028 dışındaki bayramlar hesaba katılmadı.</span>`;
+  const e0 = $("sE").value || $("sD").value, ov = A.items.find((x) => isRange(x) && (!sEdit || x.id !== sEdit.id) && x.d <= e0 && (x.e || x.d) >= $("sD").value);
+  if (ov) h += `<br><span class="wn">⚠️ “${esc(ov.ti || izAd(ov))}” (${rangeTxt(ov)}) ile aynı günlere denk geliyor.</span>`;
+  if (sK === "yillik") {
+    const y = parse($("sD").value).getFullYear(), Y = izinYil(y);
+    if (Y.top) { const old = sEdit && sEdit.t === "izin" ? izinCalc(sEdit, y).gun : 0, kal = Y.kal + old - izinCalc(q, y).gun; h += `<br>${kal < 0 ? `<span class="wn">⚠️ ${y} hakkını ${fmtG(-kal)} gün aşıyor</span>` : `Kaydedince ${y} yıllık izninden kalan: <b style="font-size:14px">${fmtG(kal)} gün</b>`}`; }
+    else h += `<br><span style="opacity:.75">Ajanda sekmesine yıllık izin hakkını girersen kalan günü de gösteririm.</span>`;
+  } else h += `<br><span style="opacity:.75">Yıllık izin hakkından düşülmez.</span>`;
+  $("sCalc").innerHTML = h;
+}
+function openSheet(day, item) {
+  sEdit = item || null;
+  const d = item ? item.d : keyOf(day || selected || today);
+  $("sT").textContent = item ? "Kaydı düzenle" : "Ajandaya ekle";
+  $("sDay").textContent = item ? `${TYPES[item.t] ? TYPES[item.t].ic : "📝"} ${tAd(item)}` : fmtLong(parse(d));
+  $("sTitle").value = item ? item.ti || "" : "";
+  $("sD").value = d; $("sE").value = item && item.e ? item.e : "";
+  $("sTm").value = item && item.tm ? item.tm : "";
+  $("sHalf").checked = !!(item && item.half);
+  $("sOk").checked = !!(item && item.ok);
+  $("sNote").value = item && item.n ? item.n : "";
+  $("sDel").hidden = !item;
+  $("aSheet").hidden = false; document.body.style.overflow = "hidden";
+  if (item && isRange(item)) { sK = item.t === "izin" ? "yillik" : IZK[item.k] ? item.k : "diger"; setType("izin"); }
+  else setType(item ? (item.t === "randevu" ? "toplanti" : item.t) : sT);
+  if (!item) setTimeout(() => $("sTitle").focus(), 250);
+}
+function closeSheet() { $("aSheet").hidden = true; document.body.style.overflow = ""; }
+function saveSheet() {
+  const d = $("sD").value; if (!d) { atoast("Tarih seç"); return; }
+  const rng = sT === "izin", t = sIt();
+  let e = rng ? $("sE").value || d : "";
+  if (rng && e < d) { atoast("Bitiş tarihi başlangıçtan önce olamaz"); return; }
+  if (rng && (parse(e) - parse(d)) / 864e5 > 366) { atoast("En fazla 1 yıllık aralık girilebilir"); return; }
+  const ti = $("sTitle").value.trim();
+  if (!ti && !rng) { atoast("Bir başlık yaz"); $("sTitle").focus(); return; }
+  const x = { id: sEdit ? sEdit.id : Date.now().toString(36) + Math.random().toString(36).slice(2, 6), t, d, ti };
+  if (t === "diger") x.k = sK;
+  if (rng && e !== d) x.e = e;
+  if (rng && e === d && $("sHalf").checked) x.half = 1;
+  if (WORK.has(t) && $("sTm").value) x.tm = $("sTm").value;
+  if (!rng && $("sOk").checked) x.ok = 1;
+  const n = $("sNote").value.trim(); if (n) x.n = n;
+  if (sEdit) A.items[A.items.findIndex((y) => y.id === sEdit.id)] = x; else A.items.push(x);
+  saveA(); closeSheet(); renderAll();
+  atoast(sEdit ? "Güncellendi ✓" : rng ? `${izAd(x)} eklendi · ${fmtG(izinCalc(x).gun)} iş günü` : `${TYPES[t].ad} eklendi ✓`);
+}
+function delSheet() {
+  if (!sEdit) return;
+  const b = $("sDel");
+  if (b.dataset.ok !== "1") { b.dataset.ok = "1"; b.textContent = "Sil?"; b.style.width = "72px"; setTimeout(() => { b.dataset.ok = ""; b.textContent = "🗑"; b.style.width = ""; }, 2500); return; }
+  A.items = A.items.filter((x) => x.id !== sEdit.id); saveA(); closeSheet(); renderAll(); atoast("Silindi");
+  b.dataset.ok = ""; b.textContent = "🗑"; b.style.width = "";
+}
+function icsDown() {
+  const d = $("sD").value; if (!d) return;
+  const ti = $("sTitle").value.trim() || TYPES[sT].ad, tm = $("sTm").value;
+  const ymd = d.replace(/-/g, ""), st = tm ? `DTSTART:${ymd}T${tm.replace(":", "")}00` : `DTSTART;VALUE=DATE:${ymd}`;
+  let en; if (tm) { const [h, m] = tm.split(":").map(Number), t2 = h * 60 + m + 60; en = t2 >= 1440 ? `DTEND:${ymd}T235900` : `DTEND:${ymd}T${pad(Math.floor(t2 / 60))}${pad(t2 % 60)}00`; } else { const n = parse(d); n.setDate(n.getDate() + 1); en = `DTEND;VALUE=DATE:${keyOf(n).replace(/-/g, "")}`; }
+  const clean = (t) => t.replace(/[\;,]/g, (c) => "\\" + c).replace(/\n/g, "\\n");
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sadolayn//Ajanda//TR", "BEGIN:VEVENT", "UID:" + Date.now() + "@sadolayn", "DTSTAMP:" + new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z", st, en, "SUMMARY:" + clean(TYPES[sT].ic + " " + ti), $("sNote").value.trim() ? "DESCRIPTION:" + clean($("sNote").value.trim()) : "", "BEGIN:VALARM", "TRIGGER:-PT30M", "ACTION:DISPLAY", "DESCRIPTION:" + clean(ti), "END:VALARM", "END:VEVENT", "END:VCALENDAR"].filter(Boolean).join("\r\n");
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = "ajanda.ics"; document.body.appendChild(a); a.click(); a.remove();
+  atoast("Dosyayı açınca telefon takvimine eklenir");
+}
+$("sType").querySelectorAll("button").forEach((b) => (b.onclick = () => setType(b.dataset.t)));
+$("sIz").querySelectorAll("button").forEach((b) => (b.onclick = () => { sK = b.dataset.k; setType("izin"); }));
+["sD", "sE", "sHalf"].forEach((x) => $(x).addEventListener("input", () => { if (x === "sD" && sT === "izin" && (!$("sE").value || $("sE").value < $("sD").value)) $("sE").value = $("sD").value; sCalc(); }));
+$("sSave").onclick = saveSheet; $("sCancel").onclick = closeSheet; $("sDel").onclick = delSheet; $("sIcs").onclick = icsDown;
+$("aSheet").onclick = (e) => { if (e.target === $("aSheet")) closeSheet(); };
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("aSheet").hidden) closeSheet(); });
+$("fab").onclick = () => openSheet(document.querySelector(".tabs button.active").dataset.tab === "ay" ? selected : today);
+$("addDay").onclick = () => openSheet(selected);
+
+// ---------- Ajanda sekmesi ----------
+let aYear = YEARS.includes(today.getFullYear()) ? today.getFullYear() : YEARS[0], aF = "all";
+function ring(Y) {
+  const R = 40, C = 2 * Math.PI * R, tot = Math.max(Y.top, Y.kul + Y.pln, 1);
+  const a = (Y.kul / tot) * C, b = (Y.pln / tot) * C;
+  return `<svg width="104" height="104" viewBox="0 0 104 104" aria-label="İzin durumu"><circle cx="52" cy="52" r="${R}" fill="none" stroke="#222" stroke-width="12"/>
+    <circle cx="52" cy="52" r="${R}" fill="none" stroke="#a77bf3" stroke-width="12" stroke-dasharray="${a} ${C}" transform="rotate(-90 52 52)"/>
+    <circle cx="52" cy="52" r="${R}" fill="none" stroke="#5b4688" stroke-width="12" stroke-dasharray="${b} ${C}" stroke-dashoffset="${-a}" transform="rotate(-90 52 52)"/>
+    <text x="52" y="52" text-anchor="middle" font-size="22" font-weight="700" fill="${Y.kal < 0 ? "#ef6a4c" : "#f2f2f2"}">${fmtG(Y.kal)}</text><text x="52" y="69" text-anchor="middle" font-size="10" fill="#8a8a8a">gün kaldı</text></svg>`;
+}
+function renderAjanda() {
+  $("yearsel3").innerHTML = YEARS.map((y) => `<button data-y="${y}" class="${y === aYear ? "active" : ""}">${y}</button>`).join("");
+  $("yearsel3").querySelectorAll("button").forEach((b) => (b.onclick = () => { aYear = Number(b.dataset.y); renderAjanda(); }));
+  const Y = izinYil(aYear), tk = keyOf(today);
+  // Bugün
+  const work = A.items.filter((x) => !isRange(x));
+  const bugun = work.filter((x) => x.d === tk), bek = work.filter((x) => !x.ok && x.d <= tk);
+  const wEnd = new Date(today); wEnd.setDate(wEnd.getDate() + 7);
+  const hafta = work.filter((x) => x.d > tk && x.d <= keyOf(wEnd));
+  $("aToday").textContent = today.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
+  $("aIs").innerHTML = `<div><b>${bugun.length}</b>Bugün</div><div><b style="color:${bek.length ? "var(--half)" : "var(--ink)"}">${bek.length}</b>Bekleyen</div><div><b>${hafta.length}</b>7 gün içinde</div><div><b style="color:#2fae72">${work.filter((x) => x.ok && x.d.startsWith(tk.slice(0, 7))).length}</b>Bu ay biten</div>`;
+  const izNow = A.items.filter((x) => isRange(x) && x.d <= tk && (x.e || x.d) >= tk);
+  const list = [...izNow, ...bugun.sort(byDate), ...bek.filter((x) => x.d < tk).sort(byDate).slice(0, 5), ...A.items.filter((x) => x.d > tk).sort(byDate).slice(0, 5)];
+  $("aUp").innerHTML = list.length ? list.map((x) => aItemHTML(x)).join("") : '<div class="aempty"><b>🗒️</b>Bugün için kaydın yok.<br>Sağ alttaki <b style="display:inline;font-size:inherit;color:#c9b4f7">＋</b> ile not, arama, ziyaret, toplantı ya da izin ekle.</div>';
+  // Sticky özet
+  $("iHak").textContent = bugun.length; $("iKul").textContent = bek.length; $("iPln").textContent = hafta.length; $("iKal").textContent = Y.top ? fmtG(Y.kal) : "–";
+  $("iKal").style.color = Y.kal < 0 ? "var(--hol)" : "var(--accent)";
+  // Tüm kayıtlar
+  const yi = A.items.filter((x) => x.d.slice(0, 4) <= String(aYear) && (x.e || x.d).slice(0, 4) >= String(aYear) && (aF === "all" || (aF === "bek" ? !isRange(x) && !x.ok && x.d <= tk : aF === "izin" ? isRange(x) : aF === "toplanti" ? x.t === "toplanti" || x.t === "randevu" : x.t === aF))).sort(byDate);
+  $("aAllT").textContent = `${aYear} kayıtlarım (${yi.length})`;
+  let html = "", lastM = -1;
+  for (const x of yi) { const m = x.d.slice(0, 4) < String(aYear) ? 0 : parse(x.d).getMonth(); if (m !== lastM) { html += `<div class="mgrp">${MONTHS[m]}</div>`; lastM = m; } html += aItemHTML(x); }
+  $("aAll").innerHTML = html || `<div class="aempty">Bu filtrede ${aYear} için kayıt yok.</div>`;
+  // Yıllık izin
+  $("ihY").textContent = aYear;
+  if (document.activeElement !== $("ihHak")) $("ihHak").value = A.hak[aYear] ?? "";
+  if (document.activeElement !== $("ihDev")) $("ihDev").value = A.dev[aYear] ?? "";
+  $("iRing").innerHTML = Y.top || Y.kul || Y.pln ? `${ring(Y)}<div class="k">
+    <div><span>Hak${Y.dev ? " + devreden" : ""}</span><b>${fmtG(Y.hak)}${Y.dev ? " + " + fmtG(Y.dev) : ""} gün</b></div>
+    <div><span><i class="sw" style="background:#a77bf3"></i>Kullanılan</span><b>${fmtG(Y.kul)} gün</b></div>
+    <div><span><i class="sw" style="background:#5b4688"></i>Planlanan</span><b>${fmtG(Y.pln)} gün</b></div>
+    <div class="kl"><span>Kalan</span><b style="${Y.kal < 0 ? "color:var(--hol)" : ""}">${fmtG(Y.kal)} gün</b></div>
+    ${Y.diger ? `<div><span><i class="sw" style="background:var(--dgr)"></i>Diğer izinler</span><b>${fmtG(Y.diger)} gün</b></div>` : ""}</div>` : '<div class="aempty" style="flex:1;padding:6px"><b>🏖️</b>Yıllık izin hakkını yaz; izin ekledikçe ne kadar kaldığını burada görürsün.</div>';
+  renderPosA();
+  setStickH();
+}
+$("aF").querySelectorAll("button").forEach((b) => (b.onclick = () => { aF = b.dataset.f; $("aF").querySelectorAll("button").forEach((x) => x.classList.toggle("active", x === b)); renderAjanda(); }));
+const setHak = (k, v) => { const n = v === "" ? null : Math.max(0, Math.min(k === "hak" ? 60 : 120, Number(v) || 0)); if (n === null) delete A[k][aYear]; else A[k][aYear] = n; saveA(); renderAjanda(); };
+$("ihHak").addEventListener("input", () => setHak("hak", $("ihHak").value));
+$("ihDev").addEventListener("input", () => setHak("dev", $("ihDev").value));
+
+// ---------- POS rulosu ----------
+function posModel() {
+  const y = aYear, Y = izinYil(y);
+  const its = A.items.filter((x) => x.d.slice(0, 4) <= String(y) && (x.e || x.d).slice(0, 4) >= String(y)).sort(byDate);
+  const izin = its.filter((x) => x.t === "izin").map((x) => ({ x, c: izinCalc(x, y) }));
+  const diger = its.filter((x) => x.t === "diger").map((x) => ({ x, c: izinCalc(x, y) }));
+  const isler = its.filter((x) => !isRange(x));
+  const say = (f) => { const a = isler.filter(f); return { n: a.length, ok: a.filter((x) => x.ok).length }; };
+  const ozet = [["📞", "Arama", say((x) => x.t === "arama")], ["🏢", "Ziyaret", say((x) => x.t === "ziyaret")], ["👥", "Toplantı", say((x) => x.t === "toplanti" || x.t === "randevu")], ["📝", "Not", say((x) => x.t === "not")]];
+  const now = new Date();
+  return { y, Y, izin, diger, isler, ozet, when: now.toLocaleDateString("tr-TR") + " " + now.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }), fis: String(y).slice(2) + pad(now.getMonth() + 1) + pad(now.getDate()) + "-" + pad(A.items.length) };
+}
+const rangeTxt = (x) => (x.e && x.e !== x.d ? `${shD(x.d)} – ${shD(x.e)}` : shD(x.d) + (x.half ? " ½" : ""));
+function stampOf(P) { const t = P.isler.length, ok = P.isler.filter((x) => x.ok).length; if (!t) return null; const r = ok / t; return { t: `%${Math.round(r * 100)} BİTTİ ✓`, c: r >= 0.8 ? "#16824f" : r >= 0.5 ? "#7a4fd0" : "#b5651d" }; }
+const isIc = (x) => (TYPES[x.t] || TYPES.not).ic;
+function renderPosA() {
+  const P = posModel(), Y = P.Y, el = $("aPos"), st = stampOf(P), tot = Math.max(Y.top, Y.kul + Y.pln, 1), mx = Math.max(...Y.aylik, 1);
+  const row = (a, b, cls) => `<div class="pz-row${cls ? " " + cls : ""}"><span>${a}</span><b>${b}</b></div>`;
+  el.innerHTML = `
+    <div class="pz-c"><div class="pz-logo">SADOLAYN</div><div class="pz-s">TAKVİM &amp; AJANDA · YILLIK DÖKÜM<br><b style="font-size:15px;color:#262626">${P.y}</b><br>${P.when} · Fiş no ${P.fis}</div></div>
+    ${st ? `<div class="pz-stamp" style="--sc:${st.c}">${st.t}</div>` : ""}
+    <hr class="pz-hr">
+    <div class="pz-h">İŞ ÖZETİ</div>
+    ${P.ozet.map(([ic, ad, v]) => row(`${ic} ${ad}`, v.n ? `${v.n} <span style="font-weight:400;color:#8a8270">(${v.ok} ✓)</span>` : "—")).join("")}
+    <hr class="pz-hr">
+    <div class="pz-h">KAYITLAR · ${P.isler.length}</div>
+    ${P.isler.length ? P.isler.slice(0, 40).map((x) => `<div class="pz-row"><span style="white-space:nowrap;flex:none">${x.ok ? "✓" : "·"} ${isIc(x)} ${shD(x.d)}${x.tm ? " " + x.tm : ""}</span><span style="text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:58%">${esc(x.ti)}</span></div>`).join("") + (P.isler.length > 40 ? `<div class="pz-sub">+${P.isler.length - 40} kayıt daha</div>` : "") : '<div class="pz-row" style="color:#999"><span>Kayıt yok</span><span>—</span></div>'}
+    <hr class="pz-hr">
+    <div class="pz-h">YILLIK İZİN</div>
+    ${Y.top ? row("Yıllık hak", fmtG(Y.hak) + " gün") + (Y.dev ? row("Devreden", fmtG(Y.dev) + " gün") : "") + row("Kullanılan", "−" + fmtG(Y.kul) + " gün") + row("Planlanan", "−" + fmtG(Y.pln) + " gün") + row("KALAN", fmtG(Y.kal) + " gün", "tot") + `<div class="pz-bar"><i style="width:${(Y.kul / tot) * 100}%;background:#a77bf3"></i><i style="width:${(Y.pln / tot) * 100}%;background:#cdb8f5"></i></div>` : ""}
+    ${P.izin.length ? P.izin.map(({ x, c }) => row(rangeTxt(x), fmtG(c.gun) + " gün") + (x.ti || c.hol.length ? `<div class="pz-sub">${esc(x.ti || "")}${x.ti && c.hol.length ? " · " : ""}${c.hol.length ? "resmi tatil sayılmadı: " + esc(c.hol.map((h) => h.split(" ").slice(0, 2).join(" ")).join(", ")) : ""}</div>` : "")).join("") : '<div class="pz-row" style="color:#999"><span>Yıllık izin kaydı yok</span><span>—</span></div>'}
+    ${Y.kul + Y.pln ? `<div class="pz-months">${Y.aylik.map((v, i) => `<div>${v ? `<em>${fmtG(v)}</em>` : ""}<i style="height:${(v / mx) * 70}%;${v ? "" : "background:#e2dac4"}"></i>${MI[i]}</div>`).join("")}</div>` : ""}
+    ${P.diger.length ? `<hr class="pz-hr"><div class="pz-h">DİĞER İZİNLER</div>` + P.diger.map(({ x, c }) => row(rangeTxt(x), fmtG(c.gun) + " gün") + `<div class="pz-sub">${esc(izAd(x))}${x.ti ? " · " + esc(x.ti) : ""}</div>`).join("") : ""}
+    <div class="pz-bc"></div>
+    <div class="pz-warn">KİŞİSEL AJANDA KAYDIDIR</div>
+    <div class="pz-c pz-s">Bilgi paylaştıkça büyür · sadolayn.github.io/SadoDepo</div>`;
+  if ($("ajanda").classList.contains("active")) { el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; }
+}
+if (!CanvasRenderingContext2D.prototype.roundRect) CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h) { this.rect(x, y, w, h); };
+function posCanvasA() {
+  const P = posModel(), Y = P.Y, W = 640, M = 40, st = stampOf(P);
+  const c = document.createElement("canvas"); c.width = W; c.height = 1500 + (P.izin.length + P.diger.length) * 56 + Math.min(P.isler.length, 40) * 30;
+  const g = c.getContext("2d");
+  g.fillStyle = "#fbf7ec"; g.fillRect(0, 0, W, c.height);
+  const T = (t, x, y, f, col, al) => { g.font = f; g.fillStyle = col || "#262626"; g.textAlign = al || "left"; g.fillText(t, x, y); };
+  const fit = (t, f, w) => { g.font = f; if (g.measureText(t).width <= w) return t; while (t.length > 1 && g.measureText(t + "…").width > w) t = t.slice(0, -1); return t + "…"; };
+  const hr = (y) => { g.strokeStyle = "#bdb5a0"; g.lineWidth = 1; g.setLineDash([6, 5]); g.beginPath(); g.moveTo(M, y); g.lineTo(W - M, y); g.stroke(); g.setLineDash([]); };
+  const mono = (sz, b) => `${b ? "bold " : ""}${sz}px 'Courier New', monospace`;
+  const row = (a, b, y, bold) => { T(a, M, y, mono(bold ? 24 : 20, bold)); T(b, W - M, y, mono(bold ? 24 : 20, 1), "#262626", "right"); };
+  const bw = W - 2 * M;
+  T("SADOLAYN", W / 2, 66, "italic bold 44px Georgia, serif", "#a8741c", "center");
+  T("TAKVİM & AJANDA · YILLIK DÖKÜM", W / 2, 100, mono(18), "#555", "center");
+  T(String(P.y), W / 2, 130, mono(26, 1), "#262626", "center");
+  T(`${P.when} · Fiş no ${P.fis}`, W / 2, 158, mono(16), "#777", "center");
+  let y = 180; hr(y); y += 32; T("İŞ ÖZETİ", M, y, mono(15, 1), "#8a8270"); y += 32;
+  P.ozet.forEach(([ic, ad, v]) => { row(`${ic} ${ad}`, v.n ? `${v.n} (${v.ok} ✓)` : "—", y); y += 30; });
+  y += 4; hr(y); y += 32; T(`KAYITLAR · ${P.isler.length}`, M, y, mono(15, 1), "#8a8270"); y += 32;
+  if (P.isler.length) { P.isler.slice(0, 40).forEach((x) => { const l = `${x.ok ? "✓" : "·"} ${isIc(x)} ${shD(x.d)}${x.tm ? " " + x.tm : ""}`; T(l, M, y, mono(19)); g.font = mono(19); const lw = g.measureText(l).width; T(fit(x.ti, mono(19), bw - lw - 20), W - M, y, mono(19), "#262626", "right"); y += 30; }); if (P.isler.length > 40) { T(`+${P.isler.length - 40} kayıt daha`, M, y, mono(15), "#8a8270"); y += 28; } }
+  else { T("Kayıt yok", M, y, mono(20), "#999"); y += 30; }
+  y += 4; hr(y); y += 32; T("YILLIK İZİN", M, y, mono(15, 1), "#8a8270"); y += 32;
+  if (Y.top) {
+    row("Yıllık hak", fmtG(Y.hak) + " gün", y); y += 30;
+    if (Y.dev) { row("Devreden", fmtG(Y.dev) + " gün", y); y += 30; }
+    row("Kullanılan", "−" + fmtG(Y.kul) + " gün", y); y += 30; row("Planlanan", "−" + fmtG(Y.pln) + " gün", y); y += 14;
+    g.fillStyle = "#262626"; g.fillRect(M, y, bw, 2); y += 32; row("KALAN", fmtG(Y.kal) + " gün", y, 1); y += 18;
+    const tot = Math.max(Y.top, Y.kul + Y.pln, 1);
+    g.fillStyle = "#ebe4d0"; g.beginPath(); g.roundRect(M, y, bw, 16, 8); g.fill();
+    g.save(); g.beginPath(); g.roundRect(M, y, bw, 16, 8); g.clip();
+    g.fillStyle = "#a77bf3"; g.fillRect(M, y, bw * Y.kul / tot, 16); g.fillStyle = "#cdb8f5"; g.fillRect(M + bw * Y.kul / tot, y, bw * Y.pln / tot, 16); g.restore(); y += 46;
+  }
+  const per = (arr, sub) => arr.forEach(({ x, c }) => { row(rangeTxt(x), fmtG(c.gun) + " gün", y); y += 24; const s = sub(x, c); if (s) { T(fit(s, mono(15), bw), M, y, mono(15), "#8a8270"); y += 32; } else y += 8; });
+  if (P.izin.length) per(P.izin, (x, c) => [x.ti, c.hol.length ? "resmi tatil sayılmadı: " + c.hol.map((h) => h.split(" ").slice(0, 2).join(" ")).join(", ") : ""].filter(Boolean).join(" · "));
+  else { T("Yıllık izin kaydı yok", M, y, mono(20), "#999"); y += 32; }
+  if (Y.kul + Y.pln) {
+    const mx = Math.max(...Y.aylik, 1), cw = bw / 12; y += 8;
+    Y.aylik.forEach((v, i) => { const h = (v / mx) * 70, x0 = M + i * cw + cw * 0.15; g.fillStyle = v ? "#a77bf3" : "#e2dac4"; g.fillRect(x0, y + 80 - Math.max(h, 3), cw * 0.7, Math.max(h, 3)); if (v) T(fmtG(v), x0 + cw * 0.35, y + 74 - h, mono(13, 1), "#262626", "center"); T(MI[i], x0 + cw * 0.35, y + 100, mono(13), "#8a8270", "center"); });
+    y += 124;
+  }
+  if (P.diger.length) { hr(y); y += 32; T("DİĞER İZİNLER", M, y, mono(15, 1), "#8a8270"); y += 32; per(P.diger, (x) => izAd(x) + (x.ti ? " · " + x.ti : "")); }
+  y += 6; g.fillStyle = "#262626"; let bx = W * 0.15, i = 0; while (bx < W * 0.85) { const w = [2, 1, 3, 1, 2][i++ % 5]; g.fillRect(bx, y, w, 40); bx += w + [2, 3, 1, 2][i % 4]; }
+  y += 66; T("KİŞİSEL AJANDA KAYDIDIR", W / 2, y, mono(14, 1), "#8a8270", "center");
+  y += 26; T("Bilgi paylaştıkça büyür · sadolayn.github.io/SadoDepo", W / 2, y, mono(15), "#777", "center"); y += 34;
+  if (st) { g.save(); g.translate(W - 150, 214); g.rotate(-0.18); g.scale(.8, .8); g.strokeStyle = st.c; g.lineWidth = 4; g.font = "800 22px system-ui, sans-serif"; const tw = g.measureText(st.t).width + 30; g.fillStyle = "rgba(251,247,236,.75)"; g.fillRect(-tw / 2, -24, tw, 48); g.strokeRect(-tw / 2, -24, tw, 48); T(st.t, 0, 8, "800 22px system-ui, sans-serif", st.c, "center"); g.restore(); }
+  const out = document.createElement("canvas"); out.width = W; out.height = y + 14; const o = out.getContext("2d");
+  o.drawImage(c, 0, 0); o.fillStyle = "#fff"; for (let x = 7; x < W; x += 14) { o.beginPath(); o.arc(x, out.height, 6, 0, 7); o.fill(); }
+  return out;
+}
+const loadJs = (src) => new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); });
+$("aPdf").onclick = async () => {
+  try {
+    if (!window.jspdf) { atoast("PDF hazırlanıyor…"); await loadJs("lib/jspdf.umd.min.js"); }
+    const c = posCanvasA(), w = 80, h = (c.height / c.width) * w;
+    const doc = new window.jspdf.jsPDF({ unit: "mm", format: [w, h], orientation: "portrait" });
+    doc.addImage(c.toDataURL("image/jpeg", 0.92), "JPEG", 0, 0, w, h);
+    doc.save(`Ajanda_${aYear}.pdf`); atoast("PDF indirildi");
+  } catch (e) { atoast("PDF oluşturulamadı, görsel olarak indir"); }
+};
+$("aPng").onclick = async () => {
+  const blob = await new Promise((r) => posCanvasA().toBlob(r, "image/png")), ad = `Ajanda_${aYear}.png`, file = new File([blob], ad, { type: "image/png" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title: `${aYear} ajanda dökümü` }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = ad; document.body.appendChild(a); a.click(); a.remove(); atoast("Görsel indirildi");
+};
+// ---------- Yedek ----------
+$("bkOut").onclick = () => {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify({ app: "sadolayn-ajanda", v: 2, ...A }, null, 1)], { type: "application/json" }));
+  a.download = `ajanda-yedek-${keyOf(today)}.json`; document.body.appendChild(a); a.click(); a.remove(); atoast("Yedek indirildi");
+};
+$("bkIn").onclick = () => $("bkFile").click();
+$("bkFile").onchange = async () => {
+  const f = $("bkFile").files[0]; if (!f) return;
+  const D = /^\d{4}-\d\d-\d\d$/;
+  try {
+    const j = JSON.parse(await f.text());
+    if (!j || !Array.isArray(j.items)) throw 0;
+    const ok = j.items.filter((x) => x && TYPES[x.t] && D.test(x.d)).map((x) => ({ id: String(x.id || Math.random().toString(36).slice(2)), t: x.t, d: x.d, ti: String(x.ti || "").slice(0, 80), ...(x.k && IZK[x.k] ? { k: x.k } : {}), ...(x.e && D.test(x.e) ? { e: x.e } : {}), ...(x.tm ? { tm: String(x.tm).slice(0, 5) } : {}), ...(x.half ? { half: 1 } : {}), ...(x.ok ? { ok: 1 } : {}), ...(x.n ? { n: String(x.n).slice(0, 300) } : {}) }));
+    const ids = new Set(A.items.map((x) => x.id)); let n = 0;
+    for (const x of ok) if (!ids.has(x.id)) { A.items.push(x); n++; }
+    for (const k of ["hak", "dev"]) if (j[k] && typeof j[k] === "object") for (const y in j[k]) if (A[k][y] == null && Number.isFinite(Number(j[k][y]))) A[k][y] = Number(j[k][y]);
+    saveA(); renderAll(); atoast(`${n} kayıt yüklendi`);
+  } catch (e) { atoast("Bu dosya ajanda yedeği değil"); }
+  $("bkFile").value = "";
+};
+function renderAll() { renderMonth(); if (selected) showDetail(selected); renderYear(); renderAjanda(); }
+// ================= Sekmeler ve başlangıç =================
+document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll(".tabs button").forEach((x) => x.classList.remove("active"));
+  document.querySelectorAll(".panel").forEach((x) => x.classList.remove("active"));
+  b.classList.add("active"); $(b.dataset.tab).classList.add("active");
+  document.querySelectorAll(".sh").forEach((x) => x.classList.toggle("on", x.dataset.sh === b.dataset.tab));
+  window.scrollTo({ top: 0 });
+  $("fab").hidden = !["ay", "yil", "ajanda"].includes(b.dataset.tab);
+  if (b.dataset.tab === "ajanda") renderAjanda();
+  setStickH();
+}));
+function setStickH() { const s = document.querySelector(".stick"); if (s) document.documentElement.style.setProperty("--stickH", s.offsetHeight + "px"); }
+window.addEventListener("resize", setStickH);
+const iso = (d) => keyOf(d);
+$("h1a").value = iso(today);
+const endM = new Date(today.getFullYear(), today.getMonth() + 1, 0, 12);
+$("h1b").value = iso(endM);
+$("h2a").value = iso(today);
+selected = today;
+// TCMB PPK toplantıları (data/ppk.json): ay görünümünün altında o ayın karar günü ve linki
+let PPKJ = null;
+const TCMB_TAKVIM = "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/Para+Politikasi+Kurulu/Toplanti+Takvimi";
+function ppkAy(y, m) {
+  const el = $("ppkAy"); if (!el) return;
+  const list = (PPKJ && PPKJ.meetings) || [];
+  const ay = `${y}-${String(m + 1).padStart(2, "0")}-`, g = list.filter((d) => d.startsWith(ay));
+  if (!g.length) { el.innerHTML = ""; return; }
+  const L = PPKJ.last, h = g.map((d) => {
+    const dt = new Date(d + "T12:00:00"), s = dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
+    const k = L && L.date === d ? ` → politika faizi <b>%${String(L.rate).replace(".", ",")}</b> · <a href="${L.url || TCMB_TAKVIM}" target="_blank" rel="noopener">karar metni ↗</a>` : ` 14:00 · <a href="${TCMB_TAKVIM}" target="_blank" rel="noopener">TCMB takvimi ↗</a>`;
+    return `🏦 PPK faiz kararı: <b>${s}</b>${k}`;
+  }).join("<br>");
+  el.innerHTML = h;
+}
+if (window.Ortak && Ortak.json) Ortak.json("data/ppk.json").then((j) => { PPKJ = j; ppkAy(view.getFullYear(), view.getMonth()); }).catch(() => {});
+renderMonth(); showDetail(today); calc1(); calc2(); renderList(); renderYear(); renderAjanda(); setStickH();
+if (window.Vergi) Vergi.init({ el: $("vergi"), dayInfo: (d) => { const i = info(d); return { we: i.we, hol: i.full, half: i.half, name: (i.recs.find((r) => r.type !== "dini") || {}).name || "" }; } });
+if (location.hash === "#ajanda") document.querySelector('.tabs button[data-tab="ajanda"]').click();
+if (location.hash === "#vergi") document.querySelector('.tabs button[data-tab="vergi"]').click();
+{ const th = location.hash.slice(1); if (["yil", "hesap", "liste"].includes(th)) document.querySelector('.tabs button[data-tab="' + th + '"]').click(); } // ana sayfa aramasından gelince
