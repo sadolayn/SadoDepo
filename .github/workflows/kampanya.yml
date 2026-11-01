@@ -4,6 +4,7 @@ name: Kampanyalar
 on:
   schedule:
     - cron: "23 5,12 * * *"
+    - cron: "23 0,2,8 1 * *"  # her ayın 1'i ek turlar: İstanbul 03:23, 05:23, 11:23 (ay başı kampanyaları erken yakalansın)
   workflow_dispatch:
 permissions:
   contents: write
