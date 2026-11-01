@@ -196,12 +196,13 @@ KOK_M = "https://www.maximum.com.tr"
 def max_kartlar(body, kok=KOK_M):
     """Kartlar 'Son N Gün' şeridine göre bölünür; başlık şeritten sonraki ilk anlamlı metin, bağlantı kampanya detayı."""
     b = temiz(body)
-    yer = [m for m in re.finditer(r"Son\s+(\d+)\s+G[üu]n", b)]
+    # Şerit "Son N Gün" ya da bitiş günü "Son Gün" (sayı yok; 1 Kasım 2026 ticari sayfasında 17 kartın 5'i böyleydi ve atlanıyordu)
+    yer = [m for m in re.finditer(r"Son\s+(?:(\d+)\s+)?G[üu]n\b", b)]
     out, gor = [], set()
     for i, m in enumerate(yer):
         parca = b[m.end(): (yer[i + 1].start() if i + 1 < len(yer) else m.end() + 6000)]
         metinler = [metin(x) for x in re.findall(r">([^<>]{6,400})<", parca)]
-        metinler = [x for x in metinler if x and not re.match(r"(?i)^(detaylı bilgi|maximum kart.?a başvur|başvur|son \d+ gün)", x)]
+        metinler = [x for x in metinler if x and not re.match(r"(?i)^(detaylı bilgi|maximum kart.?a başvur|başvur|son( \d+)? gün$)", x)]
         if not metinler:
             continue
         # Kartın bağlantısı "Son N Gün" şeridinden ÖNCE gelir (görselin bağlantısı): önceki karttan bu şeride kadarki son kampanya bağlantısı
@@ -215,7 +216,7 @@ def max_kartlar(body, kok=KOK_M):
         if anahtar in gor:
             continue
         gor.add(anahtar)
-        kalan = int(m.group(1))
+        kalan = int(m.group(1)) if m.group(1) else 1  # "Son Gün": bugün son gün
         # "Son N Gün" şeridi kampanyaların çoğunda bugünü de sayar (25 Ekim'de "Son 7 Gün" → 31 Ekim). Bazılarında bir gün eksik
         # sayıyor; aynı kampanya isbank.com.tr'de de varsa bitiş günü oradaki açık tarihten alınır (dosyanın sonundaki eşleme)
         out.append({"baslik": kisalt(metinler[0], 160), "bitis": (bugun + dt.timedelta(days=max(0, kalan - 1))).isoformat(),
