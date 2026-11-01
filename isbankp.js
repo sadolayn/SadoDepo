@@ -197,6 +197,9 @@ function icerigeKay() {
 }
 
 // Bitişe kalan gün: son gün 1, ertesi gün 0 ya da eksi (biten kampanya için "> 0" ile bakılır; -0 da biter sayılır)
+// Ekranda yazan "Son N gün": İşCep gibi bugün sayılmaz (30 Kasım biten kampanya 1 Kasım'da "Son 29 gün"); bitiş günü "Son gün".
+// daysLeft bugünü de sayar (bitiş günü 1) ve süresi geçenleri ayıklamada kullanılır; ona dokunulmaz.
+const sonN = (n) => n - 1;
 function daysLeft(d) {
   const end = new Date(d + "T23:59:59"), now = new Date();
   return Math.ceil((end - now) / 86400000);
@@ -244,7 +247,7 @@ function oneHtml() {
     const L = camps.filter((c) => g.re.test(c.baslik + " " + c.ozet)).concat(g.black && blk && blk.ayricaliklar ? blk.ayricaliklar.slice(0, 6).map((k) => ({ baslik: k.baslik, bitis: k.bitis || "2026-12-31" })) : []);
     const hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) > 0);
     return `<div class="ocard${hot ? " hot" : ""}" id="one${i}"><div class="oh"><i>${g.ic}</i><b>${g.ad}</b>${hot ? '<span class="newtag">TAM ZAMANI</span>' : ""}<em>${L.length ? L.length + " kampanya" : ""}</em></div>
-      <p>${g.bitis && daysLeft(g.bitis) <= 0 ? g.sonra : g.rehber}${g.bitis && daysLeft(g.bitis) > 0 ? ` <b style="color:#ffb27a">${daysLeft(g.bitis) <= 1 ? "Son gün." : `Son ${daysLeft(g.bitis)} gün.`}</b>` : ""}</p>
+      <p>${g.bitis && daysLeft(g.bitis) <= 0 ? g.sonra : g.rehber}${g.bitis && daysLeft(g.bitis) > 0 ? ` <b style="color:#ffb27a">${daysLeft(g.bitis) <= 1 ? "Son gün." : `Son ${sonN(daysLeft(g.bitis))} gün.`}</b>` : ""}</p>
       ${L.map((c) => { const t = `<span>${esc(c.baslik)}${c.url ? '&nbsp;<i class="oarr">↗</i>' : ""}</span><small>${daysLeft(c.bitis) <= 3 ? "🔥 " : ""}${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small>`;
         return c.url ? `<a class="omini olnk" href="${esc(c.url)}" target="_blank" rel="noopener">${t}</a>` : `<div class="omini">${t}</div>`; }).join("")}
       <div class="olinks">${g.link && !(g.bitis && daysLeft(g.bitis) <= 0) ? `<a class="olink" href="${g.link}" target="_blank" rel="noopener">${g.linkAd || "Kampanya koşulları"} ↗</a>` : ""}${g.link2 ? `<a class="olink" href="${g.link2}" target="_blank" rel="noopener">${g.link2Ad} ↗</a>` : ""}${!g.black && !g.link2 ? `<a class="olink dim" href="${g.tum || "https://www.maximum.com.tr/kampanyalar"}" target="_blank" rel="noopener">${g.tumAd || "maximum.com.tr'de tüm kampanyalar"} ↗</a>` : ""}</div>${g.black ? `<button type="button" class="olink tolink" data-cat="Black" style="background:none;border:none;padding:0">🖤 Black sayfasına git ›</button>` : ""}</div>`;
@@ -285,7 +288,7 @@ function odeHtml() {
   const L = camps.filter((c) => !known.has(c.url) && /temassız|temassiz|karekod|qr|maxsticker|saat ile|yüz ile|işpay|ispay/i.test(c.baslik + " " + c.ozet));
   const tag = (o) => K.filter((k) => k.yollar.includes(o.ic));
   const kCard = (k, i) => { const n = kGun(k); return `<a class="kz" id="kz${i}" href="${k.u}" target="_blank" rel="noopener">
-      <div class="kzh"><i>${k.ic}</i><b>${k.ad}</b><span class="${n <= 3 ? "u" : ""}">${n <= 1 ? "Son gün" : "Son " + n + " gün"}</span></div>
+      <div class="kzh"><i>${k.ic}</i><b>${k.ad}</b><span class="${n <= 3 ? "u" : ""}">${n <= 1 ? "Son gün" : "Son " + sonN(n) + " gün"}</span></div>
       <div class="kzo">${k.od}</div>
       <div class="kzy">${k.yollar.map((y) => { const o = ODE.find((x) => x.ic === y); return `<em>${y} ${o ? o.ad : ""}</em>`; }).join("")}</div>
       <p>${k.not}</p><small>${new Date(k.bas + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })} – ${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })} · koşullar ↗</small></a>`; };
@@ -488,7 +491,7 @@ function campCal() {
   const sagla = (L) => { const say = Object.keys(K_KAY).map((k) => [k, L.filter((x) => x._kay === k).length]).filter((x) => x[1]); return say.length > 1 ? ` <small>${say.map(([k, n]) => K_KAY[k][0] + " " + K_KAY[k][1] + " " + n).join(" · ")}</small>` : ""; };
   const secili = calGun && ends[calGun] ? `<div class="calgun" id="calGunList"><div class="cgh"><span>🔴 ${gAd(calGun)} biten <b>${ends[calGun].length}</b> kampanya${sagla(ends[calGun])}</span><button type="button" id="calKapat">✕</button></div>${ends[calGun].map(kart).join("")}</div>` : `<p class="calipucu">👆 Sayılı güne dokun: o gün biten kampanyalar açılsın.</p>`;
   const sirali = (kaynakli || camps).filter((k) => k.bitis && daysLeft(k.bitis) > 0).sort((a, b) => a.bitis.localeCompare(b.bitis)).slice(0, 8);
-  const yakinda = sirali.length ? `<div class="calyak"><b>⏳ Yakında bitenler</b>${sirali.map((k) => { const n = daysLeft(k.bitis); return `<a class="cy${n <= 3 ? " acil" : ""}" href="${esc(k.url || "#")}" target="_blank" rel="noopener"><em>${n <= 1 ? "Son gün" : n + " gün"}</em><span>${esc(k.baslik)}</span><small>${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></a>`; }).join("")}</div>` : "";
+  const yakinda = sirali.length ? `<div class="calyak"><b>⏳ Yakında bitenler</b>${sirali.map((k) => { const n = daysLeft(k.bitis); return `<a class="cy${n <= 3 ? " acil" : ""}" href="${esc(k.url || "#")}" target="_blank" rel="noopener"><em>${n <= 1 ? "Son gün" : sonN(n) + " gün"}</em><span>${esc(k.baslik)}</span><small>${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></a>`; }).join("")}</div>` : "";
   // Önümüzdeki 7 gün şeridi
   const t0 = new Date(), hafta = [...Array(7)].map((_, i) => { const x = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate() + i); const g = `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
     return `<button type="button" class="hg${(ends[g] || []).length ? " var" : ""}${calGun === g ? " on" : ""}"${(ends[g] || []).length ? ` data-g="${g}"` : " disabled"}><small>${i === 0 ? "Bugün" : i === 1 ? "Yarın" : x.toLocaleDateString("tr-TR", { weekday: "short" })}</small><b>${x.getDate()}</b><em>${(ends[g] || []).length || "–"}</em></button>`; }).join("");
@@ -541,7 +544,7 @@ function campTick() {
 }
 function campCard(k) {
   const n = daysLeft(k.bitis), u = n <= 3;
-  const left = n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
+  const left = n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${sonN(n)} gün` : `Son ${sonN(n)} gün`;
   const bit = new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
   return `<div class="camp${u ? " urgent" : ""}" style="--c:${TUR[k.tur] || "var(--muted)"}">
       <div class="top"><span class="tag">${esc(k.tur)}${isNew("c:" + k.baslik) ? '<span class="newtag">YENİ</span>' : ""}</span><span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}" title="Bitiş: ${bit}">${left}</span></div>
@@ -599,7 +602,7 @@ function kKart(k, renk, ticari) {
   const n = k.bitis ? daysLeft(k.bitis) : null, u = n != null && n <= 3, yeni = k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
   // Yeni görünen ama metnindeki başlangıcı en az 7 gün önce olan kampanya: listeye sonradan eklenmiş, "yeni başladı" sanılmasın
   const bas = yeni ? kBasla(k) : "", gec = bas && (new Date(k.ilk + "T00:00:00") - new Date(bas + "T00:00:00")) / 864e5 >= 7;
-  const left = n == null ? "" : n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${n} gün` : `Son ${n} gün`;
+  const left = n == null ? "" : n <= 1 ? "🔥 Son gün!" : u ? `⏰ Son ${sonN(n)} gün` : `Son ${sonN(n)} gün`;
   const bit = k.bitis ? new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : "";
   const kay = (Object.values(K_KAY).find((x) => k.url.includes(x[2])) || K_KAY.isbank)[2];
   return `<div class="camp${u ? " urgent" : ""}" style="--c:${renk}">
@@ -632,7 +635,7 @@ function kOneHtml(L, renk) {
   const gun = (k) => (k.bitis ? daysLeft(k.bitis) : 999);
   const fmt = (n) => n.toLocaleString("tr-TR");
   const B = [
-    ["🔥", "Bitiyor", "3 gün ya da daha az kaldı", L.filter((k) => gun(k) <= 3).sort((a, b) => gun(a) - gun(b)), (k) => (gun(k) <= 1 ? "Son gün" : `${gun(k)} gün`)],
+    ["🔥", "Bitiyor", "3 gün ya da daha az kaldı", L.filter((k) => gun(k) <= 3).sort((a, b) => gun(a) - gun(b)), (k) => (gun(k) <= 1 ? "Son gün" : `${sonN(gun(k))} gün`)],
     ["🆕", "Yeni eklenen", "son 3 günde listeye yeni giren kampanyalar (yeni müşteriye özel demek değil)", L.filter((k) => k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3).sort((a, b) => b.ilk.localeCompare(a.ilk)), () => "YENİ"],
     ["💰", "En çok kazanç", "puan, mil ya da indirim olarak en yüksek TL tutarı", L.filter((k) => tl(k) >= 100).sort((a, b) => tl(b) - tl(a)), (k) => fmt(tl(k)) + " TL"],
     ["📆", "En uzun taksit", "taksit sayısına göre", L.filter((k) => tk(k) >= 2).sort((a, b) => tk(b) - tk(a)), (k) => tk(k) + " taksit"],
