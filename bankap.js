@@ -533,7 +533,7 @@ function calcAO(c) {
 let kkManual = false;
 ["k_akdi", "k_gec"].forEach((x) => $(x).addEventListener("input", () => (kkManual = true)));
 function kkTier(b) {
-  // TCMB azami aylık oranlar (1 Ekim 2026 itibarıyla; İş Bankası Maximum'da aynı): akdi / gecikme
+  // TCMB azami aylık oranlar (1 Kasım 2026 itibarıyla; İş Bankası Maximum'da aynı): akdi / gecikme
   if (b < 30000) return [3.25, 3.55, "30.000 TL altı"];
   if (b <= 180000) return [3.75, 4.05, "30.000 – 180.000 TL"];
   return [4.25, 4.55, "180.000 TL üstü"];
@@ -558,7 +558,7 @@ function calcKK() {
   const TB = [[0, "30.000 TL altı", 3.25, 3.55], [30000, "30.000 – 180.000 TL", 3.75, 4.05], [180001, "180.000 TL üstü", 4.25, 4.55]];
   $("k_note").innerHTML = `<b>Oranlar neden değişiyor?</b> TCMB azami faizi <b>dönem borcunun tutarına göre</b> üç dilimde belirliyor. Dönem borcunu değiştirince dilim değişirse oranlar da kendiliğinden değişir${kkManual ? " (şu an oranları elle girdin, otomatik seçim kapalı)" : ""}:
     <table class="ltvtab" style="margin-top:6px"><tr><th>Dönem borcu</th><th>Akdi</th><th>Gecikme</th></tr>${TB.map((r) => `<tr class="${!kkManual && r[1] === t[2] ? "on" : ""}"><td>${r[1]}</td><td>%${nfx(r[2])}</td><td>%${nfx(r[3])}</td></tr>`).join("")}</table>
-    <span style="display:block;margin-top:4px">📌 <b>maximum.com.tr'de yayımlanan oranlar:</b> Maximum kartlarda akdi faiz %3,25 / %3,75 / %4,25 (aylık, BSMV-KKDF hariç; <a href="https://www.maximum.com.tr/harcama-taksitlendirme" target="_blank" rel="noopener" style="color:var(--accent)">maximum.com.tr ↗</a>). Oranlar TCMB\'nin 1 Ekim 2026 tablosuyla aynı; kesin oran hesap özetinde yazar.</span>`;
+    <span style="display:block;margin-top:4px">📌 <b>maximum.com.tr'de yayımlanan oranlar:</b> Maximum kartlarda akdi faiz %3,25 / %3,75 / %4,25 (aylık, BSMV-KKDF hariç; <a href="https://www.maximum.com.tr/harcama-taksitlendirme" target="_blank" rel="noopener" style="color:var(--accent)">maximum.com.tr ↗</a>). Oranlar TCMB\'nin 1 Kasım 2026 tablosuyla aynı; kesin oran hesap özetinde yazar.</span>`;
   $("k_out").textContent = tl(top);
   $("k_lim").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.a === num("k_asg")));
   $("k_oto").innerHTML = `<span>✓</span><span>Oranlar otomatik: <b>akdi %${nfx(ra * 100)}</b> · <b>gecikme %${nfx(rg * 100)}</b> · asgari %${nfx(num("k_asg"))} · ${g} gün · BSMV+KKDF %${nfx(v * 100)}${kkManual ? " (elle girildi)" : ` <span style="opacity:.75">(dönem borcu ${t[2]} dilimi, maximum.com.tr'de yayımlanan oran)</span>`}. Sadece borcu, ödenen tutarı ve limiti girmen yeter.</span>`;

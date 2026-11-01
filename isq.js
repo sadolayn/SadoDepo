@@ -72,8 +72,7 @@ const ISQ_ALL = [].concat(
     ["İş Bankası'nın tarım üreticilerine girdi alımları için sunduğu kartın adı nedir?", ["Başak Kart", "İmece Kart", "Üretici Kart", "Bereket Kart"], 1],
     ["Kredi kartı kampanyalarını, harcama ve MaxiPuan takibini tek yerde toplayan İş Bankası uygulaması hangisidir?", ["Maximum Mobil", "İşCep Cüzdan", "Bonus Flaş", "Axess Mobil"], 0],
     ["İş Bankası'nda kredili mevduat hesabının (KMH) yaygın adı nedir?", ["Artı Para", "Ek Hesap", "Avans Hesap", "Esnek Hesap"], 1],
-    ["Ekim 2026 kampanyası: Maximum anlaşmalı marketlerde tek seferde 20.000 TL alışverişe kaç TL MaxiPuan veriliyor?", ["250 TL", "500 TL", "1.000 TL", "2.000 TL"], 2, "2026-10-31"],
-    ["Ekim 2026 'İş Bankası'nı Arkadaşınıza Önerin' kampanyasında davet eden ve yeni müşteri olan arkadaşı kaçar TL MaxiPuan kazanır?", ["100 TL", "250 TL", "500 TL", "1.000 TL"], 2, "2026-10-31"],
+    ["İş Bankası'nda limiti 100.000 TL'nin üzerinde olan kredi kartlarında asgari ödeme tutarı dönem borcunun yüzde kaçıdır?", ["%10", "%20", "%40", "%50"], 2],
   ]),
 
   // --- İşCep ve dijital ---
@@ -149,6 +148,7 @@ const ISQ_ALL = [].concat(
     ["İş Black müşterilerine kültür-sanat etkinliklerinde yüzde kaç indirim var?", ["%10", "%20", "%30", "%50"], 1],
     ["Maximiles Black kartta 1 MaxiMil kaç TL değerindedir?", ["0,10 TL", "0,50 TL", "1 TL", "2 TL"], 2],
     ["Maximiles Black'te bilet ve konaklama kartla ödenirse yurt dışı seyahat sigortası limiti ne kadardır?", ["5.000 €", "10.000 €", "30.000 €", "100.000 €"], 2],
+    ["Maximiles Black sahiplerine havalimanı otopark ödemelerinde yüzde kaça varan indirim var?", ["%10", "%25", "%50", "%100"], 2],
   ]),
 
   // --- Bankamatik ve Gişematik ---
