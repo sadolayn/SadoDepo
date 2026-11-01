@@ -1006,19 +1006,19 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       : "<b>Bölge Nabzı:</b> ilini ya da ilçeni seç<small>Bölgende neler olduğuna buradan geçersin</small>"));
   })();
 
-  // ---- Aç / kapat: satıra dokununca kart yerinde açılır (tercih bu cihazda kalır); kayan yazıdan da açılır ----
+  // ---- Aç / kapat: sayfa her açılışta kapalı, satıra dokununca kart yerinde açılır; kayan yazıdan da açılır ----
   var row = $("aclRow");
   function durum(acik, kaydir) {
     K.hidden = !acik; row.setAttribute("aria-expanded", acik ? "true" : "false"); row.classList.toggle("acik", acik);
     if (acik) { yaz("aclGordu", B); OZ.gor = ""; ozetYaz(); }
     if (acik && kaydir) row.scrollIntoView({ behavior: "smooth", block: "start" });
   }
-  durum(oku("aclAcik", "0") === "1");
+  durum(false); // her açılışta kapalı başlar; satıra dokununca açılır (site uzamasın)
   row.addEventListener("click", function (e) {
-    e.preventDefault(); var a = K.hidden; durum(a); yaz("aclAcik", a ? "1" : "0");
+    e.preventDefault(); var a = K.hidden; durum(a);
     if (window.Rapor) Rapor.bolum(a ? "acilis-ac" : "acilis-kapat");
   });
-  window.Acilis = { ac: function () { durum(true, true); yaz("aclAcik", "1"); } };
+  window.Acilis = { ac: function () { durum(true, true); } };
   if (location.hash === "#acilis") setTimeout(function () { window.Acilis.ac(); }, 300);
 })();
 </script>
