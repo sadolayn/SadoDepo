@@ -602,6 +602,10 @@ function kBasla(k) {
 }
 // Aynı kampanya başka sitede de yayımlandıysa kartta onun bağlantısı da olsun: biri açılmazsa öbürü açılır
 // (1 Kasım 2026: Maximum'un yeni kasım kampanyalarının sayfaları "Kampanya Bulunamadı" veriyordu; İş Bankası ve Maximiles'taki sayfalar açıktı)
+// Elle eklenen yedek bağlantılar: kampanyanın üç sitede sayfası açılmazken ortağın sitesinde sayfası varsa (başlık anahtarı → [etiket, adres, son gün])
+const K_EK_LINK = {
+  yenikredikartimusterilerineetsdekiseciliotellerveturlarda10000tlyevaranmaxipuanfirsati: ["🏨 etstur.com", "https://www.etstur.com/Kampanyalar/10.000-TL-ye-Varan-MaxiPuan-Firsati", "2026-11-30"], // 1 Kasım 2026: Maximum sayfası "bulunamadı" veriyordu
+};
 let kEsBellek = null;
 function kEsler(k) {
   if (!KH || !KH.isbank) return [];
@@ -611,7 +615,10 @@ function kEsler(k) {
     kEsBellek = { v: KH, m };
   }
   const kendi = Object.keys(K_KAY).find((x) => k.url.includes(K_KAY[x][2]));
-  return Object.entries(kEsBellek.m[kAyni(k)] || {}).filter(([kay, u]) => kay !== kendi && u !== k.url);
+  const E = Object.entries(kEsBellek.m[kAyni(k)] || {}).filter(([kay, u]) => kay !== kendi && u !== k.url);
+  const ek = K_EK_LINK[kAyni(k)];
+  if (ek && daysLeft(ek[2]) > 0) E.push(["ek:" + ek[0], ek[1]]);
+  return E;
 }
 function kKart(k, renk, ticari) {
   const n = k.bitis ? daysLeft(k.bitis) : null, u = n != null && n <= 3, yeni = k.ilk && k.ilk > "2000-01-01" && (Date.now() - new Date(k.ilk + "T00:00:00")) / 864e5 <= 3;
@@ -624,7 +631,7 @@ function kKart(k, renk, ticari) {
       <div class="top"><span class="tag">${kIkon("ne", k.ne)} ${esc(k.ne)} · ${kIkon("nere", k.nere)} ${esc(kKisa(k.nere))}${yeni ? '<span class="newtag">YENİ</span>' : ""}${ticari ? '<span class="ktic">🏢 Ticari</span>' : ""}</span>${left ? `<span class="left ${u ? "urgent" : n <= 7 ? "soon" : ""}">${left}</span>` : ""}</div>
       <b>${esc(k.baslik)}</b>${gec ? `<small class="klis">🗓️ Listeye yeni eklendi · kampanya metninde başlangıç ${new Date(bas + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}</small>` : ""}${k.ozet ? `<p>${esc(k.ozet)}</p>` : ""}
       <div class="cfoot"><span>${bit ? "Bitiş: " + bit : ""}</span><a class="clink" href="${esc(k.url)}" target="_blank" rel="noopener">${kay}'de koşullar ↗</a></div>
-      ${(() => { const E = kEsler(k); if (E.length) return `<div class="kalt">Aynı kampanya: ${E.map(([ky, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${K_KAY[ky][0]} ${K_KAY[ky][2]} ↗</a>`).join(" · ")}</div>`;
+      ${(() => { const E = kEsler(k); if (E.length) return `<div class="kalt">Aynı kampanya: ${E.map(([ky, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${ky.startsWith("ek:") ? esc(ky.slice(3)) : K_KAY[ky][0] + " " + K_KAY[ky][2]} ↗</a>`).join(" · ")}</div>`;
         // Tek sitede yayımlanan kampanya: sayfası açılmazsa o sitenin kampanya listesi (kart orada görünür)
         const sg = k._seg || (ticari ? "ticari" : kSeg), ky = Object.keys(K_KAY).find((x) => k.url.includes(K_KAY[x][2])) || "isbank";
         const L = { isbank: "https://www.isbank.com.tr/kampanyalar" + (sg === "ticari" ? "/ticari-kart-kampanyalari?v=ticari" : ""), maximum: "https://www.maximum.com.tr/kampanyalar/" + sg, maximiles: "https://www.maximiles.com.tr/kampanyalar" }[ky];
