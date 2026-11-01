@@ -1,7 +1,16 @@
 {
-  "guncelleme": "2026-10-31T07:20:00+03:00",
+  "guncelleme": "2026-11-01T07:01:24+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
+    {
+      "tarih": "2026-10-30",
+      "kurum": "SPK",
+      "baslik": "Kredili işlemlerde özkaynak esnekliği 13 Kasım'a kadar uzatıldı",
+      "ozet": "SPK, kredili işlemlerde asgari %35 olan özkaynak oranının aracı kurumların risk politikasına göre %20'ye kadar uygulanabilmesine yönelik geçici tedbiri 2026/78 sayılı bültenle (30 Ekim) bir kez daha uzattı; tedbir 13 Kasım 2026 seans sonuna kadar sürecek. Tedbir ilk olarak 17 Eylül'de getirilmiş, 3 Ekim'de (2026/68 bülten, 65/1779 sayılı karar) 30 Ekim'e kadar uzatılmıştı. Yeni oran getirilmedi, yalnızca süre uzatıldı.",
+      "etki": "Kredili hisse işlemi yapan yatırımcılar için esnek özkaynak uygulaması 13 Kasım seans sonuna kadar devam ediyor.",
+      "onemli": false,
+      "url": "https://paratic.com/spkdan-kredili-islemler-icin-yeni-karar-sure-uzatildi/"
+    },
     {
       "tarih": "2026-10-27",
       "kurum": "SPK",
@@ -85,15 +94,6 @@
       "onemli": true,
       "url": "https://www.ntv.com.tr/turkiye/mecliste-gundem-fon-krizi-cumhurbaskani-yardimcisi-yilmaz-odeme-sureci-yarin-basliyor-1745251",
       "gazete": "2026-10-27"
-    },
-    {
-      "tarih": "2026-10-03",
-      "kurum": "SPK",
-      "baslik": "Kredili işlemlerde özkaynak esnekliği 30 Ekim'e kadar uzatıldı",
-      "ozet": "SPK 2026/68 sayılı bültenle, kredili işlemlerde asgari %35 olan özkaynak oranının aracı kurumların risk politikasına göre %20'ye kadar uygulanabilmesini 30 Ekim 2026 seans sonuna kadar uzattı. Yeni oran getirilmedi, süre uzatıldı.",
-      "etki": "Kredili hisse işlemi yapan yatırımcılar için teminat tamamlama baskısı 30 Ekim'e kadar hafif kalıyor.",
-      "onemli": false,
-      "url": "https://hukukcularevi.com/spk-2026-68-bulteni-kredili-islem-ozkaynak-esnekligi-30-ekim-2026-uzatildi-65-1779-seri-v-65-m17-m18/"
     },
     {
       "tarih": "2026-10-01",
