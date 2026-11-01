@@ -223,11 +223,57 @@ def max_kartlar(body, kok=KOK_M):
                     "ozet": (kisalt(metinler[1], 220) if len(metinler) > 1 and len(metinler[1]) > 25 and not BOS_OZET.search(metinler[1]) else ""), "url": link or kok + "/kampanyalar"})
     return out
 
+# Maximum'un liste sayfasındaki kartlarda açıklama yok; yalnızca Maximum'da yayımlanan kampanyanın kartı sitede başlıktan ibaret kalıyordu
+# (1 Kasım 2026). Kampanyanın kendi sayfasından yalnızca kısa açıklama (meta description ya da ilk paragraf) alınır; ham sayfa saklanmaz.
+# Bir kez okunan sayfa yeniden açılmaz ("oz": 1 hafızası); "Kampanya Bulunamadı" veren sayfa sonraki turda yeniden denenir.
+# Her turda en fazla M_SINIR sayfa açılır (banka sitesine yük olmasın; ilk turlarda liste birkaç günde dolar).
+M_SINIR = 60
+M_ACILAN = [0]
+def m_detay(url):
+    b = get(url)
+    if not b: return None
+    t = temiz(b)
+    if re.search(r"(?i)kampanya\s+bulunamad", metin(t)[:4000]): return None  # detay sayfası henüz yayında değil
+    h1 = re.search(r"(?is)<h1[^>]*>(.*?)</h1>", t)
+    baslik = metin(h1.group(1)) if h1 else ""
+    ozet = ""
+    for pat in (r'(?i)<meta[^>]+name="description"[^>]+content="([^"]*)"', r'(?i)<meta[^>]+property="og:description"[^>]+content="([^"]*)"'):
+        m = re.search(pat, b)
+        if m and len(metin(m.group(1))) >= 40: ozet = metin(m.group(1)); break
+    if not ozet and h1:
+        for m in re.finditer(r"(?is)<p[^>]*>(.*?)</p>", t[h1.end():h1.end() + 20000]):
+            x = metin(m.group(1))
+            if len(x) >= 40 and not BOS_OZET.search(x): ozet = x; break
+    if BOS_OZET.search(ozet) or (baslik and ozet.lower().startswith(baslik.lower()[:30])): ozet = ""
+    return kisalt(ozet, 220)
+
+def m_ozetler(lst):
+    """Açıklaması boş Maximum kampanyalarına kendi sayfasından kısa açıklama; önce hafıza, sonra (sınırlı sayıda) sayfa."""
+    bilinen = {k["url"]: k for seg_ in ("bireysel", "ticari") for k in ((eski.get("maximum") or {}).get(seg_) or {}).get("kampanyalar", []) if k.get("oz")}
+    for k in lst:
+        if k.get("ozet"): continue
+        if k["url"] in bilinen:
+            k["ozet"], k["oz"] = bilinen[k["url"]].get("ozet", ""), 1
+            continue
+        if M_ACILAN[0] >= M_SINIR or k["url"].rstrip("/").endswith("/kampanyalar"): continue
+        M_ACILAN[0] += 1
+        o = m_detay(k["url"])
+        if o is None: continue
+        k["ozet"], k["oz"] = o, 1
+    # Birçok kampanyada birebir aynı çıkan açıklama sitenin genel tanıtım yazısıdır, kampanya açıklaması değil
+    say = {}
+    for k in lst:
+        if k.get("ozet"): say[k["ozet"]] = say.get(k["ozet"], 0) + 1
+    for k in lst:
+        if k.get("ozet") and say[k["ozet"]] >= 3: k["ozet"] = ""
+    return lst
+
 def maximum(segment):
     body = get(f"{KOK_M}/kampanyalar/{segment}")
     if not body:
         return None
-    lst = max_kartlar(body)
+    lst = m_ozetler(max_kartlar(body))
+    print(f"maximum/{segment}: açıklama için açılan sayfa {M_ACILAN[0]}, açıklamalı {sum(1 for k in lst if k.get('ozet'))}/{len(lst)}")
     say = re.search(r"Kampanya\s+Sayısı\s*\(\s*(\d+)\s*\)", temiz(body))
     return {"toplam": int(say.group(1)) if say else len(lst), "kampanyalar": lst}
 
@@ -562,6 +608,18 @@ for v in (veri.get("maximiles") or {}).values():
     if not v: continue
     for k in v.get("kampanyalar", []):
         if _ayni(k["baslik"]) in _bitis: k["bitis"] = _bitis[_ayni(k["baslik"])]
+# Aynı kampanyanın bir sitedeki açıklaması boşsa öbür sitedeki açıklaması kullanılır (isbank.com.tr en ayrıntılı yazar)
+_ozet = {}
+for kaynak in ("isbank", "maximiles", "maximum"):
+    for v in (veri.get(kaynak) or {}).values():
+        if not v: continue
+        for k in v.get("kampanyalar", []) + [x for c in v.get("kategoriler", []) for x in c["kampanyalar"]]:
+            if k.get("ozet"): _ozet.setdefault(_ayni(k["baslik"]), k["ozet"])
+for kaynak in ("maximum", "maximiles", "isbank"):
+    for v in (veri.get(kaynak) or {}).values():
+        if not v: continue
+        for k in v.get("kampanyalar", []) + [x for c in v.get("kategoriler", []) for x in c["kampanyalar"]]:
+            if not k.get("ozet") and _ayni(k["baslik"]) in _ozet: k["ozet"] = _ozet[_ayni(k["baslik"])]
 for kaynak in ("isbank", "maximum", "maximiles"):
     for v in (veri.get(kaynak) or {}).values():
         if not v: continue
