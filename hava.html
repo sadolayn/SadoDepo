@@ -88,17 +88,41 @@
   .sun .ev .t { flex: 1; } .sun .ev small { display: block; color: var(--muted); font-size: 12px; }
   .sun .ev .r { text-align: right; font-weight: 600; white-space: nowrap; } .sun .ev .r small { font-weight: 400; }
   .sun svg { width: 100%; height: 70px; display: block; margin-top: 6px; }
-  .nt .ntb { font-size: 20px; text-align: center; margin: 2px 0 6px; } .nt .ntb b { color: #8fa8ff; }
-  .nt .nts { font-size: 13px; color: #cfcfcf; text-align: center; line-height: 1.5; margin-bottom: 4px; } .nt .nts b { color: #fff; }
-  .nt .ntg { height: 80px; margin-top: 10px; } .nt .ntg rect { cursor: pointer; } .nt .ntg rect.on { fill: #fff; }
-  .nt .ntc { font-size: 12.5px; color: var(--muted); text-align: center; margin: 6px 0 4px; min-height: 18px; } .nt .ntc b { color: #fff; }
-  .nt .ntt { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 6px; font-variant-numeric: tabular-nums; }
-  .nt .ntt th { font-size: 11.5px; color: var(--muted); font-weight: 600; text-align: right; padding: 4px; border-bottom: 1px solid var(--line); }
-  .nt .ntt td { padding: 6px 4px; border-bottom: 1px solid #1c1c1c; text-align: right; } .nt .ntt th:first-child, .nt .ntt td:first-child { text-align: left; }
-  .nt .ntt td.art { color: #8fa8ff; } .nt .ntt td.azl { color: #f5c04a; }
-  .nt .ntt tr.bu td { font-weight: 700; } .nt .ntt tr.don td { color: #fff; font-weight: 700; background: rgba(143,168,255,.1); }
-  .nt .ntd summary { cursor: pointer; font-size: 13px; color: #8fa8ff; padding: 10px 0 4px; min-height: 24px; }
-  .nt .ntn { font-size: 11.5px; color: var(--muted); margin-top: 10px; }
+  .nt { position: relative; overflow: hidden; border-radius: 20px; padding: 18px 16px 14px; margin-bottom: 12px; color: #e8ecff; border: 1px solid #26307a;
+    background: radial-gradient(1.2px 1.2px at 12% 18%, #fff 60%, transparent 61%), radial-gradient(1px 1px at 28% 62%, #cfd6ff 60%, transparent 61%), radial-gradient(1.4px 1.4px at 46% 12%, #fff 60%, transparent 61%),
+      radial-gradient(1px 1px at 63% 40%, #dfe4ff 60%, transparent 61%), radial-gradient(1.2px 1.2px at 81% 26%, #fff 60%, transparent 61%), radial-gradient(1px 1px at 91% 70%, #cfd6ff 60%, transparent 61%),
+      radial-gradient(1px 1px at 7% 84%, #fff 60%, transparent 61%), radial-gradient(1.3px 1.3px at 55% 88%, #e9ecff 60%, transparent 61%),
+      radial-gradient(120% 80% at 85% -10%, rgba(91,108,240,.55), transparent 60%), linear-gradient(180deg, #0c1446, #05081f 75%); }
+  .nt.gun { border-color: #7a5a20; background: radial-gradient(120% 80% at 85% -10%, rgba(245,192,74,.45), transparent 60%), linear-gradient(180deg, #2a1d06, #0d0903 75%); }
+  .nt::after { content: "🌙"; position: absolute; right: 14px; top: 10px; font-size: 40px; filter: drop-shadow(0 0 14px rgba(200,210,255,.7)); }
+  .nt.gun::after { content: "☀️"; filter: drop-shadow(0 0 16px rgba(245,192,74,.8)); }
+  .nt .ntu { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: #aab3d6; font-weight: 700; }
+  .nt .nth { display: flex; align-items: center; gap: 10px; margin: 6px 0 2px; }
+  .nt .nth b { font: italic 700 64px/1 Georgia, "Times New Roman", serif; color: #fff; text-shadow: 0 0 24px rgba(157,178,255,.6); }
+  .nt.gun .nth b { text-shadow: 0 0 24px rgba(245,192,74,.6); }
+  .nt .nth span { font-size: 16px; line-height: 1.25; color: #dfe4ff; font-weight: 600; }
+  .nt .ntt2 { font-size: 13px; color: #aab3d6; margin-bottom: 12px; }
+  .nt .ntpb { position: relative; height: 8px; border-radius: 99px; background: rgba(255,255,255,.12); }
+  .nt .ntpb i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 99px; background: linear-gradient(90deg, #4b5bd6, #9db2ff); }
+  .nt.gun .ntpb i { background: linear-gradient(90deg, #b07a1c, #f5c04a); }
+  .nt .ntpb s { position: absolute; top: 50%; transform: translate(-50%, -50%); font-size: 18px; text-decoration: none; filter: drop-shadow(0 0 6px rgba(255,255,255,.8)); }
+  .nt .ntpl { display: flex; justify-content: space-between; font-size: 11px; color: #aab3d6; margin-top: 8px; }
+  .nt .ntk { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 14px 0 12px; }
+  .nt .ntk div { background: rgba(255,255,255,.06); border: 1px solid rgba(157,178,255,.22); border-radius: 12px; padding: 8px 4px; text-align: center; }
+  .nt .ntk small { display: block; font-size: 11px; color: #aab3d6; } .nt .ntk b { display: block; font-size: 15px; color: #fff; margin: 2px 0; white-space: nowrap; }
+  .nt .ntr { display: flex; align-items: center; gap: 8px; margin: 6px 0; } .nt .ntrl { width: 52px; font-size: 12px; color: #aab3d6; flex: none; }
+  .nt .ntrb { flex: 1; display: flex; height: 26px; border-radius: 99px; overflow: hidden; font-size: 11.5px; font-weight: 700; }
+  .nt .ntrb i { background: linear-gradient(90deg, #f0a94a, #f5d36a); color: #3a2604; display: flex; align-items: center; justify-content: center; font-style: normal; white-space: nowrap; overflow: hidden; }
+  .nt .ntrb u { flex: 1; background: linear-gradient(90deg, #26307a, #3a48c0); color: #fff; display: flex; align-items: center; justify-content: center; text-decoration: none; white-space: nowrap; overflow: hidden; }
+  .nt .ntrb em { font-style: normal; padding: 0 6px; }
+  .nt .ntg { width: 100%; height: auto; display: block; margin-top: 12px; touch-action: pan-y; }
+  .nt .ntc { font-size: 12.5px; color: #aab3d6; text-align: center; margin: 4px 0 2px; min-height: 18px; } .nt .ntc b { color: #fff; }
+  .nt .ntd summary { cursor: pointer; font-size: 13px; color: #9db2ff; padding: 10px 0 4px; min-height: 24px; font-weight: 600; }
+  .nt .ntt { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .nt .ntt th { font-size: 11.5px; color: #aab3d6; font-weight: 600; text-align: right; padding: 4px; border-bottom: 1px solid rgba(157,178,255,.25); }
+  .nt .ntt td { padding: 6px 4px; border-bottom: 1px solid rgba(255,255,255,.06); text-align: right; } .nt .ntt th:first-child, .nt .ntt td:first-child { text-align: left; }
+  .nt .ntt td:last-child { color: #9db2ff; } .nt .ntt tr.bu td { font-weight: 700; } .nt .ntt tr.don td { color: #fff; font-weight: 700; background: rgba(157,178,255,.14); }
+  .nt .ntn { font-size: 11.5px; color: #8f98c0; margin-top: 10px; line-height: 1.5; }
   .alerts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
   .al { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); }
   .al .e { font-size: 26px; line-height: 1; flex: 0 0 30px; text-align: center; padding-top: 2px; }
@@ -424,46 +448,75 @@ function seasonsHTML(place) {
 }
 
 // ---- Geceler (ya da gündüzler) ne kadar daha uzayacak: gün gün, dakika ve saniyeyle (Kasım 2026) ----
-// Bugünden dönüm noktasına (gündönümü) kadar her gün gece süresi ve dünden farkı; bar grafiği günlük değişimi gösterir.
+// Gece gökyüzü kartı: geri sayım, yolun ne kadarı geride (ekinokstan gündönümüne), bugün ile dönüm gününün 24 saatlik
+// gece/gündüz şeridi, dönüm noktasını gösteren eğri (dokununca o gün yazılır) ve gün gün liste.
+let NT = null;
 function nightTrendHTML(place) {
   const gun = (i) => { const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + i); return d; };
   const N = (i) => 24 - dayLen(place.lat, gun(i)); // gece süresi (saat)
-  const uzar = N(1) > N(0); // geceler uzuyor mu
-  let k = 0; while (k < 200 && (uzar ? N(k + 1) > N(k) : N(k + 1) < N(k))) k++; // dönüm günü: bugünden k gün sonra
+  const uzar = N(1) > N(0);
+  let k = 0; while (k < 200 && (uzar ? N(k + 1) > N(k) : N(k + 1) < N(k))) k++; // dönüm günü
   if (k === 0) return "";
-  const son = gun(k), toplam = N(k) - N(0);
+  let b = 0; while (b < 200 && (uzar ? N(-b - 1) < N(-b) : N(-b - 1) > N(-b))) b++; // yolculuğun başladığı gün (önceki dönüm)
+  const son = gun(k), toplam = Math.abs(N(k) - N(0)), yuzde = Math.round((b / (b + k)) * 100);
   const tarih = (d, o) => d.toLocaleDateString("tr-TR", o || { day: "numeric", month: "long" });
-  const tarihA = (d) => { const t = tarih(d), v = (t.toLocaleLowerCase("tr").match(/[aeıioöuü]/g) || ["e"]).pop(); return t + "'" + (/[aıou]/.test(v) ? "a" : "e"); }; // 21 Aralık'a, 3 Eylül'e
+  const tarihA = (d) => { const t = tarih(d), v = (t.toLocaleLowerCase("tr").match(/[aeıioöuü]/g) || ["e"]).pop(); return t + "'" + (/[aıou]/.test(v) ? "a" : "e"); };
   const ay = Math.floor(k / 30.44), kg = Math.round(k - ay * 30.44);
-  const sure = (ay ? `${ay} ay${kg ? " " + kg + " gün" : ""}` : `${k} gün`);
   const ad = (SEASONS.find(([d]) => Math.abs(new Date(d + "T12:00:00") - son) < 2 * 864e5) || [, , ""])[2];
-  const fark = (i) => (N(i) - N(i - 1));
-  const sn = (h) => { const t = Math.round(Math.abs(h) * 3600); return (h >= 0 ? "+" : "−") + (t >= 60 ? `${Math.floor(t / 60)} dk ${t % 60} sn` : `${t} sn`); };
-  // Günlük değişim grafiği (tek seri): bugünden dönüm gününe her gün, gece dünden ne kadar uzun/kısa
-  const W = 300, H = 70, bw = W / k, mx = Math.max(...[...Array(k)].map((_, i) => Math.abs(fark(i + 1))));
-  const bars = [...Array(k)].map((_, i) => { const v = Math.abs(fark(i + 1)), h = Math.max(1.5, (v / mx) * (H - 14));
-    return `<rect x="${(i * bw + 0.5).toFixed(1)}" y="${(H - h).toFixed(1)}" width="${Math.max(0.6, bw - 1).toFixed(1)}" height="${h.toFixed(1)}" rx="${Math.min(2, bw / 3).toFixed(1)}" fill="${uzar ? "#8fa8ff" : "#f5c04a"}" data-i="${i + 1}"/>`; }).join("");
-  const satir = (i) => `<tr${i === k ? ' class="don"' : i === 0 ? ' class="bu"' : ""}><td>${i === 0 ? "Bugün" : i === 1 ? "Yarın" : tarih(gun(i), { weekday: "short", day: "numeric", month: "short" })}</td><td>${hm(N(i))}</td><td class="${fark(i) >= 0 ? "art" : "azl"}">${i === 0 ? sn(fark(0)) : sn(fark(i))}</td></tr>`;
-  const ilk = Math.min(k, 14);
-  return `<h2>${uzar ? "🌙 Geceler ne kadar uzayacak?" : "☀️ Gündüzler ne kadar uzayacak?"}</h2>
-  <div class="sun nt">
-    <div class="ntb">${uzar ? "Geceler" : "Gündüzler"} <b>${sure}</b> daha uzayacak</div>
-    <div class="nts">${tarih(son)}${ad ? " · " + ad : ""} · ${uzar ? "gece" : "gündüz"} bugün ${hm(uzar ? N(0) : 24 - N(0))} → o gün ${hm(uzar ? N(k) : 24 - N(k))} <b>(${uzar ? "+" : "+"}${hm(Math.abs(toplam))})</b></div>
-    <div class="nts">Şu an ${uzar ? "her gece bir öncekinden" : "her gündüz bir öncekinden"} <b>${sn(Math.abs(fark(0))).slice(1)}</b> uzun; ${tarihA(son)} yaklaştıkça artış saniyelere iner, sonra ${uzar ? "gündüzler uzamaya" : "geceler uzamaya"} başlar.</div>
-    <svg class="ntg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${uzar ? "Gecenin" : "Gündüzün"} günlük uzama miktarı, bugünden ${tarihA(son)}">${bars}</svg>
-    <div class="tlx"><span>Bugün · ${sn(Math.abs(fark(0))).slice(1)}/gün</span><span>${tarih(son)} · ~0</span></div>
-    <div class="ntc" id="ntc">Bir çubuğa dokun: o günün ${uzar ? "gece" : "gündüz"} süresi ve dünden farkı</div>
-    <table class="ntt"><thead><tr><th>Gün</th><th>Gece</th><th>Dünden fark</th></tr></thead><tbody>${[...Array(ilk + 1)].map((_, i) => satir(i)).join("")}</tbody></table>
-    ${k > ilk ? `<details class="ntd"><summary>${tarihA(son)} kadar her gün (${k - ilk} gün daha)</summary><table class="ntt"><tbody>${[...Array(k - ilk)].map((_, j) => satir(ilk + 1 + j)).join("")}</tbody></table></details>` : ""}
-    <div class="ntn">${esc(place.name)} için hesaplandı; gece süresi gün batımından ertesi gün doğumuna kadar.</div>
+  const fark = (i) => N(i) - N(i - 1);
+  const sn = (h) => { const t = Math.round(Math.abs(h) * 3600); return t >= 3600 ? hm(Math.abs(h)) : t >= 60 ? `${Math.floor(t / 60)} dk ${t % 60} sn` : `${t} sn`; };
+  const ar = uzar ? "uzun" : "kısa", renk = uzar ? "#9db2ff" : "#f5c04a";
+  // 24 saatlik şerit: gündüz altın, gece lacivert
+  const serit = (etiket, n) => `<div class="ntr"><span class="ntrl">${etiket}</span><div class="ntrb"><i style="width:${((24 - n) / 24 * 100).toFixed(1)}%"><em>☀️ ${hm(24 - n)}</em></i><u><em>🌙 ${hm(n)}</em></u></div></div>`;
+  // Eğri: bugünden dönüm gününe ve 30 gün sonrasına gece süresi
+  const S = k + 30, W = 320, H = 110, P = 10;
+  const V = [...Array(S + 1)].map((_, i) => N(i)), lo = Math.min(...V), hi = Math.max(...V);
+  const x = (i) => P + (i / S) * (W - 2 * P), y = (v) => H - 22 - ((v - lo) / Math.max(0.01, hi - lo)) * (H - 44);
+  const yol = V.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+  NT = { V, gun, fark, sn, tarih, x, y, S };
+  const svg = `<svg class="ntg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gece süresi bugünden ${tarihA(son)} ve sonrasına">
+    <defs><linearGradient id="ntA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${renk}" stop-opacity=".45"/><stop offset="1" stop-color="${renk}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${yol}L${x(S)},${H - 22}L${x(0)},${H - 22}Z" fill="url(#ntA)"/>
+    <path d="${yol}" fill="none" stroke="${renk}" stroke-width="2.2" stroke-linecap="round"/>
+    <line x1="${x(k)}" x2="${x(k)}" y1="${y(V[k]) + 6}" y2="${H - 22}" stroke="#fff" stroke-opacity=".35" stroke-dasharray="3 3"/>
+    <circle cx="${x(k)}" cy="${y(V[k])}" r="5" fill="#fff"/><text x="${Math.min(x(k), W - 60)}" y="${y(V[k]) - 10}" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">${hm(V[k])}</text>
+    <circle cx="${x(0)}" cy="${y(V[0])}" r="9" fill="${renk}" opacity=".25"/><circle cx="${x(0)}" cy="${y(V[0])}" r="5" fill="${renk}" stroke="#05081f" stroke-width="2"/>
+    <text x="${x(0)}" y="${H - 6}" font-size="10" fill="#aab3d6">Bugün</text>
+    <text x="${x(k)}" y="${H - 6}" font-size="10" fill="#aab3d6" text-anchor="middle">${tarih(son, { day: "numeric", month: "short" })}</text>
+    <text x="${x(S)}" y="${H - 6}" font-size="10" fill="#aab3d6" text-anchor="end">+${S} gün</text>
+    <circle class="ntdot" r="4.5" fill="#fff" stroke="${renk}" stroke-width="2" style="display:none"/>
+    <rect class="nthit" x="0" y="0" width="${W}" height="${H}" fill="transparent"/></svg>`;
+  const satir = (i) => `<tr${i === k ? ' class="don"' : i === 0 ? ' class="bu"' : ""}><td>${i === 0 ? "Bugün" : i === 1 ? "Yarın" : tarih(gun(i), { weekday: "short", day: "numeric", month: "short" })}</td><td>${hm(N(i))}</td><td>${fark(i) >= 0 ? "+" : "−"}${sn(fark(i))}</td></tr>`;
+  const ilk = Math.min(k, 7);
+  return `<div class="nt${uzar ? "" : " gun"}">
+    <div class="ntu">${uzar ? "🌙 Gecelerin yolculuğu" : "☀️ Gündüzlerin yolculuğu"}</div>
+    <div class="nth"><b>${k}</b><span>gün daha<br>${uzar ? "geceler" : "gündüzler"} uzayacak</span></div>
+    <div class="ntt2">${ay ? `${ay} ay${kg ? " " + kg + " gün" : ""} · ` : ""}${tarih(son)}${ad ? " · " + ad : ""}</div>
+    <div class="ntp"><div class="ntpb"><i style="width:${yuzde}%"></i><s style="left:${yuzde}%">${uzar ? "🌙" : "☀️"}</s></div><div class="ntpl"><span>${tarih(gun(-b), { day: "numeric", month: "short" })}</span><span>yolun %${yuzde} kadarı geride</span><span>${tarih(son, { day: "numeric", month: "short" })}</span></div></div>
+    <div class="ntk">
+      <div><small>Bu ${uzar ? "gece" : "gündüz"}</small><b>+${sn(fark(0))}</b><small>dünden ${ar}</small></div>
+      <div><small>1 hafta sonra</small><b>+${sn(Math.abs(N(7) - N(0)))}</b><small>bugünden ${ar}</small></div>
+      <div><small>${tarih(son, { day: "numeric", month: "short" })}</small><b>+${hm(toplam)}</b><small>bugünden ${ar}</small></div>
+    </div>
+    ${serit("Bugün", N(0))}${serit(tarih(son, { day: "numeric", month: "short" }), N(k))}
+    ${svg}
+    <div class="ntc" id="ntc">👆 Eğriye dokun: o günün ${uzar ? "gece" : "gece"} süresi</div>
+    <details class="ntd"><summary>📅 Gün gün liste</summary>
+      <table class="ntt"><thead><tr><th>Gün</th><th>Gece</th><th>Dünden</th></tr></thead><tbody>${[...Array(k + 1)].map((_, i) => satir(i)).join("")}</tbody></table></details>
+    <div class="ntn">${esc(place.name)} için hesaplandı · ${tarihA(son)} yaklaştıkça artış saniyelere iner, sonra ${uzar ? "gündüzler" : "geceler"} uzamaya başlar.</div>
   </div>`;
 }
-// Günlük değişim grafiği: çubuğa dokununca o günün değeri yazılır
-document.addEventListener("click", (e) => {
-  const b = e.target.closest && e.target.closest(".ntg rect"); if (!b) return;
-  const c = document.getElementById("ntc"), sel = document.querySelector(".ntg rect.on"); if (sel) sel.classList.remove("on"); b.classList.add("on");
-  const row = document.querySelectorAll(".nt .ntt tbody tr")[+b.dataset.i]; if (c && row) c.innerHTML = [...row.cells].map((x, i) => i ? `<b>${x.textContent}</b>` : x.textContent).join(" · ");
-});
+// Eğriye dokununca (ya da parmakla gezince) o günün değeri yazılır
+function ntGoster(e) {
+  const svg = e.target.closest && e.target.closest(".ntg"); if (!svg || !NT) return;
+  const r = svg.getBoundingClientRect(), px = ((e.touches ? e.touches[0].clientX : e.clientX) - r.left) / r.width * 320;
+  const i = Math.max(0, Math.min(NT.S, Math.round(((px - 10) / 300) * NT.S))), d = svg.querySelector(".ntdot");
+  d.setAttribute("cx", NT.x(i)); d.setAttribute("cy", NT.y(NT.V[i])); d.style.display = "";
+  const f = i ? NT.fark(i) : NT.fark(0);
+  $("ntc").innerHTML = `${i === 0 ? "Bugün" : NT.tarih(NT.gun(i), { weekday: "long", day: "numeric", month: "long" })} · gece <b>${hm(NT.V[i])}</b> · dünden <b>${f >= 0 ? "+" : "−"}${NT.sn(f)}</b>`;
+}
+document.addEventListener("click", ntGoster);
+document.addEventListener("touchmove", (e) => { if (e.target.closest && e.target.closest(".ntg")) ntGoster(e); }, { passive: true });
 
 // Şehir arama
 let timer;
