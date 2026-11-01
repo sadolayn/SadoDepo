@@ -198,6 +198,17 @@ const ISQ_ALL = [].concat(
     ["İş Vapur, afet durumunda kaç kişiyi barındırabilecek şekilde tasarlandı?", ["50", "150", "300", "1.000"], 2],
   ], "2026-10-21"),
 
+  // --- Kasım 2026 kampanyaları (isbank.com.tr, maximum.com.tr ve maximiles.com.tr kampanya sayfaları, 1 Kasım 2026; 30 Kasım'da düşer) ---
+  K("kart", [
+    ["Kasım 2026 Market Kampanyası: Maximum anlaşmalı marketlerde tek seferde en az kaç TL alışverişe MaxiPuan veriliyor?", ["10.000 TL", "15.000 TL", "20.000 TL", "25.000 TL"], 1, "2026-11-30"],
+    ["Kasım 2026 Market Kampanyası'nda kazanılabilecek en yüksek MaxiPuan kaç TL?", ["500 TL", "1.000 TL", "1.300 TL", "2.000 TL"], 2, "2026-11-30"],
+    ["Kasım 2026'da Hepsiburada'da Maximum ile peşin fiyatına kaç taksit yapılabiliyor?", ["3 taksit", "6 taksit", "9 taksit", "12 taksit"], 2, "2026-11-30"],
+    ["Kasım 2026 taksitli e-ticaret kampanyasında (Amazon, Hepsiburada, n11, Pazarama, Trendyol) en yüksek MaxiPuan kaç TL?", ["1.000 TL", "2.000 TL", "2.500 TL", "5.000 TL"], 2, "2026-11-30"],
+    ["Kasım 2026'da Maximiles ile Inditex mağazalarında (Zara, Bershka, Pull&Bear…) yapılan alışverişte kaç TL MaxiPuan kazanılıyor?", ["500 TL", "1.000 TL", "1.500 TL", "2.000 TL"], 1, "2026-11-30"],
+    ["Kasım 2026'da yeni kredi kartı müşterilerine ETS'deki seçili otel ve turlarda kaç TL'ye varan MaxiPuan veriliyor?", ["2.500 TL", "5.000 TL", "10.000 TL", "20.000 TL"], 2, "2026-11-30"],
+    ["Kasım 2026'da ticari kartlarla yurt dışı harcamalarda toplam en fazla kaç TL MaxiPuan kazanılıyor?", ["1.000 TL", "2.500 TL", "5.000 TL", "10.000 TL"], 1, "2026-11-30"],
+  ], "2026-11-01"),
+
   // --- Çiftçi Kadın İmece Kart (isbank.com.tr/is-ticari/ciftci-kadin-imece-kart, 22 Ekim 2026'da kontrol edildi) ---
   K("kart", [
     ["İş Bankası'nın üretici kadınlara özel kartının adı nedir?", ["Çiftçi Kadın İmece Kart", "Toprak Ana Kart", "Bereket Kadın Kart", "Hasat Kart"], 0],
