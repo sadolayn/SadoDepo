@@ -239,6 +239,35 @@
   .hak b { color: var(--ink); }
   .hak .ok { color: var(--win); }
   .hak .no { color: var(--muted); }
+
+  /* ===== Yan mod (telefon yatay; Kasım 2026): masa solda tam boy, sağda başlık, puanlar, durum, düğmeler ve el.
+     Dik düzene dokunulmaz; yalnızca alçak yatay ekranda (telefon) devreye girer, tablet ve bilgisayar aynı kalır. ===== */
+  @media (orientation: landscape) and (max-height: 560px) {
+    body { display: grid; max-width: none; width: 100%; min-height: 0; height: 100vh; height: 100dvh; overflow-y: auto; padding: 6px 12px 4px;
+      grid-template-columns: minmax(0, 1.15fr) minmax(300px, 1fr); grid-template-rows: auto auto auto auto minmax(0, 1fr) auto auto; column-gap: 14px; }
+    body > header { grid-column: 2; grid-row: 1; }
+    body > header h1 { font-size: 18px; }
+    .scores { grid-column: 2; grid-row: 2; margin: 6px 0 2px; }
+    .pens { grid-column: 2; grid-row: 3; }
+    .table { grid-column: 1; grid-row: 1 / -1; min-height: 0; height: auto; }
+    .status { grid-column: 2; grid-row: 4; min-height: 30px; font-size: 14px; padding: 4px 2px; }
+    .panel { grid-column: 2; grid-row: 5; align-self: start; margin: 0; }
+    .panel button { padding: 8px 10px; font-size: 15px; }
+    .hand { grid-column: 2; grid-row: 6; --cw: 50px; }
+    footer.copyright { grid-column: 2; grid-row: 7; margin: 0 !important; padding: 2px 0 0 !important; font-size: 11px; }
+    .panel { gap: 5px; min-height: 0; max-height: 100%; overflow-y: auto; align-content: flex-start; }
+  }
+  /* Çok alçak yatay ekran (tarayıcı çubukları açık): alt bilgi gizlenir, düğmeler küçülür; el hep görünür kalır */
+  @media (orientation: landscape) and (max-height: 400px) {
+    footer.copyright { display: none; }
+    .status { font-size: 13px; min-height: 0; }
+    .panel button { padding: 6px 9px; font-size: 14px; min-width: 40px; }
+    .scores { margin: 4px 0 0; font-size: 11px; } .scores div { padding: 2px; } .scores b { font-size: 13px; }
+    body > header .home, body > header > a, body > header .kmBtn { transform: scale(.85); }
+    .hand { --cw: 44px; }
+    #ctPanel { display: none; } #ctPanel.show { display: grid; grid-template-columns: repeat(4, 1fr); }
+    #ctPanel button { padding: 4px 3px; font-size: 12px; min-height: 30px; } #ctPanel button small { display: none; }
+  }
 </style>
 <script src="cardsound.js?v=3"></script>
 <script src="kartmasa.js?v=9" data-oyun="king"></script>
