@@ -17,13 +17,14 @@
   "ek_hesap": {
     "aylik": 4.25,
     "maasli": 4.19,
-    "maasli_bit": "2026-10-31",
+    "maasli_bas": "2026-01-01",
+    "maasli_bit": "2026-11-30",
     "isplus": {
       "Turkuaz": 4.23,
       "Mavi": 4.21,
       "Lacivert": 4.19
     },
-    "kontrol": "2026-10-29",
+    "kontrol": "2026-11-01",
     "link": "https://www.isbank.com.tr/ek-hesap",
     "taksit_max": 12,
     "kampanya": {
