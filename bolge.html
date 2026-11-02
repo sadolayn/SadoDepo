@@ -87,22 +87,6 @@
   .mod { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 14px; background: var(--k1); border: 1px solid #5a3a22; }
   .mod button { position: relative; min-height: 44px; border: 0; border-radius: 10px; background: transparent; color: #c9a88c; font-size: 15px; font-weight: 700; cursor: pointer; }
   .mod button.on { background: var(--c); color: #1a0d04; }
-  /* Dünya haritası: noktalı altın kıtalar, üstünde bayraklar. Avrupa ayrıca yakın planda */
-  .hrt { position: relative; margin: 0 0 8px; border-radius: 16px; overflow: hidden; background: radial-gradient(ellipse at 50% 40%, #16110a, #050505 70%); border: 1px solid #3a2a14; }
-  .hrt .zemin { position: absolute; inset: 0; width: 100%; height: 100%; background: url(img/dunya-nokta.svg) no-repeat; background-size: 100% 100%; opacity: .9; }
-  .hrt.dun { aspect-ratio: 1000 / 520; }
-  .hrt.avr { aspect-ratio: 74 / 46; }
-  .hrt.avr .zemin { background-size: 486.5% 315.2%; background-position: calc((168 / 360) / (1 - 1 / 4.865) * 100%) calc((21 / 145) / (1 - 1 / 3.152) * 100%); opacity: .32; filter: blur(.6px); }
-  .hrt .ic { position: absolute; inset: 0; }
-  .hrt button.bf { position: absolute; transform: translate(-50%, -50%); width: 24px; height: 24px; padding: 0; border-radius: 50%; border: 1.5px solid #6b4a1f; background: #0b0b0b; font-size: 13px; line-height: 1; cursor: pointer; box-shadow: 0 1px 6px rgba(0,0,0,.6); transition: transform .15s; }
-  .hrt.avr button.bf { width: 29px; height: 29px; font-size: 15px; }
-  .hrt button.bf.top { border-color: #f0c674; box-shadow: 0 0 0 2px rgba(240,198,116,.25), 0 0 10px rgba(240,198,116,.35); }
-  .hrt button.bf.on { transform: translate(-50%, -50%) scale(1.3); border-color: #fff; z-index: 2; }
-  .hrt .trk { position: absolute; transform: translate(-50%, -50%); width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #e0a24f; background: #1a0d04; font-size: 11px; display: flex; align-items: center; justify-content: center; }
-  .hrt.avr .trk { width: 28px; height: 28px; font-size: 15px; }
-  .hrt .av { position: absolute; border: 1px dashed rgba(240,198,116,.5); border-radius: 6px; pointer-events: none; }
-  .hrt .hB { position: absolute; left: 8px; bottom: 7px; z-index: 3; font-size: 10.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #f0c674; background: rgba(0,0,0,.55); border-radius: 999px; padding: 3px 9px; pointer-events: none; }
-  .hrt .hAd { position: absolute; right: 8px; bottom: 7px; font-size: 11px; color: #cdb48a; background: rgba(0,0,0,.55); border-radius: 999px; padding: 3px 9px; pointer-events: none; }
   .tic5 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 10px; }
   .tic5 .tk { padding: 8px 8px 7px; border-radius: 12px; border: 1px solid #4a3a22; background: rgba(240,198,116,.06); }
   .tic5 .tkB { font-size: 10.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #f0c674; margin: 0 0 6px 2px; }
@@ -234,37 +218,21 @@ const gmK = (ne) => { const y = S.elle || (S.ilce !== "Merkez" && S.ilce); retur
 const gm = (ne) => `https://www.google.com/maps/search/${encodeURIComponent(ne + " " + yerHarita())}`;
 
 // ---- Dünya: Türkiye'yle bağı güçlü ülkeler (Kasım 2026). Ülke adı ve konu başlıkta aranır; ülke tek kalıp (OR'lu yer, Google'ın konuyu atmasına yol açıyordu) ----
-// İlk sıradaki grup: 2025 dış ticarette ihracatta ve ithalatta ilk 5'e giren ülkeler (TÜİK yıllık verisi, Ocak 2026 haberleri);
-// sıra numarası düğmenin altında yazar. İthalat 5.: İsviçre (TÜİK 2025 yıllık, TRT Haber 30.01.2026).
+// Ticaret ilk 5 şeridi TIC5'te; ülke listesi kıtalara göre.
 const ULKE_GRUP = [
-  ["⭐ En büyük ticaret ortakları · 2025", [["🇩🇪", "Almanya", "İhracat 1. · İthalat 3."], ["🇨🇳", "Çin", "İthalat 1."], ["🇷🇺", "Rusya", "İthalat 2."], ["🇺🇸", "ABD", "İhracat 3. · İthalat 4."],
-    ["🇬🇧", "İngiltere", "İhracat 2."], ["🇮🇹", "İtalya", "İhracat 4."], ["🇮🇶", "Irak", "İhracat 5."], ["🇨🇭", "İsviçre", "İthalat 5."]]],
-  ["Avrupa", [["🇳🇱", "Hollanda"], ["🇫🇷", "Fransa"], ["🇧🇪", "Belçika"], ["🇦🇹", "Avusturya"], ["🇸🇪", "İsveç"], ["🇪🇸", "İspanya"], ["🇬🇷", "Yunanistan"]]],
-  ["Amerika", [["🇨🇦", "Kanada"]]],
-  ["Orta Doğu & Kafkasya", [["🇮🇷", "İran"], ["🇦🇿", "Azerbaycan"], ["🇦🇪", "BAE"], ["🇸🇦", "Suudi Arabistan"], ["🇶🇦", "Katar"]]],
-  ["Asya & Uzak Doğu", [["🇯🇵", "Japonya"], ["🇰🇷", "Güney Kore"], ["🇮🇳", "Hindistan"]]],
+  ["Avrupa", [["🇩🇪", "Almanya"], ["🇬🇧", "İngiltere"], ["🇮🇹", "İtalya"], ["🇫🇷", "Fransa"], ["🇳🇱", "Hollanda"], ["🇧🇪", "Belçika"], ["🇦🇹", "Avusturya"], ["🇨🇭", "İsviçre"], ["🇸🇪", "İsveç"], ["🇪🇸", "İspanya"], ["🇬🇷", "Yunanistan"]]],
+  ["Amerika", [["🇺🇸", "ABD"], ["🇨🇦", "Kanada"]]],
+  ["Orta Doğu & Kafkasya", [["🇮🇶", "Irak"], ["🇮🇷", "İran"], ["🇦🇿", "Azerbaycan"], ["🇦🇪", "BAE"], ["🇸🇦", "Suudi Arabistan"], ["🇶🇦", "Katar"]]],
+  ["Asya & Uzak Doğu", [["🇨🇳", "Çin"], ["🇷🇺", "Rusya"], ["🇯🇵", "Japonya"], ["🇰🇷", "Güney Kore"], ["🇮🇳", "Hindistan"]]],
 ];
 const ULKELER = ULKE_GRUP.flatMap((g) => g[1]);
-// Harita konumları (boylam, enlem) — img/dunya-nokta.svg eşdikdörtgen: x=(lon+180)/360, y=(85-lat)/145
-const KONUM = { Almanya: [11, 51.3], Çin: [104, 35], Rusya: [60, 60], ABD: [-98, 39], İngiltere: [-2, 54], İtalya: [12.5, 42.5], Irak: [43.5, 33.5], Hollanda: [4.6, 53.2], Fransa: [2.5, 46.5], Belçika: [4.2, 50.4], Avusturya: [15.5, 47.6], İsviçre: [8, 46.6], İsveç: [16, 61], İspanya: [-3.7, 40], Yunanistan: [22, 39.5], Kanada: [-100, 58], İran: [54.5, 33], Azerbaycan: [48, 40.4], BAE: [55, 23.5], "Suudi Arabistan": [45.5, 24], Katar: [50.8, 26], Japonya: [138, 37], "Güney Kore": [128, 36.5], Hindistan: [79, 22] };
 // 2025 dış ticaret ilk 5, TÜİK Ocak-Aralık 2025 (TRT Haber 30.01.2026): ihracat Almanya, B. Krallık, ABD, İtalya, Irak; ithalat Çin, Rusya, Almanya, ABD, İsviçre (15,7 milyar $)
 const TIC5 = { "İhracat": ["Almanya", "İngiltere", "ABD", "İtalya", "Irak"], "İthalat": ["Çin", "Rusya", "Almanya", "ABD", "İsviçre"] };
-// Yakın planda bayraklar üst üste binmesin diye Batı Avrupa'da konumlar biraz yayıldı (yaklaşık yerler)
-const KONUM_Y = { İngiltere: [-4, 55.5], Hollanda: [4.5, 54.5], Belçika: [1.5, 50.2], Fransa: [1, 45.5], İsviçre: [7, 44], Almanya: [11.5, 52.5], Avusturya: [17, 48.5], İtalya: [12.5, 40.5], İspanya: [-5, 39], İsveç: [17.5, 59.5], Yunanistan: [23.5, 38], Irak: [43.5, 33.5], İran: [55, 33.5], Azerbaycan: [48.5, 41], BAE: [56, 23], "Suudi Arabistan": [45, 23.5], Katar: [51, 27.5] };
 const bayrak = (ad) => (ULKELER.find((x) => x[1] === ad) || ["🌍"])[0];
-const AVRUPA = ["Almanya", "İngiltere", "İtalya", "Hollanda", "Fransa", "Belçika", "Avusturya", "İsviçre", "İsveç", "İspanya", "Yunanistan", "Irak", "İran", "Azerbaycan", "BAE", "Suudi Arabistan", "Katar"]; // yakın plana giren ülkeler
-function haritaHtml() {
-  // Dünya haritası: eşdikdörtgen (lon -180..180, lat 85..-60). Yakın plan (Avrupa + Orta Doğu): lon -12..62, lat 18..64
-  const xyD = (lo, la) => [((lo + 180) / 360 * 100).toFixed(2), ((85 - la) / 145 * 100).toFixed(2)];
-  const xyA = (lo, la) => [((lo + 12) / 74 * 100).toFixed(2), ((64 - la) / 46 * 100).toFixed(2)];
-  const bf = (xy, L, K) => L.map(([b, ad, sira]) => { const [x, y] = xy(...((K && K[ad]) || KONUM[ad])); return `<button type="button" class="bf${sira ? " top" : ""}${S.ulke === ad ? " on" : ""}" data-ulke="${esc(ad)}" style="left:${x}%;top:${y}%" aria-label="${esc(ad)}" title="${esc(ad)}">${b}</button>`; }).join("");
-  const trk = (xy) => { const [x, y] = xy(35, 39); return `<span class="trk" style="left:${x}%;top:${y}%" aria-hidden="true">🇹🇷</span>`; };
-  const disari = ULKELER.filter((u) => !AVRUPA.includes(u[1])), avr = ULKELER.filter((u) => AVRUPA.includes(u[1]));
-  const [ax, ay] = xyD(-12, 64), [bx, by] = xyD(62, 18);
+function ticHtml() {
   const tic = Object.entries(TIC5).map(([k, L]) => `<div class="tk"><div class="tkB">${k === "İhracat" ? "📤" : "📥"} ${k} · ilk 5</div><div class="tkS">${L.map((ad, i) => ad ? `<button type="button" data-ulke="${esc(ad)}" class="${S.ulke === ad ? "on" : ""}" aria-label="${esc(ad)}, ${k.toLowerCase()} ${i + 1}."><i>${bayrak(ad)}</i><b>${i + 1}.</b></button>` : `<button type="button" class="bos" disabled aria-label="5. ülke kaynakta doğrulanamadı"><i>·</i><b>5.</b></button>`).join("")}</div></div>`).join("");
   return `<div class="tic5">${tic}<div class="tkN">2025 dış ticaret sıralaması, TÜİK yıllık verisi (TRT Haber, 30 Ocak 2026) · bayrağa dokun, ülkenin haberleri açılsın</div></div>
-    <div class="hrt dun"><div class="zemin"></div><div class="ic">${trk(xyD)}${bf(xyD, disari)}</div><span class="av" style="left:${ax}%;top:${ay}%;width:${(bx - ax).toFixed(2)}%;height:${(by - ay).toFixed(2)}%"></span><span class="hB">🌍 Dünya</span>${S.ulke ? `<span class="hAd">${bayrak(S.ulke)} ${esc(S.ulke)}</span>` : ""}</div>
-    <div class="hrt avr"><div class="zemin"></div><div class="ic">${trk(xyA)}${bf(xyA, avr, KONUM_Y)}</div><span class="hB">🔍 Avrupa &amp; Orta Doğu yakın plan</span></div>`;
+`;
 }
 const ugn = (ek) => `https://www.google.com/search?tbm=nws&tbs=qdr:${{ "1d": "d", "7d": "w", "30d": "m" }[S.sure]},sbd:1&hl=tr&gl=tr&q=${encodeURIComponent(`intitle:"${S.ulke}"` + (ek ? " (" + ek.split(" OR ").map((t) => "intitle:" + t.trim()).join(" OR ") + ")" : ""))}`;
 function dunyaCiz() {
@@ -272,7 +240,7 @@ function dunyaCiz() {
   document.querySelectorAll("[data-mod]").forEach((b) => { b.classList.toggle("on", (b.dataset.mod === "dunya") !== tr); b.setAttribute("aria-selected", String((b.dataset.mod === "dunya") !== tr)); });
   $("turkiye").hidden = !tr; $("dunya").hidden = tr;
   if (tr) return;
-  $("ulkeler").innerHTML = haritaHtml() + ULKE_GRUP.map(([g, L]) => `<div class="ugB">${esc(g.replace("⭐ En büyük ticaret ortakları · 2025", "Ticaret ortakları"))}</div><div class="ulkeler kucuk">${L.map(([b, ad, sira]) => `<button type="button" data-ulke="${esc(ad)}" class="${S.ulke === ad ? "on" : ""}${sira ? " top" : ""}"><span class="bay">${b}</span><span class="un">${esc(ad)}${sira ? `<small>${esc(sira).replace(" · ", "<br>")}</small>` : ""}</span></button>`).join("")}</div>`).join("");
+  $("ulkeler").innerHTML = ticHtml() + ULKE_GRUP.map(([g, L]) => `<div class="ugB">${esc(g)}</div><div class="ulkeler kucuk">${L.map(([b, ad, sira]) => `<button type="button" data-ulke="${esc(ad)}" class="${S.ulke === ad ? "on" : ""}${sira ? " top" : ""}"><span class="bay">${b}</span><span class="un">${esc(ad)}${sira ? `<small>${esc(sira).replace(" · ", "<br>")}</small>` : ""}</span></button>`).join("")}</div>`).join("");
   $("ulkeSec").hidden = !S.ulke;
   if (!S.ulke) return;
   const b = (ULKELER.find((x) => x[1] === S.ulke) || ["🌍"])[0], sureAd = SURE[S.sure];
