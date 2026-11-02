@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-10-26",
+ "kontrol": "2026-11-02",
  "not": "Haftada bir isbank.com.tr ile karşılaştırılır. src=uygulama olanlar İşCep uygulamasında görülen, isbank.com.tr'de ayrıca anlatılmayan özelliklerdir.",
  "kategoriler": [
   {
@@ -326,6 +326,16 @@
    "src": "isbank.com.tr"
   },
   {
+   "k": "maxi",
+   "ic": "🧾",
+   "t": "Faturan beklenmedik artarsa Maxi haber verir",
+   "d": "Kayıtlı faturanda beklenmedik bir artış olursa ya da kredi kartından aynı tutarlı iki işlem geçerse Maxi kontrol etmen için hatırlatır. Talimatlı para transferin gerçekleşmez ya da sona ererse de seni bilgilendirir.",
+   "n": "İşCep › Maxi",
+   "u": "https://www.isbank.com.tr/maxi",
+   "src": "isbank.com.tr",
+   "yeni": "2026-11-02"
+  },
+  {
    "k": "kolay",
    "ic": "👆",
    "t": "İşCep simgesine basılı tut",
@@ -410,7 +420,7 @@
    "k": "aile",
    "ic": "👧",
    "t": "Girişimci Kız Çocukları Hesabı",
-   "d": "8 Mart 2025 ve sonrasında doğan kız çocukları için; ebeveyn İşCep'ten ya da şubeden açar, 1.000 TL ile başlar. 180 gün vadeli, kendiliğinden yenilenir; yıllık TÜFE değişiminin üzerine ek getiri sunulur (koşullar bankada). Çocuk 18 yaşına gelince birikim vadesiz hesabına geçer; nasıl kullanacağına o karar verir. Girişimcilik Vakfı katkısıyla.",
+   "d": "18 yaş altı kız çocukları için; hesap çocuk adına açılır (çocuğun da İş Bankası müşterisi olması gerekir). Veli İşCep'ten ya da şubeden açar, 1.000 TL ile başlar. Yalnızca 180 gün vadeli; faiz, yıllık TÜFE değişiminin üzerine prim eklenerek verilir (prim oranı bankada). Çocuk 18 yaşına gelince hesap kapanır, birikim vadesiz hesaba geçer.",
    "n": "Menü › Hesaplar › Yeni Hesap Aç › Vadeli Hesap › Girişimci Kız Çocukları Hesabı",
    "u": "https://www.isbank.com.tr/girisimci-kiz-cocuklari-hesabi",
    "src": "isbank.com.tr"
