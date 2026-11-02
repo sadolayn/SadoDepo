@@ -1348,7 +1348,12 @@ function renderIscep() {
   if (odulGit && !ipSec && !window.__odulKaydi) {
     window.__odulKaydi = 1;
     // Açılış perdesi varsa kapanmasını bekle, sonra ödül kartına kaydır
-    let n = 0; const kay = () => { const o = $("odul"); if (document.documentElement.style.overflow === "hidden" && n++ < 240) return setTimeout(kay, 250); if (o) o.scrollIntoView({ behavior: "smooth", block: "start" }); };
+    let n = 0; const kay = () => { const o = $("odul"); if (document.documentElement.style.overflow === "hidden" && n++ < 240) return setTimeout(kay, 250); if (!o) return; altGuncelle();
+      // Önce kartı ekranın üstüne getir; kaydırınca üstteki kutu küçülüp sabitleniyor, o yüzden yerleşince sabit kutuların altına ince ayar
+      const sabitAlt = () => Array.from(document.querySelectorAll("#imini, .altkutu.dar, .cyap")).filter((el) => /fixed|sticky/.test(getComputedStyle(el).position) && !el.hidden).reduce((m, el) => Math.max(m, el.getBoundingClientRect().bottom), 0);
+      window.scrollTo({ top: Math.max(0, o.getBoundingClientRect().top + window.scrollY - 8), behavior: "smooth" });
+      let say = 0; const ayar = () => { altGuncelle(); const d = o.getBoundingClientRect().top - sabitAlt() - 8; if (Math.abs(d) > 4) window.scrollBy({ top: d, behavior: "smooth" }); if (++say < 3) setTimeout(ayar, 500); };
+      setTimeout(ayar, 700); };
     setTimeout(kay, 400);
   }
   bindIscep();
