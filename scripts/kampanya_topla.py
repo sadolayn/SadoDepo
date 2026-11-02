@@ -196,7 +196,7 @@ KOK_M = "https://www.maximum.com.tr"
 def max_kartlar(body, kok=KOK_M):
     """Kartlar 'Son N Gün' şeridine göre bölünür; başlık şeritten sonraki ilk anlamlı metin, bağlantı kampanya detayı."""
     b = temiz(body)
-    # Şerit "Son N Gün" ya da bitiş günü "Son Gün" (sayı yok; 1 Kasım 2026 ticari sayfasında 17 kartın 5'i böyleydi ve atlanıyordu)
+    # Şerit "Son N Gün" ya da sayısız "Son Gün" (süresi dün bitmiş kart; aşağıda atlanır). İkisi de kart sınırı olarak aranır.
     yer = [m for m in re.finditer(r"Son\s+(?:(\d+)\s+)?G[üu]n\b", b)]
     out, gor = [], set()
     for i, m in enumerate(yer):
@@ -216,7 +216,12 @@ def max_kartlar(body, kok=KOK_M):
         if anahtar in gor:
             continue
         gor.add(anahtar)
-        kalan = int(m.group(1)) if m.group(1) else 1  # "Son Gün": bugün son gün
+        # Sayısız "Son Gün" şeridi: Maximum, süresi dün biten kampanyayı bir gün daha bu şeritle gösteriyor (31 Ekim'de "Son 1 Gün"
+        # yazan ekim kampanyaları 1 Kasım'da "Son Gün" oldu, 2 Kasım'da listeden kalktı). Bitmiş sayılır, alınmaz; şerit yine de
+        # kartları birbirinden ayırmak için aranır (yoksa önceki kartın metni sonrakine karışır).
+        if not m.group(1):
+            continue
+        kalan = int(m.group(1))
         # "Son N Gün" şeridi kampanyaların çoğunda bugünü de sayar (25 Ekim'de "Son 7 Gün" → 31 Ekim). Bazılarında bir gün eksik
         # sayıyor; aynı kampanya isbank.com.tr'de de varsa bitiş günü oradaki açık tarihten alınır (dosyanın sonundaki eşleme)
         out.append({"baslik": kisalt(metinler[0], 160), "bitis": (bugun + dt.timedelta(days=max(0, kalan - 1))).isoformat(),
