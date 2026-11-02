@@ -547,12 +547,14 @@
       const el = document.getElementById("welcome"), n = new Date(), wd = n.getDay() > 0 && n.getDay() < 6 && n.getHours() >= 8 && n.getHours() < 18;
       const ONR = "Öneri ve isteklerinizi en alttan iletebilirsiniz ✉️";
       const L = ["Hoş geldiniz", "Keyifli gezinmeler", ...(wd ? ["İyi çalışmalar"] : []), ONR];
-      el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); else if (/kampanya/i.test(el.textContent)) location.href = "isbank.html#maximum"; });
+      el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); else if (el.textContent === ODUL) location.href = "isbank.html#guncel"; else if (/kampanya/i.test(el.textContent)) location.href = "isbank.html#maximum"; });
       // Kampanya hatırlatıcısı: her ayın ilk 5 günü
-      if (new Date().getDate() <= 7) L.splice(1, 0, "📣 Ayın ilk haftası: güncel kampanya derlemesi İş Bankası Gündemi'nde ›");
+      // (Ayın ilk haftası kampanya satırı 2 Kasım 2026'da kaldırıldı; kampanya hatırlatması kayan yazıda.) İşCep ödülü 9 Kasım'a kadar, dokununca haberlere
+      const ODUL = "🏆 İşCep art arda 4. kez dünyanın en iyisi seçildi ›";
+      if (new Date() < new Date("2026-11-10T00:00:00")) L.splice(1, 0, ODUL);
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       let k = 0;
-      setInterval(() => { el.classList.add("fade"); setTimeout(() => { k = (k + 1) % L.length; el.textContent = L[k]; el.style.cursor = L[k] === ONR || /kampanya/i.test(L[k]) ? "pointer" : ""; el.style.color = /kampanya/i.test(L[k]) ? "#e0a24f" : ""; el.classList.remove("fade"); }, 600); }, 4500);
+      setInterval(() => { el.classList.add("fade"); setTimeout(() => { k = (k + 1) % L.length; el.textContent = L[k]; el.style.cursor = L[k] === ONR || L[k] === ODUL || /kampanya/i.test(L[k]) ? "pointer" : ""; el.style.color = L[k] === ODUL || /kampanya/i.test(L[k]) ? "#e0a24f" : ""; el.classList.remove("fade"); }, 600); }, 4500);
     })();
     // Saat ve tarih
     const AY = ["OCAK", "ŞUBAT", "MART", "NİSAN", "MAYIS", "HAZİRAN", "TEMMUZ", "AĞUSTOS", "EYLÜL", "EKİM", "KASIM", "ARALIK"];
