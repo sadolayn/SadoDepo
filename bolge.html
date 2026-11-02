@@ -234,6 +234,34 @@ function ticHtml() {
   return `<div class="tic5">${tic}<div class="tkN">2025 dış ticaret sıralaması, TÜİK yıllık verisi (TRT Haber, 30 Ocak 2026) · bayrağa dokun, ülkenin haberleri açılsın</div></div>
 `;
 }
+// Konular dört grupta. Dördüncü alan verilirse o konu yalnızca listedeki ülkelerde çıkar ("ORTAK": en büyük ticaret ortakları).
+const ENERJI = ["Rusya", "İran", "Irak", "Azerbaycan", "Katar", "Suudi Arabistan", "BAE"];
+const ORTAK = () => [...new Set([...TIC5["İhracat"], ...TIC5["İthalat"]])];
+const DUNYA_KONU = [
+  ["Ekonomi & finans", "#7fb4ff", [
+    ["💱", "Ekonomi & kur", 'enflasyon OR ekonomi OR büyüme OR resesyon OR borsa'],
+    ["🏛️", "Merkez bankası & faiz", '"merkez bankası" OR faiz OR Fed OR ECB'],
+    ["⭐", "Kredi notu", '"kredi notu" OR Moody\'s OR Fitch OR "S&P"'],
+    ["🚫", "Yaptırımlar & ambargo", 'yaptırım OR yaptırımlar OR ambargo OR OFAC'],
+    ["💸", "Para transferi & ödeme", 'SWIFT OR havale OR "para transferi" OR "ödeme sistemi"'],
+  ]],
+  ["Ticaret", "#3fc283", [
+    ["🤝", "Türkiye ile ilişkiler & ticaret", 'Türkiye OR ihracat OR ithalat OR "ticaret hacmi"'],
+    ["🧾", "Gümrük & tarifeler", 'gümrük OR tarife OR "ek vergi" OR kota OR SKDM', () => ORTAK()],
+    ["🚚", "Lojistik & taşımacılık", 'liman OR navlun OR lojistik OR "sınır kapısı" OR tır', () => ORTAK().concat(["İran", "Azerbaycan"])],
+    ["🛢️", "Enerji & emtia", 'petrol OR doğalgaz OR OPEC OR enerji', () => ENERJI],
+  ]],
+  ["İnsanlar", "#f0c64a", [
+    ["👨‍👩‍👧", "Gurbetçiler", 'gurbetçi OR gurbetçiler OR Türkler OR "Türk vatandaşı" OR "Türk toplumu"'],
+    ["🏠", "Çalışma & göç", '"çalışma izni" OR oturum OR göç OR göçmen OR "mavi kart"'],
+    ["🎓", "Öğrenci & eğitim", 'öğrenci OR üniversite OR burs OR "öğrenci vizesi"'],
+    ["✈️", "Seyahat & vize", 'vize OR turist OR uçuş OR "seyahat uyarısı" OR havalimanı'],
+  ]],
+  ["Gündem", "#b48cf0", [
+    ["🗳️", "Seçim & siyaset", 'seçim OR hükümet OR başbakan OR cumhurbaşkanı OR koalisyon'],
+    ["⚠️", "Afet & güvenlik", 'deprem OR sel OR saldırı OR grev OR "olağanüstü hal"'],
+  ]],
+];
 const ugn = (ek) => `https://www.google.com/search?tbm=nws&tbs=qdr:${{ "1d": "d", "7d": "w", "30d": "m" }[S.sure]},sbd:1&hl=tr&gl=tr&q=${encodeURIComponent(`intitle:"${S.ulke}"` + (ek ? " (" + ek.split(" OR ").map((t) => "intitle:" + t.trim()).join(" OR ") + ")" : ""))}`;
 function dunyaCiz() {
   const tr = S.mod !== "dunya";
