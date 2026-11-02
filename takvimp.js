@@ -76,7 +76,10 @@ const OKUL = [
   ["2027-03-08", "2027-03-12", "2. dönem ara tatili"],
   ["2027-06-25", null, "Karne günü · yaz tatili başlıyor"],
 ];
-const OKUL_YIL_SON = 2027; // 2027-2028 MEB takvimi açıklanınca eklenecek
+const OKUL_YIL_SON = 2027;
+// Okul tatili günleri (yalnızca aralıklar) → yıllık görünümde mavi şerit
+const OKUL_GUN = new Map();
+for (const [a, b, ad] of OKUL) if (b) { const [y1, m1, d1] = a.split("-").map(Number), [y2, m2, d2] = b.split("-").map(Number); for (let d = new Date(y1, m1 - 1, d1, 12); d <= new Date(y2, m2 - 1, d2, 12); d.setDate(d.getDate() + 1)) OKUL_GUN.set(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`, ad); } // 2027-2028 MEB takvimi açıklanınca eklenecek
 
 // Tarih anahtarı → kayıtlar
 const DAYS = new Map();
@@ -327,11 +330,12 @@ function renderYear() {
     const days = new Date(yYear, m + 1, 0).getDate();
     let cells = ["P", "S", "Ç", "P", "C", "C", "P"].map((d) => `<div class="h">${d}</div>`).join("");
     for (let i = 0; i < off; i++) cells += "<div></div>";
-    let w = 0;
+    let w = 0, okAy = "";
     for (let d = 1; d <= days; d++) {
       const dt = new Date(yYear, m, d, 12);
       const i = info(dt);
       const c = [];
+      const ok = OKUL_GUN.get(keyOf(dt)); if (ok) { c.push("okl"); okAy = ok; }
       if (i.we) c.push("we");
       if (i.full) c.push("hol");
       if (i.half) c.push("half");
@@ -345,7 +349,7 @@ function renderYear() {
     }
     tw += w;
     const cur = yYear === today.getFullYear() && m === today.getMonth();
-    html += `<div class="mini${cur ? " cur" : ""}" data-m="${m}"><div class="mn">${MONTHS[m]}<span>${w} iş günü</span></div><div class="mg">${cells}</div></div>`;
+    html += `<div class="mini${cur ? " cur" : ""}" data-m="${m}"><div class="mn">${MONTHS[m]}${okAy ? `<i class="okA" title="${okAy}" aria-label="Okul tatili: ${okAy}">🎒</i>` : ""}<span>${w} iş günü</span></div><div class="mg">${cells}</div></div>`;
   }
   $("ygrid").innerHTML = html;
   $("ygrid").querySelectorAll(".mini").forEach((el) => (el.onclick = () => {
