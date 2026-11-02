@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-11-01",
+ "kontrol": "2026-11-02",
  "kategoriler": [
   {
    "slug": "iste-maasa-ozel",
@@ -26,7 +26,7 @@
    "slug": "emeklilere-ozel",
    "ic": "👴",
    "ad": "Emeklilere özel",
-   "adet": 2,
+   "adet": 7,
    "url": "https://www.isbank.com.tr/kampanyalar/emeklilere-ozel",
    "kampanyalar": [
     {
@@ -40,6 +40,36 @@
      "bitis": "2026-12-31",
      "ozet": "SGK emekli maaşınızı İş Bankası’ndan alıyorsanız, Anadolu Sigorta’da avantajlı teklifler sizi bekliyor! İş Bankası aracılığıyla 31 Aralık 2026’ya kadar Anadolu ",
      "url": "https://www.isbank.com.tr/kampanyalar/emeklilere-ozel-anadolu-sigortada-avantajli-teklifler"
+    },
+    {
+     "baslik": "Bireysel Emeklilik Hesabı Açtıran SGK emeklilerine MaxiPuan fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "SGK (Emekli Sandığı, SSK ve Bağ-Kur) emekli maaşını İş Bankası'ndan almak için talimat veren veya halihazırda emekli maaşını İş Bankası'ndan alan emekli müşteri",
+     "url": "https://www.isbank.com.tr/kampanyalar/bireysel-emeklilik-hesabi-actiran-sgk-emeklilerine-maxipuan-firsati"
+    },
+    {
+     "baslik": "İlk defa Bankamatik kartı alan Emekli Maaş müşterilerinin alışverişlerinde MaxiPuan fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "İlk defa alacağınız Bankamatik Kartı'nızla her ay yapacağınız 10.000 TL ve üzeri alışverişlerinizde 6 ay boyunca 500 TL toplamda 3.000 TL’ye varan MaxiPuan fırs",
+     "url": "https://www.isbank.com.tr/kampanyalar/ilk-defa-bankamatik-karti-alan-emekli-maas-musterilerimizin-alisverislerinde-maxipuan-firsati"
+    },
+    {
+     "baslik": "Emekli Maaş Müşterilerinin İlk Kredi Kartı Başvurusuna Özel MaxiPuan Fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "​1 Kasım – 30 Kasım 2026 tarihleri arasında ilk kez İş Bankası bireysel kredi kartına başvuran emekli maaş müşterileri, 30 Nisan 2027' ye kadar yapacakları aylı",
+     "url": "https://www.isbank.com.tr/kampanyalar/emekli-maas-musterilerimizin-ilk-kredi-karti-basvurusuna-ozel-maxipuan"
+    },
+    {
+     "baslik": "SGK Emeklilerine Kasko veya Konut Sigortası’nda 1000 TL MaxiPuan Fırsatı İş Bankası’nda!",
+     "bitis": "2026-11-30",
+     "ozet": "SGK (Emekli Sandığı, SSK ve Bağ-Kur) emekli maaşını İş Bankası'ndan almak için talimat veren veya halihazırda emekli maaşını İş Bankası'ndan alan emekli müşteri",
+     "url": "https://www.isbank.com.tr/kampanyalar/kasko-veya-konut-sigortasi-yaptiran-sgk-emeklilerine-maxipuan-firsati"
+    },
+    {
+     "baslik": "Emekli maaşını İş Bankası’ndan alan SGK emeklilerinin fatura talimatlarına MaxiPuan Fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "SGK (Emekli Sandığı, SSK ve Bağ-Kur) emekli maaşını İş Bankası'ndan almak için talimat veren veya halihazırda emekli maaşını İş Bankası'ndan alan emekli müşteri",
+     "url": "https://www.isbank.com.tr/kampanyalar/emekli-maasini-is-bankasina-tasiyan-sgk-emeklilerine-ilk-fatura-talimatlarina-maxipuan-firsati"
     }
    ]
   },
