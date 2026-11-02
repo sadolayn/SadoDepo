@@ -192,6 +192,7 @@ const GRUP = BolgeSorgu.GRUP; // konular ve sorgu kuralları bolgesorgu.js'te (a
 let S = { il: "", ilce: "", elle: "", konum: false, son: [], sure: "30d", mod: "tr", ulke: "" }, IL = null, ILMAP = null, ON = [];
 try { const v = JSON.parse(localStorage.getItem("bolgem") || localStorage.getItem("haber_yerel2") || "null"); if (v && typeof v === "object") S = { ...S, ...v }; } catch (e) {}
 if (!Array.isArray(S.son)) S.son = [];
+S.mod = "tr"; // sayfa her açılışta Türkiye sekmesiyle açılır; Dünya'da seçilen ülke hatırlanır
 const sakla = () => { try { localStorage.setItem("bolgem", JSON.stringify(S)); } catch (e) {} };
 // Semt de yazılabilir: "Hatay İzmir" → elle: Hatay, il: İzmir (İzmir'deki Hatay semti, Hatay ili değil)
 const yerAd = () => [S.elle || S.ilce, S.il].filter(Boolean).join(", ");
