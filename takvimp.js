@@ -61,6 +61,23 @@ const DINI = {
   2028: [],
 };
 
+// Okul tatilleri (MEB çalışma takvimi). İş günü hesabına girmez; yalnızca Liste'de "Okul" olarak görünür.
+// Aralık: [başlangıç, bitiş, ad] (hafta içi günler); nokta: [tarih, null, ad]
+// 2025-2026: yarıyıl 19-30 Oca 2026 (1. dönem 16 Oca biter, 2. dönem 2 Şub başlar), 2. ara tatil 16-20 Mar, kapanış 26 Haz 2026
+// 2026-2027: açılış 14 Eyl 2026, 1. ara tatil 16-20 Kas, karne 22 Oca 2027, yarıyıl 25 Oca-5 Şub, 2. ara tatil 8-12 Mar, kapanış 25 Haz 2027
+const OKUL = [
+  ["2026-01-19", "2026-01-30", "Yarıyıl tatili (sömestr)"],
+  ["2026-03-16", "2026-03-20", "2. dönem ara tatili"],
+  ["2026-06-26", null, "Karne günü · yaz tatili başlıyor"],
+  ["2026-09-14", null, "Okullar açılıyor"],
+  ["2026-11-16", "2026-11-20", "1. dönem ara tatili"],
+  ["2027-01-22", null, "Karne günü · 1. dönem bitiyor"],
+  ["2027-01-25", "2027-02-05", "Yarıyıl tatili (sömestr)"],
+  ["2027-03-08", "2027-03-12", "2. dönem ara tatili"],
+  ["2027-06-25", null, "Karne günü · yaz tatili başlıyor"],
+];
+const OKUL_YIL_SON = 2027; // 2027-2028 MEB takvimi açıklanınca eklenecek
+
 // Tarih anahtarı → kayıtlar
 const DAYS = new Map();
 function add(key, name, type) { if (!DAYS.has(key)) DAYS.set(key, []); DAYS.get(key).push({ name, type }); }
@@ -166,6 +183,20 @@ function itemHTML(x, isNext) {
   const cls = "it" + (diff < 0 ? " past" : "") + (isNext ? " nx" : "");
   return `<div class="${cls}"><div class="dt"><b>${x.dt.getDate()}</b><span>${MONTHS[x.dt.getMonth()].slice(0, 3)}</span></div>
     <div class="nm">${x.name}<small>${x.dt.toLocaleDateString("tr-TR", { weekday: "long" })}${left ? " · " + left : ""}</small></div>${tag}</div>`;
+}
+// Okul tatili satırı: aralıkta kaç iş günü izin gerektiğini hesaplar (resmi tatil ve hafta sonu düşülür, arife yarım)
+function okulHTML(x) {
+  const bit = x.bit || x.dt, diff = Math.round((x.dt - today) / 86400000), bitti = bit < today;
+  const left = diff > 0 ? `${diff} gün kaldı` : !bitti && x.bit ? "Şu an tatilde" : diff === 0 ? "Bugün" : "";
+  let alt = x.dt.toLocaleDateString("tr-TR", { weekday: "long" });
+  if (x.bit) {
+    let is = 0, bay = 0;
+    for (let d = new Date(x.dt); d <= x.bit; d.setDate(d.getDate() + 1)) { const i = info(d); if (i.we) continue; if (i.full) bay++; else is += i.half ? 0.5 : 1; }
+    const isY = String(is).replace(".", ",");
+    alt = `${x.dt.getDate()} ${MONTHS[x.dt.getMonth()]} – ${x.bit.getDate()} ${MONTHS[x.bit.getMonth()]} · <b class="izn">izin gereken: ${isY} iş günü</b>${bay ? ` <span class="bayr">(${bay} gün resmî tatile denk geliyor)</span>` : ""}`;
+  }
+  return `<div class="it okul${bitti ? " past" : ""}"><div class="dt"><b>${x.dt.getDate()}</b><span>${MONTHS[x.dt.getMonth()].slice(0, 3)}</span></div>
+    <div class="nm">🎒 ${x.name}<small>${alt}${left ? " · " + left : ""}</small></div><span class="tag t4">Okul</span></div>`;
 }
 function showDetail(d) {
   const i = info(d);
@@ -274,10 +305,13 @@ function renderList() {
   let wd = 0; // hafta içine denk gelen tam tatil sayısı
   const seen = new Set();
   for (const x of items) if (x.type === "tam" && !seen.has(keyOf(x.dt))) { seen.add(keyOf(x.dt)); if (x.dt.getDay() % 6 !== 0) wd++; }
-  const shown = items.filter((x) => listF === "all" ? true : listF === "up" ? x.dt >= today : x.type === listF);
+  for (const [a, b, ad] of OKUL) if (a.startsWith(listYear + "-")) items.push({ dt: parse(a), bit: b ? parse(b) : null, name: ad, type: "okul" });
+  items.sort((a, b) => a.dt - b.dt);
+  const shown = items.filter((x) => listF === "all" ? true : listF === "up" ? (x.bit || x.dt) >= today : x.type === listF);
   const note = !(DINI[listYear] || []).length ? `<div style="font-size:12px;color:var(--muted);padding:8px 0 4px">${listYear} kandil tarihleri Diyanet takvimi netleşince eklenecek.</div>` : "";
-  $("yList").innerHTML = `<div style="font-size:13px;color:var(--muted);padding-bottom:6px">${listYear} yılında hafta içine denk gelen <b style="color:var(--hol)">${wd}</b> tam gün tatil var.</div>` + shown.map((x) => itemHTML(x, nx && keyOf(x.dt) === keyOf(nx.dt) && x.name === nx.name)).join("") +
-    (shown.length ? "" : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu filtrede gün yok.</div>') + note;
+  $("yList").innerHTML = `<div style="font-size:13px;color:var(--muted);padding-bottom:6px">${listYear} yılında hafta içine denk gelen <b style="color:var(--hol)">${wd}</b> tam gün tatil var.</div>` + shown.map((x) => x.type === "okul" ? okulHTML(x) : itemHTML(x, nx && keyOf(x.dt) === keyOf(nx.dt) && x.name === nx.name)).join("") +
+    (shown.length ? "" : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu filtrede gün yok.</div>') + note +
+    (listF === "all" || listF === "okul" || listF === "up" ? `<div class="okNot">🎒 Okul tatilleri: MEB çalışma takvimi (2025-2026 ve 2026-2027).${listYear > OKUL_YIL_SON || listYear === OKUL_YIL_SON ? " 2027-2028 takvimi henüz açıklanmadı; açıklanınca eklenecek." : ""} "İzin gereken" sayısı hafta sonlarını ve resmî tatilleri düşer, arifeyi yarım gün sayar.</div>` : "");
 }
 
 // ================= Yıllık görünüm =================
