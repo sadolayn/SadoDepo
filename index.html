@@ -57,6 +57,14 @@
     -webkit-mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 35%, transparent 68%); mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 35%, transparent 68%);
     animation: odDon 30s linear infinite; }
   .odS .hale { position: absolute; top: 0; left: 50%; width: 220px; height: 220px; margin-left: -110px; border-radius: 50%; background: radial-gradient(circle, rgba(255,200,100,.35), rgba(224,162,79,.08) 55%, transparent 70%); animation: odNef 2.8s ease-in-out infinite; }
+  .odS .kvid { display: none; position: relative; width: 100%; max-width: 420px; aspect-ratio: 16 / 9.6; object-fit: cover; object-position: 50% 30%; margin-top: 0; border-radius: 0 0 40% 40% / 0 0 18% 18%;
+    -webkit-mask: linear-gradient(#000 70%, transparent); mask: linear-gradient(#000 70%, transparent); }
+  .top.vidOn .odS .kvid { display: block; }
+  .top.vidOn .odS .kupa, .top.vidOn .odS .ray, .top.vidOn .odS .hale, .top.vidOn .odS .kf { display: none; }
+  .top.vidOn .odS .yazi { margin-top: -22px; }
+  .top.vidOn .hello { margin-bottom: 52px; transition: margin .5s ease; }
+  .top .hello { transition: margin .5s ease; }
+  .top.vidOn .odS .y1 { font-size: 10.5px; } .top.vidOn .odS .y2 { font-size: 21px; } .top.vidOn .odS .y3 { margin-top: 4px; padding: 4px 13px; }
   .odS .kupa { position: relative; width: 128px; height: 134px; margin-top: 26px; filter: drop-shadow(0 6px 22px rgba(255,180,60,.45)); }
   .top.odulOn .odS .kupa { animation: odGir .9s cubic-bezier(.2,1.4,.4,1) both; }
   .odS .kupa svg { width: 100%; height: 100%; display: block; overflow: visible; }
@@ -450,6 +458,7 @@
     <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"></h1>
     <a class="odS" id="odS" href="isbank.html#guncel" aria-label="İşCep art arda 4. kez dünyanın en iyisi seçildi, haberi oku" tabindex="-1">
       <div class="ray"></div><div class="hale"></div>
+      <video class="kvid" id="kvid" muted playsinline preload="none" poster="img/kupa-son.jpg" aria-hidden="true"><source src="img/kupa.mp4" type="video/mp4"></video>
       <div class="kupa"><svg viewBox="0 0 120 126" aria-hidden="true">
         <defs>
           <linearGradient id="kA" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a5a1c"/><stop offset=".25" stop-color="#f3d38a"/><stop offset=".45" stop-color="#fff4cf"/><stop offset=".65" stop-color="#e0a24f"/><stop offset="1" stop-color="#7a4c14"/></linearGradient>
@@ -726,6 +735,15 @@
         }
         top.classList.toggle("odulOn", ac);
         odS.tabIndex = ac ? 0 : -1;
+        // Video (kullanıcının kendi üretimi): bir kez oynar, bitince son karede kalır; yavaş bağlantı ya da "animasyonları azalt" açıksa çizilen kupa kalır
+        const v = document.getElementById("kvid"), c = navigator.connection;
+        const vidOk = v && v.canPlayType("video/mp4") && !matchMedia("(prefers-reduced-motion: reduce)").matches && !(c && (c.saveData || /2g/.test(c.effectiveType || "")));
+        if (!vidOk) return;
+        if (ac) {
+          top.classList.add("vidOn"); v.currentTime = 0;
+          odS.style.height = (parseFloat(odS.style.height) + 52) + "px";
+          const pr = v.play(); if (pr && pr.catch) pr.catch(() => top.classList.remove("vidOn"));
+        } else { v.pause(); top.classList.remove("vidOn"); }
       };
       const don = () => {
         el.classList.add("fade");
@@ -735,7 +753,7 @@
           sahne(od);
           el.style.cursor = L[k] === ONR || /kampanya/i.test(L[k]) ? "pointer" : ""; el.style.color = /kampanya/i.test(L[k]) ? "#e0a24f" : "";
           el.classList.remove("fade");
-          setTimeout(don, od ? 7000 : 4500);
+          setTimeout(don, od ? 12000 : 4500);
         }, 600);
       };
       setTimeout(don, 4500);
