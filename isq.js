@@ -198,6 +198,11 @@ const ISQ_ALL = [].concat(
     ["İş Vapur, afet durumunda kaç kişiyi barındırabilecek şekilde tasarlandı?", ["50", "150", "300", "1.000"], 2],
   ], "2026-10-21"),
 
+  // --- İşCep ödülü (Anadolu Ajansı ve Habertürk, 2 Kasım 2026) ---
+  K("iscep", [
+    ["Kasım 2026'da İşCep art arda kaçıncı kez \"Dünyanın En İyi Bireysel Mobil Bankacılık Uygulaması\" seçildi?", ["2. kez", "3. kez", "4. kez", "5. kez"], 2],
+  ], "2026-11-02"),
+
   // --- Kasım 2026 kampanyaları (isbank.com.tr, maximum.com.tr ve maximiles.com.tr kampanya sayfaları, 1 Kasım 2026; 30 Kasım'da düşer) ---
   K("kart", [
     ["Kasım 2026 Market Kampanyası: Maximum anlaşmalı marketlerde tek seferde en az kaç TL alışverişe MaxiPuan veriliyor?", ["10.000 TL", "15.000 TL", "20.000 TL", "25.000 TL"], 1, "2026-11-30"],
