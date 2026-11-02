@@ -198,7 +198,7 @@ const ISQ_ALL = [].concat(
     ["İş Vapur, afet durumunda kaç kişiyi barındırabilecek şekilde tasarlandı?", ["50", "150", "300", "1.000"], 2],
   ], "2026-10-21"),
 
-  // --- İşCep ödülü (Anadolu Ajansı ve Habertürk, 2 Kasım 2026) ---
+  // --- İşCep ödülü (isbank.com.tr/bankamizi-taniyin/iscepe-artarda-4kez-dunyanin-en-iyi-bireysel-mobil-bankacilik-uygulamasi-odulu, 2 Kasım 2026) ---
   K("iscep", [
     ["Kasım 2026'da İşCep art arda kaçıncı kez \"Dünyanın En İyi Bireysel Mobil Bankacılık Uygulaması\" seçildi?", ["2. kez", "3. kez", "4. kez", "5. kez"], 2],
   ], "2026-11-02"),
