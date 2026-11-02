@@ -1036,7 +1036,6 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   // Önemli duyuru (ÖNEMLİ rozeti, PPK satırından hemen sonra): Resmi Gazete sayfasındaki "yapım aşamasında" kutusuna gider
   const dizi = [
     ["video", "<svg class=\"kyTrb\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><rect width=\"30\" height=\"20\" fill=\"#e30a17\"/><circle cx=\"11\" cy=\"10\" r=\"5\" fill=\"#fff\"/><circle cx=\"12.25\" cy=\"10\" r=\"4\" fill=\"#e30a17\"/><polygon points=\"16.2,10 19.9,8.8 17.6,11.9 17.6,8.1 19.9,11.2\" fill=\"#fff\"/></svg><b>Cumhuriyet Bayramımız kutlu olsun!</b> İş Bankası'nın 29 Ekim videosu <b class=\"gir\">İş Bankası Gündemi › Video</b>", "2026-10-29", "onem"],
-    ["gazete.html#2026-10-15", "<b class=\"yn\">ÖNEMLİ</b>📜 Resmi Gazete (15 Ekim): taksit yetkisi artık <b>Ticaret Bakanlığı</b>'nda · sıfır telefonda 12 ay taksit sınırı <b>40 bin TL</b> oldu <b class=\"gir\">Ayrıntı</b>", "2026-11-30", "onem"],
     // Ay başı hatırlatması (her ayın 1-5'i): yeni kampanyalara katılmayı unutma. İlk 3 gün "Yeni gelenler"e, sonra tüm kampanyalara gider
     ...(+bugunTR.slice(8) <= 5 ? [[+bugunTR.slice(8) <= 5 ? "yeniliste" : "maximum", "🗓️ Yeni ay, yeni kampanyalar! " + ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"][+bugunTR.slice(5, 7) - 1] + " kampanyalarına katılmayı unutma 🎁 <b class=\"gir\">Güncel kampanyalar</b>"]] : []),
     ...(function () { try { return localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
@@ -1056,9 +1055,9 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     requestAnimationFrame(() => { const w = ser.scrollWidth / 2; ser.style.setProperty("--sure", Math.max(25, Math.round(w / 55)) + "s"); });
   }
   ciz();
-  // Kurum Duyuruları'ndaki son 7 günün ÖNEMLİ duyuruları kayan yazının başına (Resmi Gazete sayfasındaki bölüme gider)
+  // Kurum Duyuruları'ndaki son 3 günün ÖNEMLİ duyuruları kayan yazının başına (Resmi Gazete sayfasındaki bölüme gider)
   Ortak.json("gazete/duyurular.json").then((j) => {
-    const yeni = (j.duyurular || []).filter((x) => x && x.onemli && x.baslik && (Date.now() - new Date(x.tarih + "T12:00:00")) / 864e5 <= 7).slice(0, 2);
+    const yeni = (j.duyurular || []).filter((x) => x && x.onemli && x.baslik && (Date.now() - new Date(x.tarih + "T12:00:00")) / 864e5 <= 3).slice(0, 2); // 3 gün kalır (2 Kasım 2026: 7 gün uzun geldi)
     if (!yeni.length) return;
     const e = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     dizi.unshift(...yeni.map((x) => ["gazete.html?kurum", `<b class="yn">ÖNEMLİ</b>🏛️ ${e(x.kurum)}: ${e(x.baslik)} <b class="gir">Ayrıntı</b>`, "", "onem"]));
