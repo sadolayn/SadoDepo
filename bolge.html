@@ -111,7 +111,7 @@
   <div class="mod" role="tablist" aria-label="Türkiye ya da Dünya"><button type="button" role="tab" data-mod="tr">🇹🇷 Türkiye</button><button type="button" role="tab" data-mod="dunya" data-yeni="bolgeDunya|2026-11-02|•">🌍 Dünya</button></div>
 
   <div id="dunya" hidden>
-    <p class="giris">Türkiye'yle bağı güçlü 29 ülkede <b>neler oluyor</b>: ekonomi, faiz kararları, ticaret, gurbetçiler, seyahat ve vize… Haberler Türkçe Google Haberler'de açılır; bu sayfa haber derlemez.</p>
+    <p class="giris">Türkiye'yle bağı güçlü 29 ülkede <b>neler oluyor</b>: ekonomi, faiz, yaptırımlar, ticaret, enerji, gurbetçiler, öğrenciler, seyahat… Haberler Türkçe Google Haberler'de açılır; bu sayfa haber derlemez.</p>
     <section class="kart" aria-label="Ülke seç">
       <h2>Ülke seç</h2>
       <div id="ulkeler"></div>
@@ -125,7 +125,7 @@
       <section class="kart" aria-label="Ülke konuları" style="margin-top:14px">
         <div class="kBas"><h2>Konular <small>başlığında ülke ve konu geçen haberler</small></h2></div>
         <div class="donem" id="ulkeDonem"></div>
-        <div class="izgara" id="ulkeKonu" style="--g:#7fb4ff"></div>
+        <div class="konular" id="ulkeKonu"></div>
         <small class="ipucu">Liste boş gelirse o sürede o konuda haber çıkmamış demektir; süreyi uzatabilirsin.</small>
       </section>
     </div>
@@ -218,14 +218,33 @@ const ULKE_GRUP = [
   ["Asya & Uzak Doğu", [["🇯🇵", "Japonya"], ["🇰🇷", "Güney Kore"], ["🇮🇳", "Hindistan"], ["🇸🇬", "Singapur"], ["🇲🇾", "Malezya"], ["🇮🇩", "Endonezya"], ["🇹🇭", "Tayland"], ["🇻🇳", "Vietnam"]]],
 ];
 const ULKELER = ULKE_GRUP.flatMap((g) => g[1]);
+// Konular dört grupta. Dördüncü alan verilirse o konu yalnızca listedeki ülkelerde çıkar ("ORTAK": en büyük ticaret ortakları).
+const ENERJI = ["Rusya", "İran", "Irak", "Azerbaycan", "Katar", "Suudi Arabistan", "BAE"];
+const ORTAK = () => ULKE_GRUP[0][1].map((x) => x[1]);
 const DUNYA_KONU = [
-  ["💱", "Ekonomi & kur", 'enflasyon OR ekonomi OR büyüme OR resesyon OR borsa'],
-  ["🏛️", "Merkez bankası & faiz", '"merkez bankası" OR faiz OR Fed OR ECB'],
-  ["🤝", "Türkiye ile ilişkiler & ticaret", 'Türkiye OR ihracat OR ithalat OR "ticaret hacmi"'],
-  ["👨‍👩‍👧", "Gurbetçiler", 'gurbetçi OR gurbetçiler OR Türkler OR "Türk vatandaşı" OR "Türk toplumu"'],
-  ["✈️", "Seyahat & vize", 'vize OR turist OR uçuş OR "seyahat uyarısı" OR havalimanı'],
-  ["🗳️", "Seçim & siyaset", 'seçim OR hükümet OR başbakan OR cumhurbaşkanı OR koalisyon'],
-  ["⚠️", "Afet & güvenlik", 'deprem OR sel OR saldırı OR grev OR "olağanüstü hal"'],
+  ["Ekonomi & finans", "#7fb4ff", [
+    ["💱", "Ekonomi & kur", 'enflasyon OR ekonomi OR büyüme OR resesyon OR borsa'],
+    ["🏛️", "Merkez bankası & faiz", '"merkez bankası" OR faiz OR Fed OR ECB'],
+    ["⭐", "Kredi notu", '"kredi notu" OR Moody\'s OR Fitch OR "S&P"'],
+    ["🚫", "Yaptırımlar & ambargo", 'yaptırım OR yaptırımlar OR ambargo OR OFAC'],
+    ["💸", "Para transferi & ödeme", 'SWIFT OR havale OR "para transferi" OR "ödeme sistemi"'],
+  ]],
+  ["Ticaret", "#3fc283", [
+    ["🤝", "Türkiye ile ilişkiler & ticaret", 'Türkiye OR ihracat OR ithalat OR "ticaret hacmi"'],
+    ["🧾", "Gümrük & tarifeler", 'gümrük OR tarife OR "ek vergi" OR kota OR SKDM', () => ORTAK()],
+    ["🚚", "Lojistik & taşımacılık", 'liman OR navlun OR lojistik OR "sınır kapısı" OR tır', () => ORTAK().concat(["İran", "Azerbaycan"])],
+    ["🛢️", "Enerji & emtia", 'petrol OR doğalgaz OR OPEC OR enerji', () => ENERJI],
+  ]],
+  ["İnsanlar", "#f0c64a", [
+    ["👨‍👩‍👧", "Gurbetçiler", 'gurbetçi OR gurbetçiler OR Türkler OR "Türk vatandaşı" OR "Türk toplumu"'],
+    ["🏠", "Çalışma & göç", '"çalışma izni" OR oturum OR göç OR göçmen OR "mavi kart"'],
+    ["🎓", "Öğrenci & eğitim", 'öğrenci OR üniversite OR burs OR "öğrenci vizesi"'],
+    ["✈️", "Seyahat & vize", 'vize OR turist OR uçuş OR "seyahat uyarısı" OR havalimanı'],
+  ]],
+  ["Gündem", "#b48cf0", [
+    ["🗳️", "Seçim & siyaset", 'seçim OR hükümet OR başbakan OR cumhurbaşkanı OR koalisyon'],
+    ["⚠️", "Afet & güvenlik", 'deprem OR sel OR saldırı OR grev OR "olağanüstü hal"'],
+  ]],
 ];
 const ugn = (ek) => `https://www.google.com/search?tbm=nws&tbs=qdr:${{ "1d": "d", "7d": "w", "30d": "m" }[S.sure]},sbd:1&hl=tr&gl=tr&q=${encodeURIComponent(`intitle:"${S.ulke}"` + (ek ? " (" + ek.split(" OR ").map((t) => "intitle:" + t.trim()).join(" OR ") + ")" : ""))}`;
 function dunyaCiz() {
@@ -241,7 +260,10 @@ function dunyaCiz() {
   document.querySelectorAll("#ulkeSec [data-sure]").forEach((x) => x.classList.toggle("on", x.dataset.sure === S.sure));
   $("ulkeTum").href = ugn(""); $("ulkeTum").innerHTML = `${esc(S.ulke)} tüm haberler ↗<small>${sureAd} · ${donem()}</small>`;
   $("ulkeDonem").innerHTML = `📅 <span><b>${donem()}</b> arası haberler, en yeni üstte</span>`;
-  $("ulkeKonu").innerHTML = DUNYA_KONU.map(([ic, n, q]) => `<a href="${esc(ugn(q))}" target="_blank" rel="noopener"><span class="ik">${ic}</span><span class="ad">${esc(n)}</span><span class="ok">↗</span></a>`).join("");
+  $("ulkeKonu").innerHTML = DUNYA_KONU.map(([g, renk, L]) => {
+    const K = L.filter((k) => !k[3] || k[3]().includes(S.ulke)); // ülkeye uygun konular
+    return K.length ? `<div class="grp" style="--g:${renk}"><div class="grpB">${esc(g)}</div><div class="izgara">${K.map(([ic, n, q]) => `<a href="${esc(ugn(q))}" target="_blank" rel="noopener"><span class="ik">${ic}</span><span class="ad">${esc(n)}</span><span class="ok">↗</span></a>`).join("")}</div></div>` : "";
+  }).join("");
 }
 
 function sec(y) {
