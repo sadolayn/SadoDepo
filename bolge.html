@@ -110,7 +110,7 @@
   <div class="mod" role="tablist" aria-label="Türkiye ya da Dünya"><button type="button" role="tab" data-mod="tr">🇹🇷 Türkiye</button><button type="button" role="tab" data-mod="dunya" data-yeni="bolgeDunya|2026-11-02|•">🌍 Dünya</button></div>
 
   <div id="dunya" hidden>
-    <p class="giris">Türkiye'yle bağı güçlü 28 ülkede <b>neler oluyor</b>: ekonomi, faiz kararları, ticaret, gurbetçiler, seyahat ve vize… Haberler Türkçe Google Haberler'de açılır; bu sayfa haber derlemez.</p>
+    <p class="giris">Türkiye'yle bağı güçlü 29 ülkede <b>neler oluyor</b>: ekonomi, faiz kararları, ticaret, gurbetçiler, seyahat ve vize… Haberler Türkçe Google Haberler'de açılır; bu sayfa haber derlemez.</p>
     <section class="kart" aria-label="Ülke seç">
       <h2>Ülke seç</h2>
       <div id="ulkeler"></div>
@@ -209,7 +209,7 @@ const gm = (ne) => `https://www.google.com/maps/search/${encodeURIComponent(ne +
 const ULKE_GRUP = [
   ["Avrupa", [["🇩🇪", "Almanya"], ["🇬🇧", "İngiltere"], ["🇳🇱", "Hollanda"], ["🇫🇷", "Fransa"], ["🇧🇪", "Belçika"], ["🇦🇹", "Avusturya"], ["🇨🇭", "İsviçre"], ["🇸🇪", "İsveç"], ["🇮🇹", "İtalya"], ["🇪🇸", "İspanya"], ["🇬🇷", "Yunanistan"], ["🇷🇺", "Rusya"]]],
   ["Amerika", [["🇺🇸", "ABD"], ["🇨🇦", "Kanada"]]],
-  ["Orta Doğu & Kafkasya", [["🇦🇿", "Azerbaycan"], ["🇮🇶", "Irak"], ["🇦🇪", "BAE"], ["🇸🇦", "Suudi Arabistan"], ["🇶🇦", "Katar"]]],
+  ["Orta Doğu & Kafkasya", [["🇦🇿", "Azerbaycan"], ["🇮🇶", "Irak"], ["🇮🇷", "İran"], ["🇦🇪", "BAE"], ["🇸🇦", "Suudi Arabistan"], ["🇶🇦", "Katar"]]],
   ["Asya & Uzak Doğu", [["🇨🇳", "Çin"], ["🇯🇵", "Japonya"], ["🇰🇷", "Güney Kore"], ["🇮🇳", "Hindistan"], ["🇸🇬", "Singapur"], ["🇲🇾", "Malezya"], ["🇮🇩", "Endonezya"], ["🇹🇭", "Tayland"], ["🇻🇳", "Vietnam"]]],
 ];
 const ULKELER = ULKE_GRUP.flatMap((g) => g[1]);
