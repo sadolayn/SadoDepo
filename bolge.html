@@ -184,7 +184,8 @@
 
   </div>
 
-  <p class="note">Haberleri ve kaynakları Google; kurum, işletme bilgilerini ve telefonları Google Haritalar gösterir; Sadolayn bu içeriklerden sorumlu değildir. Konum yalnızca il / ilçe adını bulmak için bir kez OpenStreetMap'e sorulur, kaydedilmez. Son baktığın yerler yalnızca bu cihazda tutulur. İl ve ilçe listesi: PTT posta kodu listesi (turkey-neighbourhoods, MIT).</p>
+  <p class="note" id="notDunya" hidden>Haberleri ve kaynakları Google Haberler gösterir; Sadolayn bu içeriklerden sorumlu değildir. İhracat ve ithalat sıralaması TÜİK'in 2025 yıllık dış ticaret verisidir. Seçtiğin ülke yalnızca bu cihazda hatırlanır.</p>
+  <p class="note" id="notTr">Haberleri ve kaynakları Google; kurum, işletme bilgilerini ve telefonları Google Haritalar gösterir; Sadolayn bu içeriklerden sorumlu değildir. Konum yalnızca il / ilçe adını bulmak için bir kez OpenStreetMap'e sorulur, kaydedilmez. Son baktığın yerler yalnızca bu cihazda tutulur. İl ve ilçe listesi: PTT posta kodu listesi (turkey-neighbourhoods, MIT).</p>
 </div>
 
 <script>
@@ -266,7 +267,7 @@ const ugn = (ek) => `https://www.google.com/search?tbm=nws&tbs=qdr:${{ "1d": "d"
 function dunyaCiz() {
   const tr = S.mod !== "dunya";
   document.querySelectorAll("[data-mod]").forEach((b) => { b.classList.toggle("on", (b.dataset.mod === "dunya") !== tr); b.setAttribute("aria-selected", String((b.dataset.mod === "dunya") !== tr)); });
-  $("turkiye").hidden = !tr; $("dunya").hidden = tr;
+  $("turkiye").hidden = !tr; $("dunya").hidden = tr; $("notTr").hidden = !tr; $("notDunya").hidden = tr;
   if (tr) return;
   $("ulkeler").innerHTML = ticHtml() + ULKE_GRUP.map(([g, L]) => `<div class="ugB">${esc(g)}</div><div class="ulkeler kucuk">${L.map(([b, ad, sira]) => `<button type="button" data-ulke="${esc(ad)}" class="${S.ulke === ad ? "on" : ""}${sira ? " top" : ""}"><span class="bay">${b}</span><span class="un">${esc(ad)}${sira ? `<small>${esc(sira).replace(" · ", "<br>")}</small>` : ""}</span></button>`).join("")}</div>`).join("");
   $("ulkeSec").hidden = !S.ulke;
