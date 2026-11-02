@@ -152,6 +152,7 @@ function renderMonth() {
     if (i.half) cls.push("half");
     if (keyOf(dt) === keyOf(today)) cls.push("today");
     if (selected && keyOf(dt) === keyOf(selected)) cls.push("sel");
+    if (OKUL_GUN.has(keyOf(dt))) cls.push("okl");
     const pm = dayMarks(dt, i);
     cls.push(...pm.cls);
     const el = document.createElement("div");
@@ -175,7 +176,10 @@ function renderMonth() {
   $("sKalan").innerHTML = mEnd < today ? "" : `⏳ ${mStart > today ? "Ayın tamamı" : "Bugünden ay sonuna"} (${sayGun(mStart > today ? mStart : today, mEnd).total} gün): ${ozetHTML(sayGun(mStart > today ? mStart : today, mEnd))}`;
   $("sumTitle").textContent = `${MONTHS[m]} ${y} özeti`;
   ppkAy(y, m);
-  $("mList").innerHTML = monthItems.length ? monthItems.map((x) => itemHTML(x)).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmi tatil ya da dini gün yok.</div>';
+  // Bu aya dokunan okul tatilleri / karne / açılış (aralık ay sınırını aşsa da)
+  for (const [a, b, ad] of OKUL) { const da = parse(a), db = b ? parse(b) : da; if (da <= mEnd && db >= mStart) monthItems.push({ dt: da, bit: b ? db : null, name: ad, type: "okul" }); }
+  monthItems.sort((a, b) => a.dt - b.dt);
+  $("mList").innerHTML = monthItems.length ? monthItems.map((x) => x.type === "okul" ? okulHTML(x) : itemHTML(x)).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmi tatil ya da dini gün yok.</div>';
   const mine = A.items.filter((x) => x.d <= keyOf(mEnd) && (x.e || x.d) >= keyOf(mStart)).sort(byDate);
   if (mine.length) $("mList").innerHTML += `<div class="mgrp" style="color:#c9b4f7">Ajandam · ${MONTHS[m]}</div>` + mine.map((x) => aItemHTML(x)).join("");
 }
@@ -206,6 +210,8 @@ function showDetail(d) {
   let txt = `<b>${fmtLong(d)}</b><br>`;
   if (i.recs.length) txt += i.recs.map((r) => r.name + (r.type === "yarim" ? " (öğleden sonra tatil)" : "")).join("<br>") + "<br>";
   txt += i.we ? "Hafta sonu" : i.full ? "Resmi tatil — iş günü değil" : i.half ? "Yarım iş günü" : "İş günü";
+  const okd = OKUL_GUN.get(keyOf(d)) || (OKUL.find((o) => !o[1] && o[0] === keyOf(d)) || [])[2];
+  if (okd) txt += `<br><span style="color:#8fb4ff">🎒 Okullar: ${okd}</span>`;
   if (!inRange(d)) txt += "<br><span style='color:var(--muted);font-size:12px'>Bu yıl için bayram tarihleri yüklenmedi.</span>";
   const vg = vergiGun(d);
   if (vg.length) txt += `<div style="margin-top:6px;font-size:13px">${vg.map((e) => `${e.ic} <b style="color:${e.c === "b" && !e.both ? "#e0a24f" : "#8fb0ff"}">${e.n}</b> — son gün`).join("<br>")}<br><a href="#vergi" onclick="document.querySelector('.tabs button[data-tab=vergi]').click();return false" style="color:var(--accent);font-size:12px">Vergi sekmesinde ödeme planı →</a></div>`;
