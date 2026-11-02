@@ -87,6 +87,7 @@
   .mod { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 14px; background: var(--k1); border: 1px solid #5a3a22; }
   .mod button { position: relative; min-height: 44px; border: 0; border-radius: 10px; background: transparent; color: #c9a88c; font-size: 15px; font-weight: 700; cursor: pointer; }
   .mod button.on { background: var(--c); color: #1a0d04; }
+  .ugB { margin: 10px 2px 6px; font-size: 11.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #f0975a; } .ugB:first-child { margin-top: 0; }
   .ulkeler { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   .ulkeler button { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--cz); background: var(--k2); color: var(--c2); font-size: 14.5px; cursor: pointer; text-align: left; }
   .ulkeler button .bay { font-size: 20px; } .ulkeler button.on { border-color: var(--c); background: #2c1608; color: #fff; font-weight: 700; }
@@ -109,10 +110,10 @@
   <div class="mod" role="tablist" aria-label="Türkiye ya da Dünya"><button type="button" role="tab" data-mod="tr">🇹🇷 Türkiye</button><button type="button" role="tab" data-mod="dunya" data-yeni="bolgeDunya|2026-11-02|•">🌍 Dünya</button></div>
 
   <div id="dunya" hidden>
-    <p class="giris">Türkiye'yle bağı güçlü ülkelerde <b>neler oluyor</b>: ekonomi, faiz kararları, ticaret, gurbetçiler, seyahat ve vize… Haberler Türkçe Google Haberler'de açılır; bu sayfa haber derlemez.</p>
+    <p class="giris">Türkiye'yle bağı güçlü 28 ülkede <b>neler oluyor</b>: ekonomi, faiz kararları, ticaret, gurbetçiler, seyahat ve vize… Haberler Türkçe Google Haberler'de açılır; bu sayfa haber derlemez.</p>
     <section class="kart" aria-label="Ülke seç">
       <h2>Ülke seç</h2>
-      <div class="cipler ulkeler" id="ulkeler"></div>
+      <div id="ulkeler"></div>
     </section>
     <div id="ulkeSec" hidden>
       <section class="yer" aria-label="Seçilen ülke">
@@ -205,8 +206,13 @@ const gmK = (ne) => { const y = S.elle || (S.ilce !== "Merkez" && S.ilce); retur
 const gm = (ne) => `https://www.google.com/maps/search/${encodeURIComponent(ne + " " + yerHarita())}`;
 
 // ---- Dünya: Türkiye'yle bağı güçlü ülkeler (Kasım 2026). Ülke adı ve konu başlıkta aranır; ülke tek kalıp (OR'lu yer, Google'ın konuyu atmasına yol açıyordu) ----
-const ULKELER = [["🇩🇪", "Almanya"], ["🇺🇸", "ABD"], ["🇬🇧", "İngiltere"], ["🇳🇱", "Hollanda"], ["🇫🇷", "Fransa"], ["🇧🇪", "Belçika"], ["🇦🇹", "Avusturya"], ["🇨🇭", "İsviçre"],
-  ["🇸🇪", "İsveç"], ["🇮🇹", "İtalya"], ["🇪🇸", "İspanya"], ["🇷🇺", "Rusya"], ["🇦🇿", "Azerbaycan"], ["🇮🇶", "Irak"], ["🇦🇪", "BAE"], ["🇸🇦", "Suudi Arabistan"], ["🇨🇳", "Çin"], ["🇬🇷", "Yunanistan"]];
+const ULKE_GRUP = [
+  ["Avrupa", [["🇩🇪", "Almanya"], ["🇬🇧", "İngiltere"], ["🇳🇱", "Hollanda"], ["🇫🇷", "Fransa"], ["🇧🇪", "Belçika"], ["🇦🇹", "Avusturya"], ["🇨🇭", "İsviçre"], ["🇸🇪", "İsveç"], ["🇮🇹", "İtalya"], ["🇪🇸", "İspanya"], ["🇬🇷", "Yunanistan"], ["🇷🇺", "Rusya"]]],
+  ["Amerika", [["🇺🇸", "ABD"], ["🇨🇦", "Kanada"]]],
+  ["Orta Doğu & Kafkasya", [["🇦🇿", "Azerbaycan"], ["🇮🇶", "Irak"], ["🇦🇪", "BAE"], ["🇸🇦", "Suudi Arabistan"], ["🇶🇦", "Katar"]]],
+  ["Asya & Uzak Doğu", [["🇨🇳", "Çin"], ["🇯🇵", "Japonya"], ["🇰🇷", "Güney Kore"], ["🇮🇳", "Hindistan"], ["🇸🇬", "Singapur"], ["🇲🇾", "Malezya"], ["🇮🇩", "Endonezya"], ["🇹🇭", "Tayland"], ["🇻🇳", "Vietnam"]]],
+];
+const ULKELER = ULKE_GRUP.flatMap((g) => g[1]);
 const DUNYA_KONU = [
   ["💱", "Ekonomi & kur", 'enflasyon OR ekonomi OR büyüme OR resesyon OR borsa'],
   ["🏛️", "Merkez bankası & faiz", '"merkez bankası" OR faiz OR Fed OR ECB'],
@@ -222,7 +228,7 @@ function dunyaCiz() {
   document.querySelectorAll("[data-mod]").forEach((b) => { b.classList.toggle("on", (b.dataset.mod === "dunya") !== tr); b.setAttribute("aria-selected", String((b.dataset.mod === "dunya") !== tr)); });
   $("turkiye").hidden = !tr; $("dunya").hidden = tr;
   if (tr) return;
-  $("ulkeler").innerHTML = ULKELER.map(([b, ad]) => `<button type="button" data-ulke="${esc(ad)}" class="${S.ulke === ad ? "on" : ""}"><span class="bay">${b}</span>${esc(ad)}</button>`).join("");
+  $("ulkeler").innerHTML = ULKE_GRUP.map(([g, L]) => `<div class="ugB">${esc(g)}</div><div class="ulkeler">${L.map(([b, ad]) => `<button type="button" data-ulke="${esc(ad)}" class="${S.ulke === ad ? "on" : ""}"><span class="bay">${b}</span>${esc(ad)}</button>`).join("")}</div>`).join("");
   $("ulkeSec").hidden = !S.ulke;
   if (!S.ulke) return;
   const b = (ULKELER.find((x) => x[1] === S.ulke) || ["🌍"])[0], sureAd = SURE[S.sure];
