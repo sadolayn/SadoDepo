@@ -456,7 +456,7 @@
   <header class="top" id="top">
     <div class="yeniS" id="yeniS" hidden aria-label="Sitede yeni bölümler"><span class="ysEt"><i></i>YENİ</span><div class="ysYol"><div class="ysSer" id="ysSer"></div></div></div>
     <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"></h1>
-    <a class="odS" id="odS" href="isbank.html#guncel" aria-label="İşCep art arda 4. kez dünyanın en iyisi seçildi, haberi oku" tabindex="-1">
+    <a class="odS" id="odS" href="isbank.html#odul" aria-label="İşCep art arda 4. kez dünyanın en iyisi seçildi, haberi oku" tabindex="-1">
       <div class="ray"></div><div class="hale"></div>
       <video class="kvid" id="kvid" muted playsinline preload="none" poster="img/kupa-son.jpg" aria-hidden="true"><source src="img/kupa.mp4" type="video/mp4"></video>
       <div class="kupa"><svg viewBox="0 0 120 126" aria-hidden="true">
@@ -714,11 +714,12 @@
       const el = document.getElementById("welcome"), n = new Date(), wd = n.getDay() > 0 && n.getDay() < 6 && n.getHours() >= 8 && n.getHours() < 18;
       const ONR = "Öneri ve isteklerinizi en alttan iletebilirsiniz ✉️";
       const L = ["Hoş geldiniz", "Keyifli gezinmeler", ...(wd ? ["İyi çalışmalar"] : []), ONR];
-      el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); else if (el.textContent === ODUL) location.href = "isbank.html#guncel"; else if (/kampanya/i.test(el.textContent)) location.href = "isbank.html#maximum"; });
+      el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); else if (el.textContent === ODUL) location.href = "isbank.html#odul"; else if (/kampanya/i.test(el.textContent)) location.href = "isbank.html#maximum"; });
       // Kampanya hatırlatıcısı: her ayın ilk 5 günü
       // (Ayın ilk haftası kampanya satırı 2 Kasım 2026'da kaldırıldı; kampanya hatırlatması kayan yazıda.) İşCep ödülü 9 Kasım'a kadar, dokununca haberlere
       const ODUL = "🏆 İşCep art arda 4. kez dünyanın en iyisi seçildi ›";
-      if (new Date() < new Date("2026-11-10T00:00:00")) L.splice(1, 0, ODUL);
+      const odulVar = new Date() < new Date("2026-11-10T00:00:00");
+      if (odulVar) L.splice(1, 0, ODUL);
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       let k = 0;
       // Ödül sırası gelince: logo ve selamlama kaybolur, büyük altın kupa sahnesi açılır (7 sn)
@@ -756,7 +757,8 @@
           setTimeout(don, od ? 12000 : 4500);
         }, 600);
       };
-      setTimeout(don, 4500);
+      // Ödül varken merasim sayfa açılır açılmaz başlar (1 sn sonra), kimse kaçırmasın
+      setTimeout(don, odulVar ? 1000 : 4500);
     })();
     // Saat ve tarih
     const AY = ["OCAK", "ŞUBAT", "MART", "NİSAN", "MAYIS", "HAZİRAN", "TEMMUZ", "AĞUSTOS", "EYLÜL", "EKİM", "KASIM", "ARALIK"];

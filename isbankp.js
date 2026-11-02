@@ -42,7 +42,8 @@ if (kGit) { cat = "Maximum"; if (location.hash === "#yeniliste") kYeni = true; }
 let ayr = "black", ipl = null; try { ayr = localStorage.getItem("isbankAyr") || "black"; } catch (e) {}
 if (location.hash === "#isplus") { cat = "Black"; ayr = "plus"; }
 // Ana sayfadaki kayan yazıdan gelince
-if (location.hash === "#iscep") cat = "İşCep";
+if (location.hash === "#iscep" || location.hash === "#odul") cat = "İşCep";
+const odulGit = location.hash === "#odul"; // ana sayfadaki kupadan gelince ödül kartına kaydır
 if (location.hash === "#guncel") { cat = "📰 Güncel"; lastNews = cat; } // ana sayfadaki kayan yazıdaki önemli haberden
 if (location.hash === "#kap") { cat = "KAP"; lastNews = cat; }
 if (location.hash === "#video") { cat = "🎬 Video"; lastNews = cat; } // ana sayfadaki kayan yazıdaki bayram videosundan
@@ -1323,13 +1324,15 @@ function renderIscep() {
   const d = iscep;
   $("upd").textContent = (kontrol ? "Son kontrol: " + fmtT(kontrol) + " · " : "") + "Kaynak: isbank.com.tr";
   const fmt = (t) => new Date(t + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
-  const odul = `<div class="odul">
-      <div class="odTop"><span class="odKupa">🏆</span><div><small>GLOBAL FINANCE ÖDÜLÜ · BANKA DUYURUSUNA GÖRE</small><b>Dünyanın En İyi Mobil Bankacılık Uygulaması</b></div></div>
-      <div class="odYil"><span><i>🥇</i><b>2023</b>Birinci</span><span><i>🥇</i><b>2024</b>Birinci</span><span class="son"><i>🥇</i><b>2025</b>3 yıl üst üste</span></div>
+  // 2 Kasım 2026: art arda 4. ödül (Global Finance 2026, Singapur töreni); kaynak bankanın kendi duyurusu
+  const odul = `<div class="odul" id="odul">
+      <div class="odTop"><span class="odKupa">🏆</span><div><small>GLOBAL FINANCE 2026 · BANKA DUYURUSUNA GÖRE</small><b>Dünyanın En İyi Bireysel Mobil Bankacılık Uygulaması</b>${new Date() < new Date("2026-11-17") ? '<span class="newtag">YENİ</span>' : ""}</div></div>
+      <div class="odYil od4"><span><i>🥇</i><b>2023</b>Birinci</span><span><i>🥇</i><b>2024</b>Birinci</span><span><i>🥇</i><b>2025</b>Birinci</span><span class="son"><i>🥇</i><b>2026</b>4 yıl üst üste</span></div>
+      <div class="odNot">2026'da ayrıca Batı Avrupa ve Türkiye düzeyinde de en iyi mobil bankacılık uygulaması seçildi; banka toplam 22 ödül aldı.</div>
       <div class="odAlt"><span>📲 <b>2007</b>'den beri</span><span>👥 <b>~16 milyon</b> İşCep müşterisi (Haz. 2026)</span><span>⚙️ <b>800+</b> işlem</span></div>
-      <a href="https://www.isbank.com.tr/bankamizi-taniyin/iscep-ucuncu-kez-dunyanin-en-iyi-mobil-bankacilik-uygulamasi-secildi" target="_blank" rel="noopener">Ödül haberi, 23 Ekim 2025 ↗</a> · <a href="https://www.isbank.com.tr/contentmanagement/IsbankInvestorDocuments/pdf/YatirimciSunumu.pdf" target="_blank" rel="noopener">Müşteri sayısı: yatırımcı sunumu ↗</a>
+      <a href="https://www.isbank.com.tr/bankamizi-taniyin/iscepe-artarda-4kez-dunyanin-en-iyi-bireysel-mobil-bankacilik-uygulamasi-odulu" target="_blank" rel="noopener">Ödül haberi, 2 Kasım 2026 ↗</a> · <a href="https://www.isbank.com.tr/bankamizi-taniyin/iscep-ucuncu-kez-dunyanin-en-iyi-mobil-bankacilik-uygulamasi-secildi" target="_blank" rel="noopener">2025 haberi ↗</a> · <a href="https://www.isbank.com.tr/contentmanagement/IsbankInvestorDocuments/pdf/YatirimciSunumu.pdf" target="_blank" rel="noopener">Müşteri sayısı: yatırımcı sunumu ↗</a>
     </div>`;
-  let html = iscepIpHtml() + (ipSec ? "" : odul);
+  let html = (ipSec ? "" : odul) + iscepIpHtml(); // ödül kartı en üstte
   if (d && d.surumler && d.surumler.length) {
     const yeni = d.surumler.some((v) => isNew("v:" + v.surum));
     html += `<details class="surn"><summary>🛠️ Sürüm notları <span>· ${esc(d.surumler[0].surum)} · ${fmt(d.surumler[0].tarih)}</span>${yeni ? '<span class="newtag">YENİ</span>' : ""}</summary>`;
@@ -1342,6 +1345,12 @@ function renderIscep() {
     html += `<a class="maxlink" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">İşCep'i App Store'da aç ↗</a></details>`;
   }
   $("list").innerHTML = html;
+  if (odulGit && !ipSec && !window.__odulKaydi) {
+    window.__odulKaydi = 1;
+    // Açılış perdesi varsa kapanmasını bekle, sonra ödül kartına kaydır
+    let n = 0; const kay = () => { const o = $("odul"); if (document.documentElement.style.overflow === "hidden" && n++ < 240) return setTimeout(kay, 250); if (o) o.scrollIntoView({ behavior: "smooth", block: "start" }); };
+    setTimeout(kay, 400);
+  }
   bindIscep();
 }
 

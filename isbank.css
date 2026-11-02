@@ -261,6 +261,9 @@
   .odTop { display: flex; gap: 12px; align-items: center; } .odKupa { font-size: 40px; line-height: 1; filter: drop-shadow(0 3px 8px rgba(240,198,116,.5)); }
   .odTop small { display: block; font-size: 11px; font-weight: 800; letter-spacing: .8px; color: #c9a050; } .odTop b { display: block; margin-top: 3px; font-size: 17px; line-height: 1.25; color: #fff; }
   .odYil { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 12px 0 8px; }
+  .odYil.od4 { grid-template-columns: repeat(4, 1fr); gap: 5px; }
+  .odYil.od4 span { padding: 8px 2px; }
+  .odNot { font-size: 12px; color: #a8a090; line-height: 1.5; margin: 0 0 8px; }
   .odYil span { padding: 8px 4px; border-radius: 10px; border: 1px solid #4a3a22; background: rgba(240,198,116,.08); text-align: center; font-size: 11px; color: #cdb48a; }
   .odYil i { display: block; font-style: normal; font-size: 20px; line-height: 1.2; } .odYil b { display: block; font-size: 18px; color: #f3dca8; } .odYil .son { background: linear-gradient(160deg, #f3dca8, #c9a050); border-color: #f3dca8; color: #3a2a10; } .odYil .son b { color: #000; }
   .odAlt { display: flex; flex-wrap: wrap; gap: 6px; } .odAlt span { padding: 5px 9px; border-radius: 99px; background: #161616; border: 1px solid #262626; font-size: 12px; color: #cfcfcf; } .odAlt b { color: #fff; }
