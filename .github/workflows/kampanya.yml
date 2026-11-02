@@ -4,6 +4,7 @@ name: Kampanyalar
 on:
   schedule:
     - cron: "23 5,12 * * *"
+    - cron: "53 3 * * *"   # yedek sabah turu: İstanbul 06:53 (GitHub 08:23 turunu geciktirir ya da atlarsa mesaiye yetişsin; 2 Kasım 2026)
     - cron: "23 0,2,8 1 * *"  # her ayın 1'i ek turlar: İstanbul 03:23, 05:23, 11:23 (ay başı kampanyaları erken yakalansın)
   workflow_dispatch:
 permissions:
