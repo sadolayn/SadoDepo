@@ -45,6 +45,43 @@
   .top { display: flex; flex-direction: column; align-items: center; padding-top: 18px; width: 100%; }
   .hello { display: grid; grid-template-columns: 76px 1fr 76px; align-items: center; gap: 6px; width: 100%; max-width: 420px; margin: 4px 0 22px; }
   .hello .mid { text-align: center; min-width: 0; }
+  /* İşCep ödül sahnesi: metin gelince logo ve selamlama kaybolur, yerine büyük altın kupa */
+  .top { position: relative; }
+  .top h1.logo, .hello .mid { transition: opacity .6s ease, transform .6s ease; }
+  .top.odulOn h1.logo { opacity: 0; transform: scale(.92); }
+  .top.odulOn .hello .mid { opacity: 0; }
+  .odS { position: absolute; left: 0; right: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-decoration: none; opacity: 0; pointer-events: none; transition: opacity .6s ease; overflow: hidden; }
+  .top.odulOn .odS { opacity: 1; pointer-events: auto; }
+  .odS .ray { position: absolute; top: -140px; left: 50%; width: 420px; height: 420px; margin-left: -210px; border-radius: 50%;
+    background: repeating-conic-gradient(from 0deg, rgba(255,214,130,.22) 0deg 6deg, transparent 6deg 18deg);
+    -webkit-mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 35%, transparent 68%); mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 35%, transparent 68%);
+    animation: odDon 30s linear infinite; }
+  .odS .hale { position: absolute; top: 0; left: 50%; width: 220px; height: 220px; margin-left: -110px; border-radius: 50%; background: radial-gradient(circle, rgba(255,200,100,.35), rgba(224,162,79,.08) 55%, transparent 70%); animation: odNef 2.8s ease-in-out infinite; }
+  .odS .kupa { position: relative; width: 128px; height: 134px; margin-top: 26px; filter: drop-shadow(0 6px 22px rgba(255,180,60,.45)); }
+  .top.odulOn .odS .kupa { animation: odGir .9s cubic-bezier(.2,1.4,.4,1) both; }
+  .odS .kupa svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .odS .par { animation: odPar 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .odS .par.p2 { animation-delay: .8s; } .odS .par.p3 { animation-delay: 1.6s; } .odS .par.p4 { animation-delay: 1.2s; }
+  .odS .isik { animation: odIsik 3.2s ease-in-out infinite; }
+  .odS .yz { opacity: .18; transform-box: fill-box; transform-origin: center; filter: drop-shadow(0 0 3px #ffd27a); }
+  .top.odulOn .odS .yz { animation: odYil 7s ease-out infinite; }
+  .top.odulOn .odS .yz.y2 { animation-delay: .5s; } .top.odulOn .odS .yz.y3 { animation-delay: 1s; } .top.odulOn .odS .yz.y4 { animation-delay: 1.5s; }
+  @keyframes odYil { 0% { opacity: .18; } 8% { opacity: 1; transform: scale(1.5) rotate(20deg); } 16%, 100% { opacity: 1; transform: none; } }
+  .odS .yazi { position: relative; text-align: center; margin-top: 4px; }
+  .odS .y1 { font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #e8b05d; }
+  .odS .y2 { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 23px; line-height: 1.15; margin-top: 2px; white-space: nowrap;
+    background: linear-gradient(100deg, #c98a35 20%, #fff2c8 45%, #f3d38a 55%, #c98a35 80%); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: odYaz 3.5s linear infinite; }
+  .odS .y3 { display: inline-block; margin-top: 7px; font-size: 12px; font-weight: 700; color: #1a1206; background: linear-gradient(135deg, #f3d38a, #e0a24f); border-radius: 20px; padding: 5px 14px; box-shadow: 0 2px 12px rgba(224,162,79,.4); }
+  .odS .kf { position: absolute; top: -12px; width: 6px; height: 10px; border-radius: 1px; opacity: 0; }
+  .top.odulOn .odS .kf { animation: odKf 2.6s ease-in forwards; }
+  @keyframes odDon { to { transform: rotate(360deg); } }
+  @keyframes odNef { 50% { transform: scale(1.12); opacity: .75; } }
+  @keyframes odGir { from { transform: translateY(30px) scale(.4) rotate(-8deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes odPar { 0%, 100% { opacity: .2; transform: scale(.5); } 50% { opacity: 1; transform: scale(1.15); } }
+  @keyframes odIsik { 0% { transform: translateX(-120px); } 55%, 100% { transform: translateX(140px); } }
+  @keyframes odYaz { to { background-position: -250% 0; } }
+  @keyframes odKf { 0% { opacity: 1; transform: translateY(0) rotate(0); } 100% { opacity: 0; transform: translateY(330px) rotate(540deg); } }
+  @media (prefers-reduced-motion: reduce) { .odS * { animation: none !important; } }
   /* ===== Kayan yazı ===== */
   .kayan { display: flex; align-items: stretch; width: 100%; max-width: 420px; margin: -8px 0 20px; border-radius: 12px; overflow: hidden; text-decoration: none;
     border: 1px solid #5a4320; background: linear-gradient(90deg, rgba(224,162,79,.04), rgba(224,162,79,.10)); box-shadow: 0 0 18px rgba(224,162,79,.08); }
@@ -411,6 +448,119 @@
   <header class="top" id="top">
     <div class="yeniS" id="yeniS" hidden aria-label="Sitede yeni bölümler"><span class="ysEt"><i></i>YENİ</span><div class="ysYol"><div class="ysSer" id="ysSer"></div></div></div>
     <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"></h1>
+    <a class="odS" id="odS" href="isbank.html#guncel" aria-label="İşCep art arda 4. kez dünyanın en iyisi seçildi, haberi oku" tabindex="-1">
+      <div class="ray"></div><div class="hale"></div>
+      <div class="kupa"><svg viewBox="0 0 120 126" aria-hidden="true">
+        <defs>
+          <linearGradient id="kA" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a5a1c"/><stop offset=".25" stop-color="#f3d38a"/><stop offset=".45" stop-color="#fff4cf"/><stop offset=".65" stop-color="#e0a24f"/><stop offset="1" stop-color="#7a4c14"/></linearGradient>
+          <linearGradient id="kB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3d38a"/><stop offset="1" stop-color="#9a6420"/></linearGradient>
+          <linearGradient id="kL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3d38a"/><stop offset="1" stop-color="#a86a1e"/></linearGradient>
+          <clipPath id="kC"><path d="M28 14h64v20c0 22-14 38-32 40-18-2-32-18-32-40z"/></clipPath>
+        </defs>
+        <!-- defne çelengi: iki dal kaideden yukarı kıvrılır, yapraklar ikili -->
+        <g>
+          <path d="M54 121 C 20 119 6 88 14 46" fill="none" stroke="#b07a2a" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M0 0 C 3.5 -4.4 8.7 -4.4 11.6 0 C 8.7 4.4 3.5 4.4 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(44.4 119.5) rotate(-127.7)"/>
+          <path d="M1 0 L10.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(44.4 119.5) rotate(-127.7)"/>
+          <path d="M0 0 C 3.5 -4.4 8.7 -4.4 11.6 0 C 8.7 4.4 3.5 4.4 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(44.4 119.5) rotate(-203.7)"/>
+          <path d="M1 0 L10.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(44.4 119.5) rotate(-203.7)"/>
+          <path d="M0 0 C 3.3 -4.2 8.2 -4.2 11.0 0 C 8.2 4.2 3.3 4.2 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(32.5 114.5) rotate(-109.6)"/>
+          <path d="M1 0 L9.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(32.5 114.5) rotate(-109.6)"/>
+          <path d="M0 0 C 3.3 -4.2 8.2 -4.2 11.0 0 C 8.2 4.2 3.3 4.2 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(32.5 114.5) rotate(-185.6)"/>
+          <path d="M1 0 L9.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(32.5 114.5) rotate(-185.6)"/>
+          <path d="M0 0 C 3.1 -4.0 7.8 -4.0 10.5 0 C 7.8 4.0 3.1 4.0 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(23.3 106.3) rotate(-91.2)"/>
+          <path d="M1 0 L9.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(23.3 106.3) rotate(-91.2)"/>
+          <path d="M0 0 C 3.1 -4.0 7.8 -4.0 10.5 0 C 7.8 4.0 3.1 4.0 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(23.3 106.3) rotate(-167.2)"/>
+          <path d="M1 0 L9.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(23.3 106.3) rotate(-167.2)"/>
+          <path d="M0 0 C 3.0 -3.8 7.4 -3.8 9.9 0 C 7.4 3.8 3.0 3.8 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(16.7 95.2) rotate(-74.8)"/>
+          <path d="M1 0 L8.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(16.7 95.2) rotate(-74.8)"/>
+          <path d="M0 0 C 3.0 -3.8 7.4 -3.8 9.9 0 C 7.4 3.8 3.0 3.8 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(16.7 95.2) rotate(-150.8)"/>
+          <path d="M1 0 L8.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(16.7 95.2) rotate(-150.8)"/>
+          <path d="M0 0 C 2.8 -3.6 7.0 -3.6 9.4 0 C 7.0 3.6 2.8 3.6 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(12.9 81.7) rotate(-61.5)"/>
+          <path d="M1 0 L8.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(12.9 81.7) rotate(-61.5)"/>
+          <path d="M0 0 C 2.8 -3.6 7.0 -3.6 9.4 0 C 7.0 3.6 2.8 3.6 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(12.9 81.7) rotate(-137.5)"/>
+          <path d="M1 0 L8.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(12.9 81.7) rotate(-137.5)"/>
+          <path d="M0 0 C 2.6 -3.4 6.6 -3.4 8.8 0 C 6.6 3.4 2.6 3.4 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(11.8 66.0) rotate(-50.9)"/>
+          <path d="M1 0 L7.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(11.8 66.0) rotate(-50.9)"/>
+          <path d="M0 0 C 2.6 -3.4 6.6 -3.4 8.8 0 C 6.6 3.4 2.6 3.4 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(11.8 66.0) rotate(-126.9)"/>
+          <path d="M1 0 L7.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(11.8 66.0) rotate(-126.9)"/>
+          <path d="M0 0 C 2.5 -3.2 6.2 -3.2 8.2 0 C 6.2 3.2 2.5 3.2 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(13.5 48.5) rotate(-42.3)"/>
+          <path d="M1 0 L7.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(13.5 48.5) rotate(-42.3)"/>
+          <path d="M0 0 C 2.5 -3.2 6.2 -3.2 8.2 0 C 6.2 3.2 2.5 3.2 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(13.5 48.5) rotate(-118.3)"/>
+          <path d="M1 0 L7.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(13.5 48.5) rotate(-118.3)"/>
+          <path d="M66 121 C 100 119 114 88 106 46" fill="none" stroke="#b07a2a" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M0 0 C 3.5 -4.4 8.7 -4.4 11.6 0 C 8.7 4.4 3.5 4.4 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(75.6 119.5) rotate(23.7)"/>
+          <path d="M1 0 L10.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(75.6 119.5) rotate(23.7)"/>
+          <path d="M0 0 C 3.5 -4.4 8.7 -4.4 11.6 0 C 8.7 4.4 3.5 4.4 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(75.6 119.5) rotate(-52.3)"/>
+          <path d="M1 0 L10.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(75.6 119.5) rotate(-52.3)"/>
+          <path d="M0 0 C 3.3 -4.2 8.2 -4.2 11.0 0 C 8.2 4.2 3.3 4.2 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(87.5 114.5) rotate(5.6)"/>
+          <path d="M1 0 L9.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(87.5 114.5) rotate(5.6)"/>
+          <path d="M0 0 C 3.3 -4.2 8.2 -4.2 11.0 0 C 8.2 4.2 3.3 4.2 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(87.5 114.5) rotate(-70.4)"/>
+          <path d="M1 0 L9.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(87.5 114.5) rotate(-70.4)"/>
+          <path d="M0 0 C 3.1 -4.0 7.8 -4.0 10.5 0 C 7.8 4.0 3.1 4.0 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(96.7 106.3) rotate(-12.8)"/>
+          <path d="M1 0 L9.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(96.7 106.3) rotate(-12.8)"/>
+          <path d="M0 0 C 3.1 -4.0 7.8 -4.0 10.5 0 C 7.8 4.0 3.1 4.0 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(96.7 106.3) rotate(-88.8)"/>
+          <path d="M1 0 L9.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(96.7 106.3) rotate(-88.8)"/>
+          <path d="M0 0 C 3.0 -3.8 7.4 -3.8 9.9 0 C 7.4 3.8 3.0 3.8 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(103.3 95.2) rotate(-29.2)"/>
+          <path d="M1 0 L8.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(103.3 95.2) rotate(-29.2)"/>
+          <path d="M0 0 C 3.0 -3.8 7.4 -3.8 9.9 0 C 7.4 3.8 3.0 3.8 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(103.3 95.2) rotate(-105.2)"/>
+          <path d="M1 0 L8.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(103.3 95.2) rotate(-105.2)"/>
+          <path d="M0 0 C 2.8 -3.6 7.0 -3.6 9.4 0 C 7.0 3.6 2.8 3.6 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(107.1 81.7) rotate(-42.5)"/>
+          <path d="M1 0 L8.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(107.1 81.7) rotate(-42.5)"/>
+          <path d="M0 0 C 2.8 -3.6 7.0 -3.6 9.4 0 C 7.0 3.6 2.8 3.6 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(107.1 81.7) rotate(-118.5)"/>
+          <path d="M1 0 L8.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(107.1 81.7) rotate(-118.5)"/>
+          <path d="M0 0 C 2.6 -3.4 6.6 -3.4 8.8 0 C 6.6 3.4 2.6 3.4 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(108.2 66.0) rotate(-53.1)"/>
+          <path d="M1 0 L7.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(108.2 66.0) rotate(-53.1)"/>
+          <path d="M0 0 C 2.6 -3.4 6.6 -3.4 8.8 0 C 6.6 3.4 2.6 3.4 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(108.2 66.0) rotate(-129.1)"/>
+          <path d="M1 0 L7.9 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(108.2 66.0) rotate(-129.1)"/>
+          <path d="M0 0 C 2.5 -3.2 6.2 -3.2 8.2 0 C 6.2 3.2 2.5 3.2 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(106.5 48.5) rotate(-61.7)"/>
+          <path d="M1 0 L7.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(106.5 48.5) rotate(-61.7)"/>
+          <path d="M0 0 C 2.5 -3.2 6.2 -3.2 8.2 0 C 6.2 3.2 2.5 3.2 0 0z" fill="url(#kL)" stroke="#5a3a10" stroke-width=".4" transform="translate(106.5 48.5) rotate(-137.7)"/>
+          <path d="M1 0 L7.4 0" stroke="#fff0c0" stroke-width=".5" opacity=".7" transform="translate(106.5 48.5) rotate(-137.7)"/>
+        </g>
+        <!-- kulplar -->
+        <path d="M30 22H16c-2 18 6 30 18 32" fill="none" stroke="url(#kB)" stroke-width="5" stroke-linecap="round"/>
+        <path d="M90 22h14c2 18-6 30-18 32" fill="none" stroke="url(#kB)" stroke-width="5" stroke-linecap="round"/>
+        <!-- kupa gövdesi -->
+        <path d="M28 14h64v20c0 22-14 38-32 40-18-2-32-18-32-40z" fill="url(#kA)"/>
+        <g clip-path="url(#kC)"><rect class="isik" x="40" y="0" width="14" height="90" fill="#fff" opacity=".55" transform="skewX(-20)"/></g>
+        <ellipse cx="60" cy="14" rx="32" ry="4" fill="#fff0c0"/><ellipse cx="60" cy="14" rx="28" ry="2.6" fill="#a8722a"/>
+        <!-- 4 rakamı -->
+        <circle cx="60" cy="40" r="15" fill="#3a2508" stroke="#fff0c0" stroke-width="1.6"/>
+        <text x="60" y="47" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="20" fill="#ffe2a0">4<tspan font-size="13">×</tspan></text>
+                <!-- dört yıl, dört yıldız: sırayla yanar -->
+        <g fill="#ffe2a0" class="yil">
+          <g transform="translate(-2 -22) scale(.85)"><path class="yz" d="M16 10l1.9 4.4 4.8.5-3.6 3.2 1.1 4.7-4.2-2.5-4.2 2.5 1.1-4.7-3.6-3.2 4.8-.5z"/></g>
+          <g transform="translate(-1 -34) scale(.85)"><path class="yz y2" d="M45 10l1.9 4.4 4.8.5-3.6 3.2 1.1 4.7-4.2-2.5-4.2 2.5 1.1-4.7-3.6-3.2 4.8-.5z"/></g>
+          <g transform="translate(7 -34) scale(.85)"><path class="yz y3" d="M75 10l1.9 4.4 4.8.5-3.6 3.2 1.1 4.7-4.2-2.5-4.2 2.5 1.1-4.7-3.6-3.2 4.8-.5z"/></g>
+          <g transform="translate(12 -22) scale(.85)"><path class="yz y4" d="M104 10l1.9 4.4 4.8.5-3.6 3.2 1.1 4.7-4.2-2.5-4.2 2.5 1.1-4.7-3.6-3.2 4.8-.5z"/></g>
+        </g>
+        <!-- sap ve kaide -->
+        <path d="M54 73h12l-2 14h-8z" fill="url(#kA)"/>
+        <rect x="44" y="86" width="32" height="6" rx="2" fill="url(#kB)"/>
+        <path d="M40 92h40l2 7H38z" fill="url(#kA)"/>
+        <!-- altta dünya küresi ve geniş kırmızı şerit: Dünya Birincisi -->
+        <g transform="translate(60 103)">
+          <circle r="9" fill="#0d2a4a" stroke="#ffe2a0" stroke-width="1.2"/>
+          <g fill="#3ec16a"><path d="M-7 -2c2-3 5-1 6 1s4 1 5 3c-1 2-5 3-7 1s-5-3-4-5z"/><path d="M1 -7c2 0 5 1 6 3-1 2-4 1-5-1s-2-1-1-2z"/><path d="M-3 5c2 0 4 1 4 3-1 1-3 1-4 0s-1-3 0-3z"/></g>
+        </g>
+        <path d="M14 112c10-7 28-9 46-9s36 2 46 9l-4 10c-10-6-26-8-42-8s-32 2-42 8z" fill="#9c0f24"/>
+        <path d="M14 112c10-7 28-9 46-9s36 2 46 9l-2 4c-10-6-27-8-44-8s-34 2-44 8z" fill="#e8273f"/>
+        <text x="60" y="119" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="8" letter-spacing="1.2" fill="#fff4cf">DÜNYA BİRİNCİSİ</text>
+        <!-- parıltılar -->
+        <g fill="#fff4cf">
+          <path class="par" d="M24 4l1.6 4 4 1.6-4 1.6-1.6 4-1.6-4-4-1.6 4-1.6z"/>
+          <path class="par p2" d="M100 2l1.3 3.2 3.2 1.3-3.2 1.3-1.3 3.2-1.3-3.2-3.2-1.3 3.2-1.3z"/>
+          <path class="par p3" d="M82 30l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z"/>
+          <path class="par p4" d="M36 52l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z"/>
+        </g>
+      </svg></div>
+      <div class="yazi">
+        <div class="y1">İŞCEP · DÖRT YIL ÜST ÜSTE</div>
+        <div class="y2">Dünyanın en iyisi</div>
+        <span class="y3">Haberi oku ›</span>
+      </div>
+    </a>
     <div class="hello">
       <div class="clock" aria-label="Saat">
         <svg viewBox="0 0 100 100" aria-hidden="true">
@@ -554,7 +704,33 @@
       if (new Date() < new Date("2026-11-10T00:00:00")) L.splice(1, 0, ODUL);
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       let k = 0;
-      setInterval(() => { el.classList.add("fade"); setTimeout(() => { k = (k + 1) % L.length; el.textContent = L[k]; el.style.cursor = L[k] === ONR || L[k] === ODUL || /kampanya/i.test(L[k]) ? "pointer" : ""; el.style.color = L[k] === ODUL || /kampanya/i.test(L[k]) ? "#e0a24f" : ""; el.classList.remove("fade"); }, 600); }, 4500);
+      // Ödül sırası gelince: logo ve selamlama kaybolur, büyük altın kupa sahnesi açılır (7 sn)
+      const top = document.getElementById("top"), odS = document.getElementById("odS");
+      const KR = ["#ff4d6d", "#ffd23f", "#3ec1ff", "#5be37a", "#b56bff", "#ff8c2e", "#f3d38a", "#ff5fd2"];
+      const sahne = (ac) => {
+        if (!odS) return;
+        if (ac) {
+          const lg = top.querySelector("h1.logo"), hl = top.querySelector(".hello");
+          odS.style.top = lg.offsetTop + "px";
+          odS.style.height = (hl.offsetTop + hl.offsetHeight - lg.offsetTop) + "px";
+          odS.querySelectorAll(".kf").forEach((x) => x.remove());
+          for (let i = 0; i < 40; i++) { const c = document.createElement("i"); c.className = "kf"; c.style.left = Math.random() * 100 + "%"; c.style.background = KR[i % KR.length]; c.style.animationDelay = (Math.random() * 1.2).toFixed(2) + "s"; c.style.animationDuration = (2 + Math.random() * 1.6).toFixed(2) + "s"; odS.appendChild(c); }
+        }
+        top.classList.toggle("odulOn", ac);
+        odS.tabIndex = ac ? 0 : -1;
+      };
+      const don = () => {
+        el.classList.add("fade");
+        setTimeout(() => {
+          k = (k + 1) % L.length; const od = L[k] === ODUL;
+          el.textContent = od ? "" : L[k];
+          sahne(od);
+          el.style.cursor = L[k] === ONR || /kampanya/i.test(L[k]) ? "pointer" : ""; el.style.color = /kampanya/i.test(L[k]) ? "#e0a24f" : "";
+          el.classList.remove("fade");
+          setTimeout(don, od ? 7000 : 4500);
+        }, 600);
+      };
+      setTimeout(don, 4500);
     })();
     // Saat ve tarih
     const AY = ["OCAK", "ŞUBAT", "MART", "NİSAN", "MAYIS", "HAZİRAN", "TEMMUZ", "AĞUSTOS", "EYLÜL", "EKİM", "KASIM", "ARALIK"];
