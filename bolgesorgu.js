@@ -47,6 +47,10 @@ const GRUP = [
 //   il geneli yalnızca "-da/-de" ekiyle aranır (Aydın'da, Bayburt'ta). "Aydın'ın", "Aydınlı" da soyadlara takılıyordu (Müfit Aydın'ın, Hasan İzmirli).
 // - Yer için birden çok kalıp OR ile verilince haber olmayan küçük illerde Google konuyu bırakıp alakasız haber dolduruyordu; yer hep tek kalıp.
 // - Eksi işareti (-lig) süreyi bozuyor, 32 kelimeyi aşan sorgu gevşiyor; ikisi de kullanılmaz.
+// - 3 Kasım 2026: "Korkuteli + Atama" aramasında 2018 tarihli bir haber (Korkuteli Jandarma komutanı atandı) "3 hafta önce" diye çıktı.
+//   Sorgu doğru; Google tarihi haberin değil sayfanın son güncellenmesinden alıyor (bazı yerel siteler eski sayfaları yeniden yayımlıyor).
+//   Süre filtresi (qdr) Google'ın bu tarihine bakar; site dışlamak (-site:) eksi işaretiyle süreyi bozduğu için kullanılamaz.
+//   Bu yüzden sayfada "habere girip yayın tarihine bak" uyarısı gösterilir.
 // - Başka bir kelime, kişi, kulüp ya da başka ilin ilçesi olan adlarda (Çay, Kale, Pazar, Güney, Efeler, Beşiktaş…) il adı da başlıkta aranır.
 const SURE = { "1d": "Son 24 saat", "7d": "Son 7 gün", "30d": "Son 1 ay" }; // "30d" anahtarı kayıtlı tercihler bozulmasın diye kaldı
 const AYNI = new Set(("Aladağ,Çukurova,İmamoğlu,Karataş,Seyhan,Ceyhan,Dinar,Hamur,Güzelyurt,Bala,Çubuk,Evren,Kalecik,Yenimahalle,Kepez,Elmalı,Gazipaşa,"

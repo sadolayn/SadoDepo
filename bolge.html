@@ -69,6 +69,7 @@
   .kBas { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .kSure { flex: none; min-height: 32px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--c); background: #2c1608; color: var(--c2); font-size: 12.5px; font-weight: 700; cursor: pointer; }
   .ipucu { color: #a5876f; margin: 0 2px; }
+  .ipucu.uyari { color: #e9c9a8; background: rgba(240,151,90,.08); border: 1px solid rgba(240,151,90,.3); border-radius: 10px; padding: 8px 10px; margin: 0; line-height: 1.5; } .ipucu.uyari b { color: #fff; }
   .donem { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 12px; background: rgba(240, 151, 90, .12); border: 1px solid rgba(240, 151, 90, .4); color: var(--c2); font-size: 13px; line-height: 1.35; }
   .donem b { color: #fff; }
   .konular { display: flex; flex-direction: column; gap: 12px; }
@@ -137,6 +138,7 @@
         <div class="donem" id="ulkeDonem"></div>
         <div class="konular" id="ulkeKonu"></div>
         <small class="ipucu">Liste boş gelirse o sürede o konuda haber çıkmamış demektir; süreyi uzatabilirsin.</small>
+        <small class="ipucu uyari">⚠️ Google bazı sitelerin <b>eski haberlerini</b> sayfa yenilendiği için yeni sanıp "3 hafta önce" gibi gösterebiliyor. Önemli bir haberde, habere girip <b>yayın tarihine</b> bak.</small>
       </section>
     </div>
   </div>
@@ -164,6 +166,7 @@
       <div class="donem" id="donem"></div>
       <div id="konular" class="konular"></div>
       <small class="ipucu">Liste boş gelirse o sürede o konuda haber çıkmamış demektir; süreyi uzatabilirsin.</small>
+        <small class="ipucu uyari">⚠️ Google bazı sitelerin <b>eski haberlerini</b> sayfa yenilendiği için yeni sanıp "3 hafta önce" gibi gösterebiliyor. Önemli bir haberde, habere girip <b>yayın tarihine</b> bak.</small>
     </section>
 
     <section class="kart" aria-label="Bölgede" style="margin-top:14px">
