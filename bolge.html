@@ -206,7 +206,7 @@ const ilEk = (ad) => { const k = ad.toLocaleLowerCase("tr"), v = (k.match(/[aeı
 
 const GRUP = BolgeSorgu.GRUP; // konular ve sorgu kuralları bolgesorgu.js'te (ana sayfadaki Açılış kartı da kullanır)
 
-let S = { il: "", ilce: "", elle: "", konum: false, son: [], sure: "30d", mod: "tr", ulke: "" }, IL = null, ILMAP = null, ON = [];
+let S = { il: "", ilce: "", elle: "", konum: false, son: [], sure: "7d", mod: "tr", ulke: "" }, IL = null, ILMAP = null, ON = [];
 try { const v = JSON.parse(localStorage.getItem("bolgem") || localStorage.getItem("haber_yerel2") || "null"); if (v && typeof v === "object") S = { ...S, ...v }; } catch (e) {}
 if (!Array.isArray(S.son)) S.son = [];
 S.mod = "tr"; // sayfa her açılışta Türkiye sekmesiyle açılır; Dünya'da seçilen ülke hatırlanır
@@ -215,7 +215,10 @@ const sakla = () => { try { localStorage.setItem("bolgem", JSON.stringify(S)); }
 const yerAd = () => [S.elle || S.ilce, S.il].filter(Boolean).join(", ");
 const yerHarita = () => [S.elle || S.ilce, S.il].filter(Boolean).join(" ");
 const SURE = BolgeSorgu.SURE;
-if (!SURE[S.sure]) S.sure = "30d";
+if (!SURE[S.sure]) S.sure = "7d";
+// 3 Kasım 2026: varsayılan süre 1 aydan 1 haftaya indi (Google'ın eski sayfayı yeni sanması 1 aylık aramada daha sık çıkıyordu).
+// Daha önce kaydedilmiş "1 ay" seçimi bir kez 1 haftaya çekilir; sonra kişi istediğini seçer, o hatırlanır.
+if (!S.s7) { S.sure = "7d"; S.s7 = 1; try { localStorage.setItem("bolgem", JSON.stringify(S)); } catch (e) {} }
 const gunAd = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
 const donem = () => { const b = new Date(), a = new Date(b - { "1d": 1, "7d": 7 }[S.sure] * 864e5 || b); if (S.sure === "30d") a.setMonth(a.getMonth() - 1); return gunAd(a) + " – " + gunAd(b); };
 const gn = (ek) => BolgeSorgu.gn(S, ILMAP, ek);
