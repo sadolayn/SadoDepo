@@ -103,6 +103,9 @@
   .ulkeler button { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--cz); background: var(--k2); color: var(--c2); font-size: 14.5px; cursor: pointer; text-align: left; }
   .ulkeler button .bay { font-size: 20px; } .ulkeler button .un { min-width: 0; line-height: 1.2; } .ulkeler button .un small { display: block; font-size: 11px; color: #e0a24f; font-weight: 600; margin-top: 2px; }
   .ulkeler button.top { border-color: #6b4a1f; background: linear-gradient(160deg, rgba(240,151,90,.16), rgba(240,151,90,.04)); } .ulkeler button.top.on { border-color: var(--c); } .ulkeler button.on { border-color: var(--c); background: #2c1608; color: #fff; font-weight: 700; }
+  .bayr { display: inline-block; width: 20px; height: 15px; border-radius: 2px; vertical-align: -2px; object-fit: cover; box-shadow: 0 0 0 1px rgba(255,255,255,.15); }
+  .tkS i .bayr { width: 26px; height: 19px; }
+  .yerAd .bayr { width: 28px; height: 21px; vertical-align: -3px; }
   [hidden] { display: none !important; }
 </style>
 <script src="pwa.js"></script>
@@ -119,7 +122,7 @@
     <h1>📍 Bölge Nabzı<small>Bölgendeki haberler, tek dokunuşla</small></h1>
     <span style="width:46px"></span>
   </header>
-  <div class="mod" role="tablist" aria-label="Türkiye ya da Dünya"><button type="button" role="tab" data-mod="tr">🇹🇷 Türkiye</button><button type="button" role="tab" data-mod="dunya" data-yeni="bolgeDunya|2026-11-02|•">🌍 Dünya</button></div>
+  <div class="mod" role="tablist" aria-label="Türkiye ya da Dünya"><button type="button" role="tab" data-mod="tr"><img class="bayr" src="img/bayrak/tr.svg" alt="" width="20" height="15"> Türkiye</button><button type="button" role="tab" data-mod="dunya" data-yeni="bolgeDunya|2026-11-02|•">🌍 Dünya</button></div>
 
   <div id="dunya" hidden>
     <p class="giris">Türkiye'yle bağı güçlü 24 ülkede <b>neler oluyor</b>: ekonomi, faiz, yaptırımlar, ticaret, enerji, gurbetçiler, öğrenciler, seyahat… Haberler Türkçe Google Haberler'de açılır; bu sayfa haber derlemez.</p>
@@ -232,7 +235,10 @@ const ULKE_GRUP = [
 const ULKELER = ULKE_GRUP.flatMap((g) => g[1]);
 // 2025 dış ticaret ilk 5, TÜİK Ocak-Aralık 2025 (TRT Haber 30.01.2026): ihracat Almanya, B. Krallık, ABD, İtalya, Irak; ithalat Çin, Rusya, Almanya, ABD, İsviçre (15,7 milyar $)
 const TIC5 = { "İhracat": ["Almanya", "İngiltere", "ABD", "İtalya", "Irak"], "İthalat": ["Çin", "Rusya", "Almanya", "ABD", "İsviçre"] };
-const bayrak = (ad) => (ULKELER.find((x) => x[1] === ad) || ["🌍"])[0];
+// Bayraklar resim olarak (img/bayrak, flag-icons, MIT): Windows bayrak emojisini çizemiyor, "DE", "GB" gibi harf gösteriyordu (3 Kasım 2026)
+const bayImg = (e) => { const k = [...String(e || "")].map((c) => c.codePointAt(0) - 0x1f1e6); if (k.length !== 2 || k.some((x) => x < 0 || x > 25)) return e || "🌍";
+  const kod = k.map((x) => String.fromCharCode(97 + x)).join(""); return `<img class="bayr" src="img/bayrak/${kod}.svg" alt="" width="20" height="15" loading="lazy">`; };
+const bayrak = (ad) => bayImg((ULKELER.find((x) => x[1] === ad) || ["🌍"])[0]);
 function ticHtml() {
   const tic = Object.entries(TIC5).map(([k, L]) => `<div class="tk"><div class="tkB">${k === "İhracat" ? "📤" : "📥"} ${k} · ilk 5</div><div class="tkS">${L.map((ad, i) => ad ? `<button type="button" data-ulke="${esc(ad)}" class="${S.ulke === ad ? "on" : ""}" aria-label="${esc(ad)}, ${k.toLowerCase()} ${i + 1}."><i>${bayrak(ad)}</i><b>${i + 1}.</b></button>` : `<button type="button" class="bos" disabled aria-label="5. ülke kaynakta doğrulanamadı"><i>·</i><b>5.</b></button>`).join("")}</div></div>`).join("");
   return `<div class="tic5">${tic}<div class="tkN">2025 dış ticaret sıralaması, TÜİK yıllık verisi (TRT Haber, 30 Ocak 2026) · bayrağa dokun, ülkenin haberleri açılsın</div></div>
@@ -272,11 +278,11 @@ function dunyaCiz() {
   document.querySelectorAll("[data-mod]").forEach((b) => { b.classList.toggle("on", (b.dataset.mod === "dunya") !== tr); b.setAttribute("aria-selected", String((b.dataset.mod === "dunya") !== tr)); });
   $("turkiye").hidden = !tr; $("dunya").hidden = tr; $("notTr").hidden = !tr; $("notDunya").hidden = tr;
   if (tr) return;
-  $("ulkeler").innerHTML = ticHtml() + ULKE_GRUP.map(([g, L]) => `<div class="ugB">${esc(g)}</div><div class="ulkeler kucuk">${L.map(([b, ad, sira]) => `<button type="button" data-ulke="${esc(ad)}" class="${S.ulke === ad ? "on" : ""}${sira ? " top" : ""}"><span class="bay">${b}</span><span class="un">${esc(ad)}${sira ? `<small>${esc(sira).replace(" · ", "<br>")}</small>` : ""}</span></button>`).join("")}</div>`).join("");
+  $("ulkeler").innerHTML = ticHtml() + ULKE_GRUP.map(([g, L]) => `<div class="ugB">${esc(g)}</div><div class="ulkeler kucuk">${L.map(([b, ad, sira]) => `<button type="button" data-ulke="${esc(ad)}" class="${S.ulke === ad ? "on" : ""}${sira ? " top" : ""}"><span class="bay">${bayImg(b)}</span><span class="un">${esc(ad)}${sira ? `<small>${esc(sira).replace(" · ", "<br>")}</small>` : ""}</span></button>`).join("")}</div>`).join("");
   $("ulkeSec").hidden = !S.ulke;
   if (!S.ulke) return;
   const b = (ULKELER.find((x) => x[1] === S.ulke) || ["🌍"])[0], sureAd = SURE[S.sure];
-  $("ulkeAd").textContent = b + " " + S.ulke;
+  $("ulkeAd").innerHTML = bayImg(b) + " " + esc(S.ulke);
   document.querySelectorAll("#ulkeSec [data-sure]").forEach((x) => x.classList.toggle("on", x.dataset.sure === S.sure));
   $("ulkeTum").href = ugn(""); $("ulkeTum").innerHTML = `${esc(S.ulke)} tüm haberler ↗<small>${sureAd} · ${donem()}</small>`;
   $("ulkeDonem").innerHTML = `📅 <span><b>${donem()}</b> arası haberler, en yeni üstte</span>`;
