@@ -920,7 +920,7 @@
 (function () {
   const $ = (id) => document.getElementById(id);
   const URL_ = "https://sadolayn.github.io/SadoDepo/";
-  const METIN = "Şuna bir bak:\nBankacılık hesaplamaları, güncel İş Bankası gündemi, döviz-altın, ajanda ve keyifli oyunlar tek yerde.\nSadolayn Alerts ile seçtiğin konunun haberleri her sabah 10:00'da telefonunda.\nA❤️KLA D💙V🤍M";
+  const METIN = "Şuna bir bak:\nBankacılık hesaplamaları, güncel İş Bankası gündemi, döviz ve emtia, bölge nabzı, ajanda ve keyifli oyunlar tek yerde.\nSadolayn Alerts ile seçtiğin konunun haberleri her sabah 10:00'da telefonunda.\nA❤️KLA D💙V🤍M";
   $("oner").onclick = async () => {
     window.Rapor && Rapor.bolum("arkadasina-oner");
     if (navigator.share) { try { await navigator.share({ title: "SADOLAYN", text: METIN, url: URL_ }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
