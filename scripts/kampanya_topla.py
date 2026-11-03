@@ -402,8 +402,14 @@ def x_detay(url):
     if ozet.lower().startswith(baslik.lower()[:30]):
         ozet = ""
     ticari = bool(re.search(r"Kampanyalar\s*(?:[›>/»]\s*)?Ticari\s+Kampanyalar", metin(t)))
-    # Tarih yalnızca başlığın altındaki kampanya metninde aranır (menü, alt bilgi ve öteki kampanya kartları dışarıda kalır)
-    govde = metin(t[h1.end():] if h1 else t)[:3500]
+    duz_metin = metin(t)
+    # Site "kampanya sona ermiştir" diyorsa sayfa yıllar önceki bir kampanyadır (3 Kasım 2026: 2023'ün GMSİ kampanyası "yeni" diye listelenmişti)
+    if re.search(r"kampanya\s+sona\s+ermi[şs]tir|kampanya\s+süresi\s+(?:sona\s+ermi|dolmu)", duz_metin, re.I):
+        return "bitti"
+    # Tarih yalnızca başlığın altındaki kampanya metninde aranır (menü, alt bilgi ve öteki kampanya kartları dışarıda kalır);
+    # "Diğer / Benzer Kampanyalar" kartlarından önce kesilir, yoksa oradaki tarih bu kampanyanın bitişi sanılır
+    govde = metin(t[h1.end():] if h1 else t)
+    govde = re.split(r"(?i)(?:diğer|benzer|ilginizi çekebilecek)\s+kampanyalar", govde)[0][:3500]
     # Başlık tek bir günü söylüyorsa ("25 Ekim'de …") kampanya o gündür; metindeki puan yükleme tarihi bitiş sanılmasın
     gun_ = x_baslik_gun(baslik)
     if gun_:
