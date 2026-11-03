@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-11-02",
+ "kontrol": "2026-11-03",
  "kategoriler": [
   {
    "slug": "iste-maasa-ozel",
@@ -152,9 +152,15 @@
    "slug": "iscep-kampanyalari",
    "ic": "📲",
    "ad": "İşCep'e özel",
-   "adet": 6,
+   "adet": 7,
    "url": "https://www.isbank.com.tr/kampanyalar/iscep-kampanyalari",
    "kampanyalar": [
+    {
+     "baslik": "İş Bankası’nı arkadaşınıza önerin hem siz hem de arkadaşınız 500 TL MaxiPuan kazanın!",
+     "bitis": "2026-11-30",
+     "ozet": "İş Bankası’nı arkadaşınıza önerin, İşCep’ten müşteri olsun, hem siz hem de arkadaşınız 500 TL MaxiPuan kazanın!",
+     "url": "https://www.isbank.com.tr/kampanyalar/is-bankasini-arkadasiniza-onerin-maxipuan-kazanin"
+    },
     {
      "baslik": "İşCep Hayatım'da Evim Menüsüne Özel Kiralarsın ile Elektronik Cihaz Kiralamada %10 İndirim!",
      "bitis": "2026-12-31",
