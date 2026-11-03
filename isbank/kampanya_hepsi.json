@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-11-03T15:53",
+ "guncelleme": "2026-11-03T20:33",
  "isbank": {
   "bireysel": {
    "toplam": 175,
@@ -2257,7 +2257,7 @@
  },
  "maximum": {
   "bireysel": {
-   "toplam": 161,
+   "toplam": 164,
    "kampanyalar": [
     {
      "baslik": "E-Ticaret Alışverişlerinizde 3.000 TL'ye Varan MaxiPuan!",
@@ -3131,6 +3131,16 @@
      "nere": "Online Alışveriş"
     },
     {
+     "baslik": "FLO'da 500 TL İndirim!",
+     "bitis": "2026-11-30",
+     "ozet": "İşCep’ten veya Maximum Mobil'den kampanyaya katılarak www.flo.com.tr ve FLO mobil uygulamasında geçerli tek kullanımlık indirim kodunuzu alabilirsiniz.",
+     "url": "https://www.maximum.com.tr/kampanyalar/floda-indirim-firsati",
+     "oz": 1,
+     "ilk": "2000-01-01",
+     "ne": "İndirim",
+     "nere": "Giyim & Kozmetik"
+    },
+    {
      "baslik": "TROY ile Anadolu Hayat Emeklilik Ek Katkı Payı Ödemelerinize 3 Ay Faizsiz Taksitlendirme Fırsatı!",
      "bitis": "2026-11-30",
      "ozet": "AHE Mobil ya da Şubelerinden Troy logolu İş Bankası bireysel kredi kartınızla yapacağınız Anadolu Hayat Emeklilik ek katkı payı ödemelerinize faizsiz sonradan taksitlendirme fırsatı",
@@ -3389,6 +3399,16 @@
      "ilk": "2000-01-01",
      "ne": "Taksit",
      "nere": "Giyim & Kozmetik"
+    },
+    {
+     "baslik": "Trendyol'da Peşin Fiyatına 9 Taksit Fırsatı!",
+     "bitis": "2026-12-02",
+     "ozet": "Maximum Kart'ınız ile Trendyol‘dan yapacağınız alışverişlerinizde taksit fırsatı!",
+     "url": "https://www.maximum.com.tr/kampanyalar/trendyolda-taksit-firsati",
+     "oz": 1,
+     "ilk": "2000-01-01",
+     "ne": "Taksit",
+     "nere": "Online Alışveriş"
     },
     {
      "baslik": "Eğitim Ödemelerinize Özel Fırsatlar Sizi Bekliyor!",
@@ -3771,6 +3791,16 @@
      "nere": "Giyim & Kozmetik"
     },
     {
+     "baslik": "İşbir Yatak'ta peşin fiyatına 7 taksit fırsatı.",
+     "bitis": "2026-11-30",
+     "ozet": "Maximum Kart’ınız ile İşbir Yatak mağazalarından ve isbiryatak.com.tr adresinden yapacağınız alışverişlerinizde taksit fırsatı.",
+     "url": "https://www.maximum.com.tr/kampanyalar/isbir-yatakta-pesin-fiyatina-taksit-firsati",
+     "oz": 1,
+     "ilk": "2000-01-01",
+     "ne": "Taksit",
+     "nere": "Ev & Yaşam"
+    },
+    {
      "baslik": "QCAR'da %40 İndirim ve 5 Taksit Fırsatı",
      "bitis": "2026-12-31",
      "ozet": "Maximum Kart'ınızla QCAR'dan yapacağınız araç kiralamalarda indirim ve taksit fırsatı sizi bekliyor.",
@@ -4107,7 +4137,7 @@
      "bitis": "2026-11-22",
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/is-bankasi-troy-sahiplerine-pazaramada-250-tl-indirim-firsati",
-     "tv": 1,
+     "tv": 2,
      "ilk": "2026-11-01",
      "ne": "İndirim",
      "nere": "Online Alışveriş"
@@ -4137,7 +4167,7 @@
      "bitis": "2026-11-30",
      "ozet": "İşCep'ten kampanyaya katılın, 31 Ağustos'a kadar Maximum Kart’ınızla lululemon mağazaları ve lululemon.com.tr adresinden tek seferde yapacağınız 10.000 TL ve üzeri alışverişlerde 1.000 TL MaxiPuan kazanın!",
      "url": "https://www.maximiles.com.tr/kampanyalar/lululemon-da-1-000-tl-maxipuan",
-     "tv": 1,
+     "tv": 2,
      "ilk": "2026-11-03",
      "ne": "MaxiPuan",
      "nere": "Giyim & Kozmetik"
@@ -4227,7 +4257,7 @@
      "bitis": "2026-11-30",
      "ozet": "1 - 30 Kasım 2026 tarihleri arasında Maximum Kart’ınız ile CarrefourSA mağazaları ile CarrefourSA Online Market uygulaması veya carrefoursa.com’dan tek seferde yapacağınız 20.000 TL ve üzeri ilk taksitli alışverişinize…",
      "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-20-000-tl-ve-uzeri-carrefoursa-alisverislerinize-1-000-tl-maxipuan",
-     "tv": 1,
+     "tv": 2,
      "ilk": "2026-11-03",
      "ne": "MaxiPuan",
      "nere": "Market & Yemek"
@@ -4297,7 +4327,7 @@
      "bitis": "2026-11-30",
      "ozet": "Geçmiş Kampanyalarımız 01 Eylül 2026 Gap'te 500 TL MaxiPuan",
      "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-tan-gap-de-800-tl-ye-varan-maxipuan",
-     "tv": 1,
+     "tv": 2,
      "ilk": "2026-11-02",
      "ne": "MaxiPuan",
      "nere": "Giyim & Kozmetik"
@@ -4317,7 +4347,7 @@
      "bitis": "2026-11-30",
      "ozet": "",
      "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-tan-inditex-magazalarindan-yapacaginiz-alisverislerde-1-000-tl-maxipuan",
-     "tv": 1,
+     "tv": 2,
      "ilk": "2026-11-01",
      "ne": "MaxiMil",
      "nere": "Genel"
@@ -4337,7 +4367,7 @@
      "bitis": "2026-11-30",
      "ozet": "Maximum Kart ile giyim ve aksesuar alışverişlerinde MaxiPuan kazanın, özel kampanyaları hemen keşfedin.",
      "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-tan-marks-and-spencer-da-800-tl-ye-varan-maxipuan",
-     "tv": 1,
+     "tv": 2,
      "ilk": "2026-11-02",
      "ne": "MaxiPuan",
      "nere": "Giyim & Kozmetik"
@@ -4457,7 +4487,7 @@
      "bitis": "2026-11-30",
      "ozet": "Maximum Kart'ınızla sağlık sektöründe faaliyet gösteren Maximum anlaşmalı hastane, klinik ve polikliniklerde 1 – 30 Kasım 2026 tarihleri arasında yapacağınız 2-10 taksitli işlemlerde ilave 2 taksit fırsatı!",
      "url": "https://www.maximiles.com.tr/kampanyalar/saglik-odemelerinde-ilave-2-taksit-firsati",
-     "tv": 1,
+     "tv": 2,
      "ilk": "2026-11-03",
      "ne": "Taksit",
      "nere": "Ödeme & Fatura"
@@ -4467,7 +4497,7 @@
      "bitis": "2026-11-30",
      "ozet": "01-30 Kasım 2026 tarihleri arasında Amazon.com.tr, Hepsiburada, n11, Pazarama ve Trendyol'dan tek seferde yapacağınız 25.000-49.999 TL tutarındaki ilk taksitli alışverişinize 1.000 TL ya da 50.000 TL ve üzeri ilk…",
      "url": "https://www.maximiles.com.tr/kampanyalar/taksitli-e-ticaret-alisverislerinizde-2-500-tl-ye-varan-maxipuan",
-     "tv": 1,
+     "tv": 2,
      "ilk": "2026-11-01",
      "ne": "MaxiPuan",
      "nere": "Online Alışveriş"
@@ -4868,16 +4898,6 @@
      "nere": "Bankacılık"
     },
     {
-     "baslik": "Maximiles Business Startup Kredi Kartı İle Webrazzi Biletleri %30 İndirimli!",
-     "bitis": "2026-11-30",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-business-startup-kredi-karti-ile-webrazzi-biletleri-30-indirimli",
-     "tv": 1,
-     "ilk": "2026-11-03",
-     "ne": "MaxiMil",
-     "nere": "Eğlence & Spor"
-    },
-    {
      "baslik": "Maximiles Business Startup Kredi Kartı İle Webrazzi Etkinlik Biletlerinde %50'ye Varan İndirim!",
      "bitis": "2026-12-09",
      "ozet": "Maximiles Business Startup Kredi Kartı ile Webrazzi Etkinliklerinde %50’ye Varan İndirim!",
@@ -4919,16 +4939,6 @@
      "es": "~maximilesbusinessstartupkredikartisahiplerineozelaiexpandedurunpaketlerinde%44evaranindirim"
     },
     {
-     "baslik": "Teknolojik İhtiyaçlarını Maximiles Business Startup Kredi Kartı İle İndirimli Kirala!",
-     "bitis": "2026-11-30",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/teknolojik-ihtiyaclarini-maximiles-business-startup-kredi-karti-ile-indirimli-kirala",
-     "tv": 1,
-     "ilk": "2026-11-03",
-     "ne": "MaxiMil",
-     "nere": "Bankacılık"
-    },
-    {
      "baslik": "Ticari Kredi Kartları İle Deniz Ticaret Odası Ödemelerinde %50 İndirim Ayrıcalığı!",
      "bitis": "2027-06-17",
      "ozet": "22 Temmuz 2026 – 17 Haziran 2027 tarihleri arasında İş Bankası ticari kredi kartları ile İstanbul ve Marmara, Ege, Akdeniz, Karadeniz Bölgeleri Deniz Ticaret Odası (İMEAK Deniz Ticaret Odası) İş Bankası üye…",
@@ -4947,6 +4957,26 @@
      "ilk": "2000-01-01",
      "ne": "Ayrıcalık",
      "nere": "Bankacılık"
+    },
+    {
+     "baslik": "Maximiles Business Startup Kredi Kartı İle Webrazzi Biletleri %30 İndirimli!",
+     "bitis": "2026-11-30",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-business-startup-kredi-karti-ile-webrazzi-biletleri-30-indirimli",
+     "tv": 1,
+     "ne": "MaxiMil",
+     "nere": "Eğlence & Spor",
+     "ilk": "2026-11-03"
+    },
+    {
+     "baslik": "Teknolojik İhtiyaçlarını Maximiles Business Startup Kredi Kartı İle İndirimli Kirala!",
+     "bitis": "2026-11-30",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/teknolojik-ihtiyaclarini-maximiles-business-startup-kredi-karti-ile-indirimli-kirala",
+     "tv": 1,
+     "ne": "MaxiMil",
+     "nere": "Bankacılık",
+     "ilk": "2026-11-03"
     }
    ]
   }
