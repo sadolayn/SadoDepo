@@ -82,7 +82,11 @@ const sorgu = (S, ILMAP, ek) => yerSorgu(S, ILMAP) + (ek ? " (" + baslikta(ek) +
 // 2017-2018 haberleri "yeni" çıktı (Korkuteli atama, Çin ekonomi). Aramalar Google Haberler'e (news.google.com) taşındı: orada tarih
 // haber sitesinin yayın bilgisinden gelir. Süre "when:" ile verilir ve SORGUNUN BAŞINA yazılır (sonda kalınca uzun sorguda kesiliyordu).
 // Google Haberler sonuçları alaka sırasıyla da verebilir; kısa sürede (1-7 gün) bu sorun olmuyor.
-const haberUrl = (q, sure) => `https://news.google.com/search?q=${encodeURIComponent(`when:${{ "1d": "1d", "7d": "7d", "30d": "30d" }[sure] || "7d"} ` + q)}&hl=tr&gl=TR&ceid=TR:tr`;
+// Eski haberlerini bugünün tarihiyle yeniden yayımlayan siteler aramadan çıkarılır (sonuna -site: eklenir).
+// 3 Kasım 2026: Antalya Son Haber, 2017 savcı ve 2018 jandarma komutanı haberlerini "3 gün önce", "14 Ekim" diye veriyordu.
+// Yeni bir site bildirilirse buraya eklenir.
+const KARA_LISTE = ["antalyasonhaber.com"];
+const haberUrl = (q, sure) => `https://news.google.com/search?q=${encodeURIComponent(`when:${{ "1d": "1d", "7d": "7d", "30d": "30d" }[sure] || "7d"} ` + q + KARA_LISTE.map((d) => " -site:" + d).join(""))}&hl=tr&gl=TR&ceid=TR:tr`;
 const gn = (S, ILMAP, ek, sure) => haberUrl(sorgu(S, ILMAP, ek), sure || S.sure);
 return { GRUP: GRUP, SURE: SURE, yer: yerSorgu, gn: gn, haberUrl: haberUrl };
 })();
