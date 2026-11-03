@@ -88,11 +88,11 @@
   .mod { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 14px; background: var(--k1); border: 1px solid #5a3a22; }
   .mod button { position: relative; min-height: 44px; border: 0; border-radius: 10px; background: transparent; color: #c9a88c; font-size: 15px; font-weight: 700; cursor: pointer; }
   .mod button.on { background: var(--c); color: #1a0d04; }
-  .tic5 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 10px; }
-  .tic5 .tk { padding: 8px 8px 7px; border-radius: 12px; border: 1px solid #4a3a22; background: rgba(240,198,116,.06); }
+  .tic5 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin: 0 0 10px; }
+  .tic5 .tk { min-width: 0; overflow: hidden; padding: 8px 6px 7px; border-radius: 12px; border: 1px solid #4a3a22; background: rgba(240,198,116,.06); }
   .tic5 .tkB { font-size: 10.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #f0c674; margin: 0 0 6px 2px; }
-  .tic5 .tkS { display: flex; gap: 4px; }
-  .tic5 .tkS button { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 4px 0 3px; border-radius: 9px; border: 1px solid transparent; background: transparent; color: #cdb48a; font-size: 10px; font-weight: 700; cursor: pointer; }
+  .tic5 .tkS { display: flex; gap: 3px; }
+  .tic5 .tkS button { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 4px 0 3px; border-radius: 9px; border: 1px solid transparent; background: transparent; color: #cdb48a; font-size: 10px; font-weight: 700; cursor: pointer; }
   .tic5 .tkS button i { font-style: normal; font-size: 19px; line-height: 1.1; } .tic5 .tkS button b { font-size: 9.5px; color: #e0a24f; }
   .tic5 .tkS button.on { background: rgba(240,198,116,.18); border-color: #f0c674; }
   .tic5 .tkS button.bos { opacity: .4; }
@@ -104,7 +104,7 @@
   .ulkeler button .bay { font-size: 20px; } .ulkeler button .un { min-width: 0; line-height: 1.2; } .ulkeler button .un small { display: block; font-size: 11px; color: #e0a24f; font-weight: 600; margin-top: 2px; }
   .ulkeler button.top { border-color: #6b4a1f; background: linear-gradient(160deg, rgba(240,151,90,.16), rgba(240,151,90,.04)); } .ulkeler button.top.on { border-color: var(--c); } .ulkeler button.on { border-color: var(--c); background: #2c1608; color: #fff; font-weight: 700; }
   .bayr { display: inline-block; width: 20px; height: 15px; border-radius: 2px; vertical-align: -2px; object-fit: cover; box-shadow: 0 0 0 1px rgba(255,255,255,.15); }
-  .tkS i .bayr { width: 26px; height: 19px; }
+  .tkS i .bayr { width: 26px; max-width: 100%; height: 19px; } .tkS i { display: block; width: 100%; text-align: center; }
   .yerAd .bayr { width: 28px; height: 21px; vertical-align: -3px; }
   [hidden] { display: none !important; }
 </style>
