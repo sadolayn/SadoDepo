@@ -78,6 +78,11 @@ const baslikta = (ek) => ek.split(" OR ").map((t) => "intitle:" + t.trim()).join
 // "when:" kullanılmaz (Google Haberler'de sonda kalınca uzun sorguda kesiliyordu).
 const sorgu = (S, ILMAP, ek) => yerSorgu(S, ILMAP) + (ek ? " (" + baslikta(ek) + ")" : "");
 // sure: "1d" | "7d" | "30d"
-const gn = (S, ILMAP, ek, sure) => `https://www.google.com/search?tbm=nws&tbs=qdr:${{ "1d": "d", "7d": "w", "30d": "m" }[sure || S.sure] || "m"},sbd:1&hl=tr&gl=tr&q=${encodeURIComponent(sorgu(S, ILMAP, ek))}`;
-return { GRUP: GRUP, SURE: SURE, yer: yerSorgu, gn: gn };
+// 3 Kasım 2026: Google Arama'nın Haberler sekmesi (tbm=nws) tarihi sayfanın son güncellenmesinden alıyordu; 1 haftalık aramada bile
+// 2017-2018 haberleri "yeni" çıktı (Korkuteli atama, Çin ekonomi). Aramalar Google Haberler'e (news.google.com) taşındı: orada tarih
+// haber sitesinin yayın bilgisinden gelir. Süre "when:" ile verilir ve SORGUNUN BAŞINA yazılır (sonda kalınca uzun sorguda kesiliyordu).
+// Google Haberler sonuçları alaka sırasıyla da verebilir; kısa sürede (1-7 gün) bu sorun olmuyor.
+const haberUrl = (q, sure) => `https://news.google.com/search?q=${encodeURIComponent(`when:${{ "1d": "1d", "7d": "7d", "30d": "30d" }[sure] || "7d"} ` + q)}&hl=tr&gl=TR&ceid=TR:tr`;
+const gn = (S, ILMAP, ek, sure) => haberUrl(sorgu(S, ILMAP, ek), sure || S.sure);
+return { GRUP: GRUP, SURE: SURE, yer: yerSorgu, gn: gn, haberUrl: haberUrl };
 })();
