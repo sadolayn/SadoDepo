@@ -1,8 +1,8 @@
 {
- "guncelleme": "2026-11-03T20:33",
+ "guncelleme": "2026-11-04T14:13",
  "isbank": {
   "bireysel": {
-   "toplam": 175,
+   "toplam": 176,
    "kategoriler": [
     {
      "ad": "İş’te Maaş’a Özel",
@@ -1313,7 +1313,7 @@
     {
      "ad": "E-Ticaret Kampanyaları",
      "slug": "e-ticaret-kampanyalari",
-     "adet": 7,
+     "adet": 8,
      "url": "https://www.isbank.com.tr/kampanyalar/e-ticaret-kampanyalari",
      "kampanyalar": [
       {
@@ -1330,6 +1330,15 @@
        "bitis": "2026-11-30",
        "ozet": "30 Ekim - 30 Kasım 2026 tarihleri arasında Maximum Kart'ınız ile Pazarama'dan yapacağınız alışverişlerinizde peşin fiyatına 9 taksit fırsatı!",
        "url": "https://www.isbank.com.tr/kampanyalar/pazaramada-pesin-fiyatina-taksit-firsati",
+       "ilk": "2000-01-01",
+       "ne": "Taksit",
+       "nere": "Online Alışveriş"
+      },
+      {
+       "baslik": "PttAVM'de Peşin Fiyatına 2 Taksit Fırsatı!",
+       "bitis": "2026-11-30",
+       "ozet": "01 - 30 Kasım 2026 tarihleri arasında Maximum Kart’ınız ile PttAVM'den yapacağınız alışverişlerinizde peşin fiyatına 2 taksit fırsatı!",
+       "url": "https://www.isbank.com.tr/kampanyalar/ptt-avm-de-taksit-firsati",
        "ilk": "2000-01-01",
        "ne": "Taksit",
        "nere": "Online Alışveriş"
@@ -2257,7 +2266,7 @@
  },
  "maximum": {
   "bireysel": {
-   "toplam": 164,
+   "toplam": 166,
    "kampanyalar": [
     {
      "baslik": "E-Ticaret Alışverişlerinizde 3.000 TL'ye Varan MaxiPuan!",
@@ -2461,6 +2470,16 @@
      "nere": "Bankacılık"
     },
     {
+     "baslik": "Peşin sağlık kurumu ve eczane harcamalarınıza 3 ay faizsiz sonradan taksitlendirme fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "Peşin olarak yapacağınız hastane harcamalarınıza faizsiz sonradan taksitlendirme fırsatı!",
+     "url": "https://www.maximum.com.tr/kampanyalar/saglik-odemelerinizi-faizsiz-taksitlendirin",
+     "oz": 1,
+     "ilk": "2000-01-01",
+     "ne": "Taksit",
+     "nere": "Ödeme & Fatura"
+    },
+    {
      "baslik": "İgdaş faturalarınıza 3 aya varan taksit fırsatı!",
      "bitis": "2026-12-31",
      "ozet": "Maximum Kart’ınızla 31 Aralık 2025 tarihine kadar İgdaş vezneleri ve igdas.com.tr'den yapacağınız 250 TL – 10.000 TL arasındaki faturalarınızı 3 taksitte ödeme ayrıcalığı!",
@@ -2619,6 +2638,16 @@
      "ilk": "2026-11-03",
      "ne": "MaxiPuan",
      "nere": "Market & Yemek"
+    },
+    {
+     "baslik": "PttAVM'de Peşin Fiyatına 2 Taksit Fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "Maximum Kart’ınız ile PttAVM'den yapacağınız alışverişlerinizde peşin fiyatına taksit fırsatı!",
+     "url": "https://www.maximum.com.tr/kampanyalar/ptt-avm-de-taksit-firsati",
+     "oz": 1,
+     "ilk": "2000-01-01",
+     "ne": "Taksit",
+     "nere": "Online Alışveriş"
     },
     {
      "baslik": "Pazarama'da Peşin Fiyatına 9 Taksit Fırsatı!",
@@ -4039,7 +4068,7 @@
  },
  "maximiles": {
   "bireysel": {
-   "toplam": 78,
+   "toplam": 79,
    "kampanyalar": [
     {
      "baslik": "12 Aya Varan Amazon Prime Üyeliği!",
@@ -4333,16 +4362,6 @@
      "nere": "Giyim & Kozmetik"
     },
     {
-     "baslik": "Giyim Ve Kozmetik Alışverişlerinize 1.000 TL MaxiPuan!",
-     "bitis": "2026-11-30",
-     "ozet": "Maximum anlaşmalı işyerlerinden Maximum Kart’ınızla tek seferde yapacağınız 25.000 TL ve üzeri alışverişlerde 1.000 TL MaxiPuan kazanın!",
-     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-tan-giyim-ve-kozmetik-alisverislerinize-1-000-tl-maxipuan-kampanyasi",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "MaxiPuan",
-     "nere": "Giyim & Kozmetik"
-    },
-    {
      "baslik": "Maximiles'ınızdan Inditex Mağazalarından Yapacağınız Alışverişlerde 1.000 TL MaxiPuan!",
      "bitis": "2026-11-30",
      "ozet": "",
@@ -4411,6 +4430,16 @@
      "ilk": "2000-01-01",
      "ne": "Taksit",
      "nere": "Elektronik & Beyaz Eşya"
+    },
+    {
+     "baslik": "Mobil Temassız Ve TR Karekod Ödemelerinize Toplam 600 TL MaxiPuan!",
+     "bitis": "2026-11-30",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/mobil-temassiz-ve-tr-karekod-odemelerinize-toplam-600-tl-maxipuan",
+     "tv": 2,
+     "ilk": "2000-01-01",
+     "ne": "MaxiPuan",
+     "nere": "Bankacılık"
     },
     {
      "baslik": "My Visa Ayrıcalıklarıyla Maximiles Black’inizle Yurt Dışı Restoran Ödemelerinde %30'a Varan İndirim",
@@ -4581,6 +4610,16 @@
      "ilk": "2000-01-01",
      "ne": "MaxiMil",
      "nere": "Seyahat"
+    },
+    {
+     "baslik": "Giyim Ve Kozmetik Alışverişlerinize 1.000 TL MaxiPuan!",
+     "bitis": "2026-11-30",
+     "ozet": "Maximum anlaşmalı işyerlerinden Maximum Kart’ınızla tek seferde yapacağınız 25.000 TL ve üzeri alışverişlerde 1.000 TL MaxiPuan kazanın!",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-tan-giyim-ve-kozmetik-alisverislerinize-1-000-tl-maxipuan-kampanyasi",
+     "tv": 2,
+     "ne": "MaxiPuan",
+     "nere": "Giyim & Kozmetik",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Bella Maison'da 500 TL MaxiPuan!",
