@@ -1,0 +1,12 @@
+/* Sadolayn ortak hareket kuralları: yumuşak giriş + dokunma geri bildirimi.
+   Animasyonları azalt ayarı açık olanlarda hareket yok. */
+@keyframes sGir { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.mn > *, .rows > .row, .tiles > .tile { animation: sGir .45s cubic-bezier(.2,.7,.2,1) both; }
+.mn > *:nth-child(1){animation-delay:.05s}.mn > *:nth-child(2){animation-delay:.12s}.mn > *:nth-child(3){animation-delay:.19s}
+.mn > *:nth-child(4){animation-delay:.26s}.mn > *:nth-child(5){animation-delay:.33s}.mn > *:nth-child(6){animation-delay:.40s}
+.mn > *:nth-child(7){animation-delay:.47s}.mn > *:nth-child(8){animation-delay:.54s}.mn > *:nth-child(9){animation-delay:.61s}
+.rows > .row:nth-child(2), .tiles > .tile:nth-child(2){animation-delay:.08s} .rows > .row:nth-child(3), .tiles > .tile:nth-child(3){animation-delay:.16s} .tiles > .tile:nth-child(4){animation-delay:.24s}
+.row, .tile, .one { transition: transform .15s ease, background-color .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.row:active, .tile:active, .one:active, .row.bas, .tile.bas, .one.bas { transform: scale(.975); }
+.row.bas { background: #141008; } .tile.bas { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(224,162,79,.15); }
+@media (prefers-reduced-motion: reduce) { .mn > *, .rows > .row, .tiles > .tile { animation: none; } }
