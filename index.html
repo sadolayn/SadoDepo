@@ -79,6 +79,7 @@
   .odS .y1 { font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #e8b05d; }
   .odS .y2 { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 23px; line-height: 1.15; margin-top: 2px; white-space: nowrap;
     background: linear-gradient(100deg, #c98a35 20%, #fff2c8 45%, #f3d38a 55%, #c98a35 80%); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: odYaz 3.5s linear infinite; }
+  .odS .y2b { margin-top: 1px; font-size: 12px; font-weight: 600; color: #f3d38a; } /* ödülün tam adı (banka duyurusundaki gibi) */
   .odS .y3 { display: inline-block; margin-top: 7px; font-size: 12px; font-weight: 700; color: #1a1206; background: linear-gradient(135deg, #f3d38a, #e0a24f); border-radius: 20px; padding: 5px 14px; box-shadow: 0 2px 12px rgba(224,162,79,.4); }
   .odS .kf { position: absolute; top: -12px; width: 6px; height: 10px; border-radius: 1px; opacity: 0; }
   .top.odulOn .odS .kf { animation: odKf 2.6s ease-in forwards; }
@@ -460,7 +461,7 @@
   <header class="top" id="top">
     <div class="yeniS" id="yeniS" hidden aria-label="Sitede yeni bölümler"><span class="ysEt"><i></i>YENİ</span><div class="ysYol"><div class="ysSer" id="ysSer"></div></div></div>
     <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"></h1>
-    <a class="odS" id="odS" href="isbank.html#odul" aria-label="İşCep art arda 4. kez dünyanın en iyisi seçildi, haberi oku" tabindex="-1">
+    <a class="odS" id="odS" href="isbank.html#odul" aria-label="İşCep art arda 4. kez Dünyanın En İyi Bireysel Mobil Bankacılık Uygulaması seçildi, haberi oku" tabindex="-1">
       <div class="ray"></div><div class="hale"></div>
       <video class="kvid" id="kvid" muted playsinline preload="none" poster="img/kupa-son.jpg" aria-hidden="true"><source src="img/kupa.mp4" type="video/mp4"></video>
       <div class="kupa"><svg viewBox="0 0 120 126" aria-hidden="true">
@@ -577,8 +578,9 @@
         </g>
       </svg></div>
       <div class="yazi">
-        <div class="y1">İŞCEP · DÖRT YIL ÜST ÜSTE</div>
-        <div class="y2">Dünyanın en iyisi</div>
+        <div class="y1">İŞCEP · ART ARDA 4. KEZ</div>
+        <div class="y2">Dünyanın En İyi</div>
+        <div class="y2b">Bireysel Mobil Bankacılık Uygulaması</div>
         <span class="y3">Haberi oku ›</span>
       </div>
     </a>
@@ -721,7 +723,7 @@
       el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); else if (el.textContent === ODUL) location.href = "isbank.html#odul"; else if (/kampanya/i.test(el.textContent)) location.href = "isbank.html#maximum"; });
       // Kampanya hatırlatıcısı: her ayın ilk 5 günü
       // (Ayın ilk haftası kampanya satırı 2 Kasım 2026'da kaldırıldı; kampanya hatırlatması kayan yazıda.) İşCep ödülü 9 Kasım'a kadar, dokununca haberlere
-      const ODUL = "🏆 İşCep art arda 4. kez dünyanın en iyisi seçildi ›";
+      const ODUL = "🏆 İşCep art arda 4. kez “Dünyanın En İyi Bireysel Mobil Bankacılık Uygulaması” seçildi ›";
       const odulVar = new Date() < new Date("2026-11-10T00:00:00");
       if (odulVar) L.splice(1, 0, ODUL);
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
