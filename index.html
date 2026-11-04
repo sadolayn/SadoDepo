@@ -272,6 +272,10 @@
   .fv { display: flex; align-items: center; gap: 10px; padding: 11px 12px; min-height: 48px; box-sizing: border-box; border-radius: 14px; border: 1px solid #3a2c15; background: linear-gradient(180deg, #0f0c07, #070707); color: var(--ink); text-decoration: none; }
   .fv:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .fv:active { border-color: var(--accent); }
+  .fv { position: relative; }
+  .fvx { display: none; position: absolute; top: -8px; right: -6px; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--accent); background: #1a1206; color: var(--accent); font: 700 13px system-ui, sans-serif; cursor: pointer; padding: 0; line-height: 1; }
+  .favDuz .fvx { display: flex; align-items: center; justify-content: center; }
+  .favDuz .favL { padding-top: 6px; }
   .fv i { font-style: normal; font-size: 20px; width: 24px; text-align: center; flex: none; }
   .fv b { font: 600 14.5px Georgia, "Times New Roman", serif; line-height: 1.25; }
   .fv span { display: flex; flex-direction: column; min-width: 0; }
@@ -1602,11 +1606,14 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       var c = el("a", "fv"); c.href = h;
       var i = el("i", "", k.ik); i.setAttribute("aria-hidden", "true");
       var sp = el("span"); sp.appendChild(el("b", "", k.ad)); if (k.ust) sp.appendChild(el("small", "", k.ust));
-      c.appendChild(i); c.appendChild(sp); favL.appendChild(c);
+      c.appendChild(i); c.appendChild(sp);
+      // Düzenleme açıkken kartın köşesinde ✕: dokununca favoriden çıkar (4 Kasım 2026: çıkarma yolu görünmüyordu)
+      var x = el("button", "fvx", "✕"); x.type = "button"; x.setAttribute("data-fvx", h); x.setAttribute("aria-label", k.ad + " favorilerden çıkar"); c.appendChild(x);
+      favL.appendChild(c);
     });
     var acik = document.body.classList.contains("favDuz");
     favIp.hidden = !acik && F.length > 0;
-    favIp.innerHTML = acik ? "Sabitlemek istediğin araçlara dokun (en fazla 6). Alt başlıklar için aramadaki ☆'a dokun. Bitince <b>Tamam</b>'a dokun."
+    favIp.innerHTML = acik ? "Sabitlemek istediğin araçlara dokun (en fazla 6); çıkarmak için favorideki <b>✕</b>'e dokun. Alt başlıklar için aramadaki ☆'a dokun. Bitince <b>Tamam</b>'a dokun."
       : "Sık kullandığın 6 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun. Aramadaki ☆ ile alt başlıkları da ekleyebilirsin.";
     duz.textContent = acik ? "Tamam ✓" : (F.length ? "Düzenle" : "Seç");
     duz.setAttribute("aria-pressed", acik ? "true" : "false");
@@ -1669,6 +1676,12 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     yildizlar();
   });
   // Yıldız düğmeleri (arama sonuçları ve A-Z)
+  favL.addEventListener("click", function (e) {
+    var x = e.target.closest("[data-fvx]"); if (!x) return;
+    e.preventDefault(); e.stopPropagation();
+    var h = x.getAttribute("data-fvx"), ad = KAT[h] ? KAT[h].ad : "";
+    if (degis(h)) uyar(ad + " favorilerden çıkarıldı");
+  });
   nav.addEventListener("click", function (e) {
     var b = e.target.closest(".yb"); if (!b) return;
     e.preventDefault();
