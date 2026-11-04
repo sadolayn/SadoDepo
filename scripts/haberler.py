@@ -104,7 +104,11 @@ OKUL_RE = re.compile(r"(okul|okullar|eğitim|öğretim|ders)\w*[^.?!]{0,60}(tati
 
 # İş Bankası: Google Haberler aramaları + tüm kategorilerdeki eşleşen başlıklar
 ISB_FEEDS = [("Google Haberler", GN(q)) for q in ['"İş Bankası"', '"İşbank"', '"İşCep"', '"Maximum kart" OR "Maximiles" OR "MaxiPuan"', 'ISCTR']]
-ISB_RE = re.compile(r"iş ?bankası|işbank|isbank|işcep|iscep|isctr|maximiles|maxipuan|maximum kart|maximum mobil|türkiye iş bankası", re.I)
+# Başka bankaların Maximum'a katılması (ör. DenizBank, 6 Aralık 2026) da İş Bankası gündemidir: bu aramalar 14 güne bakar.
+ISB_ORTAK_FEEDS = [("Google Haberler", "https://news.google.com/rss/search?q=" + urllib.parse.quote(q + " when:14d") + "&hl=tr&gl=TR&ceid=TR:tr")
+                   for q in ['"Maximum" "kredi kartı" geçiş OR geçiyor OR iş birliği', '"Maximum programı" OR "Maximum altyapısı" OR "Maximum ödeme ağı"']]
+ISB_RE = re.compile(r"iş ?bankası|işbank|isbank|işcep|iscep|isctr|maximiles|maxipuan|maximum kart|maximum mobil|türkiye iş bankası|"
+                    r"maximum (?:kredi )?kart|maximum['’]?y?a geç|maximum (?:program|altyapı|ödeme ağı|dünyası|iş birliği)|maximum['’]?(?:a|ya|e)? katıl", re.I)
 
 # Tarım (İş Bankası tarım kredileri dahil)
 TARIM_FEEDS = [("Google Haberler", GN(q)) for q in ['tarım', 'çiftçi', '"tarım kredisi" OR "tarımsal kredi"', '"İş Bankası" tarım OR çiftçi OR "Tarım Kart" OR üretici', '"İmece Kart" OR "İmece Mobil" OR "Çiftçi Kadın İmece"', 'hasat OR rekolte', '"Tarım ve Orman Bakanlığı"', 'hayvancılık OR süt fiyatı']]
@@ -118,7 +122,7 @@ YZ_FEEDS = [("Google Haberler", GN(q)) for q in ['"yapay zeka"', '"yapay zekâ"'
 YZ_RE = re.compile(r"yapay ?zek[aâ]|\bai\b|chatgpt|openai|gemini|anthropic|claude|copilot|dil modeli|llm|nvidia", re.I)
 
 jobs = [(c, s, u) for c, lst in FEEDS.items() for s, u in lst] + [("okul", s, u) for s, u in OKUL_FEEDS] + [("isbank", s, u) for s, u in ISB_FEEDS] \
-     + [("tarim", s, u) for s, u in TARIM_FEEDS] + [("yz", s, u) for s, u in YZ_FEEDS]
+     + [("isbank", s, u, dt.timedelta(days=14)) for s, u in ISB_ORTAK_FEEDS] + [("tarim", s, u) for s, u in TARIM_FEEDS] + [("yz", s, u) for s, u in YZ_FEEDS]
 # Ekonomim: tek genel akış; haberler bağlantıdaki bölüme göre sekmelere dağıtılır
 EKONOMIM = ("Ekonomim", "https://www.ekonomim.com/rss")
 EKONOMIM_ROUTE = {"gundem": "gundem", "dunya": "dunya", "teknoloji": "teknoloji", "spor": "spor"}  # gerisi (ekonomi, finans, piyasa…) → ekonomi
