@@ -39,7 +39,7 @@
   .msg small { font-size: 13px; font-weight: 500; color: var(--muted); margin-top: 3px; }
   .msg.up { color: var(--up); } .msg.down { color: var(--down); } .msg.win { color: var(--win); } .msg.lose { color: var(--down); }
   /* Sayı tablosu */
-  .grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; } /* 320 px ekranda 10 sütun taşmasın */
   .grid.uc button { font-size: 13px; letter-spacing: -.3px; }
   .grid button { aspect-ratio: 1; border-radius: 9px; border: 1px solid var(--line); background: var(--field); color: var(--ink); font: 700 15px system-ui, sans-serif; font-variant-numeric: tabular-nums; cursor: pointer; padding: 0; transition: opacity .3s, background .2s, border-color .2s; position: relative; }
   .grid button:active { transform: scale(.94); }

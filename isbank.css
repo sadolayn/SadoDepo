@@ -286,6 +286,7 @@
   .menu { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 4px; padding: 5px; border-radius: 14px; background: #0d0d0d; border: 1px solid var(--line); }
   .menu button span small { display: block; font-size: 8.5px; font-weight: 600; opacity: .8; margin-top: -1px; }
   .longbar { position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-bottom: 6px; padding: 9px 10px; border-radius: 12px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  @media (max-width: 340px) { .longbar { gap: 4px; padding: 9px 6px; font-size: 12.5px; } } /* 320 px ekranda üç başlık sığsın */
   .longbar i { font-style: normal; opacity: .55; } .longbar.active { outline: 2px solid var(--accent); outline-offset: 1px; }
   .longbar em { position: absolute; top: -6px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #d32f2f; color: #fff; font-style: normal; font-size: 11px; font-weight: 800; line-height: 18px; box-shadow: 0 0 0 2px #000; }
   .menu button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; height: 48px; padding: 3px 1px; border-radius: 11px; border: 1px solid var(--line); background: var(--card); color: #cfcfcf; font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; line-height: 1.1; }
