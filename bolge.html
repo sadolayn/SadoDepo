@@ -142,7 +142,7 @@
         <div class="donem" id="ulkeDonem"></div>
         <div class="konular" id="ulkeKonu"></div>
         <small class="ipucu">Liste boş gelirse o sürede o konuda haber çıkmamış demektir; süreyi uzatabilirsin.</small>
-        <small class="ipucu uyari">🗓️ Aramalar <b>son 7 günle</b> açılır. Google bazen eski bir haberi yeni sanabilir; önemli bir haberde <b>yayın tarihine</b> bir göz at.</small>
+        <small class="ipucu uyari">🗓️ Aramalar <b class="sureNot">son 7 günle</b> açılır. Google bazen eski bir haberi yeni sanabilir; önemli bir haberde <b>yayın tarihine</b> bir göz at.</small>
       </section>
     </div>
   </div>
@@ -170,7 +170,7 @@
       <div class="donem" id="donem"></div>
       <div id="konular" class="konular"></div>
       <small class="ipucu">Liste boş gelirse o sürede o konuda haber çıkmamış demektir; süreyi uzatabilirsin.</small>
-        <small class="ipucu uyari">🗓️ Aramalar <b>son 7 günle</b> açılır. Google bazen eski bir haberi yeni sanabilir; önemli bir haberde <b>yayın tarihine</b> bir göz at.</small>
+        <small class="ipucu uyari">🗓️ Aramalar <b class="sureNot">son 7 günle</b> açılır. Google bazen eski bir haberi yeni sanabilir; önemli bir haberde <b>yayın tarihine</b> bir göz at.</small>
     </section>
 
     <section class="kart" aria-label="Bölgede" style="margin-top:14px">
@@ -306,6 +306,8 @@ function sec(y) {
 const mesaj = (t) => { $("not").textContent = t; $("not").hidden = !t; };
 
 function ciz() {
+  const sn = { "1d": "son 24 saatle", "7d": "son 7 günle", "30d": "son 1 ayla" }[S.sure]; // uyarı notu seçilen süreyi söylesin
+  document.querySelectorAll(".sureNot").forEach((x) => { x.textContent = sn; });
   dunyaCiz();
   const ad = yerAd();
   $("konum").textContent = "📍 Konum bul";
