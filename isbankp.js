@@ -1022,7 +1022,7 @@ const sfSave = () => { try { localStorage.setItem("isbSube", JSON.stringify(SF))
 const sfDist = (a, b, c, d) => { const R = 6371e3, t = Math.PI / 180, x = (c - a) * t, y = (d - b) * t; const h = Math.sin(x / 2) ** 2 + Math.cos(a * t) * Math.cos(c * t) * Math.sin(y / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); };
 const sfFmt = (m) => (m < 1000 ? Math.round(m / 10) * 10 + " m" : (m / 1000).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) + " km");
 const sfPn = () => (SF.place && SF.place.name || "").replace(/^📡\s*/, "").replace(/\s*merkez$/i, "").trim();
-const OVP = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://maps.mail.ru/osm/tools/overpass/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+const OVP = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
 // Sunuculara aynı anda sorulur; ilk sağlam cevap kazanır, diğerleri iptal edilir. Her istek 15 sn ile sınırlı.
 // Sonuç cihazda 12 saat saklanır; aynı yer ve mesafe tekrar açılınca liste anında gelir.
 async function sfOverpass(q) {

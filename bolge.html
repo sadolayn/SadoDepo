@@ -97,7 +97,8 @@
   .tic5 .tkS button.on { background: rgba(240,198,116,.18); border-color: #f0c674; }
   .tic5 .tkS button.bos { opacity: .4; }
   .tic5 .tkN { grid-column: 1 / -1; font-size: 11px; color: var(--muted); margin: -2px 2px 0; }
-  .ulkeler.kucuk { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; } .ulkeler.kucuk button { min-height: 38px; padding: 0 5px; gap: 4px; font-size: 11.5px; } .ulkeler.kucuk button .un { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ulkeler.kucuk button .bay { font-size: 17px; } .ulkeler.kucuk button .un small { display: none; }
+  .ulkeler.kucuk { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; } .ulkeler.kucuk button { min-height: 38px; padding: 0 5px; gap: 4px; font-size: 11.5px; } .ulkeler.kucuk button .un { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 400px) { .ulkeler.kucuk { grid-template-columns: repeat(2, minmax(0, 1fr)); } } /* dar ekranda 3 sütunda adlar kesiliyordu (Suudi Ar…, Güney K…) */ .ulkeler.kucuk button .bay { font-size: 17px; } .ulkeler.kucuk button .un small { display: none; }
   .ugB { margin: 10px 2px 6px; font-size: 11.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #f0975a; } .ugB:first-child { margin-top: 0; }
   .ulkeler { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   .ulkeler button { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--cz); background: var(--k2); color: var(--c2); font-size: 14.5px; cursor: pointer; text-align: left; }
@@ -288,7 +289,7 @@ function dunyaCiz() {
   $("ulkeAd").innerHTML = bayImg(b) + " " + esc(S.ulke);
   document.querySelectorAll("#ulkeSec [data-sure]").forEach((x) => x.classList.toggle("on", x.dataset.sure === S.sure));
   $("ulkeTum").href = ugn(""); $("ulkeTum").innerHTML = `Tüm ${esc(S.ulke)} haberleri ↗<small>${sureAd} · ${donem()}</small>`;
-  $("ulkeDonem").innerHTML = `📅 <span><b>${donem()}</b> arası haberler, en yeni üstte</span>`;
+  $("ulkeDonem").innerHTML = `📅 <span><b>${donem()}</b> arası haberler</span>`; // Google Haberler alaka sırasıyla gösterir, "en yeni üstte" denmez
   $("ulkeKonu").innerHTML = DUNYA_KONU.map(([g, renk, L]) => {
     const K = L.filter((k) => !k[3] || k[3]().includes(S.ulke)); // ülkeye uygun konular
     return K.length ? `<div class="grp" style="--g:${renk}"><div class="grpB">${esc(g)}</div><div class="izgara">${K.map(([ic, n, q]) => `<a href="${esc(ugn(q))}" target="_blank" rel="noopener"><span class="ik">${ic}</span><span class="ad">${esc(n)}</span><span class="ok">↗</span></a>`).join("")}</div></div>` : "";
