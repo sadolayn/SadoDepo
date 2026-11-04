@@ -581,6 +581,19 @@ function kKimBul(k, seg, sluglar) {
 const kGr = (tip) => (KH && KH.gruplar && KH.gruplar[tip] ? KH.gruplar[tip].map((g) => [g.ad, g.ikon]) : K_GRUP[tip]);
 const kIkon = (tip, ad) => (kGr(tip).find((g) => g[0] === ad) || [, "✨"])[1];
 const kKisa = (ad) => ({ "Maaşı İş Bankası'na yatanlar": "Maaşlı", "Dış ticaret · İhracat": "Dış ticaret", "İş Black · Maximiles Black": "Black" })[ad] || ad.replace(" & Beyaz Eşya", "").replace(" Alışveriş", "");
+// Açıklamadaki tarih aralığı bugünden önce bitmişse açıklama eskidir, gösterilmez (4 Kasım 2026: Maximum'un yeni kasım kampanyasının
+// gizli özet etiketi mart kampanyasından kalmıştı; kartta "1 - 31 Mart 2026 … 2.250 TL" yazıyordu). Toplayıcı da artık bunu ayıklıyor; bu yedek emniyet.
+let K_ARALIK_RE = null; // K_AYLAR aşağıda tanımlı: kalıp ilk kullanımda kurulur
+function kOzetEski(oz) {
+  if (!oz) return false;
+  if (!K_ARALIK_RE) K_ARALIK_RE = new RegExp(`(\\d{1,2})(?:\\s+(?:${K_AYLAR.join("|")}))?(?:\\s+\\d{4})?\\s*[-–]\\s*(\\d{1,2})\\s+(${K_AYLAR.join("|")})\\s+(20\\d\\d)`, "g");
+  const t = kKucuk(oz), son = [];
+  for (const m of t.matchAll(K_ARALIK_RE)) son.push(`${m[4]}-${String(K_AYLAR.indexOf(m[3]) + 1).padStart(2, "0")}-${m[2].padStart(2, "0")}`);
+  for (const m of t.matchAll(/\d{1,2}[./]\d{1,2}[./]20\d\d\s*[-–]\s*(\d{1,2})[./](\d{1,2})[./](20\d\d)/g)) son.push(`${m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}`);
+  if (!son.length) return false;
+  const bugun = new Date(), b = `${bugun.getFullYear()}-${String(bugun.getMonth() + 1).padStart(2, "0")}-${String(bugun.getDate()).padStart(2, "0")}`;
+  return son.sort().pop() < b;
+}
 // Bir kaynağın bir müşteri bölümündeki kampanyaları: tekrarsız (isbank'ta aynı kampanya birden çok kategoride olabilir)
 function kListe(kay, seg) {
   const v = KH && KH[kay] && KH[kay][seg];
@@ -588,7 +601,7 @@ function kListe(kay, seg) {
   const ham = v.kategoriler ? v.kategoriler.flatMap((c) => c.kampanyalar) : v.kampanyalar || [], gor = new Set(), sl = {};
   if (v.kategoriler) v.kategoriler.forEach((c) => c.kampanyalar.forEach((k) => (sl[k.url] = sl[k.url] || []).push(c.slug)));
   // Bitiş günü geçen kampanya, bir sonraki toplamayı beklemeden listeden düşer
-  return ham.filter((k) => !(k.bitis && daysLeft(k.bitis) <= 0) && !gor.has(k.url) && gor.add(k.url)).map((k) => ({ ...k, ne: k.ne || "Ayrıcalık", nere: k.nere || "Genel", kim: kKimBul(k, seg, sl[k.url] || []) }));
+  return ham.filter((k) => !(k.bitis && daysLeft(k.bitis) <= 0) && !gor.has(k.url) && gor.add(k.url)).map((k) => kOzetEski(k.ozet) ? { ...k, ozet: "" } : k).map((k) => ({ ...k, ne: k.ne || "Ayrıcalık", nere: k.nere || "Genel", kim: kKimBul(k, seg, sl[k.url] || []) }));
 }
 // Metindeki başlangıç günü ("1 Eylül-30 Kasım 2026 tarihleri arasında" → 2026-09-01). Maximum/Maximiles metni kısa olduğundan aynı kampanyanın İş Bankası metninden de bakılır.
 const K_AYLAR = ["ocak", "subat", "mart", "nisan", "mayis", "haziran", "temmuz", "agustos", "eylul", "ekim", "kasim", "aralik"]; // kKucuk Türkçe harfleri sadeleştirir

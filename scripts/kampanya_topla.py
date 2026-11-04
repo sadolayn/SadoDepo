@@ -234,23 +234,45 @@ def max_kartlar(body, kok=KOK_M):
 # Her turda en fazla M_SINIR sayfa açılır (banka sitesine yük olmasın; ilk turlarda liste birkaç günde dolar).
 M_SINIR = 60
 M_ACILAN = [0]
+def eski_metin(s):
+    """Metindeki tarih aralığı bugünden önce bitmişse True ("1 - 31 Mart 2026 tarihleri arasında…" 4 Kasım'da).
+    4 Kasım 2026: Maximum'un yeni kasım kampanyasının sayfasında, ekranda görünen yazı "30 Kasım 2026 tarihine kadar…" iken
+    gizli özet etiketi (meta description) mart kampanyasından kalmıştı; o eski metin sitede açıklama olarak çıktı."""
+    t = (s or "").lower()
+    def d(y, a, g):
+        try: return dt.date(int(y), int(a) if str(a).isdigit() else AYLAR[a], int(g))
+        except (ValueError, KeyError): return None
+    sonlar = [d(m.group(6), m.group(5), m.group(4)) for m in re.finditer(r"(\d{1,2})[./](\d{1,2})[./](20\d{2})\s*(?:-|–|ile)\s*(\d{1,2})[./](\d{1,2})[./](20\d{2})", t)]
+    sonlar += [d(m.group(6), m.group(5), m.group(4)) for m in re.finditer(r"(\d{1,2})\s*(?:(" + AY_RE + r")\s*(?:(20\d{2})\s*)?)?(?:-|–)\s*(\d{1,2})\s+(" + AY_RE + r")\s+(20\d{2})", t)]
+    sonlar = [x for x in sonlar if x]
+    return bool(sonlar) and max(sonlar) < bugun
+
 def m_detay(url):
+    """Dönüş: None (sayfa yok) ya da {"ozet", "bitis"}; bitiş sayfanın "Kampanya Tarihleri g.a.yyyy - g.a.yyyy" alanından."""
     b = get(url)
     if not b: return None
     t = temiz(b)
     if re.search(r"(?i)kampanya\s+bulunamad", metin(t)): return None  # detay sayfası henüz yayında değil
     h1 = re.search(r"(?is)<h1[^>]*>(.*?)</h1>", t)
     baslik = metin(h1.group(1)) if h1 else ""
-    ozet = ""
+    # Adaylar: gizli özet etiketleri, sonra başlığın altındaki ilk paragraflar. Tarihi geçmiş olan (banka eski kampanyadan bırakmış) atlanır.
+    aday = []
     for pat in (r'(?i)<meta[^>]+name="description"[^>]+content="([^"]*)"', r'(?i)<meta[^>]+property="og:description"[^>]+content="([^"]*)"'):
         m = re.search(pat, b)
-        if m and len(metin(m.group(1))) >= 40: ozet = metin(m.group(1)); break
-    if not ozet and h1:
-        for m in re.finditer(r"(?is)<p[^>]*>(.*?)</p>", t[h1.end():h1.end() + 20000]):
-            x = metin(m.group(1))
-            if len(x) >= 40 and not BOS_OZET.search(x): ozet = x; break
-    if BOS_OZET.search(ozet) or (baslik and ozet.lower().startswith(baslik.lower()[:30])): ozet = ""
-    return kisalt(ozet, 220)
+        if m: aday.append(metin(m.group(1)))
+    if h1:
+        aday += [metin(m.group(1)) for m in re.finditer(r"(?is)<p[^>]*>(.*?)</p>", t[h1.end():h1.end() + 20000])][:8]
+    ozet = ""
+    for x in aday:
+        if len(x) < 40 or BOS_OZET.search(x) or eski_metin(x): continue
+        if baslik and x.lower().startswith(baslik.lower()[:30]): continue
+        ozet = x; break
+    bitis = ""
+    alan = re.search(r"kampanya\s+tarihleri\s*:?\s*\d{1,2}[./]\d{1,2}[./]20\d{2}\s*[-–]\s*(\d{1,2})[./](\d{1,2})[./](20\d{2})", metin(t).replace("İ", "i").replace("I", "ı").lower())  # "TARİHLERİ".lower() noktalı i üretir
+    if alan:
+        try: bitis = dt.date(int(alan.group(3)), int(alan.group(2)), int(alan.group(1))).isoformat()
+        except ValueError: pass
+    return {"ozet": kisalt(ozet, 220), "bitis": bitis}
 
 def m_bos_ozet(ozet, baslik):
     """Açıklama başlığı yeniden söylüyorsa (ETS sayfasının meta description'ı başlığın aynısıydı) bilgi katmaz, boş sayılır."""
@@ -262,15 +284,20 @@ def m_ozetler(lst):
     """Açıklaması boş Maximum kampanyalarına kendi sayfasından kısa açıklama; önce hafıza, sonra (sınırlı sayıda) sayfa."""
     bilinen = {k["url"]: k for seg_ in ("bireysel", "ticari") for k in ((eski.get("maximum") or {}).get(seg_) or {}).get("kampanyalar", []) if k.get("oz")}
     for k in lst:
-        if k.get("ozet"): continue
-        if k["url"] in bilinen and not (bilinen[k["url"]].get("ozet") and m_bos_ozet(bilinen[k["url"]]["ozet"], k["baslik"])):
-            k["ozet"], k["oz"] = bilinen[k["url"]].get("ozet", ""), 1
+        if k.get("ozet") and not eski_metin(k["ozet"]): continue
+        k["ozet"] = ""
+        bk = bilinen.get(k["url"])
+        if bk and not eski_metin(bk.get("ozet")) and not (bk.get("ozet") and m_bos_ozet(bk["ozet"], k["baslik"])):
+            k["ozet"], k["oz"] = bk.get("ozet", ""), 1
+            if bk.get("bt"): k["bitis"], k["bt"] = bk["bitis"], 1
             continue
         if M_ACILAN[0] >= M_SINIR or k["url"].rstrip("/").endswith("/kampanyalar"): continue
         M_ACILAN[0] += 1
         o = m_detay(k["url"])
         if o is None: continue
-        k["ozet"], k["oz"] = ("" if m_bos_ozet(o, k["baslik"]) else o), 1
+        k["ozet"], k["oz"] = ("" if m_bos_ozet(o["ozet"], k["baslik"]) else o["ozet"]), 1
+        # "Son N Gün" şeridi bazı kampanyalarda bir gün eksik sayıyor; sayfadaki açık tarih kesindir
+        if o["bitis"] and o["bitis"] >= bugun.isoformat(): k["bitis"], k["bt"] = o["bitis"], 1
     # Birçok kampanyada birebir aynı çıkan açıklama sitenin genel tanıtım yazısıdır, kampanya açıklaması değil
     say = {}
     for k in lst:
@@ -399,7 +426,7 @@ def x_detay(url):
         return None
     ac = re.search(r'(?i)<meta[^>]+name="description"[^>]+content="([^"]*)"', b)
     ozet = re.sub(r"\s+", " ", html.unescape(ac.group(1))).strip() if ac else ""
-    if ozet.lower().startswith(baslik.lower()[:30]):
+    if ozet.lower().startswith(baslik.lower()[:30]) or eski_metin(ozet):
         ozet = ""
     ticari = bool(re.search(r"Kampanyalar\s*(?:[›>/»]\s*)?Ticari\s+Kampanyalar", metin(t)))
     duz_metin = metin(t)
