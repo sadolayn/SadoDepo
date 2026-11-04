@@ -520,9 +520,19 @@ def ilk_tarih(yeni, eski_v):
     for k in eskiler:
         if k.get("ilk"): gor[k["url"]] = min(k["ilk"], gor.get(k["url"], k["ilk"]))
     ilk_calisma = not gor
+    # Geri dönen adres: önceki listede yok ve hafızada en son 2+ gün önce görülmüş. Banka biten kampanyanın adresini yeni dönem
+    # kampanyası için yeniden kullanıyor (PttAVM taksit: 31 Ekim'de bitti, 4 Kasım'da aynı adresle yeni kampanya); hafızadaki
+    # eski tarih alınırsa YENİ rozeti çıkmaz. Böyle adres bugün yeni sayılır, hafızası sıfırlanır. 1 günlük düşüşler (site eksik
+    # yüklenince) eskisi gibi hatırlanır.
+    eski_url = {k["url"] for k in eskiler}
+    donus = (bugun - dt.timedelta(days=2)).isoformat()
+    geri = 0
     for k in yeniler:
         k.pop("ilk", None)
-        if k["url"] in gor: k["ilk"] = gor[k["url"]]
+        if k["url"] in gor:
+            if k["url"] not in eski_url and k["url"] in hafiza and hafiza[k["url"]][1] <= donus:
+                hafiza.pop(k["url"]); geri += 1; continue
+            k["ilk"] = gor[k["url"]]
     bilinen = [(k["baslik"], k["ilk"]) for k in eskiler if k.get("ilk")] + [(k["baslik"], k["ilk"]) for k in yeniler if "ilk" in k]
     benzer = 0
     for k in yeniler:
@@ -535,7 +545,7 @@ def ilk_tarih(yeni, eski_v):
     sinir = (bugun - dt.timedelta(days=90)).isoformat()
     hafiza = {u: v for u, v in sorted(hafiza.items()) if v[1] >= sinir}
     json.dump(hafiza, open(ILK, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
-    print(f"ilk görülme: hafızada {len(hafiza)}, benzer yazımdan {benzer}, bugün yeni {sum(1 for k in yeniler if k['ilk'] == bugun.isoformat())}")
+    print(f"ilk görülme: hafızada {len(hafiza)}, benzer yazımdan {benzer}, geri dönen adres {geri}, bugün yeni {sum(1 for k in yeniler if k['ilk'] == bugun.isoformat())}")
 
 def adet(v):
     if not v: return 0
