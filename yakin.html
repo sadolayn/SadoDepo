@@ -246,9 +246,16 @@ function mapLoad(which, src, title, gUrl) {
   const tok = (LD[which] = (LD[which] || 0) + 1);
   ov.innerHTML = '<div class="sp"></div><div>Harita yükleniyor…</div>'; ov.classList.add("show");
   if (which === "fs") $("fstitle").textContent = "⏳ Harita yükleniyor…";
-  fr.onload = () => { if (tok !== LD[which] || !fr.src) return; clearTimeout(LD[which + "t"]); ov.classList.remove("show"); if (which === "fs") $("fstitle").textContent = title; };
+  fr.onload = () => { if (tok !== LD[which] || !fr.dataset.cur) return; clearTimeout(LD[which + "t"]); ov.classList.remove("show"); if (which === "fs") $("fstitle").textContent = title; };
   clearTimeout(LD[which + "t"]);
   LD[which + "t"] = setTimeout(() => { if (tok !== LD[which]) return; ov.innerHTML = `<div style="font-size:28px">🗺️</div><div>Harita şu an açılamadı.</div><a href="${gUrl}" target="_blank" rel="noopener">Google Haritalar'da aç ↗</a>`; if (which === "fs") $("fstitle").textContent = "Harita açılamadı"; }, 15000);
+  frYukle(fr, src);
+}
+// Çerçeveye harita yükle: src'yi değiştirmek tarayıcı geçmişine gizli bir adım ekliyor (geri tuşu tam ekranı kapatmıyordu);
+// replace ile yükleyince geçmiş temiz kalır. Yüklü adres data-cur'da tutulur (src özniteliği replace ile değişmez).
+function frYukle(fr, src) {
+  fr.dataset.cur = src;
+  try { if (fr.src && fr.contentWindow) { fr.contentWindow.location.replace(src); return; } } catch (e) {}
   fr.src = src;
 }
 // Google Haritalar'da aç: bilgisayarda Google konumu internet bağlantısından (İstanbul) aldığı için
@@ -268,7 +275,7 @@ function setGmap(c) {
   const qtxt = (GQ[c.k] || c.n.toLowerCase()) + (pn && pn !== "Bulunduğun yer" ? " " + pn : "");
   const src = `https://maps.google.com/maps?q=${encodeURIComponent(qtxt)}&ll=${ll}&sll=${ll}&z=${z}&hl=tr&output=embed`;
   fsSrc = src.replace(/&z=\d+/, `&z=${Math.max(12, z - 1)}`);
-  if ($("gmap").src !== src) mapLoad("g", src, titleOf(c), gUrlOf(c));
+  if ($("gmap").dataset.cur !== src) mapLoad("g", src, titleOf(c), gUrlOf(c));
 }
 const CAT = {}; GROUPS.forEach(([, l]) => l.forEach(([k, e, n, sel]) => (CAT[k] = { k, e, n, sel })));
 let S = { place: null, r: 3000, cat: null };
@@ -461,14 +468,14 @@ function openNobet() {
   if (!S.place) { alert("Önce konum ara ya da 📍 ile konumunu kullan. İstersen e-Devlet'ten de bakabilirsin."); return; }
   const ll = `${(+S.place.lat).toFixed(5)},${(+S.place.lon).toFixed(5)}`;
   $("fstitle").textContent = `💊 Nöbetçi eczane · ${(S.place.name || "").replace(/^📡\s*/, "")}`;
-  $("fsmap").src = `https://maps.google.com/maps?q=n%C3%B6bet%C3%A7i+eczane+near+${ll}&z=14&hl=tr&output=embed`;
+  frYukle($("fsmap"), `https://maps.google.com/maps?q=n%C3%B6bet%C3%A7i+eczane+near+${ll}&z=14&hl=tr&output=embed`);
   $("fsgm").href = `https://www.google.com/maps/search/n%C3%B6bet%C3%A7i+eczane/@${ll},14z`;
   if (!$("fs").classList.contains("show")) { $("fs").classList.add("show"); document.body.style.overflow = "hidden"; try { history.pushState({ fs: 1 }, ""); } catch (e) {} }
 }
 function openFs() {
   if (!fsSrc || !S.cat) return;
   const c = CAT[S.cat];
-  if ($("fsmap").src !== fsSrc) mapLoad("fs", fsSrc, titleOf(c), gUrlOf(c)); else $("fstitle").textContent = titleOf(c);
+  if ($("fsmap").dataset.cur !== fsSrc) mapLoad("fs", fsSrc, titleOf(c), gUrlOf(c)); else $("fstitle").textContent = titleOf(c);
   const term = encodeURIComponent(GQ[c.k] || c.n.toLowerCase());
   $("fsgm").href = gUrlOf(c);
   $("fs").classList.add("show"); document.body.style.overflow = "hidden";
