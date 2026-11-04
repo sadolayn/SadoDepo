@@ -165,7 +165,7 @@ const ISQ_ALL = [].concat(
   ]),
   // --- Bankamatik ve Gişematik: yeni sorular (21 Ekim 2026; isbank.com.tr/bankamatik ve İş Vapur duyurusu) ---
   K("matik", [
-    ["İş Bankası'nın yüzen şubesi İş Vapur'da nakit işlemler için hangi cihazlar var?", ["2 Bankamatik", "1 GişeMatik ve 1 Bankamatik", "Sadece İşCepmatik", "Cihaz yok, sadece gişe"], 1],
+    ["İş Bankası'nın yüzen şubesi İş Vapur'da nakit işlemler için hangi cihazlar var?", ["2 Bankamatik", "1 Gişematik ve 1 Bankamatik", "Sadece İşCepmatik", "Cihaz yok, sadece gişe"], 1],
     ["İş Bankası'nın Türkiye genelinde kaç Bankamatik'i var?", ["2.500'e varan", "4.000'e varan", "7.000'e varan", "15.000'e varan"], 2],
     ["Bankamatik'ten (kartla ya da İşCep karekoduyla) günde kaç TL'ye kadar ücretsiz para çekilir?", ["10.000 TL", "20.000 TL", "30.000 TL", "50.000 TL"], 1],
     ["Bankamatik'ten günlük 20.000 TL'yi aşan çekim hangi tutara kadar ücret karşılığı yapılabilir?", ["25.000 TL", "30.000 TL", "40.000 TL", "50.000 TL"], 1],

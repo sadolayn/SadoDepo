@@ -87,7 +87,7 @@ window.Vergi = (function () {
       <div id="v_alert"></div>
       </div>
       <div class="vlist" id="v_list"></div>
-      <p class="note">Son gün hafta sonu ya da resmi tatile denk gelirse izleyen ilk iş gününe kayar (VUK). Arife günleri öğleden sonra tatildir; ödemeyi sabah yap. Bir vergiye dokun → aşağıda ödeme planı ve kısa bir not hazırlanır.</p>
+      <p class="note">Son gün hafta sonu ya da resmî tatile denk gelirse izleyen ilk iş gününe kayar (VUK). Arife günleri öğleden sonra tatildir; ödemeyi sabah yap. Bir vergiye dokun → aşağıda ödeme planı ve kısa bir not hazırlanır.</p>
     </div>
     <div class="card">
       <h2>💳 Ödeme planı</h2>
@@ -231,7 +231,7 @@ function renderVergiCal(today, end, all) {
     return `<div class="mo"><h3>${m.toLocaleDateString("tr-TR", { month: "long", year: "numeric" })}</h3><div class="g">${cells}</div></div>`;
   }).join("");
   $("v_cal").innerHTML = `<div class="tip" id="v_tip">Bir güne dokun, o günün vergilerini gör.</div><div class="yr">${html}</div>
-    <div class="lg"><span class="l7">Bireysel vergi</span><span class="l8">Ticari vergi</span><span class="l4">Resmi / dini bayram</span><span class="l5">Arife</span><span class="l6">Hafta sonu</span></div>`;
+    <div class="lg"><span class="l7">Bireysel vergi</span><span class="l8">Ticari vergi</span><span class="l4">Resmî / dini bayram</span><span class="l5">Arife</span><span class="l6">Hafta sonu</span></div>`;
 }
   function bagla() {
   $("v_cal").addEventListener("click", (e) => { const d = e.target.closest(".d[data-tip]"); if (d) $("v_tip").textContent = d.dataset.tip; });

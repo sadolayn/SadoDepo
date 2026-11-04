@@ -287,7 +287,7 @@ function dunyaCiz() {
   const b = (ULKELER.find((x) => x[1] === S.ulke) || ["🌍"])[0], sureAd = SURE[S.sure];
   $("ulkeAd").innerHTML = bayImg(b) + " " + esc(S.ulke);
   document.querySelectorAll("#ulkeSec [data-sure]").forEach((x) => x.classList.toggle("on", x.dataset.sure === S.sure));
-  $("ulkeTum").href = ugn(""); $("ulkeTum").innerHTML = `${esc(S.ulke)} tüm haberler ↗<small>${sureAd} · ${donem()}</small>`;
+  $("ulkeTum").href = ugn(""); $("ulkeTum").innerHTML = `Tüm ${esc(S.ulke)} haberleri ↗<small>${sureAd} · ${donem()}</small>`;
   $("ulkeDonem").innerHTML = `📅 <span><b>${donem()}</b> arası haberler, en yeni üstte</span>`;
   $("ulkeKonu").innerHTML = DUNYA_KONU.map(([g, renk, L]) => {
     const K = L.filter((k) => !k[3] || k[3]().includes(S.ulke)); // ülkeye uygun konular

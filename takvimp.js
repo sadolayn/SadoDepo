@@ -179,7 +179,7 @@ function renderMonth() {
   // Bu aya dokunan okul tatilleri / karne / açılış (aralık ay sınırını aşsa da)
   for (const [a, b, ad] of OKUL) { const da = parse(a), db = b ? parse(b) : da; if (da <= mEnd && db >= mStart) monthItems.push({ dt: da, bit: b ? db : null, name: ad, type: "okul" }); }
   monthItems.sort((a, b) => a.dt - b.dt);
-  $("mList").innerHTML = monthItems.length ? monthItems.map((x) => x.type === "okul" ? okulHTML(x) : itemHTML(x)).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmi tatil ya da dini gün yok.</div>';
+  $("mList").innerHTML = monthItems.length ? monthItems.map((x) => x.type === "okul" ? okulHTML(x) : itemHTML(x)).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmî tatil ya da dini gün yok.</div>';
   const mine = A.items.filter((x) => x.d <= keyOf(mEnd) && (x.e || x.d) >= keyOf(mStart)).sort(byDate);
   if (mine.length) $("mList").innerHTML += `<div class="mgrp" style="color:#c9b4f7">Ajandam · ${MONTHS[m]}</div>` + mine.map((x) => aItemHTML(x)).join("");
 }
@@ -191,7 +191,7 @@ function itemHTML(x, isNext) {
   return `<div class="${cls}"><div class="dt"><b>${x.dt.getDate()}</b><span>${MONTHS[x.dt.getMonth()].slice(0, 3)}</span></div>
     <div class="nm">${x.name}<small>${x.dt.toLocaleDateString("tr-TR", { weekday: "long" })}${left ? " · " + left : ""}</small></div>${tag}</div>`;
 }
-// Okul tatili satırı: aralıkta kaç iş günü izin gerektiğini hesaplar (resmi tatil ve hafta sonu düşülür, arife yarım)
+// Okul tatili satırı: aralıkta kaç iş günü izin gerektiğini hesaplar (resmî tatil ve hafta sonu düşülür, arife yarım)
 function okulHTML(x) {
   const bit = x.bit || x.dt, diff = Math.round((x.dt - today) / 86400000), bitti = bit < today;
   const left = diff > 0 ? `${diff} gün kaldı` : !bitti && x.bit ? "Şu an tatilde" : diff === 0 ? "Bugün" : "";
@@ -209,7 +209,7 @@ function showDetail(d) {
   const i = info(d);
   let txt = `<b>${fmtLong(d)}</b><br>`;
   if (i.recs.length) txt += i.recs.map((r) => r.name + (r.type === "yarim" ? " (öğleden sonra tatil)" : "")).join("<br>") + "<br>";
-  txt += i.we ? "Hafta sonu" : i.full ? "Resmi tatil — iş günü değil" : i.half ? "Yarım iş günü" : "İş günü";
+  txt += i.we ? "Hafta sonu" : i.full ? "Resmî tatil — iş günü değil" : i.half ? "Yarım iş günü" : "İş günü";
   const okd = OKUL_GUN.get(keyOf(d)) || (OKUL.find((o) => !o[1] && o[0] === keyOf(d)) || [])[2];
   if (okd) txt += `<br><span style="color:#8fb4ff">🎒 Okullar: ${okd}</span>`;
   if (!inRange(d)) txt += "<br><span style='color:var(--muted);font-size:12px'>Bu yıl için bayram tarihleri yüklenmedi.</span>";
@@ -246,7 +246,7 @@ function calc1() {
   $("h1rows").innerHTML = [
     ["Toplam takvim günü", total],
     ["Hafta sonu", we],
-    ["Hafta içi resmi tatil", hol],
+    ["Hafta içi resmî tatil", hol],
     ["Yarım gün (arife)", half],
   ].map(([k, v]) => `<div><span>${k}</span><span>${v}</span></div>`).join("") +
     (outside ? `<div><span style="color:var(--half)">Not</span><span style="color:var(--half);font-size:12px;text-align:right">2026–2028 dışındaki bayramlar hesaba katılmadı</span></div>` : "");
@@ -400,7 +400,7 @@ const shD = (k) => { const d = parse(k); return `${d.getDate()} ${MONTHS[d.getMo
 const fmtG = (n) => n.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
 function atoast(t) { const el = $("aToast"); el.textContent = t; el.classList.add("show"); clearTimeout(atoast._t); atoast._t = setTimeout(() => el.classList.remove("show"), 2400); }
 
-// İzin günü: hafta sonu ve resmi tatiller sayılmaz, arife yarım gün
+// İzin günü: hafta sonu ve resmî tatiller sayılmaz, arife yarım gün
 function izinCalc(x, year) {
   const o = { gun: 0, past: 0, fut: 0, we: 0, hol: [], half: [], outside: false, days: 0, mon: Array(12).fill(0) };
   if (!x.d) return o;
@@ -431,7 +431,7 @@ function izinYil(y) {
   }
   return { hak, dev, top: hak + dev, kul, pln, kal: hak + dev - kul - pln, diger, aylik };
 }
-// Takvim hücresi: izin alt çizgi, not ve işler sağ üstte nokta (resmi tatil renklerinden ayrı)
+// Takvim hücresi: izin alt çizgi, not ve işler sağ üstte nokta (resmî tatil renklerinden ayrı)
 // Vergi takvimi (vergi.js): o gün son günü olan vergiler
 let VG_CACHE = null;
 function vergiGun(d) {
@@ -461,7 +461,7 @@ function aItemHTML(x, onDay) {
   if (rng) {
     const c = izinCalc(x);
     sub = (x.e && x.e !== x.d ? `${shD(x.d)} – ${shD(x.e)} · ${c.days} gün` : parse(x.d).toLocaleDateString("tr-TR", { day: "numeric", month: "short", weekday: "short" }) + (x.half ? " · yarım gün" : "")) + (x.ti ? " · " + izAd(x) : "");
-    if (c.hol.length) sub += ` · ${c.hol.length} resmi tatil hariç`;
+    if (c.hol.length) sub += ` · ${c.hol.length} resmî tatil hariç`;
     gn = `<span class="gn">${fmtG(c.gun)} iş günü</span>`;
   } else {
     sub = (onDay ? T.ad : parse(x.d).toLocaleDateString("tr-TR", { day: "numeric", month: "short", weekday: "short" })) + (x.tm ? " · " + x.tm : "") + (x.n ? " · " + x.n : "");
@@ -504,7 +504,7 @@ function sCalc() {
   const q = { t: sIt(), d: $("sD").value, e: $("sE").value, half: $("sHalf").checked }, c = izinCalc(q);
   let h = `<b>${fmtG(c.gun)} iş günü</b> ${IZK[sK].toLowerCase()} · ${c.days} takvim günü`;
   if (c.we) h += `<br>🗓 ${c.we} gün hafta sonu — sayılmadı`;
-  if (c.hol.length) h += `<br><span class="sk">🇹🇷 Resmi tatil sayılmadı: ${esc(c.hol.join(", "))}</span>`;
+  if (c.hol.length) h += `<br><span class="sk">🇹🇷 Resmî tatil sayılmadı: ${esc(c.hol.join(", "))}</span>`;
   if (c.half.length) h += `<br><span class="wn">◐ Arife yarım gün sayıldı: ${c.half.join(", ")}</span>`;
   if (c.outside) h += `<br><span class="wn">2026–2028 dışındaki bayramlar hesaba katılmadı.</span>`;
   const e0 = $("sE").value || $("sD").value, ov = A.items.find((x) => isRange(x) && (!sEdit || x.id !== sEdit.id) && x.d <= e0 && (x.e || x.d) >= $("sD").value);
@@ -660,7 +660,7 @@ function renderPosA() {
     <hr class="pz-hr">
     <div class="pz-h">YILLIK İZİN</div>
     ${Y.top ? row("Yıllık hak", fmtG(Y.hak) + " gün") + (Y.dev ? row("Devreden", fmtG(Y.dev) + " gün") : "") + row("Kullanılan", "−" + fmtG(Y.kul) + " gün") + row("Planlanan", "−" + fmtG(Y.pln) + " gün") + row("KALAN", fmtG(Y.kal) + " gün", "tot") + `<div class="pz-bar"><i style="width:${(Y.kul / tot) * 100}%;background:#a77bf3"></i><i style="width:${(Y.pln / tot) * 100}%;background:#cdb8f5"></i></div>` : ""}
-    ${P.izin.length ? P.izin.map(({ x, c }) => row(rangeTxt(x), fmtG(c.gun) + " gün") + (x.ti || c.hol.length ? `<div class="pz-sub">${esc(x.ti || "")}${x.ti && c.hol.length ? " · " : ""}${c.hol.length ? "resmi tatil sayılmadı: " + esc(c.hol.map((h) => h.split(" ").slice(0, 2).join(" ")).join(", ")) : ""}</div>` : "")).join("") : '<div class="pz-row" style="color:#999"><span>Yıllık izin kaydı yok</span><span>—</span></div>'}
+    ${P.izin.length ? P.izin.map(({ x, c }) => row(rangeTxt(x), fmtG(c.gun) + " gün") + (x.ti || c.hol.length ? `<div class="pz-sub">${esc(x.ti || "")}${x.ti && c.hol.length ? " · " : ""}${c.hol.length ? "resmî tatil sayılmadı: " + esc(c.hol.map((h) => h.split(" ").slice(0, 2).join(" ")).join(", ")) : ""}</div>` : "")).join("") : '<div class="pz-row" style="color:#999"><span>Yıllık izin kaydı yok</span><span>—</span></div>'}
     ${Y.kul + Y.pln ? `<div class="pz-months">${Y.aylik.map((v, i) => `<div>${v ? `<em>${fmtG(v)}</em>` : ""}<i style="height:${(v / mx) * 70}%;${v ? "" : "background:#e2dac4"}"></i>${MI[i]}</div>`).join("")}</div>` : ""}
     ${P.diger.length ? `<hr class="pz-hr"><div class="pz-h">DİĞER İZİNLER</div>` + P.diger.map(({ x, c }) => row(rangeTxt(x), fmtG(c.gun) + " gün") + `<div class="pz-sub">${esc(izAd(x))}${x.ti ? " · " + esc(x.ti) : ""}</div>`).join("") : ""}
     <div class="pz-bc"></div>
@@ -701,7 +701,7 @@ function posCanvasA() {
     g.fillStyle = "#a77bf3"; g.fillRect(M, y, bw * Y.kul / tot, 16); g.fillStyle = "#cdb8f5"; g.fillRect(M + bw * Y.kul / tot, y, bw * Y.pln / tot, 16); g.restore(); y += 46;
   }
   const per = (arr, sub) => arr.forEach(({ x, c }) => { row(rangeTxt(x), fmtG(c.gun) + " gün", y); y += 24; const s = sub(x, c); if (s) { T(fit(s, mono(15), bw), M, y, mono(15), "#8a8270"); y += 32; } else y += 8; });
-  if (P.izin.length) per(P.izin, (x, c) => [x.ti, c.hol.length ? "resmi tatil sayılmadı: " + c.hol.map((h) => h.split(" ").slice(0, 2).join(" ")).join(", ") : ""].filter(Boolean).join(" · "));
+  if (P.izin.length) per(P.izin, (x, c) => [x.ti, c.hol.length ? "resmî tatil sayılmadı: " + c.hol.map((h) => h.split(" ").slice(0, 2).join(" ")).join(", ") : ""].filter(Boolean).join(" · "));
   else { T("Yıllık izin kaydı yok", M, y, mono(20), "#999"); y += 32; }
   if (Y.kul + Y.pln) {
     const mx = Math.max(...Y.aylik, 1), cw = bw / 12; y += 8;

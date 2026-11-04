@@ -266,7 +266,7 @@ function calcMev() {
 }
 
 // ---------- Tüketici ----------
-// Tatiller (takvim.html ile aynı kaynak): sabit resmi tatiller + bayramlar (tam gün)
+// Tatiller (takvim.html ile aynı kaynak): sabit resmî tatiller + bayramlar (tam gün)
 const TK_FIXED = ["01-01", "04-23", "05-01", "05-19", "07-15", "08-30", "10-29"];
 const TK_REL = { 2026: ["03-20", "03-21", "03-22", "05-27", "05-28", "05-29", "05-30"], 2027: ["03-09", "03-10", "03-11", "05-16", "05-17", "05-18", "05-19"],
   2028: ["02-26", "02-27", "02-28", "05-05", "05-06", "05-07", "05-08"], 2029: ["02-14", "02-15", "02-16", "04-24", "04-25", "04-26", "04-27"] };
@@ -278,7 +278,7 @@ function isHoliday(d) {
   return TK_FIXED.includes(md) || (TK_REL[d.getFullYear()] || []).includes(md);
 }
 function nextBiz(d) { const x = new Date(d); while (isHoliday(x)) x.setDate(x.getDate() + 1); return x; }
-// Vade sonu kontrolü: günün tatil adı (bayram / resmi tatil / hafta sonu), değilse null
+// Vade sonu kontrolü: günün tatil adı (bayram / resmî tatil / hafta sonu), değilse null
 const TK_AD = { "01-01": "Yılbaşı", "04-23": "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı", "05-01": "1 Mayıs Emek ve Dayanışma Günü", "05-19": "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı",
   "07-15": "15 Temmuz Demokrasi ve Millî Birlik Günü", "08-30": "30 Ağustos Zafer Bayramı", "10-29": "29 Ekim Cumhuriyet Bayramı" };
 function tatilAdi(d) {
@@ -801,7 +801,7 @@ $("ta_pdf").addEventListener("click", (e) => taSummary && planPdf(taPdf, e.curre
 
 
 // ---------- Yönetmelik izleme ----------
-// Resmi Gazete özetleri (gazete/*.json, son 45 gün) taranır; kredi yönetmeliğine ya da ilgili ürüne değinen bir madde varsa
+// Resmî Gazete özetleri (gazete/*.json, son 45 gün) taranır; kredi yönetmeliğine ya da ilgili ürüne değinen bir madde varsa
 // ilgili hesabın başında "dikkat" uyarısı çıkar. Baremler elle güncellenir; uyarı yalnızca "kontrol et" der.
 const YON_IZLE = {
   ta_yon: ["taşıt kredi", "araç kredi", "kredi işlemlerine ilişkin yönetmelik", "kredilendirme oran", "bankaların kredi işlemleri", "elektrik motorlu taşıt", "elektrikli araç kredi"],
@@ -828,7 +828,7 @@ const YON_IZLE = {
     const el = $(id); if (!el) continue;
     const dd = new Date(o.d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
     el.hidden = false;
-    el.innerHTML = `⚠️ <b>Dikkat:</b> ${dd} tarihli Resmi Gazete'de taşıt kredilerini ilgilendirebilecek bir düzenleme var. Aşağıdaki baremler bu değişikliğe göre kontrol edilmemiş olabilir; <a href="gazete.html#${o.d}" style="color:inherit;font-weight:700">özeti aç</a> ve isbank.com.tr ile karşılaştır.`;
+    el.innerHTML = `⚠️ <b>Dikkat:</b> ${dd} tarihli Resmî Gazete'de taşıt kredilerini ilgilendirebilecek bir düzenleme var. Aşağıdaki baremler bu değişikliğe göre kontrol edilmemiş olabilir; <a href="gazete.html#${o.d}" style="color:inherit;font-weight:700">özeti aç</a> ve isbank.com.tr ile karşılaştır.`;
   }
 })();
 
@@ -886,7 +886,7 @@ function ozetBagla(pre, getT) {
 }
 // ---------- Ödeme planı PDF (üç kredide ortak) ----------
 let tkPdf = null, k2Pdf = null, tcPdf = null;
-const PDF_NOTE = "Bu belge tahmini bir hesaplamadır; bankanın resmi ödeme planı değildir. Kesin tutarlar ve tarihler işlem günü banka tarafından belirlenir. Ücret, masraf, komisyon ve sigorta dahil edilmemiştir.";
+const PDF_NOTE = "Bu belge tahmini bir hesaplamadır; bankanın resmî ödeme planı değildir. Kesin tutarlar ve tarihler işlem günü banka tarafından belirlenir. Ücret, masraf, komisyon ve sigorta dahil edilmemiştir.";
 // Özet kutuları: ilk satır kredi, ikinci satır ödeme bilgisi
 function planKutular(o) {
   const f = fmt2, pc = (x) => "%" + x.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 3 });
@@ -904,7 +904,7 @@ function planPdfHTML(o) {
     <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #c9953c;padding-bottom:8px">
       <div><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#a8741c">KREDİ HESAPLAMA ÖZETİ</div><div style="font-size:19px;font-weight:700;margin-top:2px">${o.tur}</div></div>
       <div style="text-align:right;font-size:10.5px;color:#777">Hesaplama tarihi: ${d(new Date())}<br>İlk taksit: ${d(o.rows[0].d)}</div></div>
-    <div style="margin-top:6px;font-size:10.5px;color:#a8741c;font-weight:700">BİLGİLENDİRME AMAÇLI · RESMİ ÖDEME PLANI DEĞİLDİR</div>
+    <div style="margin-top:6px;font-size:10.5px;color:#a8741c;font-weight:700">BİLGİLENDİRME AMAÇLI · RESMÎ ÖDEME PLANI DEĞİLDİR</div>
     ${kutu(K[0], false)}${kutu(K[1], true)}
     <div style="margin-top:6px;font-size:10.5px;color:#777">BSMV ${pc(o.bsmv * 100)} · KKDF ${pc(o.kkdf * 100)} · Toplam faiz ${f(o.tF)} TL · vergi ${f(o.tV)} TL · fon ${f(o.tFo)} TL</div>
     <table style="width:100%;border-collapse:collapse;margin-top:14px;font-size:11px">
@@ -932,7 +932,7 @@ function buildPlanPdf(o, name) {
   doc.setFont("FS", "normal"); doc.setFontSize(9); doc.setTextColor(119, 119, 119);
   doc.text(`Hesaplama tarihi: ${d(new Date())}`, L + W, y, { align: "right" }); doc.text(`İlk taksit: ${d(o.rows[0].d)}`, L + W, y + 5, { align: "right" });
   doc.setDrawColor(...GOLD); doc.setLineWidth(0.9); doc.line(L, y + 10, L + W, y + 10);
-  doc.setFont("FS", "bold"); doc.setFontSize(8.5); doc.setTextColor(168, 116, 28); doc.text("BİLGİLENDİRME AMAÇLI · RESMİ ÖDEME PLANI DEĞİLDİR", L, y + 15);
+  doc.setFont("FS", "bold"); doc.setFontSize(8.5); doc.setTextColor(168, 116, 28); doc.text("BİLGİLENDİRME AMAÇLI · RESMÎ ÖDEME PLANI DEĞİLDİR", L, y + 15);
   y += 19;
   // Yan yana özet kutuları
   const K = planKutular(o), bw = (W - 8) / 3, bh = 15;
@@ -974,7 +974,7 @@ function buildPlanPdf(o, name) {
     try { doc.restoreGraphicsState(); } catch (e) {}
     doc.setDrawColor(230, 220, 196); doc.setLineWidth(0.3); doc.line(L, 284, L + W, 284);
     doc.setFont("FS", "normal"); doc.setFontSize(8); doc.setTextColor(168, 116, 28);
-    doc.text("Bilgilendirme amaçlı tahmini hesaplamadır · resmi ödeme planı değildir", L, 289);
+    doc.text("Bilgilendirme amaçlı tahmini hesaplamadır · resmî ödeme planı değildir", L, 289);
     doc.setTextColor(140, 140, 140); doc.text(`${i} / ${n}`, L + W, 289, { align: "right" });
   }
   doc.save(name);
@@ -1268,7 +1268,7 @@ function calcCek() {
   const sum = [ozetMetni("TL ÇEK İSKONTO ÖZETİ", [[`İşlem (kullandırım) tarihi: ${shortD(isl)}`, `Çek adedi: ${res.length}`, `Yıllık faiz oranı: %${nfx(ry * 100)}`],
     res.map((x) => `${x.i + 1}) ${fmt2(x.T)} TL · vade ${shortD(x.v)} · valör ${shortD(x.val)} · ${x.nf} gün`),
     [`Toplam çek: ${tl(TT)}`, ...(oran < 1 ? [`Kullandırılan (%${nfx(oran * 100)}): ${tl(AA)}`] : []), `İskonto faizi: ${tl(FF)}`, `BSMV (%${nfx(bsmv * 100)}): ${tl(BS)}`, ...(KK ? [`KKDF: ${tl(KK)}`] : []), ...(kom ? [`Kullandırım komisyonu + BSMV: ${tl(kom + komBS)}`] : []), `Ortalama vade: ${shortD(ortVD)} · valör ${shortD(ortVV)}`, `Hesaba geçecek net tutar: ${tl(net)}`]],
-    "Faiz kullandırımda peşin alınır; valör tarihleri hafta sonu ve resmi tatillere göre kaydırılmıştır.")];
+    "Faiz kullandırımda peşin alınır; valör tarihleri hafta sonu ve resmî tatillere göre kaydırılmıştır.")];
   $("c_prev").textContent = sum.join("\n");
   cekPdf = { isl, ry, res, TT, AA, FF, BS, KK, kom: kom + komBS, net, ortVD, ortVV, bsmv, kkdf, oran };
   renderCal(isl, res);
@@ -1305,7 +1305,7 @@ function belgePdf(o, btn) {
     doc.setFont("FS", "normal"); doc.setFontSize(9); doc.setTextColor(119, 119, 119);
     o.sag.forEach((t, i) => doc.text(t, L + W, y + i * 5, { align: "right" }));
     doc.setDrawColor(...GOLD); doc.setLineWidth(0.9); doc.line(L, y + 10, L + W, y + 10);
-    doc.setFont("FS", "bold"); doc.setFontSize(8.5); doc.setTextColor(168, 116, 28); doc.text("BİLGİLENDİRME AMAÇLI · RESMİ BELGE DEĞİLDİR", L, y + 15);
+    doc.setFont("FS", "bold"); doc.setFontSize(8.5); doc.setTextColor(168, 116, 28); doc.text("BİLGİLENDİRME AMAÇLI · RESMÎ BELGE DEĞİLDİR", L, y + 15);
     y += 19;
     const bw = (W - 8) / 3, bh = 15;
     o.kutular.forEach((row, ri) => { row.forEach(([k, v], i) => { const x = L + i * (bw + 4);
@@ -1329,7 +1329,7 @@ function belgePdf(o, btn) {
       doc.setFont("FS", "bold"); doc.setFontSize(46); doc.setTextColor(168, 116, 28); doc.text("BİLGİ AMAÇLI", 105, 170, { align: "center", angle: 30 });
       try { doc.restoreGraphicsState(); } catch (e) {}
       doc.setDrawColor(230, 220, 196); doc.setLineWidth(0.3); doc.line(L, 284, L + W, 284);
-      doc.setFont("FS", "normal"); doc.setFontSize(8); doc.setTextColor(168, 116, 28); doc.text("Bilgilendirme amaçlı tahmini hesaplamadır · resmi belge değildir", L, 289);
+      doc.setFont("FS", "normal"); doc.setFontSize(8); doc.setTextColor(168, 116, 28); doc.text("Bilgilendirme amaçlı tahmini hesaplamadır · resmî belge değildir", L, 289);
       doc.setTextColor(140, 140, 140); doc.text(`${i} / ${n}`, L + W, 289, { align: "right" }); }
     doc.save(o.dosya); done();
   }).catch(() => {
@@ -1459,7 +1459,7 @@ renderCekList();
     const w = $("e_warn");
     w.className = "ekwarn" + (asim ? " hot" : "");
     w.innerHTML = (asim
-      ? `<b>⚠️ ${Math.round(num("e_gun"))} gün yazıldı; hesap 30 güne göre gösteriliyor.</b> Bir aydan uzun kullanımda dönem faizi ödenmezse anaparaya eklenir ve faize faiz işler; tutar değişir. Uzun vade için aşağıdaki <b>Taksitli Nakit Avans</b>'a bak.`
+      ? `<b>⚠️ ${Math.round(num("e_gun"))} gün yazıldı; hesap 30 güne göre gösteriliyor.</b> Bir aydan uzun kullanımda dönem faizi ödenmezse anaparaya eklenir ve faize faiz işler; tutar değişir. Uzun vade için aşağıdaki <b>Taksitli Ek Hesap</b>'a bak.`
       : `<b>⚠️ 1 aydan sonra dikkat:</b> Ek hesap faizi her hesap kesim döneminde tahsil edilir. Dönem faizi ödenmezse faiz anaparaya eklenir, faize de faiz işler; tutar bu hesaptan farklı olabilir.`);
     ekOzet = ozetMetni("BİREYSEL EK HESAP FAİZ ÖZETİ", [[`Kullanılacak tutar: ${tl(P)}`, `Süre: ${gunAd(g)}`, `Aylık faiz oranı: %${f2(r)}`], [`Faiz: ${tl(k.faiz)}`, `KKDF (%15): ${tl(k.kkdf)}`, `BSMV (%15): ${tl(k.bsmv)}`, `Toplam maliyet: ${tl(k.top)}`, `Geri ödenecek toplam: ${tl(P + k.top)}`]]);
     $("e_hapT").textContent = `· ${tl(P)} · %${f2(r)}`;
@@ -1486,7 +1486,7 @@ renderCekList();
     $("et_out").textContent = tl(t);
     rows("et_rows", [["Toplam geri ödeme", tl(top), "total"], ["Toplam faiz", tl(sF)], ["KKDF + BSMV", tl(sV)], ["Efektif aylık maliyet", "%" + (re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })]]);
     $("et_note").textContent = (P < 500 || P > 600000 ? "⚠️ Taksitli kullanım 500 TL – 600.000 TL arası ve ek hesap limiti kadar. " : "") + "İlk taksit kullanımdan 30 gün sonra (bankaya göre değişir).";
-    tOzet = ozetMetni("TAKSİTLİ NAKİT AVANS ÖZETİ (Ek Hesaba bağlı)", [[`Tutar: ${tl(P)}`, `Vade: ${n} ay`, `Aylık faiz oranı: %${f2(r * 100)}`], [`Aylık taksit tutarı: ${tl(t)}`, `Toplam geri ödeme: ${tl(top)}`], [`Toplam faiz: ${tl(sF)}`, `KKDF + BSMV: ${tl(sV)}`, `Efektif aylık maliyet: %${(re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })}`]], "Oran kullanım günü sabitlenir, vade boyunca değişmez.");
+    tOzet = ozetMetni("TAKSİTLİ EK HESAP ÖZETİ", [[`Tutar: ${tl(P)}`, `Vade: ${n} ay`, `Aylık faiz oranı: %${f2(r * 100)}`], [`Aylık taksit tutarı: ${tl(t)}`, `Toplam geri ödeme: ${tl(top)}`], [`Toplam faiz: ${tl(sF)}`, `KKDF + BSMV: ${tl(sV)}`, `Efektif aylık maliyet: %${(re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })}`]], "Oran kullanım günü sabitlenir, vade boyunca değişmez.");
     const K = EK.kampanya, kEl = $("et_kamp");
     if (K && bugun >= (K.bas || "") && bugun <= K.bit) { kEl.hidden = false; kEl.href = K.url; kEl.innerHTML = `🎉 <b>${escB(K.ad)}</b> · son gün ${trh(K.bit)}: ${escB(K.oran)} ↗`; } else kEl.hidden = true;
   };

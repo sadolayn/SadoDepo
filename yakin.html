@@ -399,7 +399,7 @@ async function openCat(k) {
   $("panel").classList.add("show");
   $("ptitle").textContent = `${c.e} ${c.n}`;
   $("pcount").textContent = "";
-  $("pinfo").innerHTML = k === "toplanma" ? `<div class="info">🟩 Deprem ve afet <b>toplanma alanları</b>nın resmi listesi için: <a href="https://www.turkiye.gov.tr/arama?aranan=toplanma+alan%C4%B1" target="_blank" rel="noopener">e-Devlet (AFAD) sorgulama ↗</a></div>`
+  $("pinfo").innerHTML = k === "toplanma" ? `<div class="info">🟩 Deprem ve afet <b>toplanma alanları</b>nın resmî listesi için: <a href="https://www.turkiye.gov.tr/arama?aranan=toplanma+alan%C4%B1" target="_blank" rel="noopener">e-Devlet (AFAD) sorgulama ↗</a></div>`
     : k === "polis" ? `<div class="info">🚨 Acil durumda tüm birimler için <b>112</b>.</div>` : "";
   $("map").style.display = "none"; $("mtog").style.display = "none";
   if (!S.place) { $("plist").innerHTML = '<div class="msg">Önce yukarıdan konum ara ya da 📍 ile konumunu kullan.</div>'; $("gmw").style.display = "none"; $("panel").scrollIntoView({ behavior: "smooth" }); return; }

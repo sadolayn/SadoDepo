@@ -325,7 +325,7 @@ function alertsHTML(dl, pol) {
   if (i >= 0) A.push({ c: "org", e: "🌡️", t: "Hava hızla ısınıyor", s: `${dLabel(dl.time[i], i)} ${Math.round(mx[i])}° bekleniyor (bugün ${Math.round(mx[0])}°).${far(i)}`, o: 5 });
   // Aşırı sıcak
   i = first((j) => mx[j] >= 35);
-  if (i >= 0) { const k = count((j) => mx[j] >= 35, i); const top = Math.max(...mx.slice(i, i + k)); A.push({ c: top >= 38 ? "red" : "org", e: "🔥", t: top >= 38 ? "Aşırı sıcak" : "Çok sıcak", s: `${dLabel(dl.time[i], i)}${k > 1 ? ` başlayarak ${k} gün` : ""} sıcaklık ${Math.round(top)}°'ye çıkıyor. Öğle saatlerinde güneşten korun, bol su iç.${far(i)}`, o: top >= 38 ? 1 : 2 }); }
+  if (i >= 0) { const k = count((j) => mx[j] >= 35, i); const top = Math.max(...mx.slice(i, i + k)); A.push({ c: top >= 38 ? "red" : "org", e: "🔥", t: top >= 38 ? "Aşırı sıcak" : "Çok sıcak", s: `${dLabel(dl.time[i], i)}${k > 1 ? ` ve sonraki ${k - 1} gün` : ""} sıcaklık ${Math.round(top)}°'ye çıkıyor. Öğle saatlerinde güneşten korun, bol su iç.${far(i)}`, o: top >= 38 ? 1 : 2 }); }
   // Don
   i = first((j) => mn[j] <= 0);
   if (i >= 0) A.push({ c: mn[i] <= -5 ? "red" : "blu", e: "🧊", t: mn[i] <= -5 ? "Sert don" : "Don / buzlanma riski", s: `${dLabel(dl.time[i], i)} gece sıcaklık ${Math.round(mn[i])}°'ye düşüyor. Yollarda buzlanma, tarım ürünlerinde zirai don olabilir.${far(i)}`, o: 2 });
@@ -334,7 +334,7 @@ function alertsHTML(dl, pol) {
   if (i >= 0) A.push({ c: sn[i] >= 10 ? "red" : "blu", e: "❄️", t: sn[i] >= 10 ? "Yoğun kar yağışı" : "Kar yağışı", s: `${dLabel(dl.time[i], i)} ${Math.round(sn[i])} cm kar bekleniyor.${far(i)}`, o: 1 });
   // Şiddetli yağış
   i = first((j) => pr[j] >= 20);
-  if (i >= 0) { const k = count((j) => pr[j] >= 10, i); const tot = pr.slice(i, i + Math.max(1, k)).reduce((a, b) => a + b, 0); A.push({ c: pr[i] >= 50 ? "red" : "org", e: "⛈️", t: pr[i] >= 50 ? "Çok kuvvetli yağış — sel riski" : "Kuvvetli yağış", s: `${dLabel(dl.time[i], i)}${k > 1 ? ` başlayarak ${k} gün` : ""} toplam ${Math.round(tot)} mm yağış bekleniyor. Su baskını ve ani sele dikkat.${far(i)}`, o: pr[i] >= 50 ? 0 : 1 }); }
+  if (i >= 0) { const k = count((j) => pr[j] >= 10, i); const tot = pr.slice(i, i + Math.max(1, k)).reduce((a, b) => a + b, 0); A.push({ c: pr[i] >= 50 ? "red" : "org", e: "⛈️", t: pr[i] >= 50 ? "Çok kuvvetli yağış — sel riski" : "Kuvvetli yağış", s: `${dLabel(dl.time[i], i)}${k > 1 ? ` ve sonraki ${k - 1} gün` : ""} toplam ${Math.round(tot)} mm yağış bekleniyor. Su baskını ve ani sele dikkat.${far(i)}`, o: pr[i] >= 50 ? 0 : 1 }); }
   else { i = first((j) => wc[j] >= 95); if (i >= 0) A.push({ c: "org", e: "⛈️", t: "Gök gürültülü sağanak", s: `${dLabel(dl.time[i], i)} yer yer gök gürültülü sağanak${wc[i] >= 96 ? " ve dolu" : ""} bekleniyor.${far(i)}`, o: 2 }); }
   // Rüzgâr
   i = first((j) => gu[j] >= 60);

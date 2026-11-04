@@ -245,7 +245,7 @@ function oneHtml() {
   const tiles = `<div class="otiles">${order.map((g, i) => { const n = match(g), hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) > 0);
       return `<button type="button" class="ot${hot ? " hot" : ""}" data-go="one${i}"><i>${g.ic}</i><span>${g.kisa || g.ad}</span>${n ? `<em>${n}</em>` : ""}</button>`; }).join("")}
     <button type="button" class="ot pay" data-tur="📲 Kartsız öde"><i>📲</i><span>Kartsız öde</span>${Date.now() < new Date("2026-11-03T00:00:00+03:00") ? '<em class="y">YENİ</em>' : ""}</button></div>`;
-  return `<div class="ohead">⭐ Öne çıkanlar<span>Başlığa dokun, o bölüme git · kampanya satırına dokun, resmi sayfası açılır</span></div>` + tiles + order.map((g, i) => {
+  return `<div class="ohead">⭐ Öne çıkanlar<span>Başlığa dokun, o bölüme git · kampanya satırına dokun, resmî sayfası açılır</span></div>` + tiles + order.map((g, i) => {
     const L = camps.filter((c) => g.re.test(c.baslik + " " + c.ozet)).concat(g.black && blk && blk.ayricaliklar ? blk.ayricaliklar.slice(0, 6).map((k) => ({ baslik: k.baslik, bitis: k.bitis || "2026-12-31" })) : []);
     const hot = (g.sezon || []).includes(m) && (!g.bitis || daysLeft(g.bitis) > 0);
     return `<div class="ocard${hot ? " hot" : ""}" id="one${i}"><div class="oh"><i>${g.ic}</i><b>${g.ad}</b>${hot ? '<span class="newtag">TAM ZAMANI</span>' : ""}<em>${L.length ? L.length + " kampanya" : ""}</em></div>
@@ -266,7 +266,7 @@ const ODE = [
   { ic: "🔳", ad: "TR Karekod", k: "Karekod", alt: "QR ile öde", p: "POS'taki karekodu telefonunla okut, kartını ya da hesabını seç, tutarı onayla. Kart çıkarmana gerek yok; Maximum Mobil'le de olur.", n: "İşCep › Ödeme Yap › Karekod ile öde › kodu okut › Onayla", u: "https://www.isbank.com.tr/tr-karekod-ile-odeme", ua: "isbank.com.tr" },
   { ic: "🅿️", ad: "İşPay", k: "İşPay", alt: "Online, kart bilgisi yok", p: "İnternet alışverişinde ödeme adımında İşPay'i seçersin; kart bilgisi girmeden kredi kartı, MaxiPuan, havale, Taksitli Ek Hesap ya da Anında Alışveriş Kredisi ile ödersin.", n: "Alışveriş sitesinin ödeme sayfasında \"İşPay\" seçeneğine dokun, İş Bankası ile onayla.", u: "https://www.isbank.com.tr/bankamizi-taniyin/is-bankasi-odeme-deneyimini-ispay-ile-tek-platformda-topladi", ua: "isbank.com.tr" },
 ];
-// Kartsız ödemeye kampanyalar (resmi sayfalardan doğrulandı; yollar: hangi ödeme yollarında geçerli)
+// Kartsız ödemeye kampanyalar (resmî sayfalardan doğrulandı; yollar: hangi ödeme yollarında geçerli)
 const ODE_K = [
   { ic: "🎁", ad: "Mobil temassız, saat ve karekoda 600 TL MaxiPuan", tl: 600, od: "Mobil temassız, saat ve TR Karekod ödemelerine toplam <b>600 TL</b>'ye kadar MaxiPuan · harcama tutarı ve günlük sınır kampanya sayfasında", yollar: ["📱", "⌚", "🔳"], bas: "2026-10-01", bitis: "2026-10-31",
     not: "Önce İşCep / Maximum Mobil › Kampanyalar › <b>KATIL</b>. Telefonla temassızda yalnız Android geçerli; fiziki kartla temassız sayılmaz. Kredi kartı, Bankamatik ve MaxiPara kartları dahil.", u: "https://www.maximum.com.tr/kampanyalar/mobil-temassiz-ve-tr-karekod-odemelerinize-maxipuan-firsati" },
@@ -296,7 +296,7 @@ function odeHtml() {
       <p>${k.not}</p><small>${new Date(k.bas + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })} – ${new Date(k.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" })} · koşullar ↗</small></a>`; };
   return `<div class="pay-hero"><b>📲 Kartsız öde, kazan</b><span>Telefon, saat, karekod, MaxSticker, yüz ya da İşPay… Kartsız ödemeye özel kampanyalar ve hangi yolun nerede geçtiği tek yerde.</span>
       ${K.length ? `<div class="hsum"><b>${K.length}</b> kampanya · toplam <b>${K.reduce((t, k) => t + k.tl, 0).toLocaleString("tr-TR")} TL</b>'ye varan MaxiPuan</div>` : ""}</div>
-    <div class="ohead" style="margin-top:4px">🎁 Kartsız ödemeye kampanyalar<span>Kartın üstüne dokun, resmi kampanya sayfası açılır</span></div>
+    <div class="ohead" style="margin-top:4px">🎁 Kartsız ödemeye kampanyalar<span>Kartın üstüne dokun, resmî kampanya sayfası açılır</span></div>
     ${K.map(kCard).join("")}
     ${L.length ? `<div class="ocard">${L.map((c) => `<a class="omini olnk" href="${esc(c.url || "https://www.maximum.com.tr/kampanyalar")}" target="_blank" rel="noopener"><span>${esc(c.baslik)}&nbsp;<i class="oarr">↗</i></span><small>${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small></a>`).join("")}</div>` : ""}
     <div class="ohead" style="margin-top:16px">🧭 Ödeme yolları<span>Nasıl açılır, hangi kampanyada geçerli</span></div>
@@ -346,7 +346,7 @@ function isplusHtml() {
 }
 function blackHtml() {
   return `<div class="blk">
-      <div class="bh"><span>BİLGİ · RESMİ DEĞİL</span><b>İş Black</b><small>Varlığına göre kendiliğinden tanımlanan ayrıcalık programı · başvuru gerekmez</small></div>
+      <div class="bh"><span>BİLGİ · RESMÎ DEĞİL</span><b>İş Black</b><small>Varlığına göre kendiliğinden tanımlanan ayrıcalık programı · başvuru gerekmez</small></div>
       <div class="tiers">
         <div class="tier"><em>BLACK</em><b>1 milyon TL</b><span>ve üzeri güncel ya da aylık ortalama varlık</span></div>
         <div class="tier plus"><em>BLACK PLUS</em><b>4 milyon TL</b><span>ve üzeri güncel ya da aylık ortalama varlık</span></div>
@@ -674,7 +674,7 @@ function kOneHtml(L, renk) {
   const P = kPosListe().sort((a, b) => gun(a) - gun(b)).filter((k, i, a) => a.findIndex((x) => kAyni(x) === kAyni(k)) === i); // iki kaynakta aynı kampanya bir kez
   if (P.length) B.push(["🏪", "İşyeri & POS", "İş Bankası, Maximum ve Maximiles'taki POS, yazarkasa ve esnaf kampanyaları", P, (k) => K_KAY[k._kay][1], 99]);
   if (!B.length) return '<div class="empty">Bu bölümde öne çıkarılacak kampanya yok.</div>';
-  return `<div class="ohead">⭐ Öne çıkanlar<span>${L.length} kampanyanın içinden kendiliğinden seçilir · satıra dokun, resmi sayfası açılır</span></div>`
+  return `<div class="ohead">⭐ Öne çıkanlar<span>${L.length} kampanyanın içinden kendiliğinden seçilir · satıra dokun, resmî sayfası açılır</span></div>`
     + `<div class="otiles">${B.map(([ic, ad, , l], i) => `<button type="button" class="ot" data-go="kone${i}"><i>${ic}</i><span>${ad}</span><em>${l.length}</em></button>`).join("")}</div>`
     + B.map(([ic, ad, alt, l, et], i) => `<div class="ocard" id="kone${i}" style="--c:${renk}"><div class="oh"><i>${ic}</i><b>${ad}</b><em>${l.length} kampanya</em></div><p style="color:var(--muted);margin:2px 0 6px">${alt}</p>`
       + l.slice(0, B[i][5] || 6).map((k) => `<a class="omini olnk" href="${esc(k.url)}" target="_blank" rel="noopener"><span>${esc(k.baslik)}&nbsp;<i class="oarr">↗</i></span><small><b>${et(k)}</b></small></a>`).join("") + `</div>`).join("");
@@ -970,7 +970,7 @@ function bindCal() {
 
 function renderSubeler() {
   let d = subeler;
-  if (d && fin) { // şube, ATM ve çalışan sayısını bankanın resmi veri dosyasından al
+  if (d && fin) { // şube, ATM ve çalışan sayısını bankanın resmî veri dosyasından al
     const L = fin.periods.length - 1, S = fin.s;
     d = Object.assign({}, d, { atm: S.atm[L] ?? d.atm, calisan: S.calisan[L] ?? d.calisan, calisanDonem: pLabel(fin.periods[L]),
       yurtici: S.sube[L] != null ? S.sube[L] - d.yurtdisi : d.yurtici, donem: pLabel(fin.periods[L]) });
@@ -1220,7 +1220,7 @@ function ytTable(i) {
   const rows = finRows(i).map(([ad, bu, once, tur, iyi]) =>
     `<tr><td>${esc(ad)}</td><td class="now">${ytFmt(bu, tur)}</td><td class="old">${ytFmt(once, tur)}</td><td>${chgCell(bu, once, tur, iyi)}</td></tr>`).join("");
   return `<table class="yt"><thead><tr><th>Kalem</th><th>${pLabel(P[i])}</th><th>${j >= 0 ? pLabel(P[j]) : "–"}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
-    <div class="yt-note">Bankanın kendi yayımladığı resmi veri. Tutarlar TL (trn = trilyon, mlr = milyar). Renk yalnızca artış/azalış yönünü gösterir, yorum değildir. Yatırım tavsiyesi değildir. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.</div>`;
+    <div class="yt-note">Bankanın kendi yayımladığı resmî veri. Tutarlar TL (trn = trilyon, mlr = milyar). Renk yalnızca artış/azalış yönünü gösterir, yorum değildir. Yatırım tavsiyesi değildir. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.</div>`;
 }
 function bindYt() {
   const c = document.getElementById("ytChips");
@@ -1476,8 +1476,8 @@ function gundemBagla() {
     if (n) n.click(); else if (c) c.click(); else if (z === "Finans") $("subeBar").click(); }));
 }
 
-// ===== Video: bankanın resmi YouTube kanalındaki son paylaşımlar (yeni ürünler çoğu zaman önce burada tanıtılıyor) =====
-// ===== Medya: bankanın kendi sitesindeki haberler, resmi YouTube kanalındaki reklam filmleri, resmi sosyal medya hesapları =====
+// ===== Video: bankanın resmî YouTube kanalındaki son paylaşımlar (yeni ürünler çoğu zaman önce burada tanıtılıyor) =====
+// ===== Medya: bankanın kendi sitesindeki haberler, resmî YouTube kanalındaki reklam filmleri, resmî sosyal medya hesapları =====
 // Haber başlıkları ve hesap bağlantıları isbank.com.tr'nin "Haberler ve Medya" sayfalarından günde bir kez (scripts/isbank_medya.py)
 let MED = null, medSec = "haber";
 try { medSec = localStorage.getItem("isbankMedya") || ""; } catch (e) {}
@@ -1532,7 +1532,7 @@ function renderMedya() {
       return;
     }
     renderVideo();
-    $("list").insertAdjacentHTML("afterbegin", `<div class="mdHero"><b>🎬 Reklam filmleri ve videolar</b><span>Bankanın resmi YouTube kanalından, her saat kendiliğinden. Dokununca YouTube'da açılır.</span></div>`);
+    $("list").insertAdjacentHTML("afterbegin", `<div class="mdHero"><b>🎬 Reklam filmleri ve videolar</b><span>Bankanın resmî YouTube kanalından, her saat kendiliğinden. Dokununca YouTube'da açılır.</span></div>`);
     $("list").insertAdjacentHTML("beforeend", sayfa("https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari", "Tüm reklam videoları"));
     return;
   }
@@ -1547,7 +1547,7 @@ function renderMedya() {
     const onde = gruplar.filter((g) => MED_ONDE.includes(g.ad)).sort((a, b) => MED_ONDE.indexOf(a.ad) - MED_ONDE.indexOf(b.ad)), diger = gruplar.filter((g) => !MED_ONDE.includes(g.ad));
     const satir = (g) => { const H = mdPf ? g.L.filter((x) => x.platform === mdPf) : g.L; return H.length ? `<div class="mdRow"><div class="mdAd"><b>${esc(g.ad)}</b>${MED_TANIM[g.ad] ? `<small>${esc(MED_TANIM[g.ad])}</small>` : ""}</div><div class="mdPl">${H.map((x) => `<a href="${esc(x.url)}" target="_blank" rel="noopener" aria-label="${esc(g.ad)} · ${esc(x.platform)}"${mdPf ? ' class="gen"' : ""}>${mdIk(x.platform)}${mdPf ? `<span>Aç ↗</span>` : ""}</a>`).join("")}</div></div>` : ""; };
     const dSay = diger.filter((g) => !mdPf || g.L.some((x) => x.platform === mdPf)).length;
-    $("list").innerHTML = `<div class="mdHero"><b>📱 Resmi sosyal medya hesapları</b><span>Bağlantılar bankanın kendi "Sosyal Medya" sayfasından alınır. Simgeye dokun, hesap açılsın; üstten platform seçebilirsin.</span></div>`
+    $("list").innerHTML = `<div class="mdHero"><b>📱 Resmî sosyal medya hesapları</b><span>Bağlantılar bankanın kendi "Sosyal Medya" sayfasından alınır. Simgeye dokun, hesap açılsın; üstten platform seçebilirsin.</span></div>`
       + `<div class="mdPf"><button type="button" data-pf="" class="${mdPf ? "" : "on"}">Hepsi</button>${plat.map((pl) => `<button type="button" data-pf="${esc(pl)}" class="${mdPf === pl ? "on" : ""}">${mdIk(pl)}${esc(pl)}<em>${L.filter((x) => x.platform === pl).length}</em></button>`).join("")}</div>`
       + `<div class="mdKut">${onde.map(satir).join("")}</div>`
       + (dSay ? (mdPf ? `<div class="mdBas">Diğer hesaplar</div><div class="mdKut">${diger.map(satir).join("")}</div>` : `<details class="mdDig"><summary>Diğer hesaplar · ${dSay}<small>${esc(diger.map((g) => g.ad).join(", "))}</small></summary><div class="mdKut">${diger.map(satir).join("")}</div></details>`) : "")
@@ -1558,10 +1558,10 @@ function renderMedya() {
   }
   $("upd").innerHTML = MED && MED.guncelleme ? `🔄 Başlıklar bankanın kendi sitesinden günde bir kez alınır · son: <b>${fd(MED.guncelleme)}</b>` : "";
   const H = (MED && MED.haberler) || [];
-  $("list").innerHTML = `<div class="mdHero"><b>📰 İş Bankası'ndan haberler</b><span>Bankanın kendi sitesindeki duyurular. Başlığa dokun, resmi sayfası açılsın.</span></div>`
+  $("list").innerHTML = `<div class="mdHero"><b>📰 İş Bankası'ndan haberler</b><span>Bankanın kendi sitesindeki duyurular. Başlığa dokun, resmî sayfası açılsın.</span></div>`
     + (H.length ? "" : `<div class="mdYapim">🚧 <b>Yapım aşamasında</b><span>Haber başlıklarının buraya kendiliğinden gelmesi üzerinde çalışılıyor. O zamana kadar aşağıdaki kartlar bankanın kendi haber sayfasını açar.</span></div>`)
     + (H.length ? H.map((h) => `<a class="mdHab" href="${esc(h.url)}" target="_blank" rel="noopener"><b>${esc(h.baslik)}</b>${h.ozet ? `<p>${esc(h.ozet)}</p>` : ""}<small>${h.tarih ? new Date(h.tarih + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }) + " · " : ""}isbank.com.tr ↗</small></a>`).join("")
-      : `<a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/haberler-ve-medya" target="_blank" rel="noopener"><b>📰 İş Bankası'ndan Haberler</b><p>Bankanın kendi duyuruları resmi sitesinde, aya göre listelenir. Dokun, resmi sayfası açılsın.</p><small>isbank.com.tr ↗</small></a>
+      : `<a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/haberler-ve-medya" target="_blank" rel="noopener"><b>📰 İş Bankası'ndan Haberler</b><p>Bankanın kendi duyuruları resmî sitesinde, aya göre listelenir. Dokun, resmî sayfası açılsın.</p><small>isbank.com.tr ↗</small></a>
         <a class="mdHab" href="https://www.isbank.com.tr/bankamizi-taniyin/reklam-videolari" target="_blank" rel="noopener"><b>🎬 Reklam Videoları</b><p>Bankanın reklam filmleri; son videolar burada "Reklam filmleri" sekmesinde de var.</p><small>isbank.com.tr ↗</small></a>`)
     + sayfa("https://www.isbank.com.tr/bankamizi-taniyin/haberler-ve-medya", "Haberler ve Medya")
     + `<p class="note" style="text-align:center">Basında çıkan İş Bankası haberleri için 📰 Haberler bölümüne bak.</p>`;
@@ -1579,9 +1579,9 @@ document.addEventListener("click", (e) => {
 function renderVideo() {
   if (liveUpd) $("upd").textContent = "Her saat otomatik · son: " + new Date(liveUpd).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   const tarih = (d) => (Date.now() - new Date(d)) / 864e5 < 1 ? agoTxt(d) : new Date(d).toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
-  const hesap = `<div class="vdHes"><small>Bankanın resmi hesapları</small><div>${RESMI.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join("")}</div></div>`;
+  const hesap = `<div class="vdHes"><small>Bankanın resmî hesapları</small><div>${RESMI.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join("")}</div></div>`;
   if (!vids.length) { $("list").innerHTML = '<div class="empty">Videolar henüz gelmedi; YouTube kanalına aşağıdaki bağlantıdan bakabilirsin.</div>' + hesap; return; }
-  // Kapak resmi YouTube'un herkese açık küçük resim adresinden (i.ytimg.com); video kimliği bağlantıdan çıkarılır
+  // Kapak resmî YouTube'un herkese açık küçük resim adresinden (i.ytimg.com); video kimliği bağlantıdan çıkarılır
   const kimlik = (u) => ((u || "").match(/(?:v=|shorts\/|youtu\.be\/)([\w-]{11})/) || [])[1];
   const resim = (x) => { const id = kimlik(x.u); return id ? `<img src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""; };
   const yeni = (x) => (isNew("y:" + x.u) || (x.d && (Date.now() - new Date(x.d)) / 864e5 <= 7) ? '<span class="newtag">YENİ</span>' : ""); // son 7 günün videosu hep YENİ
@@ -1593,10 +1593,10 @@ function renderVideo() {
   // En yeni hangisiyse o bölüm üstte
   h += kisa.length && uzun.length && (uzun[0].d || "") > (kisa[0].d || "") ? kartlar + serit : serit + kartlar;
   $("list").innerHTML = (cat === "🎬 Video" ? `<a class="mdHab" href="#" data-git="Medya" data-md="reklam"><b>🎬 Televizyon reklam filmleri</b><p>Bankanın reklam filmleri ayrı listede, sayfada oynar.</p><small>Medya › Reklam filmleri →</small></a>` : "") + h + hesap
-    + `<p class="note" style="margin-top:8px">Bankanın resmi YouTube kanalındaki son videolar her saat otomatik gelir; dokununca YouTube'da açılır. Instagram, X, Facebook ve LinkedIn paylaşımları dışarıya açık bir akış sunmadığı için buraya otomatik alınamıyor, yukarıdaki bağlantılardan bakabilirsin.</p>`;
+    + `<p class="note" style="margin-top:8px">Bankanın resmî YouTube kanalındaki son videolar her saat otomatik gelir; dokununca YouTube'da açılır. Instagram, X, Facebook ve LinkedIn paylaşımları dışarıya açık bir akış sunmadığı için buraya otomatik alınamıyor, yukarıdaki bağlantılardan bakabilirsin.</p>`;
 }
 
-// ===== Bilanço grafikleri (bankanın çeyreklik resmi verisinden) =====
+// ===== Bilanço grafikleri (bankanın çeyreklik resmî verisinden) =====
 function chartSvg(vals, labels, o) {
   const W = 340, H = 150, L = 6, R = 6, T = 18, B = 22, n = vals.length;
   const ok = vals.filter((v) => v != null), mx = Math.max(...ok) * 1.08, mn = o.line ? Math.min(...ok) * 0.9 : 0;
