@@ -145,11 +145,11 @@ function vergiEvents(from, to) {
 }
 // Kartla ödeme / taksit durumu (İş Bankası kampanya sayfalarındaki son bilgilere göre; kampanyalar dönemseldir)
 const VTK = {
-  mtv: { def: 3, max: 3, lvl: "g", txt: "🚗 <b>MTV'de geçmiş dönemlerde kampanyalı taksit oldu.</b> Maximum özellikli bireysel kartlarla Ocak/Temmuz dönemlerinde 3 aya varan taksit (Ocak 2026: 750 TL ve üzeri, tüm banka kanalları). gib.gov.tr'de peşin ödenen 2.000 TL ve üzeri MTV sonradan 2–3 taksit faizsiz yapılabildi. Ticari: <b>İş Bankası Vergi Kart</b> ile plaka sınırı olmadan toplu MTV talimatı." },
+  mtv: { def: 3, max: 3, lvl: "g", txt: "🚗 <b>MTV'de geçmiş dönemlerde kampanyalı taksit oldu.</b> Maximum özellikli bireysel kartlarla Ocak/Temmuz dönemlerinde 3 aya varan taksit (Ocak 2026: 750 TL ve üzeri, tüm banka kanalları). gib.gov.tr'de peşin ödenen 2.000 TL ve üzeri MTV sonradan 2–3 taksit faizsiz yapılabildi (geçmiş kampanya). Ticari kartlarda toplu MTV talimatı verilebilir; koşullar ürün sayfasında." },
   emk: { def: 1, max: 12, lvl: "o", txt: "🏠 <b>Emlak ve ÇTV'de taksit kampanyası genelde yok</b>, kartla tek çekim ödenir (ÇTV belediye POS'u üzerinden Vergi Kart ile de ödenebilir). Taksit seçersen standart kart faizi işler." },
   gv: { def: 1, max: 12, lvl: "o", txt: "💼 <b>Gelir vergisinde taksit kampanyaya bağlı</b>; kampanya yoksa kartla tek çekim. Taksit seçersen standart kart faizi işler." },
-  tic: { def: 1, max: 4, lvl: "o", txt: "🏢 <b>Ticari vergilerde taksit dönemsel kampanyaya bağlı.</b> İş Bankası ticari kredi kartlarıyla geçmiş kampanyalarda 2–4 ay faizsiz taksit verildi (gib.gov.tr veya banka kanalı, taksitlendirme İşCep / Maximum İşyerim'den). <b>Vergi Kart</b>: tek çekim, ayda iki hesap kesimi (15'i ve 28'i). Kampanya yoksa standart oran." },
-  sgk: { def: 2, max: 2, lvl: "o", txt: "👷 <b>SGK primi:</b> 2025'te ticari kartla 5.000 TL ve üzeri ödemeye 2 ay faizsiz taksit kampanyası uygulanmıştı (geçmiş kampanya; bugün geçerli olup olmadığını kampanya sayfasından kontrol et). Kartla SGK ödemesinde <b>%3,10 + BSMV komisyon</b> (en az 4,94 TL + BSMV) alınır; taksit kampanyası komisyonu kapsamaz. SGK'da gecikme cezası ve gecikme zammı ayrı kurallarla hesaplanır; aşağıdaki gecikme tutarı yaklaşıktır." },
+  tic: { def: 1, max: 4, lvl: "o", txt: "🏢 <b>Ticari vergilerde taksit dönemsel kampanyaya bağlı.</b> İş Bankası ticari kredi kartlarıyla geçmiş kampanyalarda 2–4 ay faizsiz taksit verildi. <b>Vergi Kart</b>'ın hesap kesim ve ödeme koşulları ürün sayfasında. Kampanya yoksa standart oran." },
+  sgk: { def: 2, max: 2, lvl: "o", txt: "👷 <b>SGK primi:</b> 2025'te ticari kartla 5.000 TL ve üzeri ödemeye 2 ay faizsiz taksit kampanyası uygulanmıştı (geçmiş kampanya; bugün geçerli olup olmadığını kampanya sayfasından kontrol et). Kartla SGK ödemesinde <b>%3,10 + BSMV komisyon</b> (en az 4,94 TL + BSMV) alınabilir; güncel oran ödeme ekranında görünür. Taksit kampanyası komisyonu kapsamayabilir. SGK'da gecikme cezası ve gecikme zammı ayrı kurallarla hesaplanır; aşağıdaki gecikme tutarı yaklaşıktır." },
 };
 const vtkOf = (e) => (e.k.startsWith("mtv") ? VTK.mtv : e.k.startsWith("emk") ? VTK.emk : e.k.startsWith("gv") ? VTK.gv : e.k === "sgk" ? VTK.sgk : VTK.tic);
 const AYLAR_TR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
@@ -207,7 +207,7 @@ function calcVergiPlan(today) {
   if (e) {
     const L = dayDiff(today, e.d);
     $("v_msg").value = `${e.n} son ödeme: ${fdtw(e.d)} ${e.d.getFullYear()} (${L === 0 ? "bugün" : L + " gün kaldı"}).\n` +
-      (n > 1 ? `Kredi kartıyla ${n} taksit → aylık ${tl(taksit)}${r ? "" : " (kampanya varsa faizsiz, kontrol et)"}.\n` : `Ödeme: şube, internet ve mobil bankacılık.\n`) +
+      (n > 1 ? `Kredi kartıyla ${n} taksit → aylık ${tl(taksit)}${r ? "" : " (kampanya varsa faizsiz, kontrol et)"}.\n` : ``) +
       `Son günden sonra aylık %${nfx(GZ_AYLIK)} gecikme zammı.`;
   } else $("v_msg").value = "";
 }
