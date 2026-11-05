@@ -1256,7 +1256,7 @@ function yatHtml() {
     const opts = P.map((p, i) => ({ p, i })).filter((o) => o.p.startsWith(ly) || o.p === (+ly - 1) + "/12").reverse();
     if (ytSel == null) ytSel = last;
     const card = (ad, k, tur, iyi, alt) => `<div class="stat"><span>${ad}</span><b style="font-size:21px">${ytFmt(S[k][last], tur)}</b><small>${alt || ""} ${chgCell(S[k][last], S[k][j], tur, iyi)}</small></div>`;
-    h += `<div class="day" style="margin-top:22px">📊 Finansal veriler · ${pLabel(P[last])}<small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Kaynak: bankanın finansal veri dosyası. Haberlerdeki konsolide (iştiraklerle birlikte) rakamlardan biraz farklı olabilir.</small></div>
+    h += `<div class="day" style="margin-top:22px">📊 Finansal veriler · ${pLabel(P[last])} · <span style="color:#8fb0ff">konsolide olmayan (solo)</span><small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Yalnızca bankanın kendi rakamları; kaynak bankanın finansal veri dosyası. KAP'taki konsolide raporda (iştiraklerle birlikte) rakamlar daha büyüktür.</small></div>
       <div class="stats">
         ${card("Toplam aktif", "aktif", "tl", "up", "yıllık")}
         ${card("Krediler", "kredi", "tl", "up", "yıllık")}
@@ -1268,7 +1268,7 @@ function yatHtml() {
         ${card("Takipteki krediler", "npl", "pct", "down", "")}
       </div>
       ${chartsHtml()}
-      <div class="day" style="margin-top:18px">📈 Bir yıl önceyle karşılaştırma</div>
+      <div class="day" style="margin-top:18px">📈 Bir yıl önceyle karşılaştırma <small style="font-weight:500;color:#9a9a9a">· solo</small></div>
       <div class="yt-chips" id="ytChips">${opts.map((o) => `<button data-i="${o.i}" class="${o.i === ytSel ? "on" : ""}">${pLabel(o.p)}</button>`).join("")}</div>
       <div id="ytTable">${ytTable(ytSel)}</div>`;
   }
