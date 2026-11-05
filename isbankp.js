@@ -1981,6 +1981,8 @@ function renderList() {
   if (cat === "Medya") return renderMedya();
   if (cat === "Şubeler") return renderSubeler();
   $("upd").textContent = [kontrol ? "Son kontrol: " + fmtT(kontrol) : newsUpd ? "Son güncelleme: " + fmtT(newsUpd) : "", "seçilmiş haberler"].filter(Boolean).join(" · ");
+  // Haberdeki alıntı (soz): tamamı küçük, can alıcı kısmı (vurgu) altın renkte
+  const sozHtml = (h) => { const t = esc(h.soz), v = h.vurgu ? esc(h.vurgu) : ""; return `<blockquote class="soz">“${v && t.includes(v) ? t.replace(v, `<mark>${v}</mark>`) : t}”${h.sozKim ? `<cite>— ${esc(h.sozKim)}</cite>` : ""}</blockquote>`; };
   const items = cat === "👔 Atamalar" ? atamaListe() : all.filter((h) => cat === "Tümü" || h.kategori === cat);
   if (!items.length) { $("list").innerHTML = cat === "👔 Atamalar" ? '<div class="empty">Son dönemde üst düzey atama haberi yok. KAP\'a düşen atama ve görev değişiklikleri burada görünür.</div>' : '<div class="empty">Bu kategoride henüz haber yok.</div>'; return; }
   let html = cat === "Tümü" ? gundemOzet() : cat === "👔 Atamalar" ? '<p class="note">👔 İş Bankası üst yönetimindeki atama ve görev değişiklikleri: KAP açıklamaları ve haberler bir arada. Habere dokununca kaynağında açılır.</p>' : "", last = "";
@@ -1990,6 +1992,7 @@ function renderList() {
       <span class="tag">${esc(h.kategori)}</span>${isNew("n:" + (h.url || h.baslik)) ? '<span class="newtag">YENİ</span>' : ""}
       <b>${esc(h.baslik)}</b>
       <p>${esc(h.ozet)}</p>
+      ${h.soz ? sozHtml(h) : ""}
       <div class="src">${esc(h.kaynak)}</div>
     </a>`;
   }
