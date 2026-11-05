@@ -1282,7 +1282,7 @@ function bindKons() {
   document.querySelectorAll("[data-kons]").forEach((b) => (b.onclick = () => { konsSel = b.dataset.kons; renderFinans(); }));
 }
 function bindYt() {
-  bindKons();
+  bindKons(); bindCharts();
   const c = document.getElementById("ytChips");
   if (!c) return;
   c.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; ytSel = +b.dataset.i; c.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); document.getElementById("ytTable").innerHTML = ytTable(ytSel); };
@@ -1666,17 +1666,43 @@ function chartSvg(vals, labels, o) {
   if (o.line) {
     const pts = vals.map((v, i) => v == null ? null : `${x(i).toFixed(1)},${y(v).toFixed(1)}`).filter(Boolean);
     g += `<polygon points="${x(0)},${H - B} ${pts.join(" ")} ${x(n - 1)},${H - B}" fill="${o.c}" opacity=".12"/><polyline points="${pts.join(" ")}" fill="none" stroke="${o.c}" stroke-width="2.4" stroke-linejoin="round"/>`;
-    vals.forEach((v, i) => { if (v != null) g += `<circle cx="${x(i)}" cy="${y(v)}" r="${i === n - 1 ? 4 : 2.4}" fill="${i === n - 1 ? o.c : "#0d0d0d"}" stroke="${o.c}" stroke-width="1.6"><title>${labels[i]}: ${o.f(v)}</title></circle>`; });
+    vals.forEach((v, i) => { if (v != null) g += `<circle class="pt" data-i="${i}" cx="${x(i)}" cy="${y(v)}" r="${i === n - 1 ? 4 : 2.4}" fill="${i === n - 1 ? o.c : "#0d0d0d"}" stroke="${o.c}" stroke-width="1.6"/>`; });
   } else {
     const bw = (W - L - R) / n * 0.62;
-    vals.forEach((v, i) => { if (v == null) return; const yy = y(v); g += `<rect x="${(x(i) - bw / 2).toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${(H - B - yy).toFixed(1)}" rx="3" fill="${o.c}" opacity="${i === n - 1 ? 1 : 0.55}"><title>${labels[i]}: ${o.f(v)}</title></rect>`; });
+    vals.forEach((v, i) => { if (v == null) return; const yy = y(v); g += `<rect class="pt" data-i="${i}" x="${(x(i) - bw / 2).toFixed(1)}" y="${yy.toFixed(1)}" width="${bw.toFixed(1)}" height="${(H - B - yy).toFixed(1)}" rx="3" fill="${o.c}" opacity="${i === n - 1 ? 1 : 0.55}"/>`; });
   }
+  // dokunma alanları: her çeyrek için sütun genişliğinde görünmez şerit (parmakla kolay seçilsin)
+  const cw = (W - L - R) / n;
+  vals.forEach((v, i) => { if (v != null) g += `<rect class="hit" data-i="${i}" x="${(x(i) - cw / 2).toFixed(1)}" y="0" width="${cw.toFixed(1)}" height="${H}" fill="transparent"/>`; });
   // son değer etiketi
-  const li = n - 1; g += `<text x="${Math.min(x(li), W - R - 2)}" y="${y(vals[li]) - 7}" text-anchor="end" font-size="12" font-weight="800" fill="#f2f2f2">${o.f(vals[li])}</text>`;
+  const li = n - 1; g += `<text class="son" x="${Math.min(x(li), W - R - 2)}" y="${y(vals[li]) - 7}" text-anchor="end" font-size="12" font-weight="800" fill="#f2f2f2">${o.f(vals[li])}</text>`;
   // çeyrek etiketleri (Ç1–Ç4) her noktanın altında, son çeyrek açık renk; yıl etiketi bir satır altta, her yılın ilk noktasında
-  labels.forEach((lb, i) => { const q = "Ç" + Math.round(+lb.split("/")[1] / 3); g += `<text x="${x(i)}" y="${H - 19}" text-anchor="middle" font-size="9.5" fill="${i === n - 1 ? "#f3d38a" : "#6f6f6f"}">${q}</text>`; });
+  labels.forEach((lb, i) => { const q = "Ç" + Math.round(+lb.split("/")[1] / 3); g += `<text class="q" data-i="${i}" x="${x(i)}" y="${H - 19}" text-anchor="middle" font-size="9.5" fill="${i === n - 1 ? "#f3d38a" : "#6f6f6f"}">${q}</text>`; });
   let prev = ""; labels.forEach((lb, i) => { const yr = lb.split("/")[0]; if (yr !== prev) { g += `<text x="${x(i)}" y="${H - 5}" text-anchor="${i === 0 ? "start" : "middle"}" font-size="10.5" fill="#8a8a8a">${yr}</text>`; prev = yr; } });
-  return `<svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
+  // dokununca açılan baloncuk (JS doldurur)
+  g += `<g class="tip" style="display:none"><line stroke="${o.c}" stroke-dasharray="3 3" opacity=".7"/><rect rx="7" fill="#161616" stroke="${o.c}"/><text font-size="11.5" fill="#f2f2f2" text-anchor="middle"><tspan class="t1" font-weight="800"></tspan><tspan class="t2" fill="#9a9a9a" font-size="10.5"></tspan></text></g>`;
+  const meta = encodeURIComponent(JSON.stringify({ x: vals.map((v, i) => +x(i).toFixed(1)), y: vals.map((v) => v == null ? null : +y(v).toFixed(1)), v: vals.map((v) => v == null ? null : o.f(v)), l: labels.map((lb) => { const [yy, m] = lb.split("/"); return "Ç" + Math.round(+m / 3) + " " + yy; }), base: H - B }));
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" data-meta="${meta}" tabindex="0">${g}</svg>`;
+}
+// Grafiklere dokunma: ilgili çeyreğin değeri baloncukta; aynı yere ya da boşluğa tekrar dokununca kapanır
+function bindCharts() {
+  document.querySelectorAll(".chart svg[data-meta]").forEach((svg) => {
+    const M = JSON.parse(decodeURIComponent(svg.dataset.meta)), tip = svg.querySelector(".tip"), ln = tip.querySelector("line"), box = tip.querySelector("rect"), tx = tip.querySelector("text"), t1 = tip.querySelector(".t1"), t2 = tip.querySelector(".t2"), son = svg.querySelector(".son");
+    let acik = -1;
+    const kapat = () => { acik = -1; tip.style.display = "none"; son.style.display = ""; svg.querySelectorAll(".pt.sec").forEach((e) => e.classList.remove("sec")); };
+    const goster = (i) => {
+      if (M.y[i] == null) return;
+      if (acik === i) return kapat();
+      acik = i; svg.querySelectorAll(".pt.sec").forEach((e) => e.classList.remove("sec")); const pt = svg.querySelector(`.pt[data-i="${i}"]`); if (pt) pt.classList.add("sec");
+      t1.textContent = M.v[i]; t2.textContent = " · " + M.l[i];
+      tip.style.display = ""; son.style.display = "none";
+      const w = tx.getBBox().width + 16, h = 22, cx = Math.min(Math.max(M.x[i], w / 2 + 2), 340 - w / 2 - 2), top = Math.max(2, M.y[i] - 32);
+      box.setAttribute("x", cx - w / 2); box.setAttribute("y", top); box.setAttribute("width", w); box.setAttribute("height", h);
+      tx.setAttribute("x", cx); tx.setAttribute("y", top + 15);
+      ln.setAttribute("x1", M.x[i]); ln.setAttribute("x2", M.x[i]); ln.setAttribute("y1", top + h); ln.setAttribute("y2", M.base);
+    };
+    svg.addEventListener("click", (e) => { const h = e.target.closest("[data-i]"); if (h) goster(+h.dataset.i); else kapat(); });
+  });
 }
 function chartsHtml() {
   if (!fin) return "";
