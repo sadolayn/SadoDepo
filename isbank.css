@@ -846,6 +846,7 @@
   .kyseg button { flex: 1; min-height: 36px; padding: 0 6px; border-radius: 11px; border: 1px solid #333; background: #111; color: #ddd; font: inherit; font-size: 13px; cursor: pointer; }
   .kyseg button b { color: #3fc283; margin-left: 2px; }
   .kyseg button.on { border-color: #3fc283; background: #0d2a1b; color: #fff; font-weight: 700; }
+  .ksag .ksira { margin: 8px 0 0; } .ksag .ksira button.on { border-color: var(--kk, #e0a24f); background: color-mix(in srgb, var(--kk, #e0a24f) 22%, #000); }
   .kdag { display: block; margin-top: 2px; font-size: 11.5px; color: #aaa; }
   .ktic { display: inline-block; margin-left: 6px; padding: 0 6px; border-radius: 6px; background: #2b1d08; border: 1px solid #6b4a14; color: #f3c77a; font-size: 10.5px; font-weight: 700; }
   .koneri { display: block; margin-top: 10px; } .koneri button { margin: 4px 3px 0; padding: 6px 11px; border-radius: 999px; border: 1px solid #e0a24f; background: transparent; color: #f3dca8; font: inherit; font-size: 13px; cursor: pointer; }

@@ -561,8 +561,12 @@ function campCard(k) {
 // Her kampanya tek bir "ne kazanırım" ve tek bir "nerede" grubundadır (sınıflandırma veri toplanırken yapılır): toplamlar her zaman tutar.
 // Süzgeçler "ve" ile birleşir: bir satırdaki sayılar öbür satırdaki seçime göre hesaplanır (dal dal daralır).
 let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kKim = "", kOne = false, kKatAcik = false;
-try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kNe = k.ne || ""; kNere = k.nere || ""; kKim = k.kim || ""; kOne = !!k.one; } catch (e) {}
-const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, ne: kNe, nere: kNere, kim: kKim, one: kOne })); } catch (e) {} };
+// Sıralama (5 Kasım 2026): "yeni" = listeye giriş günü en yeni üstte (ilk görülme tarihi olmayan eski kampanyalar altta, bitişe göre); "bitis" = en erken biten üstte
+let kSira = "yeni";
+try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kNe = k.ne || ""; kNere = k.nere || ""; kKim = k.kim || ""; kOne = !!k.one; if (k.sira === "bitis") kSira = "bitis"; } catch (e) {}
+const kKaydet = () => { try { localStorage.setItem("isbankKamp", JSON.stringify({ kay: kKay, seg: kSeg, ne: kNe, nere: kNere, kim: kKim, one: kOne, sira: kSira })); } catch (e) {} };
+const kIlk = (k) => (k.ilk && k.ilk > "2000-01-01" ? k.ilk : "");
+const kSirala = (L) => L.slice().sort((a, b) => (kSira === "yeni" && kIlk(b).localeCompare(kIlk(a))) || (a.bitis || "9").localeCompare(b.bitis || "9"));
 // Kaynak renkleri: lacivert, pembe, mavi (ana sayfadaki kartların tonlarıyla uyumlu)
 // [ikon, ad, alan adı, vurgu rengi, seçili düğme zemini, seçili düğme yazısı]
 const K_KAY = { isbank: ["🏦", "İş Bankası", "isbank.com.tr", "#5b6cf0", "linear-gradient(160deg, #34449e, #1c2560)", "#fff"],
@@ -762,6 +766,7 @@ function renderKampanyalar() {
     t.querySelector(".ksihk").onclick = () => { kSihAcKapa(); kYeni = false; kAra = ""; renderKampanyalar(); bolumeGit($("kGovde")); };
     $("kGovde").onclick = (e) => {
       const ys = e.target.closest("[data-yseg]"); if (ys) { kYeniSeg = ys.dataset.yseg; $("kGovde").innerHTML = kYeniHtml(); return; }
+      const sr = e.target.closest("[data-sira]"); if (sr) { kSira = sr.dataset.sira; kKaydet(); renderKampanyalar(); return; }
       const o = e.target.closest("[data-ornek]"); if (o) { const i = $("kAra"); i.value = o.dataset.ornek; i.oninput(); return; }
       const b = e.target.closest("[data-sh]"); if (!b) return;
       const i = b.dataset.sh.indexOf(":"), a = b.dataset.sh.slice(0, i), v = b.dataset.sh.slice(i + 1), cevir = (L) => (L.includes(v) ? L.filter((x) => x !== v) : [...L, v]);
@@ -776,10 +781,11 @@ function renderKampanyalar() {
   };
   const yaz = (h) => { $("list").innerHTML = ust + `<div id="kGovde">${kAra.trim() ? kAraHtml() : kYeni ? kYeniHtml() : kSih.acik ? kSihHtml() : h}</div>`; bagla(); };
   if (kOne) { govde = () => kOneHtml(L, renk) + tumLink; yaz(govde()); bindSpecial(); return; }
-  const liste = L.filter((k) => uy(k, "")).sort((a, b) => (a.bitis || "9").localeCompare(b.bitis || "9"));
+  const liste = kSirala(L.filter((k) => uy(k, "")));
   const yol = [kayAd, kSeg === "ticari" ? "Ticari" : "Bireysel", kNe && kIkon("ne", kNe) + " " + kNe, kNere && kIkon("nere", kNere) + " " + kKisa(kNere), kKim && (GK.find((g) => g[0] === kKim) || K_HERKES)[1] + " " + kKim].filter(Boolean).join(" › ");
+  const sb2 = (v, ad) => `<button type="button" data-sira="${v}" class="${kSira === v ? "on" : ""}">${ad}</button>`;
   const sag = `<div class="ksag" style="--kk:${renk}"><div class="kyol">${esc(yol)} · <b>${liste.length} adet</b></div>`
-    + `</div>`;
+    + `<div class="kyseg ksira" role="group" aria-label="Sıralama">${sb2("yeni", "🆕 En yeni üstte")}${sb2("bitis", "⏳ Bitişe göre")}</div></div>`;
   const acil = liste.filter((k) => k.bitis && daysLeft(k.bitis) <= 3).length;
   const V0 = KH[kKay][kSeg], kayp = V0.toplam - L.length, biten = (V0.kategoriler || []).reduce((a, c) => a + (c.biten || 0), 0);
   govde = () => sag + (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
