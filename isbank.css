@@ -653,8 +653,13 @@
   .altkutu .tfil.sekme button.on { background: var(--c, #e0a24f); border-color: var(--c, #e0a24f); color: #000; }
   .altkutu .tfil.sekme button.on b { background: rgba(0,0,0,.2); }
   /* Uzun alt başlık kutusu kaydırınca tek satır: yalnızca seçili başlık + "Değiştir"; dokununca hepsi açılır */
-  .altkutu.dar:not(.acik) #nsub button:not(.on), .altkutu.dar:not(.acik) #tfil button:not(.on) { display: none !important; }
-  .altkutu.dar:not(.acik) { padding-bottom: 6px; cursor: pointer; }
+  .altkutu.dar:not(.acik) #nsub, .altkutu.dar:not(.acik) #tfil { display: none !important; } /* daralmış kutu: yalnızca başlık satırı; seçili alt başlık yazı olarak başlığın yanında */
+  .altbas .sec { display: none; font-style: normal; font-weight: 700; color: #ddd; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .altkutu.dar:not(.acik) .altbas .sec { display: inline; }
+  .altkutu.dar:not(.acik) .altbas { margin-bottom: 0; }
+  .altkutu.dar:not(.acik) .altbas b { display: none; } /* bölüm adı üst çubukta zaten yazıyor */
+  .altkutu.dar:not(.acik) .altbas .sec:empty::before { content: "Alt başlıklar"; color: #8a8a8a; }
+  .altkutu.dar:not(.acik) { padding: 7px 10px; cursor: pointer; }
   .altkutu.dar:not(.acik) #nsub, .altkutu.dar:not(.acik) #tfil { pointer-events: none; }
   .altkutu.dar .altbas::after { content: "Değiştir ▾"; margin-left: auto; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--c, #e0a24f); color: var(--c, #e0a24f); font-size: 11.5px; font-weight: 800; }
   .altkutu.dar.acik .altbas::after { content: "Kapat ▴"; }

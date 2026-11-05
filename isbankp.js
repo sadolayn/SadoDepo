@@ -123,10 +123,17 @@ function altGuncelle() {
   k.hidden = !(var1 || var2);
   if (!k.hidden && a) {
     k.style.setProperty("--c", c);
-    $("altbas").innerHTML = `▼ <b>${esc(ad)}</b> <span>· alt başlıklar</span>`;
+    $("altbas").innerHTML = `▼ <b>${esc(ad)}</b> <span>· alt başlıklar</span><em class="sec"></em>`;
+    seciliOzet();
     const r = a.getBoundingClientRect(), kr = k.getBoundingClientRect();
     k.style.setProperty("--ok", Math.max(16, Math.min(kr.width - 16, r.left + r.width / 2 - kr.left)) + "px");
   }
+}
+// Daralmış kutuda seçili alt başlıklar tek satırda yazı olarak görünür (ör. "Tümü · Haber")
+function seciliOzet() {
+  const e = $("altbas").querySelector(".sec"); if (!e) return;
+  const sec = [...$("altkutu").querySelectorAll("#nsub button.on, #tfil button.on")].map((b) => { const c = b.cloneNode(true); c.querySelectorAll("b, em").forEach((x) => x.remove()); return c.textContent.replace(/\s+/g, " ").trim(); }).filter(Boolean);
+  e.textContent = sec.join(" · ");
 }
 // Alt başlık satırları sonradan dolabilir (ör. İşCep ipuçları veriyle gelir): değişince kutuyu güncelle
 (function () { let bekle = 0; const mo = new MutationObserver(() => { if (bekle) return; bekle = requestAnimationFrame(() => { bekle = 0; altGuncelle(); }); });
@@ -157,14 +164,14 @@ function bolumeKay(el) {
   function kontrol() {
     if (k.hidden) { if (dar) birak(); k.classList.remove("uzun"); return; }
     const ust = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--iminiH")) || 0;
-    const uzun = dar || say() > 4;
+    const uzun = dar || say() > 0; // her alt başlık kutusu yukarı kaydırınca tek satırlık çubuğa iner (eskiden yalnızca 4'ten çok başlığı olanlar)
     k.classList.toggle("uzun", uzun);
     const izr = iz.getBoundingClientRect();
     if (!dar && uzun && izr.top + k.offsetHeight < ust + 24) {
       // Kutu gözden çıktı: sabit çubuğa dönüşür, kapladığı yer #altIz'de kalır (liste aynı yerde durur)
       const l0 = $("list").getBoundingClientRect().top;
       boy = k.offsetHeight; dar = true;
-      k.classList.add("dar"); k.style.left = izr.left + "px"; k.style.width = izr.width + "px"; iz.style.height = boy + "px";
+      k.classList.add("dar"); seciliOzet(); k.style.left = izr.left + "px"; k.style.width = izr.width + "px"; iz.style.height = boy + "px";
       const d = $("list").getBoundingClientRect().top - l0; if (d) iz.style.height = boy - d + "px";
     } else if (dar && izr.top + boy > ust + 34) birak(); // kutunun yeri yeniden göründü: kutu yerine döner
     else if (dar) { k.style.left = izr.left + "px"; k.style.width = izr.width + "px"; } // ekran döndürülünce
@@ -183,7 +190,7 @@ function bolumeKay(el) {
     if (!k.classList.contains("dar") || e.target.closest(".kara")) return;
     if (!k.classList.contains("acik")) { k.classList.add("acik"); e.stopPropagation(); return; }
     if (e.target.closest(".altbas")) k.classList.remove("acik");
-    else if (e.target.closest("button")) setTimeout(() => k.classList.remove("acik"), 0);
+    else if (e.target.closest("button")) setTimeout(() => { k.classList.remove("acik"); seciliOzet(); }, 0);
   }, true);
 })();
 let subeKayiyor = 0;
