@@ -1255,6 +1255,9 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     // Ay başı hatırlatması (her ayın 1-5'i): yeni kampanyalara katılmayı unutma. İlk 3 gün "Yeni gelenler"e, sonra tüm kampanyalara gider
     ...(+bugunTR.slice(8) <= 5 ? [[+bugunTR.slice(8) <= 5 ? "yeniliste" : "maximum", "🗓️ Yeni ay, yeni kampanyalar! " + ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"][+bugunTR.slice(5, 7) - 1] + " kampanyalarına katılmayı unutma 🎁 <b class=\"gir\">Güncel kampanyalar</b>"]] : []),
     ...(function () { try { return localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
+    // 5 Kasım 2026: DenizBank kredi kartları Maximum'a geçiyor; kaynak DenizBank'ın kendi duyurusu ("6 Aralık 2026'dan itibaren … Maximum
+    // altyapısına geçiyor"); yalnızca duyuruda yazan söylenir, geçiş gününe kadar kalır
+    ["https://www.denizbank.com/kampanya/kart-kampanyalari/cok-yakinda", "🤝 DenizBank kredi kartları <b>6 Aralık'tan</b> itibaren Maximum altyapısına geçiyor <b class=\"gir\">DenizBank duyurusu</b>", "2026-12-06"],
     // 2 Kasım 2026: İşCep ödülü; kaynak İş Bankası'nın kendi duyurusu (isbank.com.tr); bir hafta kalır
     ["https://www.isbank.com.tr/bankamizi-taniyin/iscepe-artarda-4kez-dunyanin-en-iyi-bireysel-mobil-bankacilik-uygulamasi-odulu", "🏆 İşCep art arda 4. kez <b>“Dünyanın En İyi Bireysel Mobil Bankacılık Uygulaması”</b> seçildi <b class=\"gir\">Haberi oku</b>", "2026-11-09"],
     ["maximum", "🎁 Kampanyaları bulmak hiç bu kadar kolay olmamıştı: İş Bankası, Maximum ve Maximiles tek ekranda; arama, takvim ve <b>Bana uygun</b> <b class=\"gir\">İş Bankası Gündemi › Kampanyalar</b>", "2026-11-30"],
@@ -1286,6 +1289,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     e.preventDefault();
     if (h === "ppk") { ppk && ppk.tap && ppk.tap(); return; }
     if (h === "acilis") { window.Rapor && Rapor.bolum("kayan-acilis"); window.Acilis && window.Acilis.ac(); return; }
+    if (/^https:\/\/www\.denizbank\.com\//.test(h)) { window.Rapor && Rapor.bolum("kayan-denizbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // DenizBank'ın kendi duyurusu
     if (/^https:\/\/www\.isbank\.com\.tr\//.test(h)) { window.Rapor && Rapor.bolum("kayan-isbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // İş Bankası'nın kendi duyurusu
     if (h.includes(".html")) { window.Rapor && Rapor.bolum(h.includes("kurum") ? "kayan-kurum" : "kayan-gazete-yakinda"); location.href = h; return; }
     window.Rapor && Rapor.bolum("kayan-" + h); location.href = "isbank.html#" + h;
