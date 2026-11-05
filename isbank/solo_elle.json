@@ -1,0 +1,16 @@
+{
+ "not": "Bankanın veri dosyası (finans.json) henüz yeni çeyreği içermiyorsa bu dönemler solo tabloya eklenir; dosya güncellenince otomatik olarak devre dışı kalır. Birimler finans.json ile aynı (milyar TL, oran %). Kredi kartı sayısı raporda yok.",
+ "donemler": [
+  {
+   "p": "2026/9",
+   "kaynak": "Bankanın 30.09.2026 konsolide olmayan (solo) finansal raporu, PwC sınırlı denetim",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/finansal-bilgiler",
+   "s": {
+    "aktif": 5299.209, "kredi": 2719.589, "mevduat": 3547.003, "ozkaynak": 457.134,
+    "netkar": 40.434, "nfg": 111.432, "komisyon": 127.488,
+    "npl": 4.2, "roe": 14.9, "roa": 1.3, "syr": 17.23,
+    "sube": 1012, "atm": 7255, "calisan": 20723, "kart": null
+   }
+  }
+ ]
+}

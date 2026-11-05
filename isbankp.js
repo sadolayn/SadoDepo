@@ -1234,12 +1234,24 @@ function finRows(i) {
   ];
   return R;
 }
+// Banka veri dosyası yeni çeyreği henüz içermiyorsa KAP'taki solo rapordan elle girilen dönem (isbank/solo_elle.json) sona eklenir;
+// dosya o dönemi içerdiğinde bu ek kendiliğinden devre dışı kalır.
+function soloElle(j) {
+  (j && j.donemler || []).forEach((d) => {
+    const P = fin.periods, last = P[P.length - 1], n = (p) => { const [y, m] = p.split("/"); return +y * 100 + +m; };
+    if (P.includes(d.p) || n(d.p) <= n(last)) return;
+    P.push(d.p);
+    Object.keys(fin.s).forEach((k) => fin.s[k].push(d.s[k] ?? null));
+    fin.elle = Object.assign({}, fin.elle, { [d.p]: d });
+  });
+}
+const elleNot = (p) => fin.elle && fin.elle[p] ? ` ${pLabel(p)} rakamları <a href="${esc(fin.elle[p].url)}" target="_blank" rel="noopener" style="color:var(--accent)">bankanın solo raporundan</a> elle girildi; veri dosyası güncellenince kendiliğinden yenilenir.` : "";
 function ytTable(i) {
   const P = fin.periods, j = i - 4;
   const rows = finRows(i).map(([ad, bu, once, tur, iyi]) =>
     `<tr><td>${esc(ad)}</td><td class="now">${ytFmt(bu, tur)}</td><td class="old">${ytFmt(once, tur)}</td><td>${chgCell(bu, once, tur, iyi)}</td></tr>`).join("");
   return `<table class="yt"><thead><tr><th>Kalem</th><th>${pLabel(P[i])}</th><th>${j >= 0 ? pLabel(P[j]) : "–"}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
-    <div class="yt-note">Bankanın kendi yayımladığı resmî veri. Tutarlar TL (trn = trilyon, mlr = milyar). Renk yalnızca artış/azalış yönünü gösterir, yorum değildir. Yatırım tavsiyesi değildir. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.</div>`;
+    <div class="yt-note">Bankanın kendi yayımladığı resmî veri. Tutarlar TL (trn = trilyon, mlr = milyar). Renk yalnızca artış/azalış yönünü gösterir, yorum değildir. Yatırım tavsiyesi değildir. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.${elleNot(P[i])}</div>`;
 }
 // Konsolide (iştiraklerle birlikte) ana rakamlar: isbank/konsolide.json, elle girilir (KAP ya da bankanın konsolide raporu). Solo tablonun altında ayrı kutu;
 // yan yana konmaz (dar ekranda sığmaz, iki ölçü karışır). Bilanço kalemleri bir önceki yıl sonuyla, kâr aynı dönemin bir yıl öncesiyle karşılaştırılır (raporun kendi sütunları).
@@ -1275,7 +1287,7 @@ function yatHtml() {
     const opts = P.map((p, i) => ({ p, i })).filter((o) => o.p.startsWith(ly) || o.p === (+ly - 1) + "/12").reverse();
     if (ytSel == null) ytSel = last;
     const card = (ad, k, tur, iyi, alt) => `<div class="stat"><span>${ad}</span><b style="font-size:21px">${ytFmt(S[k][last], tur)}</b><small>${alt || ""} ${chgCell(S[k][last], S[k][j], tur, iyi)}</small></div>`;
-    h += `<div class="day" style="margin-top:22px">📊 Finansal veriler · ${pLabel(P[last])} · <span style="color:#8fb0ff">konsolide olmayan (solo)</span><small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Yalnızca bankanın kendi rakamları; kaynak bankanın finansal veri dosyası. KAP'taki konsolide raporda (iştiraklerle birlikte) rakamlar daha büyüktür.</small></div>
+    h += `<div class="day" style="margin-top:22px">📊 Finansal veriler · ${pLabel(P[last])} · <span style="color:#8fb0ff">konsolide olmayan (solo)</span><small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Yalnızca bankanın kendi rakamları; kaynak bankanın finansal veri dosyası${fin.elle && fin.elle[P[last]] ? ` (${pLabel(P[last])}: bankanın solo raporu)` : ""}. KAP'taki konsolide raporda (iştiraklerle birlikte) rakamlar daha büyüktür.</small></div>
       <div class="stats">
         ${card("Toplam aktif", "aktif", "tl", "up", "yıllık")}
         ${card("Krediler", "kredi", "tl", "up", "yıllık")}
@@ -1966,6 +1978,7 @@ function renderList() {
     } catch (e) {}
     if (!CATS.some((c) => c[0] === cat) && !MENU.some((m) => m[0] === cat) && cat !== "Finans") cat = "Tümü";
     try { fin = await Ortak.json("isbank/finans.json"); } catch (e) {}
+    try { if (fin) soloElle(await Ortak.json("isbank/solo_elle.json")); } catch (e) {}
     try { KONS = await Ortak.json("isbank/konsolide.json"); } catch (e) {}
     try { yat = await Ortak.json("isbank/yatirimci.json"); } catch (e) {}
     try { bkamp = await Ortak.json("isbank/banka_kampanya.json"); } catch (e) {}
