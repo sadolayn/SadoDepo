@@ -1649,7 +1649,7 @@ function renderVideo() {
 
 // ===== Bilanço grafikleri (bankanın çeyreklik resmî verisinden) =====
 function chartSvg(vals, labels, o) {
-  const W = 340, H = 150, L = 6, R = 6, T = 18, B = 22, n = vals.length;
+  const W = 340, H = 162, L = 6, R = 6, T = 18, B = 34, n = vals.length;
   const ok = vals.filter((v) => v != null), mx = Math.max(...ok) * 1.08, mn = o.line ? Math.min(...ok) * 0.9 : 0;
   const x = (i) => L + (W - L - R) * (o.line ? i / (n - 1) : (i + 0.5) / n), y = (v) => T + (H - T - B) * (1 - (v - mn) / (mx - mn || 1));
   let g = `<line x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}" stroke="#333"/>`;
@@ -1663,8 +1663,9 @@ function chartSvg(vals, labels, o) {
   }
   // son değer etiketi
   const li = n - 1; g += `<text x="${Math.min(x(li), W - R - 2)}" y="${y(vals[li]) - 7}" text-anchor="end" font-size="12" font-weight="800" fill="#f2f2f2">${o.f(vals[li])}</text>`;
-  // yıl etiketleri: her yılın ilk noktası
-  let prev = ""; labels.forEach((lb, i) => { const yr = lb.split("/")[0]; if (yr !== prev) { g += `<text x="${x(i)}" y="${H - 6}" text-anchor="${i === 0 ? "start" : "middle"}" font-size="10.5" fill="#8a8a8a">${yr}</text>`; prev = yr; } });
+  // çeyrek etiketleri (Ç1–Ç4) her noktanın altında, son çeyrek açık renk; yıl etiketi bir satır altta, her yılın ilk noktasında
+  labels.forEach((lb, i) => { const q = "Ç" + Math.round(+lb.split("/")[1] / 3); g += `<text x="${x(i)}" y="${H - 19}" text-anchor="middle" font-size="9.5" fill="${i === n - 1 ? "#f3d38a" : "#6f6f6f"}">${q}</text>`; });
+  let prev = ""; labels.forEach((lb, i) => { const yr = lb.split("/")[0]; if (yr !== prev) { g += `<text x="${x(i)}" y="${H - 5}" text-anchor="${i === 0 ? "start" : "middle"}" font-size="10.5" fill="#8a8a8a">${yr}</text>`; prev = yr; } });
   return `<svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`;
 }
 function chartsHtml() {
