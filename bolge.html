@@ -66,6 +66,11 @@
   .sure button.on { background: var(--c); color: #1a0d04; font-weight: 800; }
   .tum { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 58px; border-radius: 12px; background: var(--c); color: #1a0d04; font-size: 16px; font-weight: 800; text-decoration: none; }
   .tum small { font-size: 12px; font-weight: 700; color: #4a2410; }
+  /* Dünya: ülke + il (ör. Aydın ile ilgili Almanya haberleri) */
+  .tum.ikinci { min-height: 52px; padding: 6px 10px; background: transparent; border: 1px solid var(--c); color: var(--c2); font-size: 15px; text-align: center; }
+  .tum.ikinci small { color: #c9a88c; font-weight: 600; }
+  .ilSec { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #c9a88c; }
+  .ilSec select { flex: 1; min-width: 0; min-height: 40px; padding: 0 8px; border-radius: 10px; border: 1px solid var(--cz); background: var(--k2); color: var(--c2); font: inherit; font-size: 14px; }
   .kBas { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .kSure { flex: none; min-height: 32px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--c); background: #2c1608; color: var(--c2); font-size: 12.5px; font-weight: 700; cursor: pointer; }
   .ipucu { color: #a5876f; margin: 0 2px; }
@@ -136,6 +141,8 @@
         <div class="yerUst"><span class="yerAd" id="ulkeAd"></span><button type="button" id="ulkeSil" aria-label="Ülkeyi temizle">✕</button></div>
         <div class="sure" role="group" aria-label="Süre"><button type="button" data-sure="1d">Son 24 saat</button><button type="button" data-sure="7d">Son 7 gün</button><button type="button" data-sure="30d">Son 1 ay</button></div>
         <a class="tum" id="ulkeTum" target="_blank" rel="noopener">Ülkenin tüm haberleri ↗</a>
+        <a class="tum ikinci" id="ulkeIlA" target="_blank" rel="noopener" hidden></a>
+        <label class="ilSec">📍 <span id="ulkeIlNot">İlinle ilgili haberler</span><select id="ulkeIl" aria-label="Ülke haberlerini bir ille daralt"><option value="">İl seç</option></select></label>
       </section>
       <section class="kart" aria-label="Ülke konuları" style="margin-top:14px">
         <div class="kBas"><h2>Konular <small>başlığında ülke ve konu geçen haberler</small></h2></div>
@@ -207,7 +214,7 @@ const ilEk = (ad) => { const k = ad.toLocaleLowerCase("tr"), v = (k.match(/[aeı
 
 const GRUP = BolgeSorgu.GRUP; // konular ve sorgu kuralları bolgesorgu.js'te (ana sayfadaki Açılış kartı da kullanır)
 
-let S = { il: "", ilce: "", elle: "", konum: false, son: [], sure: "7d", mod: "tr", ulke: "" }, IL = null, ILMAP = null, ON = [];
+let S = { il: "", ilce: "", elle: "", konum: false, son: [], sure: "7d", mod: "tr", ulke: "", dil: "" }, IL = null, ILMAP = null, ON = [];
 try { const v = JSON.parse(localStorage.getItem("bolgem") || localStorage.getItem("haber_yerel2") || "null"); if (v && typeof v === "object") S = { ...S, ...v }; } catch (e) {}
 if (!Array.isArray(S.son)) S.son = [];
 S.mod = location.hash === "#dunya" ? "dunya" : "tr"; // sayfa her açılışta Türkiye sekmesiyle açılır (ana sayfadaki YENİ şeridinden #dunya ile Dünya); Dünya'da seçilen ülke hatırlanır
@@ -289,6 +296,17 @@ function dunyaCiz() {
   $("ulkeAd").innerHTML = bayImg(b) + " " + esc(S.ulke);
   document.querySelectorAll("#ulkeSec [data-sure]").forEach((x) => x.classList.toggle("on", x.dataset.sure === S.sure));
   $("ulkeTum").href = ugn(""); $("ulkeTum").innerHTML = `Tüm ${esc(S.ulke)} haberleri ↗<small>${sureAd} · ${donem()}</small>`;
+  // Ülke + il: başlığında ikisi birden geçen haberler, Google Arama'nın Haberler sekmesinde en yeni üstte (Türkiye aramaları gibi).
+  // Google Haberler'de denendi (5 Kasım 2026): Antalya+Rusya, Gaziantep+Irak, Kocaeli+Çin iyi; Aydın+Almanya'da yerel gazetenin adı
+  // ("… - Aydın Ses Gazetesi") eşleşip genel Almanya haberleri de geliyordu. Arama sekmesi kaynak adını başlık saymaz.
+  // İl, Türkiye sekmesinde seçilen yerden gelir; burada başka bir il seçilirse o hatırlanır (S.dil).
+  const dil = S.dil || S.il, sel = $("ulkeIl");
+  if (ILMAP && sel.options.length < 2) sel.innerHTML = `<option value="">İl seç</option>` + Object.keys(ILMAP).sort((a, b) => a.localeCompare(b, "tr")).map((x) => `<option>${esc(x)}</option>`).join("");
+  else if (!ILMAP) ilYukle();
+  if (ILMAP) sel.value = dil || "";
+  $("ulkeIlNot").textContent = dil ? "İl değiştir" : "İlinle ilgili haberler";
+  $("ulkeIlA").hidden = !dil;
+  if (dil) { $("ulkeIlA").href = BolgeSorgu.aramaUrl(`intitle:"${S.ulke}" intitle:"${dil}"`, S.sure); $("ulkeIlA").innerHTML = `📍 ${esc(dil)} ile ilgili ${esc(S.ulke)} haberleri ↗<small>${sureAd} · en yeni üstte</small>`; }
   $("ulkeDonem").innerHTML = `📅 <span><b>${donem()}</b> arası haberler</span>`; // Google Haberler alaka sırasıyla gösterir, "en yeni üstte" denmez
   $("ulkeKonu").innerHTML = DUNYA_KONU.map(([g, renk, L]) => {
     const K = L.filter((k) => !k[3] || k[3]().includes(S.ulke)); // ülkeye uygun konular
@@ -399,6 +417,7 @@ function konumBul() {
 }
 
 $("konum").onclick = konumBul;
+$("ulkeIl").addEventListener("change", (e) => { S.dil = e.target.value; sakla(); ciz(); window.Rapor && Rapor.bolum("bolgem-dunya-il"); });
 $("yaz").addEventListener("input", oner);
 $("yaz").addEventListener("focus", ilYukle);
 // Yazarken öneriler klavyenin altında kalmasın: kutu ekranın üstüne kayar
