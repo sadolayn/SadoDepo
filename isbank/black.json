@@ -3,9 +3,9 @@
   "https://www.isbank.com.tr/kampanyalar/is-black-ayricaliklari",
   "https://www.isbank.com.tr/is-black"
  ],
- "kontrol": "2026-11-04",
- "degisim": "2026-11-04",
- "hash": "6b7d40663db773d4",
+ "kontrol": "2026-11-05",
+ "degisim": "2026-11-05",
+ "hash": "5cfc224cf964d3a1",
  "kampanyalar": [
   {
    "baslik": "İş’te Maaş’a Özel (2)",
@@ -28,7 +28,7 @@
    "ilk": "2000-01-01"
   },
   {
-   "baslik": "İşPay Kampanyaları (1)",
+   "baslik": "İşPay Kampanyaları (2)",
    "url": "https://www.isbank.com.tr/kampanyalar/ispay-kampanyalari",
    "ilk": "2026-10-27"
   },
@@ -73,7 +73,7 @@
    "ilk": "2000-01-01"
   },
   {
-   "baslik": "Araç Kiralama Kampanyaları (7)",
+   "baslik": "Araç Kiralama Kampanyaları (8)",
    "url": "https://www.isbank.com.tr/kampanyalar/arac-kiralama-kampanyalari",
    "ilk": "2000-01-01"
   },
@@ -81,6 +81,11 @@
    "baslik": "Akaryakıt Kampanyaları (3)",
    "url": "https://www.isbank.com.tr/kampanyalar/akaryakit-kampanyalari",
    "ilk": "2000-01-01"
+  },
+  {
+   "baslik": "Beyaz Eşya Kampanyaları (1)",
+   "url": "https://www.isbank.com.tr/kampanyalar/beyaz-esya-kampanyalari",
+   "ilk": "2026-11-05"
   },
   {
    "baslik": "İşCep Kampanyaları (7)",
@@ -98,7 +103,7 @@
    "ilk": "2000-01-01"
   },
   {
-   "baslik": "Bireysel Kredi Kampanyaları (5)",
+   "baslik": "Bireysel Kredi Kampanyaları (3)",
    "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
    "ilk": "2000-01-01"
   },
@@ -436,6 +441,7 @@
   "/kampanyalar/is-black-kultur-ve-sanat-harcamalarinizda-indirim-ayricaliklari": "2026-10-28",
   "/kampanyalar/maximiles-ve-maximiles-black-sahiplerine-ozel-indirimli-lounge-ayricaligi": "2026-10-28",
   "/kampanyalar/swissotel-the-bosphorusda-secili-mekan-ve-etkinliklerde-indirim-ayricaligi": "2026-10-28",
-  "/kampanyalar/is-black-plus-kart-sahiplerine-secili-kahve-dukkanlarinda-indirim-ayricaligi": "2026-10-28"
+  "/kampanyalar/is-black-plus-kart-sahiplerine-secili-kahve-dukkanlarinda-indirim-ayricaligi": "2026-10-28",
+  "/kampanyalar/beyaz-esya-kampanyalari": "2026-11-05"
  }
 }
