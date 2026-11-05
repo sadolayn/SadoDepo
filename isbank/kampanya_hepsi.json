@@ -1,8 +1,8 @@
 {
- "guncelleme": "2026-11-05T06:37",
+ "guncelleme": "2026-11-05T14:36",
  "isbank": {
   "bireysel": {
-   "toplam": 177,
+   "toplam": 180,
    "kategoriler": [
     {
      "ad": "İş’te Maaş’a Özel",
@@ -1142,7 +1142,7 @@
     {
      "ad": "Beyaz Eşya Kampanyaları",
      "slug": "beyaz-esya-kampanyalari",
-     "adet": 1,
+     "adet": 2,
      "url": "https://www.isbank.com.tr/kampanyalar/beyaz-esya-kampanyalari",
      "kampanyalar": [
       {
@@ -1153,6 +1153,15 @@
        "ilk": "2026-11-05",
        "ne": "Taksit",
        "nere": "Elektronik & Beyaz Eşya"
+      },
+      {
+       "baslik": "Samsung.com'da Seçili Beyaz Eşyalarda %15 İndirim!",
+       "bitis": "2026-11-30",
+       "ozet": "Maximum Kart'ınızla 30 Kasım 2026 tarihine kadar, Samsung.com adresinden yapacağınız seçili beyaz eşya alışverişlerinizde %15 indirim ayrıcalığı!",
+       "url": "https://www.isbank.com.tr/kampanyalar/samsungcomda-secili-beyaz-esyalarda-indirim-firsati",
+       "ilk": "2026-11-05",
+       "ne": "İndirim",
+       "nere": "Elektronik & Beyaz Eşya"
       }
      ],
      "biten": 0
@@ -1160,7 +1169,7 @@
     {
      "ad": "İşCep Kampanyaları",
      "slug": "iscep-kampanyalari",
-     "adet": 7,
+     "adet": 8,
      "url": "https://www.isbank.com.tr/kampanyalar/iscep-kampanyalari",
      "kampanyalar": [
       {
@@ -1225,6 +1234,15 @@
        "ilk": "2000-01-01",
        "ne": "İndirim",
        "nere": "Bankacılık"
+      },
+      {
+       "baslik": "İşCep kullanıcılarına özel Pazarama Tatil’de Otel Rezervasyonlarına 3.000 TL İndirim!",
+       "bitis": "2026-11-30",
+       "ozet": "30 Kasım 2026 tarihine kadar İşCep kullanıcılarına özel Pazarama Tatil üzerinden 50.000 TL ve üzeri otel rezervasyonlarında 3.000 TL indirim fırsatı.",
+       "url": "https://www.isbank.com.tr/kampanyalar/iscep-kullanicilarina-ozel-pazarama-tatilde-indirim-firsati",
+       "ilk": "2026-11-05",
+       "ne": "İndirim",
+       "nere": "Seyahat"
       }
      ],
      "biten": 0
@@ -1331,7 +1349,7 @@
     {
      "ad": "E-Ticaret Kampanyaları",
      "slug": "e-ticaret-kampanyalari",
-     "adet": 8,
+     "adet": 9,
      "url": "https://www.isbank.com.tr/kampanyalar/e-ticaret-kampanyalari",
      "kampanyalar": [
       {
@@ -1395,6 +1413,15 @@
        "url": "https://www.isbank.com.tr/kampanyalar/trendyolda-taksit-firsati",
        "ilk": "2000-01-01",
        "ne": "Taksit",
+       "nere": "Online Alışveriş"
+      },
+      {
+       "baslik": "Samsung.com'da Seçili Telefon, Tablet, Saat ve Kulaklıklarda %5 İndirim!",
+       "bitis": "2026-11-30",
+       "ozet": "İşCep veya Maximum Mobil'den kampanyaya katılın, Maximum Kart'ınızla 30 Kasım 2026 tarihine kadar, samsung.com adresinden yapacağınız seçili Samsung telefon, tablet, saat ve kulaklıklarda %5 İndirim kazanın!",
+       "url": "https://www.isbank.com.tr/kampanyalar/samsung-comda-secili-telefon-tablet-saat-ve-kulakliklarda-indirim",
+       "ilk": "2026-11-05",
+       "ne": "İndirim",
        "nere": "Online Alışveriş"
       },
       {
@@ -2284,7 +2311,7 @@
  },
  "maximum": {
   "bireysel": {
-   "toplam": 173,
+   "toplam": 178,
    "kampanyalar": [
     {
      "baslik": "E-Ticaret Alışverişlerinizde 3.000 TL'ye Varan MaxiPuan!",
@@ -2428,6 +2455,17 @@
      "ilk": "2000-01-01",
      "ne": "Taksit",
      "nere": "Seyahat"
+    },
+    {
+     "baslik": "Yeni kredi kartı müşterilerine Mitsubishi Electric’te 5.000 TL MaxiPuan fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "Maximum Kart’ınızla Mitsubishi Electric’te tek seferde yapacağınız alışverişinizde MaxiPuan kazanma fırsatı!",
+     "url": "https://www.maximum.com.tr/kampanyalar/yeni-kredi-karti-musterilerimize-mitsubishi-electricte-maxipuan-firsati",
+     "oz": 1,
+     "bt": 1,
+     "ilk": "2026-11-05",
+     "ne": "MaxiPuan",
+     "nere": "Elektronik & Beyaz Eşya"
     },
     {
      "baslik": "Pazarama Tatil'de Otel Rezervasyonunuza 7.500 TL'ye varan PazaramaPuan!",
@@ -3515,6 +3553,17 @@
      "nere": "Online Alışveriş"
     },
     {
+     "baslik": "Samsung.com'da Seçili Süpürgelerde %15 İndirim!",
+     "bitis": "2026-12-02",
+     "ozet": "Maximum Kart'ınızla Samsung.com adresinden yapacağınız seçili süpürge alışverişlerinizde indirim ayrıcalığı kazanın!",
+     "url": "https://www.maximum.com.tr/kampanyalar/samsung-com-da-secili-supurgelerde-indirim",
+     "oz": 1,
+     "bt": 1,
+     "ilk": "2026-11-05",
+     "ne": "İndirim",
+     "nere": "Elektronik & Beyaz Eşya"
+    },
+    {
      "baslik": "Eğitim Ödemelerinize Özel Fırsatlar Sizi Bekliyor!",
      "bitis": "2026-11-30",
      "ozet": "Eğitim ödemenizi yapmadan önce limitinizi güncellemeyi unutmayın. Limit artış talebinizi İşCep veya Çözüm Merkezi üzerinden iletebilirsiniz.",
@@ -3656,6 +3705,39 @@
      "ilk": "2026-11-05",
      "ne": "İndirim",
      "nere": "Araç & Akaryakıt"
+    },
+    {
+     "baslik": "Samsung.com'da Seçili Telefon, Tablet, Saat ve Kulaklıklarda %5 İndirim!",
+     "bitis": "2026-11-30",
+     "ozet": "Maximum Kart'ınızla samsung.com adresinden yapacağınız seçili Samsung telefon, tablet, saat ve kulaklıklarda %5 İndirim kazanın!",
+     "url": "https://www.maximum.com.tr/kampanyalar/samsung-comda-secili-telefon-tablet-saat-ve-kulakliklarda-indirim-firsati",
+     "oz": 1,
+     "bt": 1,
+     "ilk": "2026-11-05",
+     "ne": "İndirim",
+     "nere": "Elektronik & Beyaz Eşya"
+    },
+    {
+     "baslik": "Samsung.com'da seçili TV ve ses sistemi alışverişlerinizde %10 İndirim!",
+     "bitis": "2026-11-30",
+     "ozet": "Maximum Kart'ınızla, samsung.com adresinden yapacağınız seçili Samsung TV ve ses sistemi alışverişlerinizde indirim fırsatı.",
+     "url": "https://www.maximum.com.tr/kampanyalar/samsungda-indirim-firsati",
+     "oz": 1,
+     "bt": 1,
+     "ilk": "2026-11-05",
+     "ne": "İndirim",
+     "nere": "Elektronik & Beyaz Eşya"
+    },
+    {
+     "baslik": "Samsung.com'da Seçili Beyaz Eşyalarda %15 İndirim!",
+     "bitis": "2026-11-30",
+     "ozet": "Maximum Kart'ınızla Samsung.com adresinden yapacağınız seçili beyaz eşya alışverişlerinizde %15 indirim ayrıcalığı!",
+     "url": "https://www.maximum.com.tr/kampanyalar/samsungcomda-secili-beyaz-esyalarda-indirim-firsati",
+     "oz": 1,
+     "bt": 1,
+     "ilk": "2026-11-05",
+     "ne": "İndirim",
+     "nere": "Elektronik & Beyaz Eşya"
     },
     {
      "baslik": "Elektrikli Araç Şarj İstasyonlarından Yapacağınız Ödemelerinize 500 TL MaxiPuan Fırsatı!",
