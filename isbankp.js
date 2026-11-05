@@ -1296,17 +1296,18 @@ function yatHtml() {
     // Dönem düğmeleri: son yılın çeyrekleri (yeniden eskiye) + bir önceki yıl sonu
     const opts = P.map((p, i) => ({ p, i })).filter((o) => o.p.startsWith(ly) || o.p === (+ly - 1) + "/12").reverse();
     if (ytSel == null) ytSel = last;
+    const gore = j >= 0 ? pLabel(P[j]) + "'e göre" : "", donemAd = (p) => pRange(p).split("–").map((a) => a.replace(/^./, (c) => c.toUpperCase())).join("–").replace("Yıllık", "Yıl") + " " + p.split("/")[0]; // "Ocak–Eylül 2026"
     const card = (ad, k, tur, iyi, alt) => `<div class="stat"><span>${ad}</span><b style="font-size:21px">${ytFmt(S[k][last], tur)}</b><small>${alt || ""} ${chgCell(S[k][last], S[k][j], tur, iyi)}</small></div>`;
     h += `<div class="day" style="margin-top:22px">📊 Finansal veriler · ${pLabel(P[last])} · ${fBadge("solo")}<small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Yalnızca bankanın kendi rakamları; kaynak bankanın finansal veri dosyası${fin.elle && fin.elle[P[last]] ? ` (${pLabel(P[last])}: bankanın solo raporu)` : ""}. KAP'taki konsolide raporda (iştiraklerle birlikte) rakamlar daha büyüktür.</small></div>
       <div class="stats">
-        ${card("Toplam aktif", "aktif", "tl", "up", "yıllık")}
-        ${card("Krediler", "kredi", "tl", "up", "yıllık")}
-        ${card("Mevduat", "mevduat", "tl", "up", "yıllık")}
-        ${card("Özkaynak", "ozkaynak", "tl", "up", "yıllık")}
-        ${card("Net kâr (" + pRange(P[last]) + ")", "netkar", "tl", "up", "yıllık")}
-        ${card("Özkaynak kârlılığı", "roe", "pct", "up", "")}
-        ${card("Sermaye yeterliliği", "syr", "pct", "up", "")}
-        ${card("Takipteki krediler", "npl", "pct", "down", "")}
+        ${card("Toplam aktif", "aktif", "tl", "up", gore)}
+        ${card("Krediler", "kredi", "tl", "up", gore)}
+        ${card("Mevduat", "mevduat", "tl", "up", gore)}
+        ${card("Özkaynak", "ozkaynak", "tl", "up", gore)}
+        ${card("Net kâr · " + donemAd(P[last]).replace(/ \d{4}$/, ""), "netkar", "tl", "up", j >= 0 ? donemAd(P[j]) + "'e göre" : "")}
+        ${card("Özkaynak kârlılığı", "roe", "pct", "up", gore)}
+        ${card("Sermaye yeterliliği", "syr", "pct", "up", gore)}
+        ${card("Takipteki krediler", "npl", "pct", "down", gore)}
       </div>
       ${chartsHtml()}
       <div class="day" style="margin-top:18px">📈 Bir yıl önceyle karşılaştırma ${fBadge("solo")}</div>
