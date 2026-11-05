@@ -1257,9 +1257,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     ...(function () { try { return localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
     // 5 Kasım 2026: DenizBank kredi kartları Maximum'a geçiyor; kaynak DenizBank'ın kendi duyurusu ("6 Aralık 2026'dan itibaren … Maximum
     // altyapısına geçiyor"); yalnızca duyuruda yazan söylenir, geçiş gününe kadar kalır
-    ["https://www.denizbank.com/kampanya/kart-kampanyalari/cok-yakinda", "🤝 DenizBank kredi kartları <b>6 Aralık'tan</b> itibaren Maximum altyapısına geçiyor <b class=\"gir\">DenizBank duyurusu</b>", "2026-12-06"],
-    // 2 Kasım 2026: İşCep ödülü; kaynak İş Bankası'nın kendi duyurusu (isbank.com.tr); bir hafta kalır
-    ["https://www.isbank.com.tr/bankamizi-taniyin/iscepe-artarda-4kez-dunyanin-en-iyi-bireysel-mobil-bankacilik-uygulamasi-odulu", "🏆 İşCep art arda 4. kez <b>“Dünyanın En İyi Bireysel Mobil Bankacılık Uygulaması”</b> seçildi <b class=\"gir\">Haberi oku</b>", "2026-11-09"],
+    ["https://www.denizbank.com/kampanya/kart-kampanyalari/cok-yakinda", "🤝 DenizBank kredi kartları <b>6 Aralık'tan</b> itibaren Maximum altyapısına geçiyor", "2026-12-06"],
+    // İşCep ödülü satırı 5 Kasım'da çıkarıldı: üstteki kupa kartı zaten gösteriyor
     ["maximum", "🎁 Kampanyaları bulmak hiç bu kadar kolay olmamıştı: İş Bankası, Maximum ve Maximiles tek ekranda; arama, takvim ve <b>Bana uygun</b> <b class=\"gir\">İş Bankası Gündemi › Kampanyalar</b>", "2026-11-30"],
     ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
           ];
@@ -1418,6 +1417,10 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 (function () {
   const GUN = 5;
   const YENI = [
+    ["🌍", "Bölge Nabzı › Dünya", "24 ülkede ekonomi, ticaret ve gurbetçi haberleri", "bolge.html#dunya", "2026-11-05"],
+    ["🚗", "Bölge Nabzı", "trafik kazası ve dolandırıcılık haberleri de bölgende", "bolge.html", "2026-11-05"],
+    ["⭐", "Favorilerim", "sık kullandığın 6 aracı ana sayfaya sabitle", "#fav", "2026-11-05"],
+    ["🎒", "Takvim", "okul tatilleri ve izin gereken iş günleri", "takvim.html", "2026-11-05"],
     ["📍", "Bölge Nabzı", "ilini ya da ilçeni seç: atama, vefat, yatırım, konkordato…", "bolge.html", "2026-10-29"],
     ["🧭", "Yol Gösteren", "firmayı tanımak için resmî kaynaklar tek yerde", "firma.html", "2026-10-28"],
     ["💡", "Pratik", "Hesaplamalar'da kısayollar: yüzde, KDV, tarih, mesafe…", "hesap.html#klavye", "2026-10-27"],
