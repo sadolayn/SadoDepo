@@ -61,7 +61,10 @@
     -webkit-mask: linear-gradient(#000 70%, transparent); mask: linear-gradient(#000 70%, transparent); }
   .top.vidOn .odS .kvid { display: block; }
   .top.vidOn .odS .kupa, .top.vidOn .odS .ray, .top.vidOn .odS .hale, .top.vidOn .odS .kf { display: none; }
-  .top.vidOn .odS .yazi { margin-top: -22px; }
+  .top.vidOn .odS .yazi { margin-top: -32px; }
+  /* Ödülün tam adı bir satır daha tuttuğu için "Haberi oku" düğmesi kayan yazının altına kaçıyordu ya da kesiliyordu (5 Kasım 2026);
+     düğme yerine adın sonuna ›, kartın tamamı zaten bağlantı */
+  .odS span.y3 { display: none; } .odS .y2b::after { content: " ›"; }
   .top.vidOn .hello { margin-bottom: 52px; transition: margin .5s ease; }
   .top .hello { transition: margin .5s ease; }
   .top.vidOn .odS .y1 { font-size: 11px; } .top.vidOn .odS .y2 { font-size: 21px; } .top.vidOn .odS .y3 { margin-top: 4px; padding: 4px 13px; }
