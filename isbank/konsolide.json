@@ -83,6 +83,29 @@
    "url": "https://www.isbank.com.tr/bankamizi-taniyin/finansal-bilgiler"
   },
   {
+   "p": "2026/6",
+   "aktif": 6011.469,
+   "kredi": 3084.201,
+   "mevduat": 3472.347,
+   "ozkaynak": 540.585,
+   "netkar": 41.954,
+   "grup": 30.088,
+   "onceki": {
+    "p": "2025/12",
+    "aktif": 5389.34,
+    "kredi": 2716.991,
+    "mevduat": 3172.836,
+    "ozkaynak": 504.818
+   },
+   "oncekiKar": {
+    "p": "2025/6",
+    "netkar": 41.006,
+    "grup": 30.038
+   },
+   "kaynak": "KAP 1642312, 3 Ağustos 2026 (30.06.2026 konsolide rapor, PwC sınırlı denetim, olumlu)",
+   "url": "https://www.kap.org.tr/tr/Bildirim/1642312"
+  },
+  {
    "p": "2026/9",
    "aktif": 6285.423,
    "kredi": 3234.019,
