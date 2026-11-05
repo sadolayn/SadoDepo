@@ -1241,7 +1241,26 @@ function ytTable(i) {
   return `<table class="yt"><thead><tr><th>Kalem</th><th>${pLabel(P[i])}</th><th>${j >= 0 ? pLabel(P[j]) : "–"}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
     <div class="yt-note">Bankanın kendi yayımladığı resmî veri. Tutarlar TL (trn = trilyon, mlr = milyar). Renk yalnızca artış/azalış yönünü gösterir, yorum değildir. Yatırım tavsiyesi değildir. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.</div>`;
 }
+// Konsolide (iştiraklerle birlikte) ana rakamlar: isbank/konsolide.json, elle girilir (KAP ya da bankanın konsolide raporu). Solo tablonun altında ayrı kutu;
+// yan yana konmaz (dar ekranda sığmaz, iki ölçü karışır). Bilanço kalemleri bir önceki yıl sonuyla, kâr aynı dönemin bir yıl öncesiyle karşılaştırılır (raporun kendi sütunları).
+let KONS = null, konsSel = "";
+function konsolideHtml() {
+  if (!KONS || !KONS.donemler || !KONS.donemler.length) return "";
+  const D = KONS.donemler.filter((x) => x.aktif != null), k = D.find((x) => x.p === konsSel) || D[D.length - 1], o = k.onceki || {}, ok = k.oncekiKar || {};
+  const ay = (p) => { const [y, m] = p.split("/"); return ({ "3": "Ocak–Mart", "6": "Ocak–Haziran", "9": "Ocak–Eylül", "12": "Ocak–Aralık" })[m] + " " + y; };
+  const satir = (ad, bu, once, iyi) => `<tr><td>${esc(ad)}</td><td class="now">${ytFmt(bu)}</td><td class="old">${ytFmt(once)}</td><td>${once == null ? "–" : chgCell(bu, once, "", iyi)}</td></tr>`;
+  const rows = satir("Toplam aktif", k.aktif, o.aktif, "up") + satir("Krediler", k.kredi, o.kredi, "up") + satir("Mevduat", k.mevduat, o.mevduat, "up") + satir("Özkaynak", k.ozkaynak, o.ozkaynak, "up")
+    + (k.netkar != null ? satir(`Dönem net kârı (${ay(k.p).split(" ")[0]})`, k.netkar, ok.netkar, "up") + satir("· ana ortaklık payı", k.grup, ok.grup, "up") : "");
+  const gecmis = D.length > 1 ? `<div class="yt-chips" style="margin-top:8px">${D.map((x) => `<button type="button" data-kons="${esc(x.p)}" class="${x.p === k.p ? "on" : ""}">${pLabel(x.p)}</button>`).join("")}</div>` : "";
+  return `<div class="day" style="margin-top:22px">🏦 Konsolide <small style="font-weight:500;color:#9a9a9a">· iştiraklerle birlikte · ${pLabel(k.p)}</small></div>
+    ${gecmis}<table class="yt"><thead><tr><th>Kalem</th><th>${pLabel(k.p)}</th><th>${o.p ? pLabel(o.p) : "–"}${ok.p ? `<small style="display:block;font-weight:400">kâr: ${pLabel(ok.p)}</small>` : ""}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="yt-note">Konsolide tabloda Anadolu Sigorta, Anadolu Hayat gibi iştirakler de yer alır; bu yüzden rakamlar yukarıdaki solo tablodan büyüktür. Bilanço kalemleri bir önceki yıl sonuyla, kâr bir yıl önceki aynı dönemle karşılaştırılır. Elle girilir, yorum değildir. Kaynak: <a href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.kaynak)} ↗</a></div>`;
+}
+function bindKons() {
+  document.querySelectorAll("[data-kons]").forEach((b) => (b.onclick = () => { konsSel = b.dataset.kons; renderFinans(); }));
+}
 function bindYt() {
+  bindKons();
   const c = document.getElementById("ytChips");
   if (!c) return;
   c.onclick = (e) => { const b = e.target.closest("button"); if (!b) return; ytSel = +b.dataset.i; c.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); document.getElementById("ytTable").innerHTML = ytTable(ytSel); };
@@ -1270,7 +1289,8 @@ function yatHtml() {
       ${chartsHtml()}
       <div class="day" style="margin-top:18px">📈 Bir yıl önceyle karşılaştırma <small style="font-weight:500;color:#9a9a9a">· solo</small></div>
       <div class="yt-chips" id="ytChips">${opts.map((o) => `<button data-i="${o.i}" class="${o.i === ytSel ? "on" : ""}">${pLabel(o.p)}</button>`).join("")}</div>
-      <div id="ytTable">${ytTable(ytSel)}</div>`;
+      <div id="ytTable">${ytTable(ytSel)}</div>
+      ${konsolideHtml()}`;
   }
   if (y) {
     h += `<div class="day" id="sunumBox" style="margin-top:22px">📄 Yatırımcı sunumu</div><div class="facts" style="margin-top:6px"><ul>${y.paylar.map((n) => `<li>${esc(n)}</li>`).join("")}</ul></div>
@@ -1946,6 +1966,7 @@ function renderList() {
     } catch (e) {}
     if (!CATS.some((c) => c[0] === cat) && !MENU.some((m) => m[0] === cat) && cat !== "Finans") cat = "Tümü";
     try { fin = await Ortak.json("isbank/finans.json"); } catch (e) {}
+    try { KONS = await Ortak.json("isbank/konsolide.json"); } catch (e) {}
     try { yat = await Ortak.json("isbank/yatirimci.json"); } catch (e) {}
     try { bkamp = await Ortak.json("isbank/banka_kampanya.json"); } catch (e) {}
     try { KH = await Ortak.json("isbank/kampanya_hepsi.json"); } catch (e) {}

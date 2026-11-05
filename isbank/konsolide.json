@@ -1,0 +1,86 @@
+{
+ "not": "İş Bankası konsolide (iştiraklerle birlikte) ana rakamlar; elle girilir, her dönem için kaynak belirtilir. Birim milyar TL. netkar = yılbaşından dönem sonuna dönem net kârı (azınlık payları dahil), grup = ana ortaklık payı.",
+ "guncelleme": "2026-11-05",
+ "donemler": [
+  {
+   "p": "2025/6",
+   "aktif": 4645.148,
+   "kredi": 2317.373,
+   "mevduat": 2706.473,
+   "ozkaynak": 422.379,
+   "netkar": 41.006,
+   "grup": 30.038,
+   "onceki": {
+    "p": "2024/12",
+    "aktif": 3860.698,
+    "kredi": 1887.291,
+    "mevduat": 2179.418,
+    "ozkaynak": 372.712
+   },
+   "oncekiKar": {
+    "p": "2024/6",
+    "netkar": 38.96,
+    "grup": 29.331
+   },
+   "kaynak": "Bankanın 30.06.2025 konsolide finansal raporu (Excel)",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/finansal-bilgiler"
+  },
+  {
+   "p": "2025/12",
+   "aktif": 5389.34,
+   "kredi": 2716.991,
+   "mevduat": 3172.836,
+   "ozkaynak": 504.818,
+   "netkar": null,
+   "grup": null,
+   "kaynak": "KAP 1693299 (30.09.2026 raporunun önceki dönem sütunu)",
+   "url": "https://www.kap.org.tr/tr/Bildirim/1693299"
+  },
+  {
+   "p": "2026/3",
+   "aktif": 5782.905,
+   "kredi": 2916.355,
+   "mevduat": 3342.886,
+   "ozkaynak": 498.065,
+   "netkar": 25.667,
+   "grup": 20.459,
+   "onceki": {
+    "p": "2025/12",
+    "aktif": 5389.338,
+    "kredi": 2716.991,
+    "mevduat": 3172.839,
+    "ozkaynak": 504.819
+   },
+   "oncekiKar": {
+    "p": "2025/3",
+    "netkar": 17.407,
+    "grup": 12.17
+   },
+   "kaynak": "Bankanın 31.03.2026 konsolide finansal raporu (Excel)",
+   "url": "https://www.isbank.com.tr/bankamizi-taniyin/finansal-bilgiler"
+  },
+  {
+   "p": "2026/9",
+   "aktif": 6285.423,
+   "kredi": 3234.019,
+   "mevduat": 3632.688,
+   "ozkaynak": 551.63,
+   "netkar": 59.059,
+   "grup": 40.437,
+   "onceki": {
+    "p": "2025/12",
+    "aktif": 5389.34,
+    "kredi": 2716.991,
+    "mevduat": 3172.836,
+    "ozkaynak": 504.818
+   },
+   "oncekiKar": {
+    "p": "2025/9",
+    "netkar": 60.291,
+    "grup": 44.127
+   },
+   "kaynak": "KAP 1693299, 5 Kasım 2026 (PwC sınırlı denetim, görüş olumlu)",
+   "url": "https://www.kap.org.tr/tr/Bildirim/1693299"
+  }
+ ]
+}
