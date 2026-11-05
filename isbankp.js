@@ -47,6 +47,7 @@ if (location.hash === "#iscep" || location.hash === "#odul") cat = "İşCep";
 const odulGit = location.hash === "#odul"; // ana sayfadaki kupadan gelince ödül kartına kaydır
 if (location.hash === "#guncel") { cat = "📰 Güncel"; lastNews = cat; } // ana sayfadaki kayan yazıdaki önemli haberden
 if (location.hash === "#kap") { cat = "KAP"; lastNews = cat; }
+if (location.hash === "#haber") { cat = "Haber"; lastNews = cat; } // ana sayfadaki kayan yazıdaki Genel Müdür sözünden
 if (location.hash === "#video") { cat = "🎬 Video"; lastNews = cat; } // ana sayfadaki kayan yazıdaki bayram videosundan
 if (location.hash === "#atamalar") { cat = "👔 Atamalar"; lastNews = cat; } // ana sayfadaki ÖNEMLİ atama haberinden
 if (location.hash === "#black") { cat = "Black"; ayr = "black"; }

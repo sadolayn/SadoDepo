@@ -1252,6 +1252,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   // Önemli duyuru (ÖNEMLİ rozeti, PPK satırından hemen sonra): Resmi Gazete sayfasındaki "yapım aşamasında" kutusuna gider
   const dizi = [
     ["video", "<svg class=\"kyTrb\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><rect width=\"30\" height=\"20\" fill=\"#e30a17\"/><circle cx=\"11\" cy=\"10\" r=\"5\" fill=\"#fff\"/><circle cx=\"12.25\" cy=\"10\" r=\"4\" fill=\"#e30a17\"/><polygon points=\"16.2,10 19.9,8.8 17.6,11.9 17.6,8.1 19.9,11.2\" fill=\"#fff\"/></svg><b>Cumhuriyet Bayramımız kutlu olsun!</b> İş Bankası'nın 29 Ekim videosu <b class=\"gir\">İş Bankası Gündemi › Video</b>", "2026-10-29", "onem"],
+    // 6 Kasım 2026: Genel Müdür H. Cahit Çınar'ın Eylül 2026 sonuçlarına ilişkin değerlendirmesi (Fintechtime / Fintech Dünyası'ndaki açıklama metni); Haberler'deki alıntı kartına gider
+    ["haber", "💬 Genel Müdür <b>H. Cahit Çınar</b>: “Bir bankanın çok daha ötesinde bir kurum olarak kaynaklarımızı ülkemizin katma değerli üretimine fayda sağlamak (…) için kullanmaya devam edeceğiz” <b class=\"gir\">İş Bankası Gündemi › Haber</b>", "2026-11-20", "onem"],
     // Ay başı hatırlatması (her ayın 1-5'i): yeni kampanyalara katılmayı unutma. İlk 3 gün "Yeni gelenler"e, sonra tüm kampanyalara gider
     ...(+bugunTR.slice(8) <= 5 ? [[+bugunTR.slice(8) <= 5 ? "yeniliste" : "maximum", "🗓️ Yeni ay, yeni kampanyalar! " + ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"][+bugunTR.slice(5, 7) - 1] + " kampanyalarına katılmayı unutma 🎁 <b class=\"gir\">Güncel kampanyalar</b>"]] : []),
     ...(function () { try { return localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
@@ -1420,7 +1422,6 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     ["🌍", "Bölge Nabzı › Dünya", "24 ülkede ekonomi, ticaret ve gurbetçi haberleri", "bolge.html#dunya", "2026-11-05"],
     ["🚗", "Bölge Nabzı", "trafik kazası ve dolandırıcılık haberleri de bölgende", "bolge.html", "2026-11-05"],
     ["⭐", "Favorilerim", "sık kullandığın 6 aracı ana sayfaya sabitle", "#fav", "2026-11-05"],
-    ["🎒", "Takvim", "okul tatilleri ve izin gereken iş günleri", "takvim.html", "2026-11-05"],
     ["📍", "Bölge Nabzı", "ilini ya da ilçeni seç: atama, vefat, yatırım, konkordato…", "bolge.html", "2026-10-29"],
     ["🧭", "Yol Gösteren", "firmayı tanımak için resmî kaynaklar tek yerde", "firma.html", "2026-10-28"],
     ["💡", "Pratik", "Hesaplamalar'da kısayollar: yüzde, KDV, tarih, mesafe…", "hesap.html#klavye", "2026-10-27"],
