@@ -1255,18 +1255,28 @@ function ytTable(i) {
 }
 // Konsolide (iştiraklerle birlikte) ana rakamlar: isbank/konsolide.json, elle girilir (KAP ya da bankanın konsolide raporu). Solo tablonun altında ayrı kutu;
 // yan yana konmaz (dar ekranda sığmaz, iki ölçü karışır). Bilanço kalemleri bir önceki yıl sonuyla, kâr aynı dönemin bir yıl öncesiyle karşılaştırılır (raporun kendi sütunları).
+// Dönem seçici: yıla göre gruplanmış zaman çizgisi (yıl etiketi + Ç1–Ç4 düğmeleri). items: [{p, attr, val, on}], en eski solda.
+function donemCizgi(items, id) {
+  const yil = {}; items.forEach((it) => { const [y, m] = it.p.split("/"); (yil[y] = yil[y] || []).push(Object.assign({ q: "Ç" + Math.round(+m / 3), ay: AY_TR[m].slice(0, 3) }, it)); });
+  return `<div class="yt-tl"${id ? ` id="${id}"` : ""}>${Object.keys(yil).sort().map((y) => `<div class="yt-yil"><b>${y}</b>${yil[y].sort((a, b) => +a.p.split("/")[1] - +b.p.split("/")[1]).map((it) => `<button type="button" ${it.attr}="${esc(String(it.val))}" class="${it.on ? "on" : ""}"><small>${it.q}</small>${it.ay}</button>`).join("")}</div>`).join("")}</div>`;
+}
+const fBadge = (tur) => tur === "solo" ? `<span class="fbadge solo">Solo · yalnızca banka</span>` : `<span class="fbadge kons">Konsolide · iştiraklerle birlikte</span>`;
 let KONS = null, konsSel = "";
 function konsolideHtml() {
   if (!KONS || !KONS.donemler || !KONS.donemler.length) return "";
-  const D = KONS.donemler.filter((x) => x.aktif != null), k = D.find((x) => x.p === konsSel) || D[D.length - 1], o = k.onceki || {}, ok = k.oncekiKar || {};
+  const D = KONS.donemler.filter((x) => x.aktif != null), k = D.find((x) => x.p === konsSel) || D[D.length - 1];
+  const [ky, km] = k.p.split("/"), yo = D.find((x) => x.p === (+ky - 1) + "/" + km); // bir yıl önceki aynı dönem
+  const o = yo || k.onceki || {}, ok = yo && yo.netkar != null ? yo : (k.oncekiKar || {});
   const ay = (p) => { const [y, m] = p.split("/"); return ({ "3": "Ocak–Mart", "6": "Ocak–Haziran", "9": "Ocak–Eylül", "12": "Ocak–Aralık" })[m] + " " + y; };
   const satir = (ad, bu, once, iyi) => `<tr><td>${esc(ad)}</td><td class="now">${ytFmt(bu)}</td><td class="old">${ytFmt(once)}</td><td>${once == null ? "–" : chgCell(bu, once, "", iyi)}</td></tr>`;
   const rows = satir("Toplam aktif", k.aktif, o.aktif, "up") + satir("Krediler", k.kredi, o.kredi, "up") + satir("Mevduat", k.mevduat, o.mevduat, "up") + satir("Özkaynak", k.ozkaynak, o.ozkaynak, "up")
-    + (k.netkar != null ? satir(`Dönem net kârı (${ay(k.p).split(" ")[0]})`, k.netkar, ok.netkar, "up") + satir("· ana ortaklık payı", k.grup, ok.grup, "up") : "");
-  const gecmis = D.length > 1 ? `<div class="yt-chips" style="margin-top:8px">${D.map((x) => `<button type="button" data-kons="${esc(x.p)}" class="${x.p === k.p ? "on" : ""}">${pLabel(x.p)}</button>`).join("")}</div>` : "";
-  return `<div class="day" style="margin-top:22px">🏦 Konsolide <small style="font-weight:500;color:#9a9a9a">· iştiraklerle birlikte · ${pLabel(k.p)}</small></div>
-    ${gecmis}<table class="yt"><thead><tr><th>Kalem</th><th>${pLabel(k.p)}</th><th>${o.p ? pLabel(o.p) : "–"}${ok.p ? `<small style="display:block;font-weight:400">kâr: ${pLabel(ok.p)}</small>` : ""}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
-    <div class="yt-note">Konsolide tabloda Anadolu Sigorta, Anadolu Hayat gibi iştirakler de yer alır; bu yüzden rakamlar yukarıdaki solo tablodan büyüktür. Bilanço kalemleri bir önceki yıl sonuyla, kâr bir yıl önceki aynı dönemle karşılaştırılır. Elle girilir, yorum değildir. Kaynak: <a href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.kaynak)} ↗</a></div>`;
+    + (k.netkar != null ? satir(`Net kâr (${ay(k.p).split(" ")[0].toLowerCase()})`, k.netkar, ok.netkar, "up") + satir("· ana ortaklık payı", k.grup, ok.grup, "up") : "");
+  const gecmis = D.length > 1 ? donemCizgi(D.map((x) => ({ p: x.p, attr: "data-kons", val: x.p, on: x.p === k.p }))) : "";
+  const karsi = yo ? pLabel(yo.p) : `${o.p ? pLabel(o.p) : "–"}${ok.p ? `<small style="display:block;font-weight:400">kâr: ${pLabel(ok.p)}</small>` : ""}`;
+  const notKarsi = yo ? "Bir yıl önceki aynı dönemle karşılaştırılır." : `${pLabel(k.p)} için bir yıl öncesinin konsolide rakamı elimizde yok; bilanço yıl sonuyla, kâr bir yıl önceki aynı dönemle karşılaştırılır.`;
+  return `<div class="day" style="margin-top:22px">🏦 Bir yıl önceyle karşılaştırma ${fBadge("kons")}</div>
+    ${gecmis}<table class="yt kons"><thead><tr><th>Kalem</th><th>${pLabel(k.p)}</th><th>${karsi}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="yt-note">Konsolide tabloda Anadolu Sigorta, Anadolu Hayat gibi iştirakler de yer alır; bu yüzden rakamlar yukarıdaki solo tablodan büyüktür. ${notKarsi} Elle girilir, yorum değildir. Kaynak: <a href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.kaynak)} ↗</a></div>`;
 }
 function bindKons() {
   document.querySelectorAll("[data-kons]").forEach((b) => (b.onclick = () => { konsSel = b.dataset.kons; renderFinans(); }));
@@ -1287,7 +1297,7 @@ function yatHtml() {
     const opts = P.map((p, i) => ({ p, i })).filter((o) => o.p.startsWith(ly) || o.p === (+ly - 1) + "/12").reverse();
     if (ytSel == null) ytSel = last;
     const card = (ad, k, tur, iyi, alt) => `<div class="stat"><span>${ad}</span><b style="font-size:21px">${ytFmt(S[k][last], tur)}</b><small>${alt || ""} ${chgCell(S[k][last], S[k][j], tur, iyi)}</small></div>`;
-    h += `<div class="day" style="margin-top:22px">📊 Finansal veriler · ${pLabel(P[last])} · <span style="color:#8fb0ff">konsolide olmayan (solo)</span><small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Yalnızca bankanın kendi rakamları; kaynak bankanın finansal veri dosyası${fin.elle && fin.elle[P[last]] ? ` (${pLabel(P[last])}: bankanın solo raporu)` : ""}. KAP'taki konsolide raporda (iştiraklerle birlikte) rakamlar daha büyüktür.</small></div>
+    h += `<div class="day" style="margin-top:22px">📊 Finansal veriler · ${pLabel(P[last])} · ${fBadge("solo")}<small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Yalnızca bankanın kendi rakamları; kaynak bankanın finansal veri dosyası${fin.elle && fin.elle[P[last]] ? ` (${pLabel(P[last])}: bankanın solo raporu)` : ""}. KAP'taki konsolide raporda (iştiraklerle birlikte) rakamlar daha büyüktür.</small></div>
       <div class="stats">
         ${card("Toplam aktif", "aktif", "tl", "up", "yıllık")}
         ${card("Krediler", "kredi", "tl", "up", "yıllık")}
@@ -1299,8 +1309,8 @@ function yatHtml() {
         ${card("Takipteki krediler", "npl", "pct", "down", "")}
       </div>
       ${chartsHtml()}
-      <div class="day" style="margin-top:18px">📈 Bir yıl önceyle karşılaştırma <small style="font-weight:500;color:#9a9a9a">· solo</small></div>
-      <div class="yt-chips" id="ytChips">${opts.map((o) => `<button data-i="${o.i}" class="${o.i === ytSel ? "on" : ""}">${pLabel(o.p)}</button>`).join("")}</div>
+      <div class="day" style="margin-top:18px">📈 Bir yıl önceyle karşılaştırma ${fBadge("solo")}</div>
+      ${donemCizgi(opts.map((o) => ({ p: o.p, attr: "data-i", val: o.i, on: o.i === ytSel })), "ytChips")}
       <div id="ytTable">${ytTable(ytSel)}</div>
       ${konsolideHtml()}`;
   }

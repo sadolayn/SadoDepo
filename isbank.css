@@ -353,6 +353,18 @@
   .sum .grid span { font-size: 11px; color: #c9d0ff; }
   .sum .foot { font-size: 11px; color: #aab3e6; margin-top: 8px; }
   .sum .foot a { color: #fff; font-weight: 600; text-decoration: none; margin-left: 4px; }
+  .yt-tl { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 10px; }
+  .yt-yil { display: flex; align-items: stretch; gap: 4px; padding: 4px 6px 4px 4px; border: 1px solid var(--line); border-radius: 14px; background: #070707; }
+  .yt-yil b { align-self: center; font-family: Georgia, serif; font-style: italic; font-weight: 400; font-size: 13px; color: var(--accent); padding: 0 6px 0 5px; }
+  .yt-yil button { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 44px; padding: 5px 8px; border-radius: 10px; border: 1px solid transparent; background: transparent; color: var(--muted); font-size: 12.5px; font-weight: 600; cursor: pointer; transition: background .2s ease, color .2s ease, transform .15s ease; }
+  .yt-yil button small { font-size: 10px; font-weight: 500; letter-spacing: .3px; color: #6f6f6f; }
+  .yt-yil button:active { transform: scale(.95); }
+  .yt-yil button.on { background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; border-color: #3a50f0; }
+  .yt-yil button.on small { color: #c9d1ff; }
+  .fbadge { display: inline-block; vertical-align: middle; margin-left: 6px; padding: 3px 9px; border-radius: 999px; font-size: 10.5px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; }
+  .fbadge.solo { color: #9fb8ff; background: #121a3a; border: 1px solid #2a3a7a; }
+  .fbadge.kons { color: #d9b8ff; background: #241640; border: 1px solid #4a2f80; }
+  table.yt.kons { border-color: #3a2a60; } table.yt.kons th { background: #140f20; }
   .yt-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 8px; }
   .yt-chips button { padding: 7px 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
   .yt-chips button.on { background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; border-color: #3a50f0; }
