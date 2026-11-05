@@ -70,6 +70,9 @@
   .tum.ikinci { min-height: 52px; padding: 6px 10px; background: transparent; border: 1px solid var(--c); color: var(--c2); font-size: 15px; text-align: center; }
   .tum.ikinci small { color: #c9a88c; font-weight: 600; }
   .ilSec { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #c9a88c; }
+  .daralt { display: flex; align-items: center; gap: 10px; min-height: 44px; margin-top: 2px; font-size: 13.5px; color: var(--c2); cursor: pointer; }
+  .daralt input { width: 22px; height: 22px; margin: 0; accent-color: var(--c); flex: none; }
+  .daralt small { display: block; font-size: 11.5px; color: #a5876f; margin-top: 1px; }
   .ilSec select { flex: 1; min-width: 0; min-height: 40px; padding: 0 8px; border-radius: 10px; border: 1px solid var(--cz); background: var(--k2); color: var(--c2); font: inherit; font-size: 14px; }
   .kBas { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .kSure { flex: none; min-height: 32px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--c); background: #2c1608; color: var(--c2); font-size: 12.5px; font-weight: 700; cursor: pointer; }
@@ -143,6 +146,7 @@
         <a class="tum" id="ulkeTum" target="_blank" rel="noopener">Ülkenin tüm haberleri ↗</a>
         <a class="tum ikinci" id="ulkeIlA" target="_blank" rel="noopener" hidden></a>
         <label class="ilSec">📍 <span id="ulkeIlNot">Büyükşehrinle bağı</span><select id="ulkeIl" aria-label="Ülkeyle bağı aranacak büyükşehir"><option value="">Büyükşehir seç</option></select></label>
+        <label class="daralt" id="daraltK" hidden><input type="checkbox" id="daralt"><span id="daraltM"></span></label>
       </section>
       <section class="kart" aria-label="Ülke konuları" style="margin-top:14px">
         <div class="kBas"><h2>Konular <small>başlığında ülke ve konu geçen haberler</small></h2></div>
@@ -214,7 +218,7 @@ const ilEk = (ad) => { const k = ad.toLocaleLowerCase("tr"), v = (k.match(/[aeı
 
 const GRUP = BolgeSorgu.GRUP; // konular ve sorgu kuralları bolgesorgu.js'te (ana sayfadaki Açılış kartı da kullanır)
 
-let S = { il: "", ilce: "", elle: "", konum: false, son: [], sure: "7d", mod: "tr", ulke: "", dil: "" }, IL = null, ILMAP = null, ON = [];
+let S = { il: "", ilce: "", elle: "", konum: false, son: [], sure: "7d", mod: "tr", ulke: "", dil: "", dar: false, dilYok: false }, IL = null, ILMAP = null, ON = [];
 try { const v = JSON.parse(localStorage.getItem("bolgem") || localStorage.getItem("haber_yerel2") || "null"); if (v && typeof v === "object") S = { ...S, ...v }; } catch (e) {}
 if (!Array.isArray(S.son)) S.son = [];
 S.mod = location.hash === "#dunya" ? "dunya" : "tr"; // sayfa her açılışta Türkiye sekmesiyle açılır (ana sayfadaki YENİ şeridinden #dunya ile Dünya); Dünya'da seçilen ülke hatırlanır
@@ -290,6 +294,8 @@ const BUYUK = ["Adana", "Ankara", "Antalya", "Aydın", "Balıkesir", "Bursa", "D
 // Kısa tutuldu: Google ~32 kelimeyi aşan aramanın sonunu kesiyor; 9 kelimeyle uzunluk Atama aramasına yakın (5 Kasım 2026, 12 çiftte denendi)
 const BAG = 'ihracat OR ihracatı OR ithalat OR yatırım OR ticaret OR turist OR uçuş OR fabrika OR "iş birliği"';
 const ugn = (ek) => BolgeSorgu.haberUrl(`intitle:"${S.ulke}"` + (ek ? " (" + ek.split(" OR ").map((t) => "intitle:" + t.trim()).join(" OR ") + ")" : ""), S.sure); // Google Haberler (bolgesorgu.js)
+// "Konuları şehre göre daralt" açıkken: ülke + büyükşehir + konu başlıkta birlikte (konu verilmezse bağ kelimeleri); Google Arama'da en yeni üstte, hep son 1 ay
+const ugnDar = (dil, ek) => BolgeSorgu.aramaUrl(`intitle:"${S.ulke}" intitle:"${dil}" (${(ek || BAG).split(" OR ").map((t) => "intitle:" + t.trim()).join(" OR ")})`, "30d");
 function dunyaCiz() {
   const tr = S.mod !== "dunya";
   document.querySelectorAll("[data-mod]").forEach((b) => { b.classList.toggle("on", (b.dataset.mod === "dunya") !== tr); b.setAttribute("aria-selected", String((b.dataset.mod === "dunya") !== tr)); });
@@ -307,16 +313,24 @@ function dunyaCiz() {
   // yerel gazetenin her Almanya haberi geliyordu. Bağ kelimesiyle sonuçlar seyrek ama nokta atışı ("İngiltere'ye Denizli ihracatı yüzde 40,7 arttı",
   // "Gaziantep-Irak İş ve Yatırım Forumu"); seyrek olduğu için süre her zaman 1 ay. İl ya da ülke metinde aranınca alakasız haber karışıyordu.
   // İl, Türkiye sekmesinde seçilen yer büyükşehirse oradan gelir; burada seçilen hatırlanır (S.dil).
-  const dil = BUYUK.includes(S.dil) ? S.dil : BUYUK.includes(S.il) ? S.il : "", sel = $("ulkeIl");
+  // "Büyükşehir seç" seçilirse (S.dilYok) Türkiye sekmesindeki il de kullanılmaz
+  const dil = BUYUK.includes(S.dil) ? S.dil : !S.dilYok && BUYUK.includes(S.il) ? S.il : "", sel = $("ulkeIl");
   if (sel.options.length < 2) sel.innerHTML = `<option value="">Büyükşehir seç</option>` + BUYUK.map((x) => `<option>${esc(x)}</option>`).join("");
   sel.value = dil;
   $("ulkeIlNot").textContent = dil ? "Şehir değiştir" : "Büyükşehrinle bağı";
   $("ulkeIlA").hidden = !dil;
-  if (dil) { $("ulkeIlA").href = BolgeSorgu.aramaUrl(`intitle:"${S.ulke}" intitle:"${dil}" (${BAG.split(" OR ").map((t) => "intitle:" + t.trim()).join(" OR ")})`, "30d"); $("ulkeIlA").innerHTML = `📍 ${esc(dil)} – ${esc(S.ulke)}: ticaret, yatırım, turizm ↗<small>Son 1 ay · en yeni üstte</small>`; }
-  $("ulkeDonem").innerHTML = `📅 <span><b>${donem()}</b> arası haberler</span>`; // Google Haberler alaka sırasıyla gösterir, "en yeni üstte" denmez
+  if (dil) { $("ulkeIlA").href = ugnDar(dil); $("ulkeIlA").innerHTML = `📍 ${esc(dil)} – ${esc(S.ulke)}: ticaret, yatırım, turizm ↗<small>Son 1 ay · en yeni üstte</small>`; }
+  // Anahtar: büyükşehir seçiliyken "Konuları şehre göre daralt" (S.dar). Açıkken tüm haberler ve her konu şehir + ülke + konu arar (5 Kasım 2026).
+  const dar = !!(dil && S.dar);
+  $("daraltK").hidden = !dil; $("daralt").checked = dar;
+  // Yönelme eki: Aydın'a, İzmir'e, Muğla'ya, Ordu'ya (ilEk tamlama içindir)
+  const eEk = (ad) => { const k = ad.toLocaleLowerCase("tr"), v = (k.match(/[aeıioöuü]/g) || ["e"]).pop(); return ad + "'" + (/[aeıioöuü]$/.test(k) ? "y" : "") + (/[aıou]/.test(v) ? "a" : "e"); };
+  $("daraltM").innerHTML = `Konuları <b>${esc(dil ? eEk(dil) : "şehre")}</b> göre daralt<small>${dar ? "Açık: her düğme " + esc(dil) + " + " + esc(S.ulke) + " + konu arar; seyrek ama nokta atışı, bazı düğmeler boş gelebilir" : "Kapalı: konular ülke geneli"}</small>`;
+  if (dar) { $("ulkeTum").href = ugnDar(dil); $("ulkeTum").innerHTML = `${esc(dil)} ile ilgili tüm ${esc(S.ulke)} haberleri ↗<small>Son 1 ay · en yeni üstte</small>`; $("ulkeIlA").hidden = true; }
+  $("ulkeDonem").innerHTML = dar ? `📍 <span><b>${esc(dil)}</b> + <b>${esc(S.ulke)}</b> + konu, başlıkta birlikte · son 1 ay, en yeni üstte</span>` : `📅 <span><b>${donem()}</b> arası haberler</span>`; // Google Haberler alaka sırasıyla gösterir, "en yeni üstte" denmez
   $("ulkeKonu").innerHTML = DUNYA_KONU.map(([g, renk, L]) => {
     const K = L.filter((k) => !k[3] || k[3]().includes(S.ulke)); // ülkeye uygun konular
-    return K.length ? `<div class="grp" style="--g:${renk}"><div class="grpB">${esc(g)}</div><div class="izgara">${K.map(([ic, n, q]) => `<a href="${esc(ugn(q))}" target="_blank" rel="noopener"><span class="ik">${ic}</span><span class="ad">${esc(n)}</span><span class="ok">↗</span></a>`).join("")}</div></div>` : "";
+    return K.length ? `<div class="grp" style="--g:${renk}"><div class="grpB">${esc(g)}</div><div class="izgara">${K.map(([ic, n, q]) => `<a href="${esc(dar ? ugnDar(dil, q) : ugn(q))}" target="_blank" rel="noopener"><span class="ik">${ic}</span><span class="ad">${esc(n)}</span><span class="ok">↗</span></a>`).join("")}</div></div>` : "";
   }).join("");
 }
 
@@ -423,7 +437,8 @@ function konumBul() {
 }
 
 $("konum").onclick = konumBul;
-$("ulkeIl").addEventListener("change", (e) => { S.dil = e.target.value; sakla(); ciz(); window.Rapor && Rapor.bolum("bolgem-dunya-il"); });
+$("ulkeIl").addEventListener("change", (e) => { S.dil = e.target.value; S.dilYok = !S.dil; sakla(); ciz(); window.Rapor && Rapor.bolum("bolgem-dunya-il"); });
+$("daralt").addEventListener("change", (e) => { S.dar = e.target.checked; sakla(); ciz(); window.Rapor && Rapor.bolum("bolgem-dunya-daralt"); });
 $("yaz").addEventListener("input", oner);
 $("yaz").addEventListener("focus", ilYukle);
 // Yazarken öneriler klavyenin altında kalmasın: kutu ekranın üstüne kayar
