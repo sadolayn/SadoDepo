@@ -1350,6 +1350,15 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   });
   window.Acilis = { ac: function () { durum(true, true); } };
   if (location.hash === "#acilis") setTimeout(function () { window.Acilis.ac(); }, 300);
+  // Favoriler, arama ve A-Z listesindeki "Açılış kartı" kısayolları: kart gizli olduğu için #acilis'e atlamak bir şey
+  // yapmıyordu (6 Kasım 2026); kısayola dokununca kartı aç ve oraya kaydır
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href="#acilis"]');
+    if (!a || a === row || document.body.classList.contains("favDuz") || e.target.closest("[data-fvx], .yb")) return;
+    e.preventDefault(); window.Acilis.ac();
+    if (window.Rapor) Rapor.bolum("acilis-kisayol");
+  });
+  window.addEventListener("hashchange", function () { if (location.hash === "#acilis") window.Acilis.ac(); });
 })();
 </script>
 
