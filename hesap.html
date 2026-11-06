@@ -1,7 +1,8 @@
 <!doctype html>
-<html lang="tr">
+<html lang="tr" data-tema-koru="\.(calc|k|lcd|bed|brand|solar|prt|led|bmdisp|brb)\b">
 <head>
 <meta charset="utf-8">
+<script src="tema.js"></script>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" href="img/icon.png">
 <link rel="apple-touch-icon" href="img/icon.png">
@@ -50,7 +51,7 @@
 
   <!-- ===== Hesap makinesi ===== -->
   <section class="panel on" id="calc" data-skin="seritli">
-    <div class="calcbox"><div class="calc">
+    <div class="calcbox" data-tema-koru-alan><div class="calc">
       <div class="brand"><b>Sadolayn</b><div class="solar"></div><span class="prt"><i class="led"></i>PRINT</span><span class="brb"><button type="button" id="skinB" aria-label="Görünüm" data-yeni="gorunum|2026-10-20|•">🎨</button><button type="button" id="snd" aria-label="Tuş sesi">🔊</button></span><i id="mdl">SL-12</i></div>
       <div class="skinpop" id="skinPop" hidden><b>Makinenin görünümü</b><button type="button" data-s="seritli"><i class="sw sw-s"></i>Şeritli</button><button type="button" data-s="klasik"><i class="sw sw-k"></i>Klasik</button><button type="button" data-s="pastel"><i class="sw sw-p"></i>Pastel</button></div>
       <div class="lcd"><div class="ind"><span id="iM">M</span><span id="iE">E</span><span id="iK">−</span></div><div class="op" id="lOp"></div><div class="num" id="lNum">0</div></div>
