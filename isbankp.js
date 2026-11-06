@@ -798,7 +798,7 @@ function renderKampanyalar() {
   const V0 = KH[kKay][kSeg], kayp = V0.toplam - L.length, biten = (V0.kategoriler || []).reduce((a, c) => a + (c.biten || 0), 0);
   govde = () => sag + (acil ? `<div class="alarm">⏰ <b>${acil} kampanya</b> 3 gün içinde bitiyor!</div>` : "")
     + (liste.length ? liste.map((k) => kKart(k, renk)).join("") : '<div class="empty">Bu seçimde şu an kampanya yok.</div>')
-    + (kayp > 0 && !kNe && !kNere && !kKim ? `<p class="note" style="text-align:center">${kayDom}'de ${V0.toplam} yazıyor: ${kKay === "isbank" || (biten && biten >= kayp) ? `<b>${L.length} güncel</b> + ${kayp} süresi bitmiş kampanya. Sitedeki sayılara "Bu Kampanya Sona Ermiştir" yazan eski kampanyalar da dahil; burada yalnızca güncel olanlar var.` : `burada <b>${L.length}</b> farklı kampanya var. Aynı kampanyaya giden kartlar burada bir kez sayılır, bitiş günü geçenler de listeden düşer; fark bundan.`}</p>` : "") + tumLink;
+    + (kayp > 0 && !kNe && !kNere && !kKim ? `<p class="note" style="text-align:center">${kayDom}'de ${V0.toplam} yazıyor: ${biten && biten >= kayp ? `<b>${L.length} güncel</b> + ${kayp} süresi bitmiş kampanya. Sitedeki sayılara "Bu Kampanya Sona Ermiştir" yazan eski kampanyalar da dahil; burada yalnızca güncel olanlar var.` : `burada <b>${L.length}</b> farklı kampanya var. Aynı kampanyaya giden kartlar burada bir kez sayılır, bitiş günü geçenler de listeden düşer; fark bundan.`}</p>` : "") + tumLink;
   yaz(govde());
 }
 // Arama: üç kaynakta, bireysel ve ticaride birden; başlık, açıklama ve gruplarda geçen her kampanya

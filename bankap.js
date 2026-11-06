@@ -4,7 +4,7 @@ const pct = (n) => isFinite(n) ? "%" + n.toLocaleString("tr-TR", { maximumFracti
 function num(id) {
   const v = $(id).value.trim().replace(/\s/g, "");
   // Türkçe biçim: 1.000.000,50
-  const clean = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : (/^\d{1,3}(\.\d{3})+$/.test(v) ? v.replace(/\./g, "") : v);
+  const clean = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : (/^-?\d{1,3}(\.\d{3})+$/.test(v) ? v.replace(/\./g, "") : v);
   const n = parseFloat(clean);
   return isFinite(n) ? n : 0;
 }
@@ -362,7 +362,7 @@ function calcTK() {
   $("t_dnote").innerHTML = okIlk || !ilk
     ? `İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı (bankaya göre değişir).${ilk ? ` Şu an: <b>${gIlk} gün</b>.` : ""}`
     : `<span style="color:#ef8a5d">⚠️ İlk taksit tarihi kullandırım tarihinden en az 5, en fazla 45 gün sonra olmalı (şu an ${gIlk} gün). Uygun tarih: ${shortD(addDays(bas, 5))} – ${shortD(addDays(bas, 45))}.</span>`;
-  if (!P || !n || !ilk || !okIlk) { $("ts_warn").hidden = true; ["ts_taksit", "ts_toplam", "ts_masraf", "ts_sig", "ts_net"].forEach((x) => ($(x).textContent = "–")); $("ts_ilk").textContent = ""; tkSummary = ""; $("t_out").textContent = "–"; rows("t_rows", []); rows("t_prows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
+  if (!(P > 0) || !n || !ilk || !okIlk) { $("ts_warn").hidden = true; ["ts_taksit", "ts_toplam", "ts_masraf", "ts_sig", "ts_net"].forEach((x) => ($(x).textContent = "–")); $("ts_ilk").textContent = ""; tkSummary = ""; $("t_out").textContent = "–"; rows("t_rows", []); rows("t_prows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
   const dues = []; for (let k = 0; k < n; k++) dues.push(addMonthsC(ilk, k));
   // İlk dönem: ilk taksit kullandırımdan tam 1 ay sonraysa 1 ay faiz; değilse gün/30 (kırık dönem)
   const g1 = dayDiff(bas, ilk), tamAy = ymd(addMonthsC(bas, 1)) === ymd(ilk);
@@ -1127,7 +1127,7 @@ function calcTarim() {
   const cnt = mode === "aylik" ? n : mode === "yillik" ? Math.max(1, Math.round(n / 12)) : 1;
   $("tr_ilkLbl").textContent = mode === "hasat" ? "Ödeme (vade) tarihi" : "İlk taksit tarihi";
   const D = dateSetup("tr", step, cnt, mode === "aylik" ? 5 : 1, mode === "aylik" ? 45 : 99999);
-  if (!P || !n || !D.ok) { $("tr_out").textContent = "–"; rows("tr_rows", []); $("tr_plan").innerHTML = ""; trOzet = ""; trPdf = null; return; }
+  if (!(P > 0) || !n || !D.ok) { $("tr_out").textContent = "–"; rows("tr_rows", []); $("tr_plan").innerHTML = ""; trOzet = ""; trPdf = null; return; }
   // Dönem faizi: aylık = yıllık/12 (kırık ilk dönem gün/30); yıllık ve hasat = gün/360
   const rp = mode === "aylik" ? ry / 12 : ry;
   const per = mode === "hasat" ? [{ d: D.ilk, fac: ymd(addMonthsC(D.bas, n)) === ymd(D.ilk) ? n / 12 : D.g / 360, g: D.g }] : mkPerStep(D.bas, D.ilk, cnt, step, mode === "aylik" ? 30 : 360);
@@ -1135,7 +1135,7 @@ function calcTarim() {
   const cur = build(kkdf, bsmv);
   const sum = (pl, k) => pl.reduce((a, x) => a + x[k], 0);
   const toplam = sum(cur.plan, "t"), fz = sum(cur.plan, "f");
-  const alt = durum === "levha" ? build(trKkdf("cks", num("tr_tutar")), bsmv) : null; // levhasız olsaydı: 15.000 TL'ye kadar KKDF yok
+  const alt = durum === "levha" ? build(trKkdf("cks", num("tr_tutar")) / 100, bsmv) : null; // levhasız olsaydı: 15.000 TL'ye kadar KKDF yok
   const fark = alt ? Math.abs(sum(alt.plan, "t") - toplam) : 0;
   const ilkF = cur.plan.length > 1 && Math.abs(cur.plan[0].t - R2(cur.T)) > 0.005;
   $("tr_bigLbl").textContent = mode === "hasat" ? "Vade sonu ödeme" : mode === "yillik" ? "Yıllık taksit" : "Aylık taksit";
@@ -1181,7 +1181,7 @@ const isBizDay = (d) => { const i = dayInfo(d); return !i.we && !i.hol; }; // ar
 const nextBizC = (d) => { const x = new Date(d); while (!isBizDay(x)) x.setDate(x.getDate() + 1); return x; };
 const addBiz = (d, n) => { let x = nextBizC(d); for (let i = 0; i < n; i++) { x = addDays(x, 1); x = nextBizC(x); } return x; };
 const dayWhy = (d) => { const i = dayInfo(d); return i.hol ? i.name : i.we ? (d.getDay() === 6 ? "Cumartesi" : "Pazar") : i.half ? i.name : ""; };
-const parseNum = (v) => { v = String(v || "").trim().replace(/\s/g, ""); const c = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : (/^\d{1,3}(\.\d{3})+$/.test(v) ? v.replace(/\./g, "") : v); const n = parseFloat(c); return isFinite(n) ? n : 0; };
+const parseNum = (v) => { v = String(v || "").trim().replace(/\s/g, ""); const c = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : (/^-?\d{1,3}(\.\d{3})+$/.test(v) ? v.replace(/\./g, "") : v); const n = parseFloat(c); return isFinite(n) ? n : 0; };
 let CEKLER = [{ t: "1.000.000", v: "2026-11-27" }];
 try { const sv = JSON.parse(localStorage.getItem("cekler") || "null"); if (Array.isArray(sv) && sv.length) CEKLER = sv; } catch (e) {}
 function renderCekList() {

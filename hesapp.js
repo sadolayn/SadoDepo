@@ -266,7 +266,7 @@ function calcF() {
   $("fBigL").textContent = `${g} günlük ${kr ? "faiz" : "brüt faiz"}`;
   const tR = kr ? 0 : num($("fTax").value) / 100;
   $("fDay").textContent = tl(gun) + " TL"; $("fDay2").textContent = kr ? `1 günlük · ${tl(gun * 30)} TL / 30 gün` : `brüt · net ${tl(gun * (1 - tR))} TL`;
-  $("fTotL").textContent = `${g} günlük ${kr ? "faiz" : "net faiz"}`; $("fTot").textContent = tl(kr ? faiz : faiz * (1 - tR)) + " TL"; $("fTot2").textContent = kr ? `geri ödeme ${tl(P + faiz, 0)} TL*` : `stopaj %${nf(tR * 100, 1)} düşüldü`;
+  $("fTotL").textContent = `${g} günlük ${kr ? "faiz" : "net faiz"}`; $("fTot").textContent = tl(kr ? faiz : faiz * (1 - tR)) + " TL"; $("fTot2").textContent = kr ? `geri ödeme ${tl(P + faiz * (1 + num($("fBsmv").value) / 100 + num($("fKkdf").value) / 100), 0)} TL*` : `stopaj %${nf(tR * 100, 1)} düşüldü`;
   $("fOut").textContent = tl(faiz) + " TL";
   if (kr) {
     const bs = faiz * num($("fBsmv").value) / 100, kk = faiz * num($("fKkdf").value) / 100;
