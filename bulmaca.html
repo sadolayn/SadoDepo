@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sayı Bulmaca</title>
+<meta name="description" content="Bilgi paylaştıkça büyür">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SADOLAYN">
+<meta property="og:title" content="Sayı Bulmaca · SADOLAYN">
+<meta property="og:description" content="“Bilgi paylaştıkça büyür”">
+<meta property="og:url" content="https://sadolayn.github.io/SadoDepo/bulmaca.html">
+<meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sadolayn — Bilgi paylaştıkça büyür">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<link rel="stylesheet" href="hesap.css">
+<script src="pwa.js"></script>
+<script src="ortak.js"></script>
+<script src="rapor.js"></script>
+<script type="module" src="sayac.js"></script>
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+<script src="oyunsaat.js" data-kilit="sayfa"></script>
+<div class="wrap">
+  <div class="stick">
+    <header>
+      <a href="oyunlar.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Oyunlar" aria-label="Oyunlar">🎮</a>
+      <h1>🔢 Sayı Bulmaca</h1>
+      <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
+    </header>
+  </div>
+
+  <!-- ===== Sayı Bulmaca (+ / −) ===== -->
+  <section class="panel on" id="bulmaca">
+    <div class="card" id="bmSetup">
+      <h2>🔢 Sayı Bulmaca · Sadolayn'a karşı</h2>
+      <p class="hint" style="margin-top:0">İkiniz de rakamları birbirinden farklı, 0 ile başlamayan gizli bir sayı tutarsınız. Sırayla birbirinizin sayısını tahmin edersiniz. Her tahmine ipucu verilir: <b style="color:var(--ok)">+</b> rakam doğru ve <b>yeri doğru</b>, <b style="color:var(--red)">−</b> rakam var ama <b>yeri yanlış</b>. Örn. gizli 4271, tahmin 1234 → <b>+1 −2</b>. Önce bulan kazanır; aynı turda bulursanız berabere.</p>
+      <label>Basamak</label>
+      <div class="seg" id="bmLen"><button data-n="3">3</button><button data-n="4" class="on">4</button><button data-n="5">5</button><button data-n="6">6</button></div>
+      <label>Zorluk</label>
+      <div class="seg" id="bmLvl"><button data-l="1">🙂 Kolay</button><button data-l="2" class="on">😤 Zor</button><button data-l="3">🔥 Çok zor</button></div>
+      <p class="hint" id="bmLvlHint" style="margin:6px 0 0"></p>
+      <label>Senin gizli sayın (Sadolayn bunu bulmaya çalışacak)</label>
+      <div class="field"><input id="bmMine" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="ör. 4271" style="letter-spacing:4px;-webkit-text-security:disc"><span><button type="button" id="bmEye" aria-label="Sayıyı göster ya da gizle" style="min-width:32px;min-height:32px;background:none;border:none;font-size:16px;cursor:pointer">👁</button></span></div>
+      <div class="chips"><button type="button" id="bmRand">🎲 Benim yerime rastgele seç</button></div>
+      <p class="hint" id="bmErr" style="color:var(--red)"></p>
+      <button type="button" class="btn-go" id="bmGo">Oyuna başla</button>
+    </div>
+    <div id="bmGame" hidden>
+      <div class="card" style="padding:10px 12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="margin:0">Tur <span id="bmTur">1</span></h2><span class="hint" style="margin:0">Senin sayın: <b id="bmMineShow" style="letter-spacing:2px;color:var(--ink)"></b></span></div>
+        <p class="hint" id="bmMsg" style="margin:4px 0 0"></p>
+      </div>
+      <div class="bmcols">
+        <div class="card"><h3 class="bmh">Senin tahminlerin</h3><div class="bml" id="bmMeL"></div></div>
+        <div class="card"><h3 class="bmh">Sadolayn'ın tahminleri</h3><div class="bml" id="bmAiL"></div></div>
+      </div>
+      <div class="card bmpad" id="bmPad">
+        <div class="bmdisp" id="bmDisp"></div>
+        <div class="bmkeys" id="bmKeys"></div>
+        <div class="bmact"><button type="button" id="bmRuloBtn">🧾 Rulo</button><button type="button" id="bmDel">⌫ Sil</button><button type="button" class="go" id="bmSend">Tahmin et</button></div>
+      </div>
+      <div class="rulo" id="bmRulo" hidden>
+        <div class="rlTools"><button type="button" data-rt="kalem" class="on">✏️ Kalem</button><button type="button" data-rt="silgi">🧽 Silgi</button><button type="button" id="rlClear">🗑️ Çizimi sil</button><button type="button" id="rlDown">⬇️ İndir</button></div>
+        <div class="rlPaper" id="rlPaper">
+          <div class="rlHead"><b>SADOLAYN</b><span>🔢 Sayı Bulmaca · <span id="rlInfo"></span></span><i>✂ · · · · · · · · · · · · · · · · · · · · ✂</i></div>
+          <div class="rlLines" id="rlLines"></div>
+          <div class="rlWrite"><input id="rlText" type="text" maxlength="60" placeholder="Not yaz, Enter'a bas (ör. 7 yok, 3 başta)"><button type="button" id="rlAdd" aria-label="Not ekle">＋</button></div>
+          <canvas id="rlCanvas" aria-label="Çizim alanı"></canvas>
+          <div class="rlFoot">Parmağınla çiz, karala, hesap yap ✍️</div>
+        </div>
+      </div>
+      <div class="card" id="bmEnd" hidden><div class="res" style="margin:0;text-align:center"><div class="big" id="bmEndT"></div><p class="hint" id="bmEndS"></p></div><button type="button" class="btn-go" id="bmAgain">Yeni oyun</button></div>
+      <div class="chips" style="justify-content:center"><button type="button" id="bmQuit">Oyunu bırak</button></div>
+    </div>
+  </section>
+</div>
+
+<script src="bulmacap.js"></script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

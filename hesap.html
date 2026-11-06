@@ -29,7 +29,6 @@
 <link rel="stylesheet" href="theme.css">
 </head>
 <body>
-<script src="oyunsaat.js" data-kilit="bulmaca"></script>
 <div class="wrap">
   <div class="stick">
     <header>
@@ -45,7 +44,7 @@
       <button data-t="tarih" data-yeni="t-tarih|2026-10-17|•"><b>📆</b>Tarih</button>
       <button data-t="yuzde" data-yeni="t-yuzde|2026-10-17|•"><b>％</b>Yüzde</button>
       <button data-t="klavye" data-yeni="t-klavye|2026-10-27|•"><b>💡</b>Pratik</button>
-      <button data-t="bulmaca" data-yeni="t-bulmaca|2026-10-17|•"><b>🔢</b>Bulmaca</button>
+      <button data-t="pusula" data-yeni="t-pusula|2026-11-06|•"><b>🧭</b>Pusula</button>
     </div>
   </div>
 
@@ -266,53 +265,23 @@
     </div>
   </section>
 
-  <!-- ===== Sayı Bulmaca (+ / −) ===== -->
-  <section class="panel" id="bulmaca">
-    <div class="card" id="bmSetup">
-      <h2>🔢 Sayı Bulmaca · Sadolayn'a karşı</h2>
-      <p class="hint" style="margin-top:0">İkiniz de rakamları birbirinden farklı, 0 ile başlamayan gizli bir sayı tutarsınız. Sırayla birbirinizin sayısını tahmin edersiniz. Her tahmine ipucu verilir: <b style="color:var(--ok)">+</b> rakam doğru ve <b>yeri doğru</b>, <b style="color:var(--red)">−</b> rakam var ama <b>yeri yanlış</b>. Örn. gizli 4271, tahmin 1234 → <b>+1 −2</b>. Önce bulan kazanır; aynı turda bulursanız berabere.</p>
-      <label>Basamak</label>
-      <div class="seg" id="bmLen"><button data-n="3">3</button><button data-n="4" class="on">4</button><button data-n="5">5</button><button data-n="6">6</button></div>
-      <label>Zorluk</label>
-      <div class="seg" id="bmLvl"><button data-l="1">🙂 Kolay</button><button data-l="2" class="on">😤 Zor</button><button data-l="3">🔥 Çok zor</button></div>
-      <p class="hint" id="bmLvlHint" style="margin:6px 0 0"></p>
-      <label>Senin gizli sayın (Sadolayn bunu bulmaya çalışacak)</label>
-      <div class="field"><input id="bmMine" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="ör. 4271" style="letter-spacing:4px;-webkit-text-security:disc"><span><button type="button" id="bmEye" aria-label="Sayıyı göster ya da gizle" style="background:none;border:none;font-size:16px;cursor:pointer">👁</button></span></div>
-      <div class="chips"><button type="button" id="bmRand">🎲 Benim yerime rastgele seç</button></div>
-      <p class="hint" id="bmErr" style="color:var(--red)"></p>
-      <button type="button" class="btn-go" id="bmGo">Oyuna başla</button>
-    </div>
-    <div id="bmGame" hidden>
-      <div class="card" style="padding:10px 12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="margin:0">Tur <span id="bmTur">1</span></h2><span class="hint" style="margin:0">Senin sayın: <b id="bmMineShow" style="letter-spacing:2px;color:var(--ink)"></b></span></div>
-        <p class="hint" id="bmMsg" style="margin:4px 0 0"></p>
+  <!-- ===== Pusula (6 Kasım 2026): sensörle yön; kadranda sessiz yeşil nokta kıble yönünü gösterir ===== -->
+  <section class="panel" id="pusula">
+    <div class="card psCard">
+      <div class="psTop"><div><h2 style="margin:0">🧭 Pusula</h2><p class="hint" style="margin:2px 0 0">Telefonu düz tut; kadran yönünle döner.</p></div><button type="button" class="psBtn" id="psBtn">Başlat</button></div>
+      <div class="psDial" id="psDial" aria-live="polite">
+        <div class="psIndex"></div>
+        <svg viewBox="0 0 320 320" id="psSvg" aria-label="Pusula kadranı"></svg>
+        <div class="psRead"><b id="psDeg">–</b><span id="psDir">pusulayı başlat</span></div>
       </div>
-      <div class="bmcols">
-        <div class="card"><h3 class="bmh">Senin tahminlerin</h3><div class="bml" id="bmMeL"></div></div>
-        <div class="card"><h3 class="bmh">Sadolayn'ın tahminleri</h3><div class="bml" id="bmAiL"></div></div>
-      </div>
-      <div class="card bmpad" id="bmPad">
-        <div class="bmdisp" id="bmDisp"></div>
-        <div class="bmkeys" id="bmKeys"></div>
-        <div class="bmact"><button type="button" id="bmRuloBtn">🧾 Rulo</button><button type="button" id="bmDel">⌫ Sil</button><button type="button" class="go" id="bmSend">Tahmin et</button></div>
-      </div>
-      <div class="rulo" id="bmRulo" hidden>
-        <div class="rlTools"><button type="button" data-rt="kalem" class="on">✏️ Kalem</button><button type="button" data-rt="silgi">🧽 Silgi</button><button type="button" id="rlClear">🗑️ Çizimi sil</button><button type="button" id="rlDown">⬇️ İndir</button></div>
-        <div class="rlPaper" id="rlPaper">
-          <div class="rlHead"><b>SADOLAYN</b><span>🔢 Sayı Bulmaca · <span id="rlInfo"></span></span><i>✂ · · · · · · · · · · · · · · · · · · · · ✂</i></div>
-          <div class="rlLines" id="rlLines"></div>
-          <div class="rlWrite"><input id="rlText" type="text" maxlength="60" placeholder="Not yaz, Enter'a bas (ör. 7 yok, 3 başta)"><button type="button" id="rlAdd" aria-label="Not ekle">＋</button></div>
-          <canvas id="rlCanvas" aria-label="Çizim alanı"></canvas>
-          <div class="rlFoot">Parmağınla çiz, karala, hesap yap ✍️</div>
-        </div>
-      </div>
-      <div class="card" id="bmEnd" hidden><div class="res" style="margin:0;text-align:center"><div class="big" id="bmEndT"></div><p class="hint" id="bmEndS"></p></div><button type="button" class="btn-go" id="bmAgain">Yeni oyun</button></div>
-      <div class="chips" style="justify-content:center"><button type="button" id="bmQuit">Oyunu bırak</button></div>
+      <div class="psYer"><span id="psIl">Yer</span><select id="psSel" aria-label="İl"><option value="">İl seç</option></select><button type="button" id="psGps" aria-label="Konumumu kullan">📍</button></div>
+      <p class="hint psNot" id="psNot"></p>
     </div>
   </section>
 </div>
 
 <script src="hesapp.js"></script>
+<script src="pusula.js"></script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 <script>
