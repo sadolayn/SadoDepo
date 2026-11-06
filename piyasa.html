@@ -62,6 +62,12 @@
   .tile .c .g { font-weight: 700; }
   .grid .tile { display: flex; flex-direction: column; justify-content: flex-start; }
   .tile .usd { font-size: 12px; color: #b9a888; margin: -1px 0 3px; }
+  /* Güncel başlığında dönem seçici (ana sayfadaki Döviz & Emtia ile ortak seçim) */
+  .ghead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; } .ghead h2 { margin: 0; }
+  .ghead label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .ghead select { appearance: none; -webkit-appearance: none; min-height: 32px; padding: 4px 24px 4px 11px; border-radius: 999px; border: 1px solid var(--accent); color: #f3d38a; font: 600 13px system-ui, sans-serif; cursor: pointer;
+    background: rgba(224,162,79,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23e0a24f'/%3E%3C/svg%3E") no-repeat right 9px center; }
+  .ghead select option { background: #111; color: #f2f2f2; }
   .tile:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .up { color: var(--up); } .down { color: var(--down); }
 
@@ -298,17 +304,28 @@ function sample(lo, hi, max = 260) { // grafik için en fazla ~260 nokta
 }
 
 /* ---------- Bölümler ---------- */
+// Dönem seçici (6 Kasım 2026): ana sayfadaki Döviz & Emtia ile aynı seçim (localStorage "aclDonem"); seçilen dönemin değişimi kutuda kalın,
+// 1Y ve 5Y yanında sabit kalır. Dönemin başı: o güne ya da öncesine düşen son kapanış.
+const DONEM = [["1g", "1G", "günlük"], ["1h", "1H", "haftalık"], ["1a", "1A", "aylık"], ["3a", "3A", "3 aylık"], ["6a", "6A", "6 aylık"], ["1y", "1Y", "yıllık"]];
+let donem = "1g"; try { const x = localStorage.getItem("aclDonem"); if (DONEM.some((d) => d[0] === x)) donem = x; } catch (e) {}
+function donemBas() { // seçilen dönemin başındaki kapanışın sırası
+  if (donem === "1g") return N - 2;
+  const t = new Date(D.dates[N - 1] + "T12:00:00");
+  if (donem === "1h") t.setDate(t.getDate() - 7); else t.setMonth(t.getMonth() - { "1a": 1, "3a": 3, "6a": 6, "1y": 12 }[donem]);
+  return idxOn(iso(t));
+}
 function renderTiles() {
-  const last = D.dates[N - 1];
+  const last = D.dates[N - 1], b = donemBas(), et = DONEM.find((d) => d[0] === donem)[1];
+  $("gAralik").textContent = `${fdate(D.dates[b])} → ${fdate(last)}`;
   $("tiles").innerHTML = A.map((a) => {
     const v = D[a.k][N - 1], c1 = chgSince(a.k, shiftYears(last, -1)), c5 = chgSince(a.k, shiftYears(last, -5));
-    const cg = N > 1 && D[a.k][N - 2] ? (v / D[a.k][N - 2] - 1) * 100 : null; // günlük: bir önceki kapanışa göre
+    const cg = b >= 0 && D[a.k][b] ? (v / D[a.k][b] - 1) * 100 : null; // seçilen dönemin başındaki kapanışa göre (günlükte bir önceki kapanış)
     // Emtia: TL'nin yanında uluslararası dolar fiyatı (madenler 1 ons, petrol 1 varil)
     const usd = a.u ? (v * (a.br ? 1 : 31.1034768)) / D.usd[N - 1] : null;
     return `<button class="tile ${S.sel === a.k ? "sel" : ""}" data-k="${a.k}">
       <div class="n"><span>${a.ic} ${a.n}</span><span>${a.u ? "TL" + a.u : a.s + "/TL"}</span></div>
       <div class="v num">${nf(v, a.d)}</div>${usd ? `<div class="usd num">$${nf(usd, usd < 100 || a.br ? 2 : 0)}/${a.br || "ons"}</div>` : ""}
-      <div class="c num">${cg != null ? `<span class="g ${cls(cg)}">1G ${pct(cg, 2)}</span>` : ""}<span class="${cls(c1)}">1Y ${pct(c1, 0)}</span><span class="${cls(c5)}">5Y ${pct(c5, 0)}</span></div>
+      <div class="c num">${cg != null ? `<span class="g ${cls(cg)}">${et} ${pct(cg, 2)}</span>` : ""}${donem === "1y" ? "" : `<span class="${cls(c1)}">1Y ${pct(c1, 0)}</span>`}<span class="${cls(c5)}">5Y ${pct(c5, 0)}</span></div>
     </button>`;
   }).join("");
 }
@@ -491,8 +508,9 @@ function build() {
   if (!S.date) S.date = shiftYears(last, -5);
   $("upd").textContent = `Son veri: ${fdate(last)} · güncelleme ${D.updated.slice(11)}`;
   $("app").innerHTML = `
-  <div class="card"><h2>Güncel</h2><div class="grid" id="tiles"></div>
-    <div class="note" style="margin-top:8px">1G: bir önceki kapanışa göre, 1Y: son 1 yıl, 5Y: son 5 yıl; değişimler TL bazında. Emtiada altta uluslararası dolar fiyatı da var (madenler 1 ons). Petrol: Brent ham petrolün varil fiyatı, TL'ye çevrilmiş. Bir kutuya dokununca grafiği açılır.</div></div>
+  <div class="card"><div class="ghead"><h2>Güncel</h2><label><select id="gDon" aria-label="Değişim dönemi">${DONEM.map((d) => `<option value="${d[0]}"${d[0] === donem ? " selected" : ""}>${d[2]}</option>`).join("")}</select></label></div>
+    <div class="note" id="gAralik" style="margin:-4px 0 8px"></div><div class="grid" id="tiles"></div>
+    <div class="note" style="margin-top:8px">Kalın değişim, üstteki seçilen döneme göre (1G bir önceki kapanış, 1H hafta, 1A ay, 3A/6A 3 ve 6 ay, 1Y yıl); yanında son 1 ve 5 yıl. Değişimler TL bazında; seçim ana sayfadaki Döviz &amp; Emtia ile ortaktır. Emtiada altta uluslararası dolar fiyatı da var (madenler 1 ons). Petrol: Brent ham petrolün varil fiyatı, TL'ye çevrilmiş. Bir kutuya dokununca grafiği açılır.</div></div>
 
   <div class="card"><div class="chead" id="chead"></div>
     <div class="chips" id="ranges">${["1Y", "3Y", "5Y", "Tümü"].map((r) => `<span class="chip" data-r="${r}">${r === "Tümü" ? "Tümü" : r.replace("Y", " yıl")}</span>`).join("")}</div>
@@ -531,6 +549,7 @@ function build() {
   <div class="note" style="text-align:center;padding:0 8px">${D.source} Altın gram fiyatı uluslararası ons fiyatından hesaplanır; kuyumcu ve banka alış-satış fiyatları farklıdır. Enflasyon: TÜİK TÜFE aylık değişimleri. Yatırım tavsiyesi değildir.</div>`;
 
   $("tiles").onclick = (e) => { const b = e.target.closest(".tile"); if (!b) return; S.sel = b.dataset.k; save(); renderTiles(); renderChart(); $("chart").scrollIntoView({ behavior: "smooth", block: "center" }); };
+  $("gDon").addEventListener("change", (e) => { donem = e.target.value; try { localStorage.setItem("aclDonem", donem); } catch (x) {} renderTiles(); });
   $("ranges").onclick = (e) => { const c = e.target.closest(".chip"); if (!c) return; S.range = c.dataset.r; save(); renderChart(); };
   $("tmode").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; S.tmode = b.dataset.m; save(); renderTable(); };
   $("smode").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; S.mode = b.dataset.m; save(); renderSim(); };
