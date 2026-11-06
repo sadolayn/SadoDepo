@@ -1095,7 +1095,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       var b = baz();
       satir("piyasa", '<div class="aclP"><a class="aclPB" href="piyasa.html"><b>💱 Döviz &amp; Emtia</b><small>' + gunAy(D[i1]) + " kapanışı ›</small></a>" + donSec(b) +
         '<div class="aclPG">' + kutular(b) + "</div>" + sepet(b) +
-        '<details class="aclPN"><summary>ℹ️ Değerler nasıl okunur?</summary>Döviz: 1 birimin TL karşılığı. Emtia: uluslararası dolar fiyatı; altın, gümüş, platin ve paladyum 1 ons, petrol 1 varil Brent. ▲▼ kutularda seçilen dönemin başındaki kapanışa göre (günlükte bir önceki kapanış), kendi biriminde. Sepetim: seçilen kalemlerin seçilen dönemdeki (gün, hafta, ay, 3 ay, 6 ay, yıl) değişiminin eşit ağırlıklı ortalaması, hepsi TL bazında; yatırım tavsiyesi değildir.</details></div>');
+        '<details class="aclPN"><summary>ℹ️ Değerler nasıl okunur?</summary>Döviz: 1 birimin TL karşılığı. Emtia: uluslararası dolar fiyatı; altın, gümüş, platin ve paladyum 1 ons, petrol 1 varil Brent. ▲▼ kutularda seçilen dönemin başındaki kapanışa göre (günlükte bir önceki kapanış), kendi biriminde. Döviz &amp; Emtia sayfasında değişimler TL bazındadır; bu yüzden emtiada buradakinden küçük bir fark görülebilir (aradaki fark doların TL karşısındaki hareketidir). Sepetim: seçilen kalemlerin seçilen dönemdeki (gün, hafta, ay, 3 ay, 6 ay, yıl) değişiminin eşit ağırlıklı ortalaması, hepsi TL bazında; yatırım tavsiyesi değildir.</details></div>');
     }
     $("aclSat").addEventListener("change", function (e) { if (e.target.id !== "aclDon") return; don = e.target.value; yaz("aclDonem", don); ciz(); });
     $("aclSat").addEventListener("click", function (e) {
