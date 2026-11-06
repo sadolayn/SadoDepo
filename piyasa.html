@@ -64,10 +64,11 @@
   .tile .usd { font-size: 12px; color: #b9a888; margin: -1px 0 3px; }
   /* Güncel başlığında dönem seçici (ana sayfadaki Döviz & Emtia ile ortak seçim) */
   .ghead { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; } .ghead h2 { margin: 0; }
-  .ghead label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
-  .ghead select { appearance: none; -webkit-appearance: none; min-height: 32px; padding: 4px 24px 4px 11px; border-radius: 999px; border: 1px solid var(--accent); color: #f3d38a; font: 600 13px system-ui, sans-serif; cursor: pointer;
-    background: rgba(224,162,79,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23e0a24f'/%3E%3C/svg%3E") no-repeat right 9px center; }
-  .ghead select option { background: #111; color: #f2f2f2; }
+  .ghead small { font-size: 12px; color: var(--muted); text-align: right; }
+  /* Dönem düğmeleri: tek dokunuşla seçilir (6 Kasım 2026: açılır liste telefonda tam ekran pencere açıyordu, üç dokunuş gerekiyordu) */
+  .seg { display: flex; width: 100%; box-sizing: border-box; gap: 4px; margin: 0 0 10px; padding: 3px; border-radius: 12px; background: var(--field); border: 1px solid var(--line); }
+  .seg button { flex: 1 1 0; min-width: 0; min-height: 34px; padding: 0 2px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font: 600 12.5px system-ui, sans-serif; cursor: pointer; white-space: nowrap; }
+  .seg button.on { background: var(--accent); color: #1a1206; font-weight: 800; }
   .tile:last-child:nth-child(odd) { grid-column: 1 / -1; }
   .up { color: var(--up); } .down { color: var(--down); }
 
@@ -308,7 +309,7 @@ function sample(lo, hi, max = 260) { // grafik için en fazla ~260 nokta
 /* ---------- Bölümler ---------- */
 // Dönem seçici (6 Kasım 2026): ana sayfadaki Döviz & Emtia ile aynı seçim (localStorage "aclDonem"); seçilen dönemin değişimi kutuda kalın,
 // 1Y ve 5Y yanında sabit kalır. Dönemin başı: o güne ya da öncesine düşen son kapanış.
-const DONEM = [["1g", "1G", "günlük"], ["1h", "1H", "haftalık"], ["1a", "1A", "aylık"], ["3a", "3A", "3 aylık"], ["6a", "6A", "6 aylık"], ["1y", "1Y", "yıllık"]];
+const DONEM = [["1g", "1G", "günlük", "Gün"], ["1h", "1H", "haftalık", "Hafta"], ["1a", "1A", "aylık", "Ay"], ["3a", "3A", "3 aylık", "3 Ay"], ["6a", "6A", "6 aylık", "6 Ay"], ["1y", "1Y", "yıllık", "Yıl"]];
 let donem = "1g"; try { const x = localStorage.getItem("aclDonem"); if (DONEM.some((d) => d[0] === x)) donem = x; } catch (e) {}
 function donemBas() { // seçilen dönemin başındaki kapanışın sırası
   if (donem === "1g") return N - 2;
@@ -514,8 +515,9 @@ function build() {
   if (!S.date) S.date = shiftYears(last, -5);
   $("upd").textContent = `Son veri: ${fdate(last)} · güncelleme ${D.updated.slice(11)}`;
   $("app").innerHTML = `
-  <div class="card"><div class="ghead"><h2>Güncel</h2><label><select id="gDon" aria-label="Değişim dönemi">${DONEM.map((d) => `<option value="${d[0]}"${d[0] === donem ? " selected" : ""}>${d[2]}</option>`).join("")}</select></label></div>
-    <div class="note" id="gAralik" style="margin:-4px 0 8px"></div><div class="grid" id="tiles"></div>
+  <div class="card"><div class="ghead"><h2>Güncel</h2><small id="gAralik"></small></div>
+    <div class="seg" id="gDon" role="group" aria-label="Değişim dönemi">${DONEM.map((d) => `<button type="button" data-d="${d[0]}" class="${d[0] === donem ? "on" : ""}" aria-pressed="${d[0] === donem}">${d[3]}</button>`).join("")}</div>
+    <div class="grid" id="tiles"></div>
     <div class="note" style="margin-top:8px">Kalın değişim, üstteki seçilen döneme göre (1G bir önceki kapanış, 1H hafta, 1A ay, 3A/6A 3 ve 6 ay, 1Y yıl); yanında son 1 ve 5 yıl. Değişimler TL bazında; seçim ana sayfadaki Döviz &amp; Emtia ile ortaktır. Emtiada altta uluslararası dolar fiyatı da var (madenler 1 ons). Petrol: Brent ham petrolün varil fiyatı, TL'ye çevrilmiş. Bir kutuya dokununca grafiği açılır.</div></div>
 
   <div class="card"><div class="chead" id="chead"></div>
@@ -555,7 +557,8 @@ function build() {
   <div class="note" style="text-align:center;padding:0 8px">${D.source} Altın gram fiyatı uluslararası ons fiyatından hesaplanır; kuyumcu ve banka alış-satış fiyatları farklıdır. Enflasyon: TÜİK TÜFE aylık değişimleri. Yatırım tavsiyesi değildir.</div>`;
 
   $("tiles").onclick = (e) => { const b = e.target.closest(".tile"); if (!b) return; S.sel = b.dataset.k; save(); renderTiles(); renderChart(); $("chart").scrollIntoView({ behavior: "smooth", block: "center" }); };
-  $("gDon").addEventListener("change", (e) => { donem = e.target.value; try { localStorage.setItem("aclDonem", donem); } catch (x) {} renderTiles(); });
+  $("gDon").onclick = (e) => { const b = e.target.closest("button[data-d]"); if (!b) return; donem = b.dataset.d; try { localStorage.setItem("aclDonem", donem); } catch (x) {}
+    $("gDon").querySelectorAll("button").forEach((x) => { x.classList.toggle("on", x === b); x.setAttribute("aria-pressed", String(x === b)); }); renderTiles(); };
   $("ranges").onclick = (e) => { const c = e.target.closest(".chip"); if (!c) return; S.range = c.dataset.r; save(); renderChart(); };
   $("tmode").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; S.tmode = b.dataset.m; save(); renderTable(); };
   $("smode").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; S.mode = b.dataset.m; save(); renderSim(); };

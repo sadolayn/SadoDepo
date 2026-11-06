@@ -409,7 +409,11 @@
   .aclSpS i { font-style: normal; font-size: 17px; font-weight: 800; }
   .aclSpS .up { color: #5cc98a; } .aclSpS .dn { color: #ff7b72; } .aclSpS .eq { color: #8a8a8a; }
   .aclSpB > b { flex: 1; }
-  .aclPD { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0 6px; } .aclPD small { font-size: 11.5px; color: #8a8a8a; text-align: right; }
+  .aclPD { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 4px 0 4px; } .aclPD b { font-size: 12px; color: #b9b9b9; font-weight: 600; } .aclPD small { font-size: 11.5px; color: #8a8a8a; text-align: right; }
+  /* Dönem düğmeleri: tek dokunuşla (6 Kasım 2026: açılır liste telefonda tam ekran pencere açıyordu) */
+  .aclSeg { display: flex; gap: 3px; margin: 0 0 7px; padding: 3px; border-radius: 11px; background: #0d0d0d; border: 1px solid #262626; }
+  .aclSeg button { flex: 1 1 0; min-width: 0; min-height: 30px; padding: 0 2px; border: 0; border-radius: 8px; background: transparent; color: #a8a8a8; font: 600 12px system-ui, sans-serif; cursor: pointer; white-space: nowrap; }
+  .aclSeg button.on { background: #e0a24f; color: #1a1206; font-weight: 800; }
   .aclSpSel { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; color: #8a8a8a; white-space: nowrap; }
   .aclSpSel select { appearance: none; -webkit-appearance: none; min-height: 30px; padding: 4px 22px 4px 9px; border-radius: 999px; border: 1px solid #e0a24f; color: #f3d38a; font: 600 12.5px system-ui, sans-serif; cursor: pointer;
     background: rgba(224,162,79,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23e0a24f'/%3E%3C/svg%3E") no-repeat right 8px center; }
@@ -1085,7 +1089,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     }
     var aralik = function (b) { return gunAy(D[b]) + (D[b].slice(0, 4) !== D[i1].slice(0, 4) ? " " + D[b].slice(0, 4) : "") + " → " + gunAy(D[i1]); };
     // Dönem: "günlük ▾" yazısına dokununca seçim listesi açılır; kutular ve Sepetim birlikte değişir
-    var donSec = function (b) { return '<div class="aclPD"><label class="aclSpSel"><select id="aclDon" aria-label="Değişim dönemi">' + DON.map(function (d) { return '<option value="' + d[0] + '"' + (d[0] === don ? " selected" : "") + ">" + d[3] + "</option>"; }).join("") + '</select> değişim</label><small>' + aralik(b) + "</small></div>"; };
+    var donSec = function (b) { return '<div class="aclPD"><b>Değişim</b><small>' + aralik(b) + '</small></div><div class="aclSeg" role="group" aria-label="Değişim dönemi">' + DON.map(function (d) { return '<button type="button" data-don="' + d[0] + '" class="' + (d[0] === don ? "on" : "") + '" aria-pressed="' + (d[0] === don) + '">' + d[1] + "</button>"; }).join("") + "</div>"; };
     function sepet(b) {
       var top = SEP.reduce(function (a, k) { return a + gTL(k, b); }, 0), c = SEP.length ? top / SEP.length : 0;
       return '<div class="aclSp"><div class="aclSpB"><b>🧺 Sepetim</b>' + (SEP.length ? '<span class="aclSpS">' + ok(c) + "</span>" : "") + '<small>' + DON.filter(function (d) { return d[0] === don; })[0][3] + " · TL</small></div>" +
@@ -1097,7 +1101,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
         '<div class="aclPG">' + kutular(b) + "</div>" + sepet(b) +
         '<details class="aclPN"><summary>ℹ️ Değerler nasıl okunur?</summary>Döviz: 1 birimin TL karşılığı. Emtia: uluslararası dolar fiyatı; altın, gümüş, platin ve paladyum 1 ons, petrol 1 varil Brent. ▲▼ kutularda seçilen dönemin başındaki kapanışa göre (günlükte bir önceki kapanış), kendi biriminde. Döviz &amp; Emtia sayfasında değişimler TL bazındadır; bu yüzden emtiada buradakinden küçük bir fark görülebilir (aradaki fark doların TL karşısındaki hareketidir). Sepetim: seçilen kalemlerin seçilen dönemdeki (gün, hafta, ay, 3 ay, 6 ay, yıl) değişiminin eşit ağırlıklı ortalaması, hepsi TL bazında; yatırım tavsiyesi değildir.</details></div>');
     }
-    $("aclSat").addEventListener("change", function (e) { if (e.target.id !== "aclDon") return; don = e.target.value; yaz("aclDonem", don); ciz(); });
+    $("aclSat").addEventListener("click", function (e) { var b = e.target.closest("button[data-don]"); if (!b) return; don = b.dataset.don; yaz("aclDonem", don); ciz(); });
     $("aclSat").addEventListener("click", function (e) {
       var b = e.target.closest("button[data-sep]"); if (!b) return;
       var k = b.dataset.sep, i = SEP.indexOf(k); if (i > -1) SEP.splice(i, 1); else SEP.push(k);
