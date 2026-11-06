@@ -74,6 +74,7 @@
   /* Grafik */
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
   .chip { padding: 7px 12px; border-radius: 18px; background: var(--field); border: 1px solid var(--line); color: var(--muted); font-size: 13px; cursor: pointer; font-weight: 600; }
+  #ranges { gap: 4px; flex-wrap: nowrap; } #ranges .chip { flex: 1 1 auto; padding: 8px 4px; text-align: center; font-size: 12.5px; white-space: nowrap; } @media (max-width: 340px) { #ranges { flex-wrap: wrap; } } /* 7 aralık telefonda tek satıra sığsın */
   .chip.on { background: var(--accent); color: #000; border-color: var(--accent); }
   .chart { position: relative; height: 220px; touch-action: pan-y; }
   .chart svg { width: 100%; height: 100%; display: block; overflow: visible; }
@@ -238,13 +239,14 @@ function drawLine(el, xs, ys, fmt, opt = {}) {
     grid += `<line x1="${pl}" x2="${W - pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="#1f1f1f"/>`
       + `<text x="${W - pr + 6}" y="${Y(v) + 4}" fill="#6f6f6f" font-size="11">${shortNum(v)}</text>`;
   }
-  // x eksen: yıllar
+  // x eksen: yıllar; 400 günden kısa aralıkta ay adları (1 yılda iki ayda bir, yıl başında yıl yazılır)
+  const gun = xs.length > 1 ? (Date.parse(xs[xs.length - 1]) - Date.parse(xs[0])) / 864e5 : 0, ayl = gun < 400, iki = gun >= 200;
   let xl = "", lastY = "";
   xs.forEach((s, i) => {
-    const y = s.slice(0, 4);
-    if (y !== lastY && i > 0) {
+    const y = ayl ? s.slice(0, 7) : s.slice(0, 4);
+    if (y !== lastY && i > 0 && (!iki || +s.slice(5, 7) % 2 === 1)) {
       xl += `<line x1="${X(i)}" x2="${X(i)}" y1="${pt}" y2="${H - pb}" stroke="#181818"/>`
-        + `<text x="${X(i) + 3}" y="${H - 6}" fill="#6f6f6f" font-size="11">${y}</text>`;
+        + `<text x="${X(i) + 3}" y="${H - 6}" fill="#6f6f6f" font-size="11">${ayl ? (s.slice(5, 7) === "01" ? s.slice(0, 4) : fdate(s, { month: "short" })) : y}</text>`;
     }
     lastY = y;
   });
@@ -330,14 +332,18 @@ function renderTiles() {
   }).join("");
 }
 
+// Grafik aralıkları (6 Kasım 2026: 1, 3 ve 6 ay eklendi; veri Ekim 2020'de başladığı için 10 yıl yok, "Tümü" ~6 yıl)
+const RANGES = ["1A", "3A", "6A", "1Y", "3Y", "5Y", "Tümü"];
 function renderChart() {
   const a = AK[S.sel], last = D.dates[N - 1];
-  const from = { "1Y": shiftYears(last, -1), "3Y": shiftYears(last, -3), "5Y": shiftYears(last, -5), "Tümü": D.dates[0] }[S.range];
+  const ay = (m) => { const d = new Date(last + "T12:00:00"); d.setMonth(d.getMonth() - m); return iso(d); };
+  if (!RANGES.includes(S.range)) S.range = "1Y";
+  const from = { "1A": ay(1), "3A": ay(3), "6A": ay(6), "1Y": shiftYears(last, -1), "3Y": shiftYears(last, -3), "5Y": shiftYears(last, -5), "Tümü": D.dates[0] }[S.range];
   const lo = idxOn(from), idx = sample(lo, N - 1);
   const ys = idx.map((i) => D[a.k][i]), xs = idx.map((i) => D.dates[i]);
   const ch = (D[a.k][N - 1] / D[a.k][lo] - 1) * 100;
   $("chead").innerHTML = `<div><div style="font-size:13px;color:var(--muted)">${a.ic} ${a.n} ${a.u ? "(TL/" + (a.br || "gram") + ")" : "(TL)"}</div><div class="big num">${nf(D[a.k][N - 1], a.d)} TL</div></div>
-    <div class="chg num ${cls(ch)}" style="text-align:right">${arrow(ch)} ${pct(ch)}<div style="color:var(--muted);font-size:11px">${S.range === "Tümü" ? fdate(D.dates[0], { month: "short", year: "numeric" }) + "'den beri" : S.range.replace("Y", " yılda")}</div></div>`;
+    <div class="chg num ${cls(ch)}" style="text-align:right">${arrow(ch)} ${pct(ch)}<div style="color:var(--muted);font-size:11px">${S.range === "Tümü" ? fdate(D.dates[0], { month: "short", year: "numeric" }) + "'den beri" : S.range.replace("Y", " yılda").replace("A", " ayda")}</div></div>`;
   document.querySelectorAll("#ranges .chip").forEach((c) => c.classList.toggle("on", c.dataset.r === S.range));
   drawLine($("chart"), xs, ys, (v) => nf(v, a.d) + " TL", { label: a.n + " fiyat grafiği" });
 }
@@ -513,7 +519,7 @@ function build() {
     <div class="note" style="margin-top:8px">Kalın değişim, üstteki seçilen döneme göre (1G bir önceki kapanış, 1H hafta, 1A ay, 3A/6A 3 ve 6 ay, 1Y yıl); yanında son 1 ve 5 yıl. Değişimler TL bazında; seçim ana sayfadaki Döviz &amp; Emtia ile ortaktır. Emtiada altta uluslararası dolar fiyatı da var (madenler 1 ons). Petrol: Brent ham petrolün varil fiyatı, TL'ye çevrilmiş. Bir kutuya dokununca grafiği açılır.</div></div>
 
   <div class="card"><div class="chead" id="chead"></div>
-    <div class="chips" id="ranges">${["1Y", "3Y", "5Y", "Tümü"].map((r) => `<span class="chip" data-r="${r}">${r === "Tümü" ? "Tümü" : r.replace("Y", " yıl")}</span>`).join("")}</div>
+    <div class="chips" id="ranges">${RANGES.map((r) => `<span class="chip" data-r="${r}">${r === "Tümü" ? "Tümü" : r.replace("Y", " yıl").replace("A", " ay")}</span>`).join("")}</div>
     <div class="chart" id="chart"></div></div>
 
   <div class="card"><h2>Yıllık görünüm</h2>
