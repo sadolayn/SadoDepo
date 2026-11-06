@@ -27,6 +27,10 @@
   --s-warn: #e8b52b;
   --s-bad: #ef6a4c;
 }
+/* Yazı netliği: tarayıcı metni kendi kafasına göre büyütmesin (Samsung İnternet yatay/masaüstü modunda şişiriyordu),
+   harf aralıkları ve ligatürler düzgün otursun, sahte kalın/italik üretilmesin */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; text-rendering: optimizeLegibility; }
+body { font-synthesis: none; }
 /* Renkli kutucuk: style="--c: var(--s-blue)" vererek kullanılır */
 .s-tile { --c: var(--s-gold); border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 36%, #000), color-mix(in srgb, var(--c) 10%, #060606)); color: color-mix(in srgb, var(--c) 35%, #fff); border-radius: 11px; }
 .s-tile.on { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 45%, transparent); }

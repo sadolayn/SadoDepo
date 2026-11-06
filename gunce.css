@@ -104,7 +104,7 @@
   .days button small { display: block; font-size: 11px; color: var(--muted); }
   .days button b { display: block; font-size: 16px; line-height: 1.2; }
   .days button i { display: block; font-style: normal; font-size: 11px; font-weight: 700; color: var(--ok); min-height: 13px; }
-  .days button.off { opacity: .45; }
+  .days button.off { opacity: .62; }
   .days button:disabled { opacity: .22; cursor: default; }
   .days button.td { border-color: var(--accent); }
   .days button.td::before { content: "BUGÜN"; position: absolute; top: -7px; left: 50%; transform: translateX(-50%); font-size: 8px; font-weight: 800; letter-spacing: .4px; background: var(--accent); color: #000; border-radius: 6px; padding: 1px 4px; }
@@ -156,7 +156,7 @@
   .heat { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .heat .h { font-size: 11px; color: var(--muted); text-align: center; }
   .heat .d { aspect-ratio: 1; border-radius: 8px; background: var(--field); display: flex; align-items: center; justify-content: center; font-size: 12px; position: relative; cursor: pointer; }
-  .heat .d.off { background: #0c0d11; color: #555; }
+  .heat .d.off { background: #101115; color: #8a8a8a; }
   .heat .d.td { outline: 2px solid var(--accent); }
   .heat .d small { position: absolute; bottom: 2px; right: 4px; font-size: 9px; font-weight: 700; }
 
