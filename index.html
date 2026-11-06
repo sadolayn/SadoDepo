@@ -7,6 +7,7 @@
 <link rel="apple-touch-icon" href="img/icon.png">
 <meta name="theme-color" content="#000000">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="tema.js"></script>
 <title>SADOLAYN</title>
 <meta name="description" content="Bilgi paylaştıkça büyür">
 <meta property="og:type" content="website">
@@ -465,6 +466,102 @@
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
 <link rel="stylesheet" href="hareket.css">
+<style>
+  /* ===== Açık mod: ana sayfa ===== */
+  html[data-tema="acik"] { --bg: #f6f3ec; --card: #ffffff; --ink: #1b1813; --muted: #6b645a; --accent: #9a6517; --line: #e4ddcf; }
+  html[data-tema="acik"] h1.logo img { filter: drop-shadow(0 2px 6px rgba(120,80,20,.28)) saturate(1.1) brightness(.92); }
+  html[data-tema="acik"] .mn h2::after, html[data-tema="acik"] .quote span::before { background: linear-gradient(90deg, #d9c39a, transparent); }
+  html[data-tema="acik"] .quote span::after { background: linear-gradient(90deg, #d9c39a, transparent); transform: scaleX(-1); }
+  html[data-tema="acik"] :is(.rows, .tile, .altL, .azP) { background: #fff; box-shadow: 0 1px 2px rgba(60,45,20,.05); }
+  html[data-tema="acik"] .row + .row, html[data-tema="acik"] .alt { border-color: #efe9de; }
+  html[data-tema="acik"] :is(.row, .alt a):active { background: #f6ecd9; }
+  html[data-tema="acik"] .row .ok { color: #c9a66a; }
+  html[data-tema="acik"] .row.acl .d b, html[data-tema="acik"] .aclS .x b { color: #8a5a12; }
+  html[data-tema="acik"] .row.alr .d b { color: #1f8a57; }
+  html[data-tema="acik"] .row.alr .ik i { box-shadow: 0 0 0 2px #fff, 0 0 6px rgba(31,138,87,.6); }
+  html[data-tema="acik"] .one { box-shadow: 0 8px 22px rgba(30,45,120,.22); }
+  /* arama, favoriler */
+  html[data-tema="acik"] .ara input { background: #fff; }
+  html[data-tema="acik"] .ara input::placeholder { color: #7a7368; }
+  html[data-tema="acik"] .ara input:focus { box-shadow: 0 0 0 3px rgba(154,101,23,.15); }
+  html[data-tema="acik"] #araSil { background: #efe9de; color: #4a443b; }
+  html[data-tema="acik"] .fav h2 button { border-color: #d9c39a; }
+  html[data-tema="acik"] .fav h2 button[aria-pressed="true"], html[data-tema="acik"] .favDuz .mn .secili .yld { background: #e0a24f; border-color: #e0a24f; color: #1a1206; }
+  html[data-tema="acik"] .fv { background: linear-gradient(180deg, #fffaf0, #fff); border-color: #ead9b8; }
+  html[data-tema="acik"] .fvx { background: #fff7e6; }
+  html[data-tema="acik"] :is(.fv small, .alt a small) { color: #6b645a; }
+  html[data-tema="acik"] :is(#azBtn[aria-expanded="true"], .altMsg) { color: #8a5a12; }
+  html[data-tema="acik"] .altB { background: #fbf6ec; border-color: #efe9de; }
+  html[data-tema="acik"] .azKapat { background: #fbf6ec; border-color: #efe9de; }
+  html[data-tema="acik"] .alt .yb { color: #7a7368; }
+  html[data-tema="acik"] .favDuz .mn .yld { background: #fff; border-color: #d9d2c4; color: #7a7368; }
+  /* üst bölüm: saat ve takvim yaprağı beyaz kart olur, kadran koyu kalır (kol saati gibi) */
+  html[data-tema="acik"] .datec { background: #fff; border-color: #e2cfa6; box-shadow: 0 2px 8px rgba(120,80,20,.12); }
+  html[data-tema="acik"] .datec .d { color: #2a2214; }
+  html[data-tema="acik"] .bar { background: rgba(246,243,236,.94); }
+  /* yeni bölümler şeridi ve kayan yazı */
+  html[data-tema="acik"] .yeniS { background: #fff; border-color: #ead9b8; }
+  html[data-tema="acik"] .kayan { border-color: #e2cfa6; background: linear-gradient(90deg, #fffaf0, #fbf0da); box-shadow: none; }
+  html[data-tema="acik"] :is(.kyOge, .ysSer a, .ysSer .ysDet) { color: #3a3226; }
+  html[data-tema="acik"] :is(.kyOge b, .ysSer a b) { color: #8a5a12; }
+  html[data-tema="acik"] :is(.kyOge.son, .kyOge.ppk, .kyOge.onem) { color: #1b1813; }
+  html[data-tema="acik"] .kyOge::after, html[data-tema="acik"] .ysSer a::after { color: #c9a66a; }
+  html[data-tema="acik"] .ysSer .ysNot { color: #6b645a; }
+  /* PPK penceresi */
+  html[data-tema="acik"] .ppkSh { background: rgba(40,30,15,.35); }
+  html[data-tema="acik"] .ppkK { background: #fff; border-color: #e2cfa6; color: #3a3226; box-shadow: 0 -6px 30px rgba(60,40,10,.2); }
+  html[data-tema="acik"] .ppkK .x { background: #f3ede2; color: #6b645a; }
+  html[data-tema="acik"] .ppkK .pT { color: #1b1813; }
+  html[data-tema="acik"] .ppkK .pS { color: #5a5245; }
+  html[data-tema="acik"] .ppkK .pS b { color: #8a5a12; }
+  html[data-tema="acik"] .ppkK .pB a, html[data-tema="acik"] .ppkK .pB button:not(.ana) { border-color: #c9a66a; color: #8a5a12; }
+  html[data-tema="acik"] .ppkK .pK { color: #7a7368; }
+  /* Açılış kartı */
+  html[data-tema="acik"] .acl { border-color: #efe3cc; background: linear-gradient(180deg, #fdf7ea, #fff); }
+  html[data-tema="acik"] :is(.aclPG a, .aclSeg, .aclSpC button) { background: #fff; border-color: #e4ddcf; }
+  html[data-tema="acik"] .aclPG a.em, html[data-tema="acik"] .aclSp { border-color: #ead9b8; }
+  html[data-tema="acik"] :is(.aclPG .ad, .aclPD b, .aclSpC button) { color: #4a443b; }
+  html[data-tema="acik"] :is(.aclPB small, .aclPG .br, .aclPN, .aclSpB small, .aclPD small, .aclSpSel, .aclSpT, .aclS .x small, .aclAlt, .aclPG .eq, .aclSpS .eq) { color: #6b645a; }
+  html[data-tema="acik"] .aclPN summary, html[data-tema="acik"] .aclS .x small b { color: #7a5a22; }
+  html[data-tema="acik"] :is(.aclPG .up, .aclSpS .up) { color: #1f8a57; }
+  html[data-tema="acik"] :is(.aclPG .dn, .aclSpS .dn) { color: #c2412a; }
+  html[data-tema="acik"] .aclSeg button { color: #6b645a; }
+  html[data-tema="acik"] .aclSpSel select { color: #8a5a12; }
+  html[data-tema="acik"] .aclSpSel select option { background: #fff; color: #1b1813; }
+  html[data-tema="acik"] .aclSpC button[aria-pressed="true"] { color: #8a5a12; }
+  html[data-tema="acik"] :is(.aclS, .aclK) { border-color: #efe9de; }
+  html[data-tema="acik"] .aclBar { background: #efe9de; }
+  html[data-tema="acik"] .aclS .ok { color: #c9a66a; }
+  html[data-tema="acik"] .aclT { border-color: #e2cfa6; background: linear-gradient(160deg, #fdf3df, #fff); }
+  /* Kupa sahnesi gece sahnesi olarak kalır: koyu kart içinde */
+  html[data-tema="acik"] .odS { background: #0b0a08; border-radius: 18px; padding-bottom: 12px; }
+  /* Paylaş kartı, öneri formu, kurulum yardımı */
+  html[data-tema="acik"] .paylas { background: radial-gradient(120% 80% at 50% 0%, rgba(224,162,79,.20) 0%, rgba(224,162,79,.06) 45%, #fff 75%); box-shadow: 0 1px 2px rgba(60,45,20,.05); }
+  html[data-tema="acik"] .pyHead h3 { color: #6b4a12; }
+  html[data-tema="acik"] .pyHead p { color: #6b645a; }
+  html[data-tema="acik"] .pyBig { box-shadow: 0 6px 16px rgba(224,162,79,.28); }
+  html[data-tema="acik"] .pySm { border-color: #e4ddcf; background: #fbf8f2; color: #1b1813; }
+  html[data-tema="acik"] .pyIc2 { background: #f1ece2; }
+  html[data-tema="acik"] .paylas .pySlogan { border-color: #ead9b8; }
+  html[data-tema="acik"] .oneri-btn { border-color: #d9c39a; }
+  html[data-tema="acik"] .oneri-ov { background: rgba(40,30,15,.4); }
+  html[data-tema="acik"] .oneri-box { background: #fff; border-color: #e2cfa6; color: #1b1813; }
+  html[data-tema="acik"] .oneri-box p { color: #5f594f !important; }
+  html[data-tema="acik"] .oneri-box :is(textarea, input) { background: #fbf8f2; color: #1b1813; border-color: #e4ddcf; }
+  html[data-tema="acik"] .oneri-act button { background: #f3ede2; border-color: #e4ddcf; color: #3a352d; }
+  html[data-tema="acik"] .oneri-act button[type=submit] { background: #e0a24f; border-color: #e0a24f; color: #1a1206; }
+  html[data-tema="acik"] .kurYardim { background: linear-gradient(180deg, rgba(63,194,131,.10), #fff 70%); color: #3a352d; }
+  html[data-tema="acik"] .kurYardim b { color: #1b1813; }
+  html[data-tema="acik"] .kyN { color: #1f7a4c; }
+  html[data-tema="acik"] .kyS li { border-color: #efe9de; }
+  html[data-tema="acik"] .kyS small { color: #6b645a; }
+  /* Görünüm bölümü */
+  .gorunum { width: 100%; max-width: 380px; }
+  .gorunum h2 { margin: 26px 2px 10px; font: italic 600 15px Georgia, "Times New Roman", serif; color: var(--accent); letter-spacing: .3px; display: flex; align-items: baseline; gap: 10px; }
+  .gorunum h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #5a4320, transparent); }
+  html[data-tema="acik"] .gorunum h2::after { background: linear-gradient(90deg, #d9c39a, transparent); }
+  html[data-tema="acik"] .temaSec { background: #fff; }
+</style>
 </head>
 <body>
   <header class="top" id="top">
@@ -699,6 +796,25 @@
       </div>
     </div>
   </nav>
+  <section class="gorunum" aria-label="Görünüm">
+    <h2>Görünüm</h2>
+    <div class="temaSec" id="temaSec" role="group" aria-label="Tema seçimi">
+      <button type="button" data-t="oto">📱 Otomatik</button><button type="button" data-t="acik">☀️ Açık</button><button type="button" data-t="koyu">🌙 Koyu</button>
+    </div>
+    <p class="temaNot" id="temaNot"></p>
+  </section>
+  <script>
+  (function () {
+    var k = document.getElementById("temaSec"), n = document.getElementById("temaNot");
+    function boya() {
+      var s = Tema.secim(), t = Tema.tema();
+      k.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.t === s ? "true" : "false"); });
+      n.textContent = s === "oto" ? "Telefonunun ayarına uyar; şu an " + (t === "acik" ? "açık" : "koyu") + " görünüyor. Oyunlar hep koyu kalır." : "Oyunlar hep koyu kalır.";
+    }
+    k.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) Tema.sec(b.dataset.t); });
+    document.addEventListener("tema", boya); boya();
+  })();
+  </script>
   <div class="quote">
     <q>Bilgi paylaştıkça büyür</q>
     <span>SADOLAYN</span>
