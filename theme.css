@@ -65,3 +65,18 @@ html[data-tema="acik"] .row.bas { background: #f6ecd9; }
 .temaSec { display: flex; gap: 3px; padding: 3px; border-radius: 12px; border: 1px solid var(--line, #262626); background: var(--card, #0d0d0d); }
 .temaSec button { flex: 1 1 0; min-width: 0; min-height: 38px; border: 0; border-radius: 9px; background: transparent; color: var(--muted, #8a8a8a); font: 600 13.5px system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; transition: background-color .2s ease, color .2s ease; }
 .temaSec button[aria-pressed="true"] { background: #e0a24f; color: #1a1206; font-weight: 800; }
+
+/* Açık mod: renkli menü kutucukları (Bankacılık, İş Bankası Gündemi menüsü, Haberler başlıkları, Hesaplamalar sekmeleri)
+   Her kutucuğun kendi rengi --c. Zemin rengin çok açık tonu, yazı aynı rengin koyusu, seçili olan biraz daha dolgun. */
+html[data-tema="acik"] :where(.tabs button, .menu button, #cats .chip, #tabs button, .tfil.mtiles button.mt):not(.active):not(.on) {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--c) 22%, #fff), color-mix(in srgb, var(--c) 8%, #fff)) !important;
+  border-color: color-mix(in srgb, var(--c) 50%, #fff) !important;
+  color: color-mix(in srgb, var(--c) 35%, #1b1813) !important;
+}
+html[data-tema="acik"] :where(.tabs button, .menu button, #cats .chip, #tabs button, .tfil.mtiles button.mt):is(.active, .on) {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--c) 35%, #fff), color-mix(in srgb, var(--c) 65%, #fff)) !important;
+  border-color: color-mix(in srgb, var(--c) 80%, #000) !important;
+  color: #000 !important;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--c) 35%, transparent) !important;
+}
+html[data-tema="acik"] .menu button.hasnew:not(.active) { border-color: #d32f2f !important; }

@@ -140,7 +140,9 @@
   function varCoz(v, n) {
     if ((n || 0) > 6 || v.indexOf("var(") < 0) return v;
     return varCoz(v.replace(/var\(\s*(--[\w-]+)\s*(?:,\s*([^()]*(?:\([^()]*\))?[^()]*))?\)/g, function (s, ad, yedek) {
-      var x = VARLAR[ad]; return x ? x : yedek ? yedek.trim() : s;
+      // Yalnızca :root'ta tek tanımlı değişkeni çöz; bölüme/öğeye göre değişen değişkene (ör. --ky) dokunma,
+      // yoksa yedek değer (ör. #000) sabitlenir ve seçili düğmenin beyaz yazısı siyaha döner.
+      var x = VARLAR[ad]; return x ? x : s;
     }), (n || 0) + 1);
   }
   function secici(sel) {
