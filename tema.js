@@ -11,8 +11,8 @@
      - koyu çizgi → açık çizgi, siyah gölge → hafif sıcak gölge
      - parlak dolgular (altın düğme, yeşil rozet) ve onların üstündeki yazı olduğu gibi kalır
    Satır içi style="" renkleri de aynı kurala göre çevrilir (koyuya dönünce eski haline gelir).
-   Elle düzeltme gereken yerlere sayfada html[data-tema="acik"] .x { … } yazılır; sayfanın kendi stilinden SONRA
-   geldiği için boyacının ürettiğini ezer.
+   Elle düzeltme gereken yerlere sayfanın stiline html[data-tema="acik"] .x { … } yazılır; boyacı bu kurallara
+   dokunmaz ve ürettiğini kaynağın ÖNÜNE koyar, böylece elle yazılan her zaman kazanır.
    <html data-tema-motor="yok">: boyacı çalışmaz, sayfa açık renklerini tamamen kendisi verir (index.html).
    Oyun sayfaları bu dosyayı yüklemez, hep koyu kalır. */
 (function () {
@@ -90,12 +90,13 @@
     if (a === 0) return c;
     var L = lab(c[0], c[1], c[2]), C = Math.hypot(L[1], L[2]);
     if (a < 1 && C < 8 && L[0] > 85) return [27, 24, 19, Math.max(a, 0.55)];
-    if (kontrast(c[0], c[1], c[2]) >= 4.5) return c;
+    // Hedef beyaza karşı 5.2: kâğıt zeminde (#f6f3ec) ve hafif renkli kartlarda da 4.5'in üstünde kalsın
+    if (kontrast(c[0], c[1], c[2]) >= 5.2) return c;
     var hedef, aa = L[1], bb = L[2];
     if (C < 8) { hedef = Math.min(L[0], 10 + (100 - L[0]) * 33 / 42); aa = SICAK[0]; bb = SICAK[1]; }
     else hedef = L[0];
     var o = rgbL(hedef, aa, bb);
-    while (kontrast(o[0], o[1], o[2]) < 4.6 && hedef > 5) { hedef -= 1.5; o = rgbL(hedef, aa, bb); }
+    while (kontrast(o[0], o[1], o[2]) < 5.2 && hedef > 5) { hedef -= 1.5; o = rgbL(hedef, aa, bb); }
     return o.concat(a);
   }
   function cizgi(c) {
@@ -154,6 +155,7 @@
   }
   function kuralCevir(r) {
     var st = r.style, sel = r.selectorText, out = [], k = { parlak: false, sabit: st.position === "fixed" };
+    if (sel.indexOf("data-tema") >= 0) return ""; // elle yazılmış tema kuralı, dokunma
     var aynen = KORU.test(sel), ayni = function (c) { return c; };
     var zemin_ = aynen ? ayni : zemin, yazi_ = aynen ? ayni : yazi, cizgi_ = aynen ? ayni : cizgi, golge_ = aynen ? ayni : golge, yaziGolge_ = aynen ? ayni : yaziGolge;
     var yaziKlip = /background-clip:\s*text|-webkit-background-clip:\s*text/.test(st.cssText);
@@ -224,7 +226,7 @@
       var sonuc = []; kurallar(kl, sonuc);
       if (!sonuc.length) continue;
       var el = document.createElement("style"); el.setAttribute("data-tema-uretim", ""); el.textContent = sonuc.join("\n");
-      n.parentNode.insertBefore(el, n.nextSibling); uretilen.push(el); yeni = true;
+      n.parentNode.insertBefore(el, n); uretilen.push(el); yeni = true;
     }
     if (yeni) { try { var t = uretilen.map(function (e) { return e.textContent; }).join("\n"); sessionStorage.setItem("temaOn:" + SAYFA, t.length < 400000 ? t : ""); } catch (e) {} }
   }
