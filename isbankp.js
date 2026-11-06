@@ -260,7 +260,7 @@ function oneHtml() {
       <p>${g.bitis && daysLeft(g.bitis) <= 0 ? g.sonra : g.rehber}${g.bitis && daysLeft(g.bitis) > 0 ? ` <b style="color:#ffb27a">${daysLeft(g.bitis) <= 1 ? "Son gün." : `Son ${sonN(daysLeft(g.bitis))} gün.`}</b>` : ""}</p>
       ${L.map((c) => { const t = `<span>${esc(c.baslik)}${c.url ? '&nbsp;<i class="oarr">↗</i>' : ""}</span><small>${daysLeft(c.bitis) <= 3 ? "🔥 " : ""}${new Date(c.bitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" })}</small>`;
         return c.url ? `<a class="omini olnk" href="${esc(c.url)}" target="_blank" rel="noopener">${t}</a>` : `<div class="omini">${t}</div>`; }).join("")}
-      <div class="olinks">${g.link && !(g.bitis && daysLeft(g.bitis) <= 0) ? `<a class="olink" href="${g.link}" target="_blank" rel="noopener">${g.linkAd || "Kampanya koşulları"} ↗</a>` : ""}${g.link2 ? `<a class="olink" href="${g.link2}" target="_blank" rel="noopener">${g.link2Ad} ↗</a>` : ""}${!g.black && !g.link2 ? `<a class="olink dim" href="${g.tum || "https://www.maximum.com.tr/kampanyalar"}" target="_blank" rel="noopener">${g.tumAd || "maximum.com.tr'de tüm kampanyalar"} ↗</a>` : ""}</div>${g.black ? `<button type="button" class="olink tolink" data-cat="Black" style="background:none;border:none;padding:0">🖤 Black sayfasına git ›</button>` : ""}</div>`;
+      <div class="olinks">${g.link && !(g.bitis && daysLeft(g.bitis) <= 0) ? `<a class="olink" href="${esc(g.link)}" target="_blank" rel="noopener">${g.linkAd || "Kampanya koşulları"} ↗</a>` : ""}${g.link2 ? `<a class="olink" href="${g.link2}" target="_blank" rel="noopener">${g.link2Ad} ↗</a>` : ""}${!g.black && !g.link2 ? `<a class="olink dim" href="${g.tum || "https://www.maximum.com.tr/kampanyalar"}" target="_blank" rel="noopener">${g.tumAd || "maximum.com.tr'de tüm kampanyalar"} ↗</a>` : ""}</div>${g.black ? `<button type="button" class="olink tolink" data-cat="Black" style="background:none;border:none;padding:0">🖤 Black sayfasına git ›</button>` : ""}</div>`;
   }).join("") + `<a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Tüm Maximum kampanyaları ↗</a>`;
 }
 // ===== Kartsız öde: Maximum ile temassız ve yeni ödeme yolları =====
@@ -297,7 +297,7 @@ function odeHtml() {
   const known = new Set(K.map((k) => k.u));
   const L = camps.filter((c) => !known.has(c.url) && /temassız|temassiz|karekod|qr|maxsticker|saat ile|yüz ile|işpay|ispay/i.test(c.baslik + " " + c.ozet));
   const tag = (o) => K.filter((k) => k.yollar.includes(o.ic));
-  const kCard = (k, i) => { const n = kGun(k); return `<a class="kz" id="kz${i}" href="${k.u}" target="_blank" rel="noopener">
+  const kCard = (k, i) => { const n = kGun(k); return `<a class="kz" id="kz${i}" href="${esc(k.u)}" target="_blank" rel="noopener">
       <div class="kzh"><i>${k.ic}</i><b>${k.ad}</b><span class="${n <= 3 ? "u" : ""}">${n <= 1 ? "Son gün" : "Son " + sonN(n) + " gün"}</span></div>
       <div class="kzo">${k.od}</div>
       <div class="kzy">${k.yollar.map((y) => { const o = ODE.find((x) => x.ic === y); return `<em>${y} ${o ? o.ad : ""}</em>`; }).join("")}</div>
@@ -311,7 +311,7 @@ function odeHtml() {
     <div class="pay-grid">${ODE.map((o, i) => { const T = tag(o); return `<div class="pay${o.yeni ? " new" : ""}" id="ode${i}"><div class="ph"><i>${o.ic}</i><div><b>${o.ad}${o.yeni ? ' <span class="newtag">YENİ</span>' : ""}</b><small>${o.alt}</small></div></div>
       <p>${o.p}</p><div class="pn">👉 ${o.n}</div>
       ${T.length ? `<div class="pk">${T.map((k) => `<button type="button" data-go="kz${ODE_K.indexOf(k)}">🎁 ${k.ad}</button>`).join("")}</div>` : o.kn ? `<div class="pk none">${o.kn}</div>` : ""}
-      ${o.u ? `<a class="olink" href="${o.u}" target="_blank" rel="noopener">Ayrıntılar · ${o.ua} ↗</a>` : ""}</div>`; }).join("")}</div>
+      ${o.u ? `<a class="olink" href="${esc(o.u)}" target="_blank" rel="noopener">Ayrıntılar · ${o.ua} ↗</a>` : ""}</div>`; }).join("")}</div>
     <a class="maxlink" href="https://www.maximum.com.tr/kampanyalar" target="_blank" rel="noopener">Yeni kartsız ödeme kampanyaları · maximum.com.tr ↗</a>
     <div class="pay-tip">🔒 Kartın, telefonun ya da MaxSticker'ın kaybolursa İşCep'ten hemen geçici olarak kapatabilirsin.</div>`;
 }
@@ -1373,7 +1373,7 @@ function iscepIpHtml() {
   const bas = ipSec ? `<div class="ipsec"><b>${(IPK.find((c) => c[0] === ipSec) || [])[1] || ""} ${esc((IPK.find((c) => c[0] === ipSec) || [])[2] || "")}</b><span>${L.length} ipucu</span><button type="button" data-ipk="">🌟 Hepsine dön</button></div>` : "";
   return (ipSec ? `<div class="iphero mini"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in az bilinen süper güçleri 🚀</b></div>` : `<div class="iphero"><small>💡 BİLİYOR MUYDUNUZ?</small><b>İşCep'in az bilinen süper güçleri 🚀</b><span>800'den fazla işlemin içinden en çok şaşırtanlar. Her gün biri öne çıkar.</span></div>`) + `
     ${ipSec ? "" /* başlık seçilince günün ipucu gizlenir; yoksa üstte hep aynı kart kalıp seçim değişmemiş gibi görünüyordu */ : `    <div class="ipgun"><div class="iph"><i>${g.ic}</i><div><em>${ipTorba ? `İpucu · ${IPUCU.length - ipTorba.length}/${IPUCU.length}` : "Günün ipucu"}</em><b>${esc(g.t)}${taze(g) ? '<span class="newtag">YENİ</span>' : ""}</b></div></div><p>${esc(g.d)}</p><div class="ipn">📍 ${esc(g.n)}</div>
-      <div class="ipl"><a href="${g.u}" target="_blank" rel="noopener">Ayrıntı ↗</a>${ipGecmis.length ? `<button type="button" id="ipGeri">◀ Önceki</button>` : ""}<button type="button" id="ipZar">${ipTorba && !ipTorba.length ? "🔁 Hepsini gördün · baştan" : "🎲 Bir tane daha"}</button></div></div>` + bas + ``}
+      <div class="ipl"><a href="${esc(g.u)}" target="_blank" rel="noopener">Ayrıntı ↗</a>${ipGecmis.length ? `<button type="button" id="ipGeri">◀ Önceki</button>` : ""}<button type="button" id="ipZar">${ipTorba && !ipTorba.length ? "🔁 Hepsini gördün · baştan" : "🎲 Bir tane daha"}</button></div></div>` + bas + ``}
     ${tamami}${L.map(([x, i], n) => { const p = n ? L[n - 1][0] : null; let h = "";
       if (x.k === "ayar" && (!p || p.k !== "ayar")) h += `<div class="ipay"><b>⚙️ Bir kez ayarla, hep kullan</b><span>Bunlar İşCep'te <b>bir kez</b> açılır, sonra her gün kendiliğinden çalışır. Çoğu <b>Profil ve Ayarlar</b> menüsünde, kartla ilgili olanlar <b>Kartlar</b> menüsünde.</span></div>`;
       if (x.g && (!p || p.g !== x.g)) h += `<div class="ipgr">${esc(x.g)}</div>`;
