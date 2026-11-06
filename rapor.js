@@ -2,6 +2,8 @@
    GoatCounter panelinde görünenler:
      oyun-bitti-<oyun>   → biten oyun sayısı (tavla, batak, king, balayi, solitaire, pilot, tahmin, bulmaca)
      bolum-<sayfa>/<bölüm> → sayfa içinde açılan bölüm/sekme (aynı sayfa açılışında bir kez)
+     tema-<koyu|acik>-<oto|secim> → ziyaretçi siteyi hangi görünümde gördü (tarayıcı oturumunda bir kez; oto = telefon ayarı, secim = elle seçti)
+     bolum-index/tema-sec-<oto|acik|koyu> → ana sayfadaki Görünüm düğmesine dokunma
    Sayfa ziyaretlerini GoatCounter zaten kendisi sayar. */
 (function () {
   var q = [], tries = 0;
@@ -26,5 +28,13 @@
       gc("bolum-" + k.toLocaleLowerCase("tr").replace(/[^a-z0-9çğıöşü/]+/g, "-"), "Bölüm: " + k);
     },
   };
+  // Görünüm sayımı: koyu mu açık mı görüldü (oyun sayfaları tema yüklemez, orada sayılmaz)
+  try {
+    var t = document.documentElement.getAttribute("data-tema"), sc = document.documentElement.getAttribute("data-tema-secim");
+    if (t && !sessionStorage.getItem("raporTema")) {
+      sessionStorage.setItem("raporTema", "1");
+      gc("tema-" + t + "-" + (sc === "oto" ? "oto" : "secim"), "Görünüm: " + t + (sc === "oto" ? " (otomatik)" : " (seçilmiş)"));
+    }
+  } catch (e) {}
   try { localStorage.removeItem("rapor_v1"); } catch (e) {} // eski sürümün biriktirdiği özetleri temizle
 })();

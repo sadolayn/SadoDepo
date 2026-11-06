@@ -1371,7 +1371,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       k.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.t === s ? "true" : "false"); });
       k.querySelector('[data-t="oto"]').title = "Telefonun ayarına uyar; şu an " + (t === "acik" ? "açık" : "koyu") + ". Oyunlar hep koyu kalır.";
     }
-    k.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) Tema.sec(b.dataset.t); });
+    k.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) { Tema.sec(b.dataset.t); window.Rapor && Rapor.bolum("tema-sec-" + b.dataset.t); } });
     document.addEventListener("tema", boya); boya();
   })();
 </script>
