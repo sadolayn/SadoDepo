@@ -44,6 +44,24 @@
   .days i { display: block; width: 100%; border-radius: 6px 6px 2px 2px; background: linear-gradient(180deg, #f3d38a, #c9953c); min-height: 3px; transition: height .5s; }
   .days em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
   .days div.today i { background: linear-gradient(180deg, #9ff0c8, #3fc283); }
+  .tum3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; }
+  .tum3 span { padding: 9px 4px; border-radius: 12px; background: #101010; border: 1px solid var(--line); font-size: 11px; color: var(--muted); line-height: 1.35; }
+  .tum3 span b { display: block; font-family: Georgia, serif; font-size: 22px; color: #f3d38a; font-variant-numeric: tabular-nums; }
+  .tumG { display: flex; align-items: flex-end; gap: 4px; height: 120px; margin-top: 12px; padding: 16px 2px 0; overflow-x: auto; scrollbar-width: thin; }
+  .tumG div { flex: 0 0 24px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .tumG i { display: block; width: 100%; border-radius: 5px 5px 2px 2px; background: linear-gradient(180deg, #f3d38a, #c9953c); min-height: 3px; }
+  .tumG em { font-style: normal; font-size: 11px; color: var(--ink); margin-bottom: 3px; }
+  .tumG div.today i { background: linear-gradient(180deg, #9ff0c8, #3fc283); }
+  .tumG div.rek em { color: #f3d38a; font-weight: 700; }
+  .tumG div.ay small { color: #e0a24f; }
+  .tumG small { font-size: 11px; margin-top: 2px; }
+  .kilit { max-width: 360px; margin: 18vh auto 0; text-align: center; }
+  .kilit h1 { font-family: Georgia, serif; font-style: italic; color: var(--accent); font-size: 22px; margin: 0 0 6px; }
+  .kilit p { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+  .kilit input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: #0d0d0d; color: var(--ink); font-size: 16px; text-align: center; letter-spacing: 1px; outline: none; }
+  .kilit input:focus { border-color: var(--accent); }
+  .kilit button { margin-top: 10px; width: 100%; padding: 12px; border: 0; border-radius: 12px; background: var(--accent); color: #000; font-size: 15px; font-weight: 700; }
+  .kilit .err { margin-top: 10px; font-size: 13px; min-height: 18px; }
   .note { font-size: 12px; color: var(--muted); line-height: 1.5; }
   .tog { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; }
   .tog input { width: 24px; height: 24px; accent-color: var(--accent); }
@@ -52,7 +70,14 @@
 <link rel="stylesheet" href="theme.css">
 </head>
 <body>
-<div class="wrap">
+<form class="kilit" id="kilit" hidden autocomplete="off">
+  <h1>🔒 Sadece sahibine</h1>
+  <p>Bu sayfa şifreyle açılır.</p>
+  <input type="password" id="pw" placeholder="şifre" aria-label="Şifre" autofocus>
+  <button type="submit">Aç</button>
+  <div class="err" id="pwErr"></div>
+</form>
+<div class="wrap" hidden>
   <header><a href="index.html" aria-label="Ana sayfa">🏠</a><h1>👥 Kaç kişi online?</h1><span style="width:44px"></span></header>
   <div class="card hero">
     <span class="lbl"><span class="dot"></span>Şu an sitede</span>
@@ -62,12 +87,24 @@
   </div>
   <div class="card"><h2>Hangi sayfadalar?</h2><div id="pages"><div class="empty">–</div></div></div>
   <div class="card"><h2>Son 7 gün · tekil ziyaretçi</h2><div class="days" id="days"></div><p class="note" id="gunNote" style="margin:10px 0 0"></p><div id="kars"></div></div>
+  <div class="card" id="tumKart" hidden><h2>Başından beri</h2><div class="tum3" id="tum3"></div><div class="tumG" id="tumG"></div><p class="note" id="tumNote" style="margin:8px 0 0"></p></div>
   <div class="card">
     <label class="tog"><span>🙈 Bu cihazda beni sayma <small style="opacity:.7">(canlı sayaç ve sayfa raporu)</small></span><input type="checkbox" id="ben"></label>
     <p class="note" style="margin:8px 0 0">Açıkken bu cihazdaki ziyaretlerin canlı sayıya ve günlük sayaca eklenmez. Bu sayfa sitede hiçbir yerde bağlantılı değil; linki sadece sende.</p>
   </div>
   <p class="note">Sayım anonimdir: yalnızca sayfa adı ve cihaz türü tutulur; isim, konum ya da IP kaydedilmez. Sekme kapanınca kayıt kendiliğinden silinir.</p>
 </div>
+<script>
+// Şifre kontrolü: sayfada şifrenin kendisi değil, parmak izi (SHA-256) var. Doğru girilince bu cihazda hatırlanır.
+(async function () {
+  const H = "81384c059bce492573b4d14bb867c38abfb8725b3b87640b0d6b94d874dcd2fe";
+  const oz = async (t) => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)))].map((b) => b.toString(16).padStart(2, "0")).join("");
+  const ac = () => { document.getElementById("kilit").hidden = true; document.querySelector(".wrap").hidden = false; };
+  try { if (localStorage.getItem("canli_giris") === H) return ac(); } catch (e) {}
+  const f = document.getElementById("kilit"); f.hidden = false;
+  f.onsubmit = async (e) => { e.preventDefault(); const v = document.getElementById("pw").value.trim(); if (v && (await oz(v)) === H) { try { localStorage.setItem("canli_giris", H); } catch (x) {} ac(); } else { document.getElementById("pwErr").innerHTML = '<span class="err">Olmadı, bir daha dene.</span>'; } };
+})();
+</script>
 <script type="module">
 const FB_DB = "https://sadolaynsadosan-default-rtdb.europe-west1.firebasedatabase.app", V = "10.12.2";
 const $ = (id) => document.getElementById(id);
@@ -81,6 +118,21 @@ const gunOf = (ms) => new Date(ms + 3 * 3600e3).toISOString().slice(0, 10);
 const TATIL_SABIT = { "01-01": "Yılbaşı", "04-23": "23 Nisan", "05-01": "1 Mayıs", "05-19": "19 Mayıs", "07-15": "15 Temmuz", "08-30": "30 Ağustos", "10-28": "Cumhuriyet Bayramı", "10-29": "Cumhuriyet Bayramı" };
 const TATIL_DINI = { "Ramazan Bayramı": ["2026-03-19", "2026-03-22", "2027-03-08", "2027-03-11", "2028-02-25", "2028-02-28"], "Kurban Bayramı": ["2026-05-26", "2026-05-30", "2027-05-15", "2027-05-19", "2028-05-04", "2028-05-08"] };
 const tatil = (k) => TATIL_SABIT[k.slice(5)] || Object.keys(TATIL_DINI).find((ad) => { const t = TATIL_DINI[ad]; for (let i = 0; i < t.length; i += 2) if (k >= t[i] && k <= t[i + 1]) return true; return false; }) || "";
+// "Başından beri": sayacın ilk kaydettiği günden bugüne her gün (boş günler 0)
+function tumu(G) {
+  const K = Object.keys(G).filter((k) => /^\d{4}-\d{2}-\d{2}$/.test(k)).sort();
+  if (!K.length) return;
+  const bugun = gunOf(Date.now()), L = [];
+  for (let t = Date.parse(K[0] + "T12:00:00Z"); ; t += 864e5) { const k = new Date(t).toISOString().slice(0, 10); if (k > bugun) break; L.push([k, Math.max(0, Math.floor(Number(G[k]) || 0))]); }
+  const top = L.reduce((a, b) => a + b[1], 0), tam = L.filter((x) => x[0] !== bugun), ort = tam.length ? Math.round(tam.reduce((a, b) => a + b[1], 0) / tam.length) : 0;
+  const rek = L.reduce((a, b) => (b[1] > a[1] ? b : a)), mx = Math.max(1, rek[1]);
+  const uzun = (k) => new Date(k + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+  $("tum3").innerHTML = `<span><b>${top.toLocaleString("tr-TR")}</b>toplam ziyaret</span><span><b>${ort}</b>günlük ortalama</span><span><b>${rek[1]}</b>en kalabalık gün<br>${uzun(rek[0])}</span>`;
+  $("tumG").innerHTML = L.map(([k, v], i) => { const g = +k.slice(8), ay = i === 0 || g === 1; return `<div class="${k === bugun ? "today" : ""}${k === rek[0] ? " rek" : ""}${ay ? " ay" : ""}"><em>${v}</em><i style="height:${(v / mx) * 100}%"></i><small>${ay ? new Date(k + "T12:00:00").toLocaleDateString("tr-TR", { month: "short" }) : g}</small></div>`; }).join("");
+  $("tumNote").textContent = `${uzun(K[0])}'dan bu yana ${L.length} gün. Grafiği sağa sola kaydırabilirsin; yeşil çubuk bugün, altın sayı en kalabalık gün.`;
+  $("tumKart").hidden = false;
+  requestAnimationFrame(() => { $("tumG").scrollLeft = $("tumG").scrollWidth; });
+}
 try {
   const { initializeApp } = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`);
   const { getDatabase, ref, onValue } = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-database.js`);
@@ -103,6 +155,7 @@ try {
     for (let i = 6; i >= 0; i--) { const k = gunOf(Date.now() - i * 864e5); D.push([k, say(i), say(i + 7)]); }
     const mx = Math.max(1, ...D.map((x) => x[1])), bugun = gunOf(Date.now());
     $("days").innerHTML = D.map(([k, v, g]) => `<div class="${k === bugun ? "today" : ""}"><em>${v}</em><i style="height:${(v / mx) * 100}%"></i>${k === bugun ? "Bugün" : new Date(k + "T12:00:00").toLocaleDateString("tr-TR", { weekday: "short" })}<small>${g}</small></div>`).join("");
+    tumu(G);
     const top = D.reduce((a, b) => a + b[1], 0);
     $("gunNote").textContent = `Son 7 günde toplam ${top} tekil ziyaret (her cihaz günde bir kez sayılır). Çubukların altındaki gri sayı geçen haftanın aynı günü.`;
     // Geçen haftayla karşılaştırma: bugün bitmediği için dünden geriye 7 tam gün; ayrıca son 4 haftanın toplamı
