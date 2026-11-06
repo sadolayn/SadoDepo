@@ -8,6 +8,8 @@ var BolgeSorgu = (function () {
 // (en uzun yer kalıbıyla, Efeler + Aydın, denendi) ve ifadeler ayırt edici bir kelimeyle başlar ("organize sanayi" → "organize suç" olmasın).
 // Trafik kazası (Ekim 2026): bölgedeki yol kapanmaları, müşteri ya da çalışanı etkileyen kazalar için; "kazası" iş kazalarını da getirir.
 // Afet & kesinti "ulaşıma kapandı"yı da arar (kar, sel, heyelan, yol çalışması); ayrı Yol & ulaşım düğmesi küçük ilçelerde boş kalırdı. Sorgu Atama kadar uzun.
+// AVM & proje (6 Kasım 2026): yerel firmaların AVM, mağaza, cadde/konut projesi haberleri ("Zoroğlu İnşaat'tan … vizyon proje" gibi);
+// öteki düğmelerin kalıplarına uymuyordu. "proje" belediye projelerini de getirir, bölge için yine işe yarar.
 // Dolandırıcılık: bölgede yayılan yöntemleri (sahte polis, telefon dolandırıcılığı) önceden bilmek için.
 const GRUP = [
   ["İnsanlar", "#b48cf0", [
@@ -22,6 +24,7 @@ const GRUP = [
     ["🚢", "İhracat & ticaret", 'ihracat OR ithalat OR ihracatçı OR ihracatçılar'],
     ["💳", "Maaş promosyonu", 'promosyon OR promosyonu OR "promosyon anlaşması" OR "promosyon ihalesi"'],
     ["🏪", "Açılış", '"açılış töreni" OR "hizmete açıldı" OR "hizmete girdi" OR "açılışı yapıldı" OR "açılışını yaptı"'],
+    ["🏬", "AVM & proje", 'AVM OR mağaza OR mağazası OR proje OR projesi OR "satışa çıktı"'],
     ["⚖️", "Konkordato & iflas", 'konkordato OR iflas OR "icradan satılık"'],
   ]],
   ["Kamu & şehir", "#5aa9f0", [
