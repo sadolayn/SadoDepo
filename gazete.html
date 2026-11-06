@@ -352,7 +352,7 @@ function renderHaftaBnk(mon) {
   if (!gunler.length || gunler.some((d) => !(d in BNK))) { el.innerHTML = ""; return; } // yükleniyor ya da özet yok
   const L = []; [...gunler].reverse().forEach((d) => (BNK[d] || []).forEach((it) => L.push({ d, it }))); // en yeni gün en üstte
   const bugHafta = isoOf(mon) === (() => { const t = new Date(today + "T12:00:00"); t.setDate(t.getDate() - ((t.getDay() + 6) % 7)); return isoOf(t); })();
-  const ad = bugHafta ? "Bu hafta" : "Bu haftada";
+  const ad = bugHafta ? "Bu hafta" : "O hafta";
   if (!L.length) { el.innerHTML = `<div class="hbnk bos"><div class="hh">✓ ${ad} bankacılığı ilgilendiren bir düzenleme yok</div>${kTeaser()}</div>`; bindTeaser(); return; }
   el.innerHTML = `<div class="hbnk"><div class="hh">🏦 ${ad} bankacılığı ilgilendiren <b>${L.length}</b> düzenleme<small>Dokun, o günün özetinde aç · takvimdeki mavi sayılar aynı şeyi gösterir</small></div>
     <ul>${(bnkHepsi ? L : L.slice(0, 3)).map(({ d, it }) => { const t = new Date(d + "T12:00:00"); return `<li><button type="button" data-g="${d}"><em>${GUN[t.getDay()]} ${t.getDate()}</em><span>${esc(it.baslik)}</span></button></li>`; }).join("")}</ul>
@@ -405,7 +405,7 @@ function renderCal() {
   for (let d = 1; d <= dim; d++) {
     h += dayBtn(`${ym}-${String(d).padStart(2, "0")}`, today, set);
   }
-  h += `</div><div class="cal-f"><span><i></i>Özet var</span><span><b class="lg">2</b>Bankacılık maddesi</span><span>Diğer günler: resmi site</span></div>`;
+  h += `</div><div class="cal-f"><span><i></i>Özet var</span><span><b class="lg">2</b>Bankacılık maddesi</span><span>Diğer günler: resmî site</span></div>`;
   $("cal").innerHTML = h;
   { const r = new Date((selDate || today) + "T12:00:00"); r.setDate(r.getDate() - ((r.getDay() + 6) % 7)); renderHaftaBnk(r); }
   bnkYukle([...Array(dim)].map((_, i) => `${ym}-${String(i + 1).padStart(2, "0")}`));

@@ -1,7 +1,7 @@
 // "YENİ / YENİLENDİ" rozetleri — tüm sayfalarda ortak.
 // Kullanım: <a data-yeni="anahtar|2026-10-17|YENİ"> … <div class="t">Başlık</div> … </a>
 // Etiket "•" ise yalnızca kırmızı nokta konur (küçük sekmeler için).
-// Kullanıcı öğeye dokununca o tarihli değişiklik görülmüş sayılır; 21 gün sonra rozet kendiliğinden kalkar.
+// Kullanıcı öğeye dokununca o tarihli değişiklik görülmüş sayılır; 7 gün sonra rozet kendiliğinden kalkar.
 (function () {
   var KEY = "yeniGoruldu", GUN = 7;
   var S = {}; try { S = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) {}

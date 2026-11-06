@@ -320,12 +320,12 @@
 // Kurallar: başlangıç penceresinde ve ⚙️ Ayarlar'da aynı metin
 const KURAL = () => `<ul class="rules">
       <li>20 el oynanır. Her oyuncu sırayla 5 kez oyun seçer: <b>2 koz</b> ve <b>3 ceza</b>. Her ceza oyunda toplam 2 kez oynanabilir.</li>
-      <li><b>Cezalar:</b> El almaz (el başı −50), Kupa almaz (kupa başı −30), Erkek almaz (papaz/vale −60), Kız almaz (kız −100), Rifki (kupa papazı −320), Son iki (son iki el −180).</li>
+      <li><b>Cezalar:</b> El almaz (el başı −50), Kupa almaz (kupa başı −30), Erkek almaz (papaz/vale −60), Kız almaz (kız −100), Rıfkı (kupa papazı −320), Son iki (son iki el −180).</li>
       <li><b>Rakipler:</b> Her hamlede olası kart dağılımlarını simüle ederek oynar ve birlikte senin puanını düşürmeye çalışır.</li>
       <li><b>Koz:</b> Aldığın her el +50. Her oyuncunun <b>ilk seçimi koz olamaz</b>; ilk turda herkes ceza seçer.</li>
       <li>Renge uymak zorunlu. <b>Yükseltme</b> (başlarken seçilir) açıksa koz oyununda renge uyarken büyüğünü atmak zorundasın; kapalıysa renge uyman yeter, yalnızca koz açılınca yükseltilir. Renk yoksa koz atılır ve yerde koz varsa yükseltilir. Koz kırılmadan kozla açılmaz.</li>
-      <li>Kupa almaz ve Rifki'de kupa kırılmadan kupayla açılmaz. Rifki'de yerde kupa ası varsa elindeki kupa papazını atmak zorunludur; Kız almaz'da yerde aynı rengin papazı ya da ası varsa o rengin kızını atmak zorunludur.</li>
-      <li>Ceza oyunlarında renk yoksa ceza kartı varsa onu atmak zorundasın (kupa, kız, erkek, rifki).</li>
+      <li>Kupa almaz ve Rıfkı'da kupa kırılmadan kupayla açılmaz. Rıfkı'da yerde kupa ası varsa elindeki kupa papazını atmak zorunludur; Kız almaz'da yerde aynı rengin papazı ya da ası varsa o rengin kızını atmak zorunludur.</li>
+      <li>Ceza oyunlarında renk yoksa ceza kartı varsa onu atmak zorundasın (kupa, kız, erkek, rıfkı).</li>
       <li><b>Yıldız:</b> Oyuna Yıldız ayırarak başlarsın. Birinci olursan ayırdığının <b>3 katını</b>, ikinci olursan <b>Yıldızını geri</b> alırsın. Puanlar eşitse o sıraların payı eşit bölünür (birincilik paylaşılırsa ikiniz de 2 katını alırsınız). Bakiyen Batak ve Balayı King'le ortak; biterse 3 saat sonra İş Bankası sorusu gelir.</li>
     </ul>`;
 if (window.KartMasa) KartMasa.kurallar = KURAL;
@@ -344,7 +344,7 @@ const CEZALAR = {
   kupa:  { ad: "Kupa almaz",  kisa: "Kupa",   puan: 30,  aciklama: "Aldığın her kupa −30" },
   erkek: { ad: "Erkek almaz", kisa: "Erkek",  puan: 60,  aciklama: "Her papaz ve vale −60" },
   kiz:   { ad: "Kız almaz",   kisa: "Kız",    puan: 100, aciklama: "Her kız −100" },
-  rifki: { ad: "Rifki",       kisa: "Rifki",  puan: 320, aciklama: "Kupa papazı −320" },
+  rifki: { ad: "Rıfkı",       kisa: "Rıfkı",  puan: 320, aciklama: "Kupa papazı −320" },
   son:   { ad: "Son iki",     kisa: "Son 2",  puan: 180, aciklama: "Son iki elin her biri −180" },
 };
 const CEZA_KEYS = Object.keys(CEZALAR);
