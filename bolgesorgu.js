@@ -10,6 +10,7 @@ var BolgeSorgu = (function () {
 // Afet & kesinti "ulaşıma kapandı"yı da arar (kar, sel, heyelan, yol çalışması); ayrı Yol & ulaşım düğmesi küçük ilçelerde boş kalırdı. Sorgu Atama kadar uzun.
 // AVM & proje (6 Kasım 2026): yerel firmaların AVM, mağaza, cadde/konut projesi haberleri ("Zoroğlu İnşaat'tan … vizyon proje" gibi);
 // öteki düğmelerin kalıplarına uymuyordu. "proje" belediye projelerini de getirir, bölge için yine işe yarar.
+// "mağaza" çıkarıldı: Emlakjet'in "Kiralık Dükkan & Mağaza" ilanlarını haber diye getiriyordu; ilan/mağaza sayfası siteleri kara listede.
 // Dolandırıcılık: bölgede yayılan yöntemleri (sahte polis, telefon dolandırıcılığı) önceden bilmek için.
 const GRUP = [
   ["İnsanlar", "#b48cf0", [
@@ -24,7 +25,7 @@ const GRUP = [
     ["🚢", "İhracat & ticaret", 'ihracat OR ithalat OR ihracatçı OR ihracatçılar'],
     ["💳", "Maaş promosyonu", 'promosyon OR promosyonu OR "promosyon anlaşması" OR "promosyon ihalesi"'],
     ["🏪", "Açılış", '"açılış töreni" OR "hizmete açıldı" OR "hizmete girdi" OR "açılışı yapıldı" OR "açılışını yaptı"'],
-    ["🏬", "AVM & proje", 'AVM OR mağaza OR mağazası OR proje OR projesi OR "satışa çıktı"'],
+    ["🏬", "AVM & proje", 'AVM OR proje OR projesi OR "satışa çıktı" OR "yatırım fırsatı" OR "ticaret merkezi"'],
     ["⚖️", "Konkordato & iflas", 'konkordato OR iflas OR "icradan satılık"'],
   ]],
   ["Kamu & şehir", "#5aa9f0", [
@@ -87,7 +88,8 @@ const sorgu = (S, ILMAP, ek) => yerSorgu(S, ILMAP) + (ek ? " (" + baslikta(ek) +
 // çünkü orada bilinen bir "eski haberi yeni tarihle yayımlayan" site yok.
 // Kara liste: eski haberlerini bugünün tarihiyle yeniden yayımlayan siteler (Antalya Son Haber: 2017 savcı, 2018 jandarma komutanı haberleri
 // "3 gün önce" / "14 Ekim" diye çıkıyordu). Yeni bir site bildirilince buraya eklenir.
-const KARA_LISTE = ["antalyasonhaber.com"];
+// İlan ve mağaza sayfaları (6 Kasım 2026): Haberler sekmesinde emlak ilanları ve mağaza tanıtım sayfaları çıkıyordu.
+const KARA_LISTE = ["antalyasonhaber.com", "emlakjet.com", "sahibinden.com", "hepsiemlak.com", "dijital.link", "migros.com.tr"];
 const disla = () => KARA_LISTE.map((d) => " -site:" + d).join("");
 const aramaUrl = (q, sure) => `https://www.google.com/search?tbm=nws&tbs=qdr:${{ "1d": "d", "7d": "w", "30d": "m" }[sure] || "w"},sbd:1&hl=tr&gl=tr&q=${encodeURIComponent(q + disla())}`;
 const haberUrl = (q, sure) => `https://news.google.com/search?q=${encodeURIComponent(`when:${{ "1d": "1d", "7d": "7d", "30d": "30d" }[sure] || "7d"} ` + q)}&hl=tr&gl=TR&ceid=TR:tr`;
