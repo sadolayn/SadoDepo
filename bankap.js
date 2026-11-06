@@ -677,7 +677,7 @@ function calcKonut() {
   $("k2s_net").textContent = tl(P - tahsis - masraf);
   k2Pdf = { tur: "Konut Kredisi", bas: D.bas, P, r, n, bsmv: 0, kkdf: 0, tF, tV: 0, tFo: 0, top: toplam, T: R2(taksit), rows: plan.map((x) => ({ d: x.d, a: x.ana, f: x.f, fo: 0, v: 0, t: x.t, b: x.bal })) };
   k2Summary = krediOzet({ tur: "Konut Kredisi", P, n, r, taksit: R2(taksit), plan, bsmv: 0, kkdf: 0, tF, tB: 0, tK: 0, toplam, d0: plan[0].d, d1: plan[plan.length - 1].d });
-  $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksidin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.";
+  $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Alıcının üzerine kayıtlı başka bir konut varsa azami kredi oranı daha düşük olabilir; bu hesap ilk konut varsayımıyla yapıldı. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksidin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.";
 }
 
 // ---------- Hesap çekirdekleri (DOM'suz): vade karşılaştırma ve ters hesap da bunları kullanır ----------
