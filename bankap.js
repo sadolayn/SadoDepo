@@ -117,28 +117,32 @@ function calcExtra(P, r, g, start) {
   const r2 = num("m2_faiz") / 100, g2 = Math.round(num("m2_gun")) || g;
   if (!P || !g || !r2) { $("m2_out").textContent = "–"; rows("m2_rows", []); $("m2_note").textContent = ""; }
   else {
-    const ours = netFor(P, r, g, start, sMan), theirs = netFor(P, r2, g2, start, sMan), diff = theirs - ours;
-    $("m2_label").textContent = diff > 0 ? "2. teklif daha fazla kazandırıyor" : "1. teklif daha iyi";
-    $("m2_out").textContent = (diff > 0 ? "+" : "") + tl(diff);
+    const ours = netFor(P, r, g, start, sMan), theirs = netFor(P, r2, g2, start, sMan);
+    // Vadeler farklıysa toplam getiri kıyaslanamaz (uzun vade hep fazla görünür): günlük net getiriyle kıyaslanır
+    const ayni = g2 === g, dO = ours / g, dT = theirs / g2, diff = ayni ? theirs - ours : (dT - dO) * g2;
+    const ikinci = ayni ? diff > 0 : dT > dO;
+    $("m2_label").textContent = ikinci ? "2. teklif daha fazla kazandırıyor" : diff === 0 ? "İki teklif eşit" : "1. teklif daha iyi";
+    $("m2_out").textContent = (diff > 0 ? "+" : diff < 0 ? "−" : "") + tl(Math.abs(diff));
     const list = [
       [`1. teklif net (%${nfx(r * 100)} · ${g} gün)`, tl(ours)],
       [`2. teklif net (%${nfx(r2 * 100)} · ${g2} gün)`, tl(theirs)],
-      ["Fark (vade başına)", tl(Math.abs(diff)), diff > 0 ? "neg" : "pos"],
-      ["Günlük fark", tl(Math.abs(diff) / Math.max(g, g2))],
-      ["Yıllık fark (yenilenirse)", tl(Math.abs(diff) * 365 / g2)],
+      ...(ayni ? [["Fark (vade başına)", tl(Math.abs(diff)), diff > 0 ? "neg" : "pos"]]
+        : [["Günlük net getiri", `${tl(dO)} · ${tl(dT)}`], [`Fark (${g2} günde, günlük net getiriyle)`, tl(Math.abs(diff)), diff > 0 ? "neg" : "pos"]]),
+      ["Günlük fark", tl(Math.abs(dT - dO))],
+      ["Yıllık fark (yenilenirse)", tl(Math.abs(dT - dO) * 365)],
     ];
-    let note = "";
-    if (diff > 0) {
-      // Farkı kapatmak için gereken oran (aynı vade) ve gereken vade (aynı oran)
+    let note = ayni ? "" : `Vadeler farklı (${g} ve ${g2} gün) olduğu için teklifler günlük net getiriyle kıyaslandı; uzun vadenin toplam getirisi süre uzun olduğu için büyük görünür. Stopaj her teklifin kendi vadesine göre alındı.`;
+    if (ikinci) {
+      // Farkı kapatmak için gereken oran (1. teklifin vadesinde, 2. teklifin günlük getirisine ulaşmak için)
       const unit = netFor(P, 1, g, start, sMan);
-      const rNeed = unit ? theirs / unit : 0;
-      let dNeed = null;
-      for (let d = g; d <= g * 3 + 30; d++) { if (netFor(P, r, d, start, sMan) >= theirs) { dNeed = d; break; } }
+      const rNeed = unit ? dT * g / unit : 0;
       list.push([`Aynı ${g} günde gereken oran`, "%" + nfx(Math.ceil(rNeed * 10000) / 100)]);
-      if (dNeed) list.push([`%${nfx(r * 100)} ile gereken vade`, `${dNeed} gün (+${dNeed - g})`, "total"]);
-      note = dNeed
-        ? `Örnek: ${g} gün yerine ${dNeed} gün seçilirse 1. teklifin oranıyla net ${tl(netFor(P, r, dNeed, start, sMan))} kazanılır; 2. teklifin ${g2} günlük getirisine ulaşılır${dNeed > g2 ? ` (para ${dNeed - g2} gün daha uzun kalır)` : dNeed < g2 ? ` (para ${g2 - dNeed} gün daha kısa kalır)` : ""}. Fark ${tl(diff)}.`
-        : "";
+      if (ayni) {
+        let dNeed = null;
+        for (let d = g; d <= g * 3 + 30; d++) { if (netFor(P, r, d, start, sMan) >= theirs) { dNeed = d; break; } }
+        if (dNeed) list.push([`%${nfx(r * 100)} ile gereken vade`, `${dNeed} gün (+${dNeed - g})`, "total"]);
+        note = dNeed ? `Örnek: ${g} gün yerine ${dNeed} gün seçilirse 1. teklifin oranıyla net ${tl(netFor(P, r, dNeed, start, sMan))} kazanılır; 2. teklifin getirisine ulaşılır. Fark ${tl(diff)}.` : "";
+      }
     }
     rows("m2_rows", list);
     $("m2_note").textContent = note;
