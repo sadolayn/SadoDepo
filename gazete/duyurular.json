@@ -1,7 +1,16 @@
 {
-  "guncelleme": "2026-11-01T07:01:24+03:00",
+  "guncelleme": "2026-11-06T07:01:13+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
+    {
+      "tarih": "2026-11-04",
+      "kurum": "BDDK",
+      "baslik": "Golden Global Yatırım Bankası'nın faaliyet izni kaldırıldı",
+      "ozet": "BDDK, 4 Kasım 2026 tarihli ve 11593 sayılı kararla Golden Global Yatırım Bankası A.Ş.'nin faaliyet iznini 5411 sayılı Bankacılık Kanunu'nun 71'inci maddesinin birinci fıkrasının (c) bendi çerçevesinde kaldırdı; karar 6 Kasım 2026 tarihli Resmi Gazete'de yayımlandı. Kararın gerekçesi açıklanmadı.",
+      "onemli": false,
+      "url": "https://www.cnbce.com/haberler/bddkdan-golden-global-yatirim-bankasi-karari-faaliyet-izni-kaldirildi-h41147",
+      "gazete": "2026-11-06"
+    },
     {
       "tarih": "2026-10-30",
       "kurum": "SPK",
@@ -79,8 +88,8 @@
       "tarih": "2026-10-15",
       "kurum": "Ticaret Bakanlığı",
       "baslik": "Perakende taksit kuralları değişti: yetki Ticaret Bakanlığı'nda",
-      "ozet": "Resmi Gazete 33401'deki yönetmelik değişikliğiyle genel 12 ay taksit tavanı yönetmelikten çıktı; konut dışı taksitli satışlarda vade ve sınırları artık Ticaret Bakanlığı belirliyor (BDDK kararlarıyla uyumlu). İlk adım: sıfır cep telefonunda 12 ay taksit sınırı 20 bin TL'den 40 bin TL'ye çıktı (üstü 3 ay), yenilenmiş telefonda tutar sınırı olmadan 12 ay (kartla taksitli satış; tüketici kredisi vadeleri BDDK'nın 1 Ekim kararında). Diğer ürünlerde değişiklik yok.",
-      "etki": "Kartlı taksitli satışlarda telefon taksit sınırları değişti; bundan sonraki taksit duyuruları Bakanlıktan gelecek.",
+      "ozet": "Resmi Gazete 33401'deki yönetmelik değişikliğiyle genel 12 ay taksit tavanı yönetmelikten çıktı; konut dışı taksitli satışlarda vade ve sınırları artık Ticaret Bakanlığı belirliyor (BDDK kararlarıyla uyumlu). İlk adım: sıfır cep telefonunda 12 ay taksit sınırı 20 bin TL'den 40 bin TL'ye çıktı (üstü 3 ay), yenilenmiş telefonda tutar sınırı olmadan 12 ay (kartla taksitli satış; tüketici kredisi vadeleri BDDK'nın 1 Ekim kararında). Güncelleme: Bakanlık 22 Ekim 2026'da kredi kartı ve tüketici kredisi dışındaki (senetli/doğrudan) taksitli satışlar için ürün bazında azami taksit sürelerini duyurdu; haberlere göre beyaz eşya ve mobilyada 9 ay, tablette 6 ay, televizyonda 5.000 TL altı 9 ay / üstü 4 ay, video-kamera-ses sistemlerinde 4 ay, yurt içi uçuş, seyahat acentesi ve konaklamada 18 aya kadar.",
+      "etki": "Kartlı taksitli satışlarda telefon taksit sınırları değişti; haberlere göre 22 Ekim'deki ürün bazlı süreler kredi kartı ve tüketici kredisiyle yapılan alışverişlere doğrudan uygulanmıyor, bunlarda BDDK kuralları geçerli.",
       "onemli": true,
       "url": "https://ticaret.gov.tr/haberler/ticaret-bakanligindan-bddk-kararlariyla-uyumlu-yeni-duzenleme-15-10-2026",
       "gazete": "2026-10-15"
