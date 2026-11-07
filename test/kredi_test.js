@@ -31,6 +31,23 @@ const sayi = (t) => parseFloat(String(t).replace(/\./g, "").replace(",", "."));
     esit(o.ad + " · toplam geri", sayi(top[3]), o.toplam.geri); esit(o.ad + " · toplam faiz", sayi(top[5]), o.toplam.faiz);
     esit(o.ad + " · toplam fon", sayi(top[6]), o.toplam.fon); esit(o.ad + " · toplam vergi", sayi(top[7]), o.toplam.vergi);
   }
+  for (const o of ORN.konut || []) {
+    const g = o.girdi;
+    const plan = await p.evaluate((g) => {
+      dManual.k2 = true; eksOn = false; const s = (k, v) => (document.getElementById(k).value = v);
+      s("k2_tutar", g.tutar.toLocaleString("tr-TR")); s("k2_faiz", String(g.faiz).replace(".", ",")); s("k2_vade", String(g.vade));
+      s("k2_bas", g.bas); s("k2_ilk", g.ilk); calcKonut();
+      return [...document.querySelectorAll("#k2_mplan tr")].slice(1).map((tr) => [...tr.children].map((td) => td.textContent));
+    }, g);
+    // sütunlar: # · tarih · gün · taksit · anapara · faiz · kalan
+    const s1 = o.satir1, r1 = plan[0];
+    esit(o.ad + " · 1. gün", +r1[2], s1.gun);
+    [["taksit", 3], ["anapara", 4], ["faiz", 5], ["kalan", 6]].forEach(([k, i]) => esit(`${o.ad} · 1. ${k}`, sayi(r1[i]), s1[k]));
+    ORN.konut_ortak_satirlar.satirlar.forEach(([an, fz, kal], j) => { const r = plan[j + 1], no = j + 2;
+      esit(`${o.ad} · ${no}. taksit`, sayi(r[3]), ORN.konut_ortak_satirlar.taksit); esit(`${o.ad} · ${no}. anapara`, sayi(r[4]), an); esit(`${o.ad} · ${no}. faiz`, sayi(r[5]), fz); esit(`${o.ad} · ${no}. kalan`, sayi(r[6]), kal); });
+    const top = plan[plan.length - 1];
+    esit(o.ad + " · toplam geri", sayi(top[3]), o.toplam.geri); esit(o.ad + " · toplam faiz", sayi(top[5]), o.toplam.faiz);
+  }
   console.log(`${kontrol} kontrol · ${hatalar.length} fark`); hatalar.slice(0, 30).forEach((h) => console.log("✗ " + h));
   await b.close(); process.exit(hatalar.length ? 1 : 0);
 })();
