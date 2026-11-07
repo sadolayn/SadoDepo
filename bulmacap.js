@@ -247,6 +247,7 @@ async function gunPaylas(btn) {
   try { await navigator.clipboard.writeText(t); const o = btn.textContent; btn.textContent = "✅ Kopyalandı, istediğin yere yapıştır"; setTimeout(() => (btn.textContent = o), 2200); } catch (e) { prompt("Kopyala:", t); }
   window.Rapor && Rapor.bolum("gunluk-paylas");
 }
+let gunDetay = false;
 function gunKartYaz() {
   const g = gunOku(), I = gIstOku(), no = gunNo(g.t), el = $("bmGunKart"); if (!el) return;
   const tarih = new Date(g.t + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
@@ -254,12 +255,20 @@ function gunKartYaz() {
   const dag = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((k) => [k, I.dag[k] || 0]), mx = Math.max(1, ...dag.map((x) => x[1]));
   const yarin = new Date(Date.parse(g.t + "T00:00:00+03:00") + 864e5), kal = Math.max(0, yarin - Date.now()), sa = Math.floor(kal / 36e5), dk = Math.floor(kal % 36e5 / 6e4);
   const ist = `<div class="gs"><div><b>${I.cozulen}</b><span>çözülen gün</span></div><div><b>${seri}</b><span>seri 🔥</span></div><div><b>${I.enSeri}</b><span>en uzun seri</span></div><div><b>${I.cozulen ? (Object.entries(I.dag).reduce((a, [k, v]) => a + k * v, 0) / I.cozulen).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) : "–"}</b><span>ort. tahmin</span></div></div>`;
-  let govde;
-  if (g.bitti) govde = `<p class="ok">✅ Bugünün sayısını <b>${g.me.length}</b> tahminde buldun!</p>${ist}<div class="gd">${dag.filter((x) => x[0] <= Math.max(6, ...Object.keys(I.dag).map(Number))).map(([k, v]) => `<span>${k === 10 ? "10+" : k}</span><i class="${g.me.length === k || (k === 10 && g.me.length >= 10) ? "bu" : ""}" style="width:${Math.max(8, v / mx * 100)}%">${v}</i>`).join("")}</div><div class="gb"><button type="button" class="btn-go" id="gunPaylas">📤 Paylaş</button><button type="button" class="btn-go" id="gunGor" style="background:transparent;color:var(--accent);border:1px solid #5a4320">Tahminlerim</button></div><div class="ny">⏳ Yeni sayı <b>${sa} sa ${dk} dk</b> sonra</div>`;
-  else govde = `<p>Herkes için aynı <b>4 basamaklı</b> gizli sayı. Günde bir kez; kaç tahminde bulacaksın? Sonucu sayıyı ele vermeden paylaş, arkadaşların da denesin.</p>${I.cozulen ? ist : ""}<button type="button" class="btn-go" id="gunBasla">${g.me.length ? `▶️ Devam et (${g.me.length} tahmin yaptın)` : "Bugünün sayısını çöz"}</button>`;
-  el.innerHTML = `<div class="gt"><b>📅 Günün Sayısı #${no}</b><small>${tarih}</small></div>${govde}`;
-  const b1 = $("gunBasla"), b2 = $("gunPaylas"), b3 = $("gunGor");
-  if (b1) b1.onclick = gunBasla; if (b2) b2.onclick = () => gunPaylas(b2); if (b3) b3.onclick = gunBasla;
+  const dagH = `<div class="gd">${dag.filter((x) => x[0] <= Math.max(6, ...Object.keys(I.dag).map(Number))).map(([k, v]) => `<span>${k === 10 ? "10+" : k}</span><i class="${g.bitti && (g.me.length === k || (k === 10 && g.me.length >= 10)) ? "bu" : ""}" style="width:${Math.max(8, v / mx * 100)}%">${v}</i>`).join("")}</div>`;
+  // İnce davet şeridi: ana oyun (Sadolayn'a karşı) ilk ekranda görünsün; istatistik yalnızca dokununca açılır
+  let ust, alt = "";
+  if (g.bitti) {
+    ust = `<div class="gl"><b>✅ Günün Sayısı #${no}</b><span>${g.me.length} tahminde buldun${seri > 1 ? ` · 🔥 ${seri} gün` : ""}</span></div><div class="gk"><button type="button" class="ga" id="gunPaylas">📤 Paylaş</button><button type="button" class="gi" id="gunAc" aria-expanded="${gunDetay}" aria-label="İstatistik">${gunDetay ? "▴" : "📊"}</button></div>`;
+    if (gunDetay) alt = `<div class="gx">${ist}${dagH}<button type="button" class="gi gw" id="gunGor">Tahminlerimi gör</button><div style="margin-top:8px;font-size:12px;color:var(--muted);text-align:center">⏳ Yeni sayı <b>${sa} sa ${dk} dk</b> sonra</div></div>`;
+  } else {
+    ust = `<div class="gl"><b>📅 Günün Sayısı #${no}</b><span>${g.me.length ? `${g.me.length} tahmin yaptın, devam et` : "Herkese aynı sayı · sen kaçta bulursun?"}</span></div><div class="gk"><button type="button" class="ga" id="gunBasla">${g.me.length ? "Devam ›" : "Çöz ›"}</button>${I.cozulen ? `<button type="button" class="gi" id="gunAc" aria-expanded="${gunDetay}">${gunDetay ? "▴" : "📊"}</button>` : ""}</div>`;
+    if (gunDetay && I.cozulen) alt = `<div class="gx">${ist}${dagH}</div>`;
+  }
+  el.innerHTML = `<div class="gr1">${ust}</div>${alt}`;
+  el.title = tarih;
+  const b1 = $("gunBasla"), b2 = $("gunPaylas"), b3 = $("gunGor"), b4 = $("gunAc");
+  if (b1) b1.onclick = gunBasla; if (b2) b2.onclick = () => gunPaylas(b2); if (b3) b3.onclick = gunBasla; if (b4) b4.onclick = () => { gunDetay = !gunDetay; gunKartYaz(); };
 }
 function gunBasla() {
   const g = gunOku();
