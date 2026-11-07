@@ -1193,14 +1193,11 @@ let OZET = null, ozetSel = "";
 function ozDeg(bu, once, iyi) {
   if (bu == null || once == null) return { c: "n", t: "–" };
   if (once > 0 && bu >= 0) {
-    const r = bu / once, p = (r - 1) * 100, c = bu === once ? "n" : ((bu > once) === (iyi === "up") ? "g" : "b");
+    const r = bu / once, p = (r - 1) * 100, c = bu === once || iyi === "notr" ? "n" : ((bu > once) === (iyi === "up") ? "g" : "b");
     if (r >= 10) return { c, t: Math.floor(r).toLocaleString("tr-TR") + " katı" };
     return { c, t: (p > 0 ? "+%" : p < 0 ? "−%" : "%") + Math.abs(p).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) };
   }
-  // zarar içeren kalemler: yüzde yanıltıcı olur, yönü söz ile yazılır
-  if (once < 0 && bu < 0) return bu < once ? { c: "b", t: "zarar arttı" } : bu > once ? { c: "g", t: "zarar azaldı" } : { c: "n", t: "aynı" };
-  if (once <= 0 && bu > 0) return { c: "g", t: "kâra döndü" };
-  if (once > 0 && bu < 0) return { c: "b", t: "zarara döndü" };
+  // eksi (zarar) içeren kalemlerde yüzde yanıltıcı olur ve söz yorum gibi okunur: değişim gösterilmez, rakamlar yan yana yeter
   return { c: "n", t: "–" };
 }
 function renderOzet() {
@@ -1220,14 +1217,14 @@ function renderOzet() {
     sat("Krediler", B.kredi, "up") +
     sat("TP krediler", B.krediTP, "up", "yalt") +
     sat("YP krediler", B.krediYP, "up", "yalt") +
-    sat("Beklenen zarar karşılıkları (−)", B.bzk, "down", "yeksi") +
+    sat("Beklenen zarar karşılıkları (−)", B.bzk, "notr", "yeksi") +
     sat("Gayrinakdi krediler", B.gnakdi, "up") +
     sat("Akreditifler", B.akreditif, "up", "yalt") +
     sat("Mevduat", B.mevduat, "up", "yvurgu") +
     sat("Özkaynaklar", B.ozkaynak, "up") +
     bas("Gelir tablosu", "milyon TL · " + (yil ? "yıllık" : ay), kisaP(d.p), kisaP(d.oncekiDonem)) +
     sat("Faiz gelirleri", G.faizGelir, "up") +
-    sat("Faiz giderleri (−)", G.faizGider, "down", "yeksi") +
+    sat("Faiz giderleri (−)", G.faizGider, "notr", "yeksi") +
     sat("Net faiz geliri", G.nfg, "up") +
     sat("Net ücret ve komisyon geliri", G.komisyon, "up") +
     sat("Ticari kâr / zarar", G.ticari, "up") +
@@ -1240,7 +1237,7 @@ function renderOzet() {
   const [y, m] = d.p.split("/"), tarih = ({ "3": "31.03.", "6": "30.06.", "9": "30.09.", "12": "31.12." })[m] + y;
   $("list").innerHTML = `<div class="day" style="margin-top:6px">📑 Bilanço özeti · ${pLabel(d.p)} ${fBadge("solo")}</div>${secici}
     <div class="yt2kap"><table class="yt2"><caption>İŞBANK · ${pLabel(d.p)}</caption>${rows}</table></div>
-    <div class="yt-note">Bankanın ${tarih} tarihli konsolide olmayan (solo) finansal raporundan, raporda yazdığı gibi. Bilanço kalemleri bir önceki yıl sonuyla, gelir tablosu bir önceki yılın aynı dönemiyle (yılbaşından itibaren) karşılaştırılır. Krediler raporun “Krediler” satırıdır; beklenen zarar karşılıkları ayrı satırda gösterilir. Zarar içeren kalemlerde yüzde yerine yön yazılır. Renk yalnızca yönü gösterir, yorum değildir. Yatırım tavsiyesi değildir.${d.birim && d.birim !== "milyon TL" ? " Bu dönemin raporu bin TL verir; milyon TL'ye yuvarlandı." : ""} Kaynak: <a href="${esc(OZET.kaynak.url)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(OZET.kaynak.ad)} ↗</a></div>`;
+    <div class="yt-note">Bankanın ${tarih} tarihli konsolide olmayan (solo) finansal raporundan, raporda yazdığı gibi. Bilanço kalemleri bir önceki yıl sonuyla, gelir tablosu bir önceki yılın aynı dönemiyle (yılbaşından itibaren) karşılaştırılır. Krediler raporun “Krediler” satırıdır; beklenen zarar karşılıkları ayrı satırda gösterilir. Eksi değer içeren kalemlerde yüzde değişim gösterilmez. Gider ve karşılık kalemleri renklendirilmez. Renk yalnızca artış/azalış yönünü gösterir, yorum değildir. Yatırım tavsiyesi değildir.${d.birim && d.birim !== "milyon TL" ? " Bu dönemin raporu bin TL verir; milyon TL'ye yuvarlandı." : ""} Kaynak: <a href="${esc(OZET.kaynak.url)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(OZET.kaynak.ad)} ↗</a></div>`;
   $("list").querySelectorAll("[data-oz]").forEach((b) => (b.onclick = () => { ozetSel = b.dataset.oz; renderOzet(); }));
 }
 const kisaP = (p) => { const [y, m] = p.split("/"); return AY_TR[m].slice(0, 3) + " " + y; };

@@ -994,3 +994,6 @@ html[data-tema="acik"] .yt-yil button.on small { color: #dfe4ff !important; }
 html[data-tema="acik"] table.yt2 td.neg { color: #b3261e !important; }
 html[data-tema="acik"] table.yt2 tr.yeksi td { background: #f6f1e6; }
 html[data-tema="acik"] table.yt2 tr.yeksi td:first-child { color: #5a3d10 !important; }
+/* Bilanço özeti: renksiz (nötr) değişimler de net okunsun */
+table.yt2 td.yd.n, table.yt2 .ydk.n { color: #cfcfcf; }
+html[data-tema="acik"] table.yt2 td.yd.n, html[data-tema="acik"] table.yt2 .ydk.n { color: #3a352d !important; }
