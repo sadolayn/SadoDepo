@@ -1480,7 +1480,7 @@ function renderIscep() {
       </div>`;
     });
     html += `<div class="surL"><a class="maxlink" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">App Store ↗</a>${d.playUrl ? `<a class="maxlink" href="${esc(d.playUrl)}" target="_blank" rel="noopener">Google Play ↗</a>` : ""}</div>`;
-    html += `<p class="surK">Yeni sürümler her gün App Store ve Google Play'den kendiliğinden eklenir.</p></details>`;
+    html += `<p class="surK">Yeni sürümler her gün App Store'dan kendiliğinden eklenir.${d.play && d.play.guncelleme ? ` Google Play sürüm numarası göstermiyor; orada son güncelleme ${fmt(d.play.guncelleme)}.` : ""}</p></details>`;
   }
   $("list").innerHTML = html;
   if (odulGit && !ipSec && !window.__odulKaydi) {

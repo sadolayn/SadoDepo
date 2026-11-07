@@ -1336,13 +1336,21 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     });
   }).catch(function () {});
 
-  // İşCep yeni sürümü (isbank/iscep.json, App Store sürüm geçmişi): kartta son 7 gün, sabah bandında son 3 gün
+  // İşCep yeni sürümü (isbank/iscep.json; her gün App Store ve Google Play'den, scripts/iscep_surum.py): kartta son 7 gün, sabah bandında son 3 gün.
+  // Google Play sürüm numarası vermediği için Play'deki güncelleme App Store'daki son sürümden yeniyse "Android'de güncellendi" denir.
   Ortak.json("isbank/iscep.json").then(function (J) {
-    var v = (J && J.surumler || [])[0]; if (!v || !v.tarih) return;
-    var g = fark(v.tarih); if (g > 0 || g < -6) return;
-    var yen = (v.yenilikler || []).filter(function (x) { return !/performans|iyileştirme/i.test(x); })[0] || (v.yenilikler || [])[0];
-    satir("iscep", kalip("isbank.html#iscep", "📲", "İşCep <b>" + esc(v.surum) + "</b> yayında (" + gunAy(v.tarih) + ")" + (yen ? "<small>" + esc(yen) + "</small>" : "")));
-    if (g >= -2) { SB.iscep = ["Yeni İşCep <b>" + esc(v.surum) + "</b> yayında", "Yeni İşCep <b>" + esc(v.surum) + "</b>"]; sbYaz(); }
+    var v = (J && J.surumler || [])[0], P = J && J.play; if (!v || !v.tarih) return;
+    var ilkYeni = function (L) { return (L || []).filter(function (x) { return !/performans|iyileştirme/i.test(x); })[0] || (L || [])[0]; };
+    var g = fark(v.tarih), gp = P && P.guncelleme && P.guncelleme > v.tarih ? fark(P.guncelleme) : null;
+    if (g <= 0 && g >= -6) {
+      var yen = ilkYeni(v.yenilikler);
+      satir("iscep", kalip("isbank.html#iscep", "📲", "İşCep <b>" + esc(v.surum) + "</b> yayında (" + gunAy(v.tarih) + ")" + (yen ? "<small>" + esc(yen) + "</small>" : "")));
+      if (g >= -2) { SB.iscep = ["Yeni İşCep <b>" + esc(v.surum) + "</b> yayında", "Yeni İşCep <b>" + esc(v.surum) + "</b>"]; sbYaz(); }
+    } else if (gp !== null && gp <= 0 && gp >= -6) {
+      var yp = ilkYeni(P.yenilikler);
+      satir("iscep", kalip("isbank.html#iscep", "📲", "İşCep <b>Google Play'de güncellendi</b> (" + gunAy(P.guncelleme) + ")" + (yp ? "<small>" + esc(yp) + "</small>" : "")));
+      if (gp >= -2) { SB.iscep = ["İşCep <b>Android'de güncellendi</b>", "Android'de yeni <b>İşCep</b>"]; sbYaz(); }
+    }
   }).catch(function () {});
 
   // PPK

@@ -10,7 +10,10 @@ Kaynaklar (resmî mağazalar):
 Kurallar:
   * Yalnızca listedeki en yeni sürümden büyük bir sürüm görülürse yeni kayıt eklenir; elle yazılmış eski kayıtlara dokunulmaz.
   * Aynı sürüm öteki mağazada da görülürse yalnızca kaydın "magazalar" alanına eklenir.
-  * Bir mağazaya ulaşılamazsa ya da sürüm "cihaza göre değişir" gibi okunamazsa o mağaza sessizce atlanır.
+  * Google Play İşCep'in sürüm numarasını göstermiyor ("Varies with device", 8 Kasım 2026'da denendi). O yüzden Play'den
+    son güncelleme günü ve "Yenilikler" notu "play" alanına yazılır; ana sayfa bu tarih App Store'daki son sürümden yeniyse
+    "Android'de güncellendi" der. Play ileride sürüm numarası verirse sürüm geçmişine de eklenir.
+  * Bir mağazaya ulaşılamazsa o mağaza sessizce atlanır.
   * Mağazadan gelen sürüm notu satırlara bölünür; "Bu sürümle birlikte;" gibi giriş satırları atılır, en çok 8 madde tutulur.
 
 Kullanım:
@@ -78,11 +81,13 @@ def play(ham=None):
             from google_play_scraper import app  # pip install google-play-scraper
             ham = app(PLAY_ID, lang="tr", country="tr")
         surum, guncel = ham.get("version"), ham.get("updated")
-        if not anahtar(surum) or not guncel:
-            print("Google Play sürümü okunamadı:", repr(surum), repr(guncel), file=sys.stderr)  # ör. 'Cihaza göre değişir'
+        if not guncel:
             return None
         t = dt.datetime.fromtimestamp(int(guncel), TR).date().isoformat()
-        return {"magaza": "Google Play", "surum": surum.strip(), "tarih": t, "yenilikler": notlar(ham.get("recentChanges"))}
+        if not anahtar(surum):
+            print("Google Play sürüm numarası vermiyor:", repr(surum), "· son güncelleme", t, file=sys.stderr)
+            surum = None
+        return {"magaza": "Google Play", "surum": surum and surum.strip(), "tarih": t, "yenilikler": notlar(ham.get("recentChanges"))}
     except Exception as e:
         print("Google Play okunamadı:", e, file=sys.stderr)
         return None
@@ -92,7 +97,11 @@ def birlestir(D, bulunan):
     """Bulunan mağaza sürümlerini sürüm geçmişine işler. Değişiklik olduysa True döner."""
     L = D.setdefault("surumler", [])
     degisti = False
-    for b in sorted([x for x in bulunan if x], key=lambda x: anahtar(x["surum"])):
+    for b in [x for x in bulunan if x and x["magaza"] == "Google Play"]:  # Play: son güncelleme günü ve notu
+        yeni = {"guncelleme": b["tarih"], "yenilikler": b["yenilikler"]}
+        if D.get("play") != yeni:
+            D["play"] = yeni; degisti = True
+    for b in sorted([x for x in bulunan if x and x["surum"]], key=lambda x: anahtar(x["surum"])):
         kayit = next((v for v in L if v.get("surum") == b["surum"]), None)
         if kayit:
             mg = kayit.get("magazalar")
