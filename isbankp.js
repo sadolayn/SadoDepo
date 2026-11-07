@@ -30,7 +30,7 @@ const color = (k) => (CATS.find((c) => c[0] === k) || [])[1] || "var(--muted)";
 const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
 let bkamp = null, blk = null, fin = null, yat = null, kontrol = null, iscep = null, subeler = null, newsUpd = null, all = [], camps = [], campUpd = null, cat = "Tümü", live = [], liveUpd = null, vids = [], vidsOk = null;
 try { cat = localStorage.getItem("isbankCat") || "Tümü"; } catch (e) {}
-let finSec = "veri"; // Finansal bilgiler alt başlığı: veri · takvim · sunum
+let finSec = "veri"; // Finansal bilgiler alt başlığı: veri · ozet · takvim · sunum
 if (cat === "📅 Takvim") { cat = "Finans"; finSec = "takvim"; }
 if (cat === "Kampanya") { cat = "Maximum"; try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); localStorage.setItem("isbankKamp", JSON.stringify({ ...k, kay: "isbank" })); } catch (e) {} } // eski Banka Kampanya → Kampanyalar › İş Bankası
 if (location.hash === "#maximum") cat = "Maximum"; // ana sayfadaki kampanya hatırlatıcısından gelince
@@ -1179,13 +1179,71 @@ const ILK = [
 function renderFinans() {
   const t = $("tfil");
   t.className = "tfil sekme"; t.hidden = false;
-  t.innerHTML = [["veri", "📊", "Finansal veriler"], ["takvim", "📅", "Finansal takvim"], ["sunum", "📄", "Yatırımcı sunumu"]].map(([k, ic, ad]) => altSekme("data-fs", k, ic, ad, null, finSec === k)).join("");
+  t.innerHTML = [["veri", "📊", "Finansal veriler"], ["ozet", "📑", "Bilanço özeti"], ["takvim", "📅", "Finansal takvim"], ["sunum", "📄", "Yatırımcı sunumu"]].map(([k, ic, ad]) => altSekme("data-fs", k, ic, ad, null, finSec === k)).join("");
   t.onclick = (e) => { const b = e.target.closest("button[data-fs]"); if (!b) return; finSec = b.dataset.fs; renderFinans(); if (finSec === "sunum" && $("sunumBox")) bolumeKay($("sunumBox")); else icerigeKay(); };
   if (finSec === "takvim") return renderTakvim();
+  if (finSec === "ozet") return renderOzet();
   $("upd").textContent = fin ? "Veri dönemi: " + pLabel(fin.periods[fin.periods.length - 1]) + " · banka 3 ayda bir açıklar" : "";
   $("list").innerHTML = yatHtml() + (subeler ? `<a class="maxlink" style="border-color:var(--line);color:var(--muted)" href="${esc(subeler.kaynakUrl)}" target="_blank" rel="noopener">Kaynak: ${esc(subeler.kaynak)} ↗</a>` + (subeler.ekKaynaklar || []).map((k) => `<a class="maxlink" style="border-color:var(--line);color:var(--muted);font-weight:400;font-size:13px" href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.ad)} ↗</a>`).join("") : "");
   bindYt();
 }
+// ===== Bilanço özeti: bankanın solo finansal raporundan seçilmiş kalemler (isbank/solo_ozet.json, scripts/solo_ozet.py) =====
+// Raporun kendi düzeni: bilanço ve nazım kalemleri önceki yıl sonuyla, gelir tablosu önceki yılın aynı dönemiyle (yılbaşından kümülatif).
+let OZET = null, ozetSel = "";
+function ozDeg(bu, once, iyi) {
+  if (bu == null || once == null) return { c: "n", t: "–" };
+  if (once > 0 && bu >= 0) {
+    const r = bu / once, p = (r - 1) * 100, c = bu === once ? "n" : ((bu > once) === (iyi === "up") ? "g" : "b");
+    if (r >= 10) return { c, t: Math.floor(r).toLocaleString("tr-TR") + " katı" };
+    return { c, t: (p > 0 ? "+%" : p < 0 ? "−%" : "%") + Math.abs(p).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) };
+  }
+  // zarar içeren kalemler: yüzde yanıltıcı olur, yönü söz ile yazılır
+  if (once < 0 && bu < 0) return bu < once ? { c: "b", t: "zarar arttı" } : bu > once ? { c: "g", t: "zarar azaldı" } : { c: "n", t: "aynı" };
+  if (once <= 0 && bu > 0) return { c: "g", t: "kâra döndü" };
+  if (once > 0 && bu < 0) return { c: "b", t: "zarara döndü" };
+  return { c: "n", t: "–" };
+}
+function renderOzet() {
+  $("upd").textContent = "";
+  const D = (OZET && OZET.donemler) || [];
+  if (!D.length) { $("list").innerHTML = `<div class="empty">Bilanço özeti yüklenemedi.</div>`; return; }
+  const d = D.find((x) => x.p === ozetSel) || D[D.length - 1], B = d.bilanco, G = d.gelir;
+  const sayi = (v) => v == null ? "–" : (v < 0 ? "−" : "") + Math.abs(v).toLocaleString("tr-TR");
+  const bas = (ad, alt, k1, k2) => `<tr class="ysh"><th>${ad}${alt ? `<small>${alt}</small>` : ""}</th><th>${k2}</th><th>${k1}</th><th class="ydb">Değişim</th></tr>`;
+  const sat = (ad, v, iyi, cls) => { const g = ozDeg(v[0], v[1], iyi);
+    return `<tr${cls ? ` class="${cls}"` : ""}><td>${ad}</td><td class="old${v[1] < 0 ? " neg" : ""}">${sayi(v[1])}</td><td class="now${v[0] < 0 ? " neg" : ""}">${sayi(v[0])}<span class="ydk ${g.c}">${g.t}</span></td><td class="yd ${g.c}">${g.t}</td></tr>`; };
+  const yil = d.p.endsWith("/12"), ay = pRange(d.p);
+  const rows =
+    bas("Bilanço", "milyon TL", kisaP(d.p), kisaP(d.oncekiYilSonu)) +
+    sat("Toplam varlıklar", B.aktif, "up") +
+    sat("Finansal varlıklar", B.finVarlik, "up", "yalt") +
+    sat("Krediler", B.kredi, "up") +
+    sat("TP krediler", B.krediTP, "up", "yalt") +
+    sat("YP krediler", B.krediYP, "up", "yalt") +
+    sat("Beklenen zarar karşılıkları (−)", B.bzk, "down", "yeksi") +
+    sat("Gayrinakdi krediler", B.gnakdi, "up") +
+    sat("Akreditifler", B.akreditif, "up", "yalt") +
+    sat("Mevduat", B.mevduat, "up", "yvurgu") +
+    sat("Özkaynaklar", B.ozkaynak, "up") +
+    bas("Gelir tablosu", "milyon TL · " + (yil ? "yıllık" : ay), kisaP(d.p), kisaP(d.oncekiDonem)) +
+    sat("Faiz gelirleri", G.faizGelir, "up") +
+    sat("Faiz giderleri (−)", G.faizGider, "down", "yeksi") +
+    sat("Net faiz geliri", G.nfg, "up") +
+    sat("Net ücret ve komisyon geliri", G.komisyon, "up") +
+    sat("Ticari kâr / zarar", G.ticari, "up") +
+    sat("Sermaye piyasası işlemleri", G.spk, "up", "yalt") +
+    sat("Türev işlemler", G.turev, "up", "yalt") +
+    sat("Kambiyo işlemleri", G.kambiyo, "up", "yalt") +
+    sat("Faaliyet brüt kârı", G.brut, "up") +
+    sat("Net kâr", G.netkar, "up", "yvurgu");
+  const secici = D.length > 1 ? donemCizgi(D.map((x) => ({ p: x.p, attr: "data-oz", val: x.p, on: x.p === d.p }))) : "";
+  const [y, m] = d.p.split("/"), tarih = ({ "3": "31.03.", "6": "30.06.", "9": "30.09.", "12": "31.12." })[m] + y;
+  $("list").innerHTML = `<div class="day" style="margin-top:6px">📑 Bilanço özeti · ${pLabel(d.p)} ${fBadge("solo")}</div>${secici}
+    <div class="yt2kap"><table class="yt2"><caption>İŞBANK · ${pLabel(d.p)}</caption>${rows}</table></div>
+    <div class="yt-note">Bankanın ${tarih} tarihli konsolide olmayan (solo) finansal raporundan, raporda yazdığı gibi. Bilanço kalemleri bir önceki yıl sonuyla, gelir tablosu bir önceki yılın aynı dönemiyle (yılbaşından itibaren) karşılaştırılır. Krediler raporun “Krediler” satırıdır; beklenen zarar karşılıkları ayrı satırda gösterilir. Zarar içeren kalemlerde yüzde yerine yön yazılır. Renk yalnızca yönü gösterir, yorum değildir. Yatırım tavsiyesi değildir.${d.birim && d.birim !== "milyon TL" ? " Bu dönemin raporu bin TL verir; milyon TL'ye yuvarlandı." : ""} Kaynak: <a href="${esc(OZET.kaynak.url)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(OZET.kaynak.ad)} ↗</a></div>`;
+  $("list").querySelectorAll("[data-oz]").forEach((b) => (b.onclick = () => { ozetSel = b.dataset.oz; renderOzet(); }));
+}
+const kisaP = (p) => { const [y, m] = p.split("/"); return AY_TR[m].slice(0, 3) + " " + y; };
 // Harita: konum alınınca sayfanın içinde gömülü Google Haritalar açılır
 function bindMap() {
   const btn = $("mapGo"); if (!btn) return;
@@ -2039,6 +2097,7 @@ function renderList() {
     try { fin = await Ortak.json("isbank/finans.json"); } catch (e) {}
     try { if (fin) soloElle(await Ortak.json("isbank/solo_elle.json")); } catch (e) {}
     try { KONS = await Ortak.json("isbank/konsolide.json"); } catch (e) {}
+    try { OZET = await Ortak.json("isbank/solo_ozet.json"); } catch (e) {}
     try { yat = await Ortak.json("isbank/yatirimci.json"); } catch (e) {}
     try { bkamp = await Ortak.json("isbank/banka_kampanya.json"); } catch (e) {}
     try { KH = await Ortak.json("isbank/kampanya_hepsi.json"); } catch (e) {}

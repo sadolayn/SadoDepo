@@ -1,0 +1,189 @@
+{
+ "not": "İş Bankası konsolide olmayan (solo) finansal raporlarından seçilmiş kalemler, milyon TL. Bilanço ve nazım hesaplar: [cari, önceki yıl sonu]; gelir tablosu: [cari, önceki yılın aynı dönemi], yılbaşından kümülatif. scripts/solo_ozet.py ile bankanın yayımladığı Excel'den üretilir.",
+ "donemler": [
+  {
+   "p": "2025/12",
+   "bilanco": {
+    "aktif": [
+     4624940,
+     3323776
+    ],
+    "finVarlik": [
+     1538739,
+     1096130
+    ],
+    "kredi": [
+     2381139,
+     1656913
+    ],
+    "krediTP": [
+     1550889,
+     1063165
+    ],
+    "krediYP": [
+     830250,
+     593748
+    ],
+    "bzk": [
+     89066,
+     51184
+    ],
+    "gnakdi": [
+     896551,
+     582702
+    ],
+    "akreditif": [
+     151154,
+     93163
+    ],
+    "mevduat": [
+     3098900,
+     2127117
+    ],
+    "ozkaynak": [
+     427635,
+     318338
+    ]
+   },
+   "gelir": {
+    "faizGelir": [
+     754553,
+     530915
+    ],
+    "faizGider": [
+     657631,
+     496464
+    ],
+    "nfg": [
+     96922,
+     34451
+    ],
+    "komisyon": [
+     134351,
+     91411
+    ],
+    "ticari": [
+     -22199,
+     -8862
+    ],
+    "spk": [
+     5823,
+     21592
+    ],
+    "turev": [
+     -26747,
+     -55997
+    ],
+    "kambiyo": [
+     -1275,
+     25544
+    ],
+    "brut": [
+     230267,
+     141052
+    ],
+    "netkar": [
+     67441,
+     45517
+    ]
+   },
+   "oncekiYilSonu": "2024/12",
+   "oncekiDonem": "2024/12",
+   "birim": "milyon TL (raporda bin TL; yuvarlandı)"
+  },
+  {
+   "p": "2026/9",
+   "bilanco": {
+    "aktif": [
+     5299209,
+     4624940
+    ],
+    "finVarlik": [
+     1671248,
+     1538739
+    ],
+    "kredi": [
+     2838816,
+     2381139
+    ],
+    "krediTP": [
+     1861008,
+     1550889
+    ],
+    "krediYP": [
+     977808,
+     830250
+    ],
+    "bzk": [
+     126180,
+     89066
+    ],
+    "gnakdi": [
+     1054021,
+     896550
+    ],
+    "akreditif": [
+     184151,
+     151153
+    ],
+    "mevduat": [
+     3547003,
+     3098899
+    ],
+    "ozkaynak": [
+     457134,
+     427635
+    ]
+   },
+   "gelir": {
+    "faizGelir": [
+     671079,
+     550744
+    ],
+    "faizGider": [
+     559647,
+     492547
+    ],
+    "nfg": [
+     111432,
+     58197
+    ],
+    "komisyon": [
+     127488,
+     95769
+    ],
+    "ticari": [
+     -34287,
+     -14379
+    ],
+    "spk": [
+     3062,
+     2825
+    ],
+    "turev": [
+     -51320,
+     -17260
+    ],
+    "kambiyo": [
+     13971,
+     56
+    ],
+    "brut": [
+     222914,
+     151643
+    ],
+    "netkar": [
+     40434,
+     44002
+    ]
+   },
+   "oncekiYilSonu": "2025/12",
+   "oncekiDonem": "2025/9",
+   "birim": "milyon TL"
+  }
+ ],
+ "kaynak": {
+  "ad": "İş Bankası · Finansal bilgiler (konsolide olmayan finansal raporlar)",
+  "url": "https://www.isbank.com.tr/bankamizi-taniyin/finansal-bilgiler"
+ }
+}
