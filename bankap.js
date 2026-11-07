@@ -343,9 +343,11 @@ function tkPlan(B, per, T, r, kkdf, bsmv, closeLast) {
     if (last) ana = bal;
     let t = R2(ana + f + kk + bs);
     if (last && j > 0 && per[j].fac === 1 && Math.abs(t - T) < Math.max(1, T * 0.0005)) {
-      const rem = R2(T - t);
-      // Kuruş farkı faiz/vergiyi eksiye düşürecekse (ör. %0 faiz) sabitleme yapılmaz; son taksit birkaç kuruş küçük kalır
-      if (kkdf > 0 && kk + rem >= 0) { kk = R2(kk + rem); t = T; } else if (bsmv > 0 && bs + rem >= 0) { bs = R2(bs + rem); t = T; } else if (f + rem >= 0) { f = R2(f + rem); t = T; }
+      // Son taksit eşit taksite sabitlenir: brüt (taksit − anapara) önce faize ayrılır, KKDF/BSMV bu faizden yuvarlanır,
+      // kuruş farkı faize yazılır (bankanın ödeme planı örnekleriyle birebir, test/kredi_ornekleri.json).
+      // Fark faizi eksiye düşürecekse (ör. %0 faiz) sabitleme yapılmaz; son taksit birkaç kuruş küçük kalır.
+      const br = R2(T - ana), f0 = R2(br / tx), k2 = R2(f0 * kkdf), b2 = R2(f0 * bsmv), f2 = R2(br - k2 - b2);
+      if (f2 >= 0 && br >= 0) { f = f2; kk = k2; bs = b2; t = T; }
     }
     bal = R2(Math.max(0, bal - ana));
     out.push({ d: per[j].d, g: per[j].g, t, ana, f, kk, bs, bal });
