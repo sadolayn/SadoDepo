@@ -171,7 +171,7 @@
   .dig .nc i { width: 3px; height: 3px; border-radius: 50%; background: #ff7a1a; box-shadow: 0 0 3px #ff5a00; transition: opacity .2s; }
   .dig.off .nc i { opacity: .25; box-shadow: none; }
   .datec { cursor: pointer; }
-  .datec { justify-self: center; width: 60px; border-radius: 12px; overflow: hidden; border: 1px solid #5a4320; background: #0f0f0f; text-align: center; box-shadow: 0 2px 10px rgba(224,162,79,.14); }
+  .datec { justify-self: center; width: 60px; min-width: min-content; padding: 0 2px; box-sizing: border-box; border-radius: 12px; overflow: hidden; border: 1px solid #5a4320; background: #0f0f0f; text-align: center; box-shadow: 0 2px 10px rgba(224,162,79,.14); }
   .datec .m { background: linear-gradient(180deg, #e8b05d, #c98a35); color: #1a1205; font-size: 11px; font-weight: 800; letter-spacing: 1.5px; padding: 3px 0 2px; }
   .datec .d { font-size: 27px; font-weight: 800; line-height: 1.05; padding-top: 4px; color: #f6e7cc; font-variant-numeric: tabular-nums; }
   .datec .w { font-size: 11px; color: var(--accent); padding: 1px 0 6px; font-weight: 600; }
@@ -272,7 +272,8 @@
   .fav h2 button[aria-pressed="true"] { background: var(--accent); color: #111; border-color: var(--accent); }
   .favIp { margin: -2px 2px 0; letter-spacing: normal; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
   .favIp b { color: var(--accent); font-weight: 600; }
-  .favL { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .favL { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } /* minmax(0,…): uzun kelime sütunu ekran dışına itmesin */
+  @media (max-width: 22em) { .favL { grid-template-columns: minmax(0, 1fr); } } /* büyük sistem yazısında tek sütun */
   .favL:empty { display: none; }
   .fv { display: flex; align-items: center; gap: 10px; padding: 11px 12px; min-height: 48px; box-sizing: border-box; border-radius: 14px; border: 1px solid #3a2c15; background: linear-gradient(180deg, #0f0c07, #070707); color: var(--ink); text-decoration: none; }
   .fv:last-child:nth-child(odd) { grid-column: 1 / -1; }
@@ -282,9 +283,9 @@
   .favDuz .fvx { display: flex; align-items: center; justify-content: center; }
   .favDuz .favL { padding-top: 6px; }
   .fv i { font-style: normal; font-size: 20px; width: 24px; text-align: center; flex: none; }
-  .fv b { font: 600 14.5px Georgia, "Times New Roman", serif; line-height: 1.25; }
+  .fv b { font: 600 14.5px Georgia, "Times New Roman", serif; line-height: 1.25; overflow-wrap: anywhere; }
   .fv span { display: flex; flex-direction: column; min-width: 0; }
-  .fv small { font: 11px system-ui, sans-serif; color: #9a9a9a; margin-top: 2px; }
+  .fv small { font: 11px system-ui, sans-serif; color: #9a9a9a; margin-top: 2px; overflow-wrap: anywhere; }
   .araAlt { display: flex; justify-content: flex-end; margin: 2px 2px 0; }
   #azBtn { background: none; border: 0; color: var(--accent); font: 600 13px system-ui, sans-serif; padding: 6px 4px; min-height: 30px; cursor: pointer; letter-spacing: normal; }
   #azBtn[aria-expanded="true"] { color: #f3dca8; }
