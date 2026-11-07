@@ -79,6 +79,7 @@ def play(ham=None):
             ham = app(PLAY_ID, lang="tr", country="tr")
         surum, guncel = ham.get("version"), ham.get("updated")
         if not anahtar(surum) or not guncel:
+            print("Google Play sürümü okunamadı:", repr(surum), repr(guncel), file=sys.stderr)  # ör. 'Cihaza göre değişir'
             return None
         t = dt.datetime.fromtimestamp(int(guncel), TR).date().isoformat()
         return {"magaza": "Google Play", "surum": surum.strip(), "tarih": t, "yenilikler": notlar(ham.get("recentChanges"))}
