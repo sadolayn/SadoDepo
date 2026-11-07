@@ -1,0 +1,29 @@
+name: İşCep sürüm takibi
+# App Store ve Google Play'de İşCep'in yeni sürümü çıktıysa isbank/iscep.json'a ekler (scripts/iscep_surum.py).
+# Ana sayfadaki sabah bandı yeni sürümü ilk 3 gün gösterir.
+on:
+  schedule:
+    - cron: "41 3 * * *"   # 06:41 İstanbul (sabah bandına yetişsin)
+    - cron: "41 13 * * *"  # 16:41 İstanbul
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: iscep-surum
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q google-play-scraper==1.2.7 || echo "google-play-scraper kurulamadı; yalnızca App Store'a bakılacak"
+      - run: python scripts/iscep_surum.py
+      - name: Commit
+        run: |
+          git config user.name "sadolayn-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add isbank/iscep.json
+          git diff --cached --quiet || (git commit -m "İşCep yeni sürümü eklendi" && git pull --rebase -q && git push)

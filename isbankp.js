@@ -1475,11 +1475,12 @@ function renderIscep() {
     html += `<details class="surn"><summary>🛠️ Sürüm notları <span>· ${esc(d.surumler[0].surum)} · ${fmt(d.surumler[0].tarih)}</span>${yeni ? '<span class="newtag">YENİ</span>' : ""}</summary>`;
     d.surumler.forEach((v, i) => {
       html += `<div class="ver ${i === 0 ? "new" : ""}">
-        <div class="top"><span class="vn">Sürüm ${esc(v.surum)}${isNew("v:" + v.surum) ? '<span class="newtag">YENİ</span>' : ""}${i === 0 ? '<span class="badge">GÜNCEL</span>' : ""}</span><span class="vd">${fmt(v.tarih)}</span></div>
+        <div class="top"><span class="vn">Sürüm ${esc(v.surum)}${isNew("v:" + v.surum) ? '<span class="newtag">YENİ</span>' : ""}${i === 0 ? '<span class="badge">GÜNCEL</span>' : ""}</span><span class="vd">${fmt(v.tarih)}</span></div>${v.magazalar ? `<div class="vm">📲 ${v.magazalar.map(esc).join(" · ")}</div>` : ""}
         <ul>${v.yenilikler.map((y) => `<li>${esc(y)}</li>`).join("")}</ul>
       </div>`;
     });
-    html += `<a class="maxlink" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">İşCep'i App Store'da aç ↗</a></details>`;
+    html += `<div class="surL"><a class="maxlink" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">App Store ↗</a>${d.playUrl ? `<a class="maxlink" href="${esc(d.playUrl)}" target="_blank" rel="noopener">Google Play ↗</a>` : ""}</div>`;
+    html += `<p class="surK">Yeni sürümler her gün App Store ve Google Play'den kendiliğinden eklenir.</p></details>`;
   }
   $("list").innerHTML = html;
   if (odulGit && !ipSec && !window.__odulKaydi) {

@@ -463,6 +463,20 @@
   .aclT .sg button { display: flex; justify-content: space-between; align-items: center; min-height: 32px; padding: 5px 9px; border-radius: 9px; border: 1px solid rgba(255,255,255,.08); background: rgba(0,0,0,.35); color: #e9dcc0; font: 12.5px system-ui, sans-serif; cursor: pointer; }
   .aclT .sg button b { color: #fff; font-size: 14px; }
   .aclT .sg button:active { border-color: #e0a24f; }
+  /* Sabah bandı (8 Kasım 2026): iş günleri 07:00-10:00 arasında aramanın üstünde tek satır; Açılış kartının canlı özeti.
+     O gün kart henüz açılmadıysa bir kez parıldar (göz kırpar); dokununca kart açılır. */
+  .sbB { display: flex; align-items: center; gap: 7px; min-height: 40px; padding: 8px 10px; margin: 0 0 12px; border-radius: 12px; border: 1px solid #5a4320;
+    background: linear-gradient(90deg, rgba(224,162,79,.13), rgba(224,162,79,.04)); color: #e9dcc0; text-decoration: none; position: relative; overflow: hidden; }
+  .sbB[hidden] { display: none; }
+  .sbI { font-size: 17px; flex: none; }
+  .sbT { flex: 1; min-width: 0; font-size: 12px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sbT b { color: #f3d38a; }
+  .sbO { flex: none; font-size: 17px; line-height: 1; color: #e0a24f; }
+  .sbB::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; pointer-events: none; opacity: 0;
+    background: linear-gradient(100deg, transparent, rgba(243,211,138,.30), transparent); transform: translateX(-120%); }
+  .sbB.kirp::after { animation: sbParla 1.4s .8s 2 cubic-bezier(.4,0,.2,1); }
+  @keyframes sbParla { 0% { opacity: 1; transform: translateX(-120%); } 100% { opacity: 1; transform: translateX(280%); } }
+  @media (prefers-reduced-motion: reduce) { .sbB.kirp::after { animation: none; } }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -537,6 +551,9 @@
   html[data-tema="acik"] .aclBar { background: #dcd3c2; }
   html[data-tema="acik"] .aclS .ok { color: #c9a66a; }
   html[data-tema="acik"] .aclT { border-color: #d4bb8a; background: linear-gradient(160deg, #fdf3df, #fff); }
+  html[data-tema="acik"] .sbB { border-color: #d8c49a; background: linear-gradient(90deg, #fdf3df, #fff); color: #3a3226; }
+  html[data-tema="acik"] .sbT b, html[data-tema="acik"] .sbO { color: #8a5a12; }
+  html[data-tema="acik"] .sbB::after { background: linear-gradient(100deg, transparent, rgba(224,162,79,.35), transparent); }
   /* Kupa sahnesi gece sahnesi olarak kalır: koyu kart içinde */
   html[data-tema="acik"] .odS { background: #0b0a08; border-radius: 18px; padding-bottom: 4px; max-width: 420px; margin: 0 auto; }
   html[data-tema="acik"] .top.odulOn .hello :is(.clock, .datec) { position: relative; z-index: 4; }
@@ -759,6 +776,7 @@
   </div>
   <!-- Ana menü: 4 başlık altında gruplu (İş Bankası kartı en üstte tek başına) -->
   <nav class="mn" aria-label="Ana menü">
+    <a class="sbB" id="sbB" href="#acilis" hidden><span class="sbI" aria-hidden="true">☕</span><span class="sbT" id="sbT"></span><span class="sbO" aria-hidden="true">›</span></a>
     <div class="ara" role="search">
       <span class="araIk" aria-hidden="true">🔎</span>
       <input type="search" id="araQ" placeholder="Ara: çek iskonto, mevduat, resmî gazete…" aria-label="Araçlarda ara" autocomplete="off" enterkeyhint="go">
@@ -810,7 +828,7 @@
 
     <h2>Sabah brifingi <small>tek bakışta</small></h2>
     <div class="rows">
-      <a class="row acl aclR" id="aclRow" href="#acilis" role="button" aria-expanded="false" aria-controls="acilis" data-ara="açılış kartı sabah brifing çeyrek iş günü ppk bölge kampanya faiz kredi" data-yeni="acilis2|2026-11-01|YENİLENDİ"><span class="ik">☕</span><div><div class="t">Açılış kartı</div><div class="d" id="aclD">Çeyrek, Resmî Gazete, bölgen, PPK ve kampanyalar</div></div><span class="ok">›</span></a>
+      <a class="row acl aclR" id="aclRow" href="#acilis" role="button" aria-expanded="false" aria-controls="acilis" data-ara="açılış kartı sabah brifing çeyrek iş günü ppk bölge kampanya faiz kredi" data-yeni="acilis3|2026-11-08|YENİLENDİ"><span class="ik">☕</span><div><div class="t">Açılış kartı</div><div class="d" id="aclD">Çeyrek, Resmî Gazete, bölgen, PPK ve kampanyalar</div></div><span class="ok">›</span></a>
       <div class="acl" id="acilis" hidden>
         <div class="aclIc">
           <div id="aclSat"></div>
@@ -1173,11 +1191,39 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 
 
   var goster = function () {};
+  // ---- Sabah bandı: iş günleri 07:00-10:00, tek satır. Öncelik: PPK günü, yeni İşCep sürümü, Gazete'deki bankacılık başlıkları,
+  // ayın son iş günü / arife / yarın tatil, bugün gelen yeni kampanyalar, çeyrek hedefi. Sığan kadarı (en çok 3) yazılır;
+  // bir parçanın uzun hâli sığmazsa kısası denenir, o da sığmazsa sıradakine geçilir.
+  var SB = {}, sbSaat = new Date().getHours(), sbVakit = sbSaat >= 7 && sbSaat < 10 && isG(BUGUN);
+  function sbYaz() {
+    if (!sbVakit) return;
+    var aday = ["ppk", "iscep", "gazete", "takvim", "kampanya", "hedef"].map(function (k) { return SB[k]; }).filter(Boolean), el = $("sbB");
+    if (!aday.length || !el) return;
+    if (el.hidden) { el.hidden = false; window.aclBant = true; if (oku("aclGordu", "") !== B) el.classList.add("kirp"); }
+    var t = $("sbT");
+    var sigar = function (h) { t.innerHTML = h; var r = document.createRange(); r.selectNodeContents(t); return r.getBoundingClientRect().width <= t.clientWidth - 1; }; // gerçek yazı genişliği (scrollWidth küsuratı yuvarlıyor)
+    function diz(ilkKisa) { // ilk parça uzun ya da kısa hâliyle başlayıp sığanları sırayla ekler; seçilenlerin öncelik sırasını da döndürür
+      var sec = [], sira = [];
+      aday.forEach(function (a, j) {
+        if (sec.length >= 3) return;
+        var secenek = [].concat(a); if (!sec.length && ilkKisa) secenek = secenek.slice(-1);
+        for (var i = 0; i < secenek.length; i++) {
+          if (/^Bugün/.test(secenek[i]) && sec.some(function (x) { return /^Bugün/.test(x); })) continue; // "Bugün … · Bugün …" tekrarı olmasın
+          if (!sec.length || sigar(sec.concat(secenek[i]).join(" · "))) { sec.push(secenek[i]); sira.push(j); break; }
+        }
+      });
+      return { sec: sec, sira: sira.join(",") };
+    }
+    var u = diz(false), k = diz(true), en = k.sec.length > u.sec.length || (k.sec.length === u.sec.length && k.sira < u.sira) ? k : u; // daha çok parça, eşitse daha öncelikli olanlar
+    t.innerHTML = en.sec.join(" · ");
+  }
+  window.addEventListener("resize", sbYaz); // katlanan ekran açılıp kapanınca yeniden sığdır
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sbYaz); // yazı tipi geç yüklenince yeniden ölç
   var OZ = { gor: oku("aclGordu", "") === B ? "✅ Bugün baktın · " : "" }, alt = []; // küçükken görünen tek satır: çeyrek · PPK · kampanya
   function ozetYaz() { $("aclAlt").innerHTML = alt.join("<br>"); $("aclD").innerHTML = (OZ.gor || "") + ["ceyrek", "pf", "ppk"].map(function (k) { return OZ[k]; }).filter(Boolean).map(function (x) { return '<span style="white-space:nowrap">' + x + "</span>"; }).join(" · "); } // her parça bölünmeden satıra sığar
 
   // ---- 2) Satırlar: çeyrek, Gazete, PPK, takvim (sırası sabit) ----
-  var SAT = {}, SIRA = ["ceyrek", "gazete", "bolge", "ppk", "takvim", "piyasa"]; // piyasa kampanyaların hemen üstünde
+  var SAT = {}, SIRA = ["ceyrek", "gazete", "iscep", "bolge", "ppk", "takvim", "piyasa"]; // piyasa kampanyaların hemen üstünde
   function satir(ad, html) { SAT[ad] = html; $("aclSat").innerHTML = SIRA.map(function (k) { return SAT[k] || ""; }).join(""); goster(); }
   function kalip(href, ik, x, dis) { return '<a class="aclS" href="' + href + '"' + (dis ? ' target="_blank" rel="noopener"' : "") + '><span class="ik" aria-hidden="true">' + ik + '</span><span class="x">' + x + '</span><span class="ok" aria-hidden="true">›</span></a>'; }
 
@@ -1242,16 +1288,19 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       var G = JSON.parse(localStorage.getItem("gunce_v2") || "null"), T = G && G.targets && G.targets[y + "-Q" + (qn + 1)];
       if (G && T && Array.isArray(G.products)) {
         var ay = [qn * 3, qn * 3 + 1, qn * 3 + 2], kisa = new Intl.NumberFormat("tr-TR", { notation: "compact", maximumFractionDigits: 1 });
-        var H = G.products.filter(function (p) { return Number(T[p.id]) > 0 && (!p.type || p.type === "adet" || p.type === "tutar"); }).map(function (p) {
+        var TUM = G.products.filter(function (p) { return Number(T[p.id]) > 0 && (!p.type || p.type === "adet" || p.type === "tutar"); }).map(function (p) {
           var s = 0; Object.keys(G.days || {}).forEach(function (k) { var a = k.split("-"); if (+a[0] === y && ay.indexOf(+a[1] - 1) > -1) s += Number((G.days[k] || {})[p.id]) || 0; });
           var f = function (n) { return p.type === "tutar" ? kisa.format(n).replace(/\s?B$/, " bin") : sayi(Math.round(n * 10) / 10, 0); };
           return { ad: p.name, s: s, t: Number(T[p.id]), f: f };
-        }).sort(function (a, b) { return a.s / a.t - b.s / b.t; }).slice(0, 3);
+        });
+        if (TUM.length) SB.hedef = "Çeyrek hedefi <b>%" + Math.round(TUM.reduce(function (a, o) { return a + Math.min(o.s / o.t, 1); }, 0) / TUM.length * 100) + "</b>"; // ürünlerin ortalaması, her biri en fazla %100
+        var H = TUM.slice().sort(function (a, b) { return a.s / a.t - b.s / b.t; }).slice(0, 3);
         if (H.length) h = "<small>🎯 " + H.map(function (o) { return esc(o.ad) + " <b>" + o.f(o.s) + "/" + o.f(o.t) + "</b>"; }).join(" · ") + "</small>";
       }
     } catch (e) {}
     if (!h) h = "<small>Hedeflerini Günce'ye girersen burada görünür 🎯</small>";
     OZ.ceyrek = "📅 Çeyrekte <b>" + sayi(kal, kal % 1 ? 1 : 0) + "</b> iş günü"; ozetYaz();
+    if (!SB.hedef) SB.hedef = "Çeyrekte <b>" + sayi(kal, kal % 1 ? 1 : 0) + "</b> iş günü"; sbYaz();
     satir("ceyrek", kalip("gunce.html", "📅", "<b>" + (qn + 1) + ". çeyrek:</b> %" + yuz + " tamamlandı, <b>" + sayi(kal, kal % 1 ? 1 : 0) + " iş günü</b> kaldı" +
       '<span class="aclBar"><i style="width:' + yuz + '%"></i></span>' + h));
   })();
@@ -1264,12 +1313,12 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     var sonIs = isG(BUGUN) && ilk.getMonth() !== BUGUN.getMonth();
     var ana = "", alt2 = "";
     if (!isG(BUGUN)) ana = (BUGUN.getDay() === 0 || BUGUN.getDay() === 6 ? "Hafta sonu" : "Bugün resmî tatil") + (aySon ? ", ay bugün bitiyor" : "") + " · sonraki iş günü <b>" + GUNAD[ilk.getDay()] + " " + ilk.getDate() + " " + ayAd(ilk) + "</b>";
-    else if (YARIM.indexOf(B) > -1) ana = "Bugün <b>arife, yarım gün</b>";
-    else if (sonIs) ana = "Bugün <b>ayın son iş günü</b>";
-    else if (!isG(ekle(BUGUN, 1)) && ekle(BUGUN, 1).getDay() !== 6) ana = "Yarın <b>resmî tatil</b> · sonraki iş günü " + GUNAD[ilk.getDay()] + " " + ilk.getDate() + " " + ayAd(ilk);
+    else if (YARIM.indexOf(B) > -1) { ana = "Bugün <b>arife, yarım gün</b>"; SB.takvim = "Bugün <b>arife</b>, yarım gün"; }
+    else if (sonIs) { ana = "Bugün <b>ayın son iş günü</b>"; SB.takvim = "Bugün <b>ayın son iş günü</b>"; }
+    else if (!isG(ekle(BUGUN, 1)) && ekle(BUGUN, 1).getDay() !== 6) { ana = "Yarın <b>resmî tatil</b> · sonraki iş günü " + GUNAD[ilk.getDay()] + " " + ilk.getDate() + " " + ayAd(ilk); SB.takvim = "Yarın <b>resmî tatil</b>"; }
     else { var k = 0; for (var d = new Date(BUGUN); d.getMonth() === BUGUN.getMonth(); d = ekle(d, 1)) if (d > BUGUN) k += isV(d); ana = ayAd(BUGUN) + " ayının bitmesine <b>" + sayi(k, k % 1 ? 1 : 0) + " iş günü</b> var"; }
     if (ilk.getMonth() !== BUGUN.getMonth()) { var m = ilk.getMonth(), yy = ilk.getFullYear(), s = ayIs(yy, m); alt2 = "<small>" + AY[m] + " ayında " + sayi(s, s % 1 ? 1 : 0) + " iş günü var</small>"; }
-    satir("takvim", kalip("takvim.html", "🗓️", ana + alt2));
+    satir("takvim", kalip("takvim.html", "🗓️", ana + alt2)); sbYaz();
   })();
 
   // Resmî Gazete
@@ -1280,10 +1329,20 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       var x = b.length ? gun + " Resmî Gazete'de bankacılığa dokunan <b>" + b.length + " başlık</b><small>" + esc(b[0].baslik) + (b.length > 1 ? " · +" + (b.length - 1) + " başlık daha" : "") + "</small>"
         : gun + " Resmî Gazete'de bankacılığı doğrudan ilgilendiren <b>düzenleme yok</b>";
       if (at.length) x += "<small>👔 " + at.length + " önemli atama</small>";
+      if (t === B && b.length) { SB.gazete = ["Gazete'de <b>" + b.length + "</b> bankacılık başlığı", "Gazete: <b>" + b.length + "</b> bankacılık başlığı"]; sbYaz(); }
       satir("gazete", kalip("gazete.html", "📜", x));
       alt.push("Resmî Gazete " + gunAy(t) + (g.sayi ? ", sayı " + esc(g.sayi) : ""));
       ozetYaz();
     });
+  }).catch(function () {});
+
+  // İşCep yeni sürümü (isbank/iscep.json, App Store sürüm geçmişi): kartta son 7 gün, sabah bandında son 3 gün
+  Ortak.json("isbank/iscep.json").then(function (J) {
+    var v = (J && J.surumler || [])[0]; if (!v || !v.tarih) return;
+    var g = fark(v.tarih); if (g > 0 || g < -6) return;
+    var yen = (v.yenilikler || []).filter(function (x) { return !/performans|iyileştirme/i.test(x); })[0] || (v.yenilikler || [])[0];
+    satir("iscep", kalip("isbank.html#iscep", "📲", "İşCep <b>" + esc(v.surum) + "</b> yayında (" + gunAy(v.tarih) + ")" + (yen ? "<small>" + esc(yen) + "</small>" : "")));
+    if (g >= -2) { SB.iscep = ["Yeni İşCep <b>" + esc(v.surum) + "</b> yayında", "Yeni İşCep <b>" + esc(v.surum) + "</b>"]; sbYaz(); }
   }).catch(function () {});
 
   // PPK
@@ -1301,6 +1360,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     // Özet satırı: politika faizi (son PPK kararı, data/ppk.json) ve sonraki toplantıya kalan gün
     if (son.rate != null) OZ.pf = "📈 Politika faizi <b>%" + sayi(son.rate, son.rate % 1 ? 2 : 0) + "</b>";
     if (sonra) OZ.ppk = "🏛️ PPK " + (g === 0 ? "<b>bugün</b>" : "<b>" + g + "</b> gün");
+    if (sonra === B) { SB.ppk = "Bugün <b>PPK</b> günü"; sbYaz(); }
     ozetYaz();
     satir("ppk", kalip(son.url || "https://www.tcmb.gov.tr", "🏛️", x, true));
   }).catch(function () {});
@@ -1325,6 +1385,14 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       return { fk: fk, yn: yn };
     }
     var Bi = say("bireysel"), Ti = say("ticari");
+    (function () { // sabah bandı için: bugün ilk kez görülen kampanyalar, iki segment ve üç site birlikte, aynı kampanya bir kez
+      var G = {}; ["isbank", "maximum", "maximiles"].forEach(function (kay) { Object.keys(KH[kay] || {}).forEach(function (sg) {
+        var v = KH[kay][sg] || {}, L = v.kampanyalar || [].concat.apply([], (v.kategoriler || []).map(function (c) { return c.kampanyalar || []; }));
+        L.forEach(function (k) { if (!k || !k.baslik || (k.bitis && k.bitis < B)) return; var a = k.es || ayni(k.baslik), ilk = k.ilk && k.ilk > "2000-01-01" ? k.ilk : "0"; if (!(a in G) || ilk < G[a]) G[a] = ilk; });
+      }); });
+      var yb = Object.keys(G).filter(function (a) { return G[a] === B; }).length;
+      if (yb) { SB.kampanya = ["Bugün <b>" + yb + "</b> yeni kampanya", "<b>" + yb + "</b> yeni kampanya"]; sbYaz(); }
+    })();
     if (!Bi.fk && !Ti.fk && !Bi.yn && !Ti.yn) return;
     function kutu(tur, ic, ad, alt, b, t) {
       return '<div class="aclT ' + tur + '"><div class="ust"><span class="ic" aria-hidden="true">' + ic + '</span><b class="n">' + (b + t) + '</b></div><div class="ad">' + ad + '</div><div class="alt2">' + alt + "</div>" +
@@ -1355,7 +1423,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   var row = $("aclRow");
   function durum(acik, kaydir) {
     K.hidden = !acik; row.setAttribute("aria-expanded", acik ? "true" : "false"); row.classList.toggle("acik", acik);
-    if (acik) { yaz("aclGordu", B); OZ.gor = ""; ozetYaz(); }
+    if (acik) { yaz("aclGordu", B); OZ.gor = ""; ozetYaz(); var sb = $("sbB"); if (sb) sb.classList.remove("kirp"); }
     if (acik && kaydir) row.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   durum(false); // her açılışta kapalı başlar; satıra dokununca açılır (site uzamasın)
@@ -1407,7 +1475,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     ["haber", "💬 İş Bankası Genel Müdürü H. Cahit Çınar: “Bundan sonra da <b>bir bankanın çok daha ötesinde bir kurum</b> olarak kaynaklarımızı ülkemizin katma değerli üretimine fayda sağlamak ve tüm paydaşlarımız için kalıcı değer üretmek için kullanmaya devam edeceğiz” <b class=\"gir\">İş Bankası Gündemi › Haber</b>", "2026-11-20", "onem"],
     // Ay başı hatırlatması (her ayın 1-5'i): yeni kampanyalara katılmayı unutma. İlk 3 gün "Yeni gelenler"e, sonra tüm kampanyalara gider
     ...(+bugunTR.slice(8) <= 5 ? [[+bugunTR.slice(8) <= 5 ? "yeniliste" : "maximum", "🗓️ Yeni ay, yeni kampanyalar! " + ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"][+bugunTR.slice(5, 7) - 1] + " kampanyalarına katılmayı unutma 🎁 <b class=\"gir\">Güncel kampanyalar</b>"]] : []),
-    ...(function () { try { return localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
+    ...(function () { try { return window.aclBant || localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
     // 5 Kasım 2026: DenizBank kredi kartları Maximum'a geçiyor; kaynak DenizBank'ın kendi duyurusu ("6 Aralık 2026'dan itibaren … Maximum
     // altyapısına geçiyor"); yalnızca duyuruda yazan söylenir, geçiş gününe kadar kalır
     ["https://www.denizbank.com/kampanya/kart-kampanyalari/cok-yakinda", "🤝 DenizBank kredi kartları <b>6 Aralık'tan</b> itibaren Maximum altyapısına geçiyor", "2026-12-06"],

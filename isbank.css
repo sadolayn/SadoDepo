@@ -79,6 +79,9 @@
   .ver .top { display: flex; justify-content: space-between; align-items: center; }
   .ver .vn { font-weight: 700; font-size: 16px; }
   .ver .vd { font-size: 12px; color: var(--muted); }
+  .ver .vm { font-size: 11.5px; color: var(--muted); margin-top: 3px; } /* sürümün göründüğü mağaza(lar) */
+  .surL { display: flex; gap: 8px; } .surL .maxlink { flex: 1; }
+  .surK { font-size: 11.5px; color: var(--muted); text-align: center; margin: 8px 0 6px; }
   .ver ul { margin: 8px 0 0; padding-left: 18px; }
   .ver li { font-size: 14px; color: #c9c9c9; margin-bottom: 3px; }
   .ver.new { border-color: var(--dijital); }
