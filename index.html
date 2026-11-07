@@ -557,11 +557,22 @@
   html[data-tema="acik"] .kyS li { border-color: #efe9de; }
   html[data-tema="acik"] .kyS small { color: #6b645a; }
   /* Görünüm seçimi: sayfanın en üstünde */
+  /* Görünüm seçimi: sayfanın en üstünde, minik önizleme kartlarıyla (Açık · Koyu · Sistem) */
   .temaUst { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; max-width: 420px; margin: 0 0 12px; }
   .temaUst > span { font: italic 600 14px Georgia, "Times New Roman", serif; color: var(--accent); white-space: nowrap; }
-  .temaUst .temaSec { flex: 0 1 270px; border-color: #5a4320; }
-  .temaUst .temaSec button { min-height: 34px; font-size: 13px; padding: 0 4px; white-space: nowrap; }
-  html[data-tema="acik"] .temaUst .temaSec { border-color: #e2cfa6; background: #fff; box-shadow: 0 1px 3px rgba(120,80,20,.08); }
+  .temaUst .temaSec { display: flex; gap: 8px; padding: 0; border: 0; background: none; box-shadow: none; }
+  .temaUst .temaSec button { display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 0; padding: 0; border: 0; background: none; color: var(--muted); font: 600 11.5px system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+  .temaUst .temaSec button[aria-pressed="true"] { background: none; color: var(--accent); font-weight: 800; }
+  .tOn { position: relative; display: block; width: 50px; height: 34px; border-radius: 9px; padding: 4px; box-sizing: border-box; border: 2px solid transparent; outline: 1px solid var(--line); outline-offset: -1px; transition: border-color .2s ease, transform .15s ease; }
+  .temaSec button:active .tOn { transform: scale(.94); }
+  .temaSec button[aria-pressed="true"] .tOn { border-color: #e0a24f; outline-color: transparent; }
+  .tOn > s { display: block; height: 100%; border-radius: 5px; position: relative; }
+  .tOn > s::before, .tOn > s::after { content: ""; position: absolute; left: 4px; height: 2px; border-radius: 1px; }
+  .tOn > s::before { top: 5px; width: 17px; } .tOn > s::after { top: 9px; width: 11px; }
+  .tOn > s > i { position: absolute; right: 4px; bottom: 4px; width: 6px; height: 6px; border-radius: 50%; background: #e0a24f; }
+  .tOn.ac { background: #f6f3ec; } .tOn.ac > s { background: #fff; box-shadow: 0 0 0 1px #e4ddcf; } .tOn.ac > s::before, .tOn.ac > s::after { background: #b9b1a3; }
+  .tOn.ko { background: #000; } .tOn.ko > s { background: #141414; box-shadow: 0 0 0 1px #2a2a2a; } .tOn.ko > s::before, .tOn.ko > s::after { background: #6b6b6b; }
+  .tOn.si { background: linear-gradient(135deg, #f6f3ec 50%, #000 50%); } .tOn.si > s { background: linear-gradient(135deg, #fff 50%, #141414 50%); box-shadow: 0 0 0 1px #8a8a8a; } .tOn.si > s::before, .tOn.si > s::after { background: #8a8a8a; }
   html[data-tema="acik"] .ysEt { color: #8f5d12; }
   html[data-tema="acik"] .ysEt i { background: #e0a24f; }
 </style>
@@ -570,8 +581,8 @@
   <header class="top" id="top">
     <div class="temaUst">
       <span>Görünüm</span>
-      <div class="temaSec" id="temaSec" role="group" aria-label="Görünüm: otomatik, açık ya da koyu">
-        <button type="button" data-t="oto" title="Telefonun ayarına uyar">📱 Oto</button><button type="button" data-t="acik">☀️ Açık</button><button type="button" data-t="koyu">🌙 Koyu</button>
+      <div class="temaSec" id="temaSec" role="group" aria-label="Görünüm: açık, koyu ya da sistem (telefonun ayarı)">
+        <button type="button" data-t="acik"><span class="tOn ac" aria-hidden="true"><s><i></i></s></span>Açık</button><button type="button" data-t="koyu"><span class="tOn ko" aria-hidden="true"><s><i></i></s></span>Koyu</button><button type="button" data-t="oto" title="Telefonun ayarına uyar"><span class="tOn si" aria-hidden="true"><s><i></i></s></span>Sistem</button>
       </div>
     </div>
     <div class="yeniS" id="yeniS" hidden aria-label="Sitede yeni bölümler"><span class="ysEt"><i></i>YENİ</span><div class="ysYol"><div class="ysSer" id="ysSer"></div></div></div>
