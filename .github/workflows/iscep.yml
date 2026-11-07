@@ -26,4 +26,4 @@ jobs:
           git config user.name "sadolayn-bot"
           git config user.email "actions@users.noreply.github.com"
           git add isbank/iscep.json
-          git diff --cached --quiet || (git commit -m "İşCep yeni sürümü eklendi" && git pull --rebase -q && git push)
+          git diff --cached --quiet || (git commit -m "İşCep sürüm bilgisi güncellendi" && git pull --rebase -q && git push)

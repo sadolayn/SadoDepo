@@ -1444,6 +1444,7 @@ function iscepIpHtml() {
 }
 function bindIscep() {
   const ay = $("list").querySelector(".ipgun .ipl a"); if (ay) ay.addEventListener("click", () => window.Rapor && Rapor.bolum("ipucu-ayrinti"));
+  $("list").querySelectorAll(".iscR a").forEach((a) => a.addEventListener("click", () => window.Rapor && Rapor.bolum(a.dataset.r || "iscep-resmi")));
   const z = $("ipZar"); if (z) z.onclick = () => {
     window.Rapor && Rapor.bolum("ipucu-bir-tane-daha");
     // Torba usulü: karıştırılmış sırayla gelir, hepsi görülmeden hiçbiri tekrar çıkmaz
@@ -1482,6 +1483,11 @@ function renderIscep() {
     html += `<div class="surL"><a class="maxlink" href="${esc(d.kaynakUrl)}" target="_blank" rel="noopener">App Store ↗</a>${d.playUrl ? `<a class="maxlink" href="${esc(d.playUrl)}" target="_blank" rel="noopener">Google Play ↗</a>` : ""}</div>`;
     html += `<p class="surK">Yeni sürümler her gün App Store'dan kendiliğinden eklenir.${d.play && d.play.guncelleme ? ` Google Play sürüm numarası göstermiyor; orada son güncelleme ${fmt(d.play.guncelleme)}.` : ""}</p></details>`;
   }
+  // Resmî İşCep sayfası ve alt sayfaları (8 Kasım 2026, isbank.com.tr/iscep'teki bölümlerden; açıklamalar sayfadaki ifadelerle)
+  const ISCL = [["⏱️", "İşlem limit ve saatleri", "islem-limit-ve-saatleri"], ["💸", "Ödemeler ve para transferi", "odemeler-ve-para-transferi"], ["🤖", "Maxi", "maxi"], ["🏡", "İşCep'le Hayatım", "isceple-hayatim"],
+    ["🛡️", "Güvenlik", "guvenlik"], ["♿", "Engelsiz bankacılık", "engelsiz-bankacilik"], ["🏢", "İşCep Ticari", "is-ticari/iscep-ticari"], ["🙋", "Müşteri olmak", "musteri-olmak-istiyorum"]];
+  html += `<div class="iscR"><a class="maxlink" href="https://www.isbank.com.tr/iscep" target="_blank" rel="noopener">🔗 İşCep'in resmî sayfası ↗<small>İndirme, şifre alma, şubeye gitmeden müşteri olma, Maxi, güvenlik ve tüm işlemler · isbank.com.tr</small></a>
+    <div class="iscL">${ISCL.map(([i, ad, u]) => `<a href="https://www.isbank.com.tr/${u}" target="_blank" rel="noopener" data-r="iscep-${u.split("/").pop()}"><i aria-hidden="true">${i}</i>${esc(ad)}</a>`).join("")}</div></div>`;
   $("list").innerHTML = html;
   if (odulGit && !ipSec && !window.__odulKaydi) {
     window.__odulKaydi = 1;
