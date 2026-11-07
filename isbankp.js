@@ -1212,13 +1212,13 @@ function ytFmt(v, tur) {
   if (v == null) return "–";
   if (tur === "pct") return "%" + v.toLocaleString("tr-TR", { minimumFractionDigits: 1, maximumFractionDigits: 2 });
   if (tur === "adet") return v >= 1e6 ? (v / 1e6).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) + " mn" : v.toLocaleString("tr-TR");
-  return v >= 1000 ? (v / 1000).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " trn" : v.toLocaleString("tr-TR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " mlr";
+  return Math.round(v * 1000).toLocaleString("tr-TR"); // veri milyar TL (3 hane) → milyon TL tam rakam
 }
 function chgCell(bu, once, tur, iyi) {
   if (bu == null || once == null) return '<span class="chg n">–</span>';
   let txt;
-  if (tur === "pct") { const d = bu - once; txt = (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toLocaleString("tr-TR", { maximumFractionDigits: 2 }) + " puan"; }
-  else { const p = (bu / once - 1) * 100; txt = (p >= 0 ? "▲ +%" : "▼ −%") + Math.abs(p).toLocaleString("tr-TR", { maximumFractionDigits: 1 }); }
+  if (tur === "pct") { const d = bu - once; txt = (d >= 0 ? "▲ " : "▼ ") + `<span class="cv">${d >= 0 ? "+" : "−"}${Math.abs(d).toLocaleString("tr-TR", { maximumFractionDigits: 2 })}</span> puan`; }
+  else { const p = (bu / once - 1) * 100; txt = (p >= 0 ? "▲ " : "▼ ") + `<span class="cv">${p >= 0 ? "+%" : "−%"}${Math.abs(p).toLocaleString("tr-TR", { maximumFractionDigits: 1 })}</span>`; } // işaret rakamdan ayrılmasın
   const cls = bu === once ? "n" : ((bu > once) === (iyi === "up") ? "g" : "b");
   return `<span class="chg ${cls}">${txt}</span>`;
 }
@@ -1265,8 +1265,8 @@ function ytTable(i) {
   const P = fin.periods, j = i - 4;
   const rows = finRows(i).map(([ad, bu, once, tur, iyi]) =>
     `<tr><td>${esc(ad)}</td><td class="now">${ytFmt(bu, tur)}</td><td class="old">${ytFmt(once, tur)}</td><td>${chgCell(bu, once, tur, iyi)}</td></tr>`).join("");
-  return `<table class="yt"><thead><tr><th>Kalem</th><th>${pLabel(P[i])}</th><th>${j >= 0 ? pLabel(P[j]) : "–"}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
-    <div class="yt-note">Bankanın kendi yayımladığı resmî veri. Tutarlar TL (trn = trilyon, mlr = milyar). Renk yalnızca artış/azalış yönünü gösterir, yorum değildir. Yatırım tavsiyesi değildir. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.${elleNot(P[i])}</div>`;
+  return `<table class="yt"><thead><tr><th>Kalem<small style="display:block;font-weight:500">milyon TL</small></th><th>${pLabel(P[i])}</th><th>${j >= 0 ? pLabel(P[j]) : "–"}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="yt-note">Bankanın kendi yayımladığı resmî veri. Tutarlar milyon TL. Renk yalnızca artış/azalış yönünü gösterir, yorum değildir. Yatırım tavsiyesi değildir. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.${elleNot(P[i])}</div>`;
 }
 // Konsolide (iştiraklerle birlikte) ana rakamlar: isbank/konsolide.json, elle girilir (KAP ya da bankanın konsolide raporu). Solo tablonun altında ayrı kutu;
 // yan yana konmaz (dar ekranda sığmaz, iki ölçü karışır). Bilanço kalemleri bir önceki yıl sonuyla, kâr aynı dönemin bir yıl öncesiyle karşılaştırılır (raporun kendi sütunları).
@@ -1290,7 +1290,7 @@ function konsolideHtml() {
   const karsi = yo ? pLabel(yo.p) : `${o.p ? pLabel(o.p) : "–"}${ok.p ? `<small style="display:block;font-weight:400">kâr: ${pLabel(ok.p)}</small>` : ""}`;
   const notKarsi = yo ? "Bir yıl önceki aynı dönemle karşılaştırılır." : `${pLabel(k.p)} için bir yıl öncesinin konsolide rakamı elimizde yok; bilanço yıl sonuyla, kâr bir yıl önceki aynı dönemle karşılaştırılır.`;
   return `<div class="day" style="margin-top:22px">🏦 Bir yıl önceyle karşılaştırma ${fBadge("kons")}</div>
-    ${gecmis}<table class="yt kons"><thead><tr><th>Kalem</th><th>${pLabel(k.p)}</th><th>${karsi}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
+    ${gecmis}<table class="yt kons"><thead><tr><th>Kalem<small style="display:block;font-weight:500">milyon TL</small></th><th>${pLabel(k.p)}</th><th>${karsi}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
     <div class="yt-note">Konsolide tabloda Anadolu Sigorta, Anadolu Hayat gibi iştirakler de yer alır; bu yüzden rakamlar yukarıdaki solo tablodan büyüktür. ${notKarsi} Elle girilir, yorum değildir. Kaynak: <a href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.kaynak)} ↗</a></div>`;
 }
 function bindKons() {
@@ -1313,7 +1313,7 @@ function yatHtml() {
     if (ytSel == null) ytSel = last;
     const gore = j >= 0 ? pLabel(P[j]) + "'e göre" : "", donemAd = (p) => pRange(p).split("–").map((a) => a.replace(/^./, (c) => c.toUpperCase())).join("–").replace("Yıllık", "Yıl") + " " + p.split("/")[0]; // "Ocak–Eylül 2026"
     const card = (ad, k, tur, iyi, alt) => `<div class="stat"><span>${ad}</span><b style="font-size:21px">${ytFmt(S[k][last], tur)}</b><small>${alt || ""} ${chgCell(S[k][last], S[k][j], tur, iyi)}</small></div>`;
-    h += `<div class="day" style="margin-top:22px">📊 Finansal veriler · ${pLabel(P[last])} · ${fBadge("solo")}<small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Yalnızca bankanın kendi rakamları; kaynak bankanın finansal veri dosyası${fin.elle && fin.elle[P[last]] ? ` (${pLabel(P[last])}: bankanın solo raporu)` : ""}. KAP'taki konsolide raporda (iştiraklerle birlikte) rakamlar daha büyüktür.</small></div>
+    h += `<div class="day" style="margin-top:22px">📊 Finansal veriler · ${pLabel(P[last])} · ${fBadge("solo")}<small style="display:block;font-weight:500;font-size:11.5px;color:#9a9a9a;margin-top:2px">Tutarlar milyon TL. Yalnızca bankanın kendi rakamları; kaynak bankanın finansal veri dosyası${fin.elle && fin.elle[P[last]] ? ` (${pLabel(P[last])}: bankanın solo raporu)` : ""}. KAP'taki konsolide raporda (iştiraklerle birlikte) rakamlar daha büyüktür.</small></div>
       <div class="stats">
         ${card("Toplam aktif", "aktif", "tl", "up", gore)}
         ${card("Krediler", "kredi", "tl", "up", gore)}
@@ -1724,11 +1724,11 @@ function chartsHtml() {
   if (!fin) return "";
   const P = fin.periods, S = fin.s;
   const qNet = P.map((p, i) => { const m = +p.split("/")[1]; if (S.netkar[i] == null) return null; if (m === 3) return S.netkar[i]; return S.netkar[i - 1] == null ? null : +(S.netkar[i] - S.netkar[i - 1]).toFixed(3); });
-  const mlr = (v) => v.toLocaleString("tr-TR", { maximumFractionDigits: 1 }) + " mlr", trn = (v) => (v / 1000).toLocaleString("tr-TR", { maximumFractionDigits: 2 }) + " trn", pc = (v) => "%" + v.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
+  const mn = (v) => Math.round(v * 1000).toLocaleString("tr-TR"), pc = (v) => "%" + v.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
   const C = (t, sub, svg) => `<div class="chart"><h5>${t}</h5><small>${sub}</small>${svg}</div>`;
   return `<div class="day" style="margin-top:18px">📉 Çeyrek çeyrek seyir</div>` +
-    C("Net kâr (her çeyrek ayrı)", "milyar TL · son çubuk en güncel çeyrek", chartSvg(qNet, P, { c: "#e0a24f", f: mlr })) +
-    C("Toplam aktif", "trilyon TL", chartSvg(S.aktif, P, { c: "#5aa9f0", f: trn, line: true })) +
+    C("Net kâr (her çeyrek ayrı)", "milyon TL · son çubuk en güncel çeyrek", chartSvg(qNet, P, { c: "#e0a24f", f: mn })) +
+    C("Toplam aktif", "milyon TL", chartSvg(S.aktif, P, { c: "#5aa9f0", f: mn, line: true })) +
     C("Özkaynak kârlılığı", "yıllıklandırılmış, %", chartSvg(S.roe, P, { c: "#3fc283", f: pc, line: true })) +
     C("Takipteki krediler oranı", "% · düşük olması iyidir", chartSvg(S.npl, P, { c: "#ef6a4c", f: pc, line: true }));
 }
