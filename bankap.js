@@ -1112,6 +1112,9 @@ $("tc_copy").addEventListener("click", () => {
 
 // ---------- Tarım ----------
 // [KKDF, BSMV] — levhasız ÇKS/çiftçilik belgeli: KKDF %15, ancak 15.000 TL'ye kadar olan kredide %0
+// Dayanak (7 Kasım 2026 kontrolü): GİB KKDF oran tablosu — %15 yalnızca "gerçek kişilere ticari amaçla kullanılmamak kaydıyla
+// kullandırılan" tüketici kredilerinde (2010/974 BKK), diğer TL kredilerde %0 (2025/10094 CK). Vergi levhası ticari/zirai amacı
+// belgelediği için levhalı çiftçide %0; levhasızda kredi tüketici kredisi sayılıp %15. 15.000 TL istisnası 2018 kararından (ikincil kaynak).
 const TR_PRESET = { levha: [0, 5], cks: [15, 5] };
 const trKkdf = (durum, P) => (durum === "cks" && P <= 15000 ? 0 : TR_PRESET[durum][0]);
 let trManual = false, trOzet = "", trPdf = null;
