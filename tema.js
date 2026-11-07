@@ -11,8 +11,9 @@
      - koyu çizgi → açık çizgi, siyah gölge → hafif sıcak gölge
      - parlak dolgular (altın düğme, yeşil rozet) ve onların üstündeki yazı olduğu gibi kalır
    Satır içi style="" renkleri de aynı kurala göre çevrilir (koyuya dönünce eski haline gelir).
-   Elle düzeltme gereken yerlere sayfanın stiline html[data-tema="acik"] .x { … } yazılır; boyacı bu kurallara
-   dokunmaz ve ürettiğini kaynağın ÖNÜNE koyar, böylece elle yazılan her zaman kazanır.
+   Elle düzeltme gereken yerlere sayfanın stiline html[data-tema="acik"] .x { … } yazılır; boyacı bu kurallara dokunmaz.
+   Üretilen kurallar :where() önekiyle özgüllük eklemez ve kaynağın ARDINA konur: aynı seçicide boyacı kazanır,
+   daha özel kaynak kuralı ve elle yazılan açık-mod kuralı (html[...] önekli, daha güçlü) yine kazanır.
    <html data-tema-motor="yok">: boyacı çalışmaz, sayfa açık renklerini tamamen kendisi verir (index.html).
    Oyun sayfaları bu dosyayı yüklemez, hep koyu kalır. */
 (function () {
@@ -123,6 +124,7 @@
     return c;
   }
   var RENK = /#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)|\b(?:black|white)\b/g;
+  var RENK1 = new RegExp(RENK.source); // .test() için: global bayraklı regex lastIndex yüzünden ara sıra eşleşmeyi kaçırıyordu
   function cevir(deger, fn, k) {
     return deger.replace(RENK, function (s) { var c = coz(s.toLowerCase()); return c ? yaz(fn(c, k)) : s; });
   }
@@ -140,9 +142,9 @@
   function varCoz(v, n) {
     if ((n || 0) > 6 || v.indexOf("var(") < 0) return v;
     return varCoz(v.replace(/var\(\s*(--[\w-]+)\s*(?:,\s*([^()]*(?:\([^()]*\))?[^()]*))?\)/g, function (s, ad, yedek) {
-      // Yalnızca :root'ta tek tanımlı değişkeni çöz; bölüme/öğeye göre değişen değişkene (ör. --ky) dokunma,
-      // yoksa yedek değer (ör. #000) sabitlenir ve seçili düğmenin beyaz yazısı siyaha döner.
-      var x = VARLAR[ad]; return x ? x : s;
+      // Kökte tanımlı değişkeni çöz (:root'ta birden çok kez tanımlıysa sayfanın o anki gerçek değeri); bölüme/öğeye göre
+      // değişen değişkene (ör. --ky, yalnızca düğmede tanımlı) dokunma, yoksa yedek değer sabitlenir ve seçili düğme bozulur.
+      var x = VARLAR[ad]; if (!x) { try { x = getComputedStyle(document.documentElement).getPropertyValue(ad).trim(); } catch (e) {} } return x ? x : s;
     }), (n || 0) + 1);
   }
   function secici(sel) {
@@ -150,7 +152,9 @@
     for (var i = 0; i < sel.length; i++) { var ch = sel[i]; if (ch === "(" || ch === "[") d0++; else if (ch === ")" || ch === "]") d0--; else if (ch === "," && !d0) { parca.push(sel.slice(bas, i)); bas = i + 1; } }
     parca.push(sel.slice(bas));
     return parca.map(function (s) {
-      s = s.trim(); var P = 'html[data-tema="acik"]';
+      // :where() önekin özgüllüğünü sıfırlar: üretilen kural kaynağıyla aynı güçte olur ve kaynağın hemen ardından gelir.
+      // Böylece sayfanın daha özel kuralları (ör. ".cipler .sonC button { border: 0 }") eskisi gibi kazanır (7 Kasım 2026, Bölge Nabzı çipleri).
+      s = s.trim(); var P = ':where(html[data-tema="acik"])';
       if (/^(:root|html)\b/.test(s)) return s.replace(/^(:root|html)/, P);
       return P + " " + s;
     }).join(", ");
@@ -176,17 +180,17 @@
       if (!v) return;
       if (p.slice(0, 2) === "--") {
         var vv = varCoz(v.trim()); var c = coz(vv.toLowerCase());
-        if (!c) { if (RENK.test(vv)) { RENK.lastIndex = 0; ekle(p, cevir(vv, zemin_, {})); } RENK.lastIndex = 0; return; }
+        if (!c) { if (RENK1.test(vv)) { ekle(p, cevir(vv, zemin_, {})); } return; }
         var L = lab(c[0], c[1], c[2])[0];
         ekle(p, yaz(L < 35 && c[3] >= 0.8 ? zemin_(c, {}) : yazi_(c)), onc); return;
       }
       var cv = varCoz(v);
       if (ZEMIN[p]) {
-        if (!RENK.test(cv)) { RENK.lastIndex = 0; if (/^(none|transparent|initial|inherit|unset)$/.test(cv.trim()) || p === "background-image") ekle(p, v, onc); return; }
-        RENK.lastIndex = 0;
+        if (!RENK1.test(cv)) { if (/^(none|transparent|initial|inherit|unset)$/.test(cv.trim()) || p === "background-image") ekle(p, v, onc); return; }
+       
         var yv = yaziKlip ? cevir(cv, yazi_) : cevir(cv, zemin_, k);
         // var() içeren kısayol: yalnızca renk/resim parçasını yaz, yoksa background-repeat vb. sıfırlanır
-        if (p === "background") { var t1 = cv.trim(); if (coz(t1.toLowerCase())) { p = "background-color"; } else if (/^(linear|radial|conic|repeating)-gradient\(.*\)$/.test(t1)) p = "background-image"; }
+        if (p === "background") { var t1 = cv.trim(); if (/^(linear|radial|conic|repeating-linear|repeating-radial|repeating-conic)-gradient\(/.test(t1)) p = "background-image"; else if (coz(t1.toLowerCase())) p = "background-color"; }
         ekle(p, yv, onc);
       } else if (YAZI[p]) {
         ekle(p, k.parlak ? cv : cevir(cv, yazi_), onc);
@@ -197,7 +201,7 @@
       } else if (p === "text-shadow") {
         ekle(p, cevir(cv, yaziGolge_), onc);
       }
-      RENK.lastIndex = 0;
+     
     });
     return out.length ? secici(sel) + " { " + out.join("; ") + "; }" : "";
   }
@@ -228,7 +232,7 @@
       var sonuc = []; kurallar(kl, sonuc);
       if (!sonuc.length) continue;
       var el = document.createElement("style"); el.setAttribute("data-tema-uretim", ""); el.textContent = sonuc.join("\n");
-      n.parentNode.insertBefore(el, n); uretilen.push(el); yeni = true;
+      n.parentNode.insertBefore(el, n.nextSibling); uretilen.push(el); yeni = true;
     }
     if (yeni) { try { var t = uretilen.map(function (e) { return e.textContent; }).join("\n"); sessionStorage.setItem("temaOn:" + SAYFA, t.length < 400000 ? t : ""); } catch (e) {} }
   }
@@ -259,7 +263,7 @@
     if (el.closest(".ataIntro,[data-tema-koru-alan]")) return;
     var eski = ESKI.get(el) || {}, k = { parlak: false, sabit: st.position === "fixed" };
     SATIR.forEach(function (p) {
-      var v = st.getPropertyValue(p); if (!v || !(RENK.test(v))) { RENK.lastIndex = 0; return; } RENK.lastIndex = 0;
+      var v = st.getPropertyValue(p); if (!v || !(RENK1.test(v))) { return; }
       if (eski[p] && eski[p].yeni === v) return; // zaten çevrildi
       var fn = ZEMIN[p] ? zemin : YAZI[p] ? yazi : p === "box-shadow" ? golge : p === "text-shadow" ? yaziGolge : cizgi;
       var y = cevir(v, fn, k);
@@ -274,10 +278,40 @@
     var eski = ESKI && ESKI.get(el); if (!eski) return;
     for (var p in eski) {
       if (p.charAt(0) === "@") { if (el.getAttribute(p.slice(1)) === eski[p].yeni) el.setAttribute(p.slice(1), eski[p].eski); }
-      else if (el.style.getPropertyValue(p) === eski[p].yeni) el.style.setProperty(p, eski[p].eski);
+      else if (el.style.getPropertyValue(p) === eski[p].yeni) { if (eski[p].bekci) { el.style.removeProperty(p); if (eski[p].eski) el.style.setProperty(p, eski[p].eski); if (BEKCI) BEKCI.delete(el); } else el.style.setProperty(p, eski[p].eski); }
     }
     ESKI.delete(el);
   }
+  /* ---------- kontrast bekçisi ----------
+     CSS dosyalarından okunamayan renkler (öğeye özel --c gibi değişkenler, sonradan yazılan stiller) için son güvence:
+     açık modda görünen yazılar zeminine karşı 4,5:1'in altındaysa aynı tonun koyusu öğeye yazılır. Koyuya dönünce geri alınır. */
+  var BEKCI = typeof WeakSet === "function" ? new WeakSet() : null, bekciZ = 0;
+  function zeminRengi(el) {
+    for (var e = el; e && e.nodeType === 1; e = e.parentElement) {
+      var cs = getComputedStyle(e);
+      if (cs.backgroundImage && cs.backgroundImage !== "none") return null; // degrade/görsel: ölçülemez, dokunma
+      var c = coz(cs.backgroundColor.toLowerCase()); if (c && c[3] > 0.6) return c;
+    }
+    return [246, 243, 236, 1];
+  }
+  function bekci(kok) {
+    if (!BEKCI || !ESKI || d.getAttribute("data-tema") !== "acik" || !kok || !kok.querySelectorAll) return;
+    var l = kok.querySelectorAll("*");
+    for (var i = 0; i < l.length; i++) {
+      var el = l[i]; if (BEKCI.has(el) || el.closest("svg,.ataIntro,[data-tema-koru-alan],.calc")) continue;
+      var metin = false; for (var n = el.firstChild; n; n = n.nextSibling) if (n.nodeType === 3 && n.nodeValue.trim().length > 0) { metin = true; break; }
+      if (!metin || !el.getClientRects().length) continue;
+      var cs = getComputedStyle(el); if (cs.visibility === "hidden" || /transparent|rgba\(0, 0, 0, 0\)/.test(cs.webkitTextFillColor || "")) continue;
+      var c = coz(String(cs.color).toLowerCase()); if (!c || c[3] < 0.5) continue;
+      var z = zeminRengi(el); if (!z || lum(z[0], z[1], z[2]) < 0.45) continue; // yalnızca açık zemin
+      var a = lum(c[0], c[1], c[2]), b2 = lum(z[0], z[1], z[2]), k = (Math.max(a, b2) + 0.05) / (Math.min(a, b2) + 0.05);
+      if (k >= 4.5) continue;
+      var y = yazi([c[0], c[1], c[2], 1]); // beyaza göre ≥6,5 hedefli koyulaştırma
+      var eski = ESKI.get(el) || {}; eski["color"] = { eski: el.style.getPropertyValue("color"), yeni: yaz(y), bekci: 1 }; ESKI.set(el, eski);
+      el.style.setProperty("color", yaz(y), "important"); BEKCI.add(el);
+    }
+  }
+  function bekciSonra(kok) { clearTimeout(bekciZ); bekciZ = setTimeout(function () { bekci(kok && kok.isConnected ? kok : document.body); }, 120); }
   var gozcu = null;
   function satirlarBoya(kok) { if (kok.querySelectorAll) { if (kok.hasAttribute && (kok.hasAttribute("style") || kok.hasAttribute("fill") || kok.hasAttribute("stroke"))) satirBoya(kok); var l = kok.querySelectorAll("[style],svg [fill],svg [stroke],svg [stop-color]"); for (var i = 0; i < l.length; i++) satirBoya(l[i]); } }
   function gozcuBaslat() {
@@ -286,21 +320,22 @@
     gozcu = new MutationObserver(function (ml) {
       if (d.getAttribute("data-tema") !== "acik") return;
       ml.forEach(function (m) {
-        if (m.type === "attributes") satirBoya(m.target);
-        else for (var i = 0; i < m.addedNodes.length; i++) { var n = m.addedNodes[i]; if (n.nodeType === 1) { if (n.tagName === "STYLE" || n.tagName === "LINK") setTimeout(sayfaBoya, 0); else satirlarBoya(n); } }
+        if (m.type === "attributes") { if (!(m.target.style && m.target.style.getPropertyPriority("color") === "important" && BEKCI && BEKCI.has(m.target))) satirBoya(m.target); }
+        else for (var i = 0; i < m.addedNodes.length; i++) { var n = m.addedNodes[i]; if (n.nodeType === 1) { if (n.tagName === "STYLE" || n.tagName === "LINK") setTimeout(sayfaBoya, 0); else { satirlarBoya(n); bekciSonra(document.body); } } }
       });
     });
     gozcu.observe(document.documentElement, { subtree: true, childList: true, attributes: true, attributeFilter: ["style", "fill", "stroke"] });
   }
   function gozcuDurdur() {
     if (gozcu) { gozcu.disconnect(); gozcu = null; }
-    if (document.body) { var l = document.body.querySelectorAll("[style],svg [fill],svg [stroke],svg [stop-color]"); for (var i = 0; i < l.length; i++) satirGeri(l[i]); satirGeri(document.body); }
+    if (document.body) { var l = document.body.querySelectorAll("[style],svg [fill],svg [stroke],svg [stop-color]");
+      clearTimeout(bekciZ); for (var i = 0; i < l.length; i++) satirGeri(l[i]); satirGeri(document.body); }
   }
 
   /* ---------- uygula ---------- */
   var onbellek = null, gizle = null;
   function hazir() {
-    sayfaBoya(); gozcuBaslat();
+    sayfaBoya(); gozcuBaslat(); bekciSonra(document.body);
     if (onbellek) { onbellek.remove(); onbellek = null; }
     if (gizle) { gizle.remove(); gizle = null; }
   }
