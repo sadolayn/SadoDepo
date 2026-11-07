@@ -43,11 +43,11 @@ function tik(big) {
   } catch (e) {}
 }
 // Türkçe sayı okuma/yazma
-function num(v) { return Sayi.coz(v).n; } // biçim doğrulamalı okuma (sayi.js): "12abc" gibi girişler NaN → sonuç "–"
+function num(v) { return v && v.tagName ? Sayi.oku(v).n : Sayi.coz(v).n; } // biçim doğrulamalı okuma (sayi.js): "12abc" gibi girişler NaN → sonuç "–"
 const tl = (n, d = 2) => (isFinite(n) ? n.toLocaleString("tr-TR", { minimumFractionDigits: d, maximumFractionDigits: d }) : "–");
 const nf = (n, d = 2) => (isFinite(n) ? n.toLocaleString("tr-TR", { maximumFractionDigits: d }) : "–");
 const rows = (id, list) => ($(id).innerHTML = list.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join(""));
-document.querySelectorAll('input[inputmode="decimal"]').forEach((i) => i.addEventListener("blur", () => { const n = num(i.value); if (i.value.trim() && Math.abs(n) >= 1000) i.value = n.toLocaleString("tr-TR", { maximumFractionDigits: 6 }); }));
+document.querySelectorAll('input[inputmode="decimal"]').forEach((i) => i.addEventListener("blur", () => { const n = num(i); if (i.value.trim() && Math.abs(n) >= 1000) i.value = n.toLocaleString("tr-TR", { maximumFractionDigits: 6 }); }));
 
 // ===== Hesap makinesi: kesirli (rasyonel) aritmetik, yuvarlama hatası yok =====
 const gcd = (a, b) => { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) [a, b] = [b, a % b]; return a || 1n; };
@@ -222,14 +222,14 @@ const VADE = { kredi: [["Aylık", 30], ["3 aylık", 90], ["6 aylık", 180], ["Y�
 let fMod = "kredi", fTaxAuto = true;
 const addM = (d, m) => { const x = new Date(d.getFullYear(), d.getMonth() + m, 1, 12), last = new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate(); x.setDate(Math.min(d.getDate(), last)); return x; };
 function fChips() { $("fVade").innerHTML = VADE[fMod].map(([t, v]) => `<button type="button" data-v="${v}">${t}</button>`).join(""); fMarkChip(); }
-function fMarkChip() { const g = Math.round(num($("fG").value)), a = pD($("fA").value) || today; $("fVade").querySelectorAll("button").forEach((b) => b.classList.toggle("on", (b.dataset.v === "1y" ? dd(a, addM(a, 12)) : +b.dataset.v) === g)); }
+function fMarkChip() { const g = Math.round(num($("fG"))), a = pD($("fA").value) || today; $("fVade").querySelectorAll("button").forEach((b) => b.classList.toggle("on", (b.dataset.v === "1y" ? dd(a, addM(a, 12)) : +b.dataset.v) === g)); }
 $("fMod").addEventListener("click", (e) => { const b = e.target.closest("button[data-m]"); if (!b) return; fMod = b.dataset.m; $("fMod").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); fTaxAuto = true; $("fG").value = fMod === "kredi" ? 30 : 32; fSyncB(); fChips(); calcF(); });
 $("fVade").addEventListener("click", (e) => {
   const b = e.target.closest("button[data-v]"); if (!b) return; const a = pD($("fA").value) || today;
   $("fG").value = b.dataset.v === "1y" ? dd(a, addM(a, 12)) : b.dataset.v; fSyncB(); calcF();
 });
 // Başlangıç girildiyse bitişi gün sayısına göre güncelle
-function fSyncB() { const a = pD($("fA").value); if (a) $("fB").value = ymd(addD(a, Math.round(num($("fG").value)))); }
+function fSyncB() { const a = pD($("fA").value); if (a) $("fB").value = ymd(addD(a, Math.round(num($("fG"))))); }
 ["fA", "fB"].forEach((id) => $(id).addEventListener("input", () => { const a = pD($("fA").value), b = pD($("fB").value); if (a && b && b > a) $("fG").value = dd(a, b); else if (a && id === "fA") fSyncB(); calcF(); }));
 $("fG").addEventListener("input", () => { fSyncB(); calcF(); });
 $("fTax").addEventListener("input", () => { fTaxAuto = !$("fTax").value.trim(); calcF(); });
@@ -239,7 +239,7 @@ function fStopaj(g) {
   return STOPAJ.find(([m]) => m === Infinity || b <= addM(a, m));
 }
 function calcF() {
-  const P = num($("fP").value), r = num($("fR").value), g = Math.round(num($("fG").value));
+  const P = num($("fP")), r = num($("fR")), g = Math.round(num($("fG")));
   const kr = fMod === "kredi";
   const a = pD($("fA").value) || today, yr = a.getFullYear(), base = kr ? 36000 : isLeap(yr) ? 36600 : 36500;
   let nx = yr + 1; while (!isLeap(nx)) nx++;
@@ -264,32 +264,32 @@ function calcF() {
     ? `⚠️ Vade bitişi <b>${endTxt}</b> — ${isWE(end) ? "hafta sonu" : "resmî tatil"}. İlk iş günü <b>${longD(iw)}</b> (${dd(end, iw)} gün sonra)${kr ? "; ödeme o güne kayar." : "; faiz o güne kadar işleyebilir, bankaya göre değişir."}`
     : `✅ Vade bitişi <b>${endTxt}</b> — iş günü.${$("fA").value ? "" : " (Başlangıç bugün sayıldı.)"}`;
   $("fBigL").textContent = `${g} günlük ${kr ? "faiz" : "brüt faiz"}`;
-  const tR = kr ? 0 : num($("fTax").value) / 100;
+  const tR = kr ? 0 : num($("fTax")) / 100;
   $("fDay").textContent = tl(gun) + " TL"; $("fDay2").textContent = kr ? `1 günlük · ${tl(gun * 30)} TL / 30 gün` : `brüt · net ${tl(gun * (1 - tR))} TL`;
-  $("fTotL").textContent = `${g} günlük ${kr ? "faiz" : "net faiz"}`; $("fTot").textContent = tl(kr ? faiz : faiz * (1 - tR)) + " TL"; $("fTot2").textContent = kr ? `geri ödeme ${tl(P + faiz * (1 + num($("fBsmv").value) / 100 + num($("fKkdf").value) / 100), 0)} TL*` : `stopaj %${nf(tR * 100, 1)} düşüldü`;
+  $("fTotL").textContent = `${g} günlük ${kr ? "faiz" : "net faiz"}`; $("fTot").textContent = tl(kr ? faiz : faiz * (1 - tR)) + " TL"; $("fTot2").textContent = kr ? `geri ödeme ${tl(P + faiz * (1 + num($("fBsmv")) / 100 + num($("fKkdf")) / 100), 0)} TL*` : `stopaj %${nf(tR * 100, 1)} düşüldü`;
   $("fOut").textContent = tl(faiz) + " TL";
   if (kr) {
-    const bs = faiz * num($("fBsmv").value) / 100, kk = faiz * num($("fKkdf").value) / 100;
+    const bs = faiz * num($("fBsmv")) / 100, kk = faiz * num($("fKkdf")) / 100;
     rows("fRows", [
       ["Formül", `${tl(P, 0)} × %${nf(r)} × ${g} ÷ 36.000`],
       ["Günlük faiz", tl(gun) + " TL"],
       ["Aylık (30 gün) faiz", tl(gun * 30) + " TL"],
-      ["BSMV" + (bs ? ` (%${nf(num($("fBsmv").value))})` : ""), tl(bs) + " TL"],
-      ["KKDF" + (kk ? ` (%${nf(num($("fKkdf").value))})` : ""), tl(kk) + " TL"],
+      ["BSMV" + (bs ? ` (%${nf(num($("fBsmv")))})` : ""), tl(bs) + " TL"],
+      ["KKDF" + (kk ? ` (%${nf(num($("fKkdf")))})` : ""), tl(kk) + " TL"],
       ["Faiz + vergiler", tl(faiz + bs + kk) + " TL"],
       ["Toplam geri ödeme", tl(P + faiz + bs + kk) + " TL"],
     ]);
     $("fNote").textContent = "* Basit faiz hesabıdır, taksitli kredinin ödeme planı değildir; oran aylık verildiyse 12 ile çarpıp gir. BSMV ve KKDF boşsa 0 sayılır; kredi türüne göre kendin gir (ör. ticari TL kredide BSMV %5, KKDF %0; konut kredisinde ikisi de yok).";
   } else {
-    const tax = faiz * num($("fTax").value) / 100;
+    const tax = faiz * num($("fTax")) / 100;
     rows("fRows", [
       ["Formül", `${tl(P, 0)} × %${nf(r)} × ${g} ÷ ${base.toLocaleString("tr-TR")}`],
       ["Günlük brüt faiz", tl(gun) + " TL"],
-      ["Günlük net faiz", tl(gun * (1 - num($("fTax").value) / 100)) + " TL"],
-      [`Stopaj (%${nf(num($("fTax").value), 1)})`, tl(tax) + " TL"],
+      ["Günlük net faiz", tl(gun * (1 - num($("fTax")) / 100)) + " TL"],
+      [`Stopaj (%${nf(num($("fTax")), 1)})`, tl(tax) + " TL"],
       ["Net faiz", tl(faiz - tax) + " TL"],
       ["Vade sonu toplam (net)", tl(P + faiz - tax) + " TL"],
-      ["Net yıllık getiri", "%" + nf(r * (1 - num($("fTax").value) / 100), 2)],
+      ["Net yıllık getiri", "%" + nf(r * (1 - num($("fTax")) / 100), 2)],
     ]);
     $("fNote").textContent = "";
   }
@@ -328,7 +328,7 @@ $("tQ").addEventListener("click", (e) => {
   $("tB").value = ymd(r); calcT();
 });
 function calcA() {
-  const d = pD($("aD").value), n = Math.round(num($("aN").value));
+  const d = pD($("aD").value), n = Math.round(num($("aN")));
   if (!d || !isFinite(n)) { $("aOut").textContent = "–"; rows("aRows", []); return; }
   const r = addD(d, n);
   $("aOut").textContent = r.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -427,11 +427,11 @@ function fromGross(G, spec, k) {
   return G / (1 + k / 100) / (1 + prev / 100);
 }
 function calcV() {
-  const c = $("vCat").value, x = VC[c], P = num($("vP").value);
+  const c = $("vCat").value, x = VC[c], P = num($("vP"));
   const manual = c === "kdv" || c === "elle";
   $("vManual").hidden = !manual; $("vOtvBox").hidden = c !== "elle";
   let spec, k; const opt = (!manual && x[4]) || {}, L = opt.lbl || "ÖTV";
-  if (manual) { k = kO; spec = c === "elle" ? num($("vO").value) : 0; }
+  if (manual) { k = kO; spec = c === "elle" ? num($("vO")) : 0; }
   else { k = x[3]; spec = x[2] === "tel" ? { d: [[4500, 25], [9000, 40], [Infinity, 50]], min: 456 } : x[2] === "oto" ? CARS[vSub] : x[2] === "ev" ? EVS[vSub] : x[2]; }
   const rateTxt = typeof spec === "number" ? (spec ? `${L} <b>%${nf(spec, 1)}</b>` : "ÖTV <b>yok</b>") : `ÖTV <b>${spec.d.map(([l, o]) => `%${o}${isFinite(l) ? ` (≤${tl(l, 0)})` : ""}`).join(" · ")}</b>`;
   $("vRate").innerHTML = manual ? "" : `<span>${rateTxt}</span><span>KDV <b>%${k}</b></span>`;
@@ -458,7 +458,7 @@ vSubUI(); calcV();
 
 // ===== Tapu harcı =====
 function calcTp() {
-  const P = num($("tpP").value), E = num($("tpE").value), D = num($("tpD").value), M = Math.max(P, E);
+  const P = num($("tpP")), E = num($("tpE")), D = num($("tpD")), M = Math.max(P, E);
   if (!M) { $("tpOut").textContent = "–"; rows("tpRows", []); return; }
   const h = M * 0.02;
   $("tpOut").textContent = tl(h * 2) + " TL";
@@ -484,7 +484,7 @@ function ekS(x, tur) {
   return EKS[k][tur];
 }
 function calcY() {
-  const A = num($("yA").value), B = num($("yB").value);
+  const A = num($("yA")), B = num($("yB"));
   rows("yRows", [
     [`${nf(A)}'${ekS(A, 0)} %${nf(B)}'${ekS(B, 1)}`, nf(A * B / 100, 4)],
     [`${nf(A)} + %${nf(B)}`, nf(A * (1 + B / 100), 4)],
@@ -578,10 +578,10 @@ window.addEventListener("resize", () => { if ($("cetvel").classList.contains("on
 // ===== Mesafe ölçer: kamera + eğim sensörü (trigonometri) =====
 let mStream = null, mBeta = null, mLockD = null, mTopOn = false;
 try { const e = localStorage.getItem("mesafeGoz"); if (e) $("mEye").value = e; } catch (e) {}
-const mEye = () => Math.max(20, num($("mEye").value)) / 100;
+const mEye = () => Math.max(20, num($("mEye"))) / 100;
 const mFmt = (m) => (!isFinite(m) || m < 0 ? "–" : m < 10 ? nf(m, 2) + " m" : nf(m, 1) + " m");
 try { const bb = localStorage.getItem("mesafeBoy"); if (bb) $("mBoy").value = bb; } catch (e) {}
-$("mBoy").addEventListener("input", () => { const b = num($("mBoy").value); if (b > 100 && b < 230) { $("mEye").value = Math.round(b - 12); try { localStorage.setItem("mesafeBoy", $("mBoy").value); } catch (e) {} mSave(); } });
+$("mBoy").addEventListener("input", () => { const b = num($("mBoy")); if (b > 100 && b < 230) { $("mEye").value = Math.round(b - 12); try { localStorage.setItem("mesafeBoy", $("mBoy").value); } catch (e) {} mSave(); } });
 $("mEye").addEventListener("input", mSave);
 function mSave() { try { localStorage.setItem("mesafeGoz", $("mEye").value); } catch (e) {} mRender(); }
 function onOri(e) {

@@ -4,27 +4,36 @@
    Kabul edilen biçimler:
      1.000.000   1.000.000,50   (Türkçe: nokta binlik, virgül ondalık)
      1000000     1000000,50     12,5     ,5
-     12.5        (yalnızca ondalık nokta; "1.500" gibi üç haneli grup binlik sayılır)
+     12.5        (yalnızca ondalık nokta; "1.500" gibi üç haneli grup binlik sayılır —
+                  yüzde/binde kutularında ise "3.125" ondalıktır, 3,125 okunur)
      başta eksi; başta/sonda "%", sonda "TL" ya da "₺"; aradaki boşluklar.
    Sonuç: { n, ok, bos } — geçersizse n = NaN (hesaplar "–" gösterir), boşsa n = 0. */
 (function () {
   // sondaki virgül geçerli: yazarken "12," ara hâli kırmızı yanmasın
   const TR_GRUP = /^-?\d{1,3}(\.\d{3})+(,\d*)?$/, TR = /^-?(\d+)?(,\d*)?$/, NOKTA = /^-?\d+\.\d+$/;
-  function coz(v) {
+  // oran: kutu yüzde/binde kutusuysa tek noktalı giriş ondalıktır ("3.125" → 3,125; binlik olamaz)
+  function coz(v, oran) {
     let s = String(v == null ? "" : v).replace(/[\s  ]/g, "").replace(/^%|%$/g, "").replace(/(TL|₺)$/i, "");
     if (s === "" || s === "-") return { n: 0, ok: true, bos: true };
     let t;
-    if (TR_GRUP.test(s)) t = s.replace(/\./g, "").replace(",", ".");
+    if (oran && NOKTA.test(s)) t = s;
+    else if (TR_GRUP.test(s)) t = s.replace(/\./g, "").replace(",", ".");
     else if (TR.test(s) && /\d/.test(s)) t = s.replace(",", ".");
     else if (NOKTA.test(s)) t = s;
     else return { n: NaN, ok: false, bos: false };
     const n = Number(t.replace(/^(-?)\./, "$10."));
     return isFinite(n) ? { n, ok: true, bos: false } : { n: NaN, ok: false, bos: false };
   }
+  // Yüzde (%) ya da binde (‰) birimli kutu mu? Birim, kutunun yanındaki span'da yazar.
+  function oranMi(el) {
+    const k = el && (el.closest(".field") || el.parentElement), u = k && k.querySelector("span");
+    return !!u && /^[%‰]/.test(u.textContent.trim());
+  }
+  const oku = (el) => coz(el.value, oranMi(el));
   // Kutuyu işaretle: geçersizse kırmızı çerçeve ve altında kısa uyarı
   function isaretle(el) {
     if (!el || el.tagName !== "INPUT") return;
-    const r = coz(el.value), kutu = el.closest(".field") || el.parentElement;
+    const r = oku(el), kutu = el.closest(".field") || el.parentElement;
     if (r.ok) { el.removeAttribute("aria-invalid"); if (kutu) kutu.classList.remove("sayiHata"); }
     else { el.setAttribute("aria-invalid", "true"); if (kutu) kutu.classList.add("sayiHata"); }
   }
@@ -35,5 +44,5 @@
 .sayiHata { position: relative; }
 .sayiHata::after { content: "Sayıyı kontrol et"; position: absolute; right: 10px; top: -9px; padding: 0 6px; border-radius: 6px; background: #ef6a4c; color: #fff; font: 700 10.5px/16px system-ui, -apple-system, "Segoe UI", sans-serif; pointer-events: none; }`;
   document.head.appendChild(st);
-  window.Sayi = { coz, isaretle };
+  window.Sayi = { coz, oku, oranMi, isaretle };
 })();

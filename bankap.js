@@ -3,7 +3,7 @@ const tl = (n) => isFinite(n) ? n.toLocaleString("tr-TR", { minimumFractionDigit
 const pct = (n) => isFinite(n) ? "%" + n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : "–";
 // Sayı okuma: önce biçim doğrulanır (sayi.js). Geçersiz giriş NaN döner → sonuçlar "–", kutu kırmızı işaretlenir.
 function num(id) {
-  const el = $(id), r = Sayi.coz(el.value);
+  const el = $(id), r = Sayi.oku(el); // yüzde/binde kutusunda "3.125" ondalık okunur
   Sayi.isaretle(el);
   return r.n;
 }
@@ -1191,6 +1191,9 @@ const HOL_FIXED = { "01-01": "Yılbaşı", "04-23": "Ulusal Egemenlik ve Çocuk 
 const HOL_REL = {
   2026: { "03-19": ["Ramazan Bayramı arifesi", 1], "03-20": ["Ramazan Bayramı 1. gün"], "03-21": ["Ramazan Bayramı 2. gün"], "03-22": ["Ramazan Bayramı 3. gün"], "05-26": ["Kurban Bayramı arifesi", 1], "05-27": ["Kurban Bayramı 1. gün"], "05-28": ["Kurban Bayramı 2. gün"], "05-29": ["Kurban Bayramı 3. gün"], "05-30": ["Kurban Bayramı 4. gün"] },
   2027: { "03-08": ["Ramazan Bayramı arifesi", 1], "03-09": ["Ramazan Bayramı 1. gün"], "03-10": ["Ramazan Bayramı 2. gün"], "03-11": ["Ramazan Bayramı 3. gün"], "05-15": ["Kurban Bayramı arifesi", 1], "05-16": ["Kurban Bayramı 1. gün"], "05-17": ["Kurban Bayramı 2. gün"], "05-18": ["Kurban Bayramı 3. gün"], "05-19": ["Kurban Bayramı 4. gün"] },
+  2028: { "02-25": ["Ramazan Bayramı arifesi", 1], "02-26": ["Ramazan Bayramı 1. gün"], "02-27": ["Ramazan Bayramı 2. gün"], "02-28": ["Ramazan Bayramı 3. gün"], "05-04": ["Kurban Bayramı arifesi", 1], "05-05": ["Kurban Bayramı 1. gün"], "05-06": ["Kurban Bayramı 2. gün"], "05-07": ["Kurban Bayramı 3. gün"], "05-08": ["Kurban Bayramı 4. gün"] },
+  // 2029 Kurban arifesi 23 Nisan'a denk gelir: o gün zaten tam gün tatil (HOL_FIXED), arife ayrıca yazılmaz
+  2029: { "02-13": ["Ramazan Bayramı arifesi", 1], "02-14": ["Ramazan Bayramı 1. gün"], "02-15": ["Ramazan Bayramı 2. gün"], "02-16": ["Ramazan Bayramı 3. gün"], "04-24": ["Kurban Bayramı 1. gün"], "04-25": ["Kurban Bayramı 2. gün"], "04-26": ["Kurban Bayramı 3. gün"], "04-27": ["Kurban Bayramı 4. gün"] },
 };
 // Günün durumu: {we, hol, half, name}
 function dayInfo(d) {
@@ -1518,15 +1521,10 @@ renderCekList();
   function src() {
     $("e_src").innerHTML = `Faiz oranı kendiliğinden gelmez; sana uygulanan oranı yaz. Düğmelerdeki oranlar <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr</a>'de herkese açık yayımlanan genel oranlardır (son kontrol: ${new Date(EK.kontrol + "T12:00:00").toLocaleDateString("tr-TR")}); kişiye uygulanan oran farklı olabilir. Hesap bilgi amaçlıdır.`;
   }
-  const kopya = (id, getT) => $(id).addEventListener("click", () => {
-    const t = getT(); if (!t) return; const b = $(id), o = b.textContent;
-    const done = () => { b.textContent = "✅ Kopyalandı"; setTimeout(() => (b.textContent = o), 1500); };
-    if (navigator.clipboard) navigator.clipboard.writeText(notEkle(t)).then(done, () => prompt("Kopyala:", t)); else prompt("Kopyala:", t);
-  });
   ozetBagla("e", () => ekOzet); ozetBagla("et", () => tOzet);
   $("e_faiz").addEventListener("input", (e) => { if (e.isTrusted) { oranElle = true; secili = null; } });
   $("et_faiz").addEventListener("input", (e) => { if (e.isTrusted) tOranElle = true; });
-  ["e_tutar", "et_tutar"].forEach((id) => $(id).addEventListener("blur", () => { $(id).value = num(id).toLocaleString("tr-TR", { maximumFractionDigits: 2 }); }));
+  ["e_tutar", "et_tutar"].forEach((id) => $(id).addEventListener("blur", () => { const n = num(id); if (isFinite(n)) $(id).value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }); }));
   document.querySelectorAll("#ek input").forEach((e) => e.addEventListener("input", () => (e.id.startsWith("et_") ? calcEkT() : calcEk())));
   // Oran alanı kendiliğinden dolmaz; yukarıdaki düğmeye dokununca ya da elle yazınca hesaplanır
   const uygula = () => { src(); calcEk(); calcEkT(); };
@@ -1537,13 +1535,13 @@ renderCekList();
 // ---------- Faiz oranı girilmeden sonuç yok ----------
 // Oran alanı boşken ona bağlı sonuçlar gizlenir, yerine "Faiz oranını gir" notu çıkar; nota dokununca alan açılır.
 function fyKontrol() {
-  const bos = (id) => !$(id).value.trim();
+  const bos = (id) => !$(id).value.trim() || !Sayi.oku($(id)).ok; // geçersiz oran da "girilmemiş" sayılır: sonuç tablosu gizli kalır
   document.querySelectorAll("[data-fy]").forEach((el) => el.classList.toggle("fyGizli", el.dataset.fy.split(" ").some(bos)));
   document.querySelectorAll("[data-fymsg]").forEach((el) => (el.hidden = !el.dataset.fymsg.split(" ").some(bos)));
 }
 ["input", "change", "click"].forEach((ev) => document.addEventListener(ev, fyKontrol));
 document.querySelectorAll("[data-fymsg]").forEach((el) => el.addEventListener("click", () => {
-  const id = el.dataset.fymsg.split(" ").reverse().find((x) => !$(x).value.trim()); if (!id) return;
+  const id = el.dataset.fymsg.split(" ").reverse().find((x) => !$(x).value.trim() || !Sayi.oku($(x)).ok); if (!id) return;
   const i = $(id); i.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => i.focus({ preventScroll: true }), 250);
 }));
 fyKontrol();

@@ -25,6 +25,8 @@
     var v = el.value, c = el.selectionStart == null ? v.length : el.selectionStart;
     // Yazılan nokta = ondalık (virgül yoksa)
     if (e.data === "." && v.charAt(c - 1) === "." && v.indexOf(",") < 0) v = v.slice(0, c - 1) + "," + v.slice(c);
+    // Yüzde/binde kutusunda tek nokta her zaman ondalıktır (yapıştırılan "3.125" ya da "12.5"): virgüle çevrilir
+    else if (window.Sayi && Sayi.oranMi(el) && v.indexOf(",") < 0 && (v.match(/\./g) || []).length === 1) v = v.replace(".", ",");
     var keep = v.slice(0, c).replace(/[^\d,-]/g, "").length;
     var nv = fmt(v);
     if (nv === el.value) return;
