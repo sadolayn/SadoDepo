@@ -1,6 +1,6 @@
 const $ = (id) => document.getElementById(id);
 // ===== Sayı Bulmaca =====
-const BM = { n: 4, lvl: 2, mine: "", ai: "", cand: [], all: [], me: [], aiL: [], over: false, tur: 1 };
+const BM = { n: 4, lvl: 2, mine: "", ai: "", cand: [], all: [], me: [], aiL: [], over: false, tur: 1, not: Array(10).fill(0) };
 const BMLV = { 1: "Sadolayn rahat oynar: sadece son ipuçlarını hatırlar.", 2: "Sadolayn tüm ipuçlarını kullanır, uyan sayılar arasından rastgele seçer.", 3: "Sadolayn her tahmini en çok olasılığı eleyecek şekilde hesaplar. Bol şans!" };
 const distinct = (s) => new Set(s).size === s.length;
 const validNum = (s, n) => new RegExp(`^[1-9]\\d{${n - 1}}$`).test(s) && distinct(s);
@@ -22,8 +22,10 @@ function aiGuess() {
 }
 function bmRender() {
   $("bmTur").textContent = BM.tur;
-  const row = (x, k) => `<div class="gr${x.s[0] === BM.n ? " win" : ""}"><i>${k + 1}</i><b>${x.g}</b>${fb(x.s)}</div>`;
-  ["bmMeL", "bmAiL"].forEach((id, j) => { const L = j ? BM.aiL : BM.me, el = $(id); el.dataset.n = BM.n; el.innerHTML = L.map(row).join("") || '<p class="hint">Henüz yok</p>'; el.scrollTop = el.scrollHeight; });
+  ["bmMeL", "bmAiL"].forEach((id, j) => { const L = j ? BM.aiL : BM.me, el = $(id), son = L.length - 1;
+    const row = (x, k) => `<div class="gr${x.s[0] === BM.n ? " win" : ""}${k === son && BM.yeni ? " yeni" : ""}"><i>${k + 1}</i><b>${x.g}</b>${fb(x.s)}</div>`;
+    el.dataset.n = BM.n; el.innerHTML = L.map(row).join("") || '<p class="hint">Henüz yok</p>'; el.scrollTop = el.scrollHeight; });
+  BM.yeni = false;
   bmPadRender();
 }
 let bmIn = "";
@@ -44,7 +46,8 @@ function tik(big) {
 }
 function bmPadRender() {
   $("bmDisp").innerHTML = Array.from({ length: BM.n }, (_, k) => `<span class="${k === bmIn.length ? "cur" : ""}">${bmIn[k] || ""}</span>`).join("");
-  $("bmKeys").querySelectorAll("button").forEach((b) => { const d = b.dataset.d; b.disabled = BM.over || bmIn.includes(d) || bmIn.length >= BM.n || (d === "0" && !bmIn.length); });
+  $("bmKeys").querySelectorAll("button").forEach((b) => { const d = b.dataset.d, nt = BM.not[+d]; b.disabled = BM.over || bmIn.includes(d) || bmIn.length >= BM.n || (d === "0" && !bmIn.length); b.classList.toggle("n", nt === 1); b.classList.toggle("y", nt === 2); });
+  $("bmNot").querySelectorAll("button").forEach((b) => { const nt = BM.not[+b.dataset.nd]; b.className = nt === 1 ? "n" : nt === 2 ? "y" : ""; b.setAttribute("aria-label", `${b.dataset.nd}: ${nt === 1 ? "yok" : nt === 2 ? "var" : "işaretsiz"}`); });
   $("bmRuloBtn").classList.toggle("on", !$("bmRulo").hidden);
   $("bmSend").disabled = BM.over || bmIn.length !== BM.n; $("bmDel").disabled = BM.over || !bmIn.length;
 }
@@ -54,6 +57,8 @@ function bmKey(d) {
   bmPadRender();
 }
 $("bmKeys").innerHTML = "1234567890".split("").map((d) => `<button type="button" data-d="${d}">${d}</button>`).join("");
+$("bmNot").innerHTML = "0123456789".split("").map((d) => `<button type="button" data-nd="${d}">${d}</button>`).join("");
+$("bmNot").addEventListener("click", (e) => { const b = e.target.closest("button[data-nd]"); if (!b || BM.over) return; const d = +b.dataset.nd; BM.not[d] = (BM.not[d] + 1) % 3; tik(false); bmPadRender(); });
 // Tuşlar parmak değdiği anda çalışır (pointerdown); ardından gelen click yok sayılır. Klavyeyle/erişilebilirlik araçlarıyla basılan click yine çalışır.
 let bmPD = 0;
 $("bmKeys").addEventListener("pointerdown", (e) => { const b = e.target.closest("button[data-d]"); if (!b || b.disabled || e.button > 0) return; bmPD = Date.now(); e.preventDefault(); bmKey(b.dataset.d); });
@@ -66,7 +71,24 @@ document.addEventListener("keydown", (e) => {
   else if (e.key === "Backspace") { $("bmDel").click(); e.preventDefault(); }
   else if (e.key === "Enter") { bmSend(); e.preventDefault(); }
 });
-function bmEnd(t, s) { BM.over = true; window.Rapor && Rapor.oyun("bulmaca", /Kazandın/.test(t), `${BM.n} basamak | ${({1:"Kolay",2:"Zor",3:"Çok zor"})[BM.lvl]} | ${BM.tur}. tur | ${t.replace(/^\S+\s/, "")}`); $("bmEnd").hidden = false; $("bmEndT").textContent = t; $("bmEndS").innerHTML = s; $("bmPad").hidden = true; bmPadRender(); }
+// Kişisel istatistik (yalnızca bu cihazda): basamak + zorluk başına oynanan, kazanılan, berabere, en iyi tur
+const IST_KEY = "bmIstat";
+const istOku = () => { try { return JSON.parse(localStorage.getItem(IST_KEY) || "{}") || {}; } catch (e) { return {}; } };
+function istYaz() {
+  const k = `${BM.n}-${BM.lvl}`, x = istOku()[k];
+  $("bmIst").innerHTML = x && x.o ? `📊 Bu ayarda: <b>${x.o}</b> oyun · <b>${x.k}</b> galibiyet${x.b ? ` · ${x.b} berabere` : ""}${x.en ? ` · en iyi <b>${x.en}</b> tur` : ""}` : "";
+}
+function istGuncelle(sonuc) {
+  const A = istOku(), k = `${BM.n}-${BM.lvl}`, x = A[k] || { o: 0, k: 0, b: 0, en: 0 };
+  x.o++; let rekor = "";
+  if (sonuc === "k") { x.k++; if (!x.en) { rekor = "ilk"; x.en = BM.tur; } else if (BM.tur < x.en) { rekor = "yeni"; x.en = BM.tur; } }
+  if (sonuc === "b") x.b++;
+  A[k] = x; try { localStorage.setItem(IST_KEY, JSON.stringify(A)); } catch (e) {}
+  return { x, rekor };
+}
+function bmEnd(t, s) { BM.over = true;
+  if (!/karıştı/.test(t)) { const sonuc = /Kazandın/.test(t) ? "k" : /Berabere/.test(t) ? "b" : "y", r = istGuncelle(sonuc);
+    s += `<br><span class="bmrek">${r.rekor === "yeni" ? `🏅 Yeni rekor: ${BM.tur} tur!` : r.rekor === "ilk" ? `🏅 Bu ayarda ilk galibiyetin!` : `📊 ${r.x.o} oyun · ${r.x.k} galibiyet${r.x.en ? ` · en iyi ${r.x.en} tur` : ""}`}</span>`; istYaz(); } window.Rapor && Rapor.oyun("bulmaca", /Kazandın/.test(t), `${BM.n} basamak | ${({1:"Kolay",2:"Zor",3:"Çok zor"})[BM.lvl]} | ${BM.tur}. tur | ${t.replace(/^\S+\s/, "")}`); $("bmEnd").hidden = false; $("bmEndT").textContent = t; $("bmEndS").innerHTML = s; $("bmPad").hidden = true; bmPadRender(); }
 $("bmLen").addEventListener("click", (e) => { const b = e.target.closest("button[data-n]"); if (!b) return; BM.n = +b.dataset.n; $("bmLen").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); $("bmMine").maxLength = BM.n; $("bmMine").placeholder = "ör. " + "427150".slice(0, BM.n); $("bmMine").value = $("bmMine").value.slice(0, BM.n); try { localStorage.setItem("bmAyar", JSON.stringify({ n: BM.n, l: BM.lvl })); } catch (er) {} });
 $("bmLvl").addEventListener("click", (e) => { const b = e.target.closest("button[data-l]"); if (!b) return; BM.lvl = +b.dataset.l; $("bmLvl").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); $("bmLvlHint").textContent = BMLV[BM.lvl]; try { localStorage.setItem("bmAyar", JSON.stringify({ n: BM.n, l: BM.lvl })); } catch (er) {} });
 (function () { let a = null; try { a = JSON.parse(localStorage.getItem("bmAyar") || "null"); } catch (e) {} if (a) { BM.n = a.n || 4; BM.lvl = a.l || 2; } $("bmLen").querySelector(`[data-n="${BM.n}"]`).click(); $("bmLvl").querySelector(`[data-l="${BM.lvl}"]`).click(); })();
@@ -76,7 +98,7 @@ $("bmGo").onclick = () => {
   const v = $("bmMine").value.trim();
   if (!validNum(v, BM.n)) { $("bmErr").textContent = `${BM.n} basamaklı, rakamları farklı ve 0 ile başlamayan bir sayı yaz (ya da rastgele seç).`; return; }
   const A = allNums(BM.n);
-  Object.assign(BM, { mine: v, ai: randNum(BM.n), cand: A, all: A, me: [], aiL: [], over: false, tur: 1 });
+  Object.assign(BM, { mine: v, ai: randNum(BM.n), cand: A, all: A, me: [], aiL: [], over: false, tur: 1, not: Array(10).fill(0) });
   RL.notes = []; rlClearDraw(); rlRender();
   $("bmMineShow").textContent = v; $("bmSetup").hidden = true; $("bmGame").hidden = false; $("bmEnd").hidden = true;
   bmIn = ""; $("bmPad").hidden = false;
@@ -87,7 +109,9 @@ function bmSend() {
   if (BM.over) return;
   const g = bmIn;
   if (!validNum(g, BM.n)) { $("bmMsg").innerHTML = `<span style="color:var(--red)">${BM.n} basamaklı, rakamları farklı, 0 ile başlamayan bir sayı yaz.</span>`; return; }
-  const s1 = score(BM.ai, g); BM.me.push({ g, s: s1 }); RL.notes.push({ g: BM.me.length - 1 }); bmIn = "";
+  const once = BM.me.findIndex((x) => x.g === g);
+  if (once >= 0) { $("bmMsg").innerHTML = `<span style="color:var(--red)">${g} sayısını ${once + 1}. tahminde denedin (${BM.me[once].s[0] || BM.me[once].s[1] ? `+${BM.me[once].s[0]} −${BM.me[once].s[1]}` : "0"}). Başka bir sayı dene.</span>`; tik(true); return; }
+  const s1 = score(BM.ai, g); BM.me.push({ g, s: s1 }); RL.notes.push({ g: BM.me.length - 1 }); bmIn = ""; BM.yeni = true;
   // Sadolayn'ın sırası
   const ag = aiGuess(), s2 = score(BM.mine, ag); BM.aiL.push({ g: ag, s: s2 });
   BM.cand = BM.cand.filter((c) => score(c, ag).join() === s2.join());
@@ -160,3 +184,7 @@ rlRender();
 $("bmMine").addEventListener("input", () => { $("bmMine").value = $("bmMine").value.replace(/\D/g, "").slice(0, BM.n); });
 $("bmAgain").onclick = () => { $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; };
 $("bmQuit").onclick = () => { if (BM.over || confirm("Oyun bırakılsın mı?")) { if (!BM.over) bmEnd("🏳️ Oyunu bıraktın", `Sadolayn'ın sayısı <b>${BM.ai}</b> idi.`); $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; } };
+
+// İstatistik satırı ayar değişince güncellenir
+["bmLen", "bmLvl"].forEach((id) => $(id).addEventListener("click", () => setTimeout(istYaz, 0)));
+istYaz();
