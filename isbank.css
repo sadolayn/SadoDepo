@@ -886,3 +886,12 @@
   .altkutu .tsat button.kac { border-style: dashed !important; color: var(--c, #e0a24f) !important; background: transparent !important; font-weight: 800; }
   .menu button[data-k="Maximum"] span { display: inline-block; letter-spacing: -.3px; font-size: 11px; transform: scaleX(.84); transform-origin: center; white-space: nowrap; }
   .menu button[data-k="Haberler"] small { display: inline-block; font-size: 11px; white-space: nowrap; letter-spacing: -.5px; opacity: .85; }
+
+/* Kampanyalar süzgeci (7 Kasım 2026): ayrıntılı süzgeç tek düğmede; daralmış şeritte yalnızca özet + arama; açılan panel ekranı kaplamaz */
+.altkutu #tfil.kamp .kfilt { display: flex !important; align-items: center; gap: 8px; width: 100%; min-height: 40px; margin-top: 10px; padding: 7px 12px !important; border-radius: 12px; border: 1px dashed color-mix(in srgb, var(--kk, #e0a24f) 60%, #000) !important; background: transparent !important; color: var(--kk, #e0a24f) !important; font: 700 13px system-ui, -apple-system, "Segoe UI", sans-serif; text-align: left; cursor: pointer; flex-direction: row !important; }
+.altkutu #tfil.kamp .kfilt span { flex: none; }
+.altkutu #tfil.kamp .kfilt small { flex: 1; min-width: 0; font-size: 11.5px; font-weight: 600; color: #b9b9b9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.altkutu #tfil.kamp .kfilt i { flex: none; font-style: normal; }
+.altkutu #tfil.kamp .kfilt.on { border-style: solid !important; }
+.altkutu.dar:not(.acik) #tfil.kamp .tsat, .altkutu.dar:not(.acik) #tfil.kamp .kfilt, .altkutu.dar:not(.acik) #tfil.kamp .knot { display: none !important; }
+.altkutu.dar.acik { max-height: min(74dvh, calc(100dvh - var(--iminiH, 0px) - 90px)) !important; box-shadow: 0 14px 30px rgba(0,0,0,.65); }

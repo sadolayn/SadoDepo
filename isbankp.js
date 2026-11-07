@@ -162,8 +162,11 @@ function bolumeKay(el) {
   const say = () => [...k.querySelectorAll("#nsub button, #tfil button")].filter((b) => b.offsetParent || k.classList.contains("dar")).length;
   let dar = false, boy = 0;
   function birak() { dar = false; k.classList.remove("dar", "acik"); k.style.left = k.style.width = ""; iz.style.height = ""; }
+  let acikY = null;
   function kontrol() {
     if (k.hidden) { if (dar) birak(); k.classList.remove("uzun"); return; }
+    // Açılan süzgeç paneli sayfa kaydırılınca kendiliğinden kapanır (kampanyaların üstünü kapatıp kalmasın)
+    if (k.classList.contains("acik")) { if (acikY == null) acikY = scrollY; else if (Math.abs(scrollY - acikY) > 40) { k.classList.remove("acik"); acikY = null; seciliOzet(); } } else acikY = null;
     const ust = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--iminiH")) || 0;
     const uzun = dar || say() > 0; // her alt başlık kutusu yukarı kaydırınca tek satırlık çubuğa iner (eskiden yalnızca 4'ten çok başlığı olanlar)
     k.classList.toggle("uzun", uzun);
@@ -569,6 +572,8 @@ function campCard(k) {
 // Her kampanya tek bir "ne kazanırım" ve tek bir "nerede" grubundadır (sınıflandırma veri toplanırken yapılır): toplamlar her zaman tutar.
 // Süzgeçler "ve" ile birleşir: bir satırdaki sayılar öbür satırdaki seçime göre hesaplanır (dal dal daralır).
 let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kKim = "", kOne = false, kKatAcik = false;
+// Ayrıntılı süzgeç (Kimin için · Ne kazanırım · Nerede) varsayılan kapalı: kampanyalar ilk ekranda görünsün
+let kFiltAcik = false; try { kFiltAcik = sessionStorage.getItem("kFiltAcik") === "1"; } catch (e) {}
 // Sıralama (5 Kasım 2026): "yeni" = listeye giriş günü en yeni üstte (ilk görülme tarihi olmayan eski kampanyalar altta, bitişe göre); "bitis" = en erken biten üstte
 let kSira = "yeni";
 try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kNe = k.ne || ""; kNere = k.nere || ""; kKim = k.kim || ""; kOne = !!k.one; if (k.sira === "bitis") kSira = "bitis"; } catch (e) {}
@@ -732,9 +737,10 @@ function renderKampanyalar() {
     + `<div class="tsat uc"><span class="tlab">👥 Bölüm<em class="tsay">· ${esc(kayAd)}</em></span><div class="tgrid">${sb("data-sg", "bireysel", "👤", "Bireysel", say(kKay, "bireysel"), kSeg === "bireysel" && !kOne)}${sb("data-sg", "ticari", "🏢", "Ticari", say(kKay, "ticari"), kSeg === "ticari" && !kOne)}${L.length ? sb("data-one", "1", "⭐", "Öne çıkan", null, kOne) : ""}</div></div>`
     // Satır başlığındaki küçük yazı sayıların neye göre olduğunu söyler: Kaynak sayıları bireysel + ticari toplamı, Bölüm sayıları seçili kaynağın
     // Sitelerdeki sayılar toplanınca ana sayfadaki "farklı kampanya" sayısı tutmaz: aynı kampanya birden çok sitede yayımlanabiliyor
-    + `<div class="knot">ℹ️ Aynı kampanya birden çok sitede olabilir: ${kSeg === "ticari" ? "Ticaride" : "Bireyselde"} ${Object.keys(K_KAY).reduce((a, k) => a + (say(k, kSeg) || 0), 0)} kayıt, ${new Set(kTumu(kSeg).map(kAyni)).size} farklı kampanya · tüm bölümlerde ${new Set(kTumu().map(kAyni)).size} farklı kampanya</div>`
-    + (L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, kKisa(ad), n, kKim === ad)).join("")}</div></div>` : "")
-    + (L.length && !kOne ? `<div class="tsat kgr"><span class="tlab">💰 Ne kazanırım</span><div class="tgrid">${sb("data-ne", "", "📋", "Hepsi", neT.length, !kNe, "hep")}${neS.map(([ad, ic, n]) => sb("data-ne", ad, ic, ad, n, kNe === ad)).join("")}</div></div>`
+    + (L.length && !kOne ? `<button type="button" data-kfilt="1" class="kfilt${kFiltAcik ? " on" : ""}"><span>🎛️ ${kFiltAcik ? "Ayrıntılı süzgeci gizle" : "Ayrıntılı süzgeç"}</span><small>${[kKim, kNe, kNere].filter(Boolean).length ? esc([kKim, kNe, kNere].filter(Boolean).join(" · ")) : "Kimin için · Ne kazanırım · Nerede"}</small><i>${kFiltAcik ? "▴" : "▾"}</i></button>` : "")
+    + (!kFiltAcik ? "" : `<div class="knot">ℹ️ Aynı kampanya birden çok sitede olabilir: ${kSeg === "ticari" ? "Ticaride" : "Bireyselde"} ${Object.keys(K_KAY).reduce((a, k) => a + (say(k, kSeg) || 0), 0)} kayıt, ${new Set(kTumu(kSeg).map(kAyni)).size} farklı kampanya · tüm bölümlerde ${new Set(kTumu().map(kAyni)).size} farklı kampanya</div>`)
+    + (kFiltAcik && L.length && !kOne && kimS.some((g) => g[0] !== "Herkes" && g[2]) ? `<div class="tsat kgr"><span class="tlab">🎯 Kimin için</span><div class="tgrid">${sb("data-kim", "", "📋", "Hepsi", kimT.length, !kKim, "hep")}${kimS.map(([ad, ic, n]) => sb("data-kim", ad, ic, kKisa(ad), n, kKim === ad)).join("")}</div></div>` : "")
+    + (kFiltAcik && L.length && !kOne ? `<div class="tsat kgr"><span class="tlab">💰 Ne kazanırım</span><div class="tgrid">${sb("data-ne", "", "📋", "Hepsi", neT.length, !kNe, "hep")}${neS.map(([ad, ic, n]) => sb("data-ne", ad, ic, ad, n, kNe === ad)).join("")}</div></div>`
       + `<div class="tsat kgr"><span class="tlab">🛍️ Nerede</span><div class="tgrid">${sb("data-nere", "", "📋", "Hepsi", nereT.length, !kNere, "hep")}${nereGor.map(([ad, ic, n]) => sb("data-nere", ad, ic, kKisa(ad), n, kNere === ad)).join("")}${nereGor.length < nereS.length || kKatAcik ? `<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Daha az" : `▾ ${nereS.length - nereGor.length} grup daha`}</button>` : ""}</div></div>` : "");
   // "Bana uygun" ya da "Yeni gelenler" açıkken süzgeç satırları gizlenir: ikisi de üç sitenin hepsine bakar, Kaynak/Bölüm/Nerede onları etkilemez
   if (kYeni) t.innerHTML = t.querySelector(".kara").outerHTML
@@ -745,6 +751,7 @@ function renderKampanyalar() {
     const b = e.target.closest("button"); if (!b || b.closest(".kara")) return;
     if (b.dataset.sihkapat) { kSih.acik = false; kYeni = false; kAra = ""; renderKampanyalar(); icerigeKay(); return; }
     if (b.dataset.kac) { kKatAcik = !kKatAcik; renderKampanyalar(); return; }
+    if (b.dataset.kfilt) { kFiltAcik = !kFiltAcik; try { sessionStorage.setItem("kFiltAcik", kFiltAcik ? "1" : "0"); } catch (x) {} renderKampanyalar(); return; }
     if (b.dataset.ky) { kKay = b.dataset.ky; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
     else if (b.dataset.sg) { kSeg = b.dataset.sg; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
     else if (b.dataset.one) kOne = !kOne;
