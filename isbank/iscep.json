@@ -1,5 +1,5 @@
 {
-  "guncelleme": "2026-10-15T09:00:00+03:00",
+  "guncelleme": "2026-11-08T02:45:50+03:00",
   "kaynak": "App Store – İşCep sürüm geçmişi",
   "kaynakUrl": "https://apps.apple.com/tr/app/id308261752",
   "surumler": [
@@ -128,5 +128,10 @@
         "Roamless e-SIM"
       ]
     }
-  ]
+  ],
+  "play": {
+    "guncelleme": "2026-09-27",
+    "yenilikler": []
+  },
+  "playUrl": "https://play.google.com/store/apps/details?id=com.pozitron.iscep&hl=tr&gl=TR"
 }
