@@ -54,6 +54,7 @@ const gcd = (a, b) => { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) [a, 
 const Q = (n, d = 1n) => { if (d < 0n) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
 const qAdd = (a, b) => Q(a.n * b.d + b.n * a.d, a.d * b.d), qSub = (a, b) => Q(a.n * b.d - b.n * a.d, a.d * b.d);
 const qMul = (a, b) => Q(a.n * b.n, a.d * b.d), qDiv = (a, b) => (b.n === 0n ? null : Q(a.n * b.d, a.d * b.n));
+const esc = (t) => String(t == null ? "" : t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]); // PPK karar linki için
 function qParse(s) { s = s.replace(",", "."); const neg = s.startsWith("-"); if (neg) s = s.slice(1); const [i, f = ""] = s.split("."); const n = BigInt((i || "0") + f) * (neg ? -1n : 1n); return Q(n, 10n ** BigInt(f.length)); }
 function qFmt(q, maxDigits = 12) {
   const neg = q.n < 0n; let n = neg ? -q.n : q.n; const d = q.d; let ip = n / d, rem = n % d;
@@ -61,7 +62,7 @@ function qFmt(q, maxDigits = 12) {
   const room = Math.max(0, maxDigits - intStr.length); let frac = "";
   for (let i = 0; i < room + 1 && rem !== 0n; i++) { rem *= 10n; frac += (rem / d).toString(); rem %= d; }
   // yuvarla
-  if (frac.length > room) { const up = +frac[room] >= 5; frac = frac.slice(0, room); if (up) { let s = (intStr + frac); let carry = BigInt(s) + 1n; s = carry.toString().padStart(s.length, "0"); const il = s.length - frac.length; return fmtParts(neg, s.slice(0, il), s.slice(il)); } }
+  if (frac.length > room) { const up = +frac[room] >= 5; frac = frac.slice(0, room); if (up) { let s = (intStr + frac); let carry = BigInt(s) + 1n; s = carry.toString().padStart(s.length, "0"); const il = s.length - frac.length; if (il > maxDigits) return null; return fmtParts(neg, s.slice(0, il), s.slice(il)); } }
   return fmtParts(neg, intStr, frac);
 }
 function fmtParts(neg, i, f) { f = f.replace(/0+$/, ""); const ig = i.replace(/\B(?=(\d{3})+(?!\d))/g, "."); const s = (neg && (i !== "0" || f) ? "-" : "") + ig + (f ? "," + f : ""); return s; }
@@ -104,12 +105,15 @@ function press(k) {
   } else if (k === "%") {
     const b = curQ(); let r;
     if (op === "+" || op === "-") r = qDiv(qMul(acc, b), Q(100n)); else r = qDiv(b, Q(100n));
-    entry = qFmt(r).replace(/\./g, ""); fresh = true;
+    const f = qFmt(r); if (!f) { err = true; disp(); return; } // 12 haneyi aşarsa çökme yerine "Hata"
+    entry = f.replace(/\./g, ""); fresh = true;
   } else if (k === "√") {
     const v = Number(curQ().n) / Number(curQ().d); if (v < 0) { err = true; disp(); return; }
-    const s = Math.sqrt(v); entry = String(+s.toPrecision(12)).replace(".", ","); fresh = true; tape(entry, "√");
-  } else if (k === "M+" || k === "M-") { const v = curQ(); mem = mem ? (k === "M+" ? qAdd(mem, v) : qSub(mem, v)) : (k === "M+" ? v : Q(-v.n, v.d)); fresh = true; if (entry === null && acc) entry = null; tape(qFmt(v), k === "M+" ? "M+" : "M−"); }
-  else if (k === "MR") { if (mem) { entry = qFmt(mem).replace(/\./g, ""); fresh = true; } }
+    // Bilimsel gösterim ("1e-12") üretmeden en çok 12 haneye yuvarla; çok küçük kök 0 olur
+    const s = Math.sqrt(v), ih = s >= 1 ? Math.floor(Math.log10(s)) + 1 : 1;
+    entry = s.toFixed(Math.max(0, Math.min(11, 12 - ih))).replace(/\.?0+$/, "").replace(".", ",") || "0"; fresh = true; tape(entry, "√");
+  } else if (k === "M+" || k === "M-") { const v = curQ(); mem = mem ? (k === "M+" ? qAdd(mem, v) : qSub(mem, v)) : (k === "M+" ? v : Q(-v.n, v.d)); fresh = true; if (entry === null && acc) entry = null; tape(qFmt(v) || "Taşma", k === "M+" ? "M+" : "M−"); }
+  else if (k === "MR") { if (mem) { const f = qFmt(mem); if (!f) { err = true; disp(); return; } entry = f.replace(/\./g, ""); fresh = true; } }
   else if (k === "MC") { mem = null; }
   disp();
 }
