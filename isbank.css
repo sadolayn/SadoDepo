@@ -895,3 +895,18 @@
 .altkutu #tfil.kamp .kfilt.on { border-style: solid !important; }
 .altkutu.dar:not(.acik) #tfil.kamp .tsat, .altkutu.dar:not(.acik) #tfil.kamp .kfilt, .altkutu.dar:not(.acik) #tfil.kamp .knot { display: none !important; }
 .altkutu.dar.acik { max-height: min(74dvh, calc(100dvh - var(--iminiH, 0px) - 90px)) !important; box-shadow: 0 14px 30px rgba(0,0,0,.65); }
+
+/* Kampanya süzgeci yazı netliği (7 Kasım 2026): kalem adları kalın ve parlak, sayılar okunur; seçili olmayan yazı griden beyaza */
+.altkutu #tfil.kamp button:not(.on):not(.kfilt) { color: #f2f2f2 !important; }
+.altkutu #tfil.kamp button .ka { font-size: 14px; font-weight: 700; letter-spacing: .1px; }
+.altkutu #tfil.kamp button > b { font-size: 11.5px !important; font-weight: 700 !important; opacity: 1 !important; color: #c9c9c9; }
+.altkutu #tfil.kamp button.on > b { color: inherit; opacity: .85 !important; }
+.altkutu #tfil.kamp .tsat .tlab { font-weight: 800; }
+/* Ayrıntılı süzgeç düğmesi: açıkken de çerçeveli kalır, yazılar arasında boşluk; özet okunur */
+.altkutu #tfil.kamp button.kfilt, .altkutu #tfil.kamp button.kfilt.on { background: transparent !important; color: var(--kk, #e0a24f) !important; border-color: color-mix(in srgb, var(--kk, #e0a24f) 70%, #000) !important; }
+.altkutu #tfil.kamp button.kfilt { gap: 10px !important; font-size: 14px; }
+.altkutu #tfil.kamp button.kfilt small { font-size: 12.5px; font-weight: 600; color: #d6d6d6 !important; }
+html[data-tema="acik"] .altkutu #tfil.kamp button:not(.on):not(.kfilt) { color: #1b1813 !important; }
+html[data-tema="acik"] .altkutu #tfil.kamp button > b { color: #4a443b; }
+html[data-tema="acik"] .altkutu #tfil.kamp button.on > b { color: inherit; }
+html[data-tema="acik"] .altkutu #tfil.kamp button.kfilt small { color: #4a443b !important; }
