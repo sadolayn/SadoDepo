@@ -468,7 +468,7 @@
 <link rel="stylesheet" href="hareket.css">
 <style>
   /* ===== Açık mod: ana sayfa ===== */
-  html[data-tema="acik"] { --bg: #f6f3ec; --card: #ffffff; --ink: #1b1813; --muted: #6b645a; --accent: #8f5d12; --line: #e4ddcf; }
+  html[data-tema="acik"] { --bg: #f6f3ec; --card: #ffffff; --ink: #1b1813; --muted: #5a5248; --accent: #8a5a12; --line: #e4ddcf; }
   html[data-tema="acik"] h1.logo img { filter: drop-shadow(0 2px 6px rgba(120,80,20,.28)) saturate(1.1) brightness(.92); }
   html[data-tema="acik"] .mn h2::after, html[data-tema="acik"] .quote span::before { background: linear-gradient(90deg, #d9c39a, transparent); }
   html[data-tema="acik"] .quote span::after { background: linear-gradient(90deg, #d9c39a, transparent); transform: scaleX(-1); }
@@ -852,7 +852,7 @@
       const ODUL = "🏆 İşCep art arda 4. kez “Dünyanın En İyi Bireysel Mobil Bankacılık Uygulaması” seçildi ›";
       const odulVar = new Date() < new Date("2026-11-10T00:00:00");
       if (odulVar) L.splice(1, 0, ODUL);
-      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      // "Animasyonları azalt" açıksa (bilgisayarda sık) sahne yine gelir; yalnızca hareketler kapalı olur (CSS'te reduce kuralları var)
       let k = 0;
       // Ödül sırası gelince: logo ve selamlama kaybolur, büyük altın kupa sahnesi açılır (7 sn)
       const top = document.getElementById("top"), odS = document.getElementById("odS");

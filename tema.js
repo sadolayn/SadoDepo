@@ -91,12 +91,12 @@
     var L = lab(c[0], c[1], c[2]), C = Math.hypot(L[1], L[2]);
     if (a < 1 && C < 8 && L[0] > 85) return [27, 24, 19, Math.max(a, 0.55)];
     // Hedef beyaza karşı 5.2: kâğıt zeminde (#f6f3ec) ve hafif renkli kartlarda da 4.5'in üstünde kalsın
-    if (kontrast(c[0], c[1], c[2]) >= 5.2) return c;
+    if (kontrast(c[0], c[1], c[2]) >= 6.5) return c;
     var hedef, aa = L[1], bb = L[2];
-    if (C < 8) { hedef = Math.min(L[0], 10 + (100 - L[0]) * 33 / 42); aa = SICAK[0]; bb = SICAK[1]; }
+    if (C < 8) { hedef = Math.min(L[0], 8 + (100 - L[0]) * 30 / 42); aa = SICAK[0]; bb = SICAK[1]; } // gri yazı: açık modda biraz daha koyu (≈7:1), koyu moddaki canlılıkla aynı
     else hedef = L[0];
     var o = rgbL(hedef, aa, bb);
-    while (kontrast(o[0], o[1], o[2]) < 5.2 && hedef > 5) { hedef -= 1.5; o = rgbL(hedef, aa, bb); }
+    while (kontrast(o[0], o[1], o[2]) < 6.5 && hedef > 5) { hedef -= 1.5; o = rgbL(hedef, aa, bb); }
     return o.concat(a);
   }
   function cizgi(c) {
