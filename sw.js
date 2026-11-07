@@ -1,9 +1,24 @@
 // Sadolayn — çevrimdışı yedek. Önce internetten alır (güncellemeler hemen gelir).
 // İnternet yoksa ya da sunucu hata verirse en son başarılı kopyayı gösterir.
 // Önbellek anahtarı "?t=..." gibi ekler olmadan tutulur; her istek ayrı kopya olarak birikmez.
-const CACHE = "sadolayn-v500";
-self.addEventListener("install", (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(["./", "./index.html", "./img/icon.png"]).catch(() => {}))); });
-self.addEventListener("activate", (e) => { e.waitUntil(caches.keys().then((k) => Promise.all(k.filter((x) => x !== CACHE).map((x) => caches.delete(x)))).then(() => self.clients.claim())); });
+const CACHE = "sadolayn-v501";
+// Çevrimdışı açılması gereken sayfalar ve dosyaları (Bankacılık, Hesaplamalar, Günce, Takvim, oyunlar): kurulumda hazırlanır.
+// Biri inemezse diğerleri yine önbelleğe girer. Liste: bu sayfaların yüklediği yerel js/css/görsel/yazı tipi (yaklaşık 1,8 MB).
+const ONCE = ["./", "./index.html", "./manifest.webmanifest", "./balayi.html", "./balayiai.js", "./banka.css", "./banka.html", "./bankap.js", "./batak.html", "./batakai.js", "./bilmece.html", "./bulmaca.html", "./bulmacap.js", "./cardsound.js", "./faizhatira.js", "./gunce.css", "./gunce.html", "./guncep.js", "./hareket.css", "./hesap.css", "./hesap.html", "./hesapp.js", "./img/ataturk.jpg", "./img/icon.png", "./img/logo.png", "./isimler.js", "./isq.js", "./kartmasa.js", "./king.html", "./kingai.js", "./lib/gelasio-italic-latin-ext.woff2", "./lib/gelasio-italic-latin.woff2", "./lib/gelasio-latin-ext.woff2", "./lib/gelasio-latin.woff2", "./numfmt.js", "./ortak.js", "./oyunlar.html", "./oyunquiz.js", "./oyunsaat.js", "./pilot.html", "./pusula.js", "./pwa.js", "./rapor.js", "./sayac.js", "./sayi.js", "./solitaire.html", "./tahmin.html", "./takvim.css", "./takvim.html", "./takvimp.js", "./tavla.html", "./tema.js", "./theme.css", "./token.js", "./vergi.js", "./yedek.js", "./yeni.js"];
+const anahtar = (u) => { const x = new URL(u, self.location.href); return x.origin + x.pathname; };
+self.addEventListener("install", (e) => {
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE).then((c) => Promise.all(ONCE.map((u) =>
+    fetch(new Request(u, { cache: "reload" })).then((res) => { if (res.ok) return c.put(anahtar(u), res); }).catch(() => {})))));
+});
+// Yeni sürümde eski önbellekteki, yenide olmayan kopyalar (ziyaret edilmiş sayfalar, veri dosyaları) taşınır; sonra eski silinir.
+// Böylece her güncellemede çevrimdışı yedek sıfırlanmaz.
+self.addEventListener("activate", (e) => {
+  e.waitUntil(caches.open(CACHE).then((yeni) => caches.keys().then((ks) => Promise.all(ks.filter((x) => x !== CACHE).map((eskiAd) =>
+    caches.open(eskiAd).then((eski) => eski.keys().then((reqs) => Promise.all(reqs.map((r) =>
+      yeni.match(r).then((var_) => var_ || eski.match(r).then((res) => res && yeni.put(r, res))))))).then(() => caches.delete(eskiAd))))))
+    .then(() => self.clients.claim()));
+});
 function yedek(key, navigate) {
   return caches.match(key, { ignoreSearch: true }).then((m) => {
     if (!m && navigate) m = caches.match("./index.html");

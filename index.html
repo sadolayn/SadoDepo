@@ -265,6 +265,9 @@
   .araIk { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; opacity: .8; pointer-events: none; }
   #araSil { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border: 0; border-radius: 50%; background: #1a1a1a; color: #cfcfcf; font-size: 14px; cursor: pointer; }
   .araYok { margin: 14px 4px 0; letter-spacing: normal; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+  .araCip { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; font-size: 12.5px; }
+  .araCip button { padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .araCip button:active { transform: scale(.96); }
   .mn .gizli { display: none !important; }
   .fav h2 { justify-content: flex-start; }
   .fav h2 .t { font: inherit; }
@@ -477,6 +480,9 @@
   .sbB.kirp::after { animation: sbParla 1.4s .8s 2 cubic-bezier(.4,0,.2,1); }
   @keyframes sbParla { 0% { opacity: 1; transform: translateX(-120%); } 100% { opacity: 1; transform: translateX(280%); } }
   @media (prefers-reduced-motion: reduce) { .sbB.kirp::after { animation: none; } }
+  /* Açılış: saat ve tarih betik doldurana kadar görünmez, sonra yumuşakça belirir */
+  .dig, .datec { transition: opacity .25s ease; }
+  html:not(.saatHazir) .dig, html:not(.saatHazir) .datec { opacity: 0; }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -571,6 +577,7 @@
   html[data-tema="acik"] .oneri-box p { color: #5f594f !important; }
   html[data-tema="acik"] .oneri-box :is(textarea, input) { background: #fbf8f2; color: #1b1813; border-color: #c9bda6; }
   html[data-tema="acik"] .oneri-act button { background: #f3ede2; border-color: #c9bda6; color: #3a352d; }
+  html[data-tema="acik"] .yd-grid button { background: #fbf3e4; border-color: #c9a66a; color: #6b4410; }
   html[data-tema="acik"] .oneri-act button[type=submit] { background: #e0a24f; border-color: #e0a24f; color: #1a1206; }
   html[data-tema="acik"] .kurYardim { background: linear-gradient(180deg, rgba(63,194,131,.10), #fff 70%); color: #3a352d; }
   html[data-tema="acik"] .kurYardim b { color: #1b1813; }
@@ -743,7 +750,7 @@
           <line id="sh" x1="50" y1="60" x2="50" y2="13" stroke="#ff9a5a" stroke-width="1.4" stroke-linecap="round"/>
           <circle cx="50" cy="50" r="4" fill="#e0a24f" stroke="#070707" stroke-width="1.5"/>
         </svg>
-        <div class="dig" id="dig">--:--</div>
+        <div class="dig" id="dig"></div>
       </div>
       <div class="mid">
         <p class="greet" id="greet"></p>
@@ -770,7 +777,7 @@
           <line id="mh2" x1="50" y1="56" x2="50" y2="17" stroke="#e0a24f" stroke-width="3.2" stroke-linecap="round"/>
           <line id="sh2" x1="50" y1="60" x2="50" y2="13" stroke="#ff9a5a" stroke-width="1.4" stroke-linecap="round"/>
           <circle cx="50" cy="50" r="4" fill="#e0a24f" stroke="#070707" stroke-width="1.5"/>
-        </svg><div class="dig" id="dig2">--:--</div></div>
+        </svg><div class="dig" id="dig2"></div></div>
     <div class="bl"><img src="img/logo.png" alt=""><span id="greet2"></span></div>
     <div class="datec"><div class="m" id="dm2"></div><div class="d" id="dd2"></div><div class="w" id="dw2"></div></div>
   </div>
@@ -786,7 +793,9 @@
     <div class="altL" id="altL" hidden></div>
     <div class="azP" id="azP" hidden></div>
     <p class="altMsg" id="altMsg" hidden></p>
-    <p class="araYok" id="araYok" hidden>Bulunamadı. Başka bir kelime dene ya da aşağıdaki öneri formundan yaz 🙂</p>
+    <div class="araYok" id="araYok" hidden>Bulunamadı. Başka bir kelime dene ya da aşağıdaki öneri formundan yaz 🙂
+      <div class="araCip" aria-label="Sık aranan">Sık arananlar: <button type="button" data-q="çek">Çek iskonto</button><button type="button" data-q="kredi">Kredi</button><button type="button" data-q="mevduat">Mevduat</button><button type="button" data-q="resmî gazete">Resmî Gazete</button><button type="button" data-q="altın">Altın</button><button type="button" data-q="kampanya">Kampanya</button></div>
+    </div>
     <section class="fav" id="fav" aria-label="Favorilerim">
       <h2 data-yeni="favori|2026-10-30|YENİ"><span class="t">⭐ Favorilerim</span><button type="button" id="favDuz" aria-pressed="false">Seç</button></h2>
       <p class="favIp" id="favIp">Sık kullandığın 6 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun. Aramadaki ☆ ile alt başlıkları da ekleyebilirsin.</p>
@@ -934,6 +943,7 @@
       });
       if (n.getDate() !== lastDay) {
         lastDay = n.getDate();
+        document.documentElement.classList.add("saatHazir"); // saat/tarih dolunca görünür (açılışta "--:--" ve boş kutu görünmesin)
         put("dm", AY[n.getMonth()]);
         put("dd", n.getDate());
         document.getElementById("dw").textContent = GUN[n.getDay()];
@@ -972,6 +982,21 @@
 </section>
 <div class="kurYardim" id="kurYardim" hidden></div>
 <div class="oneri-wrap"><button type="button" class="oneri-btn" id="oneriBtn">✉️ Önerileriniz ve görüşleriniz benim için değerli</button></div>
+<div class="oneri-wrap" style="margin-top:10px"><button type="button" class="oneri-btn yd-btn" id="ydBtn">💾 Verilerimi yedekle / başka cihaza taşı</button></div>
+<div class="oneri-ov" id="ydOv" hidden>
+  <div class="oneri-box" role="dialog" aria-modal="true" aria-labelledby="ydBaslik">
+    <h3 id="ydBaslik">💾 Verilerimi yedekle / taşı</h3>
+    <p>Favorilerin, temanın, Günce hedeflerinin, ajandanın, Yıldızların ve oyun istatistiklerin yalnızca bu tarayıcıda durur. Telefon değiştirirken ya da bilgisayara geçerken buradan taşıyabilirsin.</p>
+    <p id="ydSay" style="font-size:12.5px;color:#8a8a8a;margin:-4px 0 10px"></p>
+    <div class="yd-grid"><button type="button" id="ydIndir">📥 Yedek dosyası indir</button><button type="button" id="ydKopya">📋 Yedek kodunu kopyala</button></div>
+    <h4 class="yd-alt">Yeni cihazda geri yükle</h4>
+    <textarea id="ydKod" rows="3" placeholder="Yedek kodunu buraya yapıştır… (boş bırakırsan dosya seçilir)" spellcheck="false" autocomplete="off"></textarea>
+    <input type="file" id="ydDosya" accept=".json,application/json,text/plain" hidden>
+    <p style="font-size:11px;color:#8a8a8a;margin:0 0 6px">Veri hiçbir sunucuya gitmez. Yalnızca kendi aldığın yedeği yükle.</p>
+    <div class="oneri-act"><button type="button" id="ydKapat">Kapat</button><button type="submit" id="ydYukle">📤 Geri yükle</button></div>
+    <div class="oneri-msg" id="ydDurum" role="status"></div>
+  </div>
+</div>
 <div class="oneri-ov" id="oneriOv" hidden>
   <form class="oneri-box" id="oneriForm">
     <h3>✉️ Önerileriniz ve görüşleriniz</h3>
@@ -1038,6 +1063,10 @@
   .oneri-box textarea, .oneri-box input { width: 100%; box-sizing: border-box; background: #181818; color: #f2f2f2; border: 1px solid #2a2a2a; border-radius: 12px; padding: 11px 12px; font: inherit; font-size: 16px; margin-bottom: 8px; resize: vertical; }
   .oneri-box textarea:focus, .oneri-box input:focus { outline: none; border-color: var(--accent); }
   .oneri-act { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; margin-top: 4px; }
+  .yd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .yd-grid button { padding: 12px 8px; border-radius: 12px; font: inherit; font-size: 14px; font-weight: 700; line-height: 1.3; cursor: pointer; border: 1px solid #5a4320; background: #1a140b; color: #f0c27a; }
+  .yd-alt { margin: 16px 0 8px; font-size: 14px; color: var(--accent); }
+  .yd-btn { font-size: 13px; }
   .oneri-act button { padding: 11px; border-radius: 12px; font: inherit; font-size: 15px; cursor: pointer; border: 1px solid #2a2a2a; background: #181818; color: #ccc; }
   .oneri-act button[type=submit] { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
   .oneri-msg { font-size: 13px; margin-top: 10px; text-align: center; min-height: 18px; }
@@ -1467,6 +1496,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   })();
 </script>
 <script src="yeni.js"></script>
+<script src="yedek.js"></script>
 <script>
 // Kayan yazı: ayrıntı vermeyen merak cümleleri, sonunda "hepsi ve daha fazlası İş Bankası Gündemi'nde".
 // Şeridin tamamı ve sağdaki "Göz at" düğmesi dokunulabilir; dokunulan cümlenin bölümü açılır.
@@ -1896,6 +1926,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     return null;
   }
   q.addEventListener("input", ara);
+  // Sonuç yoksa çıkan "sık arananlar" çipleri: dokununca o kelimeyle aranır
+  yok.addEventListener("click", function (e) { var b = e.target.closest("button[data-q]"); if (!b) return; q.value = b.dataset.q; ara(); q.focus(); });
   q.addEventListener("keydown", function (e) {
     if (e.key === "Escape") { q.value = ""; ara(); }
     if (e.key === "Enter") { var t = ara(); if (t) location.href = t; else q.blur(); }
