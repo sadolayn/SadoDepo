@@ -142,9 +142,10 @@
   function varCoz(v, n) {
     if ((n || 0) > 6 || v.indexOf("var(") < 0) return v;
     return varCoz(v.replace(/var\(\s*(--[\w-]+)\s*(?:,\s*([^()]*(?:\([^()]*\))?[^()]*))?\)/g, function (s, ad, yedek) {
-      // Kökte tanımlı değişkeni çöz (:root'ta birden çok kez tanımlıysa sayfanın o anki gerçek değeri); bölüme/öğeye göre
-      // değişen değişkene (ör. --ky, yalnızca düğmede tanımlı) dokunma, yoksa yedek değer sabitlenir ve seçili düğme bozulur.
-      var x = VARLAR[ad]; if (!x) { try { x = getComputedStyle(document.documentElement).getPropertyValue(ad).trim(); } catch (e) {} } return x ? x : s;
+      // Yalnızca CSS'te :root/html içinde tanımlı değişkeni çöz (birden çok tanımlıysa sayfanın o anki gerçek değeri).
+      // Kökte tanımlı olmayana dokunma: öğeye özel (--ky) ya da JS'in köke yazdığı aynı adlı başka bir değer (hesap.html'de --sh = üst çubuk
+      // yüksekliği, tuşlarda --sh = gölge rengi) karışır; 7 Kasım 2026'da tuş gölgesi "137px" olup makineyi bozmuştu.
+      var x = VARLAR[ad]; if (x === null) { try { x = getComputedStyle(document.documentElement).getPropertyValue(ad).trim(); } catch (e) {} } return x ? x : s; // undefined: kökte yok (öğeye özel ya da JS ile yazılan --sh gibi) → dokunma
     }), (n || 0) + 1);
   }
   function secici(sel) {
@@ -163,6 +164,7 @@
     var st = r.style, sel = r.selectorText, out = [], k = { parlak: false, sabit: st.position === "fixed" };
     if (sel.indexOf("data-tema") >= 0) return ""; // elle yazılmış tema kuralı, dokunma
     var aynen = KORU.test(sel), ayni = function (c) { return c; };
+    if (aynen) return st.cssText ? secici(sel) + " { " + st.cssText + " }" : ""; // korunan parça: özgün metin, değişken çözümü yok
     var zemin_ = aynen ? ayni : zemin, yazi_ = aynen ? ayni : yazi, cizgi_ = aynen ? ayni : cizgi, golge_ = aynen ? ayni : golge, yaziGolge_ = aynen ? ayni : yaziGolge;
     var yaziKlip = /background-clip:\s*text|-webkit-background-clip:\s*text/.test(st.cssText);
     var gorulen = {};

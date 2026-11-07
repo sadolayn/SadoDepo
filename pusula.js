@@ -53,13 +53,13 @@
   kadran();
   let kb = null; // kıble açısı (gerçek kuzeye göre)
   let heading = null, hGoster = 0, calisiyor = false;
-  function yerYaz() {
+  let yerYaz = function () {
     if (!yer) { $("psIl").textContent = "Yer"; $("psSel").value = ""; $("psKible").style.display = "none"; kb = null; return; }
     kb = kible(yer.la, yer.lo);
     $("psIl").textContent = /konum/.test(yer.ad) ? "📍 Konum" : "Yer"; $("psSel").value = yer.ad.replace(" (konum)", "");
     const g = $("psKible"); g.style.display = ""; g.setAttribute("transform", `rotate(${kb.toFixed(1)} 160 160)`);
     if (!calisiyor) $("psNot").innerHTML = `Kadran kuzeyi gösteriyor. <span style="color:#3fc283">●</span> ${Math.round(kb)}°`;
-  }
+  };
   // ---- Sensör
   function uygula(h) {
     heading = h;
@@ -103,6 +103,19 @@
       try { localStorage.setItem("pusulaIl", en); } catch (e) {}
     }, () => { $("psGps").textContent = "📍"; $("psNot").textContent = "Konum alınamadı; ili listeden seç."; }, { timeout: 10000, maximumAge: 600000 });
   };
+  // ---- Bilgisayar: yön sensörü yok; "sensör yok" demek yerine kıbleyi yazıyla göster, telefona geçirmeyi öner (7 Kasım 2026)
+  const masaustu = matchMedia("(hover: hover) and (pointer: fine)").matches && !("ontouchstart" in window) && !navigator.maxTouchPoints;
+  if (masaustu) {
+    const ipucu = $("pusula").querySelector(".psTop .hint"); if (ipucu) ipucu.textContent = "Bilgisayarda yön sensörü olmadığı için kadran kuzeyi gösterir; döndürmek için telefonda aç.";
+    $("psBtn").textContent = "📱 Telefonda aç";
+    $("psBtn").onclick = () => { const t = document.getElementById("telAc"); if (t) t.click(); else { try { navigator.clipboard.writeText(location.href.split("#")[0] + "#pusula"); $("psBtn").textContent = "✅ Bağlantı kopyalandı"; } catch (e) {} } };
+    const masaYaz = () => {
+      if (kb == null) { $("psDeg").textContent = "–"; $("psDir").textContent = "ilini seç"; return; }
+      $("psDeg").textContent = Math.round(kb) + "°"; $("psDir").textContent = "kıble · " + yonAd(kb);
+      $("psNot").innerHTML = `<span style="color:#3fc283">●</span> ${yer.ad.replace(" (konum)", "")} için kıble kuzeyden saat yönünde <b>${Math.round(kb)}°</b> (${yonAd(kb)}). Kadran kuzeyi gösteriyor.`;
+    };
+    const eskiYer = yerYaz; yerYaz = function () { eskiYer(); masaYaz(); };
+  }
   yerYaz();
   if (!yer) $("psNot").textContent = "İlini seç; kadranda yeşil nokta belirir.";
 })();
