@@ -48,6 +48,23 @@ const sayi = (t) => parseFloat(String(t).replace(/\./g, "").replace(",", "."));
     const top = plan[plan.length - 1];
     esit(o.ad + " · toplam geri", sayi(top[3]), o.toplam.geri); esit(o.ad + " · toplam faiz", sayi(top[5]), o.toplam.faiz);
   }
+  for (const o of ORN.ticari || []) {
+    const g = o.girdi;
+    const plan = await p.evaluate((g) => {
+      tcIlkManual = true; const s = (k, v) => (document.getElementById(k).value = v);
+      s("tc_tutar", g.tutar.toLocaleString("tr-TR")); s("tc_faiz", String(g.faiz).replace(".", ",")); s("tc_vade", String(g.vade));
+      s("tc_bas", g.bas); s("tc_ilk", g.ilk); s("tc_bsmv", String(g.bsmv)); s("tc_kkdf", String(g.kkdf)); calcTic();
+      return { T: document.getElementById("tc_out").textContent, rows: [...document.querySelectorAll("#tc_plan tr")].slice(1).map((tr) => [...tr.children].map((td) => td.textContent)) };
+    }, g);
+    // sütunlar: sıra · vade · gün · anapara · faiz · fon · vergi · taksit · kalan
+    esit(o.ad + " · taksit tutarı", sayi(plan.T.replace(/[^0-9.,]/g, "")), o.taksit);
+    o.satirlar.forEach(([tarih, an, fz, vg, kal], j) => { const r = plan.rows[j], no = j + 1, t = tarih.split("-").reverse().join(".");
+      kontrol++; if (r[1] !== t) hatalar.push(`${o.ad} · ${no}. vade: site ${r[1]} · banka ${t}`);
+      esit(`${o.ad} · ${no}. anapara`, sayi(r[3]), an); esit(`${o.ad} · ${no}. faiz`, sayi(r[4]), fz); esit(`${o.ad} · ${no}. vergi`, sayi(r[6]), vg);
+      esit(`${o.ad} · ${no}. taksit`, sayi(r[7]), j === o.satirlar.length - 1 ? o.son_taksit : o.taksit); esit(`${o.ad} · ${no}. kalan`, sayi(r[8]), kal); });
+    const top = plan.rows[plan.rows.length - 1];
+    esit(o.ad + " · toplam faiz", sayi(top[4]), o.toplam.faiz); esit(o.ad + " · toplam vergi", sayi(top[6]), o.toplam.vergi); esit(o.ad + " · toplam geri", sayi(top[7]), o.toplam.geri);
+  }
   console.log(`${kontrol} kontrol · ${hatalar.length} fark`); hatalar.slice(0, 30).forEach((h) => console.log("✗ " + h));
   await b.close(); process.exit(hatalar.length ? 1 : 0);
 })();
