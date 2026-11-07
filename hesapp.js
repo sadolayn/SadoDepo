@@ -210,8 +210,8 @@ const addD = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); retu
 const dd = (a, b) => Math.round((Date.UTC(b.getFullYear(), b.getMonth(), b.getDate()) - Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())) / 864e5);
 const longD = (d) => d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
 const HF = ["01-01", "04-23", "05-01", "05-19", "07-15", "08-30", "10-29"], HALF = ["10-28"];
-const HR = { 2026: ["03-20", "03-21", "03-22", "05-27", "05-28", "05-29", "05-30"], 2027: ["03-09", "03-10", "03-11", "05-16", "05-17", "05-18", "05-19"], 2028: ["02-26", "02-27", "02-28", "05-05", "05-06", "05-07", "05-08"] };
-const HH = { 2026: ["03-19", "05-26"], 2027: ["03-08", "05-15"], 2028: ["02-25", "05-04"] };
+const HR = { 2026: ["03-20", "03-21", "03-22", "05-27", "05-28", "05-29", "05-30"], 2027: ["03-09", "03-10", "03-11", "05-16", "05-17", "05-18", "05-19"], 2028: ["02-26", "02-27", "02-28", "05-05", "05-06", "05-07", "05-08"], 2029: ["02-14", "02-15", "02-16", "04-24", "04-25", "04-26", "04-27"] };
+const HH = { 2026: ["03-19", "05-26"], 2027: ["03-08", "05-15"], 2028: ["02-25", "05-04"], 2029: ["02-13"] }; // 2029 Kurban arifesi 23 Nisan: zaten tam gün tatil
 const isWE = (d) => d.getDay() === 0 || d.getDay() === 6;
 const isHol = (d) => { const md = ymd(d).slice(5); return HF.includes(md) || (HR[d.getFullYear()] || []).includes(md); };
 const isHalf = (d) => { const md = ymd(d).slice(5); return HALF.includes(md) || (HH[d.getFullYear()] || []).includes(md); };

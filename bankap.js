@@ -645,7 +645,8 @@ let k2Summary = "";
 function calcKonut() {
   const L = renderLtv();
   const deger = num("k2_deger"), P = num("k2_tutar"), r = num("k2_faiz") / 100, n = Math.round(num("k2_vade"));
-  const tahsis = P * num("k2_tahsis") / 100, masraf = num("k2_masraf");
+  // Kutu yüzde birimli (0,5 = binde 5). Yasal üst sınır binde 5: "5" yazılırsa %5 değil %0,5 ile hesaplanır, notta uyarılır
+  const tahsisGir = num("k2_tahsis"), tahsisOran = Math.min(tahsisGir, 0.5), tahsis = P * tahsisOran / 100, masraf = num("k2_masraf");
   const D = dateSetup("k2", 1, n, 5, 45);
   const ltvRows = (eksOn && deger) ? [["Peşinat", tl(Math.max(0, deger - P))], ["Kredi / ekspertiz değeri", pct((P / deger) * 100)]] : [];
   rows("k2e_rows", ltvRows);
@@ -692,7 +693,7 @@ function calcKonut() {
   $("k2s_net").textContent = tl(P - tahsis - masraf);
   k2Pdf = { tur: "Konut Kredisi", bas: D.bas, P, r, n, bsmv: 0, kkdf: 0, tF, tV: 0, tFo: 0, top: toplam, T: R2(taksit), rows: plan.map((x) => ({ d: x.d, a: x.ana, f: x.f, fo: 0, v: 0, t: x.t, b: x.bal })) };
   k2Summary = krediOzet({ tur: "Konut Kredisi", P, n, r, taksit: R2(taksit), plan, bsmv: 0, kkdf: 0, tF, tB: 0, tK: 0, toplam, d0: plan[0].d, d1: plan[plan.length - 1].d });
-  $("k2_note").textContent = "Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Alıcının üzerine kayıtlı başka bir konut varsa azami kredi oranı daha düşük olabilir; bu hesap ilk konut varsayımıyla yapıldı. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir. Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksidin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.";
+  $("k2_note").textContent = `Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Alıcının üzerine kayıtlı başka bir konut varsa azami kredi oranı daha düşük olabilir; bu hesap ilk konut varsayımıyla yapıldı. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir (kutuda %0,5).${tahsisGir > 0.5 ? " ⚠️ Girdiğin tahsis oranı bu sınırı aşıyor; hesap %0,5 ile yapıldı." : ""} Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksidin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.`;
 }
 
 // ---------- Hesap çekirdekleri (DOM'suz): vade karşılaştırma ve ters hesap da bunları kullanır ----------
@@ -1503,13 +1504,12 @@ renderCekList();
     $("et_vadeler").querySelectorAll("button").forEach((b) => (b.onclick = () => { vade = +b.dataset.v; calcEkT(); }));
     const re = r * (1 + VG), n = vade;
     const t = Math.round((re ? P * re / (1 - Math.pow(1 + re, -n)) : P / n) * 100) / 100;
-    let kal = P, sF = 0, sV = 0, plan = "";
+    let kal = P, sF = 0, sV = 0, top = 0;
     for (let i = 1; i <= n; i++) {
       const fz = kal * r, vg = fz * VG, ap = i === n ? kal : t - fz - vg;
       kal = Math.max(0, kal - ap); sF += fz; sV += vg;
-      plan += `<tr><td>${i}</td><td>${f2(i === n ? ap + fz + vg : t)}</td><td>${f2(ap)}</td><td>${f2(fz)}</td><td>${f2(vg)}</td><td>${f2(kal)}</td></tr>`;
+      top += i === n ? ap + fz + vg : t; // son taksit kuruş farkını kapatır: toplam, gerçek ödemelerin toplamı
     }
-    const top = t * n;
     $("et_lbl").textContent = `${n} ay · aylık taksit`;
     $("et_out").textContent = tl(t);
     rows("et_rows", [["Toplam geri ödeme", tl(top), "total"], ["Toplam faiz", tl(sF)], ["KKDF + BSMV", tl(sV)], ["Efektif aylık maliyet", "%" + (re * 100).toLocaleString("tr-TR", { maximumFractionDigits: 3 })]]);
