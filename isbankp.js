@@ -1253,7 +1253,7 @@ function soloElle(j) {
     fin.elle = Object.assign({}, fin.elle, { [d.p]: d });
   });
 }
-const elleNot = (p) => fin.elle && fin.elle[p] ? ` ${pLabel(p)} rakamları <a href="${esc(fin.elle[p].url)}" target="_blank" rel="noopener" style="color:var(--accent)">bankanın solo raporundan</a> elle girildi; veri dosyası güncellenince kendiliğinden yenilenir.` : "";
+const elleNot = (p) => fin.elle && fin.elle[p] ? ` ${pLabel(p)} rakamları <a href="${esc(fin.elle[p].url)}" target="_blank" rel="noopener" style="color:var(--accent)">bankanın solo raporundan</a> elle girildi${fin.elle[p].kart_kaynak ? `; kredi kartı sayısı <a href="${esc(fin.elle[p].kart_kaynak.url)}" target="_blank" rel="noopener" style="color:var(--accent)">yatırımcı sunumundan</a>` : ""}; veri dosyası güncellenince kendiliğinden yenilenir.` : "";
 function ytTable(i) {
   const P = fin.periods, j = i - 4;
   const rows = finRows(i).map(([ad, bu, once, tur, iyi]) =>
