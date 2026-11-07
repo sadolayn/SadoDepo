@@ -73,7 +73,7 @@
   .more { align-self:center; font-size:12.5px; font-weight:600; color:var(--muted); background:var(--field); border:1px solid var(--line); border-radius:14px; padding:5px 12px; cursor:pointer; }
   /* Sekme rozetleri */
   .chip { position:relative; }
-  .chip .bd { position:absolute; top:-7px; right:-6px; min-width:19px; height:19px; padding:0 5px; border-radius:10px; font-size:11px; font-weight:800; line-height:19px; text-align:center; background:var(--accent); color:#000; border:2px solid #000; }
+  #cats .chip .cn { white-space: normal !important; overflow-wrap: anywhere; } .chip .bd { position:absolute; top:-7px; right:-6px; font-size:11px !important; min-width:19px; height:19px; padding:0 5px; border-radius:10px; font-size:11px; font-weight:800; line-height:19px; text-align:center; background:var(--accent); color:#000; border:2px solid #000; }
   .chip.h1:not(.on) { border-color:#7a5a20; color:#f0d9a8; }
   .chip.h2:not(.on) { border-color:#ff6a3d; color:#ffd9c7; box-shadow:0 0 10px rgba(255,90,40,.35); }
   .chip.h2 .bd { background:#d23c16; color:#fff; animation:ping 1.6s infinite; }
@@ -90,6 +90,7 @@
   @media (prefers-reduced-motion: reduce) { .dot, .tr.l2 .ct, .chip.h2 .bd { animation:none; } }
   /* Renkli kategori kutucukları (Bankacılık menüsüyle aynı dil) */
   #cats { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px; margin-bottom:10px; }
+  @media (max-width: 22em) { #cats { grid-template-columns:repeat(4,minmax(0,1fr)); } } /* büyük sistem yazısında 4 sütun */
   #cats .chip { --c:#e0a24f; --d:#2a2010; --t:#f3dca8; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; min-width:0; min-height:56px; padding:5px 2px; border-radius:12px;
     border:1px solid color-mix(in srgb, var(--c) 55%, #000); background:linear-gradient(160deg, color-mix(in srgb, var(--c) 38%, #000), var(--d)); color:var(--t); font-size:11px; font-weight:700; line-height:1.15; text-align:center; transition:transform .12s; }
   #cats .chip i { font-style:normal; font-size:19px; line-height:1.1; }

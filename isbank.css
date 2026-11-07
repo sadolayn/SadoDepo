@@ -291,29 +291,29 @@
   .chipbar { margin: 6px 0 0; position: relative; }
   .menu { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 4px; padding: 5px; border-radius: 14px; background: #0d0d0d; border: 1px solid var(--line); }
   .menu button span small { display: block; font-size: 8.5px; font-weight: 600; opacity: .8; margin-top: -1px; }
-  .longbar { position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-bottom: 6px; padding: 9px 10px; border-radius: 12px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .longbar { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 6px; width: 100%; margin-bottom: 6px; padding: 9px 10px; border-radius: 12px; border: 1px solid #3a50f0; background: linear-gradient(135deg, #2a3fe0, #13208f); color: #fff; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; }
   @media (max-width: 340px) { .longbar { gap: 4px; padding: 9px 6px; font-size: 12.5px; } } /* 320 px ekranda üç başlık sığsın */
   .longbar i { font-style: normal; opacity: .55; } .longbar.active { outline: 2px solid var(--accent); outline-offset: 1px; }
   .longbar em { position: absolute; top: -6px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #d32f2f; color: #fff; font-style: normal; font-size: 11px; font-weight: 800; line-height: 18px; box-shadow: 0 0 0 2px #000; }
-  .menu button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; height: 48px; padding: 3px 1px; border-radius: 11px; border: 1px solid var(--line); background: var(--card); color: #cfcfcf; font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; line-height: 1.1; }
+  .menu button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-width: 0; min-height: 48px; padding: 3px 1px; border-radius: 11px; border: 1px solid var(--line); background: var(--card); color: #cfcfcf; font: inherit; font-size: 11px; font-weight: 600; cursor: pointer; line-height: 1.1; }
   .menu button i { font-style: normal; font-size: 18px; line-height: 1.1; }
-  .menu button span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
+  .menu button span { max-width: 100%; overflow-wrap: anywhere; text-align: center; line-height: 1.15; } /* büyük sistem yazısında satır kırar, taşmaz (7 Kasım 2026: anne telefonu) */
   .menu button.active { background: var(--accent); border-color: var(--accent); color: #000; }
   .menu button.hasnew { border-color: #c0392b; box-shadow: 0 0 0 1px rgba(192,57,43,.35) inset; }
   .menu button em { position: absolute; top: -5px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #d32f2f; color: #fff; font-style: normal; font-size: 11px; font-weight: 800; line-height: 18px; text-align: center; box-shadow: 0 0 0 2px #000; animation: nb 1.6s ease-in-out infinite; }
   @keyframes nb { 50% { transform: scale(1.12); } }
   /* Menü: Bankacılık'taki renkli kutucuk dili */
-  .menu button { --c: #e0a24f; --d: #2a2010; --t: #f3dca8; grid-column: span 4; height: 54px; border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 38%, #000), var(--d)); color: var(--t); font-weight: 700; }
+  .menu button { --c: #e0a24f; --d: #2a2010; --t: #f3dca8; grid-column: span 4; min-height: 54px; height: auto; border: 1px solid color-mix(in srgb, var(--c) 55%, #000); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 38%, #000), var(--d)); color: var(--t); font-weight: 700; }
   /* 5 + 5 kutucuk; Soru en altta tam genişlikte ince şerit */
   .menu { grid-template-columns: repeat(20, minmax(0, 1fr)) !important; }
   .menu button, .menu button:nth-child(n+6) { grid-column: span 4; }
-  .menu button[data-k="Soru"] { grid-column: 1 / -1 !important; height: 40px !important; flex-direction: row !important; gap: 8px; }
+  .menu button[data-k="Soru"] { grid-column: 1 / -1 !important; min-height: 40px !important; height: auto !important; flex-direction: row !important; flex-wrap: wrap; gap: 8px; }
   .menu button[data-k="Soru"] i { font-size: 18px !important; margin: 0 !important; }
   .menu button[data-k="KTakvim"] { --c: #ef5a5a; --d: #2e0a0a; --t: #ffd0d0; }
   .menu button[data-k="Pazarama"] { --c: #ff8a3d; --d: #2e1405; --t: #ffd9bf; }
   .menu button[data-k="Kartsiz"] { --c: #3fbfd6; --d: #04232a; --t: #c6f0f7; }
   .menu button[data-k="Medya"] { --c: #9b7bff; --d: #160c33; --t: #e2d9ff; }
-  .menu button[data-k="Medya"] small { display: inline-block; font-size: 11px; white-space: nowrap; opacity: .85; }
+  .menu button[data-k="Medya"] small { display: inline-block; font-size: 11px; opacity: .85; }
   .menu button span { font-size: 11px; overflow: visible; } .menu button span small { font-size: 11px; font-weight: 600; opacity: .85; }
   .menu button.active { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
   .menu button.hasnew { border-color: #d32f2f; }
@@ -631,7 +631,7 @@
   /* Menü paneli: ince çubuktan bütün bölümlere tek dokunuşla geçiş (sayfa başına dönmeden) */
   .imenu { position: fixed; top: var(--iminiH, 0px); left: 0; right: 0; z-index: 41; padding: 10px max(16px, calc((100% - 560px) / 2)) 14px; background: rgba(0,0,0,.96); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid #222; box-shadow: 0 14px 28px rgba(0,0,0,.7); max-height: calc(100dvh - var(--iminiH, 0px)); overflow-y: auto; animation: altGel .18s ease-out; }
   .imenu[hidden] { display: none; }
-  .imini .ev { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex: 0 0 38px; border-radius: 11px; background: #161616; border: 1px solid #e0a24f; font-size: 19px; text-decoration: none; }
+  .imini .ev { display: inline-flex; align-items: center; justify-content: center; min-width: 38px; min-height: 38px; flex: 0 0 auto; border-radius: 11px; background: #161616; border: 1px solid #e0a24f; font-size: 19px; text-decoration: none; }
   .imini .cur { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--c, #fff); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .imini .cur i { font-style: normal; font-size: 21px; }
   .imini button { flex: 0 0 auto; padding: 9px 13px; border-radius: 11px; border: 1px solid var(--line); background: #161616; color: #fff; font: inherit; font-size: 13.5px; font-weight: 700; }
@@ -924,3 +924,14 @@ html[data-tema="acik"] .altkutu #tfil.kamp button.kfilt small { color: #3a352d !
 html[data-tema="acik"] .altkutu #tfil.kamp button.kfilt i { background: color-mix(in srgb, var(--kk, #e0a24f) 80%, #000); color: #fff; }
 /* Linki kopyala: açık modda silik kalıyordu. Boyacı color-mix'li kuralı eziyordu; açıkta düz renklerle, kaynak renginde (--c) yazı ve kenar */
 html[data-tema="acik"] .camp .kkop { border: 1px solid color-mix(in srgb, var(--c, #e0a24f) 65%, #000) !important; background-color: color-mix(in srgb, var(--c, #e0a24f) 9%, #fff) !important; background-image: none !important; color: color-mix(in srgb, var(--c, #e0a24f) 55%, #000) !important; font-weight: 700 !important; }
+
+/* Büyük sistem yazısı (7 Kasım 2026, anne telefonu): sorgu em cinsinden; telefon yazıyı büyütünce 1em büyür ve ekran
+   "yazıya göre dar" olur. 412px ekran normal yazıda ≈25,7em, %140 büyütmede ≈18,4em. 22em altında menü 5 yerine 4 sütun,
+   kelimeler bütün kalır; Günün sorusu tam satır. */
+@media (max-width: 22em) {
+  .menu { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  .menu button, .menu button:nth-child(n+6) { grid-column: span 1 !important; }
+  .menu button[data-k="Soru"] { grid-column: 1 / -1 !important; }
+  .menu button span { font-size: 10.5px; }
+  .longbar { font-size: 12px; }
+}

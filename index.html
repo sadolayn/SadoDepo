@@ -230,7 +230,7 @@
   .one .d { font-size: 13.5px; color: #b9c0d6; margin-top: 3px; line-height: 1.4; }
   .one .canli { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
   .one .canli[hidden] { display: none; }
-  .one .canli span { white-space: nowrap; padding: 3px 10px; border-radius: 999px; background: rgba(224,162,79,.14); border: 1px solid rgba(224,162,79,.45); color: #f3dca8; font-size: 12.5px; line-height: 1.45; }
+  .one .canli span { padding: 3px 10px; border-radius: 999px; background: rgba(224,162,79,.14); border: 1px solid rgba(224,162,79,.45); color: #f3dca8; font-size: 12.5px; line-height: 1.45; }
   .one .canli span.y { background: rgba(63,194,131,.12); border-color: rgba(63,194,131,.5); color: #bff0d2; } .one .canli b { color: #fff; }
   /* Satırlı gruplar */
   .rows { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid var(--line); background: #070707; overflow: hidden; }
@@ -473,7 +473,7 @@
   html[data-tema="acik"] .mn h2::after, html[data-tema="acik"] .quote span::before { background: linear-gradient(90deg, #c9a66a, transparent); }
   html[data-tema="acik"] .quote span::after { background: linear-gradient(90deg, #c9a66a, transparent); transform: scaleX(-1); }
   html[data-tema="acik"] :is(.rows, .tile, .altL, .azP) { background: #fff; box-shadow: 0 1px 2px rgba(60,45,20,.05); }
-  html[data-tema="acik"] .row + .row, html[data-tema="acik"] .alt { border-color: #dcd3c2; }
+  html[data-tema="acik"] .row + .row, html[data-tema="acik"] .alt { border-color: #cfc4ae; }
   html[data-tema="acik"] :is(.row, .alt a):active { background: #f6ecd9; }
   html[data-tema="acik"] .row .ok { color: #c9a66a; }
   html[data-tema="acik"] .row.acl .d b, html[data-tema="acik"] .aclS .x b { color: #8a5a12; }
@@ -500,7 +500,7 @@
   html[data-tema="acik"] .datec .d { color: #2a2214; }
   html[data-tema="acik"] .bar { background: rgba(246,243,236,.94); }
   /* yeni bölümler şeridi ve kayan yazı */
-  html[data-tema="acik"] .yeniS { background: #fff; border-color: #d8c49a; }
+  html[data-tema="acik"] .yeniS { background: #fff; border-color: #c9ad7a; }
   html[data-tema="acik"] .kayan { border-color: #d4bb8a; background: linear-gradient(90deg, #fffaf0, #fbf0da); box-shadow: none; }
   html[data-tema="acik"] :is(.kyOge, .ysSer a, .ysSer .ysDet) { color: #3a3226; }
   html[data-tema="acik"] :is(.kyOge b, .ysSer a b) { color: #8a5a12; }
@@ -561,7 +561,7 @@
   .temaUst { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; max-width: 420px; margin: 0 0 12px; }
   .temaUst > span { font: italic 600 14px Georgia, "Times New Roman", serif; color: var(--accent); white-space: nowrap; }
   .temaUst .temaSec { display: flex; gap: 8px; padding: 0; border: 0; background: none; box-shadow: none; }
-  .temaUst .temaSec button { display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 0; padding: 0; border: 0; background: none; color: var(--muted); font: 600 11.5px system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+  .temaUst .temaSec button { display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 0; min-width: 50px; padding: 0; border: 0; background: none; color: var(--muted); font: 600 11.5px system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
   .temaUst .temaSec button[aria-pressed="true"] { background: none; color: var(--accent); font-weight: 800; }
   .tOn { position: relative; display: block; width: 50px; height: 34px; border-radius: 9px; padding: 4px; box-sizing: border-box; border: 2px solid transparent; outline: 1px solid var(--line); outline-offset: -1px; transition: border-color .2s ease, transform .15s ease; }
   .temaSec button:active .tOn { transform: scale(.94); }
