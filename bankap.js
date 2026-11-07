@@ -48,10 +48,23 @@ let bchOzet = "";
 // ---------- Mevduat ----------
 let stopajManual = false, mevOzet = "";
 $("m_stopaj").addEventListener("input", () => (stopajManual = true));
+// Mevduat stopajı (TL vadeli): 6 aya kadar / 1 yıla kadar / 1 yıldan uzun. Oranların bilinen geçerlilik sonu "gecerli";
+// bu tarihten sonra başlayan mevduatta sayfada "kontrol et" uyarısı çıkar (başlangıç boşsa bugün sayılır).
+// Yeni Cumhurbaşkanı Kararı gelince: oranları ve gecerli tarihini güncelle (7 Kasım 2026 kontrolü).
+const STOPAJ = { oran: [17.5, 15, 10], gecerli: "2026-12-31" };
 function autoStopaj(g) {
-  if (g <= 182) return 17.5;
-  if (g <= 365) return 15;
-  return 10;
+  if (g <= 182) return STOPAJ.oran[0];
+  if (g <= 365) return STOPAJ.oran[1];
+  return STOPAJ.oran[2];
+}
+function stopajUyari(start) {
+  // Yalnızca o tarihten sonra başlayan mevduat: öncesinde açılan mevduata bilinen oran doğru uygulanır
+  const son = new Date(STOPAJ.gecerli + "T12:00:00"), el = $("m_stopajUyari");
+  if (!el) return;
+  el.hidden = !(start && dayDiff(son, start) > 0);
+  if (el.hidden) return;
+  const o = STOPAJ.oran.map((x) => "%" + String(x).replace(".", ","));
+  el.innerHTML = `⚠️ <b>Stopaj oranlarını kontrol et:</b> Buradaki oranlar (6 aya kadar ${o[0]} · 1 yıla kadar ${o[1]} · daha uzun ${o[2]}) ${fdt(son)} tarihine kadar geçerli bilgisiyle girildi. Bu mevduat o tarihten sonra başlıyor; oranlar değişmiş olabilir. Güncel oranı biliyorsan <b>Stopaj</b> kutusuna elle yaz.`;
 }
 const isLeap = (y) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
 // Vade içindeki günleri yıllara göre böl: faiz = Σ (gün / yılın gün sayısı)
@@ -197,6 +210,7 @@ function calcMev() {
   const P = num("m_tutar"), r = num("m_faiz") / 100, s = num("m_stopaj") / 100;
   const n = Number($("m_yenile").value);
   const start = $("m_bas").value ? new Date($("m_bas").value + "T12:00:00") : new Date();
+  stopajUyari(start);
   const y1 = yearFrac(start, g);
   const brut1 = P * r * y1.f;
   const net1 = brut1 * (1 - s);
@@ -808,6 +822,7 @@ $("ta_pdf").addEventListener("click", (e) => taSummary && planPdf(taPdf, e.curre
 // Resmî Gazete özetleri (gazete/*.json, son 45 gün) taranır; kredi yönetmeliğine ya da ilgili ürüne değinen bir madde varsa
 // ilgili hesabın başında "dikkat" uyarısı çıkar. Baremler elle güncellenir; uyarı yalnızca "kontrol et" der.
 const YON_IZLE = {
+  m_yon: ["stopaj oran", "tevkifat oran", "2006/10731", "geçici 67", "mevduat faizlerinde", "mevduat faizi"],
   ta_yon: ["taşıt kredi", "araç kredi", "kredi işlemlerine ilişkin yönetmelik", "kredilendirme oran", "bankaların kredi işlemleri", "elektrik motorlu taşıt", "elektrikli araç kredi"],
 };
 (async function () {
@@ -832,7 +847,9 @@ const YON_IZLE = {
     const el = $(id); if (!el) continue;
     const dd = new Date(o.d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
     el.hidden = false;
-    el.innerHTML = `⚠️ <b>Dikkat:</b> ${dd} tarihli Resmî Gazete'de taşıt kredilerini ilgilendirebilecek bir düzenleme var. Aşağıdaki baremler bu değişikliğe göre kontrol edilmemiş olabilir; <a href="gazete.html#${o.d}" style="color:inherit;font-weight:700">özeti aç</a> ve isbank.com.tr ile karşılaştır.`;
+    el.innerHTML = id === "m_yon"
+      ? `⚠️ <b>Dikkat:</b> ${dd} tarihli Resmî Gazete'de mevduat stopajını ilgilendirebilecek bir düzenleme var. Stopaj oranları bu değişikliğe göre kontrol edilmemiş olabilir; <a href="gazete.html#${o.d}" style="color:inherit;font-weight:700">özeti aç</a>.`
+      : `⚠️ <b>Dikkat:</b> ${dd} tarihli Resmî Gazete'de taşıt kredilerini ilgilendirebilecek bir düzenleme var. Aşağıdaki baremler bu değişikliğe göre kontrol edilmemiş olabilir; <a href="gazete.html#${o.d}" style="color:inherit;font-weight:700">özeti aç</a> ve isbank.com.tr ile karşılaştır.`;
   }
 })();
 
