@@ -45,6 +45,23 @@
   .bml .gr.yeni { animation: bmGel .35s cubic-bezier(.2,.7,.2,1); }
   @keyframes bmGel { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
   .bmrek { display: inline-block; margin-top: 6px; padding: 3px 10px; border-radius: 999px; background: rgba(224,162,79,.16); border: 1px solid #5a4320; color: #f3d38a; font-size: 12.5px; font-weight: 700; }
+  /* Günün Sayısı */
+  .bmgun { border: 1px solid #5a4320; background: linear-gradient(160deg, rgba(224,162,79,.14), rgba(224,162,79,.03) 60%, #0d0d0d); }
+  .bmgun .gt { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .bmgun .gt b { font: italic 700 19px Georgia, "Times New Roman", serif; color: #f3d38a; }
+  .bmgun .gt small { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .bmgun p { margin: 6px 0 10px; font-size: 13px; color: #cfc4ad; line-height: 1.45; }
+  .bmgun .gs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0; text-align: center; }
+  .bmgun .gs div { padding: 7px 2px; border-radius: 10px; background: rgba(0,0,0,.35); border: 1px solid #2a2418; }
+  .bmgun .gs b { display: block; font-size: 20px; color: #f3d38a; font-variant-numeric: tabular-nums; } .bmgun .gs span { font-size: 11px; color: var(--muted); }
+  .bmgun .gd { display: grid; grid-template-columns: 22px 1fr; gap: 3px 6px; align-items: center; font-size: 11.5px; color: var(--muted); margin: 4px 0 10px; }
+  .bmgun .gd i { display: block; height: 16px; min-width: 18px; border-radius: 4px; background: #3a2f1c; color: #f3d38a; font: 700 11px/16px system-ui, sans-serif; font-style: normal; text-align: right; padding: 0 5px; box-sizing: border-box; }
+  .bmgun .gd i.bu { background: #e0a24f; color: #1a1206; }
+  .bmgun .gb { display: flex; gap: 8px; } .bmgun .gb button { flex: 1; }
+  .bmgun .ok { margin: 8px 0 4px; font-size: 14px; color: #9ff0c8; font-weight: 700; }
+  .bmgun .ny { font-size: 12px; color: var(--muted); margin-top: 8px; text-align: center; }
+  .gunluk .bmcols { grid-template-columns: 1fr; } .gunluk #bmCols > .card:nth-child(2) { display: none; }
+  .gunluk .bml { max-height: 36vh; }
   @media (prefers-reduced-motion: reduce) { .bml .gr.yeni { animation: none; } .bmkeys button, .bmact button { transition: none; } }
 </style>
 </head>
@@ -61,6 +78,7 @@
 
   <!-- ===== Sayı Bulmaca (+ / −) ===== -->
   <section class="panel on" id="bulmaca">
+    <div class="card bmgun" id="bmGunKart" data-yeni="gununsayisi|2026-11-07|YENİ"></div>
     <div class="card" id="bmSetup">
       <h2>🔢 Sayı Bulmaca · Sadolayn'a karşı</h2>
       <p class="hint" style="margin-top:0">İkiniz de rakamları birbirinden farklı, 0 ile başlamayan gizli bir sayı tutarsınız. Sırayla birbirinizin sayısını tahmin edersiniz. Her tahmine ipucu verilir: <b style="color:var(--ok)">+</b> rakam doğru ve <b>yeri doğru</b>, <b style="color:var(--red)">−</b> rakam var ama <b>yeri yanlış</b>. Örn. gizli 4271, tahmin 1234 → <b>+1 −2</b>. Önce bulan kazanır; aynı turda bulursanız berabere.</p>
@@ -81,7 +99,7 @@
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="margin:0">Tur <span id="bmTur">1</span></h2><span class="hint" style="margin:0">Senin sayın: <b id="bmMineShow" style="letter-spacing:2px;color:var(--ink)"></b></span></div>
         <p class="hint" id="bmMsg" style="margin:4px 0 0"></p>
       </div>
-      <div class="bmcols">
+      <div class="bmcols" id="bmCols">
         <div class="card"><h3 class="bmh">Senin tahminlerin</h3><div class="bml" id="bmMeL"></div></div>
         <div class="card"><h3 class="bmh">Sadolayn'ın tahminleri</h3><div class="bml" id="bmAiL"></div></div>
       </div>
@@ -101,7 +119,7 @@
           <div class="rlFoot">Parmağınla çiz, karala, hesap yap ✍️</div>
         </div>
       </div>
-      <div class="card" id="bmEnd" hidden><div class="res" style="margin:0;text-align:center"><div class="big" id="bmEndT"></div><p class="hint" id="bmEndS"></p></div><button type="button" class="btn-go" id="bmAgain">Yeni oyun</button></div>
+      <div class="card" id="bmEnd" hidden><div class="res" style="margin:0;text-align:center"><div class="big" id="bmEndT"></div><p class="hint" id="bmEndS"></p></div><button type="button" class="btn-go" id="bmPaylas" hidden>📤 Sonucu paylaş</button><button type="button" class="btn-go" id="bmAgain">Yeni oyun</button></div>
       <div class="chips" style="justify-content:center"><button type="button" id="bmQuit">Oyunu bırak</button></div>
     </div>
   </section>

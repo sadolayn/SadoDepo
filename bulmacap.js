@@ -99,7 +99,8 @@ $("bmGo").onclick = () => {
   const v = $("bmMine").value.trim();
   if (!validNum(v, BM.n)) { $("bmErr").textContent = `${BM.n} basamaklı, rakamları farklı ve 0 ile başlamayan bir sayı yaz (ya da rastgele seç).`; return; }
   const A = allNums(BM.n);
-  Object.assign(BM, { mine: v, ai: randNum(BM.n), cand: A, all: A, me: [], aiL: [], over: false, tur: 1, not: Array(10).fill(0) });
+  Object.assign(BM, { mod: "normal", mine: v, ai: randNum(BM.n), cand: A, all: A, me: [], aiL: [], over: false, tur: 1, not: Array(10).fill(0) });
+  $("bmGame").classList.remove("gunluk"); $("bmMineShow").parentElement.hidden = false; $("bmQuit").textContent = "Oyunu bırak"; $("bmPaylas").hidden = true;
   RL.notes = []; rlClearDraw(); rlRender();
   $("bmMineShow").textContent = v; $("bmSetup").hidden = true; $("bmGame").hidden = false; $("bmEnd").hidden = true;
   bmIn = ""; $("bmPad").hidden = false;
@@ -113,6 +114,7 @@ function bmSend() {
   const once = BM.me.findIndex((x) => x.g === g);
   if (once >= 0) { $("bmMsg").innerHTML = `<span style="color:var(--red)">${g} sayısını ${once + 1}. tahminde denedin (${BM.me[once].s[0] || BM.me[once].s[1] ? `+${BM.me[once].s[0]} −${BM.me[once].s[1]}` : "0"}). Başka bir sayı dene.</span>`; tik(true); return; }
   const s1 = score(BM.ai, g); BM.me.push({ g, s: s1 }); RL.notes.push({ g: BM.me.length - 1 }); bmIn = ""; BM.yeni = true;
+  if (BM.mod === "gunluk") { bmRender(); rlRender(); if (s1[0] === BM.n) return gunBitir(); BM.tur++; $("bmTur").textContent = BM.tur; $("bmMsg").textContent = `${BM.me.length}. tahmin: ${s1[0] || s1[1] ? `+${s1[0]} −${s1[1]}` : "hiçbir rakam yok"}. Devam!`; return; }
   // Sadolayn'ın sırası
   const ag = aiGuess(), s2 = score(BM.mine, ag); BM.aiL.push({ g: ag, s: s2 });
   BM.cand = BM.cand.filter((c) => score(c, ag).join() === s2.join());
@@ -184,8 +186,8 @@ $("rlDown").onclick = async () => {
 rlRender();
 
 $("bmMine").addEventListener("input", () => { $("bmMine").value = $("bmMine").value.replace(/\D/g, "").slice(0, BM.n); });
-$("bmAgain").onclick = () => { $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; };
-$("bmQuit").onclick = () => { if (BM.over || confirm("Oyun bırakılsın mı?")) { if (!BM.over) bmEnd("🏳️ Oyunu bıraktın", `Sadolayn'ın sayısı <b>${BM.ai}</b> idi.`); $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; } };
+$("bmAgain").onclick = () => { if (BM.mod === "gunluk") return gunCik(); $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; };
+$("bmQuit").onclick = () => { if (BM.mod === "gunluk") return gunCik(); if (BM.over || confirm("Oyun bırakılsın mı?")) { if (!BM.over) bmEnd("🏳️ Oyunu bıraktın", `Sadolayn'ın sayısı <b>${BM.ai}</b> idi.`); $("bmGame").hidden = true; $("bmSetup").hidden = false; $("bmMine").value = ""; } };
 
 // İstatistik satırı ayar değişince güncellenir
 ["bmLen", "bmLvl"].forEach((id) => $(id).addEventListener("click", () => setTimeout(istYaz, 0)));
@@ -195,6 +197,7 @@ istYaz();
 const BM_KAYIT = "bmOyun";
 function bmKaydet() {
   if (!window.__bmHazir) return; // sayfa açılırken (geri yükleme bitmeden) kayıt silinmesin
+  if (BM.mod === "gunluk") return gunKaydet();
   try {
     if (!BM.mine || BM.over || $("bmGame").hidden) { localStorage.removeItem(BM_KAYIT); return; }
     const cizim = JSON.stringify(RL.strokes).length < 150000 ? RL.strokes : [];
@@ -215,3 +218,78 @@ window.addEventListener("pagehide", bmKaydet);
   window.__bmHazir = true;
   if (k.rulo) { $("bmRulo").hidden = false; bmPadRender(); setTimeout(rlSize, 50); }
 })();
+
+// ===== Günün Sayısı: herkese aynı gün aynı 4 basamaklı sayı; günde bir kez; seri ve paylaşım =====
+const GUN_BAS = "2026-11-07"; // #1 (yayın günü)
+const gunBugun = () => new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10); // Türkiye saati
+const gunNo = (t) => Math.round((Date.parse(t) - Date.parse(GUN_BAS)) / 864e5) + 1;
+const gunDun = (t) => new Date(Date.parse(t) - 864e5).toISOString().slice(0, 10);
+function gunSayi(t) { // tarihten tohumlu karışım: her gün herkeste aynı, 4 farklı rakam, 0 ile başlamaz
+  let h = 1779033703 ^ ("sadolayn-gunun-sayisi-" + t).length;
+  for (const ch of "sadolayn-gunun-sayisi-" + t) { h = Math.imul(h ^ ch.charCodeAt(0), 3432918353); h = (h << 13) | (h >>> 19); }
+  let a = h >>> 0; const rnd = () => { a = (a + 0x6D2B79F5) | 0; let x = Math.imul(a ^ (a >>> 15), 1 | a); x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x; return ((x ^ (x >>> 14)) >>> 0) / 4294967296; };
+  const d = "0123456789".split(""); for (let i = 9; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [d[i], d[j]] = [d[j], d[i]]; }
+  if (d[0] === "0") { const k = d.findIndex((x, i) => i > 0 && i < 4 && x !== "0"); [d[0], d[k > 0 ? k : 4]] = [d[k > 0 ? k : 4], d[0]]; }
+  return d.slice(0, 4).join("");
+}
+const GK = "bmGun", GI = "bmGunIstat";
+const gunOku = () => { try { const x = JSON.parse(localStorage.getItem(GK) || "null"); return x && x.t === gunBugun() ? x : { t: gunBugun(), me: [], bitti: false, not: Array(10).fill(0), notes: [] }; } catch (e) { return { t: gunBugun(), me: [], bitti: false, not: Array(10).fill(0), notes: [] }; } };
+const gIstOku = () => { try { return JSON.parse(localStorage.getItem(GI) || "null") || { cozulen: 0, seri: 0, enSeri: 0, son: "", dag: {} }; } catch (e) { return { cozulen: 0, seri: 0, enSeri: 0, son: "", dag: {} }; } };
+function gunKaydet() { try { localStorage.setItem(GK, JSON.stringify({ t: BM.gunT, me: BM.me, bitti: BM.over, not: BM.not, notes: RL.notes, inp: bmIn })); } catch (e) {} }
+function gunPaylasMetni() {
+  const g = gunOku(), I = gIstOku(), n = g.me.length;
+  const satir = (x) => "🟢".repeat(x.s[0]) + "🟡".repeat(x.s[1]) + "⚫".repeat(4 - x.s[0] - x.s[1]);
+  return `🔢 Sadolayn · Günün Sayısı #${gunNo(g.t)}\n${n} tahminde buldum!${I.seri > 1 ? ` 🔥 Seri: ${I.seri} gün` : ""}\n\n${g.me.map(satir).join("\n")}\n\nSen kaçta bulursun? 👉 sadolayn.github.io/SadoDepo/bulmaca.html`;
+}
+async function gunPaylas(btn) {
+  const t = gunPaylasMetni();
+  try { if (navigator.share) { await navigator.share({ text: t }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+  try { await navigator.clipboard.writeText(t); const o = btn.textContent; btn.textContent = "✅ Kopyalandı, istediğin yere yapıştır"; setTimeout(() => (btn.textContent = o), 2200); } catch (e) { prompt("Kopyala:", t); }
+  window.Rapor && Rapor.bolum("gunluk-paylas");
+}
+function gunKartYaz() {
+  const g = gunOku(), I = gIstOku(), no = gunNo(g.t), el = $("bmGunKart"); if (!el) return;
+  const tarih = new Date(g.t + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" });
+  const seri = I.son === g.t || I.son === gunDun(g.t) ? I.seri : 0;
+  const dag = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((k) => [k, I.dag[k] || 0]), mx = Math.max(1, ...dag.map((x) => x[1]));
+  const yarin = new Date(Date.parse(g.t + "T00:00:00+03:00") + 864e5), kal = Math.max(0, yarin - Date.now()), sa = Math.floor(kal / 36e5), dk = Math.floor(kal % 36e5 / 6e4);
+  const ist = `<div class="gs"><div><b>${I.cozulen}</b><span>çözülen gün</span></div><div><b>${seri}</b><span>seri 🔥</span></div><div><b>${I.enSeri}</b><span>en uzun seri</span></div><div><b>${I.cozulen ? (Object.entries(I.dag).reduce((a, [k, v]) => a + k * v, 0) / I.cozulen).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) : "–"}</b><span>ort. tahmin</span></div></div>`;
+  let govde;
+  if (g.bitti) govde = `<p class="ok">✅ Bugünün sayısını <b>${g.me.length}</b> tahminde buldun!</p>${ist}<div class="gd">${dag.filter((x) => x[0] <= Math.max(6, ...Object.keys(I.dag).map(Number))).map(([k, v]) => `<span>${k === 10 ? "10+" : k}</span><i class="${g.me.length === k || (k === 10 && g.me.length >= 10) ? "bu" : ""}" style="width:${Math.max(8, v / mx * 100)}%">${v}</i>`).join("")}</div><div class="gb"><button type="button" class="btn-go" id="gunPaylas">📤 Paylaş</button><button type="button" class="btn-go" id="gunGor" style="background:transparent;color:var(--accent);border:1px solid #5a4320">Tahminlerim</button></div><div class="ny">⏳ Yeni sayı <b>${sa} sa ${dk} dk</b> sonra</div>`;
+  else govde = `<p>Herkes için aynı <b>4 basamaklı</b> gizli sayı. Günde bir kez; kaç tahminde bulacaksın? Sonucu sayıyı ele vermeden paylaş, arkadaşların da denesin.</p>${I.cozulen ? ist : ""}<button type="button" class="btn-go" id="gunBasla">${g.me.length ? `▶️ Devam et (${g.me.length} tahmin yaptın)` : "Bugünün sayısını çöz"}</button>`;
+  el.innerHTML = `<div class="gt"><b>📅 Günün Sayısı #${no}</b><small>${tarih}</small></div>${govde}`;
+  const b1 = $("gunBasla"), b2 = $("gunPaylas"), b3 = $("gunGor");
+  if (b1) b1.onclick = gunBasla; if (b2) b2.onclick = () => gunPaylas(b2); if (b3) b3.onclick = gunBasla;
+}
+function gunBasla() {
+  const g = gunOku();
+  Object.assign(BM, { mod: "gunluk", gunT: g.t, n: 4, mine: "", ai: gunSayi(g.t), me: g.me, aiL: [], over: g.bitti, tur: g.me.length + 1, not: g.not || Array(10).fill(0), all: [], cand: [] });
+  bmIn = g.bitti ? "" : (g.inp || ""); RL.notes = g.notes || g.me.map((x, i) => ({ g: i })); RL.strokes = [];
+  $("bmGame").classList.add("gunluk"); $("bmMineShow").parentElement.hidden = true; $("bmQuit").textContent = "← Günün Sayısı ekranına dön";
+  $("bmSetup").hidden = true; $("bmGunKart").hidden = true; $("bmGame").hidden = false; $("bmEnd").hidden = !g.bitti; $("bmPad").hidden = g.bitti;
+  $("bmPaylas").hidden = !g.bitti; $("bmAgain").textContent = "Tamam";
+  if (g.bitti) { $("bmEndT").textContent = `🎉 ${g.me.length} tahminde buldun!`; $("bmEndS").innerHTML = `Günün sayısı <b>${BM.ai}</b> idi. Yarın yeni sayı seni bekliyor.`; }
+  $("bmTur").textContent = BM.tur; $("bmMsg").textContent = g.bitti ? "Bugünkü sayıyı çözdün." : g.me.length ? `Kaldığın yerden: ${g.me.length} tahmin yaptın.` : "Herkesle aynı sayı. İlk tahminini yap!";
+  try { localStorage.setItem("bmGunAcik", "1"); } catch (e) {}
+  bmRender(); rlRender(); window.scrollTo({ top: 0 });
+}
+function gunBitir() {
+  BM.over = true; const I = gIstOku(), n = BM.me.length, t = BM.gunT;
+  if (I.son !== t) { I.cozulen++; I.seri = I.son === gunDun(t) ? I.seri + 1 : 1; I.enSeri = Math.max(I.enSeri, I.seri); I.son = t; const k = Math.min(10, n); I.dag[k] = (I.dag[k] || 0) + 1; try { localStorage.setItem(GI, JSON.stringify(I)); } catch (e) {} }
+  gunKaydet(); tik(true);
+  window.Rapor && Rapor.oyun("gunluk", true, `#${gunNo(t)} | ${n} tahmin`);
+  $("bmEnd").hidden = false; $("bmPad").hidden = true; $("bmPaylas").hidden = false;
+  $("bmEndT").textContent = `🎉 ${n} tahminde buldun!`;
+  $("bmEndS").innerHTML = `Günün sayısı <b>${BM.ai}</b> idi.${I.seri > 1 ? ` 🔥 Seri: <b>${I.seri} gün</b>.` : ""} Sonucunu sayıyı ele vermeden paylaşabilirsin.`;
+  $("bmMsg").textContent = "Bugünkü sayıyı çözdün."; bmPadRender();
+}
+function gunCik() {
+  gunKaydet(); BM.mod = "normal"; BM.mine = ""; BM.over = true;
+  try { localStorage.removeItem("bmGunAcik"); } catch (e) {}
+  $("bmGame").hidden = true; $("bmGame").classList.remove("gunluk"); $("bmSetup").hidden = false; $("bmGunKart").hidden = false; $("bmAgain").textContent = "Yeni oyun"; $("bmPaylas").hidden = true;
+  gunKartYaz(); window.scrollTo({ top: 0 });
+}
+$("bmPaylas").onclick = () => gunPaylas($("bmPaylas"));
+gunKartYaz(); setInterval(() => { if (!$("bmGunKart").hidden) gunKartYaz(); }, 60000);
+// Günün Sayısı açıkken sayfa yenilenirse oraya geri dön
+try { if (localStorage.getItem("bmGunAcik") === "1" && $("bmGame").hidden) gunBasla(); } catch (e) {}
