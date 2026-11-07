@@ -27,6 +27,21 @@ function bmRender() {
   bmPadRender();
 }
 let bmIn = "";
+// Tuş "tık" sesi ve hafif titreşim (Hesaplamalar'daki makineyle aynı ses; ayar aynı: hesapSes)
+let SND = true; try { SND = localStorage.getItem("hesapSes") !== "0"; } catch (e) {}
+let AC = null;
+function tik(big) {
+  try { if (navigator.vibrate) navigator.vibrate(big ? 14 : 8); } catch (e) {}
+  if (!SND) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume();
+    const t = AC.currentTime, len = Math.floor(AC.sampleRate * 0.03), buf = AC.createBuffer(1, len, AC.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 6);
+    const src = AC.createBufferSource(); src.buffer = buf;
+    const bp = AC.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = big ? 1700 : 2600; bp.Q.value = 1.4;
+    const g = AC.createGain(); g.gain.value = 0.7; src.connect(bp).connect(g).connect(AC.destination); src.start(t);
+  } catch (e) {}
+}
 function bmPadRender() {
   $("bmDisp").innerHTML = Array.from({ length: BM.n }, (_, k) => `<span class="${k === bmIn.length ? "cur" : ""}">${bmIn[k] || ""}</span>`).join("");
   $("bmKeys").querySelectorAll("button").forEach((b) => { const d = b.dataset.d; b.disabled = BM.over || bmIn.includes(d) || bmIn.length >= BM.n || (d === "0" && !bmIn.length); });
@@ -39,7 +54,10 @@ function bmKey(d) {
   bmPadRender();
 }
 $("bmKeys").innerHTML = "1234567890".split("").map((d) => `<button type="button" data-d="${d}">${d}</button>`).join("");
-$("bmKeys").addEventListener("click", (e) => { const b = e.target.closest("button[data-d]"); if (b) bmKey(b.dataset.d); });
+// Tuşlar parmak değdiği anda çalışır (pointerdown); ardından gelen click yok sayılır. Klavyeyle/erişilebilirlik araçlarıyla basılan click yine çalışır.
+let bmPD = 0;
+$("bmKeys").addEventListener("pointerdown", (e) => { const b = e.target.closest("button[data-d]"); if (!b || b.disabled || e.button > 0) return; bmPD = Date.now(); e.preventDefault(); bmKey(b.dataset.d); });
+$("bmKeys").addEventListener("click", (e) => { const b = e.target.closest("button[data-d]"); if (!b) return; if (Date.now() - bmPD < 800) return; bmKey(b.dataset.d); });
 $("bmDel").onclick = () => { bmIn = bmIn.slice(0, -1); bmPadRender(); };
 $("bmRuloBtn").onclick = () => { $("bmRulo").hidden = !$("bmRulo").hidden; bmPadRender(); if (!$("bmRulo").hidden) { rlSize(); $("bmRulo").scrollIntoView({ behavior: "smooth", block: "nearest" }); } };
 document.addEventListener("keydown", (e) => {
