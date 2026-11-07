@@ -50,6 +50,7 @@ function bmPadRender() {
   $("bmNot").querySelectorAll("button").forEach((b) => { const nt = BM.not[+b.dataset.nd]; b.className = nt === 1 ? "n" : nt === 2 ? "y" : ""; b.setAttribute("aria-label", `${b.dataset.nd}: ${nt === 1 ? "yok" : nt === 2 ? "var" : "işaretsiz"}`); });
   $("bmRuloBtn").classList.toggle("on", !$("bmRulo").hidden);
   $("bmSend").disabled = BM.over || bmIn.length !== BM.n; $("bmDel").disabled = BM.over || !bmIn.length;
+  bmKaydet();
 }
 function bmKey(d) {
   if (BM.over) return;
@@ -129,6 +130,7 @@ $("bmSend").onclick = bmSend;
 const RL = { notes: [], tool: "kalem", strokes: [] };
 const LV_AD = { 1: "Kolay", 2: "Zor", 3: "Çok zor" };
 function rlRender() {
+  setTimeout(bmKaydet, 0);
   $("rlInfo").textContent = `${BM.n} basamak · ${LV_AD[BM.lvl]} · ${new Date().toLocaleDateString("tr-TR")}`;
   const fbT = ([p, m]) => p === 0 && m === 0 ? '<span class="z">0</span>' : `<span>${p ? `<span class="p">+${p}</span>` : ""}${p && m ? " " : ""}${m ? `<span class="m">−${m}</span>` : ""}</span>`;
   $("rlLines").innerHTML = RL.notes.map((x) => x.g != null ? `<div><i>${x.g + 1}</i><span class="t">${BM.me[x.g].g}</span>${fbT(BM.me[x.g].s)}</div>` : `<div class="nt"><i>✎</i><span>${esc(x.t)}</span></div>`).join("") || '<div class="nt"><i></i><span style="color:#aaa">Tahminlerin buraya basılacak…</span></div>';
@@ -146,7 +148,7 @@ let rlCur = null;
 const rlPt = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
 cv.addEventListener("pointerdown", (e) => { cv.setPointerCapture(e.pointerId); rlCur = { e: RL.tool === "silgi", p: [rlPt(e)] }; RL.strokes.push(rlCur); rlRedraw(); });
 cv.addEventListener("pointermove", (e) => { if (!rlCur) return; rlCur.p.push(rlPt(e)); rlRedraw(); });
-["pointerup", "pointercancel", "pointerleave"].forEach((t) => cv.addEventListener(t, () => (rlCur = null)));
+["pointerup", "pointercancel", "pointerleave"].forEach((t) => cv.addEventListener(t, () => { if (rlCur) { rlCur = null; bmKaydet(); } }));
 document.querySelector(".rlTools").addEventListener("click", (e) => { const b = e.target.closest("button[data-rt]"); if (!b) return; RL.tool = b.dataset.rt; document.querySelectorAll(".rlTools [data-rt]").forEach((x) => x.classList.toggle("on", x === b)); });
 $("rlClear").onclick = () => { if (!RL.strokes.length || confirm("Çizim silinsin mi?")) rlClearDraw(); };
 window.addEventListener("resize", () => { if (!$("bmRulo").hidden) rlSize(); });
@@ -188,3 +190,28 @@ $("bmQuit").onclick = () => { if (BM.over || confirm("Oyun bırakılsın mı?"))
 // İstatistik satırı ayar değişince güncellenir
 ["bmLen", "bmLvl"].forEach((id) => $(id).addEventListener("click", () => setTimeout(istYaz, 0)));
 istYaz();
+
+// ===== Kaldığın yerden devam: oyun her hamlede bu cihaza kaydedilir; sayfa yenilenir ya da kapanırsa geri yüklenir =====
+const BM_KAYIT = "bmOyun";
+function bmKaydet() {
+  if (!window.__bmHazir) return; // sayfa açılırken (geri yükleme bitmeden) kayıt silinmesin
+  try {
+    if (!BM.mine || BM.over || $("bmGame").hidden) { localStorage.removeItem(BM_KAYIT); return; }
+    const cizim = JSON.stringify(RL.strokes).length < 150000 ? RL.strokes : [];
+    localStorage.setItem(BM_KAYIT, JSON.stringify({ v: 1, n: BM.n, lvl: BM.lvl, mine: BM.mine, ai: BM.ai, me: BM.me, aiL: BM.aiL, tur: BM.tur, not: BM.not, inp: bmIn, notes: RL.notes, strokes: cizim, rulo: !$("bmRulo").hidden, t: Date.now() }));
+  } catch (e) {}
+}
+window.addEventListener("pagehide", bmKaydet);
+(function bmGeriYukle() {
+  let k = null; try { k = JSON.parse(localStorage.getItem(BM_KAYIT) || "null"); } catch (e) {}
+  if (!k || k.v !== 1 || !k.mine || Date.now() - k.t > 14 * 864e5) { window.__bmHazir = true; return; }
+  const A = allNums(k.n);
+  Object.assign(BM, { n: k.n, lvl: k.lvl, mine: k.mine, ai: k.ai, me: k.me || [], aiL: k.aiL || [], tur: k.tur || 1, not: k.not || Array(10).fill(0), over: false, all: A,
+    cand: A.filter((c) => (k.aiL || []).every((x) => score(c, x.g).join() === x.s.join())) });
+  bmIn = k.inp || ""; RL.notes = k.notes || []; RL.strokes = k.strokes || [];
+  $("bmMineShow").textContent = BM.mine; $("bmSetup").hidden = true; $("bmGame").hidden = false; $("bmEnd").hidden = true; $("bmPad").hidden = false;
+  $("bmMsg").textContent = `Kaldığın yerden devam: ${BM.tur}. tur. ${BM.aiL.length ? `Sadolayn en son ${BM.aiL[BM.aiL.length - 1].g} dedi.` : "Sıra sende."}`;
+  bmRender(); rlRender();
+  window.__bmHazir = true;
+  if (k.rulo) { $("bmRulo").hidden = false; bmPadRender(); setTimeout(rlSize, 50); }
+})();
