@@ -1,12 +1,11 @@
 const $ = (x) => document.getElementById(x);
 const tl = (n) => isFinite(n) ? n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL" : "–";
 const pct = (n) => isFinite(n) ? "%" + n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : "–";
+// Sayı okuma: önce biçim doğrulanır (sayi.js). Geçersiz giriş NaN döner → sonuçlar "–", kutu kırmızı işaretlenir.
 function num(id) {
-  const v = $(id).value.trim().replace(/\s/g, "");
-  // Türkçe biçim: 1.000.000,50
-  const clean = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : (/^-?\d{1,3}(\.\d{3})+$/.test(v) ? v.replace(/\./g, "") : v);
-  const n = parseFloat(clean);
-  return isFinite(n) ? n : 0;
+  const el = $(id), r = Sayi.coz(el.value);
+  Sayi.isaretle(el);
+  return r.n;
 }
 function rows(id, list) {
   $(id).innerHTML = list.map(([k, v, cls]) => `<div class="${cls || ""}"><span>${k}</span><span>${v}</span></div>`).join("");
@@ -16,7 +15,7 @@ for (const id of ["b_tutar", "m_tutar", "v_min", "t_tutar", "t_ucret", "ao_x", "
   $(id).addEventListener("blur", () => {
     if (id === "ta_noter" && !$(id).value.trim()) return;
     const n = num(id);
-    $(id).value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 });
+    if (isFinite(n)) $(id).value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }); // geçersizse kutuya "NaN" yazma
   });
 }
 
@@ -1207,7 +1206,7 @@ const isBizDay = (d) => { const i = dayInfo(d); return !i.we && !i.hol; }; // ar
 const nextBizC = (d) => { const x = new Date(d); while (!isBizDay(x)) x.setDate(x.getDate() + 1); return x; };
 const addBiz = (d, n) => { let x = nextBizC(d); for (let i = 0; i < n; i++) { x = addDays(x, 1); x = nextBizC(x); } return x; };
 const dayWhy = (d) => { const i = dayInfo(d); return i.hol ? i.name : i.we ? (d.getDay() === 6 ? "Cumartesi" : "Pazar") : i.half ? i.name : ""; };
-const parseNum = (v) => { v = String(v || "").trim().replace(/\s/g, ""); const c = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : (/^-?\d{1,3}(\.\d{3})+$/.test(v) ? v.replace(/\./g, "") : v); const n = parseFloat(c); return isFinite(n) ? n : 0; };
+const parseNum = (v) => Sayi.coz(v).n; // çek tutarları: aynı biçim doğrulaması (geçersiz → NaN, çek hesaba girmez)
 let CEKLER = [{ t: "1.000.000", v: "2026-11-27" }];
 try { const sv = JSON.parse(localStorage.getItem("cekler") || "null"); if (Array.isArray(sv) && sv.length) CEKLER = sv; } catch (e) {}
 function renderCekList() {
@@ -1407,13 +1406,13 @@ function renderCal(isl, res) {
 }
 $("c_cal").addEventListener("click", (e) => { const d = e.target.closest(".d[data-tip]"); if (d) $("c_tip").textContent = d.dataset.tip; });
 $("c_list").addEventListener("input", (e) => { const el = e.target; if (el.dataset.i == null) return; CEKLER[+el.dataset.i][el.dataset.k] = el.value; calcCek(); });
-$("c_list").addEventListener("focusout", (e) => { const el = e.target; if (el.dataset.k === "t") { const n = parseNum(el.value); el.value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }); CEKLER[+el.dataset.i].t = el.value; } });
+$("c_list").addEventListener("focusout", (e) => { const el = e.target; if (el.dataset.k === "t") { const n = parseNum(el.value); if (!isFinite(n)) return; el.value = n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }); CEKLER[+el.dataset.i].t = el.value; } });
 $("c_list").addEventListener("click", (e) => { const b = e.target.closest("[data-del]"); if (!b) return; CEKLER.splice(+b.dataset.del, 1); renderCekList(); calcCek(); });
 $("c_add").addEventListener("click", () => { const lastV = pDate(CEKLER[CEKLER.length - 1]?.v) || new Date(); CEKLER.push({ t: "", v: ymd(addMonthsC(lastV, 1)) }); renderCekList(); calcCek(); });
 ["c_isl", "c_faiz", "c_bsmv", "c_kkdf", "c_oran", "c_kom", "c_lim"].forEach((x) => $(x).addEventListener("input", calcCek));
 
 $("c_kom").addEventListener("blur", () => { const k = num("c_kom"); if (k > 1.1) $("c_kom").value = "1,1"; });
-$("c_lim").addEventListener("blur", () => { const n = num("c_lim"); $("c_lim").value = n ? n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : ""; });
+$("c_lim").addEventListener("blur", () => { const n = num("c_lim"); if (!isFinite(n)) return; $("c_lim").value = n ? n.toLocaleString("tr-TR", { maximumFractionDigits: 2 }) : ""; });
 $("c_isl").value = ymd(new Date());
 // Özet kartı: aşağı kaydırınca üstte tek satıra iner
 (function () {

@@ -43,7 +43,7 @@ function tik(big) {
   } catch (e) {}
 }
 // Türkçe sayı okuma/yazma
-function num(v) { v = String(v).trim().replace(/\s/g, ""); if (!v) return 0; const c = v.includes(",") ? v.replace(/\./g, "").replace(",", ".") : (/^-?\d{1,3}(\.\d{3})+$/.test(v) ? v.replace(/\./g, "") : v); const n = parseFloat(c); return isFinite(n) ? n : 0; }
+function num(v) { return Sayi.coz(v).n; } // biçim doğrulamalı okuma (sayi.js): "12abc" gibi girişler NaN → sonuç "–"
 const tl = (n, d = 2) => (isFinite(n) ? n.toLocaleString("tr-TR", { minimumFractionDigits: d, maximumFractionDigits: d }) : "–");
 const nf = (n, d = 2) => (isFinite(n) ? n.toLocaleString("tr-TR", { maximumFractionDigits: d }) : "–");
 const rows = (id, list) => ($(id).innerHTML = list.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join(""));
@@ -329,7 +329,7 @@ $("tQ").addEventListener("click", (e) => {
 });
 function calcA() {
   const d = pD($("aD").value), n = Math.round(num($("aN").value));
-  if (!d) { $("aOut").textContent = "–"; rows("aRows", []); return; }
+  if (!d || !isFinite(n)) { $("aOut").textContent = "–"; rows("aRows", []); return; }
   const r = addD(d, n);
   $("aOut").textContent = r.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
   let iw = new Date(r); while (isWE(iw) || isHol(iw)) iw = addD(iw, 1);
