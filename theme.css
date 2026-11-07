@@ -69,7 +69,7 @@ html[data-tema="acik"] {
   --s-bg: #f6f3ec;
   --s-card: #ffffff;
   --s-field: #f1ece2;
-  --s-line: #e4ddcf;
+  --s-line: #c9bda6;
   --s-ink: #1b1813;
   --s-muted: #5a5248;
   --s-gold: #8a5a12;      /* yazı altını (koyu) */
@@ -86,7 +86,7 @@ html[data-tema="acik"] footer.copyright { color: #5f594f !important; }
 html[data-tema="acik"] footer.copyright span { color: #6b645a !important; }
 html[data-tema="acik"] footer.copyright a { color: #4a443b !important; }
 html[data-tema="acik"] #ortakYukari { background: rgba(255,255,255,.95) !important; color: #8f5d12 !important; border-color: #e2cfa6 !important; box-shadow: 0 6px 18px rgba(80,60,20,.18) !important; }
-html[data-tema="acik"] .ortakHata { background: #fff; border-color: #e4ddcf; color: #3a352d; }
+html[data-tema="acik"] .ortakHata { background: #fff; border-color: #c9bda6; color: #3a352d; }
 html[data-tema="acik"] .ortakHata b { color: #1b1813; }
 html[data-tema="acik"] .ortakHata small { color: #6b645a; }
 html[data-tema="acik"] .ortakEski { background: #fff7e6; border-color: #e2cfa6; color: #6b4a12; box-shadow: 0 6px 18px rgba(80,60,20,.18); }

@@ -103,12 +103,12 @@
     var L = lab(c[0], c[1], c[2]), C = Math.hypot(L[1], L[2]);
     if (c[3] === 0) return c;
     if (C < 8) {
-      if (L[0] < 9) return [239, 233, 222, c[3]];
-      if (L[0] < 40) return [228, 221, 207, c[3]];
+      if (L[0] < 9) return [220, 211, 194, c[3]];   // satır ayırıcı: kâğıtta belli olsun
+      if (L[0] < 40) return [201, 189, 166, c[3]];  // kart/giriş kenarlığı ≈1,9:1 (önce 1,3 idi: silik görünüyordu)
       if (L[0] > 88) return [154, 143, 126, c[3]];
       return c;
     }
-    if (L[0] < 40) { var s = Math.min(30, C * 0.8) / C; return rgbL(82, L[1] * s, L[2] * s).concat(c[3]); }
+    if (L[0] < 40) { var s = Math.min(34, C * 0.9) / C; return rgbL(74, L[1] * s, L[2] * s).concat(c[3]); } // renkli kenarlık: biraz daha dolgun
     return c;
   }
   function golge(c) {

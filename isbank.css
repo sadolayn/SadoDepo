@@ -910,3 +910,17 @@ html[data-tema="acik"] .altkutu #tfil.kamp button:not(.on):not(.kfilt) { color: 
 html[data-tema="acik"] .altkutu #tfil.kamp button > b { color: #4a443b; }
 html[data-tema="acik"] .altkutu #tfil.kamp button.on > b { color: inherit; }
 html[data-tema="acik"] .altkutu #tfil.kamp button.kfilt small { color: #4a443b !important; }
+
+/* Ayrıntılı süzgeç düğmesi dikkat çeksin (7 Kasım 2026): dolgulu altın/bölüm rengi, büyük ok, kapalıyken ne açacağı yazar */
+.altkutu #tfil.kamp button.kfilt { background: linear-gradient(135deg, color-mix(in srgb, var(--kk, #e0a24f) 22%, #000), color-mix(in srgb, var(--kk, #e0a24f) 8%, #000)) !important; border: 1px solid var(--kk, #e0a24f) !important; border-style: solid !important; color: #fff !important; box-shadow: 0 2px 10px color-mix(in srgb, var(--kk, #e0a24f) 25%, transparent); }
+.altkutu #tfil.kamp button.kfilt span { color: #fff; }
+.altkutu #tfil.kamp button.kfilt small { color: #e8e8e8 !important; }
+.altkutu #tfil.kamp button.kfilt i { width: 26px; height: 26px; border-radius: 50%; background: var(--kk, #e0a24f); color: #000; font-weight: 900; font-size: 14px; line-height: 26px; text-align: center; }
+.altkutu #tfil.kamp button.kfilt.on { background: transparent !important; box-shadow: none; }
+.altkutu #tfil.kamp button.kfilt.on i { background: transparent; color: var(--kk, #e0a24f); }
+html[data-tema="acik"] .altkutu #tfil.kamp button.kfilt { background: linear-gradient(135deg, color-mix(in srgb, var(--kk, #e0a24f) 18%, #fff), color-mix(in srgb, var(--kk, #e0a24f) 6%, #fff)) !important; color: #1b1813 !important; border-color: color-mix(in srgb, var(--kk, #e0a24f) 70%, #000) !important; }
+html[data-tema="acik"] .altkutu #tfil.kamp button.kfilt span { color: #1b1813; }
+html[data-tema="acik"] .altkutu #tfil.kamp button.kfilt small { color: #3a352d !important; }
+html[data-tema="acik"] .altkutu #tfil.kamp button.kfilt i { background: color-mix(in srgb, var(--kk, #e0a24f) 80%, #000); color: #fff; }
+/* Linki kopyala: açık modda silik kalıyordu. Boyacı color-mix'li kuralı eziyordu; açıkta düz renklerle, kaynak renginde (--c) yazı ve kenar */
+html[data-tema="acik"] .camp .kkop { border: 1px solid color-mix(in srgb, var(--c, #e0a24f) 65%, #000) !important; background-color: color-mix(in srgb, var(--c, #e0a24f) 9%, #fff) !important; background-image: none !important; color: color-mix(in srgb, var(--c, #e0a24f) 55%, #000) !important; font-weight: 700 !important; }
