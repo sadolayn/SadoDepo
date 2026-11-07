@@ -1222,33 +1222,6 @@ function chgCell(bu, once, tur, iyi) {
   const cls = bu === once ? "n" : ((bu > once) === (iyi === "up") ? "g" : "b");
   return `<span class="chg ${cls}">${txt}</span>`;
 }
-function finRows(i) {
-  const S = fin.s, P = fin.periods, j = i - 4;          // bir yıl önceki aynı çeyrek
-  const q = (k, idx) => { // çeyreklik akım (kümülatiften)
-    if (idx < 0 || S[k][idx] == null) return null;
-    const m = +P[idx].split("/")[1];
-    return m === 3 ? S[k][idx] : (S[k][idx - 1] == null ? null : S[k][idx] - S[k][idx - 1]);
-  };
-  const R = [
-    ["Toplam aktif", S.aktif[i], S.aktif[j], "tl", "up"],
-    ["Krediler", S.kredi[i], S.kredi[j], "tl", "up"],
-    ["Mevduat", S.mevduat[i], S.mevduat[j], "tl", "up"],
-    ["Özkaynak", S.ozkaynak[i], S.ozkaynak[j], "tl", "up"],
-    [`Net kâr (${pRange(P[i])})`, S.netkar[i], S.netkar[j], "tl", "up"],
-    ["Net kâr (çeyrek)", q("netkar", i), q("netkar", j), "tl", "up"],
-    [`Net faiz geliri (${pRange(P[i])})`, S.nfg[i], S.nfg[j], "tl", "up"],
-    [`Ücret ve komisyon (${pRange(P[i])})`, S.komisyon[i], S.komisyon[j], "tl", "up"],
-    ["Özkaynak kârlılığı", S.roe[i], S.roe[j], "pct", "up"],
-    ["Aktif kârlılığı", S.roa[i], S.roa[j], "pct", "up"],
-    ["Sermaye yeterliliği", S.syr[i], S.syr[j], "pct", "up"],
-    ["Takipteki krediler oranı", S.npl[i], S.npl[j], "pct", "down"],
-    ["Şube", S.sube[i], S.sube[j], "adet", "up"],
-    ["ATM", S.atm[i], S.atm[j], "adet", "up"],
-    ["Çalışan", S.calisan[i], S.calisan[j], "adet", "up"],
-    ["Kredi kartı", S.kart[i], S.kart[j], "adet", "up"],
-  ];
-  return R;
-}
 // Banka veri dosyası yeni çeyreği henüz içermiyorsa KAP'taki solo rapordan elle girilen dönem (isbank/solo_elle.json) sona eklenir;
 // dosya o dönemi içerdiğinde bu ek kendiliğinden devre dışı kalır.
 function soloElle(j) {
@@ -1261,12 +1234,52 @@ function soloElle(j) {
   });
 }
 const elleNot = (p) => fin.elle && fin.elle[p] ? ` ${pLabel(p)} rakamları <a href="${esc(fin.elle[p].url)}" target="_blank" rel="noopener" style="color:var(--accent)">bankanın solo raporundan</a> elle girildi${fin.elle[p].kart_kaynak ? `; kredi kartı sayısı <a href="${esc(fin.elle[p].kart_kaynak.url)}" target="_blank" rel="noopener" style="color:var(--accent)">yatırımcı sunumundan</a>` : ""}; veri dosyası güncellenince kendiliğinden yenilenir.` : "";
+// Dönem tablosu (bilanço tablosu düzeni): bölümler hâlinde, tutarlar milyon TL tam rakam.
+// Bilanço kalemleri bir önceki yıl sonuyla, gelir tablosu / oranlar / yaygınlık bir yıl önceki aynı dönemle karşılaştırılır (raporların kendi düzeni).
+const mnTL = (v) => v == null ? "–" : Math.round(v * 1000).toLocaleString("tr-TR");
+const kisaP = (p) => { const [y, m] = p.split("/"); return AY_TR[m].slice(0, 3) + " " + y; };
+function ytDeg(bu, once, tur, iyi) {
+  if (bu == null || once == null) return '<td class="yd n">–</td>';
+  let txt;
+  if (tur === "pct") { const d = bu - once; txt = (d > 0 ? "+" : d < 0 ? "−" : "") + Math.abs(d).toLocaleString("tr-TR", { maximumFractionDigits: 2 }) + " puan"; }
+  else { const p = (bu / once - 1) * 100; txt = (p > 0 ? "+%" : p < 0 ? "−%" : "%") + Math.abs(p).toLocaleString("tr-TR", { maximumFractionDigits: 1 }); }
+  const cls = bu === once ? "n" : ((bu > once) === (iyi === "up") ? "g" : "b");
+  return `<td class="yd ${cls}">${txt}</td>`;
+}
+// Dar ekranda 4. sütun gizlenir, değişim güncel rakamın altında küçük satır olarak görünür
+const ytAlt = (td) => { const m = /class="yd (\w)">(.*)<\/td>/.exec(td); return m ? `<span class="ydk ${m[1]}">${m[2]}</span>` : ""; };
 function ytTable(i) {
-  const P = fin.periods, j = i - 4;
-  const rows = finRows(i).map(([ad, bu, once, tur, iyi]) =>
-    `<tr><td>${esc(ad)}</td><td class="now">${ytFmt(bu, tur)}</td><td class="old">${ytFmt(once, tur)}</td><td>${chgCell(bu, once, tur, iyi)}</td></tr>`).join("");
-  return `<table class="yt"><thead><tr><th>Kalem</th><th>${pLabel(P[i])}</th><th>${j >= 0 ? pLabel(P[j]) : "–"}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
-    <div class="yt-note">Bankanın kendi yayımladığı resmî veri. Tutarlar TL (trn = trilyon, mlr = milyar). Renk yalnızca artış/azalış yönünü gösterir, yorum değildir. Yatırım tavsiyesi değildir. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.${elleNot(P[i])}</div>`;
+  const P = fin.periods, S = fin.s, j = i - 4, y = +P[i].split("/")[0];
+  const ys = P.indexOf((y - 1) + "/12"), yb = P[i].endsWith("/12") ? j : ys; // yıl sonu karşılaştırması
+  const q = (k, idx) => { if (idx < 0 || S[k][idx] == null) return null; const m = +P[idx].split("/")[1]; return m === 3 ? S[k][idx] : (S[k][idx - 1] == null ? null : S[k][idx] - S[k][idx - 1]); };
+  const val = (v, tur) => tur === "tl" ? mnTL(v) : tur === "pct" ? (v == null ? "–" : "%" + v.toLocaleString("tr-TR", { maximumFractionDigits: 2 })) : (v == null ? "–" : v.toLocaleString("tr-TR"));
+  const bas = (ad, alt, k1, k2) => `<tr class="ysh"><th>${ad}${alt ? `<small>${alt}</small>` : ""}</th><th>${k1}</th><th>${k2}</th><th class="ydb">Değişim</th></tr>`;
+  const sat = (ad, bu, once, tur, iyi, cls) => { const d = ytDeg(bu, once, tur, iyi); return `<tr${cls ? ` class="${cls}"` : ""}><td>${ad}</td><td class="now">${val(bu, tur)}${ytAlt(d)}</td><td class="old">${val(once, tur)}</td>${d}</tr>`; };
+  const o = (k, idx) => idx >= 0 ? S[k][idx] : null, pk = (idx) => idx >= 0 ? kisaP(P[idx]) : "–";
+  const aralik = pRange(P[i]) === "yıllık" ? "yıllık" : pRange(P[i]);
+  const rows =
+    bas("Bilanço", "milyon TL", kisaP(P[i]), pk(yb)) +
+    sat("Toplam varlıklar", S.aktif[i], o("aktif", yb), "tl", "up") +
+    sat("Krediler", S.kredi[i], o("kredi", yb), "tl", "up") +
+    sat("Mevduat", S.mevduat[i], o("mevduat", yb), "tl", "up", "yvurgu") +
+    sat("Özkaynaklar", S.ozkaynak[i], o("ozkaynak", yb), "tl", "up") +
+    bas("Gelir tablosu", "milyon TL · " + aralik, kisaP(P[i]), pk(j)) +
+    sat("Net faiz geliri", S.nfg[i], o("nfg", j), "tl", "up") +
+    sat("Net ücret ve komisyon", S.komisyon[i], o("komisyon", j), "tl", "up") +
+    sat("Net kâr", S.netkar[i], o("netkar", j), "tl", "up", "yvurgu") +
+    (+P[i].split("/")[1] === 3 ? "" : sat("yalnızca son çeyrek", q("netkar", i), q("netkar", j), "tl", "up", "yalt")) +
+    bas("Oranlar", "", kisaP(P[i]), pk(j)) +
+    sat("Özkaynak kârlılığı", S.roe[i], o("roe", j), "pct", "up") +
+    sat("Aktif kârlılığı", S.roa[i], o("roa", j), "pct", "up") +
+    sat("Sermaye yeterliliği", S.syr[i], o("syr", j), "pct", "up") +
+    sat("Takipteki krediler", S.npl[i], o("npl", j), "pct", "down") +
+    bas("Yaygınlık", "adet", kisaP(P[i]), pk(j)) +
+    sat("Şube", S.sube[i], o("sube", j), "adet", "up") +
+    sat("ATM", S.atm[i], o("atm", j), "adet", "up") +
+    sat("Çalışan", S.calisan[i], o("calisan", j), "adet", "up") +
+    sat("Kredi kartı", S.kart[i], o("kart", j), "adet", "up");
+  return `<div class="yt2kap"><table class="yt2"><caption>İŞBANK · ${pLabel(P[i])}</caption>${rows}</table></div>
+    <div class="yt-note">Bankanın kendi yayımladığı resmî veri (solo). Bilanço kalemleri bir önceki yıl sonuyla, diğerleri bir yıl önceki aynı dönemle karşılaştırılır. Renk yalnızca artış/azalış yönünü gösterir, yorum değildir. Yatırım tavsiyesi değildir. Kaynak: <a href="${esc(fin.url)}" target="_blank" rel="noopener" style="color:var(--accent)">İş Bankası finansal veri dosyası</a> · günde iki kez kontrol edilir.${elleNot(P[i])}</div>`;
 }
 // Konsolide (iştiraklerle birlikte) ana rakamlar: isbank/konsolide.json, elle girilir (KAP ya da bankanın konsolide raporu). Solo tablonun altında ayrı kutu;
 // yan yana konmaz (dar ekranda sığmaz, iki ölçü karışır). Bilanço kalemleri bir önceki yıl sonuyla, kâr aynı dönemin bir yıl öncesiyle karşılaştırılır (raporun kendi sütunları).
@@ -1283,14 +1296,15 @@ function konsolideHtml() {
   const [ky, km] = k.p.split("/"), yo = D.find((x) => x.p === (+ky - 1) + "/" + km); // bir yıl önceki aynı dönem
   const o = yo || k.onceki || {}, ok = yo && yo.netkar != null ? yo : (k.oncekiKar || {});
   const ay = (p) => { const [y, m] = p.split("/"); return ({ "3": "Ocak–Mart", "6": "Ocak–Haziran", "9": "Ocak–Eylül", "12": "Ocak–Aralık" })[m] + " " + y; };
-  const satir = (ad, bu, once, iyi) => `<tr><td>${esc(ad)}</td><td class="now">${ytFmt(bu)}</td><td class="old">${ytFmt(once)}</td><td>${once == null ? "–" : chgCell(bu, once, "", iyi)}</td></tr>`;
-  const rows = satir("Toplam aktif", k.aktif, o.aktif, "up") + satir("Krediler", k.kredi, o.kredi, "up") + satir("Mevduat", k.mevduat, o.mevduat, "up") + satir("Özkaynak", k.ozkaynak, o.ozkaynak, "up")
-    + (k.netkar != null ? satir(`Net kâr (${ay(k.p).split(" ")[0].toLowerCase()})`, k.netkar, ok.netkar, "up") + satir("· ana ortaklık payı", k.grup, ok.grup, "up") : "");
+  const satir = (ad, bu, once, iyi, cls) => { const d = ytDeg(bu, once, "tl", iyi); return `<tr${cls ? ` class="${cls}"` : ""}><td>${esc(ad)}</td><td class="now">${mnTL(bu)}${ytAlt(d)}</td><td class="old">${mnTL(once)}</td>${d}</tr>`; };
+  const bas = (ad, alt, k1, k2) => `<tr class="ysh"><th>${ad}<small>${alt}</small></th><th>${k1}</th><th>${k2}</th><th class="ydb">Değişim</th></tr>`;
+  const rows = bas("Bilanço", "milyon TL", kisaP(k.p), yo ? kisaP(yo.p) : o.p ? kisaP(o.p) : "–")
+    + satir("Toplam varlıklar", k.aktif, o.aktif, "up") + satir("Krediler", k.kredi, o.kredi, "up") + satir("Mevduat", k.mevduat, o.mevduat, "up", "yvurgu") + satir("Özkaynaklar", k.ozkaynak, o.ozkaynak, "up")
+    + (k.netkar != null ? bas("Kâr", "milyon TL · " + ay(k.p).split(" ")[0].toLowerCase(), kisaP(k.p), ok.p ? kisaP(ok.p) : "–") + satir("Net kâr", k.netkar, ok.netkar, "up", "yvurgu") + satir("ana ortaklık payı", k.grup, ok.grup, "up", "yalt") : "");
   const gecmis = D.length > 1 ? donemCizgi(D.map((x) => ({ p: x.p, attr: "data-kons", val: x.p, on: x.p === k.p }))) : "";
-  const karsi = yo ? pLabel(yo.p) : `${o.p ? pLabel(o.p) : "–"}${ok.p ? `<small style="display:block;font-weight:400">kâr: ${pLabel(ok.p)}</small>` : ""}`;
   const notKarsi = yo ? "Bir yıl önceki aynı dönemle karşılaştırılır." : `${pLabel(k.p)} için bir yıl öncesinin konsolide rakamı elimizde yok; bilanço yıl sonuyla, kâr bir yıl önceki aynı dönemle karşılaştırılır.`;
   return `<div class="day" style="margin-top:22px">🏦 Bir yıl önceyle karşılaştırma ${fBadge("kons")}</div>
-    ${gecmis}<table class="yt kons"><thead><tr><th>Kalem</th><th>${pLabel(k.p)}</th><th>${karsi}</th><th>Değişim</th></tr></thead><tbody>${rows}</tbody></table>
+    ${gecmis}<div class="yt2kap"><table class="yt2 kons"><caption>İŞBANK KONSOLİDE · ${pLabel(k.p)}</caption>${rows}</table></div>
     <div class="yt-note">Konsolide tabloda Anadolu Sigorta, Anadolu Hayat gibi iştirakler de yer alır; bu yüzden rakamlar yukarıdaki solo tablodan büyüktür. ${notKarsi} Elle girilir, yorum değildir. Kaynak: <a href="${esc(k.url)}" target="_blank" rel="noopener">${esc(k.kaynak)} ↗</a></div>`;
 }
 function bindKons() {
@@ -1325,7 +1339,7 @@ function yatHtml() {
         ${card("Takipteki krediler", "npl", "pct", "down", gore)}
       </div>
       ${chartsHtml()}
-      <div class="day" style="margin-top:18px">📈 Bir yıl önceyle karşılaştırma ${fBadge("solo")}</div>
+      <div class="day" style="margin-top:18px">📈 Dönem tablosu ${fBadge("solo")}</div>
       ${donemCizgi(opts.map((o) => ({ p: o.p, attr: "data-i", val: o.i, on: o.i === ytSel })), "ytChips")}
       <div id="ytTable">${ytTable(ytSel)}</div>
       ${konsolideHtml()}`;
