@@ -887,7 +887,7 @@
         "2028-02-26": [3, "Ramazan Bayramı"], "2028-05-05": [4, "Kurban Bayramı"], "2029-02-14": [3, "Ramazan Bayramı"], "2029-04-24": [4, "Kurban Bayramı"] };
       for (const bas in DINI) {
         const [sure, ad] = DINI[bas], b = new Date(bas + "T00:00:00"), fark = Math.round((new Date(n.getFullYear(), ay - 1, gn) - b) / 864e5);
-        if (fark >= 0 && fark < sure) return { ana: "İyi bayramlar", alt: `🌙 ${ad}mız kutlu olsun`, ik: "🌙" };
+        if (fark >= 0 && fark < sure) return { ana: "İyi bayramlar", alt: `🌙 ${ad}nız kutlu olsun` /* dinî bayramda "Bayramınız", millîde "Bayramımız" */, ik: "🌙" };
         if (fark === -1) return { ana: "Hayırlı arifeler", alt: `🌙 Yarın ${ad}`, ik: "🌙" };
       }
       const KANDIL = { "2026-01-15": "Miraç Kandili", "2026-02-02": "Berat Kandili", "2026-08-24": "Mevlid Kandili", "2026-12-10": "Regaib Kandili",
