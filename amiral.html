@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amiral Battı</title>
+<meta name="description" content="Bilgi paylaştıkça büyür">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SADOLAYN">
+<meta property="og:title" content="Amiral Battı · SADOLAYN">
+<meta property="og:description" content="“Bilgi paylaştıkça büyür”">
+<meta property="og:url" content="https://sadolayn.github.io/SadoDepo/amiral.html">
+<meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sadolayn — Bilgi paylaştıkça büyür">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<link rel="stylesheet" href="hesap.css">
+<script src="pwa.js"></script>
+<script src="ortak.js"></script>
+<script src="rapor.js"></script>
+<script type="module" src="sayac.js"></script>
+<link rel="stylesheet" href="theme.css">
+<style>
+  /* ===== Amiral Battı · gece ve altın; deniz lacivert, ızgara altın ===== */
+  .amH { font: italic 700 18px Georgia, "Times New Roman", serif; color: #f3d38a; margin: 0 0 6px; }
+  .amH small { font: 600 12px system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--muted); font-style: normal; margin-left: 4px; }
+  .card { border-radius: 16px; background: #0b0b0b; }
+  .amRow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .amChips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .amChips button, .amTool button { min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: #141414; color: var(--ink); font: 600 13px system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; touch-action: manipulation; transition: transform .15s ease, border-color .2s ease, background-color .2s ease; }
+  .amChips button[aria-pressed="true"] { border-color: #5a4320; background: rgba(224,162,79,.14); color: #f3d38a; }
+  .amChips button:active, .amTool button:active { transform: scale(.95); }
+  .amErr { color: var(--red); font-size: 12.5px; margin: 8px 0 0; line-height: 1.45; min-height: 0; }
+  .amErr:empty { display: none; }
+  .amErr a { color: var(--accent); }
+
+  /* Nasıl oynanır */
+  .amNasil { margin-top: 10px; border: 1px solid #1c1c1c; border-radius: 12px; background: #070707; }
+  .amNasil summary { cursor: pointer; padding: 10px 12px; font: italic 700 14.5px Georgia, serif; color: #e0a24f; list-style: none; min-height: 24px; }
+  .amNasil summary::-webkit-details-marker { display: none; }
+  .amNasil summary::after { content: "›"; float: right; color: var(--muted); font-style: normal; transition: transform .25s ease; }
+  .amNasil[open] summary::after { transform: rotate(90deg); }
+  .amNasil ul { margin: 0; padding: 0 14px 12px 30px; font-size: 13px; color: #cfcfcf; line-height: 1.45; }
+  .amNasil li { margin: 3px 0; }
+
+  /* Tahta: sol sütun sayılar, üst satır harfler, deniz kare */
+  .amBd { display: grid; grid-template-columns: 16px 1fr; grid-template-rows: 16px auto; gap: 3px; user-select: none; -webkit-user-select: none; }
+  .amBd .amCols, .amBd .amRows { display: grid; font: 600 11px system-ui, sans-serif; color: #b89a62; text-align: center; }
+  .amBd .amCols { grid-column: 2; grid-template-columns: repeat(10, 1fr); align-items: end; }
+  .amBd .amRows { grid-column: 1; grid-row: 2; grid-template-rows: repeat(10, 1fr); align-items: center; }
+  .amSea { grid-column: 2; grid-row: 2; position: relative; aspect-ratio: 1 / 1; display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr);
+    border: 1px solid #5a4320; border-radius: 10px; overflow: hidden; container-type: inline-size; font-size: 20px; font-size: 6.2cqw;
+    background:
+      linear-gradient(to right, rgba(224,162,79,.2) 1px, transparent 1px) 0 0 / 10% 10%,
+      linear-gradient(to bottom, rgba(224,162,79,.2) 1px, transparent 1px) 0 0 / 10% 10%,
+      radial-gradient(120% 90% at 30% 10%, #12204a 0%, #0b1530 45%, #070d1f 100%); }
+  .amC { position: relative; z-index: 2; display: grid; place-items: center; min-width: 0; min-height: 0; padding: 0; margin: 0; border: 0; background: transparent; color: inherit; font: inherit; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: background-color .15s ease, transform .15s ease; }
+  button.amC { cursor: pointer; }
+  .amC::after { content: ""; display: block; }
+  .amC.m::after { width: 28%; height: 28%; border-radius: 50%; background: #9fb8ee; opacity: .85; animation: amPop .3s cubic-bezier(.2,.7,.2,1); }
+  .amC.x::after { width: 13%; height: 13%; border-radius: 50%; background: #9fb8ee; opacity: .38; animation: amSol .35s ease both; }
+  .amC.h::after { content: "🔥"; line-height: 1; animation: amPop .3s cubic-bezier(.2,.7,.2,1); }
+  .amC.s::after { opacity: .62; }
+  .amC.son { box-shadow: inset 0 0 0 2px #f3d38a; border-radius: 3px; }
+  .amBd.ilk .amC::after { animation: none !important; }
+  @media (hover: hover) { .amDusman.aktif button.amC:not(.m):not(.h):not(.x):hover { background: rgba(224,162,79,.16); } }
+  .amDusman.aktif button.amC:not(.m):not(.h):not(.x):active { transform: scale(.88); background: rgba(224,162,79,.28); }
+  .amDusman.aktif .amSea { cursor: crosshair; border-color: #8a6a32; }
+  .amDusman:not(.aktif) button.amC { cursor: default; }
+
+  /* Gemi katmanı: hücrelerin altında, ızgaranın üstünde */
+  .amLay, .amFx, .amSonar { position: absolute; inset: 0; pointer-events: none; }
+  .amLay { z-index: 1; } .amFx { z-index: 3; }
+  .amGm { position: absolute; --p: 3px; transition: opacity .3s ease, transform .3s ease; }
+  .amGm::before { content: ""; position: absolute; inset: var(--p); border-radius: 999px; border: 1.5px solid #e0a24f;
+    background: radial-gradient(circle at 50% 50%, rgba(243,211,138,.55) 0 1.6px, transparent 2.2px) center / 22px 22px repeat-x, linear-gradient(180deg, #4a4130, #26211a 60%, #1b1813); }
+  .amGm.v::before { background: radial-gradient(circle at 50% 50%, rgba(243,211,138,.55) 0 1.6px, transparent 2.2px) center / 22px 22px repeat-y, linear-gradient(90deg, #4a4130, #26211a 60%, #1b1813); }
+  .amGm.sec::before { border-color: #f3d38a; box-shadow: 0 0 0 2px rgba(243,211,138,.35); }
+  .amGm.olu::before { border-color: #ef6a4c; background: linear-gradient(180deg, #2a1f1c, #151010); }
+  .amGm.dbat::before { border: 2px solid rgba(239,106,76,.9); background: rgba(239,106,76,.13); }
+  .amGm.dbat { animation: amBat .4s cubic-bezier(.2,.7,.2,1); }
+  .amGm.kalan::before { border: 1.5px dashed #f3d38a; background: rgba(243,211,138,.08); }
+  .amGm.kalan { animation: amSol .4s ease both; }
+  .amGm.hay::before { border: 1.5px dashed #3fc283; background: rgba(63,194,131,.16); }
+  .amGm.hay.kot::before { border-color: #ef6a4c; background: rgba(239,106,76,.2); }
+  .amGm.hay.kot { animation: amSalla .3s ease; }
+  .amBd.ilk .amGm { animation: none !important; }
+
+  /* Efektler: yalnızca transform ve opacity */
+  .amFx > i { position: absolute; width: 10%; height: 10%; display: block; }
+  .amFx .sp::before, .amFx .sp::after { content: ""; position: absolute; inset: 12%; border-radius: 50%; border: 2px solid rgba(170,196,255,.85); animation: amHalka .4s ease-out forwards; }
+  .amFx .sp::after { animation-delay: .1s; opacity: 0; }
+  .amFx .bm::before { content: ""; position: absolute; inset: -45%; border-radius: 50%; background: radial-gradient(circle, rgba(255,225,150,.95) 0, rgba(239,120,60,.75) 32%, rgba(239,106,76,0) 68%); animation: amPat .4s ease-out forwards; }
+  .amFx .ns { border-radius: 50%; border: 2px solid #f3d38a; box-shadow: 0 0 0 3px rgba(243,211,138,.18); animation: amNis .3s cubic-bezier(.2,.7,.2,1) both; }
+  .amFx .ns::before, .amFx .ns::after { content: ""; position: absolute; background: #f3d38a; }
+  .amFx .ns::before { left: 50%; top: -30%; bottom: -30%; width: 1.5px; margin-left: -.75px; }
+  .amFx .ns::after { top: 50%; left: -30%; right: -30%; height: 1.5px; margin-top: -.75px; }
+
+  /* Sonar: düşman denizinde tek ve sakin süpürme (sıra sendeyken) */
+  .amSonar { overflow: hidden; opacity: 0; transition: opacity .4s ease; }
+  .amDusman.aktif .amSonar { opacity: 1; }
+  .amSonar i { position: absolute; left: -21%; top: -21%; width: 142%; height: 142%; border-radius: 50%; background: conic-gradient(from 0deg, rgba(243,211,138,0) 0deg, rgba(243,211,138,0) 290deg, rgba(243,211,138,.07) 350deg, rgba(243,211,138,.13) 360deg); animation: amSonar 8s linear infinite; }
+
+  @keyframes amPop { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+  @keyframes amSol { from { opacity: 0; } }
+  @keyframes amHalka { from { opacity: 1; transform: scale(.25); } to { opacity: 0; transform: scale(1.35); } }
+  @keyframes amPat { from { opacity: 1; transform: scale(.3); } to { opacity: 0; transform: scale(1.5); } }
+  @keyframes amNis { from { opacity: 0; transform: scale(1.6); } to { opacity: 1; transform: none; } }
+  @keyframes amBat { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+  @keyframes amSalla { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+  @keyframes amSonar { to { transform: rotate(360deg); } }
+  @keyframes amGel { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  /* Diziliş: gemi tepsisi */
+  .amTray { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+  .amTray button { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; min-height: 52px; padding: 8px 10px; border-radius: 12px; border: 1px solid var(--line); background: #111; color: var(--ink); font: 600 13px system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; text-align: left; touch-action: manipulation; transition: transform .15s ease, border-color .2s ease, background-color .2s ease; }
+  .amTray button:active { transform: scale(.975); }
+  .amTray button.on { border-color: #e0a24f; background: rgba(224,162,79,.12); }
+  .amTray button.ok { color: #9a9a9a; }
+  .amTray button.ok b::after { content: " ✓"; color: #3fc283; }
+  .amTray button i { display: flex; gap: 3px; }
+  .amTray button i s { display: block; width: 12px; height: 9px; border-radius: 3px; background: #e0a24f; text-decoration: none; }
+  .amTray button.ok i s { background: #5a4320; }
+  .amTray button small { font-weight: 500; font-size: 11px; color: var(--muted); }
+  .amTool { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .amTool button { flex: 1 1 auto; }
+  .amMsg { font-size: 13px; color: #cfcfcf; margin: 8px 0 0; line-height: 1.4; min-height: 18px; }
+  .amMsg.bad { color: #ef8a6d; }
+  .btn-go:disabled { opacity: .45; cursor: default; }
+
+  /* Savaş */
+  .amDurum { padding: 10px 12px; }
+  .amDurum .amRow b { font: italic 700 16px Georgia, serif; color: #f3d38a; }
+  .amDurum .amSay { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #amSavasMsg { margin: 4px 0 0; font-size: 13.5px; color: #e6e6e6; line-height: 1.4; min-height: 19px; }
+  #amSavasMsg.yeni { animation: amGel .3s cubic-bezier(.2,.7,.2,1); }
+  .amSeri { display: inline-block; margin: 6px 0 0; padding: 3px 10px; border-radius: 999px; background: rgba(224,162,79,.16); border: 1px solid #5a4320; color: #f3d38a; font-size: 12.5px; font-weight: 700; animation: amGel .3s cubic-bezier(.2,.7,.2,1); }
+  .amSavas { display: grid; gap: 10px; }
+  .amSavas > .card { margin: 0; padding: 10px; }
+  .amFilo { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .amFilo span { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 999px; border: 1px solid #262626; background: #0f0f0f; font-size: 11.5px; color: #d8d8d8; white-space: nowrap; transition: opacity .3s ease; }
+  .amFilo span i { display: inline-flex; gap: 2px; }
+  .amFilo span i s { display: block; width: 6px; height: 6px; border-radius: 2px; background: #e0a24f; text-decoration: none; }
+  .amFilo span i s.v { background: #ef6a4c; }
+  .amFilo span.bat { opacity: .55; color: #b0a0a0; text-decoration: line-through; text-decoration-color: #ef6a4c; }
+  .amFilo span.bat i s { background: #ef6a4c; }
+  .amBen .amIc { display: grid; grid-template-columns: 168px 1fr; gap: 10px; align-items: start; }
+  .amBen .amBd { grid-template-columns: 0 1fr; grid-template-rows: 0 auto; gap: 0; }
+  .amBen .amBd .amCols, .amBen .amBd .amRows { visibility: hidden; }
+  .amBen .amSea { border-radius: 8px; }
+  .amBen .amGm { --p: 1.5px; } .amBen .amGm::before { border-width: 1px; background: linear-gradient(180deg, #4a4130, #26211a); }
+  .amBen .amC.h::after { content: ""; width: 48%; height: 48%; border-radius: 50%; background: #ef6a4c; box-shadow: 0 0 0 2px rgba(239,106,76,.3); }
+  .amBen .amC.m::after { width: 26%; height: 26%; }
+  .amBen .amFilo { flex-direction: column; margin-top: 0; }
+  .amBen .amFilo span { justify-content: space-between; }
+  .amSon { font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+  .amKapat { display: flex; justify-content: center; margin-top: 10px; }
+  .amKapat button { min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: #bdbdbd; font: 600 13px system-ui, sans-serif; cursor: pointer; }
+  .amKapat button.emin { border-color: #7a3424; color: #ef8a6d; }
+
+  /* Sonuç */
+  .amSonuc { text-align: center; animation: amGel .4s cubic-bezier(.2,.7,.2,1); }
+  .amSonuc .amBig { font: italic 700 22px Georgia, serif; color: #f3d38a; margin: 2px 0 4px; }
+  .amTiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0; }
+  .amTiles div { padding: 8px 2px; border-radius: 12px; background: #111; border: 1px solid #262626; }
+  .amTiles b { display: block; font-size: 19px; color: #f3d38a; font-variant-numeric: tabular-nums; }
+  .amTiles span { font-size: 11px; color: var(--muted); }
+  .amIst { font-size: 12.5px; color: #cfcfcf; margin: 6px 0 0; }
+
+  /* Geniş ekran (Fold iç ekran, bilgisayar): iki tahta yan yana, kendi tahtan da büyük */
+  @media (min-width: 640px) {
+    body.amSv .wrap { max-width: 980px; }
+    body.amSv .stick, body.amSv #amDurum { max-width: 980px; }
+    .amSavas { grid-template-columns: 1fr 1fr; align-items: start; }
+    .amBen .amIc { grid-template-columns: 1fr; }
+    .amBen .amBd { grid-template-columns: 16px 1fr; grid-template-rows: 16px auto; gap: 3px; }
+    .amBen .amBd .amCols, .amBen .amBd .amRows { visibility: visible; }
+    .amBen .amC.h::after { content: "🔥"; width: auto; height: auto; background: none; box-shadow: none; }
+    .amBen .amFilo { flex-direction: row; margin-top: 8px; }
+    .amBen .amGm { --p: 3px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .amC::after, .amGm, .amFx *, .amFx *::before, .amFx *::after, .amSonar i, .amSeri, .amSonuc, #amSavasMsg.yeni { animation: none !important; }
+    .amSonar { display: none; }
+    .amC, .amGm, .amChips button, .amTray button, .amTool button { transition: none; }
+    .amNasil summary::after { transition: none; }
+  }
+</style>
+</head>
+<body>
+<script src="oyunsaat.js" data-kilit="sayfa"></script>
+<div class="wrap">
+  <div class="stick">
+    <header>
+      <a href="oyunlar.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Oyunlar" aria-label="Oyunlar">🎮</a>
+      <h1>⚓ Amiral Battı</h1>
+      <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
+    </header>
+  </div>
+
+  <section class="panel on" id="amiral">
+    <!-- 1) Ayar -->
+    <div class="card" id="amAyar">
+      <h2 class="amH">⚓ Sadolayn'a karşı</h2>
+      <p class="hint" style="margin-top:0">Filonu diz, Sadolayn'ın denizine ateş et. Onun bütün gemilerini ilk batıran kazanır.</p>
+      <label>Zorluk</label>
+      <div class="seg" id="amLvl"><button type="button" data-l="1">🙂 Kolay</button><button type="button" data-l="2">😤 Orta</button><button type="button" data-l="3">🔥 Zor</button></div>
+      <p class="hint" id="amLvlHint" style="margin:6px 0 0"></p>
+      <p class="hint" id="amIstat" style="margin:6px 0 0"></p>
+      <div class="tkBal" id="amYildiz" style="margin:10px 0 0"></div>
+      <div class="amChips amAyarlar"></div>
+      <details class="amNasil" id="amNasil">
+        <summary>Nasıl oynanır?</summary>
+        <ul>
+          <li>10×10 denize 5 gemini diz: <b>Uçak gemisi</b> 5, <b>Muharip</b> 4, <b>Kruvazör</b> 3, <b>Denizaltı</b> 3, <b>Muhrip</b> 2 kare.</li>
+          <li>Gemiler birbirine <b>değemez</b>, çaprazdan bile. 🎲 ile rastgele dizebilir ya da gemiye dokunup yerini seçebilirsin.</li>
+          <li>Sırayla atış yaparsınız. Vurursan 🔥 bir atış daha senin; ıskalarsan sıra Sadolayn'a geçer.</li>
+          <li>Bir geminin bütün kareleri vurulunca batar. Gemiler değmediği için çevresi de boştur; “Otomatik işaretle” açıkken bu kareler kendiliğinden işaretlenir.</li>
+          <li>Oyun her hamlede kaydedilir; sayfayı kapatsan da kaldığın yerden devam edersin 🙂</li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- 2) Diziliş -->
+    <div class="card" id="amDiz">
+      <div class="amRow"><h2 class="amH" style="margin:0">Filonu diz</h2><span class="hint" style="margin:0" id="amDizSay"></span></div>
+      <p class="hint" style="margin:2px 0 8px">Gemiye dokun, sonra denizde başlayacağı kareye dokun. Yerleşmiş gemiye dokunursan seçilir; ikinci dokunuşta döner. Gemiler birbirine değemez, çapraz da olmaz.</p>
+      <div class="amBd amBenDiz" id="amDizBd"></div>
+      <p class="amMsg" id="amDizMsg" aria-live="polite"></p>
+      <div class="amTray" id="amTray"></div>
+      <div class="amTool">
+        <button type="button" id="amDondur">↻ Döndür</button>
+        <button type="button" id="amRastgele">🎲 Rastgele diz</button>
+        <button type="button" id="amTemizle">🧹 Temizle</button>
+      </div>
+      <p class="amErr" id="amErr"></p>
+      <button type="button" class="btn-go" id="amBasla" disabled>⚓ Savaşa başla</button>
+    </div>
+
+    <!-- 3) Savaş -->
+    <div id="amOyun" hidden>
+      <div class="card amDurum" id="amDurum">
+        <div class="amRow"><b id="amSira">Sıra sende</b><span class="amSay" id="amSay"></span></div>
+        <p id="amSavasMsg" aria-live="polite"></p>
+        <div id="amSeriYer"></div>
+      </div>
+      <div class="amSavas">
+        <div class="card amDusmanK">
+          <div class="amRow"><h3 class="amH" style="margin:0;font-size:16px">Sadolayn'ın denizi</h3><span class="hint" style="margin:0" id="amLvlRozet"></span></div>
+          <div style="margin-top:8px" class="amBd amDusman" id="amDusmanBd"></div>
+          <div class="amFilo" id="amFiloD" aria-label="Sadolayn'ın filosu"></div>
+        </div>
+        <div class="card amBen">
+          <h3 class="amH" style="margin:0 0 8px;font-size:16px">Senin filon</h3>
+          <div class="amIc">
+            <div class="amBd" id="amBenBd"></div>
+            <div><div class="amFilo" id="amFiloB" aria-label="Senin filon"></div><div class="amSon" id="amSonA"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" id="amSonuc" hidden style="margin-top:10px"></div>
+      <div class="amChips amAyarlar" style="justify-content:center"></div>
+      <div class="amKapat"><button type="button" id="amBirak">Oyunu bırak</button></div>
+    </div>
+  </section>
+</div>
+
+<script src="token.js?v=3"></script>
+<script src="amiralp.js"></script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
