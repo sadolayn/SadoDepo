@@ -870,10 +870,23 @@
       gece: `${G}<path d="M15.5 3.6a8.6 8.6 0 1 0 4.9 14.6 7 7 0 0 1-4.9-14.6z" fill="url(#gA)"/><g fill="#ffe2a8"><path class="gs" d="M19 4.2l.55 1.25 1.25.55-1.25.55L19 7.8l-.55-1.25-1.25-.55 1.25-.55z"/><path class="gs g2" d="M21.2 10l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4z"/></g>`,
     };
     let ik;
+    // Selamlama (8 Kasım 2026): sabah imza "Sağlıklı günler", gün içinde doğal ifadeler; hafta sonu ve özel günlerde değişir.
+    // Simge yine saate göre seçilir. Alt satırda "Hoş geldiniz · Keyifli gezinmeler · İyi çalışmalar" döner.
     if (h >= 5 && h < 11) { t = "Sağlıklı günler"; ik = "sabah"; }
-    else if (h >= 11 && h < 16) { t = "Sağlıklı öğlenler"; ik = "oglen"; }
-    else if (h >= 16 && h < 21) { t = "Sağlıklı akşamlar"; ik = "aksam"; }
-    else { t = "Sağlıklı geceler"; ik = "gece"; }
+    else if (h >= 11 && h < 17) { t = "Keyifli günler"; ik = "oglen"; }
+    else if (h >= 17 && h < 22) { t = "İyi akşamlar"; ik = "aksam"; }
+    else { t = "Güzel geceler"; ik = "gece"; }
+    (function () {
+      const n = new Date(), md = String(n.getMonth() + 1).padStart(2, "0") + "-" + String(n.getDate()).padStart(2, "0"), ymd = n.getFullYear() + "-" + md, gun = n.getDay();
+      // Dinî bayramlar (Diyanet takvimi; banka hesaplayıcılarıyla aynı tarihler) ve millî bayramlar
+      const DINI = ["2026-03-20", "2026-03-21", "2026-03-22", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30", "2027-03-09", "2027-03-10", "2027-03-11", "2027-05-16", "2027-05-17", "2027-05-18", "2027-05-19",
+        "2028-02-26", "2028-02-27", "2028-02-28", "2028-05-05", "2028-05-06", "2028-05-07", "2028-05-08", "2029-02-14", "2029-02-15", "2029-02-16", "2029-04-24", "2029-04-25", "2029-04-26", "2029-04-27"];
+      const MILLI = ["04-23", "05-19", "08-30", "10-29"];
+      if (md === "11-10") t = "Saygı ve özlemle";                                   // Atatürk'ü anma günü: neşeli selam yerine
+      else if (md === "01-01") t = "Mutlu yıllar";
+      else if (DINI.includes(ymd) || MILLI.includes(md)) t = "İyi bayramlar";
+      else if ((gun === 0 || gun === 6) && h >= 9 && h < 17) t = "İyi hafta sonları";
+    })();
     const svg = (id) => `<svg class="gik ${ik}" viewBox="0 0 24 24" aria-hidden="true">${IK[ik].replace(/"gA"|#gA|"gH"|#gH/g, (m) => m.replace(/g([AH])/, id + "$1"))}</svg>`;
     document.getElementById("greet").innerHTML = t + " " + svg("a");
     document.getElementById("greet2").innerHTML = t + " " + svg("b");
@@ -881,7 +894,8 @@
     (function () {
       const el = document.getElementById("welcome"), n = new Date(), wd = n.getDay() > 0 && n.getDay() < 6 && n.getHours() >= 8 && n.getHours() < 18;
       const ONR = "Öneri ve isteklerinizi en alttan iletebilirsiniz ✉️";
-      const L = ["Hoş geldiniz", "Keyifli gezinmeler", ...(wd ? ["İyi çalışmalar"] : []), ONR];
+      const anma = n.getMonth() === 10 && n.getDate() === 10; // 10 Kasım: "keyifli" ifadeler gösterilmez
+      const L = ["Hoş geldiniz", ...(anma ? [] : ["Keyifli gezinmeler"]), ...(wd ? ["İyi çalışmalar"] : []), ONR];
       el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); else if (el.textContent === ODUL) location.href = "isbank.html#odul"; else if (/kampanya/i.test(el.textContent)) location.href = "isbank.html#maximum"; });
       // Kampanya hatırlatıcısı: her ayın ilk 5 günü
       // (Ayın ilk haftası kampanya satırı 2 Kasım 2026'da kaldırıldı; kampanya hatırlatması kayan yazıda.) İşCep ödülü 9 Kasım'a kadar, dokununca haberlere
