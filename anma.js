@@ -15,11 +15,12 @@
     C = C || new AC();
     var t0 = C.currentTime + 0.05, son = t0 + sn, g = C.createGain(), f = C.createBiquadFilter(), oscs = [];
     f.type = "lowpass"; f.frequency.value = 1800; f.connect(g); g.connect(C.destination);
-    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.16, t0 + 4); g.gain.setValueAtTime(0.16, son - 6); g.gain.exponentialRampToValueAtTime(0.0001, son);
+    var Y1 = 16; // yükselme süresi (sn): ses ve perde alçaktan yavaş yavaş çıkar
+    g.gain.setValueAtTime(0.0001, t0); g.gain.linearRampToValueAtTime(0.03, t0 + 4); g.gain.linearRampToValueAtTime(0.16, t0 + Y1); g.gain.setValueAtTime(0.16, son - 6); g.gain.exponentialRampToValueAtTime(0.0001, son);
     [[0, "sawtooth"], [7, "sawtooth"], [-5, "triangle"]].forEach(function (d) {
       var o = C.createOscillator(); o.type = d[1]; o.detune.value = d[0];
-      o.frequency.setValueAtTime(140, t0); o.frequency.exponentialRampToValueAtTime(520, t0 + 7); // motor gibi yavaş yükselir
-      for (var t = t0 + 7; t < son - 6; t += 3) { o.frequency.linearRampToValueAtTime(535, t + 1.5); o.frequency.linearRampToValueAtTime(520, t + 3); } // hafif dalgalanma
+      o.frequency.setValueAtTime(90, t0); o.frequency.exponentialRampToValueAtTime(520, t0 + Y1); // motor gibi alçaktan yavaş yavaş yükselir
+      for (var t = t0 + Y1; t < son - 6; t += 3) { o.frequency.linearRampToValueAtTime(535, t + 1.5); o.frequency.linearRampToValueAtTime(520, t + 3); } // hafif dalgalanma
       o.frequency.exponentialRampToValueAtTime(160, son); // sönerek biter
       o.connect(f); o.start(t0); o.stop(son + 0.1); oscs.push(o);
     });
