@@ -38,23 +38,25 @@
   }
   SIRA.forEach(function (k) { var T = TAHTA[k], h = hamleler(T.cells); T.idx = h.idx; T.M = h.M; T.hi = h.idx[T.hedef]; });
 
-  /* ---------- Çözücü (Worker içinde de aynen çalışır) ---------- */
-  function cozucuYap() {
+  /* ---------- Çözücü ----------
+     Yığınla çalışan (özyinelemesiz) geri izleme: küçük dilimler halinde ilerler, böylece Worker yeni isteği hemen alır.
+     Konum anahtarı: delik i doluysa 2^i (37 deliğe kadar sayı olarak tam). Simetrik konumların en küçüğü "ölü" listesine yazılır. */
+  function motorYap() {
     var onbellek = {};
     function hazirla(cells, hedef) {
       var n = cells.length, P = [], idx = {}, i;
       for (i = 0; i < n; i++) { P.push(Math.pow(2, i)); idx[cells[i]] = i; }
-      var M = [];
+      var A = [], B = [], C = [], D = [[0, 1], [1, 0], [0, -1], [-1, 0]];
       for (i = 0; i < n; i++) {
-        var r = Math.floor(cells[i] / 7), c = cells[i] % 7, D = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+        var r = Math.floor(cells[i] / 7), c = cells[i] % 7;
         for (var d = 0; d < 4; d++) {
           var r2 = r + 2 * D[d][0], c2 = c + 2 * D[d][1];
           if (r2 < 0 || r2 > 6 || c2 < 0 || c2 > 6) continue;
           var b = idx[(r + D[d][0]) * 7 + c + D[d][1]], t = idx[r2 * 7 + c2];
-          if (b != null && t != null) M.push([i, b, t]);
+          if (b != null && t != null) { A.push(i); B.push(b); C.push(t); }
         }
       }
-      // 8 simetri; tahtayı kendine, hedef deliği de kendine götürenler kalır. İlk sıradaki birim dönüşüm.
+      // 8 simetri; tahtayı kendine (hedefli aramada hedef deliği de kendine) götürenler kalır. İlki birim dönüşüm.
       var T = [function (r, c) { return [r, c]; }, function (r, c) { return [c, 6 - r]; }, function (r, c) { return [6 - r, 6 - c]; }, function (r, c) { return [6 - c, r]; },
         function (r, c) { return [r, 6 - c]; }, function (r, c) { return [6 - r, c]; }, function (r, c) { return [c, r]; }, function (r, c) { return [6 - c, 6 - r]; }];
       var S = [];
@@ -64,67 +66,95 @@
         if (hedef >= 0 && m[idx[hedef]] !== idx[hedef]) return;
         S.push(m.map(function (j) { return P[j]; }));
       });
-      return { n: n, M: M, S: S, idx: idx, olu: new Set() };
+      return { n: n, A: A, B: B, C: C, S: S, idx: idx, olu: new Set() };
     }
-    // tahta: {ad, cells, hedef}; p: deliklerin 0/1 dizisi; hedefli: son piyon hedefte mi bitsin; ms: süre sınırı
-    function coz(tahta, p, hedefli, ms) {
+    // Arama nesnesi: adim(say) en çok "say" düğüm ilerler; "var" | "yok" | null (sürüyor) döner. Bulunca .yol = [[a,b,c],…]
+    function arama(tahta, p0, hedefli) {
       var k = tahta.ad + (hedefli ? "*" : ""), H = onbellek[k] || (onbellek[k] = hazirla(tahta.cells, hedefli ? tahta.hedef : -1));
-      if (H.olu.size > 5e6) H.olu = new Set(); // bellek şişmesin
-      var n = H.n, M = H.M, S = H.S, ns = S.length, olu = H.olu, hi = hedefli ? H.idx[tahta.hedef] : -1;
-      var K = [], sayi = 0, i, s, dugum = 0, yol = [], bitis = Date.now() + (ms || 6000);
-      p = p.slice();
+      if (H.olu.size > 15e5) H.olu = new Set(); // bellek şişmesin
+      var n = H.n, A = H.A, B = H.B, C = H.C, nm = A.length, S = H.S, ns = S.length, olu = H.olu, hi = hedefli ? H.idx[tahta.hedef] : -1;
+      var p = p0.slice(), K = [], sayi = 0, i, s, d = 0, J = [], KEY = [], mod = 0, val = false;
       for (s = 0; s < ns; s++) K.push(0);
       for (i = 0; i < n; i++) if (p[i]) { sayi++; for (s = 0; s < ns; s++) K[s] += S[s][i]; }
-      function git() {
-        if (sayi === 1) return hi < 0 || p[hi] === 1;
-        var key = K[0], s;
-        for (s = 1; s < ns; s++) if (K[s] < key) key = K[s];
-        if (olu.has(key)) return false;
-        if ((++dugum & 16383) === 0 && Date.now() > bitis) throw "sure";
-        for (var j = 0; j < M.length; j++) {
-          var m = M[j], a = m[0], b = m[1], c = m[2];
-          if (!p[a] || !p[b] || p[c]) continue;
-          p[a] = 0; p[b] = 0; p[c] = 1; sayi--;
-          for (s = 0; s < ns; s++) K[s] += S[s][c] - S[s][a] - S[s][b];
-          var ok = git();
-          p[a] = 1; p[b] = 1; p[c] = 0; sayi++;
-          for (s = 0; s < ns; s++) K[s] -= S[s][c] - S[s][a] - S[s][b];
-          if (ok) { yol.push(m); return true; }
-        }
-        olu.add(key);
-        return false;
+      function uygula(j, yon) { // yon 1: hamle, -1: geri
+        var a = A[j], b = B[j], c = C[j];
+        p[a] = yon < 0 ? 1 : 0; p[b] = p[a]; p[c] = yon < 0 ? 0 : 1; sayi -= yon;
+        for (var s = 0; s < ns; s++) K[s] += yon * (S[s][c] - S[s][a] - S[s][b]);
       }
-      var t0 = Date.now(), ok;
-      try { ok = git(); } catch (e) { if (e === "sure") return { durum: "sure", dugum: dugum, ms: Date.now() - t0 }; throw e; }
-      return { durum: ok ? "var" : "yok", yol: ok ? yol.reverse() : null, dugum: dugum, ms: Date.now() - t0 };
+      var o = { dugum: 0, yol: null };
+      o.adim = function (say) {
+        while (say-- > 0) {
+          if (mod === 0) { // yeni düğüm
+            o.dugum++;
+            if (sayi === 1) {
+              if (hi < 0 || p[hi] === 1) { o.yol = []; for (var x = 0; x < d; x++) o.yol.push([A[J[x]], B[J[x]], C[J[x]]]); return "var"; }
+              val = false; mod = 2; continue;
+            }
+            var key = K[0];
+            for (s = 1; s < ns; s++) if (K[s] < key) key = K[s];
+            if (olu.has(key)) { val = false; mod = 2; continue; }
+            KEY[d] = key; J[d] = -1; mod = 1;
+          }
+          if (mod === 1) { // sıradaki geçerli hamle
+            var j = J[d] + 1;
+            while (j < nm && (!p[A[j]] || !p[B[j]] || p[C[j]])) j++;
+            if (j < nm) { J[d] = j; uygula(j, 1); d++; mod = 0; continue; }
+            if (olu.size > 15e5) olu.clear(); olu.add(KEY[d]); val = false; mod = 2;
+          }
+          if (mod === 2) { // çocuktan dönüş (hep başarısız; başarı yukarıda hemen biter)
+            if (d === 0) return "yok";
+            d--; uygula(J[d], -1); mod = 1;
+          }
+        }
+        return null;
+      };
+      return o;
     }
-    // Önce hedef delikte biten çözüm aranır; yoksa herhangi bir delikte tek piyon
-    function ipucu(tahta, p, ms) {
-      var t0 = Date.now(), a = coz(tahta, p, true, ms);
-      if (a.durum === "var") { a.hedefli = true; return a; }
-      if (a.durum === "sure") return a;
-      var b = coz(tahta, p, false, Math.max(1500, (ms || 6000) - (Date.now() - t0)));
-      b.hedefli = false; b.ms = Date.now() - t0;
-      return b;
-    }
-    return { coz: coz, ipucu: ipucu };
+    return { arama: arama };
   }
 
-  /* Worker: aynı kod Blob'dan çalışır; olmazsa ana iş parçacığında kısa süreli arama */
-  var isci = null, isNo = 0, bekleyen = {};
-  try {
-    var kaynak = "var C=(" + cozucuYap.toString() + ")();onmessage=function(e){var d=e.data;var r=C.ipucu(d.tahta,d.p,d.ms);r.id=d.id;postMessage(r);};";
-    isci = new Worker(URL.createObjectURL(new Blob([kaynak], { type: "text/javascript" })));
-    isci.onmessage = function (e) { var f = bekleyen[e.data.id]; delete bekleyen[e.data.id]; if (f) f(e.data); };
-    isci.onerror = function () { isci = null; };
-  } catch (e) { isci = null; }
-  var yerel = null;
-  function cozIste(T, p, ms) {
-    var tahta = { ad: T.ad, cells: T.cells, hedef: T.hedef };
-    return new Promise(function (ok) {
-      if (isci) { var id = ++isNo; bekleyen[id] = ok; isci.postMessage({ id: id, tahta: tahta, p: p, ms: ms }); return; }
-      setTimeout(function () { yerel = yerel || cozucuYap(); ok(yerel.ipucu(tahta, p, Math.min(ms, 2500))); }, 30);
-    });
+  /* Worker gövdesi: tek iş; yeni istek gelince eskisi bırakılır (ama öğrendiği ölü konumlar kalır).
+     İş: önce hedef delikte biten çözüm, yoksa herhangi bir delikte tek piyon. Bir konuma en çok "ms" süre harcanır. */
+  function isciGovde(self, M) {
+    var is = null, sonuc = {};
+    function dongu() {
+      if (!is) return;
+      var t = Date.now() + 25, r = null;
+      while (r === null && Date.now() < t) r = is.a.adim(4000);
+      if (r === null && Date.now() > is.bitis) r = "sure";
+      if (r === "yok" && is.hedefli) { is.hedefli = false; is.a = M.arama(is.tahta, is.p, false); r = null; }
+      if (r === null) { setTimeout(dongu, 0); return; }
+      var x = { tip: "sonuc", key: is.key, durum: r, yol: is.a.yol, hedefli: is.hedefli, dugum: is.a.dugum, ms: Date.now() - is.t0 };
+      if (r !== "sure") sonuc[is.key] = x;
+      is = null; self.postMessage(x);
+    }
+    self.onmessage = function (e) {
+      var d = e.data;
+      if (d.tip !== "coz") return;
+      if (sonuc[d.key]) { self.postMessage(sonuc[d.key]); return; }
+      if (is && is.key === d.key) { is.bitis = Math.max(is.bitis, Date.now() + d.ms); return; }
+      var bas = !is; is = { key: d.key, tahta: d.tahta, p: d.p, hedefli: true, t0: Date.now(), bitis: Date.now() + d.ms };
+      is.a = M.arama(d.tahta, d.p, true);
+      if (bas) setTimeout(dongu, 0);
+    };
+  }
+  var isci = null, dinle = [];
+  function isciKur() {
+    var kaynak = "(" + isciGovde.toString() + ")(self,(" + motorYap.toString() + ")());";
+    try {
+      isci = new Worker(URL.createObjectURL(new Blob([kaynak], { type: "text/javascript" })));
+      isci.onerror = function () { isci = null; yerelKur(); };
+    } catch (e) { yerelKur(); }
+    if (isci) isci.onmessage = function (e) { dinle.forEach(function (f) { f(e.data); }); };
+  }
+  function yerelKur() { // Worker yoksa aynı gövde ana sayfada çalışır (dilimli olduğu için donmaz)
+    var sahte = { postMessage: function (x) { setTimeout(function () { dinle.forEach(function (f) { f(x); }); }, 0); } };
+    isciGovde(sahte, motorYap());
+    isci = { postMessage: function (d) { sahte.onmessage({ data: d }); } };
+  }
+  isciKur();
+  function cozIste(key, ms) {
+    isci.postMessage({ tip: "coz", key: key, tahta: { ad: T.ad, cells: T.cells, hedef: T.hedef }, p: p.slice(), ms: ms });
   }
 
   /* ---------- Durum ---------- */
@@ -225,7 +255,7 @@
   /* ---------- Oyun ---------- */
   function oyunAc(ad) {
     if (T && G) { saatDur(); kaydet(); }
-    T = TAHTA[ad]; sec = -1; iyiYol = {}; ipBekle = 0;
+    T = TAHTA[ad]; sec = -1; ipucuBirak();
     p = T.cells.map(function (x) { return T.bas.indexOf(x) >= 0 ? 1 : 0; });
     var k = K.o[ad], h = [];
     if (k && k.h) { // kayıttan yeniden oynat; geçersiz hamlede dur
@@ -237,7 +267,7 @@
     tahtaKur(); $("stSon").hidden = true;
     if (G.h.length && !hamleVar()) bitir(true);
     else { saatBasla(); mesaj(G.h.length ? "Kaldığın yerden devam 🙂" : "Bir piyona dokun, sonra atlayacağı deliğe."); }
-    sayacYaz(); kaydet();
+    sayacYaz(); kaydet(); arkaPlan();
   }
   function yap(m, surukle) {
     var a = m[0], b = m[1], c = m[2], el = piyonEl[a], yenen = piyonEl[b];
@@ -248,8 +278,9 @@
     if (yenen) { setTimeout(function () { yenen.classList.add("git"); }, surukle ? 0 : 90); setTimeout(function () { yenen.remove(); }, 420); }
     tik(330, 0.16); setTimeout(function () { tik(210, 0.09); }, 110);
     saatBasla(); etiketle(); mesaj("");
+    ipucuBirak();
     if (!hamleVar()) bitir(false);
-    sayacYaz(); kaydet();
+    sayacYaz(); kaydet(); arkaPlan();
   }
   function geriAl() {
     if (!G.h.length) return;
@@ -261,8 +292,8 @@
     piyonYap(b, true);
     if (G.bitti) { G.bitti = false; $("stSon").hidden = true; }
     if (G.h.length) saatBasla(); else { saatDur(); }
-    etiketle(); mesaj(G.h.length ? "" : "Başa döndün 🙂"); tik(260, 0.1);
-    sayacYaz(); kaydet();
+    ipucuBirak(); etiketle(); mesaj(G.h.length ? "" : "Başa döndün 🙂"); tik(260, 0.1);
+    sayacYaz(); kaydet(); arkaPlan();
   }
   function bastan() {
     saatDur(); delete K.o[T.ad]; G = null; yaz(KAYIT, K);
@@ -296,38 +327,77 @@
     }
     $("stSon").hidden = false;
     mesaj(k === 1 ? "Oyun bitti 🎉" : "Hamle kalmadı. İstersen geri alıp başka yol dene.");
-    if (!yuklemede) { tik(660, 0.12); setTimeout(function () { tik(880, 0.1); }, 140); }
+    if (!yuklemede) { setTimeout(function () { var r = $("stSon").getBoundingClientRect(); if (r.bottom > innerHeight) $("stSon").scrollIntoView({ block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); }, 450); tik(660, 0.12); setTimeout(function () { tik(880, 0.1); }, 140); }
     sayacYaz();
   }
 
-  /* ---------- İpucu ---------- */
-  var ipBekle = 0;
+  /* ---------- İpucu ----------
+     Her hamleden sonra arka planda o konum için çözüm aranır (Worker); ipucuna dokununca çoğu zaman hazırdır.
+     Bulunan yolun bütün ara konumları "iyiYol"a yazılır: ipucunu izleyen oyuncuya sonrakiler beklemeden gelir. */
+  var yokKonum = {}, sureKonum = {}, ipBek = null; // ipBek: {key, ok, t0, z}
+  function konumKey() { return T.ad + ":" + anahtar(); }
+  dinle.push(function (r) {
+    if (r.tip !== "sonuc") return;
+    var ad = r.key.split(":")[0], q = r.key.split(":")[1].split("").map(Number);
+    if (r.durum === "var") r.yol.forEach(function (m) { iyiYol[ad + ":" + q.join("")] = { m: m, hedefli: r.hedefli }; q[m[0]] = 0; q[m[1]] = 0; q[m[2]] = 1; });
+    else if (r.durum === "yok") yokKonum[r.key] = 1;
+    else sureKonum[r.key] = 1;
+    window.SoloTestSon = { durum: r.durum, ms: r.ms, dugum: r.dugum };
+    if (ipBek && ipBek.key === r.key) { var b = ipBek; ipBek = null; clearTimeout(b.z); $("stIpucu").disabled = !!G.bitti; b.ok(ipucuSonuc(r.key)); }
+  });
+  function arkaPlan() { // sessiz ön hazırlık
+    if (!G || G.bitti) return;
+    var key = konumKey();
+    if (!iyiYol[key] && !yokKonum[key] && !sureKonum[key]) cozIste(key, 6000);
+  }
   function ipucuGoster(m, not) {
     sec_(m[0]);
     if (piyonEl[m[0]]) piyonEl[m[0]].classList.add("ip");
     delikEl[m[2]].classList.remove("ok"); delikEl[m[2]].classList.add("ip");
     mesaj(not || "💡 Parlayan piyonu, kesik çizgili deliğe atla.");
   }
+  function ipucuSonuc(key) {
+    if (key !== konumKey()) { mesaj(""); return null; }
+    var b = iyiYol[key];
+    if (b) {
+      if (G.ipSon !== key) { G.ipSon = key; G.ip = (G.ip || 0) + 1; kaydet(); }
+      ipucuGoster(b.m, b.hedefli ? null : "💡 Son piyonu hedef delikte bitirmek artık mümkün değil ama tek piyona hâlâ inilebilir 👍");
+      return b.m;
+    }
+    var n = geriSayisi();
+    if (yokKonum[key]) mesaj(n > 0 ? "Bu durumdan tek piyona inilemiyor. <b>" + n + " hamle</b> geri alırsan çözüme giden yol belli 🙂" : "Bu durumdan tek piyona inilemiyor, birkaç hamle geri al 🙂");
+    else mesaj(n > 0 ? "Bu konumda ipucunu bulamadım 🤔 <b>" + n + " hamle</b> geri alırsan çözüme giden yol belli." : "Bu konum çok dallı budaklı, ipucunu bulamadım 🤔 Bir hamle geri alıp yeniden dene.");
+    return null;
+  }
+  // Çözümü bilinen en son konuma kaç hamle geri gidilmeli? (bilinmiyorsa 0)
+  function geriSayisi() {
+    var q = T.cells.map(function (x) { return T.bas.indexOf(x) >= 0 ? 1 : 0; }), son = -1;
+    for (var k = 0; k <= G.h.length; k++) {
+      if (iyiYol[T.ad + ":" + q.join("")]) son = k;
+      var m = G.h[k]; if (m) { q[m[0]] = 0; q[m[1]] = 0; q[m[2]] = 1; }
+    }
+    return son < 0 ? 0 : G.h.length - son;
+  }
   function ipucu() {
-    if (G.bitti || ipBekle) return Promise.resolve(null);
-    var key = anahtar(), bilinen = iyiYol[key];
-    var say = function () { if (G.ipSon !== key) { G.ipSon = key; G.ip = (G.ip || 0) + 1; kaydet(); } };
-    if (bilinen) { say(); ipucuGoster(bilinen.m, bilinen.hedefli ? null : "💡 Hedefte bitirmek artık zor ama tek piyona hâlâ inilebilir 👍"); return Promise.resolve(bilinen.m); }
-    var no = ++ipBekle; mesaj("🤔 Düşünüyorum…"); $("stIpucu").disabled = true;
-    var tahtaAd = T.ad, t0 = performance.now();
-    return cozIste(T, p, T.ad === "fransiz" ? 8000 : 5000).then(function (r) {
-      ipBekle = 0; $("stIpucu").disabled = !!G.bitti;
-      window.SoloTestSon = { durum: r.durum, ms: Math.round(performance.now() - t0), dugum: r.dugum };
-      if (T.ad !== tahtaAd || anahtar() !== key) { mesaj(""); return null; }
-      if (r.durum === "var") {
-        var q = p.slice();
-        r.yol.forEach(function (m) { iyiYol[q.join("")] = { m: m, hedefli: r.hedefli }; q[m[0]] = 0; q[m[1]] = 0; q[m[2]] = 1; });
-        return ipucu();
-      }
-      if (r.durum === "yok") mesaj("Bu durumdan tek piyona inilemiyor, birkaç hamle geri al 🙂");
-      else mesaj("Bu konum çok dallı budaklı, ipucunu zamanında bulamadım 🤔 Bir hamle yapıp yeniden dene.");
-      return null;
-    });
+    if (G.bitti) return Promise.resolve(null);
+    var key = konumKey();
+    if (iyiYol[key] || yokKonum[key]) return Promise.resolve(ipucuSonuc(key));
+    if (ipBek && ipBek.key === key) return ipBek.pr;
+    delete sureKonum[key];
+    mesaj("🤔 Düşünüyorum…"); $("stIpucu").disabled = true;
+    ipBek = { key: key };
+    ipBek.pr = new Promise(function (ok) { ipBek.ok = ok; });
+    ipBek.z = setTimeout(function () { if (ipBek && ipBek.key === key) mesaj("🤔 Bu konum biraz zorlu, hâlâ arıyorum…"); }, 3500);
+    cozIste(key, 12000);
+    return ipBek.pr;
+  }
+  // Fransız tahtasının başlangıcından hedefe bir çözüm (bu çözücüyle önceden bulundu; açılışta uzun aramaya gerek kalmasın)
+  (function () {
+    var F = TAHTA.fransiz, q = F.cells.map(function (x) { return F.bas.indexOf(x) >= 0 ? 1 : 0; });
+    [[3,4,5],[6,5,4],[16,9,3],[3,4,5],[11,10,9],[1,5,11],[8,9,10],[11,10,9],[13,12,11],[18,11,5],[22,15,8],[8,9,10],[17,10,4],[0,4,10],[27,20,13],[7,13,20],[25,26,27],[23,24,25],[27,20,13],[14,13,12],[19,12,6],[2,6,12],[34,30,24],[36,32,26],[25,26,27],[28,27,26],[35,31,25],[25,26,27],[33,27,20],[21,20,19],[19,12,6],[6,5,4],[4,10,17],[17,24,30],[29,30,31]].forEach(function (m) { iyiYol["fransiz:" + q.join("")] = { m: m, hedefli: true }; q[m[0]] = 0; q[m[1]] = 0; q[m[2]] = 1; });
+  })();
+  function ipucuBirak() { // konum değişti: bekleyen ipucu boşa düşer
+    if (ipBek) { var b = ipBek; ipBek = null; clearTimeout(b.z); $("stIpucu").disabled = !!(G && G.bitti); b.ok(null); }
   }
 
   /* ---------- Dokunma ve sürükleme ---------- */
@@ -412,5 +482,5 @@
   sesYaz();
   oyunAc(K.aktif);
   // Testler için küçük kapı
-  window.SoloTest = { ipucu: ipucu, durum: function () { return { tahta: T.ad, kalan: kalan(), hamle: G.h.length, bitti: !!G.bitti, hedefte: kalan() === 1 && p[T.hi] === 1, p: p.join("") }; }, cozucu: cozucuYap };
+  window.SoloTest = { ipucu: ipucu, durum: function () { return { tahta: T.ad, kalan: kalan(), hamle: G.h.length, bitti: !!G.bitti, hedefte: kalan() === 1 && p[T.hi] === 1, p: p.join("") }; }, motor: motorYap };
 })();

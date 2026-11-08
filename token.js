@@ -1,4 +1,4 @@
-// Yıldız — Batak, King, Balayı King ve Sayı Bulmaca'da ortak bakiye. (Solitaire'de Yıldız yok; orada dilek tutulur.)
+// Yıldız — Batak, King, Balayı King, Sayı Bulmaca, Satranç ve Amiral Battı'da ortak bakiye. (Solitaire'de Yıldız yok; orada dilek tutulur.)
 // Bakiye "batakMP" anahtarında durur, böylece Batak'taki eski bakiye korunur. 1.000 Yıldız ve bir kerelik 2.000 Yıldız hediyeyle başlanır.
 // Oyun başında Yıldız konur; kazanan katını alır (kesinti yok). Yıldız yalnızca oyun içi skordur.
 // Dört kişilik tekli oyunlarda (King, Batak) sıraya göre: birinci 3 katını, ikinci Yıldızını geri alır; puan eşitse o sıraların payı bölünür.
@@ -93,7 +93,7 @@
       const h = Math.floor(left / 36e5), m = Math.floor((left % 36e5) / 6e4);
       modal.innerHTML = `<h2>⭐ Yıldız bitti</h2>
         <p>Yeni Yıldız için <b>${h ? h + " saat " : ""}${m} dakika</b> sonra gel. Seni bir bilgi sorusu bekliyor; bilirsen <b>1.000 Yıldız</b> kazanırsın.</p>
-        <p style="font-size:12.5px">Bakiyen Batak, King, Balayı King ve Sayı Bulmaca'da ortak. Solitaire Yıldız istemez, dilek tutup oynayabilirsin 🌙</p>
+        <p style="font-size:12.5px">Bakiyen Batak, King, Balayı King, Sayı Bulmaca, Satranç ve Amiral Battı'da ortak. Solitaire Yıldız istemez, dilek tutup oynayabilirsin 🌙</p>
         <a class="btn" href="${geri}" style="display:block;text-decoration:none;padding:12px">Oyunlara dön</a>`;
       goster();
       return;

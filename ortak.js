@@ -71,7 +71,7 @@
     },
   };
 
-  var OYUNLAR = /^(batak|king|balayi|tavla|solitaire|pilot|tahmin|bilmece|bulmaca)$/;
+  var OYUNLAR = /^(batak|king|balayi|tavla|solitaire|pilot|tahmin|bilmece|bulmaca|satranc|amiral|solotest)$/;
   var SAYFA = (location.pathname.split("/").pop() || "index.html").replace(/\.html$/, "");
   function footer() {
     if (!document.body || document.body.getAttribute("data-footer") === "yok" || document.querySelector("footer.copyright")) return;
