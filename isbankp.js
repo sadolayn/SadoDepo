@@ -1966,13 +1966,30 @@ function deck() {
   return QD;
 }
 let SC = { d: 0, t: 0, s: 0 }; try { SC = Object.assign(SC, JSON.parse(localStorage.getItem("isbQuiz") || "{}")); } catch (e) {}
+// Skor satırı: skor, seri ve "Sıfırla" düğmesi (8 Kasım 2026)
+const scHtml = () => SC.t ? `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""} <button type="button" class="dqSifir" id="dqSifir" title="Skoru ve seriyi sıfırla">↺ Sıfırla</button>` : "İlk sorun!";
+// Üst üste 10 doğruda (10, 20, 30…) oyunlar için 500 Yıldız; bakiye oyunlardaki "batakMP" anahtarında (token.js)
+const SERI_ODUL = 10, ODUL_YILDIZ = 500;
+function yildizEkle(n) {
+  try { const k = "batakMP", m = JSON.parse(localStorage.getItem(k) || "{}") || {}; if (!(m.bal >= 0)) m.bal = 1000; m.bal += n; m.empty = 0; localStorage.setItem(k, JSON.stringify(m)); return true; } catch (e) { return false; }
+}
+function sifirBagla() {
+  const b = $("dqSifir"); if (!b) return;
+  b.onclick = () => {
+    if (!confirm("Skorun ve serin sıfırlansın mı? Baştan başlarsın.")) return;
+    SC = { d: 0, t: 0, s: 0 };
+    try { localStorage.setItem("isbQuiz", JSON.stringify(SC)); } catch (e) {}
+    window.Rapor && Rapor.bolum("soru-sifirla");
+    $("dqSc").innerHTML = scHtml();
+  };
+}
 const PRAISE = ["🎉 Tebrikler, doğru!", "👏 Harikasın!", "🌟 Bravo, tam isabet!", "🏆 Bilgine sağlık!", "✅ Süper, bildin!", "💯 Mükemmel!"];
 function qHtml() {
   const D = deck(); if (!D.length) return "";
   qKonum();
   const q = D[qI % D.length];
   return `<h4>❓ Günün sorusu</h4>${q.src ? `<div class="src">${q.src}</div>` : ""}<div class="q">${esc(q.q)}</div><div class="os" id="dqOs">${q.o.map((o, i) => `<button type="button" data-i="${i}">${esc(o)}</button>`).join("")}</div><div class="m" id="dqM">Cevabını seç 👇</div>
-    <div class="nav"><span class="score" id="dqSc">${SC.t ? `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""}` : "İlk sorun!"}</span><button type="button" id="dqNext">Sonraki soru ›</button></div>`;
+    <div class="nav"><span class="score" id="dqSc">${scHtml()}</span><button type="button" id="dqNext">Sonraki soru ›</button></div>`;
 }
 function bindQ() {
   const D = deck(), q = D[qI % D.length], os = $("dqOs"); if (!os) return; qDone = false;
@@ -1986,8 +2003,13 @@ function bindQ() {
     qKaydet(qI + 1); // cevaplanan soru yenileyince tekrar gelmesin
     const m = $("dqM"); m.className = "m congrats";
     m.innerHTML = ok ? `<b style="color:#7ee2a8;font-size:15px">${PRAISE[SC.d % PRAISE.length]}</b>${SC.s >= 3 ? ` <span>Üst üste ${SC.s} doğru! 🔥</span>` : ""}` : `Olmadı 🙂 Doğrusu yeşil olan. Sonrakinde bilirsin!`;
-    $("dqSc").innerHTML = `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""}`;
+    if (ok && SC.s % SERI_ODUL === 0 && yildizEkle(ODUL_YILDIZ)) {
+      m.innerHTML += `<div class="dqOdul">🎁 Üst üste ${SC.s} doğru! Oyunlarda kullanman için <b>${ODUL_YILDIZ} ⭐ Yıldız</b> hesabına eklendi.</div>`;
+      window.Rapor && Rapor.bolum("soru-seri-odul");
+    }
+    $("dqSc").innerHTML = scHtml(); sifirBagla();
   };
+  sifirBagla();
   $("dqNext").onclick = () => { window.Rapor && Rapor.bolum("soru-sonraki"); qI++; qKaydet(qI); $("dqBox").innerHTML = qHtml(); bindQ(); };
 }
 function renderSoru() {

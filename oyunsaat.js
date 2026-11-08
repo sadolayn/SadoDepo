@@ -1,5 +1,5 @@
 // Oyun saatleri. "Yoğun saat": hafta içi 08:45–12:30 ve 13:30–18:00 (resmî tatiller hariç).
-// Yoğun saatte: bilgisayardan oyunlar kapalı; telefondan girişte İş Bankası sorusu (oyunquiz.js), yanlışta 5 dakika bekleme.
+// Yoğun saatte: bilgisayardan oyunlar kapalı (Sayı Bulmaca hariç: o bilgisayarda da bir soruyla açılır, 8 Kasım 2026); telefondan girişte İş Bankası sorusu (oyunquiz.js), yanlışta 5 dakika bekleme.
 // Doğru cevap tek kullanımlık, 2 dakikalık bir geçiş verir (localStorage "oyunGecis"): her oyun girişinde yeniden sorulur.
 // Saat telefondan değil sunucudan (sayfanın Date başlığı) alınır; cihaz saatini değiştirmek işe yaramaz.
 // Oyun sayfaları: <script src="oyunsaat.js" data-kilit="sayfa">  ·  hesap.html Bulmaca: data-kilit="bulmaca"
@@ -30,6 +30,8 @@
     for (var i = 0; i < 4 * 24 * 60 && kapali(dk); i++) dk += 60000;
     return dk;
   }
+  // Bilgisayarda yoğun saatte de soruyla açılan oyun: Sayı Bulmaca
+  function soruyla(h) { return /^bulmaca\.html(#|$)/.test(h || ""); }
   // Masaüstü bilgisayar mı? (telefon ve tablet değil)
   function masaustu() {
     var ua = navigator.userAgent || "";
@@ -60,7 +62,7 @@
     var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
     return (h ? h + ":" + p(m) : m) + ":" + p(x);
   }
-  var MASA_METIN = "Hafta içi <b>08:45</b>'ten önce, <b>12:30–13:30</b> arası ve <b>18:00</b>'den sonra açık. Hafta sonu ve ulusal bayramlarda gün boyu açık 🙂";
+  var MASA_METIN = "Hafta içi <b>08:45</b>'ten önce, <b>12:30–13:30</b> arası ve <b>18:00</b>'den sonra açık. Hafta sonu ve ulusal bayramlarda gün boyu açık 🙂<br>🔢 <b>Sayı Bulmaca</b> bu saatlerde de açık: bir İş Bankası sorusunu bilmen yeter.";
   var css = ".os-b{max-width:360px;margin:auto;background:#0d0d0d;border:1px solid #262626;border-radius:18px;padding:22px 18px;color:#f2f2f2;text-align:center;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}" +
     ".os-i{font-size:40px;line-height:1}.os-b h3{margin:8px 0 6px;font-size:19px;color:#e0a24f}.os-b p{margin:0 0 14px;font-size:14px;line-height:1.5;color:#bdbdbd}" +
     ".os-l{font-size:12px;color:#8a8a8a}.os-cd{font-size:32px;font-weight:700;color:#e0a24f;margin:2px 0 14px;font-variant-numeric:tabular-nums}" +
@@ -110,7 +112,7 @@
     // Telefon: yalnızca açılışta bakılır; oynanan oyun yarıda kesilmez
     var bak = function (ilk) {
       var k = kapali(), yeni = "";
-      if (k && masaustu()) yeni = "masa";
+      if (k && masaustu() && !(mod === "sayfa" && soruyla(hedef))) yeni = "masa";
       else if (k && !izinli && saatHazir && (ilk || durum === "soru")) { if (gecisKullan()) izinli = true; else yeni = "soru"; }
       if (yeni !== durum) {
         durum = yeni;
@@ -129,5 +131,5 @@
   }
 
   window.OyunSaat = { kapali: kapali, acilis: acilis, simdi: simdi, hazir: hazir, sure: sure, masaustu: masaustu,
-    gecisVar: gecisVar, gecisVer: gecisVer, gecisSil: gecisSil, gecisKullan: gecisKullan, masaMetin: MASA_METIN };
+    soruyla: soruyla, gecisVar: gecisVar, gecisVer: gecisVer, gecisSil: gecisSil, gecisKullan: gecisKullan, masaMetin: MASA_METIN };
 })();

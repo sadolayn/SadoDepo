@@ -182,14 +182,18 @@
   .hbnk.bos .hh { font-size: 12.5px; color: var(--muted); }
   .cal-f i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 5px; vertical-align: middle; }
   .stick { margin: 0 -16px 12px; padding: 10px 16px; }
-  /* Aşağı kaydırınca büyük üst blok kayar gider; yerine yalnızca tarih ve ‹ › oklarından oluşan ince şerit gelir (8 Kasım 2026) */
+  /* Aşağı kaydırınca büyük üst blok kayar gider; yerine iki sekme ve (Resmî Gazete'de) tarih ile ‹ › oklarından oluşan ince şerit gelir (8 Kasım 2026) */
   .mini { position: fixed; top: 0; left: 0; right: 0; z-index: 30; background: #000; border-bottom: 1px solid #222; box-shadow: 0 8px 18px rgba(0,0,0,.55); transform: translateY(-110%); transition: transform .25s cubic-bezier(.2,.7,.2,1); }
   .mini.acik { transform: none; }
-  .mini > div { max-width: 560px; margin: 0 auto; padding: 8px 16px; display: flex; gap: 8px; align-items: center; }
+  .mini > div { max-width: 560px; margin: 0 auto; padding: 8px 16px 0; display: flex; gap: 8px; align-items: center; }
+  .mini > div:last-child { padding-bottom: 8px; }
+  .mini .ms { flex: 1; min-width: 0; font-family: inherit; font-size: 13.5px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mini .ms.on { background: linear-gradient(160deg, #3a2a10, #1a1206); border-color: var(--accent); color: #fbe3b0; }
+  .mini .ms.kr.on { background: linear-gradient(160deg, #10224a, #070f22); border-color: #5d8bff; color: #d6e2ff; }
   .mini button { min-height: 38px; border-radius: 11px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
   .mini .mo { flex: none; width: 42px; font-size: 19px; } .mini .mo:disabled { opacity: .3; }
-  .mini .mt { flex: 1; min-width: 0; font: 700 15px inherit; font-family: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  body.kurumda .mini { display: none; }
+  .mini .mt { flex: 1; min-width: 0; font-family: inherit; font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  body.kurumda .mini .gz-only { display: none !important; }
   @media (prefers-reduced-motion: reduce) { .mini { transition: none; } }
   .stick > :last-child { margin-bottom: 0; }
   html { overflow-anchor: none; }
@@ -223,7 +227,7 @@
   </div>
   <div class="cal gz-only" id="cal"></div>
   </div>
-  <div class="mini" id="mini" aria-hidden="true"><div><button type="button" class="mo" id="mPrev" aria-label="Önceki gün" tabindex="-1">‹</button><button type="button" class="mt" id="mTar" title="Yukarı çık, takvimi aç" tabindex="-1"></button><button type="button" class="mo" id="mNext" aria-label="Sonraki gün" tabindex="-1">›</button></div></div>
+  <div class="mini" id="mini" aria-hidden="true"><div><button type="button" class="ms" id="mGz" tabindex="-1">📜 Resmî Gazete</button><button type="button" class="ms kr" id="mKr" tabindex="-1">🏛️ Kurum Duyuruları</button></div><div class="gz-only"><button type="button" class="mo" id="mPrev" aria-label="Önceki gün" tabindex="-1">‹</button><button type="button" class="mt" id="mTar" title="Yukarı çık, takvimi aç" tabindex="-1"></button><button type="button" class="mo" id="mNext" aria-label="Sonraki gün" tabindex="-1">›</button></div></div>
   <div id="bugun"></div>
   <div id="haftaBnk" class="gz-only"></div>
 
@@ -282,6 +286,8 @@ function sekCiz() {
     + `<button type="button" data-s="kurum" class="kr ${sek === "kurum" ? "on" : ""}">🏛️ Kurum Duyuruları<small class="kad">${Object.entries(KURUM).map(([k, [, kc]]) => `<span style="color:${kc}">${esc(k)}</span>`).join(" · ")}</small>${y && sek !== "kurum" ? `<em>${y > 9 ? "9+" : y}</em>` : ""}</button>`;
   $("sek").querySelectorAll("button").forEach((b) => (b.onclick = () => sekAc(b.dataset.s, true)));
 }
+// ince şeridin yüksekliği (kaydırma hesapları için)
+function miniH() { const m = document.getElementById("mini"); return (m ? m.offsetHeight : 0) + 8; }
 function sekAc(s_, kaydir) {
   sek = s_; document.body.classList.toggle("kurumda", sek === "kurum");
   if (sek === "kurum") {
@@ -343,7 +349,7 @@ function bugunCiz() {
     if (b.dataset.b === "gz") {
       sekAc("gazete"); history.replaceState(null, "", "#" + today); await show(today);
       const sec = document.querySelector("#content .sec.bnk");
-      if (sec) window.scrollTo({ top: sec.getBoundingClientRect().top + scrollY - 60, behavior: "smooth" });
+      if (sec) window.scrollTo({ top: sec.getBoundingClientRect().top + scrollY - miniH(), behavior: "smooth" });
     } else { kurumSec = b.dataset.b; kGun = ""; sekAc("kurum", true); }
   }));
 }
@@ -373,7 +379,7 @@ function renderHaftaBnk(mon) {
     history.replaceState(null, "", "#" + b.dataset.g);
     await show(b.dataset.g);
     const sec = document.querySelector("#content .sec.bnk");
-    if (sec) { const y = sec.getBoundingClientRect().top + window.scrollY - 60; window.scrollTo({ top: y, behavior: "smooth" }); }
+    if (sec) { const y = sec.getBoundingClientRect().top + window.scrollY - miniH(); window.scrollTo({ top: y, behavior: "smooth" }); }
   }));
 }
 const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -523,10 +529,12 @@ init();
 <script>(function(){ // ince tarih şeridi: büyük üst blok ekrandan çıkınca görünür
   var s=document.querySelector(".stick"),m=document.getElementById("mini");if(!s||!m)return;
   var $=function(x){return document.getElementById(x)},pick=$("pick");
-  var yaz=function(){var o=pick.options[pick.selectedIndex];$("mTar").textContent=o?o.textContent:"";$("mPrev").disabled=$("prev").disabled;$("mNext").disabled=$("next").disabled;};
+  var yaz=function(){var kr=document.body.classList.contains("kurumda");$("mGz").classList.toggle("on",!kr);$("mKr").classList.toggle("on",kr);var o=pick.options[pick.selectedIndex];$("mTar").textContent=o?o.textContent:"";$("mPrev").disabled=$("prev").disabled;$("mNext").disabled=$("next").disabled;};
   var f=function(){var ac=s.getBoundingClientRect().bottom<0;if(ac)yaz();if(ac!==m.classList.contains("acik")){m.classList.toggle("acik",ac);m.setAttribute("aria-hidden",ac?"false":"true");m.querySelectorAll("button").forEach(function(b){b.tabIndex=ac?0:-1});}};
-  var git=function(id){$(id).click();setTimeout(yaz,50);var c=$("content");window.scrollTo({top:c.getBoundingClientRect().top+window.scrollY-60})};
+  var git=function(id){$(id).click();setTimeout(yaz,50);var c=$("content");window.scrollTo({top:c.getBoundingClientRect().top+window.scrollY-miniH()})};
   $("mPrev").onclick=function(){git("prev")};$("mNext").onclick=function(){git("next")};
+  var sekGec=function(x){sekAc(x,true);yaz();}; // sekme değişince sayfanın başına çıkılır (büyük sekmeler görünür)
+  $("mGz").onclick=function(){sekGec("gazete")};$("mKr").onclick=function(){sekGec("kurum")};
   $("mTar").onclick=function(){window.scrollTo({top:0,behavior:"smooth"})};
   window.addEventListener("scroll",f,{passive:true});f();
 })();</script>
