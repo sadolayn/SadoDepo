@@ -807,7 +807,7 @@
     </div>
     <section class="fav" id="fav" aria-label="Favorilerim">
       <h2 data-yeni="favori|2026-10-30|YENİ"><span class="t">⭐ Favorilerim</span><button type="button" id="favDuz" aria-pressed="false">Seç</button></h2>
-      <p class="favIp" id="favIp">Sık kullandığın 6 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun. Aramadaki ☆ ile alt başlıkları da ekleyebilirsin.</p>
+      <p class="favIp" id="favIp">Sık kullandığın 8 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun. Aramadaki ☆ ile alt başlıkları da ekleyebilirsin.</p>
       <div class="favL" id="favL"></div>
     </section>
     <a class="one isb" href="isbank.html" data-ara="kampanya maximum maximiles işcep iş black iş plus şube banka günün sorusu puan" data-yeni="isbank3|2026-10-21|YENİLENDİ">
@@ -1804,7 +1804,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     ["🏬", "Bölge Nabzı", "AVM & proje düğmesi: yerel firmaların mağaza ve proje haberleri", "bolge.html", "2026-11-06"],
     ["🌍", "Bölge Nabzı › Dünya", "24 ülkede ekonomi, ticaret ve gurbetçi haberleri", "bolge.html#dunya", "2026-11-05"],
     ["🚗", "Bölge Nabzı", "trafik kazası ve dolandırıcılık haberleri de bölgende", "bolge.html", "2026-11-05"],
-    ["⭐", "Favorilerim", "sık kullandığın 6 aracı ana sayfaya sabitle", "#fav", "2026-11-05"],
+    ["⭐", "Favorilerim", "sık kullandığın 8 aracı ana sayfaya sabitle", "#fav", "2026-11-05"],
     ["📍", "Bölge Nabzı", "ilini ya da ilçeni seç: atama, vefat, yatırım, konkordato…", "bolge.html", "2026-10-29"],
     ["🧭", "Yol Gösteren", "firmayı tanımak için resmî kaynaklar tek yerde", "firma.html", "2026-10-28"],
     ["💡", "Pratik", "Hesaplamalar'da kısayollar: yüzde, KDV, tarih, mesafe…", "hesap.html#klavye", "2026-10-27"],
@@ -1891,7 +1891,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 })();
 </script>
 <script>
-/* Ana sayfa: anlık arama (alt başlıklar dahil) + Tüm araçlar A-Z + Favorilerim (en fazla 6, yalnızca bu cihazda saklanır)
+/* Ana sayfa: anlık arama (alt başlıklar dahil) + Tüm araçlar A-Z + Favorilerim (en fazla 8, yalnızca bu cihazda saklanır)
    Yeni bir sekme/bölüm eklenince ALT listesine bir satır eklemek yeter: [başlık, ana bölüm, adres, simge, ek arama kelimeleri] */
 (function () {
   var nav = document.querySelector("nav.mn"); if (!nav) return;
@@ -1969,7 +1969,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   });
   ALT.forEach(function (x) { KAT[x[2]] = { ad: x[0], ust: x[1], h: x[2], ik: x[3], ara: norm(x[0] + " " + x[1] + " " + x[4]), adN: norm(x[0]) }; });
   // --- Favoriler
-  var KEY = "anaFav", MAX = 6, F = [];
+  var KEY = "anaFav", MAX = 8, F = [];
   try { F = JSON.parse(localStorage.getItem(KEY) || "[]") || []; } catch (e) {}
   F = F.filter(function (h) { return KAT[h]; }).slice(0, MAX);
   function kaydet() { try { localStorage.setItem(KEY, JSON.stringify(F)); } catch (e) {} }
@@ -1977,7 +1977,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   function degis(h) {
     var i = F.indexOf(h);
     if (i > -1) F.splice(i, 1);
-    else if (F.length >= MAX) { uyar("En fazla 6 favori olabilir; önce birini çıkar ⭐"); favIp.hidden = false; favIp.textContent = "En fazla 6 favori olabilir; önce birini çıkar ⭐"; return false; }
+    else if (F.length >= MAX) { uyar("En fazla 8 favori olabilir; önce birini çıkar ⭐"); favIp.hidden = false; favIp.textContent = "En fazla 8 favori olabilir; önce birini çıkar ⭐"; return false; }
     else F.push(h);
     kaydet(); ciz(); return true;
   }
@@ -2011,8 +2011,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     });
     var acik = document.body.classList.contains("favDuz");
     favIp.hidden = !acik && F.length > 0;
-    favIp.innerHTML = acik ? "Sabitlemek istediğin araçlara dokun (en fazla 6); çıkarmak için favorideki <b>✕</b>'e dokun. Alt başlıklar için aramadaki ☆'a dokun. Bitince <b>Tamam</b>'a dokun."
-      : "Sık kullandığın 6 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun. Aramadaki ☆ ile alt başlıkları da ekleyebilirsin.";
+    favIp.innerHTML = acik ? "Sabitlemek istediğin araçlara dokun (en fazla 8); çıkarmak için favorideki <b>✕</b>'e dokun. Alt başlıklar için aramadaki ☆'a dokun. Bitince <b>Tamam</b>'a dokun."
+      : "Sık kullandığın 8 aracı buraya sabitle: <b>Seç</b>'e dokun, sonra araçlara dokun. Aramadaki ☆ ile alt başlıkları da ekleyebilirsin.";
     duz.textContent = acik ? "Tamam ✓" : (F.length ? "Düzenle" : "Seç");
     duz.setAttribute("aria-pressed", acik ? "true" : "false");
     KART.forEach(function (a) {
