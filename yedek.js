@@ -62,6 +62,13 @@
     setTimeout(() => URL.revokeObjectURL(url), 4000);
     durum(`✅ "${ad}" indirildi. Yeni cihazda "Geri yükle" ile seç.`);
   }
+  // Telefonda dosyayı doğrudan WhatsApp / e-posta / Drive'a gönderir (Web Share). Desteklemeyen tarayıcıda düğme görünmez.
+  const dosya = () => { const o = topla(); return new File([JSON.stringify(o)], "sadolayn-yedek-" + o.t.slice(0, 10) + ".json", { type: "application/json" }); };
+  const paylasilir = () => { try { return !!(navigator.share && navigator.canShare && navigator.canShare({ files: [dosya()] })); } catch (e) { return false; } };
+  async function paylas() {
+    try { await navigator.share({ files: [dosya()], title: "Sadolayn yedeği", text: "Sadolayn verilerimin yedeği" }); durum("✅ Paylaşıldı. Yeni cihazda dosyayı kaydedip “Geri yükle” ile seç."); }
+    catch (e) { if (e && e.name === "AbortError") return; durum("⚠️ Paylaşılamadı; “Yedek dosyası indir”i kullan.", false); }
+  }
   async function kopyala() {
     const kod = await kodla(topla());
     const tamam = () => durum("✅ Yedek kodu kopyalandı. Yeni cihazda bu pencereye yapıştırıp “Geri yükle”ye bas.");
@@ -86,6 +93,7 @@
     $("ydOv").addEventListener("click", (e) => { if (e.target === $("ydOv")) kapat(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("ydOv").hidden) kapat(); });
     $("ydIndir").addEventListener("click", indir);
+    if ($("ydPaylas")) { $("ydPaylas").hidden = !paylasilir(); $("ydPaylas").addEventListener("click", paylas); }
     $("ydKopya").addEventListener("click", kopyala);
     $("ydYukle").addEventListener("click", () => { const v = $("ydKod").value.trim(); if (v) yukle(v); else $("ydDosya").click(); });
     $("ydDosya").addEventListener("change", (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; f.text().then(yukle); e.target.value = ""; });
