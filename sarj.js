@@ -1,5 +1,5 @@
 /* Elektrikli araç şarjı (8 Kasım 2026) — Hesaplamalar › Şarj
-   Kia Niro EV değerleri Kia Türkiye teknik özellikler sayfasından: 64,8 kWh batarya, WLTP 460 km, 16,2 kWh/100 km,
+   Hazır araçlar (Kia Niro EV, Togg T10X, BYD Atto 3, Tesla Model Y) üreticilerin açıkladığı değerlerden; örneğin Kia Niro EV: 64,8 kWh batarya, WLTP 460 km, 16,2 kWh/100 km,
    AC 11 kW (%10–100 yaklaşık 6 sa 20 dk), DC en çok 73 kW (%10–80: 73 kW'ta 45 dk, 50 kW'ta 65 dk).
    Kutular değiştirilebilir; "Başka araç" seçilirse kullanıcı kendi aracının değerlerini yazar. Fiyatlar kullanıcıdan gelir
    (tarife ve istasyon fiyatları değişir; sitede hazır fiyat yazılmaz). Bütün girişler yalnızca bu cihazda saklanır (sarj_v1).
@@ -15,11 +15,26 @@
   const kis = (a, lo, hi) => Math.min(hi, Math.max(lo, a));
   const satir = (id, L) => ($(id).innerHTML = L.filter(Boolean).map(([k, v, c]) => `<div${c ? ` class="${c}"` : ""}><span>${k}</span><b>${v}</b></div>`).join(""));
 
-  // Tüketim batarya tarafıdır (aracın ekranındaki ortalama gibi): 64,8 kWh ÷ 460 km ≈ 14,1 kWh/100 km. Kia'nın 16,2 kWh/100 km değeri
-  // WLTP'de prizden ölçülür, şarj kaybını da içerir; kayıp burada ayrıca eklendiği için iki kez sayılmasın diye 14,1 kullanılır.
-  const ARAC = { niro: { ad: "Kia Niro EV", bat: 64.8, tuk: 14.1, ac: 11, dc: 73, not: "Kia Türkiye teknik özelliklerine göre: 64,8 kWh batarya, WLTP 460 km menzil, AC 11 kW, DC en çok 73 kW. Tüketim 460 km menzilden hesaplandı (≈ 14,1 kWh/100 km; Kia'nın 16,2 değeri prizden ölçülür, şarj kaybını da içerir). Aracının ekranındaki kendi ortalamanı yazarsan sonuçlar sana daha yakın olur." } };
+  // Hazır araçlar: yalnızca değerleri resmî ya da açık bir kaynakta net olan modeller. Tüketim = batarya ÷ WLTP menzil
+  // (batarya tarafı; üreticilerin kWh/100 km değeri prizden ölçülür ve şarj kaybını da içerir, burada kayıp ayrıca eklenir).
+  // dcOrt: %80'e kadar ortalama DC gücünün tepe güce oranı, üreticinin verdiği DC şarj süresinden hesaplandı.
+  const ARAC = {
+    niro: { ad: "Kia Niro EV", bat: 64.8, menzil: 460, ac: 11, dc: 73, dcOrt: 0.83,
+      kaynak: "Kia Türkiye teknik özellikleri: 64,8 kWh, WLTP 460 km, AC 11 kW, DC en çok 73 kW (%10–80: 45 dk)." },
+    toggS: { ad: "Togg T10X Standart Menzil", bat: 52.4, menzil: 314, ac: 11, dc: 180, dcOrt: 0.37,
+      kaynak: "Togg T10X RWD Standart Menzil: 52,4 kWh, WLTP 314 km, AC 11 kW, DC en çok 180 kW (%20–80: 28 dk)." },
+    toggU: { ad: "Togg T10X Uzun Menzil", bat: 88.5, menzil: 523, ac: 11, dc: 180, dcOrt: 0.63,
+      kaynak: "Togg T10X RWD Uzun Menzil: 88,5 kWh, WLTP 523 km, AC 11 kW (22 kW seçeneği de var), DC en çok 180 kW (%20–80: 28 dk)." },
+    atto3: { ad: "BYD Atto 3", bat: 60.4, menzil: 420, ac: 11, dc: 110, dcOrt: 0.59,
+      kaynak: "BYD Türkiye teknik broşürü: 60,4 kWh, AC 11 kW, DC en çok 110 kW (%30–80: 28 dk); WLTP 420 km." },
+    teslaY: { ad: "Tesla Model Y Standart", bat: 60, menzil: 534, ac: 11, dc: 175, dcOrt: 0.67,
+      kaynak: "Tesla Model Y Standart (arkadan itiş): yaklaşık 60 kWh net, WLTP 534 km, AC 11 kW, DC en çok 175 kW (15 dk'da ≈ 260 km). Kaynaklar arasında küçük farklar var; aracının değerleriyle kontrol et." },
+  };
+  Object.values(ARAC).forEach((a) => (a.tuk = Math.round(a.bat / a.menzil * 1000) / 10));
+  const SON_NOT = " Aracının ekranındaki kendi ortalama tüketimini yazarsan sonuçlar sana daha yakın olur.";
   const KAYIP = { ac: 0.12, dc: 0.05 }; // şebekeden çekilenin bataryaya girmeyen payı (yaklaşık)
-  const DC_ORT = 0.83, DC_UST = 0.35; // %80'e kadar ortalama güç / tepe; %80 üstünde güç düşer (Kia %10–80 sürelerine göre ayarlandı)
+  const DC_UST = 0.35; // %80 üstünde DC güç belirgin düşer (tepe gücün yaklaşık üçte biri)
+  const dcOrt = () => (ARAC[D.arac] && ARAC[D.arac].dcOrt) || 0.6; // başka araçta genel bir ortalama
 
   // ---- kalıcılık: yalnızca bu cihaz
   const ALAN = ["sjBat", "sjTuk", "sjAcMax", "sjDcMax", "sjNow", "sjHedef", "sjGuc", "sjKm", "sjYNow", "sjEk", "sjMin", "sjLt", "sjYakit", "sjW", "sjSaat", "sjVNow", "sjVMin"];
@@ -27,13 +42,13 @@
   D.fiyat = D.fiyat || {}; // ev / ac / dc ayrı hatırlanır
   const kaydet = () => { ALAN.forEach((k) => (D[k] = $(k).value)); try { localStorage.setItem("sarj_v1", JSON.stringify(D)); } catch (e) {} };
   const aracYaz = (k) => { const a = ARAC[k]; if (!a) return; $("sjBat").value = tr(a.bat); $("sjTuk").value = tr(a.tuk); $("sjAcMax").value = tr(a.ac); $("sjDcMax").value = tr(a.dc); };
-  const aracBelirle = () => { // kutular Niro değerleriyle aynıysa Niro sayılır
-    const a = ARAC.niro, ayni = oku("sjBat") === a.bat && oku("sjTuk") === a.tuk && oku("sjAcMax") === a.ac && oku("sjDcMax") === a.dc;
-    D.arac = ayni ? "niro" : "diger";
+  const aracBelirle = () => { // kutular hazır bir aracın değerleriyle aynıysa o araç sayılır
+    const k = Object.keys(ARAC).find((x) => { const a = ARAC[x]; return oku("sjBat") === a.bat && oku("sjTuk") === a.tuk && oku("sjAcMax") === a.ac && oku("sjDcMax") === a.dc; });
+    D.arac = k || "diger";
     $("sjModel").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.a === D.arac));
-    $("sjAracAd").textContent = ayni ? a.ad : "Başka araç";
-    $("sjAracOz").textContent = `${nf(oku("sjBat"))} kWh · ${nf(oku("sjTuk"))} kWh/100 km · menzil ≈ ${nf(oku("sjBat") / oku("sjTuk") * 100, 0)} km`;
-    $("sjAracNot").textContent = ayni ? a.not : "Kendi aracının kullanılabilir batarya kapasitesini, ortalama tüketimini ve en yüksek şarj güçlerini yaz; bu cihazda saklanır.";
+    $("sjAracAd").textContent = k ? ARAC[k].ad : "Başka araç";
+    $("sjAracOz").textContent = oku("sjBat") > 0 && oku("sjTuk") > 0 ? `${nf(oku("sjBat"))} kWh · ${nf(oku("sjTuk"))} kWh/100 km · menzil ≈ ${nf(oku("sjBat") / oku("sjTuk") * 100, 0)} km` : "aracının değerlerini aşağıya yaz";
+    $("sjAracNot").textContent = k ? ARAC[k].kaynak + " Tüketim WLTP menzilinden hesaplandı." + SON_NOT : "Kendi aracının kullanılabilir batarya kapasitesini, ortalama tüketimini ve en yüksek şarj güçlerini yaz; bu cihazda saklanır.";
   };
 
   let mod = D.mod || "sarj", yer = D.yer || "ev";
@@ -63,7 +78,7 @@
     let saat;
     if (dc) { // %80'e kadar yüksek hız, üstünde düşük hız
       const alt = Math.min(hed, 80) - now, ust = Math.max(0, hed - Math.max(now, 80));
-      saat = (bat * Math.max(0, alt) / 100) / (P * DC_ORT) + (bat * ust / 100) / (P * DC_UST);
+      saat = (bat * Math.max(0, alt) / 100) / (P * dcOrt()) + (bat * ust / 100) / (P * DC_UST);
     } else saat = eSeb / P * (hed > 90 ? 1.05 : 1); // %90 üstünde AC de biraz yavaşlar (Kia: %10–100, 11 kW'ta yaklaşık 6 sa 20 dk)
     const km = tuk > 0 ? eBat / tuk * 100 : NaN, tutar = fiyat > 0 ? eSeb * fiyat : NaN;
     const bitis = new Date(Date.now() + saat * 3600e3);
@@ -95,7 +110,7 @@
     let durak = 0, durakSure = 0;
     if (kalanYuzde < min) {
       const eksik = (min - kalanYuzde) / 100 * bat, birDurak = bat * 0.7, P = oku("sjDcMax") || 50;
-      durak = Math.ceil(eksik / birDurak); durakSure = eksik / (Math.min(P, oku("sjDcMax") || P) * DC_ORT);
+      durak = Math.ceil(eksik / birDurak); durakSure = eksik / (Math.min(P, oku("sjDcMax") || P) * dcOrt());
     }
     $("sjT1L").textContent = "Varışta kalan"; $("sjT1").textContent = kalanYuzde >= 0 ? "%" + nf(kalanYuzde, 0) : "yetmez";
     $("sjT1b").textContent = kalanYuzde >= min ? `≈ ${nf(Math.max(0, kalanYuzde) / 100 * bat / t * 100, 0)} km daha gider` : `yolda şarj gerekir`;
@@ -152,7 +167,8 @@
     hesapla(); kaydet();
   });
   $("sjMod").addEventListener("click", (e) => { const b = e.target.closest("button[data-m]"); if (!b) return; mod = D.mod = b.dataset.m; hesapla(); kaydet(); });
-  $("sjModel").addEventListener("click", (e) => { const b = e.target.closest("button[data-a]"); if (!b) return; if (b.dataset.a === "niro") aracYaz("niro"); else { $("sjBat").focus(); } hesapla(); kaydet(); });
+  $("sjModel").innerHTML = Object.keys(ARAC).map((k) => `<button data-a="${k}">${ARAC[k].ad}</button>`).join("") + `<button data-a="diger">Başka araç</button>`;
+  $("sjModel").addEventListener("click", (e) => { const b = e.target.closest("button[data-a]"); if (!b) return; if (ARAC[b.dataset.a]) aracYaz(b.dataset.a); else { ["sjBat", "sjTuk", "sjAcMax", "sjDcMax"].forEach((x) => ($(x).value = "")); $("sjBat").focus(); } hesapla(); kaydet(); });
   $("sjYer").addEventListener("click", (e) => { const b = e.target.closest("button[data-y]"); if (!b) return; yer = D.yer = b.dataset.y; $("sjGuc").value = tr(b.dataset.k); fiyatYaz(); hesapla(); kaydet(); });
   const cip = (id, hedef) => $(id).addEventListener("click", (e) => { const b = e.target.closest("button[data-v],button[data-w]"); if (!b) return; $(hedef).value = tr(b.dataset.v || b.dataset.w); hesapla(); kaydet(); });
   cip("sjHedefC", "sjHedef"); cip("sjKmC", "sjKm"); cip("sjEkC", "sjEk"); cip("sjCihaz", "sjW");
