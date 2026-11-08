@@ -582,6 +582,7 @@
   html[data-tema="acik"] .oneri-btn { border-color: #c9a66a; }
   html[data-tema="acik"] .oneri-ov { background: rgba(40,30,15,.4); }
   html[data-tema="acik"] .oneri-box { background: #fff; border-color: #d4bb8a; color: #1b1813; }
+  html[data-tema="acik"] .oneri-cevap { background: #fbf0da; border-color: #d4bb8a; color: #5a4320; }
   html[data-tema="acik"] .oneri-box p { color: #5f594f !important; }
   html[data-tema="acik"] .oneri-box :is(textarea, input) { background: #fbf8f2; color: #1b1813; border-color: #c9bda6; }
   html[data-tema="acik"] .oneri-act button { background: #f3ede2; border-color: #c9bda6; color: #3a352d; }
@@ -802,7 +803,7 @@
     <div class="azP" id="azP" hidden></div>
     <p class="altMsg" id="altMsg" hidden></p>
     <div class="araYok" id="araYok" hidden>Bulunamadı. Başka bir kelime dene ya da aşağıdaki öneri formundan yaz 🙂
-      <div class="araCip" aria-label="Sık aranan">Sık arananlar: <button type="button" data-q="çek">Çek iskonto</button><button type="button" data-q="kredi">Kredi</button><button type="button" data-q="mevduat">Mevduat</button><button type="button" data-q="resmî gazete">Resmî Gazete</button><button type="button" data-q="altın">Altın</button><button type="button" data-q="kampanya">Kampanya</button></div>
+      <div class="araCip" aria-label="Sık aranan">Sık arananlar: <button type="button" data-q="çek">Çek iskonto</button><button type="button" data-q="kredi">Kredi</button><button type="button" data-q="mevduat">Mevduat</button><button type="button" data-q="resmî gazete">Resmî Gazete</button><button type="button" data-q="bddk">BDDK · TCMB</button><button type="button" data-q="altın">Altın</button><button type="button" data-q="kampanya">Kampanya</button></div>
     </div>
     <section class="fav" id="fav" aria-label="Favorilerim">
       <h2 data-yeni="favori|2026-10-30|YENİ"><span class="t">⭐ Favorilerim</span><button type="button" id="favDuz" aria-pressed="false">Seç</button></h2>
@@ -1100,6 +1101,7 @@
     <p style="font-size:11.5px;color:#8a8a8a;margin:-4px 0 8px">Yazdıkların yalnızca site sahibine ulaşır (Google Form), kimseyle paylaşılmaz. İsim ve iletişim yazmak isteğe bağlıdır; yazarsan yalnızca sana cevap vermek için kullanılır, başka hiçbir amaçla saklanmaz.</p>
     <textarea id="oneriMsg" maxlength="1500" rows="5" placeholder="Önerin…" required></textarea>
     <input id="oneriKim" maxlength="80" placeholder="Adın ya da kişisel e-postan (isteğe bağlı)" autocomplete="off">
+    <p class="oneri-cevap">💬 Cevap bekliyorsan buraya <b>kişisel e-postanı</b> yaz; isimsiz mesajlara dönüş yapılamıyor.</p>
     <p style="font-size:11px;color:#8a8a8a;margin:4px 0 0">⚠️ TCKN, kurum e-postası gibi bilgileri yazma.</p>
     <div class="oneri-act"><button type="button" id="oneriKapat">Vazgeç</button><button type="submit" id="oneriGonder">Gönder</button></div>
     <div class="oneri-msg" id="oneriDurum"></div>
@@ -1167,6 +1169,7 @@
   .yd-btn { font-size: 13px; }
   .oneri-act button { padding: 11px; border-radius: 12px; font: inherit; font-size: 15px; cursor: pointer; border: 1px solid #2a2a2a; background: #181818; color: #ccc; }
   .oneri-act button[type=submit] { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+  .oneri-cevap { margin: 6px 0 0; padding: 7px 10px; border-radius: 10px; border: 1px solid #5a4320; background: rgba(224,162,79,.08); font-size: 12px; line-height: 1.4; color: #e8d3a8; }
   .oneri-msg { font-size: 13px; margin-top: 10px; text-align: center; min-height: 18px; }
 </style>
 <script>
@@ -1931,7 +1934,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     ["Medya", "İş Bankası Gündemi", "isbank.html#medya", "📣", "reklam"],
     ["Tarihçe", "İş Bankası Gündemi", "isbank.html#tarihce", "🏛️", "tarih atatürk"],
     ["Günün Sorusu", "İş Bankası Gündemi", "isbank.html#soru", "❓", "bilgi yarışması"],
-    ["Kurum Duyuruları", "Resmî Gazete", "gazete.html#kurum", "🏛️", "bddk tcmb spk masak"],
+    ["Kurum Duyuruları", "Resmî Gazete", "gazete.html#kurum", "🏛️", "bddk tcmb spk masak tmsf ticaret bakanlığı merkez bankası düzenleyici kurum duyuru karar genelge"], // 8 Kasım 2026: bir ziyaretçi BDDK/TCMB duyurularını aramayla bulamadığını yazmıştı
     ["Ajanda", "Takvim & Ajanda", "takvim.html#ajanda", "📝", "ziyaret toplantı izin"],
     ["Vergi Takvimi", "Takvim & Ajanda", "takvim.html#vergi", "🧾", "beyanname son gün"],
     ["İş Günü Hesabı", "Takvim & Ajanda", "takvim.html#hesap", "🗓️", "iki tarih arası"],
