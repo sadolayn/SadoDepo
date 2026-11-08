@@ -1,7 +1,7 @@
 // Sadolayn — çevrimdışı yedek. Önce internetten alır (güncellemeler hemen gelir).
 // İnternet yoksa ya da sunucu hata verirse en son başarılı kopyayı gösterir.
 // Önbellek anahtarı "?t=..." gibi ekler olmadan tutulur; her istek ayrı kopya olarak birikmez.
-const CACHE = "sadolayn-v523";
+const CACHE = "sadolayn-v524";
 // Çevrimdışı açılması gereken sayfalar ve dosyaları (Bankacılık, Hesaplamalar, Günce, Takvim, oyunlar): kurulumda hazırlanır.
 // Biri inemezse diğerleri yine önbelleğe girer. Liste: bu sayfaların yüklediği yerel js/css/görsel/yazı tipi (yaklaşık 1,8 MB).
 const ONCE = ["./", "./index.html", "./manifest.webmanifest", "./balayi.html", "./balayiai.js", "./banka.css", "./banka.html", "./bankap.js", "./batak.html", "./batakai.js", "./bilmece.html", "./bulmaca.html", "./bulmacap.js", "./cardsound.js", "./faizhatira.js", "./gunce.css", "./gunce.html", "./guncep.js", "./hareket.css", "./hesap.css", "./hesap.html", "./hesapp.js", "./img/ataturk.jpg", "./img/icon.png", "./img/logo.png", "./isimler.js", "./isq.js", "./kartmasa.js", "./king.html", "./kingai.js", "./lib/gelasio-italic-latin-ext.woff2", "./lib/gelasio-italic-latin.woff2", "./lib/gelasio-latin-ext.woff2", "./lib/gelasio-latin.woff2", "./numfmt.js", "./ortak.js", "./oyunlar.html", "./oyunquiz.js", "./oyunsaat.js", "./pilot.html", "./pusula.js", "./sarj.js", "./anma.js", "./pwa.js", "./rapor.js", "./sayac.js", "./sayi.js", "./solitaire.html", "./tahmin.html", "./takvim.css", "./takvim.html", "./takvimp.js", "./tavla.html", "./tema.js", "./theme.css", "./token.js", "./vergi.js", "./yedek.js", "./yeni.js"];

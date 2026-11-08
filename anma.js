@@ -1,14 +1,14 @@
 /* 10 Kasım anma ekranı (8 Kasım 2026)
-   O gün site açıksa saat 09.05'te anma ekranı açılır: fotoğraf, "10 KASIM", anma metni ve "1881 – ∞".
-   Siren 09.05'te kendiliğinden çalar (tarayıcı kullanıcı dokunmadan sese izin vermezse düğme çıkar);
-   siren bittikten ya da kapatıldıktan sonra isteyen "Sireni çal" düğmesiyle yeniden çalar. Siren ses dosyası değil, tarayıcıda üretilir
-   (Web Audio: yavaşça yükselen, düz giden ve sonunda sönen bir siren sesi, yaklaşık 1 dakika).
+   10 Kasım günü, saat kaç olursa olsun, siteye o gün ilk girişte anma ekranı açılır (cihaz başına bir kez):
+   fotoğraf, "10 KASIM", anma metni ve "1881 – ∞". Bu açılışta siren kendiliğinden çalmaz; "Sireni çal" düğmesi vardır.
+   Site 09.05'ten önce açıksa saat 09.05'te ekran yeniden açılır (açıksa açık kalır) ve siren kendiliğinden çalar
+   (tarayıcı kullanıcı dokunmadan sese izin vermezse düğme çıkar). Siren bitince ya da kapatılınca yeniden çalınabilir.
+   Siren ses dosyası değil, tarayıcıda üretilir (Web Audio: yavaşça yükselen, düz giden ve sonunda sönen, yaklaşık 1 dakika).
    ortak.js bu dosyayı yalnızca 10 Kasım'da yükler. Sınıf adları .ai… ile başlar: tema motoru açık modda bunları koyu bırakır. */
 (function () {
   var n = new Date(); if (n.getMonth() !== 10 || n.getDate() !== 10 || window.__anma) return; window.__anma = 1;
   var Y = n.getFullYear(), HEDEF = new Date(Y, 10, 10, 9, 5, 0).getTime(), BITIS = new Date(Y, 10, 10, 9, 8, 0).getTime();
-  if (Date.now() >= BITIS) return;
-  var acildi = false, C = null, durdur = null;
+  var yuklenme = Date.now(), C = null, durdur = null, acik = null, stilVar = false, sirenOldu = false;
 
   function siren(sn) { // yavaş açılan, düz giden, sonunda sönen siren
     var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
@@ -27,6 +27,7 @@
   }
 
   function stil() {
+    if (stilVar) return; stilVar = true;
     var s = document.createElement("style");
     s.textContent = ".aiAnma{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;background:#000;color:#f2ead8;text-align:center;font-family:Georgia,'Times New Roman',serif;animation:aiAnmaGir 1.8s ease both}"
       // Yavaş giriş: önce ekran kararır, ardından fotoğraf, başlık, metin, yıl ve düğmeler sırayla belirir (CSS animasyonu: eklenir eklenmez çalışır)
@@ -44,8 +45,10 @@
     document.head.appendChild(s);
   }
 
-  function ac() {
-    if (acildi || Date.now() >= BITIS) return; acildi = true; stil();
+  // sirenli: 09.05 açılışı (siren kendiliğinden başlar); değilse günün ilk girişi (siren düğmeyle)
+  function ac(sirenli) {
+    if (acik && document.body.contains(acik.el)) { if (sirenli) acik.oto(); return; }
+    stil();
     var el = document.createElement("div"); el.className = "aiAnma"; el.setAttribute("data-tema-koru-alan", ""); el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "10 Kasım anma");
     el.innerHTML = '<img class="aiAnmaFoto" src="img/ataturk.jpg" alt="Mustafa Kemal Atatürk">'
       + '<h2 class="aiAnmaBas">10 KASIM</h2>'
@@ -53,21 +56,34 @@
       + '<p class="aiAnmaYil">1881 – ∞</p>'
       + '<div class="aiAnmaD"><button type="button" class="aiAnmaCal">🔊 Sireni çal</button><button type="button" class="aiAnmaSus" hidden>🔇 Sesi kapat</button><button type="button" class="aiAnmaKapat">Kapat</button></div>';
     document.body.appendChild(el);
-    var cal = el.querySelector(".aiAnmaCal"), sus = el.querySelector(".aiAnmaSus");
-    var baslat = function () { if (durdur) return; durdur = siren(60); cal.hidden = true; sus.hidden = !durdur; if (durdur) { var bu = durdur; setTimeout(function () { if (durdur !== bu) return; sus.hidden = true; durdur = null; cal.hidden = false; }, 61000); } }; // bitince yeniden çalınabilir
+    var cal = el.querySelector(".aiAnmaCal"), sus = el.querySelector(".aiAnmaSus"), kapat = el.querySelector(".aiAnmaKapat");
+    var baslat = function () { if (durdur) return; durdur = siren(60); cal.hidden = !!durdur; sus.hidden = !durdur; if (durdur) { var bu = durdur; setTimeout(function () { if (durdur !== bu) return; sus.hidden = true; durdur = null; cal.hidden = false; }, 61000); } }; // bitince yeniden çalınabilir
+    var oto = function () { // kendiliğinden çalmayı dene; tarayıcı izin vermezse düğme görünür kalır
+      baslat();
+      setTimeout(function () { if (!C || C.state !== "running") { if (durdur) durdur(); durdur = null; sus.hidden = true; cal.hidden = false; } }, 400);
+    };
     cal.onclick = function () { if (C && C.state === "suspended") C.resume().then(function () { durdur = null; baslat(); }); else baslat(); };
     sus.onclick = function () { if (durdur) durdur(); durdur = null; sus.hidden = true; cal.hidden = false; };
-    el.querySelector(".aiAnmaKapat").onclick = function () { if (durdur) durdur(); el.classList.add("kapan"); setTimeout(function () { el.remove(); }, 1600); };
-    // 09.05'te siren kendiliğinden çalar (tarayıcı izin verirse); izin vermezse ya da siren bitince "Sireni çal" ile tekrar çalınabilir
-    baslat();
-    setTimeout(function () { if (!C || C.state !== "running") { if (durdur) durdur(); durdur = null; sus.hidden = true; cal.hidden = false; } }, 400);
-    setTimeout(function () { if (document.body.contains(el) && !durdur) el.querySelector(".aiAnmaKapat").click(); }, 3 * 60000); // 3 dakika sonra kendiliğinden kapanır
+    kapat.onclick = function () { if (durdur) durdur(); durdur = null; el.classList.add("kapan"); acik = null; setTimeout(function () { el.remove(); }, 1600); };
+    acik = { el: el, oto: oto };
+    try { localStorage.setItem("anmaGor", String(Y)); } catch (e) {}
+    if (sirenli) oto();
+    setTimeout(function () { if (document.body.contains(el) && !durdur && !el.classList.contains("kapan")) kapat.click(); }, 3 * 60000); // 3 dakika sonra kendiliğinden kapanır
   }
 
-  var zaman = null, bak = function () { if (Date.now() >= BITIS) { clearInterval(zaman); return; } if (!acildi && Date.now() >= HEDEF) ac(); };
-  try { new Image().src = "img/ataturk.jpg"; } catch (e) {} // fotoğraf 09.05'te hazır olsun
-  var kalan = HEDEF - Date.now();
-  if (kalan <= 0) bak(); else setTimeout(bak, kalan);
-  zaman = setInterval(bak, 15000); // arka plandaki sekmede zamanlayıcı gecikirse
-  document.addEventListener("visibilitychange", function () { if (!document.hidden) bak(); });
+  try { new Image().src = "img/ataturk.jpg"; } catch (e) {} // fotoğraf hazır olsun
+  // 1) Günün ilk girişi: ekran bir kez açılır
+  var gordu = ""; try { gordu = localStorage.getItem("anmaGor") || ""; } catch (e) {}
+  if (gordu !== String(Y)) { if (document.body) ac(false); else document.addEventListener("DOMContentLoaded", function () { ac(false); }); }
+  // 2) Site 09.05'ten önce açıksa 09.05'te ekran ve siren
+  if (yuklenme < HEDEF) {
+    var zaman = null, bak = function () {
+      if (sirenOldu) return;
+      if (Date.now() >= BITIS) { clearInterval(zaman); return; }
+      if (Date.now() >= HEDEF) { sirenOldu = true; clearInterval(zaman); ac(true); }
+    };
+    setTimeout(bak, HEDEF - Date.now());
+    zaman = setInterval(bak, 15000); // arka plandaki sekmede zamanlayıcı gecikirse
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) bak(); });
+  }
 })();

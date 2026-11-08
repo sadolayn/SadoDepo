@@ -234,8 +234,8 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", karekod); else karekod();
 })();
-// 10 Kasım: saat 09.05'te saygı duruşu ekranı ve siren (anma.js yalnızca o gün yüklenir)
+// 10 Kasım: günün ilk girişinde anma ekranı, 09.05'te site açıksa siren (anma.js yalnızca o gün yüklenir)
 (function () {
-  var d = new Date(); if (d.getMonth() !== 10 || d.getDate() !== 10 || d.getHours() > 9) return;
+  var d = new Date(); if (d.getMonth() !== 10 || d.getDate() !== 10) return;
   var s = document.createElement("script"); s.src = "anma.js"; s.defer = true; document.head.appendChild(s);
 })();
