@@ -87,17 +87,29 @@ function istGuncelle(sonuc) {
   A[k] = x; try { localStorage.setItem(IST_KEY, JSON.stringify(A)); } catch (e) {}
   return { x, rekor };
 }
+// ===== Yıldız (token.js, Batak'taki bakiye): oyun başında ayara göre Yıldız konur =====
+// Kolay 50 · Zor 100 · Çok zor 200; her fazla basamak ikiye katlar (3 basamak ×1, 4 ×2, 5 ×4, 6 ×8): 50 … 1.600
+// Kazanırsan 2 katını alırsın, berabere iade, kaybeder ya da bırakırsan konan gider. Günün Sayısı Yıldızsızdır.
+const bmBedel = () => 50 * 2 ** (BM.lvl - 1) * 2 ** (BM.n - 3);
+function bmYildizYaz() {
+  const el = $("bmYildiz"); if (!el || !window.Token) return;
+  const b = Token.bakiye(), v = bmBedel();
+  el.innerHTML = `<span>⭐ Bu ayar: <b>${Token.fmt(v)}</b> Yıldız<br><small style="color:var(--muted)">Kazanırsan ${Token.fmt(v * 2)} · bakiyen ${Token.fmt(b)}</small></span>${b < v ? `<small style="color:var(--red);text-align:right">Yetmiyor,<br>daha kolay seç</small>` : ""}`;
+}
 function bmEnd(t, s) { BM.over = true;
+  if (BM.stake && window.Token) { const kat = /Kazandın/.test(t) ? 2 : /Berabere|karıştı/.test(t) ? 1 : 0; s += Token.sonuc("bulmaca", BM.stake, 2, kat, kat === 2 ? "🏆" : "").html; BM.stake = 0; bmYildizYaz(); }
   if (!/karıştı/.test(t)) { const sonuc = /Kazandın/.test(t) ? "k" : /Berabere/.test(t) ? "b" : "y", r = istGuncelle(sonuc);
     s += `<br><span class="bmrek">${r.rekor === "yeni" ? `🏅 Yeni rekor: ${BM.tur} tur!` : r.rekor === "ilk" ? `🏅 Bu ayarda ilk galibiyetin!` : `📊 ${r.x.o} oyun · ${r.x.k} galibiyet${r.x.en ? ` · en iyi ${r.x.en} tur` : ""}`}</span>`; istYaz(); } window.Rapor && Rapor.oyun("bulmaca", /Kazandın/.test(t), `${BM.n} basamak | ${({1:"Kolay",2:"Zor",3:"Çok zor"})[BM.lvl]} | ${BM.tur}. tur | ${t.replace(/^\S+\s/, "")}`); $("bmEnd").hidden = false; $("bmEndT").textContent = t; $("bmEndS").innerHTML = s; $("bmPad").hidden = true; bmPadRender(); }
-$("bmLen").addEventListener("click", (e) => { const b = e.target.closest("button[data-n]"); if (!b) return; BM.n = +b.dataset.n; $("bmLen").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); $("bmMine").maxLength = BM.n; $("bmMine").placeholder = "ör. " + "427150".slice(0, BM.n); $("bmMine").value = $("bmMine").value.slice(0, BM.n); try { localStorage.setItem("bmAyar", JSON.stringify({ n: BM.n, l: BM.lvl })); } catch (er) {} });
-$("bmLvl").addEventListener("click", (e) => { const b = e.target.closest("button[data-l]"); if (!b) return; BM.lvl = +b.dataset.l; $("bmLvl").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); $("bmLvlHint").textContent = BMLV[BM.lvl]; try { localStorage.setItem("bmAyar", JSON.stringify({ n: BM.n, l: BM.lvl })); } catch (er) {} });
+$("bmLen").addEventListener("click", (e) => { const b = e.target.closest("button[data-n]"); if (!b) return; BM.n = +b.dataset.n; $("bmLen").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); $("bmMine").maxLength = BM.n; $("bmMine").placeholder = "ör. " + "427150".slice(0, BM.n); $("bmMine").value = $("bmMine").value.slice(0, BM.n); bmYildizYaz(); try { localStorage.setItem("bmAyar", JSON.stringify({ n: BM.n, l: BM.lvl })); } catch (er) {} });
+$("bmLvl").addEventListener("click", (e) => { const b = e.target.closest("button[data-l]"); if (!b) return; BM.lvl = +b.dataset.l; $("bmLvl").querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b)); $("bmLvlHint").textContent = BMLV[BM.lvl]; bmYildizYaz(); try { localStorage.setItem("bmAyar", JSON.stringify({ n: BM.n, l: BM.lvl })); } catch (er) {} });
 (function () { let a = null; try { a = JSON.parse(localStorage.getItem("bmAyar") || "null"); } catch (e) {} if (a) { BM.n = a.n || 4; BM.lvl = a.l || 2; } $("bmLen").querySelector(`[data-n="${BM.n}"]`).click(); $("bmLvl").querySelector(`[data-l="${BM.lvl}"]`).click(); })();
 $("bmEye").onclick = () => { const i = $("bmMine"); i.style.webkitTextSecurity = i.style.webkitTextSecurity === "none" ? "disc" : "none"; };
 $("bmRand").onclick = () => { $("bmMine").value = randNum(BM.n); $("bmErr").textContent = ""; };
 $("bmGo").onclick = () => {
   const v = $("bmMine").value.trim();
   if (!validNum(v, BM.n)) { $("bmErr").textContent = `${BM.n} basamaklı, rakamları farklı ve 0 ile başlamayan bir sayı yaz (ya da rastgele seç).`; return; }
+  if (window.Token) { const v = bmBedel(); if (!Token.koy(v)) { $("bmErr").innerHTML = `Bu ayar için <b>${Token.fmt(v)}</b> Yıldız gerekiyor, bakiyen ${Token.fmt(Token.bakiye())}. Daha az basamak ya da daha kolay zorluk seç. İş Bankası Gündemi'ndeki <a href="isbank.html" style="color:var(--accent)">Günün sorusu</a>nda üst üste 10 doğru 500 Yıldız kazandırır.`; return; } BM.stake = v; bmYildizYaz(); }
+  $("bmErr").textContent = "";
   const A = allNums(BM.n);
   Object.assign(BM, { mod: "normal", mine: v, ai: randNum(BM.n), cand: A, all: A, me: [], aiL: [], over: false, tur: 1, not: Array(10).fill(0) });
   $("bmGame").classList.remove("gunluk"); $("bmMineShow").parentElement.hidden = false; $("bmQuit").textContent = "Oyunu bırak"; $("bmPaylas").hidden = true;
@@ -201,7 +213,7 @@ function bmKaydet() {
   try {
     if (!BM.mine || BM.over || $("bmGame").hidden) { localStorage.removeItem(BM_KAYIT); return; }
     const cizim = JSON.stringify(RL.strokes).length < 150000 ? RL.strokes : [];
-    localStorage.setItem(BM_KAYIT, JSON.stringify({ v: 1, n: BM.n, lvl: BM.lvl, mine: BM.mine, ai: BM.ai, me: BM.me, aiL: BM.aiL, tur: BM.tur, not: BM.not, inp: bmIn, notes: RL.notes, strokes: cizim, rulo: !$("bmRulo").hidden, t: Date.now() }));
+    localStorage.setItem(BM_KAYIT, JSON.stringify({ v: 1, n: BM.n, lvl: BM.lvl, mine: BM.mine, ai: BM.ai, me: BM.me, aiL: BM.aiL, tur: BM.tur, not: BM.not, inp: bmIn, notes: RL.notes, strokes: cizim, rulo: !$("bmRulo").hidden, st: BM.stake || 0, t: Date.now() }));
   } catch (e) {}
 }
 window.addEventListener("pagehide", bmKaydet);
@@ -209,7 +221,7 @@ window.addEventListener("pagehide", bmKaydet);
   let k = null; try { k = JSON.parse(localStorage.getItem(BM_KAYIT) || "null"); } catch (e) {}
   if (!k || k.v !== 1 || !k.mine || Date.now() - k.t > 14 * 864e5) { window.__bmHazir = true; return; }
   const A = allNums(k.n);
-  Object.assign(BM, { n: k.n, lvl: k.lvl, mine: k.mine, ai: k.ai, me: k.me || [], aiL: k.aiL || [], tur: k.tur || 1, not: k.not || Array(10).fill(0), over: false, all: A,
+  Object.assign(BM, { stake: k.st || 0, n: k.n, lvl: k.lvl, mine: k.mine, ai: k.ai, me: k.me || [], aiL: k.aiL || [], tur: k.tur || 1, not: k.not || Array(10).fill(0), over: false, all: A,
     cand: A.filter((c) => (k.aiL || []).every((x) => score(c, x.g).join() === x.s.join())) });
   bmIn = k.inp || ""; RL.notes = k.notes || []; RL.strokes = k.strokes || [];
   $("bmMineShow").textContent = BM.mine; $("bmSetup").hidden = true; $("bmGame").hidden = false; $("bmEnd").hidden = true; $("bmPad").hidden = false;

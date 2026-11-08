@@ -1967,9 +1967,14 @@ function deck() {
 }
 let SC = { d: 0, t: 0, s: 0 }; try { SC = Object.assign(SC, JSON.parse(localStorage.getItem("isbQuiz") || "{}")); } catch (e) {}
 // Skor satırı: skor, seri ve "Sıfırla" düğmesi (8 Kasım 2026)
-const scHtml = () => SC.t ? `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""} <button type="button" class="dqSifir" id="dqSifir" title="Skoru ve seriyi sıfırla">↺ Sıfırla</button>` : "İlk sorun!";
-// Üst üste 10 doğruda (10, 20, 30…) oyunlar için 500 Yıldız; bakiye oyunlardaki "batakMP" anahtarında (token.js)
-const SERI_ODUL = 10, ODUL_YILDIZ = 500;
+const scHtml = () => SC.t ? `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""} <span class="dqHedef">🎯 Ödüle ${Math.min(SC.od || 0, odulHedef())}/${odulHedef()}</span> <button type="button" class="dqSifir" id="dqSifir" title="Skoru ve seriyi sıfırla">↺ Sıfırla</button>` : "İlk sorun!";
+// Seri ödülü: üst üste 10 doğruya oyunlar için 500 Yıldız. Aynı hafta içinde sonraki ödül 20, sonra 40, 80… üst üste doğru ister.
+// Hafta ilk ödülle başlar; 7 gün dolunca hedef yeniden 10'a iner. Yanlış cevap ödül serisini (SC.od) sıfırlar.
+// SC.od: son ödülden beri üst üste doğru · SC.ob: haftanın başladığı an · SC.ok: bu haftaki ödül sayısı. "Sıfırla" haftayı sıfırlamaz.
+// Bakiye oyunlardaki "batakMP" anahtarında (token.js)
+const ODUL_ILK = 10, ODUL_YILDIZ = 500, HAFTA = 7 * 864e5;
+const haftaBitti = () => !SC.ok || !SC.ob || Date.now() - SC.ob >= HAFTA;
+const odulHedef = () => haftaBitti() ? ODUL_ILK : ODUL_ILK * 2 ** SC.ok;
 function yildizEkle(n) {
   try { const k = "batakMP", m = JSON.parse(localStorage.getItem(k) || "{}") || {}; if (!(m.bal >= 0)) m.bal = 1000; m.bal += n; m.empty = 0; localStorage.setItem(k, JSON.stringify(m)); return true; } catch (e) { return false; }
 }
@@ -1977,7 +1982,7 @@ function sifirBagla() {
   const b = $("dqSifir"); if (!b) return;
   b.onclick = () => {
     if (!confirm("Skorun ve serin sıfırlansın mı? Baştan başlarsın.")) return;
-    SC = { d: 0, t: 0, s: 0 };
+    SC = { d: 0, t: 0, s: 0, ob: SC.ob, ok: SC.ok };
     try { localStorage.setItem("isbQuiz", JSON.stringify(SC)); } catch (e) {}
     window.Rapor && Rapor.bolum("soru-sifirla");
     $("dqSc").innerHTML = scHtml();
@@ -1997,14 +2002,19 @@ function bindQ() {
     const b = e.target.closest("button[data-i]"); if (!b || qDone) return; qDone = true; const i = +b.dataset.i, ok = i === q.c;
     os.querySelectorAll("button").forEach((x) => { x.disabled = true; if (+x.dataset.i === q.c) x.classList.add("ok"); });
     if (!ok) b.classList.add("no");
-    SC.t++; if (ok) { SC.d++; SC.s++; } else SC.s = 0;
+    SC.t++; if (ok) { SC.d++; SC.s++; SC.od = (SC.od || 0) + 1; } else { SC.s = 0; SC.od = 0; }
+    let odul = null;
+    if (ok && SC.od >= odulHedef() && yildizEkle(ODUL_YILDIZ)) {
+      odul = SC.od; if (haftaBitti()) { SC.ob = Date.now(); SC.ok = 1; } else SC.ok++; SC.od = 0;
+    }
     window.Rapor && Rapor.bolum("soru-cevaplandi");
     try { localStorage.setItem("isbQuiz", JSON.stringify(SC)); } catch (er) {}
     qKaydet(qI + 1); // cevaplanan soru yenileyince tekrar gelmesin
     const m = $("dqM"); m.className = "m congrats";
     m.innerHTML = ok ? `<b style="color:#7ee2a8;font-size:15px">${PRAISE[SC.d % PRAISE.length]}</b>${SC.s >= 3 ? ` <span>Üst üste ${SC.s} doğru! 🔥</span>` : ""}` : `Olmadı 🙂 Doğrusu yeşil olan. Sonrakinde bilirsin!`;
-    if (ok && SC.s % SERI_ODUL === 0 && yildizEkle(ODUL_YILDIZ)) {
-      m.innerHTML += `<div class="dqOdul">🎁 Üst üste ${SC.s} doğru! Oyunlarda kullanman için <b>${ODUL_YILDIZ} ⭐ Yıldız</b> hesabına eklendi.</div>`;
+    if (odul) {
+      const bit = new Date(SC.ob + HAFTA).toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+      m.innerHTML += `<div class="dqOdul">🎁 Üst üste ${odul} doğru! Oyunlarda kullanman için <b>${ODUL_YILDIZ} ⭐ Yıldız</b> hesabına eklendi.<br><small>Sıradaki ödül için üst üste <b>${odulHedef()}</b> doğru gerekiyor. ${bit}'da hedef yeniden 10'a iner.</small></div>`;
       window.Rapor && Rapor.bolum("soru-seri-odul");
     }
     $("dqSc").innerHTML = scHtml(); sifirBagla();
