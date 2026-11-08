@@ -466,7 +466,7 @@
   .aclT .sg button { display: flex; justify-content: space-between; align-items: center; min-height: 32px; padding: 5px 9px; border-radius: 9px; border: 1px solid rgba(255,255,255,.08); background: rgba(0,0,0,.35); color: #e9dcc0; font: 12.5px system-ui, sans-serif; cursor: pointer; }
   .aclT .sg button b { color: #fff; font-size: 14px; }
   .aclT .sg button:active { border-color: #e0a24f; }
-  /* Sabah bandı (8 Kasım 2026): iş günleri 07:00-10:00 arasında aramanın üstünde tek satır; Açılış kartının canlı özeti.
+  /* Sabah bandı (8 Kasım 2026): iş günleri 07:00-11:00 arasında aramanın üstünde tek satır; Açılış kartının canlı özeti.
      O gün kart henüz açılmadıysa bir kez parıldar (göz kırpar); dokununca kart açılır. */
   .sbB { display: flex; align-items: center; gap: 7px; min-height: 40px; padding: 8px 10px; margin: 0 0 12px; border-radius: 12px; border: 1px solid #5a4320;
     background: linear-gradient(90deg, rgba(224,162,79,.13), rgba(224,162,79,.04)); color: #e9dcc0; text-decoration: none; position: relative; overflow: hidden; }
@@ -1225,12 +1225,12 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 
 
   var goster = function () {};
-  // ---- Sabah bandı: iş günleri 07:00-10:00, tek satır. Öncelik: PPK günü, yeni İşCep sürümü, Gazete'deki bankacılık başlıkları,
+  // ---- Sabah bandı: iş günleri 07:00-11:00, tek satır. Öncelik: PPK günü, yeni İşCep sürümü, Gazete'deki bankacılık başlıkları,
   // ayın son iş günü / arife / yarın tatil, bugün gelen yeni kampanyalar, çeyrek hedefi. Sığan kadarı (en çok 3) yazılır;
   // bir parçanın uzun hâli sığmazsa kısası denenir, o da sığmazsa sıradakine geçilir.
   // Sakin sabah (8 Kasım 2026): haber niteliğinde parça yoksa bandın başına günün İşCep ipucu gelir, fincan yerine ampul yanar.
   // Bant, veriler gelene kadar (en çok 1,5 sn) bekler; böylece açıldıktan sonra içeriği bir anda değişmez.
-  var SB = {}, SBP = [], sbHazir = false, sbSaat = new Date().getHours(), sbVakit = sbSaat >= 7 && sbSaat < 10 && isG(BUGUN);
+  var SB = {}, SBP = [], sbHazir = false, sbSaat = new Date().getHours(), sbVakit = sbSaat >= 7 && sbSaat < 11 && isG(BUGUN);
   function sbYaz() {
     if (!sbVakit || !sbHazir) return;
     var haber = ["ppk", "iscep", "gazete", "takvim", "kampanya"].filter(function (k) { return SB[k]; }), ipc = !haber.length && SB.ipucu;
