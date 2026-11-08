@@ -28,8 +28,13 @@
 
   function stil() {
     var s = document.createElement("style");
-    s.textContent = ".aiAnma{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;background:#000;color:#f2ead8;text-align:center;font-family:Georgia,'Times New Roman',serif;opacity:0;transition:opacity 1.6s ease}"
-      + ".aiAnma.on{opacity:1}.aiAnmaFoto{width:min(56vw,240px);aspect-ratio:3/4;object-fit:cover;object-position:50% 20%;border-radius:14px;filter:grayscale(1) contrast(1.05);box-shadow:0 0 60px rgba(224,162,79,.18)}"
+    s.textContent = ".aiAnma{position:fixed;inset:0;z-index:2147483000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;background:#000;color:#f2ead8;text-align:center;font-family:Georgia,'Times New Roman',serif;animation:aiAnmaGir 1.8s ease both}"
+      // Yavaş giriş: önce ekran kararır, ardından fotoğraf, başlık, metin, yıl ve düğmeler sırayla belirir (CSS animasyonu: eklenir eklenmez çalışır)
+      + "@keyframes aiAnmaGir{from{opacity:0}to{opacity:1}}@keyframes aiAnmaBel{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}"
+      + ".aiAnma>*{animation:aiAnmaBel 1.6s ease both}.aiAnma>.aiAnmaFoto{animation-delay:.9s;animation-duration:2.2s}.aiAnma>.aiAnmaBas{animation-delay:2.2s}"
+      + ".aiAnma>.aiAnmaB{animation-delay:2.9s}.aiAnma>.aiAnmaYil{animation-delay:3.7s}.aiAnma>.aiAnmaD{animation-delay:4.4s}"
+      + "@keyframes aiAnmaCik{to{opacity:0}}.aiAnma.kapan{animation:aiAnmaCik 1.5s ease both}@media (prefers-reduced-motion:reduce){.aiAnma,.aiAnma>*{animation-duration:.01s!important;animation-delay:0s!important}}"
+      + ".aiAnmaFoto{width:min(56vw,240px);aspect-ratio:3/4;object-fit:cover;object-position:50% 20%;border-radius:14px;filter:grayscale(1) contrast(1.05);box-shadow:0 0 60px rgba(224,162,79,.18)}"
       + ".aiAnmaBas{margin:4px 0 0;font:700 clamp(26px,7.5vw,34px) system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:.5px;color:#f2f2f2!important}"
       + ".aiAnmaB{margin:0;max-width:480px;font:400 clamp(17px,4.6vw,21px)/1.55 system-ui,-apple-system,'Segoe UI',sans-serif;text-wrap:balance;letter-spacing:normal;color:#e6e6e6!important}"
       + ".aiAnmaYil{margin:2px 0 0;font:400 clamp(34px,10vw,46px) system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:1px;color:#c9a25e!important}"
@@ -47,12 +52,12 @@
       + '<p class="aiAnmaB">Cumhuriyetimizin ve Türkiye&nbsp;İş&nbsp;Bankası\'nın Kurucusu Ulu Önder Mustafa Kemal Atatürk\'ü, tarifsiz bir özlem, derin bir saygı ve sonsuz minnetle anıyoruz.</p>'
       + '<p class="aiAnmaYil">1881 – ∞</p>'
       + '<div class="aiAnmaD"><button type="button" class="aiAnmaCal">🔊 Sireni çal</button><button type="button" class="aiAnmaSus" hidden>🔇 Sesi kapat</button><button type="button" class="aiAnmaKapat">Kapat</button></div>';
-    document.body.appendChild(el); requestAnimationFrame(function () { el.classList.add("on"); });
+    document.body.appendChild(el);
     var cal = el.querySelector(".aiAnmaCal"), sus = el.querySelector(".aiAnmaSus");
     var baslat = function () { if (durdur) return; durdur = siren(60); cal.hidden = true; sus.hidden = !durdur; if (durdur) { var bu = durdur; setTimeout(function () { if (durdur !== bu) return; sus.hidden = true; durdur = null; cal.hidden = false; }, 61000); } }; // bitince yeniden çalınabilir
     cal.onclick = function () { if (C && C.state === "suspended") C.resume().then(function () { durdur = null; baslat(); }); else baslat(); };
     sus.onclick = function () { if (durdur) durdur(); durdur = null; sus.hidden = true; cal.hidden = false; };
-    el.querySelector(".aiAnmaKapat").onclick = function () { if (durdur) durdur(); el.classList.remove("on"); setTimeout(function () { el.remove(); }, 1600); };
+    el.querySelector(".aiAnmaKapat").onclick = function () { if (durdur) durdur(); el.classList.add("kapan"); setTimeout(function () { el.remove(); }, 1600); };
     // 09.05'te siren kendiliğinden çalar (tarayıcı izin verirse); izin vermezse ya da siren bitince "Sireni çal" ile tekrar çalınabilir
     baslat();
     setTimeout(function () { if (!C || C.state !== "running") { if (durdur) durdur(); durdur = null; sus.hidden = true; cal.hidden = false; } }, 400);
@@ -60,6 +65,7 @@
   }
 
   var zaman = null, bak = function () { if (Date.now() >= BITIS) { clearInterval(zaman); return; } if (!acildi && Date.now() >= HEDEF) ac(); };
+  try { new Image().src = "img/ataturk.jpg"; } catch (e) {} // fotoğraf 09.05'te hazır olsun
   var kalan = HEDEF - Date.now();
   if (kalan <= 0) bak(); else setTimeout(bak, kalan);
   zaman = setInterval(bak, 15000); // arka plandaki sekmede zamanlayıcı gecikirse
