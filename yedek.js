@@ -38,10 +38,18 @@
     if (t.startsWith(ON)) return JSON.parse(new TextDecoder().decode(unb64(t.slice(ON.length))));
     throw new Error("Bu bir Sadolayn yedeği değil.");
   }
+  // Geri yüklemeden önce süzgeç: yalnızca düz metin değerler, sitenin kullandığı biçimde anahtar adları (harfle başlar; harf, rakam, _ : . -),
+  // kayıt başına en çok 1 MB, toplam en çok 4 MB. Uymayan kayıtlar atlanır ve sayısı söylenir.
+  const ANAHTAR = /^[A-Za-z][A-Za-z0-9_:.\-]{0,59}$/, KAYIT_MAX = 1 << 20, TOPLAM_MAX = 4 << 20;
   function dogrula(o) {
-    if (!o || o.site !== "SadoDepo" || typeof o.d !== "object" || !o.d) throw new Error("Bu bir Sadolayn yedeği değil.");
-    const d = {};
-    Object.keys(o.d).forEach((k) => { if (typeof o.d[k] === "string" && k.length <= 60 && !disari(k)) d[k] = o.d[k]; });
+    if (!o || o.site !== "SadoDepo" || typeof o.d !== "object" || !o.d || Array.isArray(o.d)) throw new Error("Bu bir Sadolayn yedeği değil.");
+    const d = {}; let toplam = 0, atlanan = 0;
+    Object.keys(o.d).forEach((k) => {
+      const v = o.d[k];
+      if (typeof v !== "string" || !ANAHTAR.test(k) || disari(k) || v.length > KAYIT_MAX || toplam + v.length > TOPLAM_MAX) { atlanan++; return; }
+      d[k] = v; toplam += v.length;
+    });
+    dogrula.atlanan = atlanan;
     return d;
   }
   const tarih = (iso) => { try { return new Date(iso).toLocaleString("tr-TR", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } };
@@ -81,7 +89,7 @@
       if (!n) throw new Error("Yedekte geri yüklenecek kayıt yok.");
       if (!confirm(`${tarih(o.t)} tarihli yedekte ${n} kayıt var.\nBu cihazdaki aynı kayıtların üzerine yazılacak. Devam edilsin mi?`)) return;
       Object.keys(d).forEach((k) => { try { localStorage.setItem(k, d[k]); } catch (e) {} });
-      durum(`✅ ${n} kayıt geri yüklendi. Sayfa yenileniyor…`);
+      durum(`✅ ${n} kayıt geri yüklendi${dogrula.atlanan ? ` (${dogrula.atlanan} uygunsuz kayıt atlandı)` : ""}. Sayfa yenileniyor…`);
       setTimeout(() => location.reload(), 900);
     } catch (e) { durum("⚠️ " + (e && e.message && /yedek|tarayıcı|kayıt/i.test(e.message) ? e.message : "Kod ya da dosya okunamadı; eksik kopyalanmış olabilir."), false); }
   }

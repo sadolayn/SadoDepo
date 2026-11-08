@@ -4,3 +4,8 @@ kesif*
 ham_*
 *.env
 .env*
+# Anahtar ve sertifika dosyaları asla depoya girmesin
+*.key
+*.pem
+*.p12
+*.pfx
