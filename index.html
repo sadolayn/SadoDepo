@@ -158,6 +158,9 @@
   /* Bilgisayarda "animasyonları azalt" açıksa da kaysın (durdurmak için üstüne gel), sadece biraz yavaş */
   @media (prefers-reduced-motion: reduce) { .kySer { animation-duration: calc(var(--sure, 60s) * 1.5); } }
   .hello .mid p.greet { margin: 0; font-size: 19px; min-height: 0; }
+  /* Simetri (8 Kasım 2026): sağdaki güneş/ay simgesi kadar solda görünmez bir boşluk; böylece yazının kendisi tam ortada durur */
+  .hello .mid p.greet .gik { margin-left: 6px; }
+  .hello .mid p.greet:has(.gik)::before { content: ""; display: inline-block; width: calc(1.25em + 6px); }
   .hello .mid p.welcome { margin: 5px 0 0; font-size: 12.5px; letter-spacing: 1.2px; color: var(--muted); transition: opacity .6s ease; min-height: 17px; }
   .hello .mid p.welcome.fade { opacity: 0; }
   .clock { display: flex; flex-direction: column; align-items: center; gap: 3px; }
@@ -933,7 +936,7 @@
     else if ((new Date().getDay() === 0 || new Date().getDay() === 6) && h >= 9 && h < 17) t = "İyi hafta sonları";
     const svg = (id) => `<svg class="gik ${ik}" viewBox="0 0 24 24" aria-hidden="true">${IK[ik].replace(/"gA"|#gA|"gH"|#gH/g, (m) => m.replace(/g([AH])/, id + "$1"))}</svg>`;
     const simge = OZEL.anma ? () => "" : svg; // anma günlerinde güneş/ay simgesi gösterilmez
-    document.getElementById("greet").innerHTML = t + " " + simge("a");
+    document.getElementById("greet").innerHTML = t + simge("a"); // boşluk yok: simgenin payı CSS ile iki yana eşit verilir
     document.getElementById("greet2").innerHTML = t + " " + simge("b");
     // Alt satır: birkaç saniyede bir yumuşakça değişir
     (function () {
@@ -1632,6 +1635,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     // 5 Kasım 2026: DenizBank kredi kartları Maximum'a geçiyor; kaynak DenizBank'ın kendi duyurusu ("6 Aralık 2026'dan itibaren … Maximum
     // altyapısına geçiyor"); yalnızca duyuruda yazan söylenir, geçiş gününe kadar kalır
     ["https://www.denizbank.com/kampanya/kart-kampanyalari/cok-yakinda", "🤝 DenizBank kredi kartları <b>6 Aralık'tan</b> itibaren Maximum altyapısına geçiyor", "2026-12-06"],
+    // 8 Kasım 2026: sayfanın en üstündeki görünüm seçimi; dokununca yukarı çıkar ve seçici kısa bir an parlar
+    ["tema", "🌓 Gözüne göre seç: en üstten <b>Açık · Koyu · Sistem</b> görünümü; Sistem telefonunun ayarına uyar <b class=\"gir\">Seç</b>", "2026-11-22"],
     // İşCep ödülü satırı 5 Kasım'da çıkarıldı: üstteki kupa kartı zaten gösteriyor
     ["maximum", "🎁 Kampanyaları bulmak hiç bu kadar kolay olmamıştı: İş Bankası, Maximum ve Maximiles tek ekranda; arama, takvim ve <b>Bana uygun</b> <b class=\"gir\">İş Bankası Gündemi › Kampanyalar</b>", "2026-11-30"],
     ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
@@ -1661,6 +1666,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     const o = e.target.closest(".kyOge"); const h = o ? o.dataset.h : "iscep";
     e.preventDefault();
     if (h === "ppk") { ppk && ppk.tap && ppk.tap(); return; }
+    if (h === "tema") { window.Rapor && Rapor.bolum("kayan-tema"); window.scrollTo({ top: 0, behavior: "smooth" }); const t = document.getElementById("temaSec"); if (t && t.animate && !matchMedia("(prefers-reduced-motion: reduce)").matches) setTimeout(() => t.animate([{ transform: "scale(1)" }, { transform: "scale(1.08)" }, { transform: "scale(1)" }], { duration: 500, iterations: 2, easing: "ease-in-out" }), 450); return; }
     if (h === "acilis") { window.Rapor && Rapor.bolum("kayan-acilis"); window.Acilis && window.Acilis.ac(); return; }
     if (/^https:\/\/www\.denizbank\.com\//.test(h)) { window.Rapor && Rapor.bolum("kayan-denizbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // DenizBank'ın kendi duyurusu
     if (/^https:\/\/www\.isbank\.com\.tr\//.test(h)) { window.Rapor && Rapor.bolum("kayan-isbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // İş Bankası'nın kendi duyurusu
