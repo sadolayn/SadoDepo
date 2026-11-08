@@ -45,17 +45,16 @@
   const aracBelirle = () => { // kutular hazır bir aracın değerleriyle aynıysa o araç sayılır
     const k = Object.keys(ARAC).find((x) => { const a = ARAC[x]; return oku("sjBat") === a.bat && oku("sjTuk") === a.tuk && oku("sjAcMax") === a.ac && oku("sjDcMax") === a.dc; });
     D.arac = k || "diger";
-    $("sjModel").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.a === D.arac));
-    $("sjAracAd").textContent = k ? ARAC[k].ad : "Başka araç";
+    if ($("sjSecim").value !== D.arac) $("sjSecim").value = D.arac;
     $("sjAracOz").textContent = oku("sjBat") > 0 && oku("sjTuk") > 0 ? `${nf(oku("sjBat"))} kWh · ${nf(oku("sjTuk"))} kWh/100 km · menzil ≈ ${nf(oku("sjBat") / oku("sjTuk") * 100, 0)} km` : "aracının değerlerini aşağıya yaz";
     $("sjAracNot").textContent = k ? ARAC[k].kaynak + " Tüketim WLTP menzilinden hesaplandı." + SON_NOT : "Kendi aracının kullanılabilir batarya kapasitesini, ortalama tüketimini ve en yüksek şarj güçlerini yaz; bu cihazda saklanır.";
   };
 
-  let mod = D.mod || "sarj", yer = D.yer || "ev";
+  let mod = D.mod || "sarj", yer = D.yer || "ev"; // ilk açılışta ev · duvar ünitesi 11 kW
   const fiyatYaz = () => {
     $("sjFiyat").value = D.fiyat[yer] || "";
     $("sjFiyatL").textContent = yer === "ev" ? "Evdeki elektrik fiyatı" : yer === "ac" ? "AC istasyon fiyatı" : "DC istasyon fiyatı";
-    $("sjFiyat").placeholder = yer === "ev" ? "faturadaki kWh fiyatı" : "istasyonun kWh fiyatı";
+    $("sjFiyat").placeholder = "fiyatı yaz";
   };
   const bar = (a, b, renk) => { // batarya göstergesi: a = başlangıç, b = bitiş (yüzde)
     const lo = kis(Math.min(a, b), 0, 100), hi = kis(Math.max(a, b), 0, 100);
@@ -177,7 +176,9 @@
     ["sarj", "yol", "v2l", "yil"].forEach((m) => ($("sjP-" + m).hidden = m !== mod));
     document.querySelector("#sarj .sjBat").hidden = mod === "yil";
     $("sjMod").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.m === mod));
-    $("sjYer").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.y === yer && Math.abs(+b.dataset.k - oku("sjGuc")) < 0.01));
+    const yv = `${yer}|${String(oku("sjGuc"))}`, ys = $("sjYerSec"), var_ = [...ys.options].some((o) => o.value === yv);
+    ys.querySelector('option[value="ozel"]').hidden = var_; ys.querySelector('option[value="ozel"]').textContent = `✏️ Elle girilen: ${nf(oku("sjGuc"))} kW (${yer === "dc" ? "DC" : "AC"})`;
+    ys.value = var_ ? yv : "ozel";
     aracBelirle();
     if (mod === "sarj") hesapSarj(); else if (mod === "yol") hesapYol(); else if (mod === "yil") hesapYil(); else hesapV2l();
   }
@@ -185,12 +186,13 @@
   // ---- olaylar
   ALAN.forEach((k) => { if (D[k] != null && D[k] !== "") $(k).value = D[k]; });
   if (!D.sjBat) aracYaz("niro");
-  if (!D.sjGuc) $("sjGuc").value = "7,4";
+  if (!D.sjGuc) $("sjGuc").value = "11";
   // Yıllık bölümündeki fiyat ve benzin kutuları diğer bölümlerdekilerle ortaktır (birine yazılan ötekine de geçer)
   const ESLE = { sjYfEv: () => "ev", sjYfDc: () => "dc" }, ESLE2 = { sjYLt: "sjLt", sjLt: "sjYLt", sjYYakit: "sjYakit", sjYakit: "sjYYakit" };
   const yilDoldur = () => { $("sjYfEv").value = D.fiyat.ev || ""; $("sjYfDc").value = D.fiyat.dc || ""; $("sjYLt").value = $("sjLt").value; $("sjYYakit").value = $("sjYakit").value; };
   fiyatYaz(); yilDoldur();
   $("sarj").addEventListener("input", (e) => {
+    if (e.target.tagName === "SELECT") return; // açılır listeler kendi "change" olayıyla işlenir
     if (ESLE[e.target.id]) { D.fiyat[ESLE[e.target.id]()] = e.target.value; if (yer === ESLE[e.target.id]()) $("sjFiyat").value = e.target.value; }
     if (ESLE2[e.target.id]) $(ESLE2[e.target.id]).value = e.target.value;
     if (e.target.id === "sjFiyat") { D.fiyat[yer] = e.target.value; yilDoldur(); }
@@ -198,12 +200,20 @@
     hesapla(); kaydet();
   });
   $("sjMod").addEventListener("click", (e) => { const b = e.target.closest("button[data-m]"); if (!b) return; mod = D.mod = b.dataset.m; hesapla(); kaydet(); });
-  $("sjModel").innerHTML = Object.keys(ARAC).map((k) => `<button data-a="${k}">${ARAC[k].ad}</button>`).join("") + `<button data-a="diger">Başka araç</button>`;
-  $("sjModel").addEventListener("click", (e) => { const b = e.target.closest("button[data-a]"); if (!b) return; if (ARAC[b.dataset.a]) aracYaz(b.dataset.a); else { ["sjBat", "sjTuk", "sjAcMax", "sjDcMax"].forEach((x) => ($(x).value = "")); $("sjBat").focus(); } hesapla(); kaydet(); });
-  $("sjYer").addEventListener("click", (e) => { const b = e.target.closest("button[data-y]"); if (!b) return; yer = D.yer = b.dataset.y; $("sjGuc").value = tr(b.dataset.k); fiyatYaz(); hesapla(); kaydet(); });
+  // Araç seçimi: açılır liste; "Başka araç"ta değer kutuları açılır. ✏️ ile hazır aracın değerleri de düzenlenebilir
+  $("sjSecim").innerHTML = Object.keys(ARAC).map((k) => `<option value="${k}">${ARAC[k].ad}</option>`).join("") + `<option value="diger">✏️ Başka araç (değerleri ben yazacağım)</option>`;
+  const duzAc = (ac) => { $("sjDuz").hidden = !ac; $("sjDuzBtn").setAttribute("aria-expanded", String(ac)); $("sjDuzBtn").classList.toggle("on", ac); };
+  $("sjSecim").addEventListener("change", (e) => {
+    const k = e.target.value;
+    if (ARAC[k]) { aracYaz(k); duzAc(false); } else { ["sjBat", "sjTuk", "sjAcMax", "sjDcMax"].forEach((x) => ($(x).value = "")); duzAc(true); D.arac = "diger"; setTimeout(() => $("sjBat").focus(), 50); }
+    hesapla(); kaydet();
+  });
+  $("sjDuzBtn").addEventListener("click", () => duzAc($("sjDuz").hidden));
+  $("sjYerSec").addEventListener("change", (e) => { const v = e.target.value; if (v === "ozel") return; const [y, k] = v.split("|"); yer = D.yer = y; $("sjGuc").value = tr(k); fiyatYaz(); hesapla(); kaydet(); });
   const cip = (id, hedef) => $(id).addEventListener("click", (e) => { const b = e.target.closest("button[data-v],button[data-w]"); if (!b) return; $(hedef).value = tr(b.dataset.v || b.dataset.w); hesapla(); kaydet(); });
   cip("sjHedefC", "sjHedef"); cip("sjKmC", "sjKm"); cip("sjEkC", "sjEk"); cip("sjCihaz", "sjW");
   cip("sjYilKmC", "sjYilKm"); cip("sjEvPayC", "sjEvPay"); cip("sjYilEkC", "sjYilEk");
   hesapla();
+  if (D.arac === "diger") duzAc(true);
   window.Sarj = { hesapla };
 })();

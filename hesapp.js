@@ -5,6 +5,7 @@ $("tabs").addEventListener("click", (e) => {
   document.querySelectorAll("#tabs button").forEach((x) => x.classList.toggle("on", x === b));
   document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("on", p.id === b.dataset.t));
   try { localStorage.setItem("hesapTab", b.dataset.t); } catch (e) {}
+  try { history.replaceState(null, "", "#" + b.dataset.t); } catch (e) {} // yenilenince aynı sekme açılsın
   window.Rapor && Rapor.bolum(b.dataset.t);
   if (b.dataset.t === "cetvel") drawRuler();
   if (b.dataset.t === "calc") setTimeout(makineBoyut, 0);
@@ -649,5 +650,10 @@ $("mTop").onclick = () => { mLockD = null; mTopOn = false; $("mLock").innerHTML 
 // Sayı Bulmaca 6 Kasım 2026'da kendi sayfasına taşındı (Oyunlar); eski #bulmaca bağlantıları oraya gider
 const bmYonlendir = () => { if (location.hash === "#bulmaca") location.replace("bulmaca.html"); };
 bmYonlendir(); window.addEventListener("hashchange", bmYonlendir);
-try { const h = location.hash.slice(1), t = h && document.querySelector(`#tabs [data-t="${h}"]`) ? h : "calc"; document.querySelector(`#tabs [data-t="${t}"]`).click(); } catch (e) {}
+// Açılışta sekme: adresteki #sekme, yoksa en son açık sekme (sayfa yenilense de aynı yerde kalınır; 8 Kasım)
+try {
+  const h = location.hash.slice(1), var_ = (x) => x && document.querySelector(`#tabs [data-t="${x}"]`);
+  let son = null; try { son = localStorage.getItem("hesapTab"); } catch (e) {}
+  const t = var_(h) ? h : var_(son) ? son : "calc"; document.querySelector(`#tabs [data-t="${t}"]`).click();
+} catch (e) {}
 setTimeout(makineBoyut, 60); if (document.fonts && document.fonts.ready) document.fonts.ready.then(makineBoyut);

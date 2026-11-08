@@ -273,9 +273,15 @@
     <div class="card">
       <div class="ftop">
         <div class="seg" id="sjMod"><button data-m="sarj" class="on">⚡ Şarj</button><button data-m="yol">🛣️ Yolculuk</button><button data-m="v2l">🔋 V2L</button><button data-m="yil">💰 Yıllık</button></div>
-        <details class="sjArac" id="sjArac">
-          <summary><span id="sjAracAd">Kia Niro EV</span><small id="sjAracOz"></small></summary>
-          <div class="chips" id="sjModel"></div>
+        <div class="sjBat" aria-hidden="true"><div class="sjBatIc"><i id="sjBarA"></i><i id="sjBarB"></i></div><div class="sjBatUc"></div></div>
+        <div class="ftiles"><div class="gun"><small id="sjT1L">Ödeyeceğin</small><b id="sjT1">–</b><i id="sjT1b"></i></div><div><small id="sjT2L">Süre</small><b id="sjT2">–</b><i id="sjT2b"></i></div></div>
+      </div>
+
+      <div class="sjSatir">
+        <label for="sjSecim">🚗 Araç</label>
+        <div class="sjSec"><select id="sjSecim" aria-label="Araç seç"></select><button type="button" id="sjDuzBtn" aria-expanded="false" title="Değerleri düzenle">✏️</button></div>
+        <p class="sjOz" id="sjAracOz"></p>
+        <div class="sjDuz" id="sjDuz" hidden>
           <div class="two">
             <div><label>Batarya (kullanılabilir)</label><div class="field"><input id="sjBat" inputmode="decimal" placeholder="ör. 60"><span>kWh</span></div></div>
             <div><label>Ortalama tüketim</label><div class="field"><input id="sjTuk" inputmode="decimal" placeholder="ör. 15"><span>kWh/100 km</span></div></div>
@@ -285,9 +291,7 @@
             <div><label>En yüksek DC şarj</label><div class="field"><input id="sjDcMax" inputmode="decimal" placeholder="ör. 100"><span>kW</span></div></div>
           </div>
           <p class="hint" id="sjAracNot"></p>
-        </details>
-        <div class="sjBat" aria-hidden="true"><div class="sjBatIc"><i id="sjBarA"></i><i id="sjBarB"></i></div><div class="sjBatUc"></div></div>
-        <div class="ftiles"><div class="gun"><small id="sjT1L">Ödeyeceğin</small><b id="sjT1">–</b><i id="sjT1b"></i></div><div><small id="sjT2L">Süre</small><b id="sjT2">–</b><i id="sjT2b"></i></div></div>
+        </div>
       </div>
 
       <!-- Şarj: maliyet ve süre -->
@@ -297,18 +301,20 @@
           <div><label>Hedef şarj</label><div class="field"><input id="sjHedef" inputmode="numeric" value="80"><span>%</span></div></div>
         </div>
         <div class="chips" id="sjHedefC"><button data-v="80">%80'e kadar</button><button data-v="90">%90</button><button data-v="100">%100</button></div>
-        <label>Nerede şarj ediyorsun?</label>
-        <div class="chips sjYer" id="sjYer">
-          <button data-y="ev" data-k="2.3">🏠 Ev prizi<small>2,3 kW</small></button>
-          <button data-y="ev" data-k="7.4">🏠 Duvar ünitesi<small>7,4 kW</small></button>
-          <button data-y="ev" data-k="11">🏠 Duvar ünitesi<small>11 kW</small></button>
-          <button data-y="ac" data-k="22">🅿️ AC istasyon<small>22 kW</small></button>
-          <button data-y="dc" data-k="50">⚡ DC hızlı<small>50 kW</small></button>
-          <button data-y="dc" data-k="120">⚡ DC hızlı<small>120 kW+</small></button>
-        </div>
+        <label for="sjYerSec">Nerede şarj ediyorsun?</label>
+        <div class="sjSec"><select id="sjYerSec" aria-label="Şarj yeri">
+          <option value="ev|11">🏠 Ev · duvar ünitesi 11 kW</option>
+          <option value="ev|7.4">🏠 Ev · duvar ünitesi 7,4 kW</option>
+          <option value="ev|2.3">🏠 Ev · normal priz 2,3 kW</option>
+          <option value="ac|22">🅿️ AC istasyon 22 kW</option>
+          <option value="dc|50">⚡ DC hızlı 50 kW</option>
+          <option value="dc|120">⚡ DC hızlı 120 kW</option>
+          <option value="dc|180">⚡ DC ultra hızlı 180 kW</option>
+          <option value="ozel" hidden>✏️ Elle girilen güç</option>
+        </select></div>
         <div class="two">
           <div><label>Şarj cihazının gücü</label><div class="field"><input id="sjGuc" inputmode="decimal" value="7.4"><span>kW</span></div></div>
-          <div><label id="sjFiyatL">Elektrik birim fiyatı</label><div class="field"><input id="sjFiyat" inputmode="decimal" placeholder="faturadaki fiyat"><span>TL/kWh</span></div></div>
+          <div><label id="sjFiyatL">Elektrik birim fiyatı</label><div class="field"><input id="sjFiyat" inputmode="decimal" placeholder="fiyatı yaz"><span>TL/kWh</span></div></div>
         </div>
         <div class="res"><div class="rows" id="sjRows"></div></div>
       </div>
@@ -363,8 +369,8 @@
         <div class="chips" id="sjYilKmC"><button data-v="10000">10.000 km</button><button data-v="15000">15.000 km</button><button data-v="20000">20.000 km</button><button data-v="30000">30.000 km</button></div>
         <div class="chips" id="sjEvPayC"><button data-v="100">Hep evde</button><button data-v="80">Çoğu evde</button><button data-v="50">Yarı yarıya</button><button data-v="0">Hep istasyonda</button></div>
         <div class="two">
-          <div><label>Evdeki elektrik fiyatı</label><div class="field"><input id="sjYfEv" inputmode="decimal" placeholder="faturadaki fiyat"><span>TL/kWh</span></div></div>
-          <div><label>DC istasyon fiyatı</label><div class="field"><input id="sjYfDc" inputmode="decimal" placeholder="istasyon fiyatı"><span>TL/kWh</span></div></div>
+          <div><label>Evdeki elektrik fiyatı</label><div class="field"><input id="sjYfEv" inputmode="decimal" placeholder="fiyatı yaz"><span>TL/kWh</span></div></div>
+          <div><label>DC istasyon fiyatı</label><div class="field"><input id="sjYfDc" inputmode="decimal" placeholder="fiyatı yaz"><span>TL/kWh</span></div></div>
         </div>
         <div class="two">
           <div><label>Benzinli tüketim</label><div class="field"><input id="sjYLt" inputmode="decimal" placeholder="ör. 6,5"><span>L/100 km</span></div></div>
