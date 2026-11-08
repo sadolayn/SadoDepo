@@ -53,6 +53,8 @@
   .top.odulOn .hello .mid { opacity: 0; }
   .odS { position: absolute; left: 0; right: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-decoration: none; opacity: 0; pointer-events: none; transition: opacity .6s ease; overflow: hidden; }
   .top.odulOn .odS { opacity: 1; pointer-events: auto; }
+  .top .hello .clock, .top .hello .datec { transition: opacity .4s ease; }
+  .top.odulOn.odDar .hello .clock, .top.odulOn.odDar .hello .datec { opacity: 0 !important; pointer-events: none; }
   .odS .ray { position: absolute; top: -140px; left: 50%; width: 420px; height: 420px; margin-left: -210px; border-radius: 50%;
     background: repeating-conic-gradient(from 0deg, rgba(255,214,130,.22) 0deg 6deg, transparent 6deg 18deg);
     -webkit-mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 35%, transparent 68%); mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 35%, transparent 68%);
@@ -891,12 +893,35 @@
       // Ödül sırası gelince: logo ve selamlama kaybolur, büyük altın kupa sahnesi açılır (7 sn)
       const top = document.getElementById("top"), odS = document.getElementById("odS");
       const KR = ["#ff4d6d", "#ffd23f", "#3ec1ff", "#5be37a", "#b56bff", "#ff8c2e", "#f3d38a", "#ff5fd2"];
+      // Kartın yeri ve yüksekliği logo + selamlama alanına göre ölçülür. Sahne açılışta (1. sn) başladığı için logo ya da yazı tipi
+      // henüz yüklenmemişse ölçü kısa kalıp alt yazı kesiliyordu (8 Kasım): yüklendikçe ve boyut değiştikçe yeniden ölçülür.
+      // Yazı alana sığmıyorsa (bazı ekranlarda selamlama kısa kalıyor) kart yazı kadar uzar; selamlamanın alt boşluğu da aynı kadar
+      // artar ki alttaki kayan yazı şeridi kartın altında kalsın. Video açıkken kart ayrıca 52 px uzundur.
+      const olc = () => {
+        const lg = top.querySelector("h1.logo"), hl = top.querySelector(".hello"), yz = odS && odS.querySelector(".yazi");
+        if (!lg || !hl || !odS) return;
+        if (!hl.style.marginBottom) hl.dataset.mb0 = parseFloat(getComputedStyle(hl).marginBottom) || 0;
+        const h0 = hl.offsetTop + hl.offsetHeight - lg.offsetTop + (top.classList.contains("vidOn") ? 52 : 0);
+        odS.style.top = lg.offsetTop + "px"; odS.style.height = h0 + "px";
+        const ihtiyac = yz ? yz.offsetTop + yz.offsetHeight + 8 : 0, fazla = Math.max(0, ihtiyac - h0);
+        const ek = (top.classList.contains("vidOn") ? 52 : 0) + fazla;
+        if (fazla) odS.style.height = (h0 + fazla) + "px";
+        hl.style.marginBottom = ek ? (+hl.dataset.mb0 + ek) + "px" : "";
+        // Dar ekranda (≈ 400 px altı ya da büyük yazı tipi) saat ve takvim kutusu kupa yazısının üstüne biniyor:
+        // çakışma varsa sahne süresince ikisi yumuşakça gizlenir, sahne bitince geri gelir.
+        const kes = (a, b) => a.width && b.width && a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+        const yr = yz ? [...yz.children].map((e) => e.getBoundingClientRect()) : [];
+        const engel = [top.querySelector(".clock"), top.querySelector(".datec")].filter(Boolean).map((e) => e.getBoundingClientRect());
+        top.classList.toggle("odDar", yr.some((y) => engel.some((e) => kes(y, e))));
+      };
+      const yenidenOlc = () => { if (top.classList.contains("odulOn")) olc(); };
+      window.addEventListener("load", yenidenOlc); window.addEventListener("resize", yenidenOlc);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(yenidenOlc);
+      if (window.ResizeObserver) { const ro = new ResizeObserver(yenidenOlc); ["h1.logo", ".hello"].forEach((q) => { const e = top.querySelector(q); if (e) ro.observe(e); }); }
       const sahne = (ac) => {
         if (!odS) return;
         if (ac) {
-          const lg = top.querySelector("h1.logo"), hl = top.querySelector(".hello");
-          odS.style.top = lg.offsetTop + "px";
-          odS.style.height = (hl.offsetTop + hl.offsetHeight - lg.offsetTop) + "px";
+          olc();
           odS.querySelectorAll(".kf").forEach((x) => x.remove());
           for (let i = 0; i < 40; i++) { const c = document.createElement("i"); c.className = "kf"; c.style.left = Math.random() * 100 + "%"; c.style.background = KR[i % KR.length]; c.style.animationDelay = (Math.random() * 1.2).toFixed(2) + "s"; c.style.animationDuration = (2 + Math.random() * 1.6).toFixed(2) + "s"; odS.appendChild(c); }
         }
@@ -907,10 +932,8 @@
         const vidOk = v && v.canPlayType("video/mp4") && !matchMedia("(prefers-reduced-motion: reduce)").matches && !(c && (c.saveData || /2g/.test(c.effectiveType || "")));
         if (!vidOk) return;
         if (ac) {
-          // Kart 52 px uzar; selamlamanın alt boşluğu da aynı kadar artar ki alttaki kayan yazı şeridi kartın altında kalsın
-          const hl = top.querySelector(".hello"); hl.style.marginBottom = (parseFloat(getComputedStyle(hl).marginBottom) + 52) + "px";
           top.classList.add("vidOn"); v.currentTime = 0;
-          odS.style.height = (parseFloat(odS.style.height) + 52) + "px";
+          olc();
           const pr = v.play(); if (pr && pr.catch) pr.catch(() => { top.classList.remove("vidOn"); top.querySelector(".hello").style.marginBottom = ""; });
         } else { v.pause(); top.classList.remove("vidOn"); top.querySelector(".hello").style.marginBottom = ""; }
       };
