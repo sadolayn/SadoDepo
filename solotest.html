@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solo Test</title>
+<meta name="description" content="Bilgi paylaştıkça büyür">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SADOLAYN">
+<meta property="og:title" content="Solo Test · SADOLAYN">
+<meta property="og:description" content="“Bilgi paylaştıkça büyür”">
+<meta property="og:url" content="https://sadolayn.github.io/SadoDepo/solotest.html">
+<meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sadolayn — Bilgi paylaştıkça büyür">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<link rel="stylesheet" href="hesap.css">
+<script src="pwa.js"></script>
+<script src="ortak.js"></script>
+<script src="rapor.js"></script>
+<script type="module" src="sayac.js"></script>
+<link rel="stylesheet" href="theme.css">
+<style>
+  /* Solo Test: tek kişilik piyon atlama. Ahşap-siyah yuvarlak tahta, altın piyonlar. */
+  body { user-select: none; -webkit-user-select: none; }
+  .wrap { max-width: 520px; }
+  /* Tahta seçimi */
+  .stSec { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: var(--field); border: 1px solid var(--line); border-radius: 14px; padding: 4px; margin-bottom: 10px; }
+  .stSec button { min-height: 44px; border: 0; background: transparent; color: #a8a8a8; border-radius: 10px; font: 600 12.5px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; padding: 4px 2px; touch-action: manipulation; transition: background-color .2s ease, color .2s ease, transform .15s ease; }
+  .stSec button small { display: block; font-size: 11px; font-weight: 500; color: inherit; opacity: .85; margin-top: 1px; }
+  .stSec button.on { background: #e0a24f; color: #1a1206; }
+  .stSec button:active { transform: scale(.96); }
+  /* Sayaçlar */
+  .stSay { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px; text-align: center; }
+  .stSay div { background: #0a0a0a; border: 1px solid var(--line); border-radius: 12px; padding: 6px 2px 5px; min-width: 0; }
+  .stSay b { display: block; font: 700 19px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif; color: #f2f2f2; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stSay span { font-size: 11px; color: var(--muted); }
+  .stSay .ana b { color: #f3d38a; }
+  .stSay .rek b { font-size: 14px; line-height: 23px; color: #cfc4ad; }
+  .stMsg { min-height: 40px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13.5px; line-height: 1.4; color: #bdbdbd; padding: 0 6px; margin: 0 0 6px; }
+  .stMsg b { color: #f3d38a; }
+  /* Tahta: yuvarlak ahşap, ince altın kakma halka */
+  .stTahtaK { display: flex; justify-content: center; margin: 2px 0 10px; }
+  .stTahta { position: relative; width: min(100%, 460px); aspect-ratio: 1; border-radius: 50%; touch-action: none;
+    background:
+      radial-gradient(circle at 50% 50%, transparent 0 63%, rgba(0,0,0,.35) 64%, transparent 66%),
+      repeating-radial-gradient(circle at 46% 42%, rgba(255,220,160,.018) 0 3px, rgba(0,0,0,.05) 3px 7px),
+      radial-gradient(circle at 42% 32%, #2b1d10 0%, #1a110a 45%, #0e0905 78%, #070503 100%);
+    box-shadow: 0 0 0 1px #5a4320, 0 0 0 5px #0b0805, 0 0 0 6px #2a1f10, 0 18px 40px rgba(0,0,0,.7), inset 0 2px 0 rgba(255,220,160,.06), inset 0 -18px 40px rgba(0,0,0,.55); }
+  .stTahta::before { content: ""; position: absolute; inset: 2.2%; border-radius: 50%; border: 1px solid rgba(224,162,79,.22); pointer-events: none; }
+  .stIzgara, .stPiyon { position: absolute; inset: 3%; }
+  .stIzgara { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(7, 1fr); }
+  .stPiyon { pointer-events: none; }
+  /* Delik: oyuk */
+  .h { position: relative; margin: 0; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; touch-action: none; }
+  .h::before { content: ""; position: absolute; left: 31%; top: 31%; width: 38%; height: 38%; border-radius: 50%;
+    background: radial-gradient(circle at 50% 38%, #000 0 48%, #120c06 72%, #2a1d10 100%);
+    box-shadow: inset 0 2px 3px rgba(0,0,0,.95), 0 1px 0 rgba(255,220,160,.08); }
+  .h:focus { outline: none; } .h:focus-visible::after { content: ""; position: absolute; inset: 6%; border-radius: 50%; box-shadow: 0 0 0 2px #e0a24f; }
+  .h.hd::before { box-shadow: inset 0 2px 3px rgba(0,0,0,.95), 0 0 0 2px rgba(224,162,79,.28); }
+  /* Gidilebilecek delik */
+  .h.ok::after { content: ""; position: absolute; inset: 14%; border-radius: 50%; border: 2px solid #e0a24f; background: rgba(224,162,79,.12); opacity: 1; transform: scale(1); transition: opacity .2s ease, transform .2s ease; }
+  .h.ip::after { content: ""; position: absolute; inset: 12%; border-radius: 50%; border: 2px dashed #f3d38a; background: rgba(243,211,138,.14); animation: stNabiz 1.4s ease-in-out infinite; }
+  @keyframes stNabiz { 0%, 100% { opacity: .55; transform: scale(.92); } 50% { opacity: 1; transform: scale(1.02); } }
+  /* Piyon */
+  .p { position: absolute; left: 0; top: 0; width: calc(100% / 7); height: calc(100% / 7); transition: transform .26s cubic-bezier(.2,.7,.2,1), opacity .26s ease; will-change: transform; }
+  .p b { position: absolute; left: 12%; top: 12%; width: 76%; height: 76%; border-radius: 50%;
+    background: radial-gradient(circle at 34% 28%, #fff7dc 0 5%, #f6dc9a 13%, #e9b464 32%, #c47f2c 58%, #7a4a14 82%, #3d230a 100%);
+    box-shadow: 0 3px 4px rgba(0,0,0,.65), 0 7px 12px rgba(0,0,0,.4), inset 0 -3px 5px rgba(60,30,0,.45), inset 0 1px 1px rgba(255,255,255,.35);
+    transition: transform .2s ease, box-shadow .2s ease; }
+  .p b::after { content: ""; position: absolute; left: 22%; top: 12%; width: 38%; height: 22%; border-radius: 50%; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0)); transform: rotate(-18deg); }
+  .p.sec b { transform: scale(1.1) translateY(-3%); box-shadow: 0 0 0 2px #f3d38a, 0 0 16px rgba(243,211,138,.55), 0 8px 14px rgba(0,0,0,.6), inset 0 -3px 5px rgba(60,30,0,.45); }
+  .p.tut { transition: none; z-index: 5; } .p.tut b { transform: scale(1.16); }
+  .p.ip b { box-shadow: 0 0 0 2px #f3d38a, 0 0 14px rgba(243,211,138,.45), 0 6px 10px rgba(0,0,0,.55), inset 0 -3px 5px rgba(60,30,0,.45); }
+  .p.git { opacity: 0; } .p.git b { transform: scale(.35); }
+  .p.gel b { animation: stGel .26s cubic-bezier(.2,.7,.2,1); }
+  @keyframes stGel { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+  .p.salla b { animation: stSalla .3s ease; }
+  @keyframes stSalla { 25% { transform: translateX(-6%); } 75% { transform: translateX(6%); } }
+  /* Düğmeler */
+  .stDug { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 6px; }
+  .stDug button { min-height: 46px; border-radius: 13px; border: 1px solid var(--line); background: #111; color: #f2f2f2; font: 700 14px system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; touch-action: manipulation; padding: 0 8px; transition: transform .15s ease, border-color .2s ease, background-color .2s ease; }
+  .stDug button:active:not(:disabled) { transform: scale(.96); }
+  .stDug button:disabled { opacity: .4; cursor: default; }
+  .stDug .ipb { border-color: #5a4320; color: #f3d38a; background: rgba(224,162,79,.08); }
+  .stDug .ses { width: 46px; padding: 0; font-size: 19px; }
+  .stDug .emin { border-color: #ef6a4c; color: #ffb7a6; }
+  /* Bitiş kartı */
+  .stSon { margin-top: 12px; text-align: center; border-color: #5a4320; background: linear-gradient(170deg, rgba(224,162,79,.13), rgba(224,162,79,.02) 60%, #0d0d0d); animation: stKart .3s cubic-bezier(.2,.7,.2,1); }
+  @keyframes stKart { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .stSon .bas { font: italic 700 26px/1.2 Georgia, "Times New Roman", serif; color: #f3d38a; margin: 2px 0 4px; }
+  .stSon p { margin: 0; font-size: 13.5px; line-height: 1.45; color: #cfc4ad; }
+  .stSon .rek { display: inline-block; margin-top: 8px; padding: 3px 11px; border-radius: 999px; background: rgba(224,162,79,.16); border: 1px solid #5a4320; color: #f3d38a; font-size: 12.5px; font-weight: 700; }
+  .stSon .ik { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .stSon .ik button { min-height: 44px; border-radius: 12px; font: 700 14px system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; touch-action: manipulation; }
+  .stSon .ik .a { border: 0; background: #e0a24f; color: #1a1206; }
+  .stSon .ik .b { border: 1px solid #5a4320; background: transparent; color: #f3d38a; }
+  /* Nasıl oynanır */
+  .stNas { margin-top: 12px; padding: 0; }
+  .stNas summary { list-style: none; cursor: pointer; padding: 13px 14px; min-height: 24px; font: italic 700 16px Georgia, "Times New Roman", serif; color: #e0a24f; display: flex; justify-content: space-between; align-items: center; }
+  .stNas summary::-webkit-details-marker { display: none; }
+  .stNas summary::after { content: "›"; font: 400 22px system-ui, sans-serif; color: #8a8a8a; transform: rotate(90deg); transition: transform .25s ease; }
+  .stNas[open] summary::after { transform: rotate(-90deg); }
+  .stNas .ic { padding: 0 14px 14px; font-size: 13.5px; line-height: 1.5; color: #bdbdbd; }
+  .stNas .ic p { margin: 0 0 8px; } .stNas .ic b { color: #f2f2f2; }
+  .stNas[open] .ic { animation: stKart .25s ease; }
+  .stIst { text-align: center; font-size: 12px; color: var(--muted); margin: 10px 0 0; line-height: 1.5; }
+  @media (max-height: 760px) { .stTahta { width: min(100%, 400px); } }
+  @media (prefers-reduced-motion: reduce) {
+    .p, .p b, .h.ok::after, .stSec button, .stDug button, .stNas summary::after { transition: none; }
+    .h.ip::after, .p.gel b, .p.salla b, .stSon, .stNas[open] .ic { animation: none; }
+  }
+</style>
+</head>
+<body data-footer="kisa">
+<script src="oyunsaat.js" data-kilit="sayfa"></script>
+<div class="wrap">
+  <div class="stick">
+    <header>
+      <a href="oyunlar.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Oyunlar" aria-label="Oyunlar">🎮</a>
+      <h1>🔘 Solo Test</h1>
+      <a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
+    </header>
+  </div>
+
+  <section id="solotest">
+    <div class="stSec" id="stSec" role="group" aria-label="Tahta seçimi"></div>
+    <div class="stSay">
+      <div class="ana"><b id="stKalan">32</b><span>piyon</span></div>
+      <div><b id="stHamle">0</b><span>hamle</span></div>
+      <div><b id="stSure">0:00</b><span>süre</span></div>
+      <div class="rek"><b id="stRekor">–</b><span>en iyi</span></div>
+    </div>
+    <p class="stMsg" id="stMsg" aria-live="polite"></p>
+    <div class="stTahtaK">
+      <div class="stTahta" id="stTahta">
+        <div class="stIzgara" id="stIzgara" role="grid" aria-label="Solo Test tahtası"></div>
+        <div class="stPiyon" id="stPiyon" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="stDug">
+      <button type="button" id="stGeri">↶ Geri al</button>
+      <button type="button" class="ipb" id="stIpucu">💡 İpucu</button>
+      <button type="button" id="stBastan">↻ Baştan</button>
+      <button type="button" class="ses" id="stSes" aria-label="Ses kapalı" title="Ses">🔇</button>
+    </div>
+    <div class="card stSon" id="stSon" hidden>
+      <div class="bas" id="stSonB"></div>
+      <p id="stSonP"></p>
+      <span class="rek" id="stSonR" hidden></span>
+      <div class="ik"><button type="button" class="b" id="stSonGeri">↶ Geri al</button><button type="button" class="a" id="stSonYeni">↻ Yeni oyun</button></div>
+    </div>
+    <details class="card stNas" id="stNas">
+      <summary>Nasıl oynanır?</summary>
+      <div class="ic">
+        <p>Bir piyon, hemen yanındaki piyonun <b>üstünden atlayıp</b> arkasındaki boş deliğe geçer; üstünden atlanan piyon tahtadan kalkar. Atlama yalnızca <b>yatay ya da dikey</b> olur, çapraz olmaz.</p>
+        <p>Amaç tahtada <b>tek piyon</b> bırakmak. Son piyon hafif altın halkalı <b>hedef delikte</b> kalırsa tam puan 🏆</p>
+        <p>Bir piyona dokun, gidebileceği delikler parlasın; sonra deliğe dokun. İstersen piyonu parmağınla sürükleyebilirsin de.</p>
+        <p>Takılırsan <b>💡 İpucu</b> sana çözüme götüren bir hamle gösterir. Geri alma sınırsız, oyunun da kaldığın yerden devam eder 🙂</p>
+        <p style="margin:0;color:#8a8a8a;font-size:12.5px">Rekor yalnızca ipucu kullanılmayan oyunlarda sayılır: önce en az piyon, eşitse en kısa süre.</p>
+      </div>
+    </details>
+    <p class="stIst" id="stIst"></p>
+  </section>
+</div>
+
+<script src="solotestp.js"></script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

@@ -332,6 +332,7 @@
     if (s.son === s.i0) { hayalet = null; dizHucre(s.i0); return; }
     if (hayalet) { const g = hayalet.g; hayalet = null; S.sec = s.k; koyDene(s.k, g); }
   });
+  dizBd.addEventListener("mousedown", (e) => e.preventDefault()); // sürüklerken yazı seçilmesin
   dizBd.addEventListener("pointerleave", () => { if (!surukle && hayalet && !hayalet.say) { hayalet = null; dizCiz(); } });
   dizBd.addEventListener("click", (e) => { const c = e.target.closest(".amC"); if (!c) return; if (Date.now() - sonFare < 400) return; dizHucre(+c.dataset.i); });
   $("amTray").addEventListener("click", (e) => { const b = e.target.closest("button[data-k]"); if (!b) return; const k = +b.dataset.k; S.sec = S.sec === k ? -1 : k; dizMsg(S.sec >= 0 ? `${FILO[k].ad} seçildi: denizde başlayacağı kareye dokun.` : ""); dizCiz(); });
