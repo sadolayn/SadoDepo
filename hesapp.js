@@ -2,6 +2,7 @@ const $ = (id) => document.getElementById(id);
 // ===== Sekmeler =====
 $("tabs").addEventListener("click", (e) => {
   const b = e.target.closest("button[data-t]"); if (!b) return;
+  if (b.dataset.t === "kaza") { window.Rapor && Rapor.bolum("kaza"); location.href = "kaza.html"; return; } // Kaza Tutanağı Asistanı ayrı sayfada (8 Kasım 2026)
   document.querySelectorAll("#tabs button").forEach((x) => x.classList.toggle("on", x === b));
   document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("on", p.id === b.dataset.t));
   try { localStorage.setItem("hesapTab", b.dataset.t); } catch (e) {}
