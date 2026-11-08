@@ -924,8 +924,6 @@
        ["09-08", "🧬 Nobel ödüllü bilim insanımız Aziz Sancar'ın doğum günü (1946)"],
       ].forEach(([g, alt, ana, anma]) => { if (g === md) ekle(alt, ana, anma); });
       if (MILLI[md] || ["01-01", "05-01", "07-15"].includes(md)) o.tatil = true; // resmî tatil: "İyi çalışmalar" denmez
-      if (md === "11-10") { const dk = n.getHours() * 60 + n.getMinutes(); // saygı duruşu hatırlatması
-        if (dk < 545) ekle("🕘 Bugün saat 09.05'te saygı duruşu"); else if (dk < 550) ekle("🕘 09.05 · Saygı duruşu"); }
       if (ay === 5 && pazar(2)) ekle("💐 Anneler Günü kutlu olsun");
       if (ay === 6 && pazar(3)) ekle("👔 Babalar Günü kutlu olsun");
       return o;
