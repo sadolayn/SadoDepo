@@ -1,6 +1,7 @@
 /* 10 Kasım anma ekranı (8 Kasım 2026)
    O gün site açıksa saat 09.05'te anma ekranı açılır: fotoğraf, "10 KASIM", anma metni ve "1881 – ∞".
-   Siren kendiliğinden çalmaz; isteyen "Sireni çal" düğmesiyle çalar. Siren ses dosyası değil, tarayıcıda üretilir
+   Siren 09.05'te kendiliğinden çalar (tarayıcı kullanıcı dokunmadan sese izin vermezse düğme çıkar);
+   siren bittikten ya da kapatıldıktan sonra isteyen "Sireni çal" düğmesiyle yeniden çalar. Siren ses dosyası değil, tarayıcıda üretilir
    (Web Audio: yavaşça yükselen, düz giden ve sonunda sönen bir siren sesi, yaklaşık 1 dakika).
    ortak.js bu dosyayı yalnızca 10 Kasım'da yükler. Sınıf adları .ai… ile başlar: tema motoru açık modda bunları koyu bırakır. */
 (function () {
@@ -43,16 +44,18 @@
     var el = document.createElement("div"); el.className = "aiAnma"; el.setAttribute("data-tema-koru-alan", ""); el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "10 Kasım anma");
     el.innerHTML = '<img class="aiAnmaFoto" src="img/ataturk.jpg" alt="Mustafa Kemal Atatürk">'
       + '<h2 class="aiAnmaBas">10 KASIM</h2>'
-      + '<p class="aiAnmaB">Cumhuriyetimizin ve Bankamızın Kurucusu Ulu Önder Mustafa Kemal Atatürk\'ü, tarifsiz bir özlem, derin bir saygı ve sonsuz minnetle anıyoruz.</p>'
+      + '<p class="aiAnmaB">Cumhuriyetimizin ve Türkiye&nbsp;İş&nbsp;Bankası\'nın Kurucusu Ulu Önder Mustafa Kemal Atatürk\'ü, tarifsiz bir özlem, derin bir saygı ve sonsuz minnetle anıyoruz.</p>'
       + '<p class="aiAnmaYil">1881 – ∞</p>'
       + '<div class="aiAnmaD"><button type="button" class="aiAnmaCal">🔊 Sireni çal</button><button type="button" class="aiAnmaSus" hidden>🔇 Sesi kapat</button><button type="button" class="aiAnmaKapat">Kapat</button></div>';
     document.body.appendChild(el); requestAnimationFrame(function () { el.classList.add("on"); });
     var cal = el.querySelector(".aiAnmaCal"), sus = el.querySelector(".aiAnmaSus");
-    var baslat = function () { if (durdur) return; durdur = siren(60); cal.hidden = true; sus.hidden = !durdur; if (durdur) setTimeout(function () { sus.hidden = true; durdur = null; }, 61000); };
+    var baslat = function () { if (durdur) return; durdur = siren(60); cal.hidden = true; sus.hidden = !durdur; if (durdur) { var bu = durdur; setTimeout(function () { if (durdur !== bu) return; sus.hidden = true; durdur = null; cal.hidden = false; }, 61000); } }; // bitince yeniden çalınabilir
     cal.onclick = function () { if (C && C.state === "suspended") C.resume().then(function () { durdur = null; baslat(); }); else baslat(); };
     sus.onclick = function () { if (durdur) durdur(); durdur = null; sus.hidden = true; cal.hidden = false; };
     el.querySelector(".aiAnmaKapat").onclick = function () { if (durdur) durdur(); el.classList.remove("on"); setTimeout(function () { el.remove(); }, 1600); };
-    // Siren kendiliğinden çalmaz: isteyen düğmeye dokunur
+    // 09.05'te siren kendiliğinden çalar (tarayıcı izin verirse); izin vermezse ya da siren bitince "Sireni çal" ile tekrar çalınabilir
+    baslat();
+    setTimeout(function () { if (!C || C.state !== "running") { if (durdur) durdur(); durdur = null; sus.hidden = true; cal.hidden = false; } }, 400);
     setTimeout(function () { if (document.body.contains(el) && !durdur) el.querySelector(".aiAnmaKapat").click(); }, 3 * 60000); // 3 dakika sonra kendiliğinden kapanır
   }
 
