@@ -876,33 +876,60 @@
     else if (h >= 11 && h < 17) { t = "Keyifli günler"; ik = "oglen"; }
     else if (h >= 17 && h < 22) { t = "İyi akşamlar"; ik = "aksam"; }
     else { t = "Güzel geceler"; ik = "gece"; }
-    // Özel günler (8 Kasım 2026; Google'ın günlük çizimleri gibi): yalnızca resmî ve dinî bayramlar, arifeler, kandiller,
-    // 10 Kasım ve yılbaşı. Anneler/Babalar/Öğretmenler günü gibi günler bilerek yok (sade kalsın).
-    // ana: büyük selamın yerine geçer (kısa). alt: alttaki dönen satırda ilk sırada gösterilir.
-    // Dinî bayramlar ve kandiller Diyanet takvimine dayanır; Ramazan başlangıcı ve 2027 Regaib eklenmedi (kaynakta net değil).
+    // Özel günler (8 Kasım 2026; Google'ın günlük çizimleri gibi). Öncelik: dinî ve millî bayramlar, arifeler, kandiller, anma günleri.
+    // ana: büyük selamın yerine geçer (kısa). alt: alttaki dönen satırda ilk sıralarda (aynı güne birden çok gün denk gelebilir).
+    // anma: o gün "Keyifli gezinmeler" gösterilmez. Dinî tarihler Diyanet takvimine dayanır; bilim günleri ve doğum tarihleri
+    // kaynaklarla doğrulandı (UNESCO Matematik Günü 14 Mart, Dünya Tasarruf Günü 31 Ekim, Aziz Sancar 8 Eylül 1946, Cahit Arf 11 Ekim 1910).
     const OZEL = (function () {
       const n = new Date(), ay = n.getMonth() + 1, gn = n.getDate(), md = String(ay).padStart(2, "0") + "-" + String(gn).padStart(2, "0"), ymd = n.getFullYear() + "-" + md;
-      const DINI = { // [ilk gün, gün sayısı, ad]
+      const pazar = (kacinci) => n.getDay() === 0 && gn === (7 - new Date(n.getFullYear(), ay - 1, 1).getDay()) % 7 + 1 + (kacinci - 1) * 7; // ayın kaçıncı pazarı
+      const o = { alt: [] }, ekle = (alt, ana, anma) => { o.alt.push(alt); if (ana && !o.ana) o.ana = ana; if (anma) o.anma = true; };
+      const DINI = { // ilk gün: [gün sayısı, ad]
         "2026-03-20": [3, "Ramazan Bayramı"], "2026-05-27": [4, "Kurban Bayramı"], "2027-03-09": [3, "Ramazan Bayramı"], "2027-05-16": [4, "Kurban Bayramı"],
         "2028-02-26": [3, "Ramazan Bayramı"], "2028-05-05": [4, "Kurban Bayramı"], "2029-02-14": [3, "Ramazan Bayramı"], "2029-04-24": [4, "Kurban Bayramı"] };
       for (const bas in DINI) {
-        const [sure, ad] = DINI[bas], b = new Date(bas + "T00:00:00"), fark = Math.round((new Date(n.getFullYear(), ay - 1, gn) - b) / 864e5);
-        if (fark >= 0 && fark < sure) return { ana: "Mutlu bayramlar", alt: `🌙 ${ad}`, ik: "🌙" }; // dinî bayramda sade, klasik selam
-        if (fark === -1) return { ana: "Hayırlı arifeler", alt: `🌙 Yarın ${ad}`, ik: "🌙" };
+        const [sure, ad] = DINI[bas], fark = Math.round((new Date(n.getFullYear(), ay - 1, gn) - new Date(bas + "T00:00:00")) / 864e5);
+        if (fark >= 0 && fark < sure) { ekle(`🌙 ${ad}`, "Mutlu bayramlar"); o.tatil = true; } // dinî bayramda sade, klasik selam
+        if (fark === -1) ekle(`🌙 Yarın ${ad}`, "Hayırlı arifeler");
       }
       const KANDIL = { "2026-01-15": "Miraç Kandili", "2026-02-02": "Berat Kandili", "2026-08-24": "Mevlid Kandili", "2026-12-10": "Regaib Kandili",
         "2027-01-04": "Miraç Kandili", "2027-01-22": "Berat Kandili", "2027-08-13": "Mevlid Kandili" };
-      if (KANDIL[ymd]) return { ana: "Hayırlı kandiller", alt: `✨ Bu gece ${KANDIL[ymd]}`, ik: "✨" };
-      const KADIR = { "2026-03-16": 1, "2027-03-05": 1 };
-      if (KADIR[ymd]) return { ana: "Hayırlı geceler", alt: "✨ Bu gece Kadir Gecesi", ik: "✨" };
+      if (KANDIL[ymd]) ekle(`✨ Bu gece ${KANDIL[ymd]}`, "Hayırlı kandiller");
+      if ({ "2026-03-16": 1, "2027-03-05": 1 }[ymd]) ekle("✨ Bu gece Kadir Gecesi", "Hayırlı geceler");
+      if (ymd === "2026-06-25") ekle("🥣 Bugün Aşure Günü");
       const MILLI = { "04-23": "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı", "05-19": "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı", "08-30": "30 Ağustos Zafer Bayramı", "10-29": "29 Ekim Cumhuriyet Bayramı" };
-      if (MILLI[md]) return { ana: "İyi bayramlar", alt: `🇹🇷 ${MILLI[md]}mız kutlu olsun`, ik: "🇹🇷" };
-      if (md === "11-10") return { ana: "Saygı ve özlemle", alt: "🇹🇷 Ulu Önder Atatürk'ü saygı ve özlemle anıyoruz", anma: true };
-      if (md === "01-01") return { ana: "Mutlu yıllar", alt: "🎉 Yeni yılımız kutlu olsun" };
-      if (md === "12-31") return { ana: "İyi yıllar", alt: "🎄 Yeni yıl yaklaşıyor" };
-      return {};
+      if (MILLI[md]) ekle(`🇹🇷 ${MILLI[md]}mız kutlu olsun`, "İyi bayramlar");
+      // Sabit günler: [ay-gün, mesaj, ana selam, anma]
+      [["11-10", "🇹🇷 Ulu Önder Atatürk'ü saygı ve özlemle anıyoruz", "Saygı ve özlemle", 1],
+       ["03-18", "🇹🇷 18 Mart Çanakkale Zaferi; şehitlerimizi rahmetle anıyoruz", "Rahmetle anıyoruz", 1],
+       ["07-15", "🇹🇷 15 Temmuz Demokrasi ve Millî Birlik Günü", "", 1],
+       ["03-12", "🇹🇷 12 Mart: İstiklal Marşı'nın kabulü ve Mehmet Akif Ersoy'u anma günü"],
+       ["01-01", "🎉 Yeni yılımız kutlu olsun", "Mutlu yıllar"], ["12-31", "🎄 Yeni yıl yaklaşıyor", "İyi yıllar"],
+       ["05-01", "🛠️ 1 Mayıs Emek ve Dayanışma Günü"],
+       ["11-24", "🍎 24 Kasım Öğretmenler Günü kutlu olsun"], ["03-08", "🌷 8 Mart Dünya Kadınlar Günü kutlu olsun"],
+       ["03-14", "🩺 14 Mart Tıp Bayramı kutlu olsun"], ["02-14", "❤️ Bugün Sevgililer Günü"],
+       ["08-26", "🏛️ 26 Ağustos 1924: Türkiye İş Bankası kuruldu"], ["10-31", "🐷 31 Ekim Dünya Tasarruf Günü"],
+       ["04-22", "🌍 22 Nisan Dünya Günü"], ["06-05", "🌱 5 Haziran Dünya Çevre Günü"],
+       // Bilim, matematik, fizik, uzay
+       ["03-14", "π 14 Mart Dünya Matematik Günü (Pi Günü: π ≈ 3,14159…) · Einstein'ın doğum günü"],
+       ["07-22", "π 22 Temmuz: Pi'ye yakınlık günü (22/7 ≈ 3,142)"],
+       ["02-11", "🔬 11 Şubat Bilimde Kadınlar ve Kız Çocukları Günü"],
+       ["01-04", "🍎 Isaac Newton'un doğum günü (1643): yerçekimi ve hareket yasaları"],
+       ["02-15", "🔭 Galileo Galilei'nin doğum günü (1564): gökyüzüne teleskopla bakan öncü"],
+       ["11-07", "⚛️ Marie Curie'nin doğum günü (1867): iki ayrı bilim dalında Nobel alan tek kişi"],
+       ["04-12", "🚀 12 Nisan 1961: Yuri Gagarin uzaya çıkan ilk insan oldu"],
+       ["07-20", "🌕 20 Temmuz 1969: Apollo 11 Ay'a indi"],
+       ["10-04", "🛰️ 4 Ekim 1957: İlk yapay uydu Sputnik 1 fırlatıldı"],
+       ["10-11", "🧮 Matematikçi Cahit Arf'ın doğum günü (1910): Arf değişmezi"],
+       ["09-08", "🧬 Nobel ödüllü bilim insanımız Aziz Sancar'ın doğum günü (1946)"],
+      ].forEach(([g, alt, ana, anma]) => { if (g === md) ekle(alt, ana, anma); });
+      if (MILLI[md] || ["01-01", "05-01", "07-15"].includes(md)) o.tatil = true; // resmî tatil: "İyi çalışmalar" denmez
+      if (ay === 5 && pazar(2)) ekle("💐 Anneler Günü kutlu olsun");
+      if (ay === 6 && pazar(3)) ekle("👔 Babalar Günü kutlu olsun");
+      return o;
     })();
     if (OZEL.ana) t = OZEL.ana;
+    else if (OZEL.anma && t === "Keyifli günler") t = "Sağlıklı günler"; // anma günlerinde "keyifli" denmez
     else if ((new Date().getDay() === 0 || new Date().getDay() === 6) && h >= 9 && h < 17) t = "İyi hafta sonları";
     const svg = (id) => `<svg class="gik ${ik}" viewBox="0 0 24 24" aria-hidden="true">${IK[ik].replace(/"gA"|#gA|"gH"|#gH/g, (m) => m.replace(/g([AH])/, id + "$1"))}</svg>`;
     document.getElementById("greet").innerHTML = t + " " + svg("a");
@@ -912,8 +939,8 @@
       const el = document.getElementById("welcome"), n = new Date(), wd = n.getDay() > 0 && n.getDay() < 6 && n.getHours() >= 8 && n.getHours() < 18;
       const ONR = "Öneri ve isteklerinizi en alttan iletebilirsiniz ✉️";
       const anma = !!OZEL.anma; // 10 Kasım: "keyifli" ifadeler gösterilmez
-      const L = [...(OZEL.alt ? [OZEL.alt] : []), "Hoş geldiniz", ...(anma ? [] : ["Keyifli gezinmeler"]), ...(wd ? ["İyi çalışmalar"] : []), ONR];
-      if (OZEL.alt) el.textContent = OZEL.alt; // özel gün mesajı açılışta görünür
+      const L = [...OZEL.alt, "Hoş geldiniz", ...(anma ? [] : ["Keyifli gezinmeler"]), ...(wd && !OZEL.tatil ? ["İyi çalışmalar"] : []), ONR]; // resmî tatilde "İyi çalışmalar" yok
+      if (OZEL.alt.length) el.textContent = OZEL.alt[0]; // özel gün mesajı açılışta görünür
       el.addEventListener("click", () => { if (el.textContent === ONR) document.getElementById("oneriBtn").click(); else if (el.textContent === ODUL) location.href = "isbank.html#odul"; else if (/kampanya/i.test(el.textContent)) location.href = "isbank.html#maximum"; });
       // Kampanya hatırlatıcısı: her ayın ilk 5 günü
       // (Ayın ilk haftası kampanya satırı 2 Kasım 2026'da kaldırıldı; kampanya hatırlatması kayan yazıda.) İşCep ödülü 9 Kasım'a kadar, dokununca haberlere
