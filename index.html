@@ -66,7 +66,7 @@
   /* Ödülün tam adı bir satır daha tuttuğu için "Haberi oku" düğmesi kayan yazının altına kaçıyordu ya da kesiliyordu (5 Kasım 2026);
      düğme yerine adın sonuna ›, kartın tamamı zaten bağlantı */
   .odS span.y3 { display: none; } .odS .y2b::after { content: " ›"; }
-  .top.vidOn .hello { margin-bottom: 52px; transition: margin .5s ease; }
+  .top .hello { transition: margin .5s ease; } /* video açılınca alt boşluk JS ile tam kart uzaması kadar artar (8 Kasım: kart şeridin üstüne biniyordu) */
   .top .hello { transition: margin .5s ease; }
   .top.vidOn .odS .y1 { font-size: 11px; } .top.vidOn .odS .y2 { font-size: 21px; } .top.vidOn .odS .y3 { margin-top: 4px; padding: 4px 13px; }
   .odS .kupa { position: relative; width: 128px; height: 134px; margin-top: 26px; filter: drop-shadow(0 6px 22px rgba(255,180,60,.45)); }
@@ -564,7 +564,7 @@
   html[data-tema="acik"] .sbT b, html[data-tema="acik"] .sbO, html[data-tema="acik"] .sbIp { color: #8a5a12; }
   html[data-tema="acik"] .sbB::after { background: linear-gradient(100deg, transparent, rgba(224,162,79,.35), transparent); }
   /* Kupa sahnesi gece sahnesi olarak kalır: koyu kart içinde */
-  html[data-tema="acik"] .odS { background: #0b0a08; border-radius: 18px; padding-bottom: 4px; max-width: 420px; margin: 0 auto; }
+  html[data-tema="acik"] .odS { box-sizing: border-box; background: #0b0a08; border-radius: 18px; padding-bottom: 4px; max-width: 420px; margin: 0 auto; }
   html[data-tema="acik"] .top.odulOn .hello :is(.clock, .datec) { position: relative; z-index: 4; }
   /* Paylaş kartı, öneri formu, kurulum yardımı */
   html[data-tema="acik"] .paylas { background: radial-gradient(120% 80% at 50% 0%, rgba(224,162,79,.20) 0%, rgba(224,162,79,.06) 45%, #fff 75%); box-shadow: 0 1px 2px rgba(60,45,20,.05); }
@@ -907,10 +907,12 @@
         const vidOk = v && v.canPlayType("video/mp4") && !matchMedia("(prefers-reduced-motion: reduce)").matches && !(c && (c.saveData || /2g/.test(c.effectiveType || "")));
         if (!vidOk) return;
         if (ac) {
+          // Kart 52 px uzar; selamlamanın alt boşluğu da aynı kadar artar ki alttaki kayan yazı şeridi kartın altında kalsın
+          const hl = top.querySelector(".hello"); hl.style.marginBottom = (parseFloat(getComputedStyle(hl).marginBottom) + 52) + "px";
           top.classList.add("vidOn"); v.currentTime = 0;
           odS.style.height = (parseFloat(odS.style.height) + 52) + "px";
-          const pr = v.play(); if (pr && pr.catch) pr.catch(() => top.classList.remove("vidOn"));
-        } else { v.pause(); top.classList.remove("vidOn"); }
+          const pr = v.play(); if (pr && pr.catch) pr.catch(() => { top.classList.remove("vidOn"); top.querySelector(".hello").style.marginBottom = ""; });
+        } else { v.pause(); top.classList.remove("vidOn"); top.querySelector(".hello").style.marginBottom = ""; }
       };
       const don = () => {
         el.classList.add("fade");
