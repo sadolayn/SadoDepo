@@ -437,16 +437,16 @@
         if (k < 0) {
           S.rAt[i] = 1; efekt(bBd, i, "sp", 600); ses("su");
           S.sira = "p"; S.tur++;
-          msg(`Sadolayn ${kor(i)}'e attı · ıska 🌊 Sıra sende.`);
+          msg(`Sadolayn ${kor(i)} karesine attı · ıska 🌊 Sıra sende.`);
           savasCiz(); kaydet(); return;
         }
         S.rAt[i] = 2; efekt(bBd, i, "bm", 600); titre(25);
         const bat = hucreler(S.ben[k]).every((j) => S.rAt[j] === 2);
         if (bat) {
           ses("bat");
-          if (batik(S.ben, S.rAt).every(Boolean)) { msg(`💥 Sadolayn senin ${FILO[k].ad}'ini de batırdı.`); savasCiz(); return bitir(false); }
-          msg(`💥 Sadolayn senin <b>${FILO[k].ad}</b> gemini batırdı! Bir daha atıyor…`);
-        } else { ses("bum"); msg(`Sadolayn ${kor(i)}'i vurdu 🔥 Bir daha atıyor…`); }
+          if (batik(S.ben, S.rAt).every(Boolean)) { msg(`💥 Son gemin de battı: ${FILO[k].ad}.`); savasCiz(); return bitir(false); }
+          msg(`💥 Senin <b>${FILO[k].ad}</b> battı! Sadolayn bir daha atıyor…`);
+        } else { ses("bum"); msg(`Sadolayn ${kor(i)} karesini vurdu 🔥 Bir daha atıyor…`); }
         savasCiz(); kaydet(); aiSira();
       }, 600);
     }, 380);
