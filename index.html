@@ -924,6 +924,8 @@
        ["09-08", "🧬 Nobel ödüllü bilim insanımız Aziz Sancar'ın doğum günü (1946)"],
       ].forEach(([g, alt, ana, anma]) => { if (g === md) ekle(alt, ana, anma); });
       if (MILLI[md] || ["01-01", "05-01", "07-15"].includes(md)) o.tatil = true; // resmî tatil: "İyi çalışmalar" denmez
+      if (md === "11-10") { const dk = n.getHours() * 60 + n.getMinutes(); // saygı duruşu hatırlatması
+        if (dk < 545) ekle("🕘 Bugün saat 09.05'te saygı duruşu"); else if (dk < 550) ekle("🕘 09.05 · Saygı duruşu"); }
       if (ay === 5 && pazar(2)) ekle("💐 Anneler Günü kutlu olsun");
       if (ay === 6 && pazar(3)) ekle("👔 Babalar Günü kutlu olsun");
       return o;
@@ -932,8 +934,9 @@
     else if (OZEL.anma && t === "Keyifli günler") t = "Sağlıklı günler"; // anma günlerinde "keyifli" denmez
     else if ((new Date().getDay() === 0 || new Date().getDay() === 6) && h >= 9 && h < 17) t = "İyi hafta sonları";
     const svg = (id) => `<svg class="gik ${ik}" viewBox="0 0 24 24" aria-hidden="true">${IK[ik].replace(/"gA"|#gA|"gH"|#gH/g, (m) => m.replace(/g([AH])/, id + "$1"))}</svg>`;
-    document.getElementById("greet").innerHTML = t + " " + svg("a");
-    document.getElementById("greet2").innerHTML = t + " " + svg("b");
+    const simge = OZEL.anma ? () => "" : svg; // anma günlerinde güneş/ay simgesi gösterilmez
+    document.getElementById("greet").innerHTML = t + " " + simge("a");
+    document.getElementById("greet2").innerHTML = t + " " + simge("b");
     // Alt satır: birkaç saniyede bir yumuşakça değişir
     (function () {
       const el = document.getElementById("welcome"), n = new Date(), wd = n.getDay() > 0 && n.getDay() < 6 && n.getHours() >= 8 && n.getHours() < 18;
