@@ -37,7 +37,7 @@
   const dcOrt = () => (ARAC[D.arac] && ARAC[D.arac].dcOrt) || 0.6; // başka araçta genel bir ortalama
 
   // ---- kalıcılık: yalnızca bu cihaz
-  const ALAN = ["sjBat", "sjTuk", "sjAcMax", "sjDcMax", "sjNow", "sjHedef", "sjGuc", "sjKm", "sjYNow", "sjEk", "sjMin", "sjLt", "sjYakit", "sjW", "sjSaat", "sjVNow", "sjVMin"];
+  const ALAN = ["sjBat", "sjTuk", "sjAcMax", "sjDcMax", "sjNow", "sjHedef", "sjGuc", "sjKm", "sjYNow", "sjEk", "sjMin", "sjLt", "sjYakit", "sjW", "sjSaat", "sjVNow", "sjVMin", "sjYilKm", "sjEvPay", "sjYilEk"];
   let D = {}; try { D = JSON.parse(localStorage.getItem("sarj_v1") || "{}") || {}; } catch (e) {}
   D.fiyat = D.fiyat || {}; // ev / ac / dc ayrı hatırlanır
   const kaydet = () => { ALAN.forEach((k) => (D[k] = $(k).value)); try { localStorage.setItem("sarj_v1", JSON.stringify(D)); } catch (e) {} };
@@ -148,21 +148,52 @@
     $("sjNote").textContent = "Aracında V2L (araçtan cihaza elektrik) özelliği ve adaptörü varsa geçerlidir. Dönüştürme kaybı yaklaşık %10 varsayıldı; cihaz güçleri örnek değerlerdir, cihazın etiketindeki gücü yaz.";
   }
 
+  // ---- 💰 Yıllık: benzinli araca göre kazanç (fiyatlar bugünkü gibi kalırsa)
+  function hesapYil() {
+    const tuk = oku("sjTuk"), km = oku("sjYilKm"), evPay = kis(oku("sjEvPay"), 0, 100) / 100, ek = oku("sjYilEk") || 0;
+    const fEv = Sayi.coz(D.fiyat.ev || "").n, fDc = Sayi.coz(D.fiyat.dc || "").n, lt = oku("sjYLt"), yakit = oku("sjYYakit");
+    bar(0, 0); $("sjT1L").textContent = "Yıllık kazanç"; $("sjT2L").textContent = "Aylık kazanç"; $("sjT1b").textContent = $("sjT2b").textContent = "";
+    const t = tuk * (1 + ek / 100), kwh = km * t / 100;
+    const evGerek = evPay > 0, dcGerek = evPay < 1, fiyatTam = (!evGerek || fEv > 0) && (!dcGerek || fDc > 0);
+    const elek = fiyatTam ? kwh * (evPay * (fEv || 0) / (1 - KAYIP.ac) + (1 - evPay) * (fDc || 0) / (1 - KAYIP.dc)) : NaN;
+    const benzin = lt > 0 && yakit > 0 ? km * lt / 100 * yakit : NaN, fark = benzin - elek;
+    const ok = isFinite(elek) && isFinite(benzin) && km > 0 && tuk > 0;
+    const tl0 = (n) => (isFinite(n) ? Math.round(n).toLocaleString("tr-TR") + " TL" : "–"); // yıllık tutarlarda kuruş gereksiz, kutuya sığsın
+    $("sjT1").textContent = ok ? tl0(fark) : "–"; $("sjT2").textContent = ok ? tl0(fark / 12) : "–";
+    if (ok) { $("sjT1b").textContent = fark >= 0 ? "elektrik lehine" : "benzin lehine"; $("sjT2b").textContent = `yılda ${nf(km, 0)} km ile`; }
+    else $("sjT1b").textContent = "fiyatları yazınca çıkar";
+    satir("sjYilRows", km > 0 && tuk > 0 ? [
+      ["Yıllık enerji (bataryaya)", nf(kwh, 0) + " kWh"],
+      ["⚡ Yıllık elektrik", isFinite(elek) ? tl0(elek) : `<small>${evGerek && !(fEv > 0) ? "ev fiyatını" : "DC fiyatını"} yaz</small>`],
+      ["⛽ Yıllık benzin", isFinite(benzin) ? tl0(benzin) : "<small>tüketim ve yakıt fiyatını yaz</small>"],
+      isFinite(elek) ? ["Km başı elektrik", tl(elek / km)] : null,
+      isFinite(benzin) ? ["Km başı benzin", tl(benzin / km)] : null,
+      ok ? ["5 yılda (fiyatlar aynı kalırsa)", tl0(fark * 5), "toplam"] : null,
+    ] : []);
+    uyar(""); $("sjNote").textContent = "Bugünkü fiyatlarla yaklaşık hesaptır; elektrik ve yakıt fiyatları değiştikçe sonuç değişir. Bakım, sigorta ve vergi farkları dahil değildir. Ev şarjında %12, DC'de %5 şarj kaybı eklendi.";
+  }
+
   function hesapla() {
-    ["sarj", "yol", "v2l"].forEach((m) => ($("sjP-" + m).hidden = m !== mod));
+    ["sarj", "yol", "v2l", "yil"].forEach((m) => ($("sjP-" + m).hidden = m !== mod));
+    document.querySelector("#sarj .sjBat").hidden = mod === "yil";
     $("sjMod").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.m === mod));
     $("sjYer").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.y === yer && Math.abs(+b.dataset.k - oku("sjGuc")) < 0.01));
     aracBelirle();
-    if (mod === "sarj") hesapSarj(); else if (mod === "yol") hesapYol(); else hesapV2l();
+    if (mod === "sarj") hesapSarj(); else if (mod === "yol") hesapYol(); else if (mod === "yil") hesapYil(); else hesapV2l();
   }
 
   // ---- olaylar
   ALAN.forEach((k) => { if (D[k] != null && D[k] !== "") $(k).value = D[k]; });
   if (!D.sjBat) aracYaz("niro");
   if (!D.sjGuc) $("sjGuc").value = "7,4";
-  fiyatYaz();
+  // Yıllık bölümündeki fiyat ve benzin kutuları diğer bölümlerdekilerle ortaktır (birine yazılan ötekine de geçer)
+  const ESLE = { sjYfEv: () => "ev", sjYfDc: () => "dc" }, ESLE2 = { sjYLt: "sjLt", sjLt: "sjYLt", sjYYakit: "sjYakit", sjYakit: "sjYYakit" };
+  const yilDoldur = () => { $("sjYfEv").value = D.fiyat.ev || ""; $("sjYfDc").value = D.fiyat.dc || ""; $("sjYLt").value = $("sjLt").value; $("sjYYakit").value = $("sjYakit").value; };
+  fiyatYaz(); yilDoldur();
   $("sarj").addEventListener("input", (e) => {
-    if (e.target.id === "sjFiyat") D.fiyat[yer] = e.target.value;
+    if (ESLE[e.target.id]) { D.fiyat[ESLE[e.target.id]()] = e.target.value; if (yer === ESLE[e.target.id]()) $("sjFiyat").value = e.target.value; }
+    if (ESLE2[e.target.id]) $(ESLE2[e.target.id]).value = e.target.value;
+    if (e.target.id === "sjFiyat") { D.fiyat[yer] = e.target.value; yilDoldur(); }
     if (e.target.id === "sjGuc" && oku("sjGuc") > (oku("sjAcMax") || 11) + 11 && yer !== "dc") { yer = "dc"; D.yer = yer; fiyatYaz(); }
     hesapla(); kaydet();
   });
@@ -172,6 +203,7 @@
   $("sjYer").addEventListener("click", (e) => { const b = e.target.closest("button[data-y]"); if (!b) return; yer = D.yer = b.dataset.y; $("sjGuc").value = tr(b.dataset.k); fiyatYaz(); hesapla(); kaydet(); });
   const cip = (id, hedef) => $(id).addEventListener("click", (e) => { const b = e.target.closest("button[data-v],button[data-w]"); if (!b) return; $(hedef).value = tr(b.dataset.v || b.dataset.w); hesapla(); kaydet(); });
   cip("sjHedefC", "sjHedef"); cip("sjKmC", "sjKm"); cip("sjEkC", "sjEk"); cip("sjCihaz", "sjW");
+  cip("sjYilKmC", "sjYilKm"); cip("sjEvPayC", "sjEvPay"); cip("sjYilEkC", "sjYilEk");
   hesapla();
   window.Sarj = { hesapla };
 })();
