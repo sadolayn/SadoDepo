@@ -876,18 +876,18 @@
     else if (h >= 11 && h < 17) { t = "Keyifli günler"; ik = "oglen"; }
     else if (h >= 17 && h < 22) { t = "İyi akşamlar"; ik = "aksam"; }
     else { t = "Güzel geceler"; ik = "gece"; }
-    // Özel günler (8 Kasım 2026; Google'ın günlük çizimleri gibi): resmî ve dinî bayramlar önceliklidir.
+    // Özel günler (8 Kasım 2026; Google'ın günlük çizimleri gibi): yalnızca resmî ve dinî bayramlar, arifeler, kandiller,
+    // 10 Kasım ve yılbaşı. Anneler/Babalar/Öğretmenler günü gibi günler bilerek yok (sade kalsın).
     // ana: büyük selamın yerine geçer (kısa). alt: alttaki dönen satırda ilk sırada gösterilir.
     // Dinî bayramlar ve kandiller Diyanet takvimine dayanır; Ramazan başlangıcı ve 2027 Regaib eklenmedi (kaynakta net değil).
     const OZEL = (function () {
       const n = new Date(), ay = n.getMonth() + 1, gn = n.getDate(), md = String(ay).padStart(2, "0") + "-" + String(gn).padStart(2, "0"), ymd = n.getFullYear() + "-" + md;
-      const pazar = (kacinci) => gn === (7 - new Date(n.getFullYear(), ay - 1, 1).getDay()) % 7 + 1 + (kacinci - 1) * 7 && n.getDay() === 0;
       const DINI = { // [ilk gün, gün sayısı, ad]
         "2026-03-20": [3, "Ramazan Bayramı"], "2026-05-27": [4, "Kurban Bayramı"], "2027-03-09": [3, "Ramazan Bayramı"], "2027-05-16": [4, "Kurban Bayramı"],
         "2028-02-26": [3, "Ramazan Bayramı"], "2028-05-05": [4, "Kurban Bayramı"], "2029-02-14": [3, "Ramazan Bayramı"], "2029-04-24": [4, "Kurban Bayramı"] };
       for (const bas in DINI) {
         const [sure, ad] = DINI[bas], b = new Date(bas + "T00:00:00"), fark = Math.round((new Date(n.getFullYear(), ay - 1, gn) - b) / 864e5);
-        if (fark >= 0 && fark < sure) return { ana: "İyi bayramlar", alt: `🌙 ${ad}nız kutlu olsun` /* dinî bayramda "Bayramınız", millîde "Bayramımız" */, ik: "🌙" };
+        if (fark >= 0 && fark < sure) return { ana: "Mutlu bayramlar", alt: `🌙 ${ad}`, ik: "🌙" }; // dinî bayramda sade, klasik selam
         if (fark === -1) return { ana: "Hayırlı arifeler", alt: `🌙 Yarın ${ad}`, ik: "🌙" };
       }
       const KANDIL = { "2026-01-15": "Miraç Kandili", "2026-02-02": "Berat Kandili", "2026-08-24": "Mevlid Kandili", "2026-12-10": "Regaib Kandili",
@@ -895,19 +895,11 @@
       if (KANDIL[ymd]) return { ana: "Hayırlı kandiller", alt: `✨ Bu gece ${KANDIL[ymd]}`, ik: "✨" };
       const KADIR = { "2026-03-16": 1, "2027-03-05": 1 };
       if (KADIR[ymd]) return { ana: "Hayırlı geceler", alt: "✨ Bu gece Kadir Gecesi", ik: "✨" };
-      if (ymd === "2026-06-25") return { alt: "🥣 Bugün Aşure Günü" };
       const MILLI = { "04-23": "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı", "05-19": "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı", "08-30": "30 Ağustos Zafer Bayramı", "10-29": "29 Ekim Cumhuriyet Bayramı" };
       if (MILLI[md]) return { ana: "İyi bayramlar", alt: `🇹🇷 ${MILLI[md]}mız kutlu olsun`, ik: "🇹🇷" };
       if (md === "11-10") return { ana: "Saygı ve özlemle", alt: "🇹🇷 Ulu Önder Atatürk'ü saygı ve özlemle anıyoruz", anma: true };
       if (md === "01-01") return { ana: "Mutlu yıllar", alt: "🎉 Yeni yılımız kutlu olsun" };
       if (md === "12-31") return { ana: "İyi yıllar", alt: "🎄 Yeni yıl yaklaşıyor" };
-      if (md === "07-15") return { alt: "🇹🇷 15 Temmuz Demokrasi ve Millî Birlik Günü" };
-      if (md === "02-14") return { alt: "❤️ Bugün Sevgililer Günü" };
-      if (md === "03-08") return { alt: "🌷 8 Mart Dünya Kadınlar Günü kutlu olsun" };
-      if (md === "03-14") return { alt: "🩺 14 Mart Tıp Bayramı kutlu olsun" };
-      if (md === "11-24") return { alt: "🍎 24 Kasım Öğretmenler Günü kutlu olsun" };
-      if (ay === 5 && pazar(2)) return { alt: "💐 Anneler Günü kutlu olsun" };
-      if (ay === 6 && pazar(3)) return { alt: "👔 Babalar Günü kutlu olsun" };
       return {};
     })();
     if (OZEL.ana) t = OZEL.ana;
