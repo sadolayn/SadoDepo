@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="tr" data-tema-koru="\.kz-(kroki|imza)C\b">
+<head>
+<meta charset="utf-8">
+<script src="tema.js"></script>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kaza Tutanağı Asistanı</title>
+<meta name="description" content="Maddi hasarlı trafik kazasında her şeyi tek telefonda topla: fotoğraflar, iki tarafın bilgileri, kroki, imzalar ve PDF.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SADOLAYN">
+<meta property="og:title" content="Kaza Tutanağı Asistanı · SADOLAYN">
+<meta property="og:description" content="“Bilgi paylaştıkça büyür”">
+<meta property="og:url" content="https://sadolayn.github.io/SadoDepo/kaza.html">
+<meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="tr_TR">
+<link rel="stylesheet" href="hesap.css">
+<link rel="stylesheet" href="kaza.css">
+<script src="pwa.js"></script>
+<script src="ortak.js"></script>
+<script src="rapor.js"></script>
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="stick">
+    <header>
+      <a class="kz-hb" href="hesap.html" title="Hesaplamalar" aria-label="Hesaplamalar">🧮</a>
+      <h1>🚗 Kaza Tutanağı</h1>
+      <a class="kz-hb" href="index.html" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
+    </header>
+    <div class="kz-bar" aria-hidden="true"><i id="kzBar"></i></div>
+    <nav class="kz-adimlar" id="kzAdimlar" aria-label="Adımlar"></nav>
+  </div>
+
+  <!-- 0 · Güvenlik -->
+  <section class="kz-adim" data-a="0" data-ad="guvenlik">
+    <h2 class="kz-t">🛑 Önce güvenlik</h2>
+    <div class="card kz-yarali">
+      <b class="kz-soru">Yaralı var mı?</b>
+      <a class="kz-btn acil kz-dev" href="tel:112">📞 112 Acil</a>
+      <div class="kz-iki">
+        <button type="button" class="kz-btn bo" data-yarali="1">Evet, yaralı var</button>
+        <button type="button" class="kz-btn bo" data-yarali="0">Hayır, yok</button>
+      </div>
+      <p class="kz-not">⚠️ Dörtlüleri yak · reflektörü koy · trafikten uzak, güvenli bir yerde bekle.</p>
+    </div>
+
+    <div class="card" id="kzDur" hidden>
+      <h3 class="kz-st">🚓 Bu durumda tutanak doldurulmaz</h3>
+      <p class="kz-resmi">“Bu durumlarda 155 veya kaza mahalli Jandarma Bölgesi ise 156 numaralı telefondan trafik zabıtasına haber veriniz.”</p>
+      <div class="kz-iki">
+        <a class="kz-btn acil" href="tel:155">📞 155 Polis</a>
+        <a class="kz-btn acil" href="tel:156">📞 156 Jandarma</a>
+      </div>
+      <p class="kz-kaynak">Kaynak: SBM, Maddi Hasarlı Trafik Kazası Tespit Tutanağı</p>
+      <button type="button" class="kz-btn bo" id="kzDurGeri">↩️ Yanlış işaretledim</button>
+    </div>
+
+    <div class="card" id="kzKontrol">
+      <h3 class="kz-st">Tutanak doldurulabilir mi?</h3>
+      <p class="kz-not">Resmî formdaki “doldurulmaz” durumları. Biri bile varsa <b>Evet</b>’e dokun.</p>
+      <div id="kzKontrolL"></div>
+      <button type="button" class="kz-btn bb" id="kzHicbiri">✅ Hiçbiri yok, devam</button>
+    </div>
+
+    <details class="card kz-bilgi">
+      <summary>ℹ️ Bu asistan ne yapar?</summary>
+      <p>Kaza anında gereken her şeyi tek telefonda toplar ve düzenler: fotoğraflar, iki tarafın bilgileri, kroki, görüşler ve imzalar. Sonunda resmî formun sırasıyla bir PDF hazırlar.</p>
+      <p><b>Bu sayfa resmî tutanak değildir.</b> Resmî kayıt için SBM’nin <b>Sigortam360</b> uygulamasını (orada ekrandan atılan imza geçerlidir) ya da iki sürücünün imzaladığı kâğıt tutanağı kullan. Burada topladıkların ikisini de birkaç dakikada bitirmeni sağlar; PDF’i ve fotoğrafları sigorta şirketine ek olarak gönderebilirsin.</p>
+      <p class="kz-resmi">“Bu tutanak, yalnız maddi hasarla sonuçlanan kazalardan sonra, kazaya karışan diğer sürücü veya sürücülerle kazanın oluş şeklinin tutanak ile tespitinde anlaştığınız takdirde doldurulacaktır.”</p>
+      <p>🔒 Tüm bilgiler ve fotoğraflar yalnızca bu telefonda kalır; sen paylaşmadıkça kimseye gitmez.</p>
+    </details>
+  </section>
+
+  <!-- 1 · Fotoğraflar -->
+  <section class="kz-adim" data-a="1" data-ad="foto">
+    <h2 class="kz-t">📸 Fotoğraflar</h2>
+    <p class="kz-not kz-ust">Araçları yerinden kaldırmadan önce, farklı açılardan çek. Kutucuğa dokun, kamera açılsın.</p>
+    <div class="kz-slots" id="kzSlots"></div>
+    <div class="kz-iki">
+      <button type="button" class="kz-btn bo" id="kzFotoEk">📷 Bir tane daha</button>
+      <button type="button" class="kz-btn bo" id="kzGaleri">🖼️ Galeriden</button>
+    </div>
+    <p class="kz-resmi">“Mümkün olan durumlarda araçlar kaza yerinden kaldırılmadan önce farklı açılardan fotoğrafları çekilmelidir.”</p>
+    <p class="kz-resmi">“Tutanak tanzimi için kaza yerinde beklenmesi gerekli değildir. Mümkünse fotoğrafı çekildikten sonra araçların trafiği aksatmayacak şekilde uygun bir yere çekilerek, tutanağın düzenlenmesi imkân dahilindedir.”</p>
+    <p class="kz-not">🔒 Fotoğraflar yalnızca bu telefonda kalır.</p>
+  </section>
+
+  <!-- 2 · Zaman ve yer -->
+  <section class="kz-adim" data-a="2" data-ad="yer">
+    <h2 class="kz-t">📍 Ne zaman, nerede</h2>
+    <div class="card">
+      <h3 class="kz-st">1. Kaza Tarihi</h3>
+      <div class="two">
+        <div><label for="kzTarih">Tarih</label><input type="date" id="kzTarih" data-k="zaman.tarih"></div>
+        <div><label for="kzSaat">Saat</label><input type="time" id="kzSaat" data-k="zaman.saat"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="kz-st">2. Kaza Yeri</h3>
+      <button type="button" class="kz-btn bb" id="kzKonum">📍 Konumumu al</button>
+      <p class="kz-not" id="kzKonumD" aria-live="polite"></p>
+      <div id="kzYerF"></div>
+    </div>
+    <div class="card">
+      <h3 class="kz-st">3. Görgü Tanıkları <small>(varsa)</small></h3>
+      <div id="kzTanik"></div>
+      <button type="button" class="kz-btn bo" id="kzTanikEk">➕ Tanık ekle</button>
+    </div>
+  </section>
+
+  <!-- 3 · A -->
+  <section class="kz-adim" data-a="3" data-ad="a">
+    <h2 class="kz-t">🙋 A — Sen</h2>
+    <div class="card kz-hat">
+      <label class="kz-sw"><input type="checkbox" id="kzHatirla"><span></span> Bilgilerimi bu telefonda hatırla</label>
+      <p class="kz-not">Bir dahaki kazada A kendiliğinden dolar. <button type="button" class="kz-link" id="kzBenSil">Hatırlananı sil</button></p>
+    </div>
+    <div id="kzFormA"></div>
+  </section>
+
+  <!-- 4 · B -->
+  <section class="kz-adim" data-a="4" data-ad="b">
+    <h2 class="kz-t">👤 B — Karşı taraf</h2>
+    <div class="card kz-vurgu">
+      <b>Yazmakla uğraşma:</b> ehliyet, ruhsat ve poliçenin fotoğrafını çek. 5 bilgi yeter, gerisini sonra fotoğraftan yazarsın.
+    </div>
+    <div id="kzFormB"></div>
+  </section>
+
+  <!-- 5 · Nasıl oldu -->
+  <section class="kz-adim" data-a="5" data-ad="nasil">
+    <h2 class="kz-t">☑️ Kaza nasıl oldu</h2>
+    <div class="card">
+      <h3 class="kz-st">7. Uygun kutuları işaretle</h3>
+      <p class="kz-not">Zorunlu değil ama sigorta şirketinin olayı kısa sürede değerlendirmesi için önemli. Hangi araç için geçerliyse <b>A</b> ya da <b>B</b>’ye dokun.</p>
+      <div class="kz-15" id="kz15"></div>
+      <div class="kz-hz">
+        <div><label for="kzHizA">A hızı (km/s)</label><input type="number" inputmode="numeric" min="0" max="300" id="kzHizA" data-k="A.hiz"></div>
+        <div><label for="kzHizB">B hızı (km/s)</label><input type="number" inputmode="numeric" min="0" max="300" id="kzHizB" data-k="B.hiz"></div>
+        <div><label for="kzFrenA">A fren izi (m)</label><input type="number" inputmode="decimal" min="0" step="0.1" id="kzFrenA" data-k="A.fren"></div>
+        <div><label for="kzFrenB">B fren izi (m)</label><input type="number" inputmode="decimal" min="0" step="0.1" id="kzFrenB" data-k="B.fren"></div>
+      </div>
+      <p class="kz-not">Fren izi yalnızca tespit edildiyse.</p>
+    </div>
+    <div class="card">
+      <h3 class="kz-st">9. İlk darbeyi aldığı yer</h3>
+      <p class="kz-not">Aracın üstünde darbenin geldiği yere dokun, ok çizilir.</p>
+      <div class="kz-darbe">
+        <div data-v="A"></div>
+        <div data-v="B"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Kroki -->
+  <section class="kz-adim" data-a="6" data-ad="kroki">
+    <h2 class="kz-t">✏️ Kroki</h2>
+    <div class="kz-kroki" id="kzKroki">
+      <div class="kz-tpl" id="kzTpl"></div>
+      <div class="kz-cw"><canvas class="kz-krokiC" id="kzKrokiC" aria-label="Kroki çizim alanı"></canvas></div>
+      <div class="kz-arac" id="kzArac">
+        <button type="button" data-m="tasi" class="on">✋ Taşı</button>
+        <button type="button" data-m="kalem">✏️ Kalem</button>
+        <button type="button" data-c="ok">➜ Ok</button>
+        <button type="button" data-c="yazi">🔤 Yazı</button>
+        <button type="button" data-c="geri">↶ Geri</button>
+        <button type="button" data-c="temiz">🧹 Temizle</button>
+        <button type="button" data-c="tam">⛶ Büyüt</button>
+      </div>
+      <div class="kz-sec" id="kzSec" hidden>
+        <span id="kzSecAd">Seçili</span>
+        <button type="button" data-r="-15" aria-label="Sola döndür">⟲</button>
+        <button type="button" data-r="15" aria-label="Sağa döndür">⟳</button>
+        <button type="button" data-r="duzenle" id="kzSecDz">✎ Düzelt</button>
+        <button type="button" data-r="sil" id="kzSecSil">🗑️ Sil</button>
+      </div>
+    </div>
+    <p class="kz-not">Araçları sürükle; döndürmek için üstteki altın tutamacı çevir ya da iki parmakla çevir. Sokak adlarını <b>🔤 Yazı</b> ile ekle, gidiş yönünü <b>➜ Ok</b> ile göster.</p>
+  </section>
+
+  <!-- 7 · Görüşler -->
+  <section class="kz-adim" data-a="7" data-ad="gorus">
+    <h2 class="kz-t">💬 Sürücü görüşleri</h2>
+    <div class="card">
+      <label for="kzGA" class="kz-lA">A sürücüsü</label>
+      <textarea id="kzGA" rows="5" data-k="gorus.A" placeholder="Ne oldu? Kısaca anlat…"></textarea>
+      <label for="kzGB" class="kz-lB">B sürücüsü</label>
+      <textarea id="kzGB" rows="5" data-k="gorus.B" placeholder="Ne oldu? Kısaca anlat…"></textarea>
+      <p class="kz-not">🎤 Yazmak zorsa klavyedeki mikrofona dokunup konuşarak yazdırabilirsin.</p>
+    </div>
+  </section>
+
+  <!-- 8 · İmzalar -->
+  <section class="kz-adim" data-a="8" data-ad="imza">
+    <h2 class="kz-t">✍️ İmzalar</h2>
+    <div class="card">
+      <div class="kz-imzaB"><b class="kz-lA">A sürücüsü</b> <span id="kzImzaAdA"></span><button type="button" class="kz-link" data-temiz="A">Temizle</button></div>
+      <canvas class="kz-imzaC" id="kzImzaA" aria-label="A sürücüsünün imza alanı"></canvas>
+      <div class="kz-imzaB"><b class="kz-lB">B sürücüsü</b> <span id="kzImzaAdB"></span><button type="button" class="kz-link" data-temiz="B">Temizle</button></div>
+      <canvas class="kz-imzaC" id="kzImzaB" aria-label="B sürücüsünün imza alanı"></canvas>
+      <p class="kz-not">Bu imzalar yalnızca bu dökümde görünür. Resmî tutanakta imza Sigortam360’ta ekrandan ya da kâğıt formda atılır.</p>
+    </div>
+  </section>
+
+  <!-- 9 · Bitir -->
+  <section class="kz-adim" data-a="9" data-ad="bitir">
+    <h2 class="kz-t">📄 Bitir</h2>
+    <div class="card"><h3 class="kz-st">Kontrol</h3><div id="kzOzet"></div></div>
+    <button type="button" class="kz-btn bb kz-buyuk" id="kzPdf">📄 PDF oluştur ve paylaş</button>
+    <p class="kz-not" id="kzPdfD" aria-live="polite"></p>
+    <div class="kz-iki">
+      <button type="button" class="kz-btn bo" id="kzPdfIndir">⬇️ PDF’i indir</button>
+      <button type="button" class="kz-btn bo" id="kzFotoPay">🖼️ Fotoğrafları paylaş</button>
+    </div>
+    <details class="card kz-kopya" id="kzKopya">
+      <summary>📋 Sigortam360’a aktarırken</summary>
+      <p class="kz-not">Uygulamada ya da kâğıt formda yazarken bilgiyi buradan tek dokunuşla kopyala.</p>
+      <label class="kz-sw"><input type="checkbox" id="kzGizle"><span></span> Kimlik numaralarını gizle</label>
+      <div id="kzKopyaL"></div>
+      <button type="button" class="kz-btn bo" id="kzHepsiKopya">📋 Hepsini metin olarak kopyala</button>
+    </details>
+    <details class="card kz-bilgi" open>
+      <summary>🧭 Ne yapmalı?</summary>
+      <p><b>Resmî kayıt:</b> SBM’nin Sigortam360 uygulamasıyla elektronik tutanak ya da iki sürücünün imzaladığı kâğıt tutanak. Bu PDF bunların yerine geçmez; ek olarak gönderilebilir.</p>
+      <p class="kz-resmi">“Tutanakların bir sureti fotoğraflarla beraber karşı tarafın veya kendi aracınızın trafik sigortası poliçesini tanzim eden sigorta şirketine veya kasko poliçesinden tazminat talep edilecekse aracınızın kasko sigortası poliçesini tanzim eden sigorta şirketine ulaştırılmalıdır.”</p>
+      <p class="kz-resmi">“İmzalanmayan tutanaklar geçersizdir. Ancak elektronik cihazlar üzerinden Sigorta Bilgi ve Gözetim Merkezi'nin sağladığı uygulamalar aracılığı ile elektronik ortamda doldurulan ve cihaz ekranı üzerinden imzalanan tutanaklar da geçerli sayılır.”</p>
+      <p class="kz-resmi">“İkiden fazla aracın karıştığı trafik kazalarında birden fazla form kullanılabilir. Bu durumda, her bir form tüm sürücüler tarafından imzalanmalıdır.”</p>
+      <p class="kz-resmi">“Kaza tespit tutanağını gerçeğe uygun şekilde düzenleyiniz. Gerçeğe aykırı tutanak düzenlemek özel evrakta sahtekarlık niteliğinde olup, cezai yaptırımı söz konusudur.”</p>
+      <p class="kz-kaynak">Kaynak: <a href="https://www.sbm.org.tr/upload/sbm/dokumanlar/kaza_tespit_tutanagi.pdf" target="_blank" rel="noopener">SBM — Maddi Hasarlı Trafik Kazası Tespit Tutanağı (PDF)</a></p>
+    </details>
+    <div class="card kz-sil">
+      <label class="kz-sw"><input type="checkbox" id="kzSilBen"><span></span> Hatırlanan A bilgilerimi de sil</label>
+      <button type="button" class="kz-btn kz-kirmizi" id="kzSil">🗑️ Bu kazayı sil</button>
+    </div>
+    <p class="kz-not">🔒 Tüm bilgiler ve fotoğraflar yalnızca bu telefonda kalır; sen paylaşmadıkça kimseye gitmez.</p>
+  </section>
+
+  <div class="kz-nav" id="kzNav">
+    <button type="button" class="kz-btn bo" id="kzGeri">← Geri</button>
+    <button type="button" class="kz-btn bb" id="kzIleri">İleri →</button>
+  </div>
+</div>
+<input type="file" accept="image/*" capture="environment" id="kzCek" hidden>
+<input type="file" accept="image/*" multiple id="kzSec2" hidden>
+<div class="kz-toast" id="kzToast" role="status" aria-live="polite"></div>
+<script src="kazakroki.js"></script>
+<script src="kazapdf.js"></script>
+<script src="kazap.js"></script>
+<script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

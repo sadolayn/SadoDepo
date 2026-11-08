@@ -653,7 +653,7 @@ const bmYonlendir = () => { if (location.hash === "#bulmaca") location.replace("
 bmYonlendir(); window.addEventListener("hashchange", bmYonlendir);
 // Açılışta sekme: adresteki #sekme, yoksa en son açık sekme (sayfa yenilense de aynı yerde kalınır; 8 Kasım)
 try {
-  const h = location.hash.slice(1), var_ = (x) => x && document.querySelector(`#tabs [data-t="${x}"]`);
+  const h = location.hash.slice(1), var_ = (x) => x && x !== "kaza" && document.querySelector(`#tabs [data-t="${x}"]`); // kaza ayrı sayfa: açılışta oraya atlanmaz
   let son = null; try { son = localStorage.getItem("hesapTab"); } catch (e) {}
   const t = var_(h) ? h : var_(son) ? son : "calc"; document.querySelector(`#tabs [data-t="${t}"]`).click();
   // Adresteki #sekme yüzünden tarayıcının bölüme atlamasını geri al: sayfa en üstten açılsın
