@@ -655,5 +655,7 @@ try {
   const h = location.hash.slice(1), var_ = (x) => x && document.querySelector(`#tabs [data-t="${x}"]`);
   let son = null; try { son = localStorage.getItem("hesapTab"); } catch (e) {}
   const t = var_(h) ? h : var_(son) ? son : "calc"; document.querySelector(`#tabs [data-t="${t}"]`).click();
+  // Adresteki #sekme yüzünden tarayıcının bölüme atlamasını geri al: sayfa en üstten açılsın
+  if (h) { const ust = () => window.scrollTo(0, 0); ust(); window.addEventListener("load", () => setTimeout(ust, 0), { once: true }); }
 } catch (e) {}
 setTimeout(makineBoyut, 60); if (document.fonts && document.fonts.ready) document.fonts.ready.then(makineBoyut);

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="tr" data-tema-koru="\.(calc|k|lcd|bed|brand|solar|prt|led|bmdisp|brb)\b">
+<html lang="tr" data-tema-koru="\.(calc|k|lcd|bed|brand|solar|prt|led|bmdisp|brb)\b|\.sjH">
 <head>
 <meta charset="utf-8">
 <script src="tema.js"></script>
@@ -268,120 +268,147 @@
   </section>
 
   <!-- ===== Pusula (6 Kasım 2026): sensörle yön; kadranda sessiz yeşil nokta kıble yönünü gösterir ===== -->
-  <!-- ===== Elektrikli araç şarjı (8 Kasım 2026): maliyet/süre · yolculuk · V2L. Hesap sarj.js'te. ===== -->
+  <!-- ===== Elektrikli araç şarjı (8 Kasım 2026, yeniden tasarım): şarj · yolculuk · V2L · yıllık. Hesap sarj.js'te.
+       Üstteki sonuç kartı (.sjH…) iki temada da koyu kalır (html data-tema-koru). ===== -->
   <section class="panel" id="sarj">
-    <div class="card">
-      <div class="ftop">
-        <div class="seg" id="sjMod"><button data-m="sarj" class="on">⚡ Şarj</button><button data-m="yol">🛣️ Yolculuk</button><button data-m="v2l">🔋 V2L</button><button data-m="yil">💰 Yıllık</button></div>
-        <div class="sjBat" aria-hidden="true"><div class="sjBatIc"><i id="sjBarA"></i><i id="sjBarB"></i></div><div class="sjBatUc"></div></div>
-        <div class="ftiles"><div class="gun"><small id="sjT1L">Ödeyeceğin</small><b id="sjT1">–</b><i id="sjT1b"></i></div><div><small id="sjT2L">Süre</small><b id="sjT2">–</b><i id="sjT2b"></i></div></div>
-      </div>
+    <div class="sjMod" id="sjMod" role="tablist" aria-label="Şarj hesabı türü">
+      <button data-m="sarj" class="on" role="tab"><b>⚡</b>Şarj</button><button data-m="yol" role="tab"><b>🛣️</b>Yolculuk</button><button data-m="v2l" role="tab"><b>🔋</b>V2L</button><button data-m="yil" role="tab"><b>💰</b>Yıllık</button>
+    </div>
 
-      <div class="sjSatir">
-        <label for="sjSecim">🚗 Araç</label>
-        <div class="sjSec"><select id="sjSecim" aria-label="Araç seç"></select><button type="button" id="sjDuzBtn" aria-expanded="false" title="Değerleri düzenle">✏️</button></div>
-        <p class="sjOz" id="sjAracOz"></p>
-        <div class="sjDuz" id="sjDuz" hidden>
-          <div class="two">
-            <div><label>Batarya (kullanılabilir)</label><div class="field"><input id="sjBat" inputmode="decimal" placeholder="ör. 60"><span>kWh</span></div></div>
-            <div><label>Ortalama tüketim</label><div class="field"><input id="sjTuk" inputmode="decimal" placeholder="ör. 15"><span>kWh/100 km</span></div></div>
-          </div>
-          <div class="two">
-            <div><label>En yüksek AC şarj</label><div class="field"><input id="sjAcMax" inputmode="decimal" placeholder="ör. 11"><span>kW</span></div></div>
-            <div><label>En yüksek DC şarj</label><div class="field"><input id="sjDcMax" inputmode="decimal" placeholder="ör. 100"><span>kW</span></div></div>
-          </div>
-          <p class="hint" id="sjAracNot"></p>
-        </div>
-      </div>
+    <!-- Sonuç kartı -->
+    <div class="sjH" id="sjH" data-tema-koru-alan>
+      <button type="button" class="sjHArac" id="sjAracBtn" aria-haspopup="dialog"><span class="sjHAracIc" aria-hidden="true">🚗</span><span class="sjHAracAd"><b id="sjAracAd">Kia Niro EV</b><small id="sjAracOz"></small></span><span class="sjHAracGit">Değiştir ›</span></button>
+      <div class="sjHBat" aria-hidden="true"><div class="sjHBatIc"><i id="sjBarA"></i><i id="sjBarB"></i><span id="sjBatYazi"></span></div><div class="sjHBatUc"></div></div>
+      <div class="sjHSon"><div class="sjHS1"><small id="sjT1L">Ödeyeceğin</small><b id="sjT1">–</b><em id="sjT1b"></em></div><div><small id="sjT2L">Süre</small><b id="sjT2">–</b><em id="sjT2b"></em></div></div>
+      <div class="sjHCip" id="sjCip"></div>
+    </div>
+    <div class="sjHMini" id="sjMini" aria-hidden="true" data-tema-koru-alan><span>⚡</span><b id="sjM1">–</b><i id="sjM2"></i></div>
 
-      <!-- Şarj: maliyet ve süre -->
-      <div id="sjP-sarj">
-        <div class="two">
-          <div><label>Şu anki şarj</label><div class="field"><input id="sjNow" inputmode="numeric" value="20"><span>%</span></div></div>
-          <div><label>Hedef şarj</label><div class="field"><input id="sjHedef" inputmode="numeric" value="80"><span>%</span></div></div>
-        </div>
-        <div class="chips" id="sjHedefC"><button data-v="80">%80'e kadar</button><button data-v="90">%90</button><button data-v="100">%100</button></div>
-        <label for="sjYerSec">Nerede şarj ediyorsun?</label>
-        <div class="sjSec"><select id="sjYerSec" aria-label="Şarj yeri">
-          <option value="ev|11">🏠 Ev · duvar ünitesi 11 kW</option>
-          <option value="ev|7.4">🏠 Ev · duvar ünitesi 7,4 kW</option>
-          <option value="ev|2.3">🏠 Ev · normal priz 2,3 kW</option>
-          <option value="ac|22">🅿️ AC istasyon 22 kW</option>
-          <option value="dc|50">⚡ DC hızlı 50 kW</option>
-          <option value="dc|120">⚡ DC hızlı 120 kW</option>
-          <option value="dc|180">⚡ DC ultra hızlı 180 kW</option>
-          <option value="ozel" hidden>✏️ Elle girilen güç</option>
-        </select></div>
-        <div class="two">
-          <div><label>Şarj cihazının gücü</label><div class="field"><input id="sjGuc" inputmode="decimal" value="7.4"><span>kW</span></div></div>
-          <div><label id="sjFiyatL">Elektrik birim fiyatı</label><div class="field"><input id="sjFiyat" inputmode="decimal" placeholder="fiyatı yaz"><span>TL/kWh</span></div></div>
-        </div>
-        <div class="res"><div class="rows" id="sjRows"></div></div>
+    <!-- ⚡ Şarj -->
+    <div class="sjP" id="sjP-sarj">
+      <div class="sjKart">
+        <h4>🔋 Şarj seviyesi</h4>
+        <div class="sjSl"><label for="sjNow">Şu an</label><input type="range" id="sjNow" min="0" max="99" step="1" value="20"><output id="sjNowO"></output></div>
+        <div class="sjSl hedef"><label for="sjHedef">Hedef</label><input type="range" id="sjHedef" min="1" max="100" step="1" value="80"><output id="sjHedefO"></output></div>
+        <div class="sjPil" id="sjHedefC"><button data-v="80">%80'e kadar</button><button data-v="90">%90</button><button data-v="100">%100</button></div>
       </div>
+      <div class="sjKart">
+        <h4>📍 Nerede şarj ediyorsun?</h4>
+        <div class="sjYer" id="sjYer">
+          <button data-y="ev" class="ev"><b>🏠</b>Evde<small id="sjYerEv">11 kW</small></button>
+          <button data-y="ac" class="ac"><b>🅿️</b>AC istasyon<small id="sjYerAc">22 kW</small></button>
+          <button data-y="dc" class="dc"><b>⚡</b>DC hızlı<small id="sjYerDc">120 kW</small></button>
+        </div>
+        <div class="sjPil sjGucPil" id="sjGucPil"></div>
+        <div class="sjGucEl" id="sjGucEl" hidden><label for="sjGuc">Şarj cihazının gücü</label><div class="field"><input id="sjGuc" inputmode="decimal" value="11"><span>kW</span></div></div>
+        <label for="sjFiyat" id="sjFiyatL">Evdeki elektrik fiyatı</label><div class="field"><input id="sjFiyat" inputmode="decimal" placeholder="fiyatı yaz"><span>TL/kWh</span></div>
+      </div>
+      <div class="sjKart"><h4>📋 Ayrıntılar</h4><div class="rows" id="sjRows"></div></div>
+    </div>
 
-      <!-- Yolculuk: menzil ve maliyet -->
-      <div id="sjP-yol" hidden>
-        <div class="two">
-          <div><label>Gidilecek yol</label><div class="field"><input id="sjKm" inputmode="decimal" value="250"><span>km</span></div></div>
-          <div><label>Yola çıkarken şarj</label><div class="field"><input id="sjYNow" inputmode="numeric" value="90"><span>%</span></div></div>
+    <!-- 🛣️ Yolculuk -->
+    <div class="sjP" id="sjP-yol" hidden>
+      <div class="sjKart">
+        <div class="sjYol" aria-hidden="true">
+          <div class="sjYolUc"><span>🏠</span><b id="sjYolA">%90</b></div>
+          <div class="sjYolCizgi"><i id="sjYolDolu"></i><span id="sjYolArac">🚗</span><em id="sjYolKmY">250 km</em></div>
+          <div class="sjYolUc"><span>🏁</span><b id="sjYolB">–</b></div>
         </div>
-        <div class="chips" id="sjKmC"><button data-v="50">50 km</button><button data-v="100">100 km</button><button data-v="250">250 km</button><button data-v="450">450 km</button></div>
-        <div class="two">
-          <div><label>Ek tüketim payı</label><div class="field"><input id="sjEk" inputmode="decimal" value="0"><span>%</span></div></div>
-          <div><label>Varışta en az kalsın</label><div class="field"><input id="sjMin" inputmode="numeric" value="10"><span>%</span></div></div>
+        <div class="sjSl"><label for="sjKm">Yol</label><input type="range" id="sjKm" min="10" max="1000" step="10" value="250"><output id="sjKmO"></output></div>
+        <div class="sjSl"><label for="sjYNow">Çıkışta</label><input type="range" id="sjYNow" min="5" max="100" step="1" value="90"><output id="sjYNowO"></output></div>
+      </div>
+      <div class="sjKart">
+        <h4>🌤️ Yol ve hava</h4>
+        <div class="sjKos" id="sjEkC">
+          <button data-v="0"><b>☀️</b>Normal</button><button data-v="10"><b>🛣️</b>Otoyol<small>+%10</small></button><button data-v="20"><b>❄️</b>Kış, klima<small>+%20</small></button><button data-v="30"><b>🥶</b>Kış + otoyol<small>+%30</small></button>
         </div>
-        <div class="chips" id="sjEkC"><button data-v="0">Normal</button><button data-v="10">Otoyol +%10</button><button data-v="20">Kış / klima +%20</button><button data-v="30">Kış + otoyol +%30</button></div>
+        <input type="hidden" id="sjEk" value="0">
+        <h4 style="margin-top:14px">🏁 Varışta en az kalsın</h4>
+        <div class="sjPil" id="sjMinC"><button data-v="5">%5</button><button data-v="10">%10</button><button data-v="20">%20</button></div>
+        <input type="hidden" id="sjMin" value="10">
+      </div>
+      <div class="sjKart">
         <details class="sjKars"><summary>⛽ Benzinli araçla karşılaştır</summary>
           <div class="two">
-            <div><label>Benzinli tüketim</label><div class="field"><input id="sjLt" inputmode="decimal" placeholder="ör. 6,5"><span>L/100 km</span></div></div>
-            <div><label>Yakıt fiyatı</label><div class="field"><input id="sjYakit" inputmode="decimal" placeholder="pompa fiyatı"><span>TL/L</span></div></div>
+            <div><label for="sjLt">Benzinli tüketim</label><div class="field"><input id="sjLt" inputmode="decimal" placeholder="ör. 6,5"><span>L/100</span></div></div>
+            <div><label for="sjYakit">Yakıt fiyatı</label><div class="field"><input id="sjYakit" inputmode="decimal" placeholder="pompa"><span>TL/L</span></div></div>
           </div>
         </details>
-        <div class="res"><div class="rows" id="sjYRows"></div></div>
+        <div class="rows" id="sjYRows"></div>
       </div>
+    </div>
 
-      <!-- V2L: araçtan cihaz beslemek -->
-      <div id="sjP-v2l" hidden>
-        <label>Ne çalıştıracaksın?</label>
-        <div class="chips" id="sjCihaz">
-          <button data-w="65">💻 Dizüstü<small>65 W</small></button>
-          <button data-w="20">💡 Kamp ışığı<small>20 W</small></button>
-          <button data-w="60">🧊 Mini buzdolabı<small>60 W</small></button>
-          <button data-w="1500">🍳 Elektrikli ocak<small>1500 W</small></button>
-          <button data-w="2000">☕ Su ısıtıcı<small>2000 W</small></button>
+    <!-- 🔋 V2L -->
+    <div class="sjP" id="sjP-v2l" hidden>
+      <div class="sjKart">
+        <h4>🔌 Ne çalıştıracaksın? <small>birden çok seçebilirsin</small></h4>
+        <div class="sjCihaz" id="sjCihaz">
+          <button data-w="65"><b>💻</b>Dizüstü<small>65 W</small></button>
+          <button data-w="20"><b>📱</b>Telefon<small>20 W</small></button>
+          <button data-w="20" data-k="isik"><b>💡</b>Kamp ışığı<small>20 W</small></button>
+          <button data-w="60"><b>🧊</b>Mini buzdolabı<small>60 W</small></button>
+          <button data-w="100"><b>📺</b>Televizyon<small>100 W</small></button>
+          <button data-w="50"><b>🌀</b>Vantilatör<small>50 W</small></button>
+          <button data-w="1500"><b>🍳</b>Ocak<small>1500 W</small></button>
+          <button data-w="2000"><b>☕</b>Su ısıtıcı<small>2000 W</small></button>
         </div>
-        <div class="two">
-          <div><label>Cihazların toplam gücü</label><div class="field"><input id="sjW" inputmode="decimal" value="65"><span>W</span></div></div>
-          <div><label>Kaç saat</label><div class="field"><input id="sjSaat" inputmode="decimal" value="3"><span>saat</span></div></div>
-        </div>
-        <div class="two">
-          <div><label>Şu anki şarj</label><div class="field"><input id="sjVNow" inputmode="numeric" value="80"><span>%</span></div></div>
-          <div><label>Altına inmesin</label><div class="field"><input id="sjVMin" inputmode="numeric" value="20"><span>%</span></div></div>
-        </div>
-        <div class="res"><div class="rows" id="sjVRows"></div></div>
+        <label for="sjW">Toplam güç <small>(cihaz etiketindeki watt)</small></label><div class="field"><input id="sjW" inputmode="decimal" value="65"><span>W</span></div>
       </div>
-      <!-- Yıllık: benzinliye göre kazanç -->
-      <div id="sjP-yil" hidden>
-        <div class="two">
-          <div><label>Yılda gidilen yol</label><div class="field"><input id="sjYilKm" inputmode="decimal" value="15.000"><span>km</span></div></div>
-          <div><label>Şarjın evde yapılan kısmı</label><div class="field"><input id="sjEvPay" inputmode="numeric" value="80"><span>%</span></div></div>
-        </div>
-        <div class="chips" id="sjYilKmC"><button data-v="10000">10.000 km</button><button data-v="15000">15.000 km</button><button data-v="20000">20.000 km</button><button data-v="30000">30.000 km</button></div>
-        <div class="chips" id="sjEvPayC"><button data-v="100">Hep evde</button><button data-v="80">Çoğu evde</button><button data-v="50">Yarı yarıya</button><button data-v="0">Hep istasyonda</button></div>
-        <div class="two">
-          <div><label>Evdeki elektrik fiyatı</label><div class="field"><input id="sjYfEv" inputmode="decimal" placeholder="fiyatı yaz"><span>TL/kWh</span></div></div>
-          <div><label>DC istasyon fiyatı</label><div class="field"><input id="sjYfDc" inputmode="decimal" placeholder="fiyatı yaz"><span>TL/kWh</span></div></div>
-        </div>
-        <div class="two">
-          <div><label>Benzinli tüketim</label><div class="field"><input id="sjYLt" inputmode="decimal" placeholder="ör. 6,5"><span>L/100 km</span></div></div>
-          <div><label>Yakıt fiyatı</label><div class="field"><input id="sjYYakit" inputmode="decimal" placeholder="pompa fiyatı"><span>TL/L</span></div></div>
-        </div>
-        <div><label>Ek tüketim payı (kış, otoyol)</label><div class="field"><input id="sjYilEk" inputmode="decimal" value="0"><span>%</span></div></div>
-        <div class="chips" id="sjYilEkC"><button data-v="0">Yok</button><button data-v="10">+%10</button><button data-v="20">+%20</button></div>
-        <div class="res"><div class="rows" id="sjYilRows"></div></div>
+      <div class="sjKart">
+        <div class="sjSl"><label for="sjSaat">Süre</label><input type="range" id="sjSaat" min="0.5" max="24" step="0.5" value="3"><output id="sjSaatO"></output></div>
+        <div class="sjSl"><label for="sjVNow">Şu an</label><input type="range" id="sjVNow" min="5" max="100" step="1" value="80"><output id="sjVNowO"></output></div>
+        <h4 style="margin-top:6px">🛑 Batarya altına inmesin</h4>
+        <div class="sjPil" id="sjVMinC"><button data-v="10">%10</button><button data-v="20">%20</button><button data-v="30">%30</button></div>
+        <input type="hidden" id="sjVMin" value="20">
+        <div class="rows" id="sjVRows"></div>
       </div>
-      <div class="warn" id="sjWarn" hidden></div>
-      <p class="hint" id="sjNote"></p>
+    </div>
+
+    <!-- 💰 Yıllık -->
+    <div class="sjP" id="sjP-yil" hidden>
+      <div class="sjKart">
+        <div class="sjSl buyuk"><label for="sjYilKm">Yılda</label><input type="range" id="sjYilKm" min="5000" max="60000" step="1000" value="15000"><output id="sjYilKmO"></output></div>
+        <div class="sjSl"><label for="sjEvPay">🏠 Evde</label><input type="range" id="sjEvPay" min="0" max="100" step="10" value="80"><output id="sjEvPayO"></output></div>
+        <p class="sjAlt" id="sjEvPayY"></p>
+      </div>
+      <div class="sjKart">
+        <h4>💵 Fiyatlar <small>bu cihazda saklanır</small></h4>
+        <div class="two">
+          <div><label for="sjYfEv">🏠 Ev elektriği</label><div class="field"><input id="sjYfEv" inputmode="decimal" placeholder="fiyatı yaz"><span>TL/kWh</span></div></div>
+          <div><label for="sjYfDc">⚡ DC istasyon</label><div class="field"><input id="sjYfDc" inputmode="decimal" placeholder="fiyatı yaz"><span>TL/kWh</span></div></div>
+        </div>
+        <div class="two">
+          <div><label for="sjYLt">⛽ Benzinli tüketim</label><div class="field"><input id="sjYLt" inputmode="decimal" placeholder="ör. 6,5"><span>L/100</span></div></div>
+          <div><label for="sjYYakit">Yakıt fiyatı</label><div class="field"><input id="sjYYakit" inputmode="decimal" placeholder="pompa"><span>TL/L</span></div></div>
+        </div>
+        <h4 style="margin-top:12px">🌤️ Yol ve hava payı</h4>
+        <div class="sjPil" id="sjYilEkC"><button data-v="0">Yok</button><button data-v="10">+%10</button><button data-v="20">+%20</button></div>
+        <input type="hidden" id="sjYilEk" value="0">
+      </div>
+      <div class="sjKart"><h4>📊 Yıllık karşılaştırma</h4><div class="sjCubuk" id="sjCubuk"></div><div class="rows" id="sjYilRows"></div></div>
+    </div>
+
+    <div class="warn" id="sjWarn" hidden></div>
+    <p class="hint" id="sjNote"></p>
+
+    <!-- Araç seçimi (alttan açılan pencere) -->
+    <div class="sjSh" id="sjSh" hidden>
+      <div class="sjShK" role="dialog" aria-modal="true" aria-labelledby="sjShB">
+        <div class="sjShUst"><h3 id="sjShB">🚗 Aracını seç</h3><button type="button" class="sjShX" id="sjShX" aria-label="Kapat">✕</button></div>
+        <div class="sjAraclar" id="sjAraclar"></div>
+        <details class="sjDuz" id="sjDuzD"><summary>✏️ Değerleri kendim yazacağım</summary>
+          <div class="two">
+            <div><label for="sjBat">Batarya (kullanılabilir)</label><div class="field"><input id="sjBat" inputmode="decimal" placeholder="ör. 60"><span>kWh</span></div></div>
+            <div><label for="sjTuk">Ortalama tüketim</label><div class="field"><input id="sjTuk" inputmode="decimal" placeholder="ör. 15"><span>kWh/100</span></div></div>
+          </div>
+          <div class="two">
+            <div><label for="sjAcMax">En yüksek AC</label><div class="field"><input id="sjAcMax" inputmode="decimal" placeholder="ör. 11"><span>kW</span></div></div>
+            <div><label for="sjDcMax">En yüksek DC</label><div class="field"><input id="sjDcMax" inputmode="decimal" placeholder="ör. 100"><span>kW</span></div></div>
+          </div>
+        </details>
+        <p class="hint" id="sjAracNot"></p>
+        <button type="button" class="sjShTamam" id="sjShTamam">Tamam</button>
+      </div>
     </div>
   </section>
 

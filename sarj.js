@@ -1,219 +1,265 @@
-/* Elektrikli araç şarjı (8 Kasım 2026) — Hesaplamalar › Şarj
-   Hazır araçlar (Kia Niro EV, Togg T10X, BYD Atto 3, Tesla Model Y) üreticilerin açıkladığı değerlerden; örneğin Kia Niro EV: 64,8 kWh batarya, WLTP 460 km, 16,2 kWh/100 km,
-   AC 11 kW (%10–100 yaklaşık 6 sa 20 dk), DC en çok 73 kW (%10–80: 73 kW'ta 45 dk, 50 kW'ta 65 dk).
-   Kutular değiştirilebilir; "Başka araç" seçilirse kullanıcı kendi aracının değerlerini yazar. Fiyatlar kullanıcıdan gelir
-   (tarife ve istasyon fiyatları değişir; sitede hazır fiyat yazılmaz). Bütün girişler yalnızca bu cihazda saklanır (sarj_v1).
-   Hesap yaklaşıktır: şarj kaybı AC'de %12, DC'de %5 varsayılır; DC hız eğrisi Kia'nın %10–80 sürelerine göre ayarlıdır. */
+/* Elektrikli araç şarjı — Hesaplamalar › Şarj (8 Kasım 2026, yeniden tasarım)
+   Bölümler: ⚡ Şarj (maliyet/süre) · 🛣️ Yolculuk (varışta kalan) · 🔋 V2L (araçtan cihaz) · 💰 Yıllık (benzinliye göre).
+   Hazır araçlar yalnızca değerleri resmî ya da açık bir kaynakta net olan modeller (Kia Niro EV, Togg T10X, BYD Atto 3,
+   Tesla Model Y Standart); tüketim = batarya ÷ WLTP menzil (batarya tarafı; üreticilerin kWh/100 km değeri prizden ölçülür,
+   şarj kaybını içerir — burada kayıp ayrıca eklenir). DC ortalama hızı her model için üreticinin verdiği şarj süresinden
+   (dcOrt). Fiyatlar kullanıcıdan gelir, sitede hazır fiyat yazılmaz. Bütün girişler yalnızca bu cihazda (sarj_v1). */
 (function () {
   if (!document.getElementById("sarj")) return;
   const $ = (id) => document.getElementById(id);
   const oku = (id) => Sayi.oku($(id)).n;
   const nf = (n, d = 1) => (isFinite(n) ? n.toLocaleString("tr-TR", { maximumFractionDigits: d }) : "–");
   const tl = (n) => (isFinite(n) ? n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL" : "–");
-  const sure = (saat) => { if (!isFinite(saat) || saat < 0) return "–"; const dk = Math.round(saat * 60); if (dk < 60) return dk + " dk"; return Math.floor(dk / 60) + " sa" + (dk % 60 ? " " + (dk % 60) + " dk" : ""); };
+  const tl0 = (n) => (isFinite(n) ? Math.round(n).toLocaleString("tr-TR") + " TL" : "–");
+  const sure = (saat) => {
+    if (!isFinite(saat) || saat < 0) return "–";
+    if (saat >= 48) { const g = Math.floor(saat / 24), sa = Math.round(saat - g * 24); return "≈ " + g + " gün" + (sa ? " " + sa + " sa" : ""); } // V2L'de küçük cihazlar günlerce çalışır
+    const dk = Math.round(saat * 60); if (dk < 60) return dk + " dk"; return Math.floor(dk / 60) + " sa" + (dk % 60 ? " " + (dk % 60) + " dk" : "");
+  };
   const tr = (x) => String(x).replace(".", ",");
   const kis = (a, lo, hi) => Math.min(hi, Math.max(lo, a));
   const satir = (id, L) => ($(id).innerHTML = L.filter(Boolean).map(([k, v, c]) => `<div${c ? ` class="${c}"` : ""}><span>${k}</span><b>${v}</b></div>`).join(""));
 
-  // Hazır araçlar: yalnızca değerleri resmî ya da açık bir kaynakta net olan modeller. Tüketim = batarya ÷ WLTP menzil
-  // (batarya tarafı; üreticilerin kWh/100 km değeri prizden ölçülür ve şarj kaybını da içerir, burada kayıp ayrıca eklenir).
-  // dcOrt: %80'e kadar ortalama DC gücünün tepe güce oranı, üreticinin verdiği DC şarj süresinden hesaplandı.
   const ARAC = {
-    niro: { ad: "Kia Niro EV", bat: 64.8, menzil: 460, ac: 11, dc: 73, dcOrt: 0.83,
+    niro: { ad: "Kia Niro EV", ik: "🚙", bat: 64.8, menzil: 460, ac: 11, dc: 73, dcOrt: 0.83,
       kaynak: "Kia Türkiye teknik özellikleri: 64,8 kWh, WLTP 460 km, AC 11 kW, DC en çok 73 kW (%10–80: 45 dk)." },
-    toggS: { ad: "Togg T10X Standart Menzil", bat: 52.4, menzil: 314, ac: 11, dc: 180, dcOrt: 0.37,
+    toggS: { ad: "Togg T10X Standart Menzil", ik: "🚘", bat: 52.4, menzil: 314, ac: 11, dc: 180, dcOrt: 0.37,
       kaynak: "Togg T10X RWD Standart Menzil: 52,4 kWh, WLTP 314 km, AC 11 kW, DC en çok 180 kW (%20–80: 28 dk)." },
-    toggU: { ad: "Togg T10X Uzun Menzil", bat: 88.5, menzil: 523, ac: 11, dc: 180, dcOrt: 0.63,
+    toggU: { ad: "Togg T10X Uzun Menzil", ik: "🚘", bat: 88.5, menzil: 523, ac: 11, dc: 180, dcOrt: 0.63,
       kaynak: "Togg T10X RWD Uzun Menzil: 88,5 kWh, WLTP 523 km, AC 11 kW (22 kW seçeneği de var), DC en çok 180 kW (%20–80: 28 dk)." },
-    atto3: { ad: "BYD Atto 3", bat: 60.4, menzil: 420, ac: 11, dc: 110, dcOrt: 0.59,
+    atto3: { ad: "BYD Atto 3", ik: "🚙", bat: 60.4, menzil: 420, ac: 11, dc: 110, dcOrt: 0.59,
       kaynak: "BYD Türkiye teknik broşürü: 60,4 kWh, AC 11 kW, DC en çok 110 kW (%30–80: 28 dk); WLTP 420 km." },
-    teslaY: { ad: "Tesla Model Y Standart", bat: 60, menzil: 534, ac: 11, dc: 175, dcOrt: 0.67,
+    teslaY: { ad: "Tesla Model Y Standart", ik: "🚗", bat: 60, menzil: 534, ac: 11, dc: 175, dcOrt: 0.67,
       kaynak: "Tesla Model Y Standart (arkadan itiş): yaklaşık 60 kWh net, WLTP 534 km, AC 11 kW, DC en çok 175 kW (15 dk'da ≈ 260 km). Kaynaklar arasında küçük farklar var; aracının değerleriyle kontrol et." },
   };
   Object.values(ARAC).forEach((a) => (a.tuk = Math.round(a.bat / a.menzil * 1000) / 10));
-  const SON_NOT = " Aracının ekranındaki kendi ortalama tüketimini yazarsan sonuçlar sana daha yakın olur.";
-  const KAYIP = { ac: 0.12, dc: 0.05 }; // şebekeden çekilenin bataryaya girmeyen payı (yaklaşık)
-  const DC_UST = 0.35; // %80 üstünde DC güç belirgin düşer (tepe gücün yaklaşık üçte biri)
-  const dcOrt = () => (ARAC[D.arac] && ARAC[D.arac].dcOrt) || 0.6; // başka araçta genel bir ortalama
+  const KAYIP = { ac: 0.12, dc: 0.05 }; // şebekeden/istasyondan çekilenin bataryaya girmeyen payı (yaklaşık)
+  const DC_UST = 0.35; // %80 üstünde DC güç belirgin düşer
+  const GUCLER = { ev: [2.3, 7.4, 11], ac: [11, 22], dc: [50, 120, 180] };
+  const GUC_AD = { 2.3: "Normal priz", 7.4: "Duvar ünitesi", 11: "Duvar ünitesi" };
 
-  // ---- kalıcılık: yalnızca bu cihaz
+  // ---- kalıcılık
   const ALAN = ["sjBat", "sjTuk", "sjAcMax", "sjDcMax", "sjNow", "sjHedef", "sjGuc", "sjKm", "sjYNow", "sjEk", "sjMin", "sjLt", "sjYakit", "sjW", "sjSaat", "sjVNow", "sjVMin", "sjYilKm", "sjEvPay", "sjYilEk"];
   let D = {}; try { D = JSON.parse(localStorage.getItem("sarj_v1") || "{}") || {}; } catch (e) {}
-  D.fiyat = D.fiyat || {}; // ev / ac / dc ayrı hatırlanır
+  D.fiyat = D.fiyat || {}; D.guc = D.guc || {}; D.cihaz = D.cihaz || null;
   const kaydet = () => { ALAN.forEach((k) => (D[k] = $(k).value)); try { localStorage.setItem("sarj_v1", JSON.stringify(D)); } catch (e) {} };
+  // kayıtlı değerler geri yazılır; kaydırıcılara sayı olarak (önceki sürüm "15.000" gibi metin saklamış olabilir)
+  ALAN.forEach((k) => { if (D[k] == null || D[k] === "") return; const el = $(k); el.value = el.type === "range" ? String(Sayi.coz(D[k]).n) : D[k]; });
+
+  let mod = D.mod || "sarj", yer = D.yer || "ev";
+  const dcOrt = () => (ARAC[D.arac] && ARAC[D.arac].dcOrt) || 0.6;
   const aracYaz = (k) => { const a = ARAC[k]; if (!a) return; $("sjBat").value = tr(a.bat); $("sjTuk").value = tr(a.tuk); $("sjAcMax").value = tr(a.ac); $("sjDcMax").value = tr(a.dc); };
-  const aracBelirle = () => { // kutular hazır bir aracın değerleriyle aynıysa o araç sayılır
+  if (!$("sjBat").value) aracYaz("niro");
+
+  // ---- araç
+  function aracBelirle() {
     const k = Object.keys(ARAC).find((x) => { const a = ARAC[x]; return oku("sjBat") === a.bat && oku("sjTuk") === a.tuk && oku("sjAcMax") === a.ac && oku("sjDcMax") === a.dc; });
     D.arac = k || "diger";
-    if ($("sjSecim").value !== D.arac) $("sjSecim").value = D.arac;
-    $("sjAracOz").textContent = oku("sjBat") > 0 && oku("sjTuk") > 0 ? `${nf(oku("sjBat"))} kWh · ${nf(oku("sjTuk"))} kWh/100 km · menzil ≈ ${nf(oku("sjBat") / oku("sjTuk") * 100, 0)} km` : "aracının değerlerini aşağıya yaz";
-    $("sjAracNot").textContent = k ? ARAC[k].kaynak + " Tüketim WLTP menzilinden hesaplandı." + SON_NOT : "Kendi aracının kullanılabilir batarya kapasitesini, ortalama tüketimini ve en yüksek şarj güçlerini yaz; bu cihazda saklanır.";
-  };
+    const bat = oku("sjBat"), tuk = oku("sjTuk");
+    $("sjAracAd").textContent = k ? ARAC[k].ad : "Kendi aracım";
+    $("sjAracOz").textContent = bat > 0 && tuk > 0 ? `${nf(bat)} kWh · menzil ≈ ${nf(bat / tuk * 100, 0)} km` : "değerlerini yazmak için dokun";
+    document.querySelector("#sjAracBtn .sjHAracIc").textContent = k ? ARAC[k].ik : "✏️";
+    $("sjAraclar").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.a === D.arac));
+    $("sjAracNot").textContent = k ? ARAC[k].kaynak + " Tüketim WLTP menzilinden hesaplandı; aracının ekranındaki kendi ortalamanı yazarsan sonuç sana daha yakın olur." : "Kendi aracının kullanılabilir batarya kapasitesini, ortalama tüketimini ve en yüksek şarj güçlerini yaz; bu cihazda saklanır.";
+  }
+  const enUzun = Math.max(...Object.values(ARAC).map((a) => a.menzil));
+  $("sjAraclar").innerHTML = Object.keys(ARAC).map((k) => { const a = ARAC[k];
+    return `<button type="button" data-a="${k}"><span class="ik">${a.ik}</span><span class="ad"><b>${a.ad}</b><small>${nf(a.bat)} kWh · DC ${a.dc} kW</small><i class="men"><i style="width:${Math.round(a.menzil / enUzun * 100)}%"></i></i></span><span class="km">${a.menzil}<small>km</small></span></button>`; }).join("")
+    + `<button type="button" data-a="diger"><span class="ik">✏️</span><span class="ad"><b>Kendi aracım</b><small>listede yoksa değerleri yaz</small></span><span class="km">›</span></button>`;
+  const shAc = (ac) => { $("sjSh").hidden = !ac; document.documentElement.classList.toggle("sjShAcik", ac); $("sjMini").classList.remove("on"); if (ac) { aracBelirle(); $("sjDuzD").open = D.arac === "diger"; } };
+  $("sjAracBtn").addEventListener("click", () => shAc(true));
+  $("sjShX").addEventListener("click", () => shAc(false)); $("sjShTamam").addEventListener("click", () => shAc(false));
+  $("sjSh").addEventListener("click", (e) => { if (e.target === $("sjSh")) shAc(false); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("sjSh").hidden) shAc(false); });
+  $("sjAraclar").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-a]"); if (!b) return;
+    if (ARAC[b.dataset.a]) { aracYaz(b.dataset.a); hesapla(); kaydet(); setTimeout(() => shAc(false), 180); }
+    else { ["sjBat", "sjTuk", "sjAcMax", "sjDcMax"].forEach((x) => ($(x).value = "")); $("sjDuzD").open = true; hesapla(); kaydet(); setTimeout(() => $("sjBat").focus(), 60); }
+  });
 
-  let mod = D.mod || "sarj", yer = D.yer || "ev"; // ilk açılışta ev · duvar ünitesi 11 kW
-  const fiyatYaz = () => {
-    $("sjFiyat").value = D.fiyat[yer] || "";
-    $("sjFiyatL").textContent = yer === "ev" ? "Evdeki elektrik fiyatı" : yer === "ac" ? "AC istasyon fiyatı" : "DC istasyon fiyatı";
-    $("sjFiyat").placeholder = "fiyatı yaz";
-  };
-  const bar = (a, b, renk) => { // batarya göstergesi: a = başlangıç, b = bitiş (yüzde)
+  // ---- görsel yardımcılar
+  const bar = (a, b, renk, yazi) => {
     const lo = kis(Math.min(a, b), 0, 100), hi = kis(Math.max(a, b), 0, 100);
     $("sjBarA").style.width = lo + "%"; $("sjBarB").style.left = lo + "%"; $("sjBarB").style.width = (hi - lo) + "%";
-    $("sjBarB").className = renk || "";
+    $("sjBarB").className = renk || ""; $("sjBatYazi").textContent = yazi || "";
   };
+  const cip = (L) => ($("sjCip").innerHTML = L.filter(Boolean).map((x) => `<span>${x}</span>`).join(""));
+  const ust = (t1L, t1, t1b, t2L, t2, t2b) => { $("sjT1L").textContent = t1L; $("sjT1").textContent = t1; $("sjT1b").textContent = t1b || ""; $("sjT2L").textContent = t2L; $("sjT2").textContent = t2; $("sjT2b").textContent = t2b || ""; $("sjM1").textContent = t1 + " · " + t2; $("sjM2").textContent = t1L; };
   const uyar = (m) => { $("sjWarn").hidden = !m; $("sjWarn").textContent = m || ""; };
+  const kaydirici = () => document.querySelectorAll("#sarj input[type=range]").forEach((r) => { // dolu kısım rengi + değer yazısı
+    const p = (r.value - r.min) / (r.max - r.min) * 100; r.style.setProperty("--p", p + "%");
+    const o = $(r.id + "O"); if (!o) return;
+    const v = +r.value; o.textContent = r.id === "sjKm" ? v + " km" : r.id === "sjYilKm" ? v.toLocaleString("tr-TR") + " km" : r.id === "sjSaat" ? tr(v) + " sa" : "%" + v;
+  });
+  const pilSec = (id, v) => $(id).querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.v === +v));
 
-  // ---- ⚡ Şarj: maliyet ve süre
+  // ---- ⚡ Şarj
+  const fiyatAd = { ev: "Evdeki elektrik fiyatı", ac: "AC istasyon fiyatı", dc: "DC istasyon fiyatı" };
+  function yerCiz() {
+    $("sjYer").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.y === yer));
+    ["ev", "ac", "dc"].forEach((y) => ($("sjYer" + y[0].toUpperCase() + y.slice(1)).textContent = tr(D.guc[y] || GUCLER[y][GUCLER[y].length - (y === "dc" ? 2 : 1)]) + " kW"));
+    const g = oku("sjGuc"), L = GUCLER[yer];
+    $("sjGucPil").innerHTML = L.map((k) => `<button data-k="${k}" class="${Math.abs(k - g) < 0.01 ? "on" : ""}">${tr(k)} kW${yer === "ev" ? `<small>${GUC_AD[k]}</small>` : ""}</button>`).join("") + `<button data-k="el" class="${L.some((k) => Math.abs(k - g) < 0.01) ? "" : "on"}">✏️ Diğer</button>`;
+    $("sjFiyatL").textContent = fiyatAd[yer]; $("sjFiyat").value = D.fiyat[yer] || "";
+  }
   function hesapSarj() {
-    const bat = oku("sjBat"), tuk = oku("sjTuk"), now = oku("sjNow"), hed = oku("sjHedef"), guc = oku("sjGuc"), fiyat = oku("sjFiyat");
+    const bat = oku("sjBat"), tuk = oku("sjTuk"), now = +$("sjNow").value, hed = +$("sjHedef").value, guc = oku("sjGuc"), fiyat = oku("sjFiyat");
     const dc = yer === "dc", arMax = dc ? oku("sjDcMax") : oku("sjAcMax");
-    bar(now, hed, "dolum");
-    if (!(bat > 0) || !(guc > 0) || !(arMax > 0) || !isFinite(now) || !isFinite(hed) || hed <= now || now < 0 || hed > 100) {
-      $("sjT1").textContent = $("sjT2").textContent = "–"; $("sjT1b").textContent = $("sjT2b").textContent = "";
-      satir("sjRows", []); uyar(hed <= now && isFinite(hed) && isFinite(now) ? "Hedef şarj, şu anki şarjdan yüksek olmalı." : ""); return;
+    pilSec("sjHedefC", hed);
+    bar(now, hed, "dolum", `%${now} → %${hed}`);
+    if (!(bat > 0) || !(guc > 0) || !(arMax > 0) || hed <= now) {
+      ust("Ödeyeceğin", "–", "", "Süre", "–"); cip([]); satir("sjRows", []);
+      uyar(hed <= now ? "Hedef şarj, şu anki şarjdan yüksek olmalı." : !(bat > 0) ? "Araç değerlerini gir: üstteki araç kartına dokun." : ""); return;
     }
     uyar("");
     const P = Math.min(guc, arMax), eBat = bat * (hed - now) / 100, eSeb = eBat / (1 - KAYIP[dc ? "dc" : "ac"]);
     let saat;
-    if (dc) { // %80'e kadar yüksek hız, üstünde düşük hız
-      const alt = Math.min(hed, 80) - now, ust = Math.max(0, hed - Math.max(now, 80));
-      saat = (bat * Math.max(0, alt) / 100) / (P * dcOrt()) + (bat * ust / 100) / (P * DC_UST);
-    } else saat = eSeb / P * (hed > 90 ? 1.05 : 1); // %90 üstünde AC de biraz yavaşlar (Kia: %10–100, 11 kW'ta yaklaşık 6 sa 20 dk)
-    const km = tuk > 0 ? eBat / tuk * 100 : NaN, tutar = fiyat > 0 ? eSeb * fiyat : NaN;
-    const bitis = new Date(Date.now() + saat * 3600e3);
-    $("sjT1L").textContent = "Ödeyeceğin"; $("sjT1").textContent = fiyat > 0 ? tl(tutar) : "–";
-    $("sjT1b").textContent = fiyat > 0 ? `${nf(km, 0)} km yol için` : "fiyatı yazınca çıkar";
-    $("sjT2L").textContent = "Süre (yaklaşık)"; $("sjT2").textContent = sure(saat);
-    $("sjT2b").textContent = "biter: " + bitis.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }) + (bitis.getDate() !== new Date().getDate() ? " (ertesi gün)" : "");
+    if (dc) { const alt = Math.min(hed, 80) - now, ustP = Math.max(0, hed - Math.max(now, 80)); saat = (bat * Math.max(0, alt) / 100) / (P * dcOrt()) + (bat * ustP / 100) / (P * DC_UST); }
+    else saat = eSeb / P * (hed > 90 ? 1.05 : 1); // %90 üstünde AC de biraz yavaşlar (Kia: %10–100, 11 kW'ta ≈ 6 sa 20 dk)
+    const km = tuk > 0 ? eBat / tuk * 100 : NaN, tutar = fiyat > 0 ? eSeb * fiyat : NaN, yuzKm = tuk > 0 && fiyat > 0 ? tuk / (1 - KAYIP[dc ? "dc" : "ac"]) * fiyat : NaN;
+    const bitis = new Date(Date.now() + saat * 3600e3), ertesi = bitis.toDateString() !== new Date().toDateString();
+    ust("Ödeyeceğin", fiyat > 0 ? tl(tutar) : "–", fiyat > 0 ? "" : "fiyatı aşağıya yaz", "Süre", sure(saat), "⏰ " + bitis.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }) + (ertesi ? " (yarın)" : "") + "'de biter");
+    cip([`🛣️ +${nf(km, 0)} km`, `⚡ ${nf(eBat)} kWh`, isFinite(yuzKm) ? `💵 100 km ${tl0(yuzKm)}` : null]);
     satir("sjRows", [
       ["Bataryaya girecek enerji", nf(eBat) + " kWh"],
       [dc ? "İstasyondan çekilecek (kayıp dahil)" : "Şebekeden çekilecek (kayıp dahil)", nf(eSeb) + " kWh"],
       ["Kazanılan menzil", "≈ " + nf(km, 0) + " km"],
-      ["Şarj gücü", `${nf(P)} kW` + (guc > arMax ? ` <small>(cihaz ${nf(guc)} kW, araç en çok ${nf(arMax)} kW alır)</small>` : "")],
-      fiyat > 0 && tuk > 0 ? ["100 km maliyeti", tl(tuk / (1 - KAYIP[dc ? "dc" : "ac"]) * fiyat), "toplam"] : null,
-      fiyat > 0 && tuk > 0 ? ["1 km maliyeti", tl(tuk / 100 / (1 - KAYIP[dc ? "dc" : "ac"]) * fiyat)] : null,
+      ["Şarj gücü", `${nf(P)} kW` + (guc > arMax ? ` <small>(araç en çok ${nf(arMax)} kW alır)</small>` : "")],
+      isFinite(yuzKm) ? ["100 km maliyeti", tl(yuzKm), "toplam"] : null,
+      isFinite(yuzKm) ? ["1 km maliyeti", tl(yuzKm / 100)] : null,
     ]);
-    if (dc && hed > 80) uyar(`%80'den sonra DC şarj belirgin yavaşlar: son %${nf(hed - Math.max(now, 80), 0)} için yaklaşık ${sure((bat * (hed - Math.max(now, 80)) / 100) / (P * DC_UST))} gider. Yolculukta genelde %80'de çıkıp yola devam etmek daha hızlıdır.`);
+    if (dc && hed > 80) uyar(`%80'den sonra DC şarj belirgin yavaşlar: son %${hed - Math.max(now, 80)} için yaklaşık ${sure((bat * (hed - Math.max(now, 80)) / 100) / (P * DC_UST))} gider. Yolculukta %80'de çıkıp devam etmek genelde daha hızlıdır.`);
     $("sjNote").textContent = "Süre ve kayıp yaklaşıktır: hava sıcaklığı, bataryanın ısısı ve istasyonun o anki gücü süreyi değiştirir. İstasyonlar genelde istasyondan çekilen kWh üzerinden ücretlendirir; kesin tutar için istasyonun uygulamasına bak.";
   }
 
-  // ---- 🛣️ Yolculuk: menzil ve maliyet
+  // ---- 🛣️ Yolculuk
   function hesapYol() {
-    const bat = oku("sjBat"), tuk = oku("sjTuk"), km = oku("sjKm"), now = oku("sjYNow"), ek = oku("sjEk") || 0, min = oku("sjMin") || 0;
-    const fiyatEv = Sayi.coz(D.fiyat.ev || "").n, fiyatDc = Sayi.coz(D.fiyat.dc || "").n, lt = oku("sjLt"), yakit = oku("sjYakit");
-    if (!(bat > 0) || !(tuk > 0) || !(km > 0) || !(now > 0)) { $("sjT1").textContent = $("sjT2").textContent = "–"; satir("sjYRows", []); bar(0, 0); uyar(""); return; }
-    const t = tuk * (1 + ek / 100), e = km * t / 100, kalanYuzde = now - e / bat * 100, menzilTam = bat / t * 100;
-    const kullanilabilir = bat * (now - min) / 100, yolMenzil = Math.max(0, kullanilabilir / t * 100);
-    bar(Math.max(0, kalanYuzde), now, kalanYuzde >= min ? "harcama" : "harcama az");
-    // yolda şarj: her durakta %10'dan %80'e DC (Kia'nın verdiği süre ölçeğiyle)
+    const bat = oku("sjBat"), tuk = oku("sjTuk"), km = +$("sjKm").value, now = +$("sjYNow").value, ek = +$("sjEk").value || 0, min = +$("sjMin").value || 0;
+    const fEv = Sayi.coz(D.fiyat.ev || "").n, fDc = Sayi.coz(D.fiyat.dc || "").n, lt = oku("sjLt"), yakit = oku("sjYakit");
+    pilSec("sjEkC", ek); pilSec("sjMinC", min);
+    $("sjYolA").textContent = "%" + now; $("sjYolKmY").textContent = km + " km";
+    if (!(bat > 0) || !(tuk > 0)) { ust("Varışta kalan", "–", "", "Harcanacak", "–"); cip([]); satir("sjYRows", []); bar(0, 0); uyar("Araç değerlerini gir: üstteki araç kartına dokun."); return; }
+    const t = tuk * (1 + ek / 100), e = km * t / 100, kalan = now - e / bat * 100, yolMenzil = Math.max(0, bat * (now - min) / 100 / t * 100);
+    const yeter = kalan >= min;
+    $("sjYolB").textContent = kalan >= 0 ? "%" + Math.round(kalan) : "–"; $("sjYolB").className = yeter ? "" : "az";
+    const oran = kis(yolMenzil / km, 0, 1); $("sjYolDolu").style.width = oran * 100 + "%"; $("sjYolDolu").className = yeter ? "" : "az";
+    $("sjYolArac").style.left = `calc(${Math.min(oran, 1) * 100}% - 12px)`;
+    bar(Math.max(0, kalan), now, yeter ? "harcama" : "harcama az", `%${now} → ${kalan >= 0 ? "%" + Math.round(kalan) : "yetmez"}`);
     let durak = 0, durakSure = 0;
-    if (kalanYuzde < min) {
-      const eksik = (min - kalanYuzde) / 100 * bat, birDurak = bat * 0.7, P = oku("sjDcMax") || 50;
-      durak = Math.ceil(eksik / birDurak); durakSure = eksik / (Math.min(P, oku("sjDcMax") || P) * dcOrt());
-    }
-    $("sjT1L").textContent = "Varışta kalan"; $("sjT1").textContent = kalanYuzde >= 0 ? "%" + nf(kalanYuzde, 0) : "yetmez";
-    $("sjT1b").textContent = kalanYuzde >= min ? `≈ ${nf(Math.max(0, kalanYuzde) / 100 * bat / t * 100, 0)} km daha gider` : `yolda şarj gerekir`;
-    $("sjT2L").textContent = "Harcanacak enerji"; $("sjT2").textContent = nf(e) + " kWh"; $("sjT2b").textContent = `${nf(t)} kWh/100 km ile`;
-    const evMal = fiyatEv > 0 ? e / (1 - KAYIP.ac) * fiyatEv : NaN, benzin = lt > 0 && yakit > 0 ? km * lt / 100 * yakit : NaN;
+    if (!yeter) { const eksik = (min - kalan) / 100 * bat; durak = Math.ceil(eksik / (bat * 0.7)); durakSure = eksik / ((oku("sjDcMax") || 50) * dcOrt()); }
+    const evMal = fEv > 0 ? e / (1 - KAYIP.ac) * fEv : NaN, benzin = lt > 0 && yakit > 0 ? km * lt / 100 * yakit : NaN;
+    ust("Varışta kalan", kalan >= 0 ? "%" + Math.round(kalan) : "Yetmez", yeter ? `≈ ${nf(Math.max(0, kalan) / 100 * bat / t * 100, 0)} km daha gider` : `🔌 yolda ${durak} kez DC şarj`, "Yolculuğun enerjisi", isFinite(evMal) ? tl0(evMal) : nf(e) + " kWh", isFinite(evMal) ? `evde şarjla · km ${tl(evMal / km)}` : `${nf(t)} kWh/100 km`);
+    cip([`🔋 ${nf(e)} kWh`, `🛣️ bu şarjla ≈ ${nf(yolMenzil, 0)} km`, durak ? `⏱️ şarj ≈ ${sure(durakSure)}` : null]);
     satir("sjYRows", [
-      ["Bu şarjla gidilebilecek yol", `≈ ${nf(yolMenzil, 0)} km <small>(%${nf(min, 0)} kalana kadar)</small>`],
-      ["Tam dolu menzil (bu tüketimle)", `≈ ${nf(menzilTam, 0)} km`],
-      durak ? ["Yolda DC şarj", `${durak} durak · ≈ ${sure(durakSure)} <small>(en çok ${nf(oku("sjDcMax"))} kW)</small>`, "uyari"] : null,
-      isFinite(evMal) ? ["Evde şarjla yolculuğun enerjisi", tl(evMal), "toplam"] : ["Evde şarjla maliyet", `<small>⚡ Şarj sekmesinde ev fiyatını yaz</small>`],
-      isFinite(evMal) ? ["Km başı", tl(evMal / km)] : null,
-      fiyatDc > 0 ? ["Hepsi DC istasyonda olsaydı", tl(e / (1 - KAYIP.dc) * fiyatDc)] : null,
+      ["Bu şarjla gidilebilecek yol", `≈ ${nf(yolMenzil, 0)} km <small>(%${min} kalana kadar)</small>`],
+      ["Tam dolu menzil (bu koşulda)", `≈ ${nf(bat / t * 100, 0)} km`],
+      durak ? ["Yolda DC şarj", `${durak} durak · ≈ ${sure(durakSure)}`, "uyari"] : null,
+      isFinite(evMal) ? ["Evde şarjla enerji", tl(evMal), "toplam"] : ["Evde şarjla maliyet", "<small>⚡ Şarj bölümünde ev fiyatını yaz</small>"],
+      fDc > 0 ? ["Hepsi DC istasyonda olsaydı", tl(e / (1 - KAYIP.dc) * fDc)] : null,
       isFinite(benzin) ? ["⛽ Benzinli araçla aynı yol", tl(benzin)] : null,
       isFinite(benzin) && isFinite(evMal) ? [benzin >= evMal ? "Fark (elektrik lehine)" : "Fark (benzin lehine)", tl(Math.abs(benzin - evMal)), "toplam"] : null,
     ]);
-    uyar(kalanYuzde < min ? `Bu yolculuk için şarj yetmiyor: varışta %${nf(min, 0)} kalması için yaklaşık ${nf((min - kalanYuzde) / 100 * bat)} kWh eklemen gerekir.` : "");
-    $("sjNote").textContent = "Tüketim hıza, havaya, yüke ve klimaya göre değişir; en doğru sonuç için aracının ekranındaki kendi ortalamanı yaz. Ek tüketim payı tahminidir, kendin ayarla.";
+    uyar(yeter ? "" : `Bu yolculuk için şarj yetmiyor: varışta %${min} kalması için yaklaşık ${nf((min - kalan) / 100 * bat)} kWh eklemen gerekir.`);
+    $("sjNote").textContent = "Tüketim hıza, havaya, yüke ve klimaya göre değişir; yol ve hava payları tahminidir. En doğru sonuç için aracının ekranındaki kendi ortalamanı yaz.";
   }
 
-  // ---- 🔋 V2L: araçtan cihaz beslemek
+  // ---- 🔋 V2L
   function hesapV2l() {
-    const bat = oku("sjBat"), tuk = oku("sjTuk"), w = oku("sjW"), saat = oku("sjSaat"), now = oku("sjVNow"), min = oku("sjVMin") || 0, fiyatEv = Sayi.coz(D.fiyat.ev || "").n;
-    if (!(bat > 0) || !(w > 0) || !(saat > 0) || !(now > 0)) { $("sjT1").textContent = $("sjT2").textContent = "–"; satir("sjVRows", []); bar(0, 0); uyar(""); return; }
-    const VERIM = 0.9, e = w / 1000 * saat / VERIM, dus = e / bat * 100, kalan = now - dus;
-    const azami = Math.max(0, bat * (now - min) / 100) * VERIM / (w / 1000);
-    bar(Math.max(0, kalan), now, kalan >= min ? "harcama" : "harcama az");
-    $("sjT1L").textContent = "Bataryadan gidecek"; $("sjT1").textContent = "%" + nf(dus, 1); $("sjT1b").textContent = nf(e, 2) + " kWh";
-    $("sjT2L").textContent = "Bu güçle çalışır"; $("sjT2").textContent = azami >= 99 ? "99 sa+" : sure(azami); $("sjT2b").textContent = `%${nf(min, 0)} kalana kadar`;
-    satir("sjVRows", [
-      ["Kalan şarj", kalan >= 0 ? "%" + nf(kalan, 0) : "yetmez", kalan >= min ? "" : "uyari"],
-      tuk > 0 ? ["Menzilden giden", `≈ ${nf(e / tuk * 100, 0)} km`] : null,
-      fiyatEv > 0 ? ["Evdeki fiyatla değeri", tl(e / (1 - KAYIP.ac) * fiyatEv), "toplam"] : null,
-    ]);
-    uyar(kalan < min ? `Bu sürede şarj %${nf(min, 0)}'ın altına iner; araç ayarladığın alt sınırda V2L'yi keser.` : w > 3600 ? "Bu güç çoğu aracın V2L çıkışının üstünde olabilir; aracının kılavuzundaki en yüksek V2L gücünü kontrol et." : "");
+    const bat = oku("sjBat"), tuk = oku("sjTuk"), w = oku("sjW"), saat = +$("sjSaat").value, now = +$("sjVNow").value, min = +$("sjVMin").value || 0, fEv = Sayi.coz(D.fiyat.ev || "").n;
+    pilSec("sjVMinC", min);
+    if (!(bat > 0) || !(w > 0)) { ust("Bataryadan gidecek", "–", "", "Bu güçle çalışır", "–"); cip([]); satir("sjVRows", []); bar(0, 0); uyar(""); return; }
+    const VERIM = 0.9, e = w / 1000 * saat / VERIM, dus = e / bat * 100, kalan = now - dus, azami = Math.max(0, bat * (now - min) / 100) * VERIM / (w / 1000);
+    bar(Math.max(0, kalan), now, kalan >= min ? "harcama" : "harcama az", `%${now} → ${kalan >= 0 ? "%" + Math.round(kalan) : "yetmez"}`);
+    ust("Bataryadan gidecek", "%" + nf(dus, 1), `${nf(e, 2)} kWh · ${tr(saat)} saatte`, "Bu güçle çalışır", sure(azami), `%${min} kalana kadar`);
+    cip([`🔌 ${nf(w, 0)} W`, tuk > 0 ? `🛣️ −${nf(e / tuk * 100, 0)} km menzil` : null, isFinite(fEv) && fEv > 0 ? `💵 ${tl(e / (1 - KAYIP.ac) * fEv)}` : null]);
+    satir("sjVRows", [["Kalan şarj", kalan >= 0 ? "%" + Math.round(kalan) : "yetmez", kalan >= min ? "" : "uyari"]]);
+    uyar(kalan < min ? `Bu sürede şarj %${min}'ın altına iner; araç ayarlanan alt sınırda V2L'yi keser.` : w > 3600 ? "Bu güç çoğu aracın V2L çıkışının üstünde olabilir; aracının kılavuzundaki en yüksek V2L gücünü kontrol et." : "");
     $("sjNote").textContent = "Aracında V2L (araçtan cihaza elektrik) özelliği ve adaptörü varsa geçerlidir. Dönüştürme kaybı yaklaşık %10 varsayıldı; cihaz güçleri örnek değerlerdir, cihazın etiketindeki gücü yaz.";
   }
+  const cihazCiz = () => { const sec = D.cihaz || []; $("sjCihaz").querySelectorAll("button").forEach((b, i) => b.classList.toggle("on", sec.includes(i))); };
 
-  // ---- 💰 Yıllık: benzinli araca göre kazanç (fiyatlar bugünkü gibi kalırsa)
+  // ---- 💰 Yıllık
   function hesapYil() {
-    const tuk = oku("sjTuk"), km = oku("sjYilKm"), evPay = kis(oku("sjEvPay"), 0, 100) / 100, ek = oku("sjYilEk") || 0;
+    const tuk = oku("sjTuk"), km = +$("sjYilKm").value, evPay = +$("sjEvPay").value / 100, ek = +$("sjYilEk").value || 0;
     const fEv = Sayi.coz(D.fiyat.ev || "").n, fDc = Sayi.coz(D.fiyat.dc || "").n, lt = oku("sjYLt"), yakit = oku("sjYYakit");
-    bar(0, 0); $("sjT1L").textContent = "Yıllık kazanç"; $("sjT2L").textContent = "Aylık kazanç"; $("sjT1b").textContent = $("sjT2b").textContent = "";
+    pilSec("sjYilEkC", ek);
+    $("sjEvPayY").textContent = evPay >= 1 ? "🏠 Şarjın hepsi evde" : evPay <= 0 ? "⚡ Şarjın hepsi DC istasyonda" : `🏠 %${Math.round(evPay * 100)} evde · ⚡ %${Math.round((1 - evPay) * 100)} DC istasyonda`;
+    bar(0, 0);
     const t = tuk * (1 + ek / 100), kwh = km * t / 100;
-    const evGerek = evPay > 0, dcGerek = evPay < 1, fiyatTam = (!evGerek || fEv > 0) && (!dcGerek || fDc > 0);
-    const elek = fiyatTam ? kwh * (evPay * (fEv || 0) / (1 - KAYIP.ac) + (1 - evPay) * (fDc || 0) / (1 - KAYIP.dc)) : NaN;
-    const benzin = lt > 0 && yakit > 0 ? km * lt / 100 * yakit : NaN, fark = benzin - elek;
-    const ok = isFinite(elek) && isFinite(benzin) && km > 0 && tuk > 0;
-    const tl0 = (n) => (isFinite(n) ? Math.round(n).toLocaleString("tr-TR") + " TL" : "–"); // yıllık tutarlarda kuruş gereksiz, kutuya sığsın
-    $("sjT1").textContent = ok ? tl0(fark) : "–"; $("sjT2").textContent = ok ? tl0(fark / 12) : "–";
-    if (ok) { $("sjT1b").textContent = fark >= 0 ? "elektrik lehine" : "benzin lehine"; $("sjT2b").textContent = `yılda ${nf(km, 0)} km ile`; }
-    else $("sjT1b").textContent = "fiyatları yazınca çıkar";
-    satir("sjYilRows", km > 0 && tuk > 0 ? [
-      ["Yıllık enerji (bataryaya)", nf(kwh, 0) + " kWh"],
-      ["⚡ Yıllık elektrik", isFinite(elek) ? tl0(elek) : `<small>${evGerek && !(fEv > 0) ? "ev fiyatını" : "DC fiyatını"} yaz</small>`],
-      ["⛽ Yıllık benzin", isFinite(benzin) ? tl0(benzin) : "<small>tüketim ve yakıt fiyatını yaz</small>"],
-      isFinite(elek) ? ["Km başı elektrik", tl(elek / km)] : null,
-      isFinite(benzin) ? ["Km başı benzin", tl(benzin / km)] : null,
+    const fiyatTam = (evPay <= 0 || fEv > 0) && (evPay >= 1 || fDc > 0);
+    const elek = fiyatTam && tuk > 0 ? kwh * (evPay * (fEv || 0) / (1 - KAYIP.ac) + (1 - evPay) * (fDc || 0) / (1 - KAYIP.dc)) : NaN;
+    const benzin = lt > 0 && yakit > 0 ? km * lt / 100 * yakit : NaN, fark = benzin - elek, ok = isFinite(elek) && isFinite(benzin);
+    ust("Yıllık kazanç", ok ? tl0(fark) : "–", ok ? (fark >= 0 ? "elektrik lehine" : "benzin lehine") : "fiyatları aşağıya yaz", "Aylık kazanç", ok ? tl0(fark / 12) : "–", ok ? `yılda ${km.toLocaleString("tr-TR")} km ile` : "");
+    cip([tuk > 0 ? `⚡ ${nf(kwh, 0)} kWh/yıl` : null, ok ? `📅 5 yılda ${tl0(fark * 5)}` : null]);
+    const mx = Math.max(elek || 0, benzin || 0) || 1;
+    $("sjCubuk").innerHTML = [["⚡ Elektrik", elek, "el"], ["⛽ Benzin", benzin, "bz"]].map(([ad, v, c]) => `<div class="${c}"><span>${ad}</span><i><i style="width:${isFinite(v) ? Math.max(3, v / mx * 100) : 0}%"></i></i><b>${isFinite(v) ? tl0(v) : "–"}</b></div>`).join("");
+    satir("sjYilRows", [
+      isFinite(elek) ? ["Km başı elektrik", tl(elek / km)] : ["⚡ Yıllık elektrik", `<small>${evPay > 0 && !(fEv > 0) ? "ev fiyatını" : "DC fiyatını"} yaz</small>`],
+      isFinite(benzin) ? ["Km başı benzin", tl(benzin / km)] : ["⛽ Yıllık benzin", "<small>tüketim ve yakıt fiyatını yaz</small>"],
       ok ? ["5 yılda (fiyatlar aynı kalırsa)", tl0(fark * 5), "toplam"] : null,
-    ] : []);
-    uyar(""); $("sjNote").textContent = "Bugünkü fiyatlarla yaklaşık hesaptır; elektrik ve yakıt fiyatları değiştikçe sonuç değişir. Bakım, sigorta ve vergi farkları dahil değildir. Ev şarjında %12, DC'de %5 şarj kaybı eklendi.";
+    ]);
+    uyar(""); $("sjNote").textContent = "Bugünkü fiyatlarla yaklaşık hesaptır; fiyatlar değiştikçe sonuç değişir. Bakım, sigorta ve vergi farkları dahil değildir. Ev şarjında %12, DC'de %5 şarj kaybı eklendi.";
   }
 
   function hesapla() {
     ["sarj", "yol", "v2l", "yil"].forEach((m) => ($("sjP-" + m).hidden = m !== mod));
-    document.querySelector("#sarj .sjBat").hidden = mod === "yil";
-    $("sjMod").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.m === mod));
-    const yv = `${yer}|${String(oku("sjGuc"))}`, ys = $("sjYerSec"), var_ = [...ys.options].some((o) => o.value === yv);
-    ys.querySelector('option[value="ozel"]').hidden = var_; ys.querySelector('option[value="ozel"]').textContent = `✏️ Elle girilen: ${nf(oku("sjGuc"))} kW (${yer === "dc" ? "DC" : "AC"})`;
-    ys.value = var_ ? yv : "ozel";
-    aracBelirle();
-    if (mod === "sarj") hesapSarj(); else if (mod === "yol") hesapYol(); else if (mod === "yil") hesapYil(); else hesapV2l();
+    $("sjMod").querySelectorAll("button").forEach((b) => { const on = b.dataset.m === mod; b.classList.toggle("on", on); b.setAttribute("aria-selected", String(on)); });
+    document.querySelector("#sjH .sjHBat").hidden = mod === "yil";
+    $("sjH").dataset.mod = mod;
+    aracBelirle(); kaydirici();
+    if (mod === "sarj") { yerCiz(); hesapSarj(); } else if (mod === "yol") hesapYol(); else if (mod === "yil") hesapYil(); else { cihazCiz(); hesapV2l(); }
   }
 
   // ---- olaylar
-  ALAN.forEach((k) => { if (D[k] != null && D[k] !== "") $(k).value = D[k]; });
-  if (!D.sjBat) aracYaz("niro");
-  if (!D.sjGuc) $("sjGuc").value = "11";
-  // Yıllık bölümündeki fiyat ve benzin kutuları diğer bölümlerdekilerle ortaktır (birine yazılan ötekine de geçer)
-  const ESLE = { sjYfEv: () => "ev", sjYfDc: () => "dc" }, ESLE2 = { sjYLt: "sjLt", sjLt: "sjYLt", sjYYakit: "sjYakit", sjYakit: "sjYYakit" };
   const yilDoldur = () => { $("sjYfEv").value = D.fiyat.ev || ""; $("sjYfDc").value = D.fiyat.dc || ""; $("sjYLt").value = $("sjLt").value; $("sjYYakit").value = $("sjYakit").value; };
-  fiyatYaz(); yilDoldur();
+  if (!D.sjGuc) $("sjGuc").value = "11";
+  yilDoldur();
+  const ESLE = { sjYfEv: "ev", sjYfDc: "dc" }, ESLE2 = { sjYLt: "sjLt", sjLt: "sjYLt", sjYYakit: "sjYakit", sjYakit: "sjYYakit" };
   $("sarj").addEventListener("input", (e) => {
-    if (e.target.tagName === "SELECT") return; // açılır listeler kendi "change" olayıyla işlenir
-    if (ESLE[e.target.id]) { D.fiyat[ESLE[e.target.id]()] = e.target.value; if (yer === ESLE[e.target.id]()) $("sjFiyat").value = e.target.value; }
-    if (ESLE2[e.target.id]) $(ESLE2[e.target.id]).value = e.target.value;
-    if (e.target.id === "sjFiyat") { D.fiyat[yer] = e.target.value; yilDoldur(); }
-    if (e.target.id === "sjGuc" && oku("sjGuc") > (oku("sjAcMax") || 11) + 11 && yer !== "dc") { yer = "dc"; D.yer = yer; fiyatYaz(); }
+    const id = e.target.id;
+    if (ESLE[id]) D.fiyat[ESLE[id]] = e.target.value;
+    if (ESLE2[id]) $(ESLE2[id]).value = e.target.value;
+    if (id === "sjFiyat") { D.fiyat[yer] = e.target.value; yilDoldur(); }
+    if (id === "sjGuc") D.guc[yer] = oku("sjGuc");
+    if (id === "sjNow" && +$("sjHedef").value <= +e.target.value) $("sjHedef").value = Math.min(100, +e.target.value + 1);
+    if (id === "sjHedef" && +$("sjNow").value >= +e.target.value) $("sjNow").value = Math.max(0, +e.target.value - 1);
+    if (id === "sjW") { D.cihaz = []; cihazCiz(); }
     hesapla(); kaydet();
   });
   $("sjMod").addEventListener("click", (e) => { const b = e.target.closest("button[data-m]"); if (!b) return; mod = D.mod = b.dataset.m; hesapla(); kaydet(); });
-  // Araç seçimi: açılır liste; "Başka araç"ta değer kutuları açılır. ✏️ ile hazır aracın değerleri de düzenlenebilir
-  $("sjSecim").innerHTML = Object.keys(ARAC).map((k) => `<option value="${k}">${ARAC[k].ad}</option>`).join("") + `<option value="diger">✏️ Başka araç (değerleri ben yazacağım)</option>`;
-  const duzAc = (ac) => { $("sjDuz").hidden = !ac; $("sjDuzBtn").setAttribute("aria-expanded", String(ac)); $("sjDuzBtn").classList.toggle("on", ac); };
-  $("sjSecim").addEventListener("change", (e) => {
-    const k = e.target.value;
-    if (ARAC[k]) { aracYaz(k); duzAc(false); } else { ["sjBat", "sjTuk", "sjAcMax", "sjDcMax"].forEach((x) => ($(x).value = "")); duzAc(true); D.arac = "diger"; setTimeout(() => $("sjBat").focus(), 50); }
+  $("sjYer").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-y]"); if (!b) return; yer = D.yer = b.dataset.y;
+    $("sjGuc").value = tr(D.guc[yer] || (yer === "dc" ? 120 : yer === "ac" ? 22 : 11)); $("sjGucEl").hidden = true; hesapla(); kaydet();
+  });
+  $("sjGucPil").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-k]"); if (!b) return;
+    if (b.dataset.k === "el") { $("sjGucEl").hidden = false; $("sjGuc").focus(); $("sjGuc").select(); return; }
+    $("sjGucEl").hidden = true; $("sjGuc").value = tr(b.dataset.k); D.guc[yer] = +b.dataset.k; hesapla(); kaydet();
+  });
+  const pil = (id, hedef) => $(id).addEventListener("click", (e) => { const b = e.target.closest("button[data-v]"); if (!b) return; $(hedef).value = b.dataset.v; if (hedef === "sjHedef" && +$("sjNow").value >= +b.dataset.v) $("sjNow").value = +b.dataset.v - 1; hesapla(); kaydet(); });
+  pil("sjHedefC", "sjHedef"); pil("sjEkC", "sjEk"); pil("sjMinC", "sjMin"); pil("sjVMinC", "sjVMin"); pil("sjYilEkC", "sjYilEk");
+  $("sjCihaz").addEventListener("click", (e) => { // birden çok cihaz: toplam güç
+    const b = e.target.closest("button[data-w]"); if (!b) return;
+    const btns = [...$("sjCihaz").querySelectorAll("button")], i = btns.indexOf(b), sec = new Set(D.cihaz || []);
+    sec.has(i) ? sec.delete(i) : sec.add(i); D.cihaz = [...sec];
+    $("sjW").value = D.cihaz.length ? String(D.cihaz.reduce((t, j) => t + +btns[j].dataset.w, 0)) : "";
     hesapla(); kaydet();
   });
-  $("sjDuzBtn").addEventListener("click", () => duzAc($("sjDuz").hidden));
-  $("sjYerSec").addEventListener("change", (e) => { const v = e.target.value; if (v === "ozel") return; const [y, k] = v.split("|"); yer = D.yer = y; $("sjGuc").value = tr(k); fiyatYaz(); hesapla(); kaydet(); });
-  const cip = (id, hedef) => $(id).addEventListener("click", (e) => { const b = e.target.closest("button[data-v],button[data-w]"); if (!b) return; $(hedef).value = tr(b.dataset.v || b.dataset.w); hesapla(); kaydet(); });
-  cip("sjHedefC", "sjHedef"); cip("sjKmC", "sjKm"); cip("sjEkC", "sjEk"); cip("sjCihaz", "sjW");
-  cip("sjYilKmC", "sjYilKm"); cip("sjEvPayC", "sjEvPay"); cip("sjYilEkC", "sjYilEk");
+  ["sjBat", "sjTuk", "sjAcMax", "sjDcMax"].forEach((x) => $(x).addEventListener("input", () => setTimeout(() => $("sjAraclar").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.a === D.arac)))));
+
+  // Sonuç kartı sabit başlığın altına kayıp gözden çıkınca üstte ince özet şeridi belirir (kaydırırken sonucu görmeye devam et);
+  // başka sekmede ya da araç penceresi açıkken görünmez
+  let miniIs = false;
+  const miniBak = () => {
+    miniIs = false;
+    const sh = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--sh")) || 120;
+    const goster = $("sarj").classList.contains("on") && $("sjSh").hidden && $("sjH").getBoundingClientRect().bottom < sh + 8;
+    $("sjMini").classList.toggle("on", goster);
+  };
+  window.addEventListener("scroll", () => { if (!miniIs) { miniIs = true; requestAnimationFrame(miniBak); } }, { passive: true });
+  $("tabs").addEventListener("click", () => setTimeout(miniBak, 30));
+  $("sjMini").addEventListener("click", () => $("sjH").scrollIntoView({ behavior: "smooth", block: "center" }));
+
   hesapla();
-  if (D.arac === "diger") duzAc(true);
   window.Sarj = { hesapla };
 })();
