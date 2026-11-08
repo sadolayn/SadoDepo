@@ -249,7 +249,7 @@
   $("amLvl").addEventListener("click", (e) => { const b = e.target.closest("button[data-l]"); if (!b) return; S.lvl = +b.dataset.l; ayarYaz(); $("amErr").textContent = ""; lvlYaz(); });
   function ayarlarCiz() {
     document.querySelectorAll(".amAyarlar").forEach((el) => {
-      el.innerHTML = `<button type="button" data-a="auto" aria-pressed="${S.auto}">🧭 Otomatik işaretle: ${S.auto ? "açık" : "kapalı"}</button><button type="button" data-a="ses" aria-pressed="${S.ses}" aria-label="Ses ${S.ses ? "açık" : "kapalı"}">${S.ses ? "🔊 Ses açık" : "🔇 Ses kapalı"}</button>`;
+      el.innerHTML = `<button type="button" data-a="auto" aria-pressed="${S.auto}">🧭 <span class="amUzun">Otomatik işaretle</span><span class="amKisa">İşaretle</span>: ${S.auto ? "açık" : "kapalı"}</button><button type="button" data-a="ses" aria-pressed="${S.ses}" aria-label="Ses ${S.ses ? "açık" : "kapalı"}">${S.ses ? "🔊 Ses açık" : "🔇 Ses kapalı"}</button>`;
     });
   }
   document.addEventListener("click", (e) => {
@@ -373,14 +373,34 @@
     $("amSira").textContent = bitti ? "Oyun bitti" : S.sira === "p" ? "🎯 Sıra sende" : "⏳ Sadolayn nişan alıyor";
     $("amSeriYer").innerHTML = !bitti && S.seri >= 2 ? `<span class="amSeri">🔥 ${S.seri} isabet üst üste!</span>` : "";
     $("amSonA").textContent = S.sonA >= 0 ? `Sadolayn'ın son atışı: ${kor(S.sonA)} ${S.rAt[S.sonA] === 2 ? "🔥" : "· ıska"}` : "";
+    sigdirSonra();
     $("amLvlRozet").textContent = `${LV[S.lvl].em} ${LV[S.lvl].ad}${S.st ? ` · ⭐ ${window.Token ? Token.fmt(S.st) : S.st}` : ""}`;
     ayarlarCiz();
   }
+  // Tam ekran savaş: sayfa ekrandan taşıyorsa tahta(lar) taşan kadar küçülür; sığıyorsa en fazla genişliği kadar büyür.
+  // Yalnızca savaş sürerken (sonuç kartı açıkken sayfa normal kayar). Pencere boyu değişince yeniden hesaplanır.
+  function amSigdir() {
+    const D = $("amDusmanBd"), B = $("amBenBd"), yan = matchMedia("(min-width: 640px)").matches;
+    const tahtalar = yan ? [D, B] : [D];
+    [D, B].forEach((x) => (x.style.maxWidth = ""));
+    document.body.style.removeProperty("--amMini");
+    if (!document.body.classList.contains("amSv") || !$("amSonuc").hidden) return;
+    for (let i = 0; i < 3; i++) { // birkaç adımda oturur (yazılar satır değiştirebilir)
+      const tas = document.documentElement.scrollHeight - window.innerHeight;
+      if (tas <= 0) break;
+      const w = Math.max(220, D.getBoundingClientRect().width - tas - 2) + "px"; tahtalar.forEach((x) => (x.style.maxWidth = w)); // yan yana iki tahta aynı boyda
+      if (!yan) { const k = Math.max(84, 116 - Math.ceil(tas / 3)); document.body.style.setProperty("--amMini", k + "px"); }
+    }
+  }
+  let sigT = 0;
+  const sigdirSonra = () => { cancelAnimationFrame(sigT); sigT = requestAnimationFrame(amSigdir); };
+  window.addEventListener("resize", sigdirSonra);
   function ekran() {
     const sv = S.faz !== "diz";
     $("amAyar").hidden = sv; $("amDiz").hidden = sv; $("amOyun").hidden = !sv;
     document.body.classList.toggle("amSv", sv);
     $("amBirak").parentElement.hidden = S.faz === "bitti";
+    sigdirSonra();
   }
   $("amBasla").onclick = () => {
     if (S.ben.some((g) => g.r == null)) return;
