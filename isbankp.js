@@ -1966,27 +1966,17 @@ function deck() {
   return QD;
 }
 let SC = { d: 0, t: 0, s: 0 }; try { SC = Object.assign(SC, JSON.parse(localStorage.getItem("isbQuiz") || "{}")); } catch (e) {}
-// Skor satırı: skor, seri ve "Sıfırla" düğmesi (8 Kasım 2026)
-const scHtml = () => SC.t ? `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""} <span class="dqHedef">🎯 Ödüle ${Math.min(SC.od || 0, odulHedef())}/${odulHedef()}</span> <button type="button" class="dqSifir" id="dqSifir" title="Skoru ve seriyi sıfırla">↺ Sıfırla</button>` : "İlk sorun!";
+// Skor satırı: kaç sorudan kaçını bildin, seri ve ödüle kalan (8 Kasım 2026)
+const scHtml = () => SC.t ? `Skorun: <b style="color:var(--ink)">${SC.d}/${SC.t}</b>${SC.s >= 2 ? ` · 🔥 ${SC.s} seri` : ""} <span class="dqHedef">🎯 Ödüle ${Math.min(SC.od || 0, odulHedef())}/${odulHedef()}</span>` : "İlk sorun!";
 // Seri ödülü: üst üste 10 doğruya oyunlar için 500 Yıldız. Aynı hafta içinde sonraki ödül 20, sonra 40, 80… üst üste doğru ister.
 // Hafta ilk ödülle başlar; 7 gün dolunca hedef yeniden 10'a iner. Yanlış cevap ödül serisini (SC.od) sıfırlar.
-// SC.od: son ödülden beri üst üste doğru · SC.ob: haftanın başladığı an · SC.ok: bu haftaki ödül sayısı. "Sıfırla" haftayı sıfırlamaz.
+// SC.od: son ödülden beri üst üste doğru · SC.ob: haftanın başladığı an · SC.ok: bu haftaki ödül sayısı.
 // Bakiye oyunlardaki "batakMP" anahtarında (token.js)
 const ODUL_ILK = 10, ODUL_YILDIZ = 500, HAFTA = 7 * 864e5;
 const haftaBitti = () => !SC.ok || !SC.ob || Date.now() - SC.ob >= HAFTA;
 const odulHedef = () => haftaBitti() ? ODUL_ILK : ODUL_ILK * 2 ** SC.ok;
 function yildizEkle(n) {
   try { const k = "batakMP", m = JSON.parse(localStorage.getItem(k) || "{}") || {}; if (!(m.bal >= 0)) m.bal = 1000; m.bal += n; m.empty = 0; localStorage.setItem(k, JSON.stringify(m)); return true; } catch (e) { return false; }
-}
-function sifirBagla() {
-  const b = $("dqSifir"); if (!b) return;
-  b.onclick = () => {
-    if (!confirm("Skorun ve serin sıfırlansın mı? Baştan başlarsın.")) return;
-    SC = { d: 0, t: 0, s: 0, ob: SC.ob, ok: SC.ok };
-    try { localStorage.setItem("isbQuiz", JSON.stringify(SC)); } catch (e) {}
-    window.Rapor && Rapor.bolum("soru-sifirla");
-    $("dqSc").innerHTML = scHtml();
-  };
 }
 const PRAISE = ["🎉 Tebrikler, doğru!", "👏 Harikasın!", "🌟 Bravo, tam isabet!", "🏆 Bilgine sağlık!", "✅ Süper, bildin!", "💯 Mükemmel!"];
 function qHtml() {
@@ -2017,9 +2007,8 @@ function bindQ() {
       m.innerHTML += `<div class="dqOdul">🎁 Üst üste ${odul} doğru! Oyunlarda kullanman için <b>${ODUL_YILDIZ} ⭐ Yıldız</b> hesabına eklendi.<br><small>Sıradaki ödül için üst üste <b>${odulHedef()}</b> doğru gerekiyor. ${bit}'da hedef yeniden 10'a iner.</small></div>`;
       window.Rapor && Rapor.bolum("soru-seri-odul");
     }
-    $("dqSc").innerHTML = scHtml(); sifirBagla();
+    $("dqSc").innerHTML = scHtml();
   };
-  sifirBagla();
   $("dqNext").onclick = () => { window.Rapor && Rapor.bolum("soru-sonraki"); qI++; qKaydet(qI); $("dqBox").innerHTML = qHtml(); bindQ(); };
 }
 function renderSoru() {
