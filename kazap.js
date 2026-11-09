@@ -164,7 +164,7 @@
 
   /* ---------- adımlar ---------- */
   var adimlar = $("kzAdimlar");
-  adimlar.innerHTML = ADIM.map(function (a, i) { return '<button type="button" data-i="' + i + '" aria-label="' + (i + 1) + ". adım: " + a[1] + '"><b>' + a[0] + "</b><span>" + a[1] + "</span></button>"; }).join("");
+  adimlar.innerHTML = ADIM.map(function (a, i) { return '<button type="button" data-i="' + i + '" aria-label="' + (i + 1) + ". adım: " + a[1] + '"><b>' + a[0] + '</b><span><i class="kzNo">' + (i + 1) + '</i><i class="kzAd"> ' + a[1] + "</i></span></button>"; }).join(""); // 9 Kasım: numaralar soldan sağa sırayı gösterir
   adimlar.onclick = function (e) { var b = e.target.closest("button[data-i]"); if (b) git(+b.dataset.i); };
   function doluMu(i) {
     var A = S.A, B = S.B;
@@ -189,6 +189,7 @@
     document.querySelectorAll(".kz-adim").forEach(function (s) { s.classList.toggle("on", +s.dataset.a === i); });
     adimlar.querySelectorAll("button").forEach(function (b, j) { b.classList.toggle("on", j === i); if (j === i) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
     $("kzBar").style.transform = "scaleX(" + ((i + 1) / ADIM.length) + ")";
+    $("kzAdimYazi").innerHTML = "Adım <b>" + (i + 1) + "</b> / " + ADIM.length + (i < ADIM.length - 1 ? " · soldan sağa sırayla ilerle" : " · son adım");
     $("kzGeri").disabled = i === 0;
     $("kzIleri").hidden = i === ADIM.length - 1;
     $("kzNav").style.gridTemplateColumns = i === ADIM.length - 1 ? "1fr" : "";
@@ -711,18 +712,35 @@
   $("kzSil").onclick = async function () {
     var benDe = $("kzSilBen").checked;
     if (!confirm("Bu kazanın tüm bilgileri, fotoğrafları, krokisi ve imzaları bu telefondan silinsin mi?" + (benDe ? "\nHatırlanan A bilgilerin de silinecek." : ""))) return;
+    await temizle(benDe); toast("🗑️ Kaza bilgileri silindi");
+  };
+  async function temizle(benDe) {
     try { localStorage.removeItem(KEY); } catch (e) {}
     if (benDe) { localStorage.removeItem(BEN); }
     await DB.temizle();
     Object.keys(urlOnbellek).forEach(function (k) { URL.revokeObjectURL(urlOnbellek[k].url); }); urlOnbellek = {};
     hazir = null; S = bos(); $("kzSilBen").checked = false;
-    hepsiniCiz(); kaydet(true); git(0); toast("🗑️ Kaza bilgileri silindi");
-  };
+    hepsiniCiz(); kaydet(true); git(0);
+  }
 
   function hepsiniCiz() {
     guvCiz(); fotoKutulari(); tanikCiz(); doldur(); konumYaz(); kutuCiz(); darbeCiz(); tplCiz(); kroki.ciz(); imzaAdlari();
     imzalar.A.yukle(); imzalar.B.yukle(); adimIsaret(); $("kzHatirla").checked = !!ayar.hatirla;
   }
   hepsiniCiz();
-  git(S.adim || 0, true);
+  // 9 Kasım 2026: önceden başlanmış bir kayıt varsa açılışta sor: kaldığın yerden mi, yeni kaza mı? Yeni kayıt her zaman 1. adımdan başlar
+  var yarim = (S.adim || 0) > 0 || S.guv.tamam || S.guv.yarali != null || ADIM.some(function (_, i) { return i > 0 && doluMu(i); });
+  if (yarim) {
+    var t = new Date(S.olustu || Date.now()), kutu = $("kzDevam");
+    $("kzDevamT").textContent = t.toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) + " " + t.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }) + " · " + ((S.adim || 0) + 1) + ". adımda kalmıştın";
+    kutu.hidden = false;
+    $("kzDevamE").onclick = function () { kutu.hidden = true; rapor("devam"); };
+    $("kzDevamY").onclick = async function () {
+      if (!confirm("Önceki kaydın bilgileri, fotoğrafları, krokisi ve imzaları silinip yeni bir kaza başlatılsın mı?\n(Kendi hatırlanan bilgilerin kalır. Önce PDF'ini almak istersen Vazgeç'e bas, kaldığın yerden devam et.)")) return;
+      await temizle(false); kutu.hidden = true; rapor("yeni"); toast("🆕 Yeni kaza: 1. adımdan başlıyoruz");
+    };
+    git(S.adim || 0, true);
+    try { history.scrollRestoration = "manual"; } catch (e) {} // tarayıcı eski kaydırma yerine dönmesin: soru kutusu görünsün
+    window.scrollTo(0, 0); window.addEventListener("load", function () { window.scrollTo(0, 0); }, { once: true });
+  } else git(0, true);
 })();

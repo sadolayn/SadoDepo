@@ -12,10 +12,24 @@ header h1 { font-size: 19px; text-align: center; flex: 1; }
 .kz-adimlar button { position: relative; min-height: 40px; padding: 4px 0 3px; border: 1px solid #262626; background: #0d0d0d; border-radius: 11px; color: #8a8a8a; font: inherit; font-size: 11px; cursor: pointer; line-height: 1.1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; transition: transform .15s, border-color .2s, background .2s; }
 .kz-adimlar button b { font-size: 17px; font-weight: 400; }
 .kz-adimlar button span { font-size: 11px; white-space: nowrap; overflow: hidden; max-width: 100%; }
-.kz-adimlar button.ok::after { content: ""; position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: 50%; background: #3fc283; }
+.kz-adimlar button.ok::after { content: "✓"; position: absolute; top: -5px; right: -4px; width: 14px; height: 14px; border-radius: 50%; background: #3fc283; color: #04140b; font: 800 9px/14px system-ui, sans-serif; text-align: center; }
+.kz-adimlar button span i { font-style: normal; }
+.kz-adimlar button .kzNo { font-weight: 800; font-variant-numeric: tabular-nums; }
+.kz-adimlar button.on .kzNo { color: #f3d38a; }
+.kz-adimYazi { margin: 6px 2px 0; font-size: 12px; color: #8a8a8a; text-align: center; }
+.kz-adimYazi b { color: #f3d38a; }
+.kz-devam { display: grid; gap: 6px; margin: 0 0 12px; padding: 12px 14px; border-radius: 16px; border: 1px solid #5a4320; background: linear-gradient(160deg, #1d150a, #0d0a05); animation: kzDvGel .3s cubic-bezier(.2,.7,.2,1); }
+.kz-devam[hidden] { display: none; }
+.kz-devam b { font-size: 15px; color: #f3d38a; }
+.kz-devam span { font-size: 12.5px; color: #bdbdbd; }
+.kz-devam div { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.kz-devam button { min-height: 44px; border-radius: 12px; border: 1px solid #262626; background: #141414; color: #f2f2f2; font: 700 13.5px system-ui, sans-serif; cursor: pointer; }
+.kz-devam button.kz-dvE { background: #e0a24f; border-color: #e0a24f; color: #1a1206; }
+@keyframes kzDvGel { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .kz-devam { animation: none; } }
 .kz-adimlar button.on { border-color: #e0a24f; background: rgba(224,162,79,.14); color: #f3d38a; }
 .kz-adimlar button:active { transform: scale(.94); }
-@media (max-width: 420px) { .kz-adimlar button span { display: none; } .kz-adimlar button { min-height: 36px; } }
+@media (max-width: 420px) { .kz-adimlar button .kzAd { display: none; } .kz-adimlar button { min-height: 44px; } }
 
 /* Adımlar */
 .kz-adim { display: none; }
