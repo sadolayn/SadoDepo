@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="tema.js"></script>
 <script>/* 10 Kasım matemi: 9 Kasım öğleden 10 Kasım gece yarısına kadar kayan yazı siyah, solunda yas kurdelesi */
-(function () { var n = new Date(); if (n.getMonth() === 10 && (n.getDate() === 10 || (n.getDate() === 9 && n.getHours() >= 12))) document.documentElement.classList.add("matem"); })();</script>
+(function () { var n = new Date(); if (n.getMonth() === 10 && (n.getDate() === 10 || (n.getDate() === 9 && n.getHours() >= 12))) document.documentElement.classList.add("matem"); if ((n.getMonth() === 10 && n.getDate() === 10) || /ata10/.test(location.search)) document.documentElement.classList.add("matem", "matem10"); })();</script>
 <title>SADOLAYN</title>
 <meta name="description" content="Bilgi paylaştıkça büyür">
 <meta property="og:type" content="website">
@@ -629,6 +629,12 @@
   html[data-tema="acik"] .ysEt i { background: #e0a24f; }
   /* 10 Kasım matemi (9 Kasım 2026): kayan yazı siyah, altın yerine gri-beyaz; solunda siyah yas kurdelesi; tanıtım satırları o gün gizlenir */
   .kyKurdele { display: none; }
+  .ataYazi { display: none; }
+  html.matem10 h1.logo { display: flex; flex-direction: column; align-items: center; }
+  html.matem10[data-tema] h1.logo img { width: auto !important; height: 156px; aspect-ratio: 360 / 491; object-fit: cover; border-radius: 14px; filter: grayscale(1) contrast(1.04) !important; box-shadow: 0 6px 22px rgba(0,0,0,.4); border: 1px solid #3a3a3a; }
+  html.matem10[data-tema="acik"] h1.logo img { box-shadow: 0 6px 20px rgba(40,30,15,.25); border-color: #cfc4ae; }
+  html.matem10 .ataYazi { display: block; margin-top: 9px; line-height: 1.3; font: italic 15px Georgia, "Times New Roman", serif; letter-spacing: .3px; white-space: nowrap; color: #dcdcdc; text-align: center; }
+  html.matem10[data-tema="acik"] .ataYazi { color: #3a3226; }
   html.matem p.greet a.sonsuz { display: inline-block; padding: 2px 10px; color: #ececec; text-decoration: none; font-size: 24px; letter-spacing: 3px; font-style: normal; }
   html.matem[data-tema="acik"] p.greet a.sonsuz { color: #1b1813; }
   html.matem p.greet a.sonsuz:active { transform: scale(.96); }
@@ -656,7 +662,8 @@
       </button>
     </div>
     <div class="yeniS" id="yeniS" hidden aria-label="Sitede yeni bölümler"><span class="ysEt"><i></i>YENİ</span><div class="ysYol"><div class="ysSer" id="ysSer"></div></div></div>
-    <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"></h1>
+    <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"><span class="ataYazi">Seni bir an olsun bile unutmadık</span></h1>
+    <script>/* 10 Kasım: logonun yerinde gün boyu Atatürk fotoğrafı */ if (document.documentElement.classList.contains("matem10")) { var aI = document.querySelector("h1.logo img"); aI.src = "img/ata-10kasim.jpg"; aI.alt = "Mustafa Kemal Atatürk"; }</script>
     <a class="odS" id="odS" href="isbank.html#odul" aria-label="İşCep art arda 4. kez Dünyanın En İyi Bireysel Mobil Bankacılık Uygulaması seçildi, haberi oku" tabindex="-1">
       <div class="ray"></div><div class="hale"></div>
       <video class="kvid" id="kvid" muted playsinline preload="none" poster="img/kupa-son.jpg" aria-hidden="true"><source src="img/kupa.mp4" type="video/mp4"></video>
