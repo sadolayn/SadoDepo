@@ -51,9 +51,13 @@
   /* ===== Kompakt üst düzen (9 Kasım 2026): saat · logo · takvim tek satırda, altında selamlama; ekranın üstünde ~150 px yer açılır =====
      .hello kutusu "display: contents" ile açılır, saat/selamlama/takvim .top ızgarasına yerleşir (HTML aynı kalır) */
   .top.kompakt { display: grid; grid-template-columns: 76px minmax(0, 1fr) 76px; column-gap: 6px; align-items: center; justify-items: center; max-width: 420px; margin: 0 auto;
-    grid-template-areas: "tema tema tema" "yeni yeni yeni" "saat logo tarih" "mid mid mid" "kayan kayan kayan"; }
-  .top.kompakt > .temaUst { grid-area: tema; justify-self: stretch; }
-  .top.kompakt > .yeniS { grid-area: yeni; justify-self: stretch; }
+    grid-template-areas: "ust ust ust" "saat logo tarih" "mid mid mid" "kayan kayan kayan"; }
+  .top.kompakt > .temaUst { grid-area: ust; justify-self: end; align-self: center; }
+  .top.kompakt > .yeniS { grid-area: ust; justify-self: stretch; width: auto; margin-right: 48px; }
+  /* kupa günlerinde (eski düzen) düğme yine sağ üst köşede, YENİ şeridiyle aynı satırda */
+  .top:not(.kompakt) > .temaUst { align-self: flex-end; }
+  .top:not(.kompakt) > .temaUst:has(+ .yeniS:not([hidden])) { margin-bottom: -40px; z-index: 2; }
+  .top:not(.kompakt) > .temaUst + .yeniS { margin-right: 48px; width: auto; align-self: stretch; }
   .top.kompakt > h1.logo { grid-area: logo; margin: 0; }
   .top.kompakt > h1.logo img { width: min(210px, 100%); }
   .top.kompakt > .hello { display: contents; }
@@ -609,23 +613,16 @@
   html[data-tema="acik"] .kyN { color: #1f7a4c; }
   html[data-tema="acik"] .kyS li { border-color: #dcd3c2; }
   html[data-tema="acik"] .kyS small { color: #6b645a; }
-  /* Görünüm seçimi: sayfanın en üstünde */
-  /* Görünüm seçimi: sayfanın en üstünde, minik önizleme kartlarıyla (Açık · Koyu · Sistem) */
-  .temaUst { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; max-width: 420px; margin: 0 0 12px; }
-  .temaUst > span { font: italic 600 14px Georgia, "Times New Roman", serif; color: var(--accent); white-space: nowrap; }
-  .temaUst .temaSec { display: flex; gap: 8px; padding: 0; border: 0; background: none; box-shadow: none; }
-  .temaUst .temaSec button { display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 0; min-width: 50px; padding: 0; border: 0; background: none; color: var(--muted); font: 600 11.5px system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
-  .temaUst .temaSec button[aria-pressed="true"] { background: none; color: var(--accent); font-weight: 800; }
-  .tOn { position: relative; display: block; width: 50px; height: 34px; border-radius: 9px; padding: 4px; box-sizing: border-box; border: 2px solid transparent; outline: 1px solid var(--line); outline-offset: -1px; transition: border-color .2s ease, transform .15s ease; }
-  .temaSec button:active .tOn { transform: scale(.94); }
-  .temaSec button[aria-pressed="true"] .tOn { border-color: #e0a24f; outline-color: transparent; }
-  .tOn > s { display: block; height: 100%; border-radius: 5px; position: relative; }
-  .tOn > s::before, .tOn > s::after { content: ""; position: absolute; left: 4px; height: 2px; border-radius: 1px; }
-  .tOn > s::before { top: 5px; width: 17px; } .tOn > s::after { top: 9px; width: 11px; }
-  .tOn > s > i { position: absolute; right: 4px; bottom: 4px; width: 6px; height: 6px; border-radius: 50%; background: #e0a24f; }
-  .tOn.ac { background: #f6f3ec; } .tOn.ac > s { background: #fff; box-shadow: 0 0 0 1px #c9bda6; } .tOn.ac > s::before, .tOn.ac > s::after { background: #b9b1a3; }
-  .tOn.ko { background: #000; } .tOn.ko > s { background: #141414; box-shadow: 0 0 0 1px #2a2a2a; } .tOn.ko > s::before, .tOn.ko > s::after { background: #6b6b6b; }
-  .tOn.si { background: linear-gradient(135deg, #f6f3ec 50%, #000 50%); } .tOn.si > s { background: linear-gradient(135deg, #fff 50%, #141414 50%); box-shadow: 0 0 0 1px #8a8a8a; } .tOn.si > s::before, .tOn.si > s::after { background: #8a8a8a; }
+  /* Görünüm seçimi (9 Kasım 2026): köşede tek yuvarlak düğme; dokundukça Açık → Koyu → Sistem */
+  .temaUst { position: relative; display: flex; justify-content: flex-end; width: 40px; margin: 0 0 6px; }
+  .temaD { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; padding: 0; border: 1px solid var(--line); background: var(--card); color: var(--accent); cursor: pointer; transition: transform .15s ease, border-color .2s ease; }
+  .temaD:active { transform: scale(.92); border-color: #e0a24f; }
+  .temaD svg { width: 20px; height: 20px; display: none; }
+  .temaD[data-s="acik"] .iA, .temaD[data-s="koyu"] .iK, .temaD[data-s="oto"] .iS { display: block; animation: tIk .3s cubic-bezier(.2,.7,.2,1); }
+  @keyframes tIk { from { opacity: 0; transform: rotate(-60deg) scale(.7); } }
+  .temaN { position: absolute; right: 48px; top: 50%; transform: translate(6px, -50%); opacity: 0; pointer-events: none; white-space: nowrap; padding: 5px 11px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); color: var(--accent); font: italic 600 13px Georgia, "Times New Roman", serif; transition: opacity .2s ease, transform .2s ease; z-index: 5; }
+  .temaN.on { opacity: 1; transform: translate(0, -50%); }
+  @media (prefers-reduced-motion: reduce) { .temaD svg { animation: none !important; } .temaN { transition: none; } }
   html[data-tema="acik"] .ysEt { color: #8f5d12; }
   html[data-tema="acik"] .ysEt i { background: #e0a24f; }
 </style>
@@ -633,10 +630,12 @@
 <body>
   <header class="top kompakt" id="top">
     <div class="temaUst">
-      <span>Görünüm</span>
-      <div class="temaSec" id="temaSec" role="group" aria-label="Görünüm: açık, koyu ya da sistem (telefonun ayarı)">
-        <button type="button" data-t="acik"><span class="tOn ac" aria-hidden="true"><s><i></i></s></span>Açık</button><button type="button" data-t="koyu"><span class="tOn ko" aria-hidden="true"><s><i></i></s></span>Koyu</button><button type="button" data-t="oto" title="Telefonun ayarına uyar"><span class="tOn si" aria-hidden="true"><s><i></i></s></span>Sistem</button>
-      </div>
+      <span class="temaN" id="temaN" aria-hidden="true"></span>
+      <button type="button" class="temaD" id="temaSec" data-s="oto" aria-label="Görünüm">
+        <svg class="iA" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+        <svg class="iK" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+        <svg class="iS" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+      </button>
     </div>
     <div class="yeniS" id="yeniS" hidden aria-label="Sitede yeni bölümler"><span class="ysEt"><i></i>YENİ</span><div class="ysYol"><div class="ysSer" id="ysSer"></div></div></div>
     <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"></h1>
@@ -1621,15 +1620,20 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 </script>
 
 <script>
-  // Görünüm seçimi (tema.js)
+  // Görünüm seçimi (tema.js): köşedeki düğme, dokundukça Açık → Koyu → Sistem; kısa süre adını gösterir
   (function () {
-    var k = document.getElementById("temaSec");
+    var k = document.getElementById("temaSec"), n = document.getElementById("temaN"), zm;
+    var AD = { acik: "Açık", koyu: "Koyu", oto: "Sistem" }, SIRA = { acik: "koyu", koyu: "oto", oto: "acik" };
     function boya() {
       var s = Tema.secim(), t = Tema.tema();
-      k.querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.t === s ? "true" : "false"); });
-      k.querySelector('[data-t="oto"]').title = "Telefonun ayarına uyar; şu an " + (t === "acik" ? "açık" : "koyu") + ". Oyunlar hep koyu kalır.";
+      k.dataset.s = s;
+      k.setAttribute("aria-label", "Görünüm: " + AD[s] + (s === "oto" ? " (telefona uyar, şu an " + (t === "acik" ? "açık" : "koyu") + ")" : "") + ". Değiştirmek için dokun.");
     }
-    k.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) { Tema.sec(b.dataset.t); window.Rapor && Rapor.bolum("tema-sec-" + b.dataset.t); } });
+    k.addEventListener("click", function () {
+      var y = SIRA[Tema.secim()]; Tema.sec(y); window.Rapor && Rapor.bolum("tema-sec-" + y);
+      n.textContent = y === "oto" ? "Sistem · telefona uyar" : AD[y]; n.classList.add("on");
+      clearTimeout(zm); zm = setTimeout(function () { n.classList.remove("on"); }, 1400);
+    });
     document.addEventListener("tema", boya); boya();
   })();
 </script>
@@ -1666,7 +1670,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     // altyapısına geçiyor"); yalnızca duyuruda yazan söylenir, geçiş gününe kadar kalır
     ["https://www.denizbank.com/kampanya/kart-kampanyalari/cok-yakinda", "🤝 DenizBank kredi kartları <b>6 Aralık'tan</b> itibaren Maximum altyapısına geçiyor", "2026-12-06"],
     // 8 Kasım 2026: sayfanın en üstündeki görünüm seçimi; dokununca yukarı çıkar ve seçici kısa bir an parlar
-    ["tema", "🌓 Gözüne göre seç: en üstten <b>Açık · Koyu · Sistem</b> görünümü; Sistem telefonunun ayarına uyar <b class=\"gir\">Seç</b>", "2026-11-22"],
+    ["tema", "🌓 Gözüne göre seç: sağ üst köşedeki düğmeye dokun: <b>Açık · Koyu · Sistem</b>; Sistem telefonunun ayarına uyar <b class=\"gir\">Seç</b>", "2026-11-22"],
     // İşCep ödülü satırı 5 Kasım'da çıkarıldı: üstteki kupa kartı zaten gösteriyor
     ["maximum", "🎁 Kampanyaları bulmak hiç bu kadar kolay olmamıştı: İş Bankası, Maximum ve Maximiles tek ekranda; arama, takvim ve <b>Bana uygun</b> <b class=\"gir\">İş Bankası Gündemi › Kampanyalar</b>", "2026-11-30"],
     ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
@@ -1696,7 +1700,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     const o = e.target.closest(".kyOge"); const h = o ? o.dataset.h : "iscep";
     e.preventDefault();
     if (h === "ppk") { ppk && ppk.tap && ppk.tap(); return; }
-    if (h === "tema") { window.Rapor && Rapor.bolum("kayan-tema"); window.scrollTo({ top: 0, behavior: "smooth" }); const t = document.getElementById("temaSec"); if (t && t.animate && !matchMedia("(prefers-reduced-motion: reduce)").matches) setTimeout(() => t.animate([{ transform: "scale(1)" }, { transform: "scale(1.08)" }, { transform: "scale(1)" }], { duration: 500, iterations: 2, easing: "ease-in-out" }), 450); return; }
+    if (h === "tema") { window.Rapor && Rapor.bolum("kayan-tema"); window.scrollTo({ top: 0, behavior: "smooth" }); const t = document.getElementById("temaSec"); if (t && t.animate && !matchMedia("(prefers-reduced-motion: reduce)").matches) setTimeout(() => t.animate([{ transform: "scale(1)" }, { transform: "scale(1.25)" }, { transform: "scale(1)" }], { duration: 500, iterations: 2, easing: "ease-in-out" }), 450); return; }
     if (h === "acilis") { window.Rapor && Rapor.bolum("kayan-acilis"); window.Acilis && window.Acilis.ac(); return; }
     if (/^https:\/\/www\.denizbank\.com\//.test(h)) { window.Rapor && Rapor.bolum("kayan-denizbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // DenizBank'ın kendi duyurusu
     if (/^https:\/\/www\.isbank\.com\.tr\//.test(h)) { window.Rapor && Rapor.bolum("kayan-isbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // İş Bankası'nın kendi duyurusu
