@@ -1632,6 +1632,14 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     ["video", "<svg class=\"kyTrb\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><rect width=\"30\" height=\"20\" fill=\"#e30a17\"/><circle cx=\"11\" cy=\"10\" r=\"5\" fill=\"#fff\"/><circle cx=\"12.25\" cy=\"10\" r=\"4\" fill=\"#e30a17\"/><polygon points=\"16.2,10 19.9,8.8 17.6,11.9 17.6,8.1 19.9,11.2\" fill=\"#fff\"/></svg><b>Cumhuriyet Bayramımız kutlu olsun!</b> İş Bankası'nın 29 Ekim videosu <b class=\"gir\">İş Bankası Gündemi › Video</b>", "2026-10-29", "onem"],
     // 9 Kasım 2026: COP31 (Antalya, 9–20 Kasım 2026); kaynak İş Bankası'nın 6.11.2026 tarihli "Türkiye İş Bankası COP31'de" duyurusu, rol adı birebir ("İklim Destekçisi"); zirve bitince kalkar
     ["https://www.isbank.com.tr/bankamizi-taniyin/turkiye-is-bankasi-cop31-de", "🌍 <b>COP31 İklim Zirvesi</b> 9–20 Kasım'da Antalya'da; İş Bankası zirvede <b>“İklim Destekçisi”</b> olarak yer alıyor <b class=\"gir\">Duyuru</b>", "2026-11-20", "onem"],
+    // COP31'de o günün İş Bankası oturumu (başlıklar duyurudaki gibi; saat duyuruda yok, yazılmaz). Oturum olmayan gün satır çıkmaz.
+    ...(function () {
+      const O = { "2026-11-09": ["İklime Dayanıklı Ekonomi & Uyum İhtiyaçlarından Yatırıma"], "2026-11-10": ["İklim Hedeflerinden Dayanıklılığa"],
+        "2026-11-13": ["Küresel Finans, Sanat & Döngüsel Ekonomi", "Yeşil ve Mavi Tahviller"], "2026-11-14": ["Gençler & İklim Mimarisi"],
+        "2026-11-16": ["Yapay Zekâ ile İklim Eylemi"], "2026-11-17": ["Maviden Yeşile: İklim Altyapısı Olarak Doğa", "İklim Riski Analitiğinden Dayanıklı Finansa"],
+        "2026-11-18": ["Geleceği Şekillendiren Çiftçi Kadınlar"] }[bugunTR];
+      return O ? [["https://www.isbank.com.tr/bankamizi-taniyin/turkiye-is-bankasi-cop31-de", "🎙️ COP31'de bugün İş Bankası'nın " + (O.length > 1 ? "oturumları" : "oturumu") + ": " + O.map((t) => "<b>" + t.replace(/&/g, "&amp;") + "</b>").join(" · ") + " <b class=\"gir\">Program</b>", "2026-11-18", "onem"]] : [];
+    })(),
     // 6 Kasım 2026: Genel Müdür H. Cahit Çınar'ın Eylül 2026 sonuçlarına ilişkin değerlendirmesi (Fintechtime / Fintech Dünyası'ndaki açıklama metni); Haberler'deki alıntı kartına gider
     ["haber", "💬 İş Bankası Genel Müdürü H. Cahit Çınar: “Bundan sonra da <b>bir bankanın çok daha ötesinde bir kurum</b> olarak kaynaklarımızı ülkemizin katma değerli üretimine fayda sağlamak ve tüm paydaşlarımız için kalıcı değer üretmek için kullanmaya devam edeceğiz” <b class=\"gir\">İş Bankası Gündemi › Haber</b>", "2026-11-20", "onem"],
     // Ay başı hatırlatması (her ayın 1-5'i): yeni kampanyalara katılmayı unutma. İlk 3 gün "Yeni gelenler"e, sonra tüm kampanyalara gider
