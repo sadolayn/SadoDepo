@@ -1,8 +1,8 @@
 {
- "guncelleme": "2026-11-09T05:46",
+ "guncelleme": "2026-11-09T17:02",
  "isbank": {
   "bireysel": {
-   "toplam": 184,
+   "toplam": 186,
    "kategoriler": [
     {
      "ad": "İş’te Maaş’a Özel",
@@ -980,7 +980,7 @@
     {
      "ad": "Dekorasyon-Mobilya Kampanyaları",
      "slug": "dekorasyon-mobilya-kampanyalari",
-     "adet": 7,
+     "adet": 8,
      "url": "https://www.isbank.com.tr/kampanyalar/dekorasyon-mobilya-kampanyalari",
      "kampanyalar": [
       {
@@ -1035,6 +1035,15 @@
        "url": "https://www.isbank.com.tr/kampanyalar/tefalcomtr-ve-tefal-uygulamasinda-indirim-firsati",
        "ilk": "2026-11-06",
        "ne": "İndirim",
+       "nere": "Ev & Yaşam"
+      },
+      {
+       "baslik": "Porland'da 500 TL MaxiPuan Fırsatı!",
+       "bitis": "2026-11-30",
+       "ozet": "3-30 Kasım 2026 tarihleri arasında Maximum Kart’ınızla Maximum anlaşmalı Porland mağazalarından ve porland.com adresinden tek seferde yapacağınız 5.000 TL ve üzeri ilk alışverişinize 500 TL MaxiPuan.",
+       "url": "https://www.isbank.com.tr/kampanyalar/porland-da-maxipuan",
+       "ilk": "2026-11-09",
+       "ne": "MaxiPuan",
        "nere": "Ev & Yaşam"
       },
       {
@@ -1227,9 +1236,9 @@
        "nere": "Elektronik & Beyaz Eşya"
       },
       {
-       "baslik": "İşCep Aracım'da Rent Go uygulaması ile araç kiralamada %40 indirim fırsatını kaçırmayın!",
+       "baslik": "İşCep Aracım'da Rent Go uygulaması ile araç kiralamada %50 indirim fırsatını kaçırmayın!",
        "bitis": "2026-12-31",
-       "ozet": "Rent Go araç kiralama hizmeti %40 indirim fırsatıyla İşCep Aracım’da!",
+       "ozet": "Rent Go araç kiralama hizmeti %50 indirim fırsatıyla İşCep Aracım’da!",
        "url": "https://www.isbank.com.tr/kampanyalar/rent-go-arac-kiralama-kampanyasi",
        "ilk": "2000-01-01",
        "ne": "İndirim",
@@ -1349,9 +1358,18 @@
     {
      "ad": "Bireysel Kredi Kampanyaları",
      "slug": "bireysel-kredi-kampanyalari",
-     "adet": 2,
+     "adet": 3,
      "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
      "kampanyalar": [
+      {
+       "baslik": "Avantajlı %3,99’dan Başlayan Faiz Oranıyla, Taksitli Ek Hesap Kullanma Fırsatı İş Bankası’nda!",
+       "bitis": "2026-11-13",
+       "ozet": "Nakit ihtiyacınızı kolayca karşılayabileceğiniz Taksitli Ek Hesap, aylık %3,99’dan başlayan faiz oranıyla şimdi daha avantajlı!",
+       "url": "https://www.isbank.com.tr/kampanyalar/indirimli-taksitli-ek-hesap-kampanyasi",
+       "ilk": "2026-11-09",
+       "ne": "Faiz & Kredi",
+       "nere": "Bankacılık"
+      },
       {
        "baslik": "İşCep'ten İş Bankalı olanlara Avantajlı Hisse Senedi Komisyon Ayrıcalığı!",
        "bitis": "2026-11-30",
@@ -2347,7 +2365,7 @@
  },
  "maximum": {
   "bireysel": {
-   "toplam": 191,
+   "toplam": 195,
    "kampanyalar": [
     {
      "baslik": "E-Ticaret Alışverişlerinizde 3.000 TL'ye Varan MaxiPuan!",
@@ -3014,11 +3032,34 @@
     {
      "baslik": "MediaMarkt.com.tr'de MaxiPuan Fırsatı!",
      "bitis": "2026-11-20",
-     "ozet": "",
+     "ozet": "9 - 20 Kasım 2026 tarihleri arasında Maximum Kart’ınızla www.mediamarkt.com.tr adresinden tek seferde yapacağınız 25.000 TL ve üzeri ilk alışverişte 2.000 TL MaxiPuan kazanın!",
      "url": "https://www.maximum.com.tr/kampanyalar/mediamarkt-maxipuan-kampanyasi",
+     "oz": 1,
+     "bt": 1,
      "ilk": "2026-11-09",
      "ne": "MaxiPuan",
      "nere": "Elektronik & Beyaz Eşya"
+    },
+    {
+     "baslik": "Porland'da 500 TL MaxiPuan Fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "Maximum anlaşmalı Porland mağazalarından ve porland.com adresinden tek seferde yapacağınız 5.000 TL ve üzeri ilk alışverişinize 500 TL MaxiPuan.",
+     "url": "https://www.maximum.com.tr/kampanyalar/porland-da-maxipuan",
+     "oz": 1,
+     "bt": 1,
+     "ilk": "2026-11-09",
+     "ne": "MaxiPuan",
+     "nere": "Online Alışveriş"
+    },
+    {
+     "baslik": "Porland'da peşin fiyatına 6 taksit fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "Evinizi yenilerken Maximum Kart ile mobilya ve dekorasyon kampanyalarından yararlanın. Anlaşmalı markalarda indirim ve MaxiPuan fırsatlarını yakalayın!",
+     "url": "https://www.maximum.com.tr/kampanyalar/porland-da-pesin-fiyatina-taksit-firsati",
+     "oz": 1,
+     "ilk": "2026-11-09",
+     "ne": "Taksit",
+     "nere": "Ev & Yaşam"
     },
     {
      "baslik": "Pilotgarage'dan Ekspertiz İşlemlerinde %20 İndirim Fırsatı",
@@ -3401,6 +3442,28 @@
      "oz": 1,
      "bt": 1,
      "ilk": "2026-11-06",
+     "ne": "Taksit",
+     "nere": "Ev & Yaşam"
+    },
+    {
+     "baslik": "Korkmaz'da 30.000 TL ve üzeri alışverişlere 8 taksit fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "Korkmaz mağazalarından ve korkmazstore.com.tr adresinden yapacağınız alışverişlerinizde taksit fırsatı.",
+     "url": "https://www.maximum.com.tr/kampanyalar/korkmazda-taksit-firsati",
+     "oz": 1,
+     "bt": 1,
+     "ilk": "2026-11-09",
+     "ne": "Taksit",
+     "nere": "Ev & Yaşam"
+    },
+    {
+     "baslik": "Korkmaz'da peşin fiyatına 6 taksit fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "Korkmaz mağazalarından ve korkmazstore.com.tr adresinden yapacağınız alışverişlerinizde taksit fırsatı.",
+     "url": "https://www.maximum.com.tr/kampanyalar/korkmaz-da-pesin-fiyatina-taksit-firsati",
+     "oz": 1,
+     "bt": 1,
+     "ilk": "2026-11-09",
      "ne": "Taksit",
      "nere": "Ev & Yaşam"
     },
@@ -4730,7 +4793,7 @@
     {
      "baslik": "MediaMarkt.com.tr'de MaxiPuan Fırsatı!",
      "bitis": "2026-11-20",
-     "ozet": "",
+     "ozet": "9 - 20 Kasım 2026 tarihleri arasında Maximum Kart’ınızla www.mediamarkt.com.tr adresinden tek seferde yapacağınız 25.000 TL ve üzeri ilk alışverişte 2.000 TL MaxiPuan kazanın!",
      "url": "https://www.maximiles.com.tr/kampanyalar/mediamarkt-com-tr-de-maxipuan-firsati",
      "tv": 2,
      "ilk": "2026-11-09",
@@ -4949,16 +5012,6 @@
      "ilk": "2026-11-03"
     },
     {
-     "baslik": "20.000 TL Ve Üzeri CarrefourSA Alışverişlerinize 1.000 TL MaxiPuan!",
-     "bitis": "2026-11-30",
-     "ozet": "1 - 30 Kasım 2026 tarihleri arasında Maximum Kart’ınız ile CarrefourSA mağazaları ile CarrefourSA Online Market uygulaması veya carrefoursa.com’dan tek seferde yapacağınız 20.000 TL ve üzeri ilk taksitli alışverişinize…",
-     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-20-000-tl-ve-uzeri-carrefoursa-alisverislerinize-1-000-tl-maxipuan",
-     "tv": 2,
-     "ne": "MaxiPuan",
-     "nere": "Market & Yemek",
-     "ilk": "2026-11-03"
-    },
-    {
      "baslik": "AdL'de 750 TL MaxiPuan!",
      "bitis": "2026-11-30",
      "ozet": "Kampanyaya katılın, 1 - 30 Kasım 2026 tarihleri arasında adL mağazaları ile www.adl.com.tr adresinden tek seferde yapacağınız 10.000 TL ve üzeri ilk alışverişinize 750 TL MaxiPuan kazanın!",
@@ -4987,6 +5040,16 @@
      "ne": "Taksit",
      "nere": "Elektronik & Beyaz Eşya",
      "ilk": "2026-11-06"
+    },
+    {
+     "baslik": "20.000 TL Ve Üzeri CarrefourSA Alışverişlerinize 1.000 TL MaxiPuan!",
+     "bitis": "2026-11-30",
+     "ozet": "1 - 30 Kasım 2026 tarihleri arasında Maximum Kart’ınız ile CarrefourSA mağazaları ile CarrefourSA Online Market uygulaması veya carrefoursa.com’dan tek seferde yapacağınız 20.000 TL ve üzeri ilk taksitli alışverişinize…",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-20-000-tl-ve-uzeri-carrefoursa-alisverislerinize-1-000-tl-maxipuan",
+     "tv": 2,
+     "ne": "MaxiPuan",
+     "nere": "Market & Yemek",
+     "ilk": "2026-11-03"
     },
     {
      "baslik": "Samsonite'ta 2.500 TL MaxiPuan!",
