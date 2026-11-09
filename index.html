@@ -629,6 +629,10 @@
   html[data-tema="acik"] .ysEt i { background: #e0a24f; }
   /* 10 Kasım matemi (9 Kasım 2026): kayan yazı siyah, altın yerine gri-beyaz; solunda siyah yas kurdelesi; tanıtım satırları o gün gizlenir */
   .kyKurdele { display: none; }
+  html.matem p.greet a.sonsuz { display: inline-block; padding: 2px 10px; color: #ececec; text-decoration: none; font-size: 24px; letter-spacing: 3px; font-style: normal; }
+  html.matem[data-tema="acik"] p.greet a.sonsuz { color: #1b1813; }
+  html.matem p.greet a.sonsuz:active { transform: scale(.96); }
+  html.matem .ysEt i { animation: none; }
   html.matem[data-tema] .kayan { background: #000; border-color: #3a3a3a; box-shadow: 0 2px 10px rgba(0,0,0,.35); }
   html.matem .kyKurdele { display: flex; align-items: center; flex: none; padding: 0 2px 0 10px; }
   html.matem .kyKurdele svg { width: 19px; height: 27px; }
@@ -969,6 +973,21 @@
     const simge = OZEL.anma ? () => "" : svg; // anma günlerinde güneş/ay simgesi gösterilmez
     document.getElementById("greet").innerHTML = t + simge("a"); // boşluk yok: simgenin payı CSS ile iki yana eşit verilir
     document.getElementById("greet2").innerHTML = t + " " + simge("b");
+    // 10 Kasım matemi: selamlama yerine "1881 – ∞"; dokununca İş Bankası'nın YouTube'daki 10 Kasım videosu açılır.
+    // Video haberler.json'daki İş Bankası YouTube akışından bulunur (saatlik güncellenir); henüz yoksa kanalın videolar sayfası açılır.
+    if (document.documentElement.classList.contains("matem")) {
+      const KANAL = "https://www.youtube.com/channel/UC8taW8Ljy9xA_tiWy-1OPww/videos";
+      document.getElementById("greet").innerHTML = `<a class="sonsuz" id="sonsuz" href="${KANAL}" target="_blank" rel="noopener" aria-label="1881 – sonsuzluk. İş Bankası'nın 10 Kasım videosunu izle">1881 – ∞</a>`;
+      document.getElementById("greet2").textContent = "1881 – ∞";
+      document.getElementById("welcome").style.display = "none";
+      document.getElementById("sonsuz").addEventListener("click", () => { window.Rapor && Rapor.bolum("matem-video"); });
+      Ortak.json("data/haberler.json").then((j) => {
+        const esik = new Date(Date.now() - 3 * 864e5).toISOString(), bul = [];
+        (function gez(o) { if (Array.isArray(o)) o.forEach(gez); else if (o && typeof o === "object") { if (o.u && /youtube\.com/.test(o.u) && /İş Bankası YouTube/.test(o.s || "")) bul.push(o); else Object.values(o).forEach(gez); } })(j);
+        const v = bul.filter((x) => (x.d || "") >= esik && /10\s*Kas[ıi]m|Atatürk|anıyoruz|minnet|özlem/i.test(x.t || "") && !/müze/i.test(x.t || "")).sort((a, b) => (b.u.includes("watch") - a.u.includes("watch")) || (b.d > a.d ? 1 : -1))[0];
+        if (v) document.getElementById("sonsuz").href = v.u;
+      }).catch(() => {});
+    }
     // Alt satır: birkaç saniyede bir yumuşakça değişir
     (function () {
       const el = document.getElementById("welcome"), n = new Date(), wd = n.getDay() > 0 && n.getDay() < 6 && n.getHours() >= 8 && n.getHours() < 18;
@@ -1696,9 +1715,24 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   if (MATEM) dizi.unshift(["anma", "Cumhuriyetimizin ve Türkiye İş Bankası'nın Kurucusu Ulu Önder <b>Mustafa Kemal Atatürk</b>'ü, tarifsiz bir özlem, derin bir saygı ve sonsuz minnetle anıyoruz. <b class=\"yil\">1881 – ∞</b>", "", "anma"]);
   // PPK satırı (TCMB faiz kararı) varsa en başa gelir; ana sayfadaki PPK betiği Kayan.ppk(...) ile verir
   let ppk = null;
+  // Matemde siyah şeritte yalnızca anma yazısı geçer; haber satırları (ÖNEMLİ duyurular, COP31, PPK) en üstteki şeride taşınır
+  function ustSerit() {
+    const k = document.getElementById("yeniS"), s2 = document.getElementById("ysSer"); if (!k || !s2) return;
+    const tem = (x) => x.replace(/<b class="gir">.*?<\/b>/g, "").replace(/<b class="yn">(.*?)<\/b>/, "<b>$1</b>");
+    const adres = (h) => /^https?:/.test(h) ? h : h.includes(".html") ? h : "isbank.html#" + h;
+    const L = dizi.filter((d) => d[3] === "onem" && (!d[2] || bugunTR <= d[2])).map(([h, x]) => `<a href="${adres(h)}"${/^https?:/.test(h) ? ' target="_blank" rel="noopener"' : ""}>${tem(x)}</a>`);
+    if (ppk) L.unshift(`<a href="#" data-ppk="1">${tem(ppk.html)}</a>`);
+    if (!L.length) { k.hidden = true; return; }
+    const tur = '<span style="display:inline-block;width:22px"></span>' + L.join("");
+    s2.innerHTML = tur + tur; k.hidden = false;
+    k.querySelector(".ysEt").innerHTML = "<i></i>GÜNDEM"; k.setAttribute("aria-label", "Gündem");
+    requestAnimationFrame(() => s2.style.setProperty("--sure", Math.max(28, Math.round(s2.scrollWidth / 2 / 40)) + "s"));
+    if (!k.dataset.ppkDinle) { k.dataset.ppkDinle = 1; s2.addEventListener("click", (e) => { if (e.target.closest("[data-ppk]")) { e.preventDefault(); ppk && ppk.tap && ppk.tap(); } }); }
+  }
   function ciz() {
-    const tek = (ppk ? `<span class="kyOge ppk" data-h="ppk">${ppk.html}</span>` : "") +
-      dizi.filter((d) => (!d[2] || bugunTR <= d[2]) && (!MATEM || d[3] === "onem" || d[3] === "anma")).map(([h, x, , k]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}${k ? " " + k : ""}" data-h="${h}">${x}</span>`).join("");
+    const tek = (ppk && !MATEM ? `<span class="kyOge ppk" data-h="ppk">${ppk.html}</span>` : "") +
+      dizi.filter((d) => (!d[2] || bugunTR <= d[2]) && (!MATEM || d[3] === "anma")).map(([h, x, , k]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}${k ? " " + k : ""}" data-h="${h}">${x}</span>`).join("");
+    if (MATEM) ustSerit();
     ser.innerHTML = tek + tek; // iki kopya: kesintisiz döngü
     kutu.hidden = false;
     requestAnimationFrame(() => { const w = ser.scrollWidth / 2; ser.style.setProperty("--sure", Math.max(25, Math.round(w / 55)) + "s"); });
@@ -1864,7 +1898,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   const son = (d) => new Date(Date.parse(d + "T00:00:00Z") + (GUN - 1) * 864e5).toISOString().slice(0, 10);
   const L = YENI.filter((x) => x[4] <= bugun && bugun <= son(x[4]));
   const kutu = document.getElementById("yeniS"), ser = document.getElementById("ysSer");
-  if (!kutu || !ser || !L.length) return;
+  if (!kutu || !ser || !L.length || document.documentElement.classList.contains("matem")) return; // matemde bu şerit gündem haberlerini taşır
   const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const tur = '<span style="display:inline-block;width:22px"></span>' + L.map(([e, ad, not, u]) => `<a href="${esc(u)}" data-r="${esc(ad)}">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("") + `<span class="ysNot ysSon">sitede yeni ✦</span>`;
   ser.innerHTML = tur + tur; // iki tur yan yana: kesintisiz döngü
