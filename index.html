@@ -637,6 +637,7 @@
   html.matem[data-tema] .kyOge b.gir { color: #111; background: #cfcfcf; }
   html.matem[data-tema] .kyOge::after { color: #4a4a4a; }
   html.matem[data-tema] .kyOge.anma { color: #f2f2f2; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 13.5px; }
+  html.matem[data-tema] .kyOge.anma b.yil { margin-left: 8px; letter-spacing: .5px; color: #cfcfcf; }
   html.matem[data-tema] .kyOge.anma b { font-style: normal; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
 </style>
 </head>
@@ -983,7 +984,7 @@
       // girişinde gösterilir; gösterildikten sonra dönen satırdan çıkar. Son gün 9 Kasım.
       const bugun = n.getFullYear() + "-" + (n.getMonth() + 1) + "-" + n.getDate();
       let odulGor = ""; try { odulGor = localStorage.getItem("odulGor") || ""; } catch (e) {}
-      const odulVar = new Date() < new Date("2026-11-10T00:00:00") && odulGor !== bugun;
+      const odulVar = new Date() < new Date("2026-11-10T00:00:00") && odulGor !== bugun && !document.documentElement.classList.contains("matem"); // matemde kutlama kartı gösterilmez
       if (odulVar) L.splice(1, 0, ODUL);
       if (odulVar) document.getElementById("top").classList.remove("kompakt"); // kupa sahnesi eski (büyük logolu) düzende kurulu; son gün 9 Kasım
       // "Animasyonları azalt" açıksa (bilgisayarda sık) sahne yine gelir; yalnızca hareketler kapalı olur (CSS'te reduce kuralları var)
@@ -1692,7 +1693,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   const CAGRI = [null, null];
   // 10 Kasım matemi: yalnızca anma satırı, ÖNEMLİ duyurular ve PPK kalır; kampanya/tanıtım satırları o gün gösterilmez
   const MATEM = document.documentElement.classList.contains("matem");
-  if (MATEM) dizi.unshift(["anma", `Cumhuriyetimizin kurucusu Ulu Önder <b>Mustafa Kemal Atatürk</b>'ü ebediyete intikalinin ${new Date().getFullYear() - 1938}. yılında saygı, sevgi ve özlemle anıyoruz`, "", "anma"]);
+  if (MATEM) dizi.unshift(["anma", "Cumhuriyetimizin ve Türkiye İş Bankası'nın Kurucusu Ulu Önder <b>Mustafa Kemal Atatürk</b>'ü, tarifsiz bir özlem, derin bir saygı ve sonsuz minnetle anıyoruz. <b class=\"yil\">1881 – ∞</b>", "", "anma"]);
   // PPK satırı (TCMB faiz kararı) varsa en başa gelir; ana sayfadaki PPK betiği Kayan.ppk(...) ile verir
   let ppk = null;
   function ciz() {
