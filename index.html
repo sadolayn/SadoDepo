@@ -571,6 +571,9 @@
   html[data-tema="acik"] :is(.aclPG .up, .aclSpS .up) { color: #1f8a57; }
   html[data-tema="acik"] :is(.aclPG .dn, .aclSpS .dn) { color: #c2412a; }
   html[data-tema="acik"] .aclSeg button { color: #6b645a; }
+  /* 9 Kasım 2026: açık temada seçili kalem/dönem belli olmuyordu (genel açık tema kuralı seçili rengi eziyordu) */
+  html[data-tema="acik"] .aclSpC button[aria-pressed="true"] { background: #e0a24f; border-color: #b07a2a; color: #1a1206; font-weight: 700; }
+  html[data-tema="acik"] .aclSeg button.on { color: #1a1206; }
   html[data-tema="acik"] .aclSpSel select { color: #8a5a12; }
   html[data-tema="acik"] .aclSpSel select option { background: #fff; color: #1b1813; }
   html[data-tema="acik"] .aclSpC button[aria-pressed="true"] { color: #8a5a12; }
