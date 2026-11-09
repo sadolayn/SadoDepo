@@ -48,6 +48,19 @@
   .hello .mid { text-align: center; min-width: 0; }
   /* İşCep ödül sahnesi: metin gelince logo ve selamlama kaybolur, yerine büyük altın kupa */
   .top { position: relative; }
+  /* ===== Kompakt üst düzen (9 Kasım 2026): saat · logo · takvim tek satırda, altında selamlama; ekranın üstünde ~150 px yer açılır =====
+     .hello kutusu "display: contents" ile açılır, saat/selamlama/takvim .top ızgarasına yerleşir (HTML aynı kalır) */
+  .top.kompakt { display: grid; grid-template-columns: 76px minmax(0, 1fr) 76px; column-gap: 6px; align-items: center; justify-items: center; max-width: 420px; margin: 0 auto;
+    grid-template-areas: "tema tema tema" "yeni yeni yeni" "saat logo tarih" "mid mid mid" "kayan kayan kayan"; }
+  .top.kompakt > .temaUst { grid-area: tema; justify-self: stretch; }
+  .top.kompakt > .yeniS { grid-area: yeni; justify-self: stretch; }
+  .top.kompakt > h1.logo { grid-area: logo; margin: 0; }
+  .top.kompakt > h1.logo img { width: min(210px, 100%); }
+  .top.kompakt > .hello { display: contents; }
+  .top.kompakt .hello .clock { grid-area: saat; }
+  .top.kompakt .hello .datec { grid-area: tarih; }
+  .top.kompakt .hello .mid { grid-area: mid; justify-self: stretch; margin: 10px 0 18px; }
+  .top.kompakt > .kayan { grid-area: kayan; justify-self: stretch; max-width: none; }
   .top h1.logo, .hello .mid { transition: opacity .6s ease, transform .6s ease; }
   .top.odulOn h1.logo { opacity: 0; transform: scale(.92); }
   .top.odulOn .hello .mid { opacity: 0; }
@@ -159,8 +172,8 @@
   @media (prefers-reduced-motion: reduce) { .kySer { animation-duration: calc(var(--sure, 60s) * 1.5); } }
   .hello .mid p.greet { margin: 0; font-size: 19px; min-height: 0; }
   /* Simetri (8 Kasım 2026): sağdaki güneş/ay simgesi kadar solda görünmez bir boşluk; böylece yazının kendisi tam ortada durur */
-  .hello .mid p.greet .gik { margin-left: 6px; }
-  .hello .mid p.greet:has(.gik)::before { content: ""; display: inline-block; width: calc(1.25em + 6px); }
+  .hello .mid p.greet:has(.gik) { position: relative; display: table; margin-left: auto; margin-right: auto; padding: 0 calc(1.25em + 6px); }
+  .hello .mid p.greet .gik { position: absolute; right: 0; top: 50%; margin: -0.66em 0 0; } /* 9 Kasım: simge alt satıra inince yazı sağa kayıyordu; artık iki yanda eşit pay, simge sağ payda */
   .hello .mid p.welcome { margin: 5px 0 0; font-size: 12.5px; letter-spacing: 1.2px; color: var(--muted); transition: opacity .6s ease; min-height: 17px; }
   .hello .mid p.welcome.fade { opacity: 0; }
   .clock { display: flex; flex-direction: column; align-items: center; gap: 3px; }
@@ -615,7 +628,7 @@
 </style>
 </head>
 <body>
-  <header class="top" id="top">
+  <header class="top kompakt" id="top">
     <div class="temaUst">
       <span>Görünüm</span>
       <div class="temaSec" id="temaSec" role="group" aria-label="Görünüm: açık, koyu ya da sistem (telefonun ayarı)">
@@ -956,6 +969,7 @@
       let odulGor = ""; try { odulGor = localStorage.getItem("odulGor") || ""; } catch (e) {}
       const odulVar = new Date() < new Date("2026-11-10T00:00:00") && odulGor !== bugun;
       if (odulVar) L.splice(1, 0, ODUL);
+      if (odulVar) document.getElementById("top").classList.remove("kompakt"); // kupa sahnesi eski (büyük logolu) düzende kurulu; son gün 9 Kasım
       // "Animasyonları azalt" açıksa (bilgisayarda sık) sahne yine gelir; yalnızca hareketler kapalı olur (CSS'te reduce kuralları var)
       let k = 0;
       // Ödül sırası gelince: logo ve selamlama kaybolur, büyük altın kupa sahnesi açılır (7 sn)
