@@ -8,6 +8,8 @@
 <meta name="theme-color" content="#000000">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="tema.js"></script>
+<script>/* 10 Kasım matemi: 9 Kasım öğleden 10 Kasım gece yarısına kadar kayan yazı siyah, solunda yas kurdelesi */
+(function () { var n = new Date(); if (n.getMonth() === 10 && (n.getDate() === 10 || (n.getDate() === 9 && n.getHours() >= 12))) document.documentElement.classList.add("matem"); })();</script>
 <title>SADOLAYN</title>
 <meta name="description" content="Bilgi paylaştıkça büyür">
 <meta property="og:type" content="website">
@@ -625,6 +627,17 @@
   @media (prefers-reduced-motion: reduce) { .temaD svg { animation: none !important; } .temaN { transition: none; } }
   html[data-tema="acik"] .ysEt { color: #8f5d12; }
   html[data-tema="acik"] .ysEt i { background: #e0a24f; }
+  /* 10 Kasım matemi (9 Kasım 2026): kayan yazı siyah, altın yerine gri-beyaz; solunda siyah yas kurdelesi; tanıtım satırları o gün gizlenir */
+  .kyKurdele { display: none; }
+  html.matem[data-tema] .kayan { background: #000; border-color: #3a3a3a; box-shadow: 0 2px 10px rgba(0,0,0,.35); }
+  html.matem .kyKurdele { display: flex; align-items: center; flex: none; padding: 0 2px 0 10px; }
+  html.matem .kyKurdele svg { width: 19px; height: 27px; }
+  html.matem[data-tema] .kyOge { color: #d6d6d6; font-weight: 400; }
+  html.matem[data-tema] .kyOge b { color: #fff; background: none; }
+  html.matem[data-tema] .kyOge b.gir { color: #111; background: #cfcfcf; }
+  html.matem[data-tema] .kyOge::after { color: #4a4a4a; }
+  html.matem[data-tema] .kyOge.anma { color: #f2f2f2; font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 13.5px; }
+  html.matem[data-tema] .kyOge.anma b { font-style: normal; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
 </style>
 </head>
 <body>
@@ -786,6 +799,7 @@
     </div>
     <!-- Kayan yazı: merak cümleleri + açık bir "gir, bak" düğmesi -->
     <a class="kayan" id="kayan" href="isbank.html#iscep" hidden aria-label="Kayan duyurular: PPK, Resmî Gazete, kampanyalar, İşCep; dokununca ilgili bölüm açılır">
+      <span class="kyKurdele" aria-hidden="true"><svg viewBox="0 0 24 34"><path d="M7.5 31 L15.2 12.5 C17.6 6.5 15.8 3 12 3 C8.2 3 6.4 6.5 8.8 12.5 L16.5 31" fill="none" stroke="#9a9a9a" stroke-width="6.4" stroke-linejoin="round"/><path d="M7.5 31 L15.2 12.5 C17.6 6.5 15.8 3 12 3 C8.2 3 6.4 6.5 8.8 12.5 L16.5 31" fill="none" stroke="#050505" stroke-width="4.6" stroke-linejoin="round"/></svg></span>
       <span class="kyYol"><span class="kySer" id="kayanSer"></span></span>
     </a>
   </header>
@@ -1676,11 +1690,14 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
           ];
   const CAGRI = [null, null];
+  // 10 Kasım matemi: yalnızca anma satırı, ÖNEMLİ duyurular ve PPK kalır; kampanya/tanıtım satırları o gün gösterilmez
+  const MATEM = document.documentElement.classList.contains("matem");
+  if (MATEM) dizi.unshift(["anma", `Cumhuriyetimizin kurucusu Ulu Önder <b>Mustafa Kemal Atatürk</b>'ü ebediyete intikalinin ${new Date().getFullYear() - 1938}. yılında saygı, sevgi ve özlemle anıyoruz`, "", "anma"]);
   // PPK satırı (TCMB faiz kararı) varsa en başa gelir; ana sayfadaki PPK betiği Kayan.ppk(...) ile verir
   let ppk = null;
   function ciz() {
     const tek = (ppk ? `<span class="kyOge ppk" data-h="ppk">${ppk.html}</span>` : "") +
-      dizi.filter((d) => !d[2] || bugunTR <= d[2]).map(([h, x, , k]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}${k ? " " + k : ""}" data-h="${h}">${x}</span>`).join("");
+      dizi.filter((d) => (!d[2] || bugunTR <= d[2]) && (!MATEM || d[3] === "onem" || d[3] === "anma")).map(([h, x, , k]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}${k ? " " + k : ""}" data-h="${h}">${x}</span>`).join("");
     ser.innerHTML = tek + tek; // iki kopya: kesintisiz döngü
     kutu.hidden = false;
     requestAnimationFrame(() => { const w = ser.scrollWidth / 2; ser.style.setProperty("--sure", Math.max(25, Math.round(w / 55)) + "s"); });
@@ -1692,13 +1709,14 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     if (!yeni.length) return;
     const e = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     dizi.unshift(...yeni.map((x) => ["gazete.html?kurum", `<b class="yn">ÖNEMLİ</b>🏛️ ${e(x.kurum)}: ${e(x.baslik)} <b class="gir">Ayrıntı</b>`, "", "onem"]));
-    dizi.sort((a, b) => (b[0] === "video") - (a[0] === "video")); // bayram videosu yine en başta
+    dizi.sort((a, b) => (b[0] === "anma") - (a[0] === "anma") || (b[0] === "video") - (a[0] === "video")); // anma satırı ve bayram videosu yine en başta
     ciz();
   }).catch(() => {});
   window.Kayan = { ppk: (o) => { if ((o && o.html) === (ppk && ppk.html)) { ppk = o; return; } ppk = o; ciz(); } };
   kutu.addEventListener("click", (e) => {
     const o = e.target.closest(".kyOge"); const h = o ? o.dataset.h : "iscep";
     e.preventDefault();
+    if (MATEM && (!o || h === "anma")) return; // anma satırı ve kurdele bir yere götürmez
     if (h === "ppk") { ppk && ppk.tap && ppk.tap(); return; }
     if (h === "tema") { window.Rapor && Rapor.bolum("kayan-tema"); window.scrollTo({ top: 0, behavior: "smooth" }); const t = document.getElementById("temaSec"); if (t && t.animate && !matchMedia("(prefers-reduced-motion: reduce)").matches) setTimeout(() => t.animate([{ transform: "scale(1)" }, { transform: "scale(1.25)" }, { transform: "scale(1)" }], { duration: 500, iterations: 2, easing: "ease-in-out" }), 450); return; }
     if (h === "acilis") { window.Rapor && Rapor.bolum("kayan-acilis"); window.Acilis && window.Acilis.ac(); return; }
