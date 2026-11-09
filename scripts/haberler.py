@@ -211,8 +211,12 @@ cats["isbank"] = isb
 ISB_OLUMSUZ = re.compile(r"protesto|eylem|yürü(?:dü|yüş)|slogan|grev|sendika|dava|mahkeme|ceza|soruşturma|gözaltı|tutukla|iddianame|skandal|"
                          r"şika?yet|şikâyet|mağdur|dolandır|hack|siber saldırı|sızıntı|sızdır|çöktü|erişim sorunu|arıza|kesinti(?!siz)|tepki|rüşvet|"
                          r"kara para|usulsüz|zimmet|haciz|icra|tazminat|işten çıkar|kovul|istifa|zarar et|çakıldı|sert düş|kriz|ihlal|suç", re.I)
+# Tık tuzağı başlıklar da elenir (9 Kasım 2026): "…ödülünde iki talimat yetmiyor: altı şart var", "Osmaniyeliler dikkat",
+# "şartları neler?" gibi kampanyayı olumsuz ya da sansasyonel anlatan yerel site başlıkları. "dikkat çekti" gibi olağan kullanım elenmez.
+ISB_TIK = re.compile(r"yetmiyor|yetmez|şartı var|şartlar[ıi]? var|şartları neler|koşulları neler|\bdikkat\b(?! çek)|tuzak|sakın|\baman\b|şok|flaş|bomba|"
+                     r"kimse bilmiyor|bilmeyen kalmasın|duyan koştu|kaçırmayın|son gün|hemen başvur|gizli şart|meğer", re.I)
 for c in list(cats):
-    cats[c] = [x for x in cats[c] if not (ISB_RE.search(low(x["t"])) and ISB_OLUMSUZ.search(low(x["t"])))]
+    cats[c] = [x for x in cats[c] if not (ISB_RE.search(low(x["t"])) and (ISB_OLUMSUZ.search(low(x["t"])) or ISB_TIK.search(low(x["t"]))))]
 # Eski haber süzgeci (yalnızca İş Bankası sekmesi): başlıkta eski yıl ya da haber sayfasındaki yayın tarihi 60 günden eskiyse elenir.
 # Adres çözme sonuçları isb_tarih'te saklanır (haber başına bir kez bakılır); turda en çok 12 yeni adrese bakılır, kalanı sonraki tur.
 # Tarih okunamazsa haber gösterilir; süzgeç bir şey bozarsa haberler yine listelenir.

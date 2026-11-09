@@ -1547,7 +1547,7 @@ const GZ_KONU = [
   ["kredi", "💰", "Kredi, faiz ve mevduat", /kredi|faiz|konut|taşıt|mevduat|vadeli|altın hesab/],
   ["kart", "💳", "Kartlar", /maximum|maximiles|kart\b|kartı|kartla/],
   ["finans", "📈", "Hisse ve finansallar", /isctr|hisse|bilanço|finansal|net kâr|net kar|temettü|çeyrek|kap açıklama|halka arz|tahvil|sermaye/, "Finans"],
-  ["odul", "🏆", "Ödüller", /ödül|birinci seçil|en iyi/],
+  ["odul", "🏆", "Ödüller", /^(?!.*\d ?tl\b)(?=.*(?:ödül|birinci seçil|en iyi))/], // "750 TL ödül" gibi kampanya ödülleri Ödüller konusuna girmez (9 Kasım 2026)
   ["iklim", "🌱", "Sürdürülebilirlik", /iklim|cop\d|sürdürülebilir|yeşil|çevre|karbon|enerji/],
   ["girisim", "🤝", "KOBİ, girişim ve üretici", /kobi|girişim|kadın|çiftçi|tarım|üretici|ihracat|esnaf/],
   ["kultur", "🎭", "Kültür, sanat ve spor", /maraton|sergi|müze|konser|festival|sponsor|sanat|tiyatro|kültür|spor|koşu/],
