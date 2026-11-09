@@ -24,16 +24,10 @@
       "Mavi": 4.21,
       "Lacivert": 4.19
     },
-    "kontrol": "2026-11-05",
+    "kontrol": "2026-11-09",
     "link": "https://www.isbank.com.tr/ek-hesap",
     "taksit_max": 12,
-    "kampanya": {
-      "ad": "İndirimli Taksitli Ek Hesap",
-      "bas": "2026-10-16",
-      "bit": "2026-11-06",
-      "oran": "%3,49'dan başlayan indirimli oranlarla, 2–12 ay",
-      "url": "https://www.isbank.com.tr/kampanyalar/indirimli-taksitli-ek-hesap-kampanyasi"
-    },
+    "kampanya": null,
     "black": {
       "Black": 4.15,
       "Black Plus": 4.1

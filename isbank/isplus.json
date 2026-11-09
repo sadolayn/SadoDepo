@@ -1,10 +1,10 @@
 {
-  "kontrol": "2026-11-02",
+  "kontrol": "2026-11-09",
   "kaynak": "https://www.isbank.com.tr/isplus",
   "ozet": "İşCep'i ve İş Bankası kartını kullandıkça kendiliğinden yükselen seviye programı. Başvuru gerekmez; kriterleri sağlayan müşteri otomatik dahil olur.",
   "seviyeler": [
-    { "ad": "Turkuaz", "renk": "#2ec4c4", "kart": "40.000 TL", "ek": "Ek koşul yok" },
-    { "ad": "Mavi", "renk": "#3f7cff", "kart": "50.000 TL", "ek": "1 ödenmiş fatura talimatı ya da 90.000 TL gelen para" },
+    { "ad": "Turkuaz", "renk": "#2ec4c4", "kart": "30.000 TL", "ek": "Ek koşul yok" },
+    { "ad": "Mavi", "renk": "#3f7cff", "kart": "45.000 TL", "ek": "1 ödenmiş fatura talimatı ya da 90.000 TL gelen para" },
     { "ad": "Lacivert", "renk": "#2a3a9c", "kart": "80.000 TL", "ek": "3 ödenmiş fatura talimatı ya da 120.000 TL gelen para" }
   ],
   "ortak": "Son 30 günde en az 1 kez İşCep girişi",
@@ -21,7 +21,7 @@
   ],
   "nerede": "İşCep › Profil ve Ayarlar › İş Plus'ı Keşfedin",
   "guncelleme": "Seviye yükselişi ertesi gün yansır; düşüş bir sonraki ayın 2'sinde uygulanır (eski seviyenin ayrıcalıkları ay sonuna kadar sürer).",
-  "dahil_degil": "İş Black, Maximum Genç ve maaş/emekli maaşı müşterileri (kendi programları var) İş Plus'a dahil edilmez. Aynı anda tek seviyenin ayrıcalığı geçerlidir.",
+  "dahil_degil": "İş Black, Maximum Genç ve maaş/emekli maaşı müşterileri (kendi programları var) ile Gerçek Kişi Tacir müşteriler İş Plus'a dahil edilmez. Program sınırlı sayıda müşteriye açıktır. Aynı anda tek seviyenin ayrıcalığı geçerlidir.",
   "harcama_dahil": "Maximum, Maximiles, Privia bireysel kredi kartları ve Bankamatik kartı (ek ve sanal kart dahil), diğer bankaların POS'ları da sayılır.",
   "harcama_haric": "Ticari kartlar, MaxiPara, ön ödemeli kart, MaxiPuan'la ödeme, iptal/iade, para yükleme, vergi-sigorta-prim ve fatura ödemeleri, kuyum. Taksitlide yalnızca o ayın toplamı sayılır."
 }
