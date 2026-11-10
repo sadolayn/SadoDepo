@@ -61,7 +61,8 @@ const idsFor = (k) => {
   if (k === "Tümü") return all.map((h) => "n:" + (h.url || h.baslik));
   // Kampanyalar: son 5 günde listeye giren kampanyalar + 15 Kasım'a kadar "Kampanyalar yenilendi" duyurusu (bir kez açınca düşer)
   if (k === "Maximum") return KH && KH.isbank ? kYeniListe().map((x) => "k:" + x.url).concat(Date.now() < new Date("2026-11-16T00:00:00+03:00") ? ["d:kampanya-yenilendi"] : []) : camps.map((c) => "c:" + c.baslik);
-  if (k === "İşCep") return iscep ? iscep.surumler.map((v) => "v:" + v.surum) : [];
+  // İşCep: yalnızca son 14 günde çıkan sürüm "yeni" sayılır (eski sürümler hafıza temizlenince yeniden YENİ görünüyordu)
+  if (k === "İşCep") return iscep ? iscep.surumler.filter((v) => (Date.now() - new Date(v.tarih + "T12:00:00")) / 864e5 <= 14).map((v) => "v:" + v.surum) : [];
   if (k === "📰 Güncel") return live.map((x) => "g:" + (x.u || x.t));
   if (k === "🎬 Video") return vids.map((x) => "y:" + x.u);
   if (k === "Finans") return fin ? ["f:" + fin.periods[fin.periods.length - 1]] : [];
@@ -87,7 +88,8 @@ function seenInit() {
   if (fin) SEEN["f:" + fin.periods[fin.periods.length - 1]] = 1;
   seenSave();
 }
-function seenSave() { try { const k = Object.keys(SEEN); if (k.length > 600) k.slice(0, k.length - 600).forEach((x) => delete SEEN[x]); localStorage.setItem("isbSeen2", JSON.stringify(SEEN)); } catch (e) {} }
+// Hafıza 600 kaydı geçince en eskiler silinir; ama sayfada hâlâ duran içeriğin kaydı silinmez (yoksa yeniden "YENİ" görünür)
+function seenSave() { try { const k = Object.keys(SEEN); if (k.length > 600) { const dur = new Set(); ["Tümü", "Maximum", "İşCep", "📰 Güncel", "🎬 Video", "Finans", "Soru", "Kampanya", "👔 Atamalar"].forEach((c) => { try { idsFor(c).forEach((x) => dur.add(x)); } catch (e) {} }); let fazla = k.length - 600; for (const x of k) { if (fazla <= 0) break; if (x[0] !== "_" && !dur.has(x)) { delete SEEN[x]; fazla--; } } } localStorage.setItem("isbSeen2", JSON.stringify(SEEN)); } catch (e) {} }
 const unseen = (k) => idsFor(k).filter((id) => !SEEN[id]);
 function markSeen(k) { NEWNOW = new Set(unseen(k)); NEWNOW.forEach((id) => (SEEN[id] = 1)); seenSave(); }
 const isNew = (id) => NEWNOW.has(id);
