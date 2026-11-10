@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-11-09T17:02",
+ "guncelleme": "2026-11-10T07:41",
  "isbank": {
   "bireysel": {
    "toplam": 186,
@@ -2365,7 +2365,7 @@
  },
  "maximum": {
   "bireysel": {
-   "toplam": 195,
+   "toplam": 196,
    "kampanyalar": [
     {
      "baslik": "E-Ticaret Alışverişlerinizde 3.000 TL'ye Varan MaxiPuan!",
@@ -2848,17 +2848,6 @@
      "nere": "Online Alışveriş"
     },
     {
-     "baslik": "Europcar'da 1.000 TL MaxiPuan Fırsatı",
-     "bitis": "2026-11-10",
-     "ozet": "Maximum Kart’ınızla Europcar’dan tek seferde yapacağınız 5.000 TL - 15.000 TL arası ilk araç kiralamada 500 TL MaxiPuan, 15.000 TL ve üzeri araç kiralamada 1.000 TL MaxiPuan kazanın.",
-     "url": "https://www.maximum.com.tr/kampanyalar/europcar-da-maxipuan-firsati",
-     "oz": 1,
-     "bt": 1,
-     "ilk": "2000-01-01",
-     "ne": "MaxiPuan",
-     "nere": "Araç & Akaryakıt"
-    },
-    {
      "baslik": "S Sport Plus yıllık üyelik 2.799 TL yerine 1.999 TL!",
      "bitis": "2026-12-31",
      "ozet": "S Sport Plus yıllık pakete yeni üye olan Maximum Kart sahiplerine, yıllık üyelikte fırsatlar!",
@@ -3027,6 +3016,15 @@
      "oz": 1,
      "ilk": "2000-01-01",
      "ne": "Taksit",
+     "nere": "Giyim & Kozmetik"
+    },
+    {
+     "baslik": "IN Street Mağazalarında %10 İndirim!",
+     "bitis": "2026-11-30",
+     "ozet": "",
+     "url": "https://www.maximum.com.tr/kampanyalar/in-streette-indirim-kampanyasi",
+     "ilk": "2026-11-10",
+     "ne": "İndirim",
      "nere": "Giyim & Kozmetik"
     },
     {
