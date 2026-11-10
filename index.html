@@ -1085,7 +1085,10 @@
     const KISA = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
     let lastDay = -1;
     const tick = () => {
-      const n = new Date(), h = n.getHours(), m = n.getMinutes(), sec = n.getSeconds();
+      const n = new Date();
+      // 10 Kasım: 09.05'te iki saat de durur, gece yarısına kadar 09:05'te kalır
+      const dur = n.getMonth() === 10 && n.getDate() === 10 && n.getHours() * 60 + n.getMinutes() >= 9 * 60 + 5;
+      const h = dur ? 9 : n.getHours(), m = dur ? 5 : n.getMinutes(), sec = dur ? 0 : n.getSeconds();
       rot("hh", (h % 12) * 30 + m * 0.5);
       rot("mh", m * 6 + sec * 0.1);
       rot("sh", sec * 6);
@@ -1093,7 +1096,7 @@
       ["dig", "dig2"].forEach((id) => {
         const el = document.getElementById(id);
         if (el.dataset.t !== hm) { el.dataset.t = hm; el.innerHTML = `<span class="nx">${hm[0]}</span><span class="nx">${hm[1]}</span><span class="nc"><i></i><i></i></span><span class="nx">${hm[2]}</span><span class="nx">${hm[3]}</span>`; el.setAttribute("aria-label", hm.slice(0, 2) + ":" + hm.slice(2)); }
-        el.classList.toggle("off", sec % 2 === 1);
+        el.classList.toggle("off", !dur && sec % 2 === 1);
       });
       if (n.getDate() !== lastDay) {
         lastDay = n.getDate();
