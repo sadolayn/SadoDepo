@@ -185,7 +185,7 @@ function calcExtra(P, r, g, start) {
   $("m3_ppk").innerHTML = (PPK.meetings || []).map((x) => { const d = new Date(x + "T12:00:00"), k = dayDiff(today, d);
     const son = L.date === x && L.rate != null ? ` · %${nfx(L.rate)}${L.url ? ` <a href="${L.url}" target="_blank" rel="noopener" style="color:var(--accent)">↗</a>` : ""}` : "";
     return `<div style="${k < 0 && !son ? "opacity:.45" : ""}"><span>${fdtw(d)} ${d.getFullYear()}</span><span>${k < 0 ? "yapıldı" : k === 0 ? "bugün" : k + " gün"}${son}</span></div>`; }).join("") +
-    `<div><span style="color:var(--muted)">Kaynak</span><span><a href="https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/Para+Politikasi+Kurulu/Toplanti+Takvimi" target="_blank" rel="noopener" style="color:var(--accent)">TCMB toplantı takvimi ↗</a></span></div>`;
+    `<div><span style="color:var(--muted)">Kaynak</span><span><a href="https://www.tcmb.gov.tr/wps/wcm/connect/tr/tcmb+tr/main+menu/duyurular/takvim" target="_blank" rel="noopener" style="color:var(--accent)">TCMB toplantı takvimi ↗</a></span></div>`;
 }
 let m2GunManual = false;
 
@@ -508,7 +508,7 @@ function calcAO(c) {
       ["Faiz tasarrufu", tl(eski - X - sumT(p)), "pos"],
     ]);
     $("ao_plan").innerHTML = planHead + p.map((x, j) => planRow(x, f0 + j + 1)).join("") + planTot(p);
-    $("ao_note").textContent = (st.onDue ? "Ara ödeme taksit gününe denk geldi: o günün taksidi ödenmemiş sayıldı, faizi ara ödemeden kapatıldı ve yeni plan bir sonraki taksit gününden başlar. " : "") + "Ara ödeme önce işlemiş faizi (gün/30, KKDF+BSMV dahil) kapatır, kalanı anaparadan düşer. Yeni planın ilk taksiti, ara ödeme gününden taksit gününe kadar olan günlerin faiziyle hesaplanır.";
+    $("ao_note").textContent = (st.onDue ? "Ara ödeme taksit gününe denk geldi: o günün taksidi ödenmemiş sayıldı, faizi ara ödemeden kapatıldı ve yeni plan bir sonraki taksit gününden başlar. " : "") + "Ara ödeme önce işlemiş faizi (gün/30, KKDF+BSMV dahil) kapatır, kalanı anaparadan düşer. Yeni planın ilk taksidi, ara ödeme gününden taksit gününe kadar olan günlerin faiziyle hesaplanır.";
   })();
 
   // ---- Yapılandırma
@@ -543,7 +543,7 @@ function calcAO(c) {
     ]);
     $("ys_plan").innerHTML = planHead + p.map((x, j) => planRow(x, j + 1)).join("") + planTot(p);
     const yw = tkVadeUyari(BC, yn).replace(" ihtiyaç kredilerinde", " yapılandırmalarda");
-    $("ys_note").innerHTML = (yw ? `<span style="color:#ef8a5d">${yw}</span><br>` : "") + (eksik ? `Peşin tutar en az işlemiş faiz + vergiler (${tl(acc)}) kadar olmalı; hesap bu tutarla yapıldı. ` : "") + "Peşin tutar önce işlemiş faizi kapatır, kalanı anaparadan düşer. Yeni planın ilk taksiti bir sonraki taksit günüdür. Yapılandırmada alınabilecek ücretler dahil değildir.";
+    $("ys_note").innerHTML = (yw ? `<span style="color:#ef8a5d">${yw}</span><br>` : "") + (eksik ? `Peşin tutar en az işlemiş faiz + vergiler (${tl(acc)}) kadar olmalı; hesap bu tutarla yapıldı. ` : "") + "Peşin tutar önce işlemiş faizi kapatır, kalanı anaparadan düşer. Yeni planın ilk taksidi bir sonraki taksit günüdür. Yapılandırmada alınabilecek ücretler dahil değildir.";
   })();
 }
 
@@ -1213,10 +1213,11 @@ const dayWhy = (d) => { const i = dayInfo(d); return i.hol ? i.name : i.we ? (d.
 const parseNum = (v) => Sayi.coz(v).n; // çek tutarları: aynı biçim doğrulaması (geçersiz → NaN, çek hesaba girmez)
 let CEKLER = [{ t: "1.000.000", v: "2026-11-27" }];
 try { const sv = JSON.parse(localStorage.getItem("cekler") || "null"); if (Array.isArray(sv) && sv.length) CEKLER = sv; } catch (e) {}
+const kacC = (t) => String(t == null ? "" : t).replace(/[&<>"']/g, (c) => "&#" + c.charCodeAt(0) + ";");
 function renderCekList() {
   $("c_list").innerHTML = CEKLER.map((c, i) => `<div class="ckrow">
-      <div><label style="margin-top:0">${i + 1}. çek tutarı</label><div class="field"><input data-i="${i}" data-k="t" type="text" inputmode="decimal" value="${c.t}"><span class="unit">TL</span></div></div>
-      <div><label style="margin-top:0">Vade</label><input data-i="${i}" data-k="v" type="date" value="${c.v}" style="color-scheme:dark"></div>
+      <div><label style="margin-top:0">${i + 1}. çek tutarı</label><div class="field"><input data-i="${i}" data-k="t" type="text" inputmode="decimal" value="${kacC(c.t)}"><span class="unit">TL</span></div></div>
+      <div><label style="margin-top:0">Vade</label><input data-i="${i}" data-k="v" type="date" value="${kacC(c.v)}" style="color-scheme:dark"></div>
       <button type="button" class="ckdel" data-del="${i}" title="Sil" ${CEKLER.length === 1 ? "disabled" : ""}>✕</button>
     </div>`).join("");
 }

@@ -231,7 +231,7 @@ function renderVergiCal(today, end, all) {
     return `<div class="mo"><h3>${m.toLocaleDateString("tr-TR", { month: "long", year: "numeric" })}</h3><div class="g">${cells}</div></div>`;
   }).join("");
   $("v_cal").innerHTML = `<div class="tip" id="v_tip">Bir güne dokun, o günün vergilerini gör.</div><div class="yr">${html}</div>
-    <div class="lg"><span class="l7">Bireysel vergi</span><span class="l8">Ticari vergi</span><span class="l4">Resmî / dini bayram</span><span class="l5">Arife</span><span class="l6">Hafta sonu</span></div>`;
+    <div class="lg"><span class="l7">Bireysel vergi</span><span class="l8">Ticari vergi</span><span class="l4">Resmî / dinî bayram</span><span class="l5">Arife</span><span class="l6">Hafta sonu</span></div>`;
 }
   function bagla() {
   $("v_cal").addEventListener("click", (e) => { const d = e.target.closest(".d[data-tip]"); if (d) $("v_tip").textContent = d.dataset.tip; });

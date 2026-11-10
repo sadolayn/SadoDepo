@@ -428,11 +428,11 @@ function renderProds() {
         : p.type === "ortalama" ? `Ort. ${fmtTL(s.done)}${s.tgt ? ` / ${fmtTL(s.tgt)}` : ""} · son ${fmtTL(s.cur)}`
         : `Son bakiye ${fmtTL(s.cur)}${s.tgt ? ` / ${fmtTL(s.tgt)}` : ""}`;
       const yer = p.type === "tutar" ? "bugünkü tutar" : "bakiye";
-      return `<div class="prod" data-p="${p.id}"><div class="ic">${p.icon}</div><div class="nm"><b>${esc(p.name)}<span class="tag">${TYPES[p.type]}</span></b><span>${info}</span></div>
+      return `<div class="prod" data-p="${esc(p.id)}"><div class="ic">${esc(p.icon)}</div><div class="nm"><b>${esc(p.name)}<span class="tag">${TYPES[p.type]}</span></b><span>${info}</span></div>
         <div class="mny"><input data-v="${p.id}" inputmode="decimal" enterkeyhint="done" placeholder="${yer}" value="${dd[p.id] != null ? sayiYaz(dd[p.id]) : ""}" aria-label="${esc(p.name)} ${yer}"></div></div>`;
     }
     const info = s.tgt ? `Çeyrek ${s.done}/${s.tgt}${isT && s.ph === "simdi" && s.pct < 100 ? (s.todayNeed ? ` · <i>bugün ${s.todayNeed} daha</i>` : " · <i>bugünkü tamam ✓</i>") : s.pct >= 100 ? " · ✓" : ""}` : `Çeyrek ${s.done} · <i>hedef yok</i>`;
-    return `<div class="prod" data-p="${p.id}"><div class="ic">${p.icon}</div><div class="nm"><b>${esc(p.name)}</b><span>${info}</span></div>
+    return `<div class="prod" data-p="${esc(p.id)}"><div class="ic">${esc(p.icon)}</div><div class="nm"><b>${esc(p.name)}</b><span>${info}</span></div>
       <div class="cnt"><button data-m="${p.id}" aria-label="Azalt">−</button><span class="v">${dd[p.id] || 0}</span><button class="plus" data-a="${p.id}" aria-label="Artır">+</button></div></div>`;
   }).join("") || `<p class="note">Kalem yok. 🎯 Hedefler'den ekle.</p>`;
   $("prods").querySelectorAll("[data-a]").forEach((b) => (b.onclick = () => bump(b.dataset.a, 1)));
@@ -524,7 +524,7 @@ function drawRows() {
   $("tRows").innerHTML = draft.products.map((p) => {
     const v = draft.t[p.id] || "", a = isAdet(p);
     const ph = a ? "adet" : p.type === "tutar" ? "TL" : p.type === "bakiye" ? "TL bakiye" : "TL ort.";
-    return `<div class="tr" data-r="${p.id}"><span class="ic">${p.icon}</span><input value="${esc(p.name)}" data-n="${p.id}" maxlength="30" aria-label="Kalem adı"><input class="num" ${a ? 'type="number" inputmode="numeric" min="0"' : 'type="text" inputmode="decimal"'} placeholder="${ph}" value="${a ? v : sayiYaz(v || null)}" data-t="${p.id}" aria-label="${esc(p.name)} çeyrek hedefi"><button class="x" data-x="${p.id}" aria-label="Kaldır">✕</button>
+    return `<div class="tr" data-r="${esc(p.id)}"><span class="ic">${esc(p.icon)}</span><input value="${esc(p.name)}" data-n="${p.id}" maxlength="30" aria-label="Kalem adı"><input class="num" ${a ? 'type="number" inputmode="numeric" min="0"' : 'type="text" inputmode="decimal"'} placeholder="${ph}" value="${a ? v : sayiYaz(v || null)}" data-t="${p.id}" aria-label="${esc(p.name)} çeyrek hedefi"><button class="x" data-x="${p.id}" aria-label="Kaldır">✕</button>
       <div class="hint" data-h="${p.id}">${a ? "" : `<span class="tag">${TYPES[p.type]}</span> `}${hint(v, T, p)}</div></div>`;
   }).join("");
   $("tRows").querySelectorAll("[data-n]").forEach((i) => (i.oninput = () => { const p = draft.products.find((x) => x.id === i.dataset.n); if (p) p.name = i.value; }));

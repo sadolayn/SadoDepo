@@ -179,12 +179,12 @@ function renderMonth() {
   // Bu aya dokunan okul tatilleri / karne / açılış (aralık ay sınırını aşsa da)
   for (const [a, b, ad] of OKUL) { const da = parse(a), db = b ? parse(b) : da; if (da <= mEnd && db >= mStart) monthItems.push({ dt: da, bit: b ? db : null, name: ad, type: "okul" }); }
   monthItems.sort((a, b) => a.dt - b.dt);
-  $("mList").innerHTML = monthItems.length ? monthItems.map((x) => x.type === "okul" ? okulHTML(x) : itemHTML(x)).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmî tatil ya da dini gün yok.</div>';
+  $("mList").innerHTML = monthItems.length ? monthItems.map((x) => x.type === "okul" ? okulHTML(x) : itemHTML(x)).join("") : '<div style="color:var(--muted);font-size:13px;padding:8px 0">Bu ay resmî tatil ya da dinî gün yok.</div>';
   const mine = A.items.filter((x) => x.d <= keyOf(mEnd) && (x.e || x.d) >= keyOf(mStart)).sort(byDate);
   if (mine.length) $("mList").innerHTML += `<div class="mgrp" style="color:#c9b4f7">Ajandam · ${MONTHS[m]}</div>` + mine.map((x) => aItemHTML(x)).join("");
 }
 function itemHTML(x, isNext) {
-  const tag = x.type === "tam" ? '<span class="tag t1">Tatil</span>' : x.type === "yarim" ? '<span class="tag t2">Yarım gün</span>' : '<span class="tag t3">Dini gün</span>';
+  const tag = x.type === "tam" ? '<span class="tag t1">Tatil</span>' : x.type === "yarim" ? '<span class="tag t2">Yarım gün</span>' : '<span class="tag t3">Dinî gün</span>';
   const diff = Math.round((x.dt - today) / 86400000);
   const left = diff > 0 ? `${diff} gün kaldı` : diff === 0 ? "Bugün" : "";
   const cls = "it" + (diff < 0 ? " past" : "") + (isNext ? " nx" : "");
@@ -774,7 +774,7 @@ $("h2a").value = iso(today);
 selected = today;
 // TCMB PPK toplantıları (data/ppk.json): ay görünümünün altında o ayın karar günü ve linki
 let PPKJ = null;
-const TCMB_TAKVIM = "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Temel+Faaliyetler/Para+Politikasi/Para+Politikasi+Kurulu/Toplanti+Takvimi";
+const TCMB_TAKVIM = "https://www.tcmb.gov.tr/wps/wcm/connect/tr/tcmb+tr/main+menu/duyurular/takvim";
 function ppkAy(y, m) {
   const el = $("ppkAy"); if (!el) return;
   const list = (PPKJ && PPKJ.meetings) || [];

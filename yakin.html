@@ -417,7 +417,7 @@ async function openCat(k) {
   return; // Yer listesi (Overpass) sık hata verdiği için kapatıldı; yalnızca Google Haritalar gösteriliyor
   ensureMap(); applyMapMode();
   const { lat, lon } = S.place;
-  if (map) { map.setView([lat, lon], S.r <= 1000 ? 15 : S.r <= 3000 ? 14 : S.r <= 5000 ? 13 : 12); setTimeout(() => map.invalidateSize(), 50); layer.clearLayers(); L.circleMarker([lat, lon], { radius: 8, color: "#fff", weight: 2, fillColor: "#4a7dff", fillOpacity: 1 }).addTo(layer).bindPopup(S.place.name); L.circle([lat, lon], { radius: S.r, color: "#e0a24f", weight: 1, fillOpacity: 0.03 }).addTo(layer); }
+  if (map) { map.setView([lat, lon], S.r <= 1000 ? 15 : S.r <= 3000 ? 14 : S.r <= 5000 ? 13 : 12); setTimeout(() => map.invalidateSize(), 50); layer.clearLayers(); L.circleMarker([lat, lon], { radius: 8, color: "#fff", weight: 2, fillColor: "#4a7dff", fillOpacity: 1 }).addTo(layer).bindPopup(esc(S.place.name)); L.circle([lat, lon], { radius: S.r, color: "#e0a24f", weight: 1, fillOpacity: 0.03 }).addTo(layer); }
   $("plist").innerHTML = '<div class="msg">Yükleniyor…</div>';
   pst("l", "ld", "⏳ Yer listesi yükleniyor…");
   if (!NOSCROLL) $("panel").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -446,7 +446,7 @@ async function openCat(k) {
         ${ad || extra ? `<div class="ad">${esc(ad)}${ad && extra ? "<br>" : ""}${esc(extra)}</div>` : ""}
         <div class="act"><a class="p" href="https://www.google.com/maps/dir/?api=1&destination=${x.la},${x.lo}" target="_blank" rel="noopener">🧭 Yol tarifi</a>
         <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(x.name ? x.name + " " : "")}${x.la},${x.lo}" target="_blank" rel="noopener">🗺️ Haritada aç</a>
-        ${ph ? `<a href="tel:${ph.replace(/[^\d+]/g, "")}">📞 Ara</a>` : ""}${web ? `<a href="${web.startsWith("http") ? web : "https://" + web}" target="_blank" rel="noopener">🌐 Web</a>` : ""}</div></div>`;
+        ${ph ? `<a href="tel:${ph.replace(/[^\d+]/g, "")}">📞 Ara</a>` : ""}${web ? `<a href="${esc(/^https?:\/\//i.test(web) ? web : "https://" + web)}" target="_blank" rel="noopener">🌐 Web</a>` : ""}</div></div>`;
     }).join("");
     if (map) items.forEach((x, i) => L.marker([x.la, x.lo], { title: x.name }).addTo(layer).bindPopup(`<b>${i + 1}. ${esc(x.name || c.n)}</b><br>${fmtD(x.d)}<br><a href="https://www.google.com/maps/dir/?api=1&destination=${x.la},${x.lo}" target="_blank" rel="noopener">Yol tarifi</a>`));
   } catch (e) {

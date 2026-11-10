@@ -1857,7 +1857,7 @@ const TARIH = [
   ["26 Ağustos 1924", "İş Bankası, Atatürk'ün direktifiyle Ankara'da kuruldu. Yola 2 şube, 37 çalışan ve 1 milyon lira sermayeyle çıktı.", "08-26"],
   ["9 Eylül 1924", "Banka, Ankara İstasyon Caddesi'ndeki ilk binasında yaklaşık 150 davetlinin katıldığı bir törenle açıldı.", "09-09"],
   ["1924", "Kuruluş sermayesinin 250 bin liralık kısmını, yani dörtte birini Atatürk karşıladı."],
-  ["1924", "Bankanın ilk genel müdürü Celal Bayar'dı. Bayar, 1950'de Cumhurbaşkanı oldu."],
+  ["1924", "Bankanın ilk genel müdürü Celâl Bayar'dı. Bayar, 1950'de Cumhurbaşkanı oldu."],
   ["1924 yıl sonu", "Kuruluşundan yaklaşık 4 ay sonra mevduatı 2,47 milyon liraya ulaştı. Aynı dönemde diğer 16 yerli bankanın toplamı 700 bin lira civarındaydı. Banka yılı 433 müşteriyle kapattı."],
   ["12 Temmuz 1925", "İzmir Şubesi açıldı.", "07-12"],
   ["1925", "İlk sanayi yatırımı Bursa'daki İpekiş oldu (250 bin lira sermaye)."],

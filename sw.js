@@ -1,7 +1,7 @@
 // Sadolayn — çevrimdışı yedek. Önce internetten alır (güncellemeler hemen gelir).
 // İnternet yoksa ya da sunucu hata verirse en son başarılı kopyayı gösterir.
 // Önbellek anahtarı "?t=..." gibi ekler olmadan tutulur; her istek ayrı kopya olarak birikmez.
-const CACHE = "sadolayn-v550";
+const CACHE = "sadolayn-v551";
 // Çevrimdışı açılması gereken sayfalar ve dosyaları (Bankacılık, Hesaplamalar, Günce, Takvim, oyunlar): kurulumda hazırlanır.
 // Biri inemezse diğerleri yine önbelleğe girer. Liste: bu sayfaların yüklediği yerel js/css/görsel/yazı tipi (yaklaşık 1,8 MB).
 const ONCE = ["./", "./index.html", "./manifest.webmanifest", "./balayi.html", "./balayiai.js", "./banka.css", "./banka.html", "./bankap.js", "./batak.html", "./batakai.js", "./bilmece.html", "./bulmaca.html", "./bulmacap.js", "./cardsound.js", "./faizhatira.js", "./gunce.css", "./gunce.html", "./guncep.js", "./hareket.css", "./hesap.css", "./hesap.html", "./hesapp.js", "./img/ataturk.jpg", "./img/icon.png", "./img/logo.png", "./isimler.js", "./isq.js", "./kartmasa.js", "./king.html", "./kingai.js", "./lib/gelasio-italic-latin-ext.woff2", "./lib/gelasio-italic-latin.woff2", "./lib/gelasio-latin-ext.woff2", "./lib/gelasio-latin.woff2", "./numfmt.js", "./ortak.js", "./oyunlar.html", "./oyunquiz.js", "./oyunsaat.js", "./pilot.html", "./pusula.js", "./sarj.js", "./anma.js", "./satranc.html", "./satrancai.js", "./amiral.html", "./amiralp.js", "./solotest.html", "./solotestp.js", "./cop31.html", "./cop31.js", "./isbank/cop31.json", "./kaza.html", "./kaza.css", "./kazap.js", "./kazapdf.js", "./kazakroki.js", "./pwa.js", "./rapor.js", "./sayac.js", "./sayi.js", "./solitaire.html", "./tahmin.html", "./takvim.css", "./takvim.html", "./takvimp.js", "./tavla.html", "./tema.js", "./theme.css", "./token.js", "./vergi.js", "./yedek.js", "./yeni.js"];
@@ -59,7 +59,8 @@ self.addEventListener("push", (e) => {
 });
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
-  const url = new URL((e.notification.data && e.notification.data.url) || "./alerts.html#bugun", self.registration.scope).href;
+  let url = new URL((e.notification.data && e.notification.data.url) || "./alerts.html#bugun", self.registration.scope).href;
+  if (new URL(url).origin !== self.location.origin) url = new URL("./alerts.html#bugun", self.registration.scope).href; // bildirim yalnızca kendi sitemizi açar
   e.waitUntil(self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
     for (const c of list) if (c.url.split("#")[0] === url.split("#")[0] && "focus" in c) { c.navigate(url).catch(() => {}); return c.focus(); }
     return self.clients.openWindow(url);
