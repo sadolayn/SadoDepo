@@ -104,6 +104,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   </div>
   <div id="altIz" aria-hidden="true"></div>
   <div class="chipbar altkutu" id="altkutu" hidden><div class="altbas" id="altbas"></div><div class="nsub" id="nsub" hidden></div><div class="tfil" id="tfil" hidden></div></div>
+  <a class="copBant" id="copBant" href="cop31.html" hidden data-tema-koru-alan><span class="cbI" aria-hidden="true">🌍</span><span class="cbM"><b>COP31 Antalya · İş Bankası programı</b><small id="copBantA">Oturumlar, konuşmacılar ve takvime ekleme</small></span><span class="cbG">Program ›</span></a>
   <div id="soon"></div>
   <div class="upd" id="upd"></div>
   <div id="list"><div class="kb" aria-hidden="true">
@@ -135,6 +136,23 @@ window.ataOyna = function (film, ozelNot, yas) {
 
 <script src="isq.js"></script>
 <script src="isbankp.js"></script>
+<script>
+// COP31 şeridi (10 Kasım 2026): 19 Kasım sonuna kadar Gündem'in en üstünde; bugünün sıradaki oturumunu gösterir, dokununca cop31.html
+(function () {
+  var b = document.getElementById("copBant"); if (!b || Date.now() > Date.parse("2026-11-19T23:59:59+03:00")) return;
+  b.hidden = false;
+  b.addEventListener("click", function () { window.Rapor && Rapor.bolum("cop31-serit"); });
+  var bugun = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10), AY = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+  var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  (window.Ortak ? Ortak.json("isbank/cop31.json") : fetch("isbank/cop31.json").then(function (r) { return r.json(); })).then(function (j) {
+    var O = (j.oturumlar || []).filter(function (o) { return Date.parse(o.g + "T" + o.s + ":00+03:00") > Date.now(); });
+    var bg = O.filter(function (o) { return o.g === bugun; }), o = O[0];
+    if (!o) { b.hidden = true; return; }
+    var ad = o.baslik || (o.kisiler[0] && o.kisiler[0].ad) || "", d = new Date(o.g + "T12:00:00+03:00");
+    document.getElementById("copBantA").innerHTML = (bg.length ? "Bugün kalan <b>" + bg.length + " oturum</b> · " : d.getUTCDate() + " " + AY[d.getUTCMonth()] + " · ") + "sıradaki " + o.b.replace(":", ".") + " " + esc(ad);
+  }).catch(function () {});
+})();
+</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>
 // Yana kayan alt filtrede seçili kutucuk görünür kalsın (sayfa dikey kaymaz)

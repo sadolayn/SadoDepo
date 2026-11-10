@@ -1696,15 +1696,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   const dizi = [
     ["video", "<svg class=\"kyTrb\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><rect width=\"30\" height=\"20\" fill=\"#e30a17\"/><circle cx=\"11\" cy=\"10\" r=\"5\" fill=\"#fff\"/><circle cx=\"12.25\" cy=\"10\" r=\"4\" fill=\"#e30a17\"/><polygon points=\"16.2,10 19.9,8.8 17.6,11.9 17.6,8.1 19.9,11.2\" fill=\"#fff\"/></svg><b>Cumhuriyet Bayramımız kutlu olsun!</b> İş Bankası'nın 29 Ekim videosu <b class=\"gir\">İş Bankası Gündemi › Video</b>", "2026-10-29", "onem"],
     // 9 Kasım 2026: COP31 (Antalya, 9–20 Kasım 2026); kaynak İş Bankası'nın 6.11.2026 tarihli "Türkiye İş Bankası COP31'de" duyurusu, rol adı birebir ("İklim Destekçisi"); zirve bitince kalkar
-    ["https://www.isbank.com.tr/bankamizi-taniyin/turkiye-is-bankasi-cop31-de", "🌍 <b>COP31 İklim Zirvesi</b> 9–20 Kasım'da Antalya'da; İş Bankası zirvede <b>“İklim Destekçisi”</b> olarak yer alıyor <b class=\"gir\">Duyuru</b>", "2026-11-20", "onem"],
-    // COP31'de o günün İş Bankası oturumu (başlıklar duyurudaki gibi; saat duyuruda yok, yazılmaz). Oturum olmayan gün satır çıkmaz.
-    ...(function () {
-      const O = { "2026-11-09": ["İklime Dayanıklı Ekonomi & Uyum İhtiyaçlarından Yatırıma"], "2026-11-10": ["İklim Hedeflerinden Dayanıklılığa"],
-        "2026-11-13": ["Küresel Finans, Sanat & Döngüsel Ekonomi", "Yeşil ve Mavi Tahviller"], "2026-11-14": ["Gençler & İklim Mimarisi"],
-        "2026-11-16": ["Yapay Zekâ ile İklim Eylemi"], "2026-11-17": ["Maviden Yeşile: İklim Altyapısı Olarak Doğa", "İklim Riski Analitiğinden Dayanıklı Finansa"],
-        "2026-11-18": ["Geleceği Şekillendiren Çiftçi Kadınlar"] }[bugunTR];
-      return O ? [["https://www.isbank.com.tr/bankamizi-taniyin/turkiye-is-bankasi-cop31-de", "🎙️ COP31'de bugün İş Bankası'nın " + (O.length > 1 ? "oturumları" : "oturumu") + ": " + O.map((t) => "<b>" + t.replace(/&/g, "&amp;") + "</b>").join(" · ") + " <b class=\"gir\">Program</b>", "2026-11-18", "onem"]] : [];
-    })(),
+    ["cop31.html", "🌍 <b>COP31 İklim Zirvesi</b> 9–20 Kasım'da Antalya'da; İş Bankası zirvede <b>“İklim Destekçisi”</b> olarak yer alıyor <b class=\"gir\">Program</b>", "2026-11-20", "onem"], // 10 Kasım: dokununca İş Bankası'nın COP31 programı (cop31.html)
+    // COP31 oturumları artık program dosyasından (isbank/cop31.json) aşağıda eklenir (10 Kasım 2026)
     // 6 Kasım 2026: Genel Müdür H. Cahit Çınar'ın Eylül 2026 sonuçlarına ilişkin değerlendirmesi (Fintechtime / Fintech Dünyası'ndaki açıklama metni); Haberler'deki alıntı kartına gider
     ["haber", "💬 İş Bankası Genel Müdürü H. Cahit Çınar: “Bundan sonra da <b>bir bankanın çok daha ötesinde bir kurum</b> olarak kaynaklarımızı ülkemizin katma değerli üretimine fayda sağlamak ve tüm paydaşlarımız için kalıcı değer üretmek için kullanmaya devam edeceğiz” <b class=\"gir\">İş Bankası Gündemi › Haber</b>", "2026-11-20", "onem"],
     // Ay başı hatırlatması (her ayın 1-5'i): yeni kampanyalara katılmayı unutma. İlk 3 gün "Yeni gelenler"e, sonra tüm kampanyalara gider
@@ -1757,6 +1750,20 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     dizi.sort((a, b) => (b[0] === "anma") - (a[0] === "anma") || (b[0] === "video") - (a[0] === "video")); // anma satırı ve bayram videosu yine en başta
     ciz();
   }).catch(() => {});
+  // COP31: bugünün kalan İş Bankası oturumları saatleriyle (program: isbank/cop31.json, İş Bankası'nın yayımladığı PDF'ten); bugün yoksa sıradaki gün
+  Ortak.json("isbank/cop31.json").then((j) => {
+    const O = (j.oturumlar || []).filter((o) => Date.parse(o.g + "T" + o.s + ":00+03:00") > Date.now());
+    if (!O.length) return;
+    const e = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const ad = (o) => o.baslik || (o.kisiler[0] && o.kisiler[0].ad) || "";
+    const bg = O.filter((o) => o.g === bugunTR), L = (bg.length ? bg : O.filter((o) => o.g === O[0].g)).slice(0, 3);
+    const AYS = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"], d = new Date(L[0].g + "T12:00:00+03:00");
+    const bas = bg.length ? "🎙️ COP31'de bugün İş Bankası:" : "🎙️ COP31'de İş Bankası " + d.getUTCDate() + " " + AYS[d.getUTCMonth()] + "'da:";
+    const satir = ["cop31.html", bas + " " + L.map((o) => "<b>" + o.b.replace(":", ".") + "</b> " + e(ad(o))).join(" · ") + (bg.length > 3 ? " · +" + (bg.length - 3) + " oturum" : "") + " <b class=\"gir\">Program</b>", "2026-11-19", "onem"];
+    const k = dizi.findIndex((x) => x[0] === "cop31.html");
+    dizi.splice(k > -1 ? k + 1 : 0, 0, satir);
+    ciz();
+  }).catch(() => {});
   window.Kayan = { ppk: (o) => { if ((o && o.html) === (ppk && ppk.html)) { ppk = o; return; } ppk = o; ciz(); } };
   kutu.addEventListener("click", (e) => {
     const o = e.target.closest(".kyOge"); const h = o ? o.dataset.h : "iscep";
@@ -1767,6 +1774,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     if (h === "acilis") { window.Rapor && Rapor.bolum("kayan-acilis"); window.Acilis && window.Acilis.ac(); return; }
     if (/^https:\/\/www\.denizbank\.com\//.test(h)) { window.Rapor && Rapor.bolum("kayan-denizbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // DenizBank'ın kendi duyurusu
     if (/^https:\/\/www\.isbank\.com\.tr\//.test(h)) { window.Rapor && Rapor.bolum("kayan-isbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // İş Bankası'nın kendi duyurusu
+    if (h === "cop31.html") { window.Rapor && Rapor.bolum("kayan-cop31"); location.href = h; return; }
     if (h.includes(".html")) { window.Rapor && Rapor.bolum(h.includes("kurum") ? "kayan-kurum" : "kayan-gazete-yakinda"); location.href = h; return; }
     window.Rapor && Rapor.bolum("kayan-" + h); location.href = "isbank.html#" + h;
   });
@@ -2029,6 +2037,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     ["Medya", "İş Bankası Gündemi", "isbank.html#medya", "📣", "reklam"],
     ["Tarihçe", "İş Bankası Gündemi", "isbank.html#tarihce", "🏛️", "tarih atatürk"],
     ["Günün Sorusu", "İş Bankası Gündemi", "isbank.html#soru", "❓", "bilgi yarışması"],
+    ["COP31 Programı", "İş Bankası Gündemi", "cop31.html", "🌍", "cop31 iklim zirvesi antalya oturum panel konuşmacı takvim"],
     ["Kurum Duyuruları", "Resmî Gazete", "gazete.html#kurum", "🏛️", "bddk tcmb spk masak tmsf ticaret bakanlığı merkez bankası düzenleyici kurum duyuru karar genelge"], // 8 Kasım 2026: bir ziyaretçi BDDK/TCMB duyurularını aramayla bulamadığını yazmıştı
     ["Ajanda", "Takvim & Ajanda", "takvim.html#ajanda", "📝", "ziyaret toplantı izin"],
     ["Vergi Takvimi", "Takvim & Ajanda", "takvim.html#vergi", "🧾", "beyanname son gün"],

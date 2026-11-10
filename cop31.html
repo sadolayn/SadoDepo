@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<script src="tema.js"></script>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>COP31 Antalya · İş Bankası programı</title>
+<meta name="description" content="Türkiye İş Bankası'nın COP31 Antalya etkinlik programı: gün gün oturumlar, konuşmacılar ve takvime ekleme.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SADOLAYN">
+<meta property="og:title" content="COP31 Antalya · İş Bankası programı · SADOLAYN">
+<meta property="og:description" content="“Bilgi paylaştıkça büyür”">
+<meta property="og:url" content="https://sadolayn.github.io/SadoDepo/cop31.html">
+<meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<meta property="og:locale" content="tr_TR">
+<link rel="stylesheet" href="hesap.css">
+<script src="pwa.js"></script>
+<script src="ortak.js"></script>
+<script src="rapor.js"></script>
+<link rel="stylesheet" href="theme.css">
+<style>
+  /* ===== COP31 Antalya · İş Bankası etkinlik programı (10 Kasım 2026) =====
+     Veri isbank/cop31.json'da: İş Bankası'nın yayımladığı program PDF'inden işlenmiş alanlar (gün, saat, yer, başlık, konuşmacı). */
+  .cp-hb { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; flex: 0 0 46px; border-radius: 14px; background: #161616; border: 1px solid #e0a24f; font-size: 22px; line-height: 1; text-decoration: none; }
+  .cp-hero { position: relative; overflow: hidden; border-radius: 18px; padding: 16px 16px 14px; margin-bottom: 12px; background: linear-gradient(160deg, #1f2f66, #121a3a); border: 1px solid #2b3f86; color: #e8eeff; box-shadow: 0 10px 26px rgba(10,20,60,.35); }
+  .cp-hero h2 { margin: 0; font: italic 700 21px Georgia, serif; color: #f3d38a; }
+  .cp-hero p { margin: 6px 0 0; font-size: 13px; line-height: 1.45; color: #c9d4f5; }
+  .cp-hero .cp-yer { display: inline-flex; gap: 6px; align-items: center; margin-top: 10px; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.08); font-size: 12px; color: #dfe7ff; }
+  .cp-simdi { margin-top: 12px; padding: 10px 12px; border-radius: 14px; background: rgba(0,0,0,.25); border: 1px solid rgba(243,211,138,.35); }
+  .cp-simdi b { display: block; font-size: 11.5px; letter-spacing: .6px; color: #f3d38a; text-transform: uppercase; }
+  .cp-simdi span { display: block; margin-top: 3px; font-size: 14.5px; font-weight: 700; color: #fff; line-height: 1.35; }
+  .cp-simdi small { display: block; margin-top: 2px; font-size: 12px; color: #c9d4f5; }
+  .cp-simdi:empty { display: none; }
+
+  .cp-gunler { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 8px; margin: 0 -2px 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .cp-gunler::-webkit-scrollbar { display: none; }
+  .cp-gunler button { flex: none; display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 58px; padding: 7px 8px; border-radius: 14px; border: 1px solid #262626; background: #0d0d0d; color: #cfcfcf; font: inherit; cursor: pointer; transition: transform .15s, border-color .2s; }
+  .cp-gunler button b { font-size: 18px; line-height: 1.1; color: #f2f2f2; }
+  .cp-gunler button span { font-size: 11px; color: #8a8a8a; }
+  .cp-gunler button i { font-style: normal; font-size: 11px; color: #e0a24f; font-weight: 700; }
+  .cp-gunler button.on { border-color: #e0a24f; background: rgba(224,162,79,.14); }
+  .cp-gunler button.gecti b { color: #8a8a8a; }
+  .cp-gunler button.bugun::after { content: "Bugün"; font-size: 11px; font-weight: 800; color: #3fc283; }
+  .cp-gunler button:active { transform: scale(.95); }
+
+  .cp-ara { display: flex; gap: 8px; margin: 2px 0 12px; }
+  .cp-ara input { flex: 1; min-width: 0; min-height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid #262626; background: #0d0d0d; color: #f2f2f2; font: inherit; font-size: 15px; }
+  .cp-ara input:focus { outline: none; border-color: #e0a24f; }
+
+  .cp-gunB { margin: 16px 2px 8px; font: italic 700 17px Georgia, serif; color: #e0a24f; }
+  .cp-o { position: relative; margin-bottom: 10px; padding: 12px 14px; border-radius: 16px; border: 1px solid #262626; background: #0b0b0b; animation: cpGel .45s cubic-bezier(.2,.7,.2,1) both; }
+  .cp-o.simdi { border-color: #3fc283; box-shadow: 0 0 0 1px rgba(63,194,131,.35); }
+  .cp-o.gecti { opacity: .62; }
+  .cp-ust { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .cp-saat { padding: 3px 9px; border-radius: 999px; background: rgba(224,162,79,.16); border: 1px solid #5a4320; color: #f3d38a; font-size: 12.5px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .cp-etk { font-size: 11.5px; color: #9fb8ee; }
+  .cp-rozet { margin-left: auto; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+  .cp-rozet.s { background: rgba(63,194,131,.18); color: #3fc283; } .cp-rozet.g { background: #161616; color: #8a8a8a; }
+  .cp-o h3 { margin: 8px 0 0; font: 700 16px/1.35 Georgia, serif; color: #f2f2f2; }
+  .cp-kat { margin: 4px 0 0; font-size: 13px; color: #cfcfcf; }
+  .cp-k { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 5px; }
+  .cp-k li { font-size: 13px; line-height: 1.35; color: #e6e6e6; }
+  .cp-k li b { font-weight: 700; }
+  .cp-k li small { display: block; font-size: 12px; color: #8a8a8a; }
+  .cp-k li.mod b::after { content: " · Moderatör"; font-weight: 600; font-size: 11.5px; color: #e0a24f; }
+  .cp-ek { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .cp-ek button, .cp-ek a { display: inline-flex; align-items: center; gap: 5px; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid #262626; background: #141414; color: #f2f2f2; font: 600 12.5px system-ui, sans-serif; text-decoration: none; cursor: pointer; transition: transform .15s; }
+  .cp-ek button:active, .cp-ek a:active { transform: scale(.95); }
+  .cp-bos { padding: 18px; text-align: center; font-size: 13.5px; color: #8a8a8a; border: 1px dashed #262626; border-radius: 16px; }
+
+  .cp-alt { margin-top: 18px; display: grid; gap: 8px; }
+  .cp-alt button, .cp-alt a { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 46px; border-radius: 14px; border: 1px solid #5a4320; background: #15110a; color: #f3d38a; font: 700 14px system-ui, sans-serif; text-decoration: none; cursor: pointer; }
+  .cp-alt .ana { background: #e0a24f; border-color: #e0a24f; color: #1a1206; }
+  .cp-not { margin: 12px 2px 0; font-size: 12px; line-height: 1.5; color: #8a8a8a; }
+  .cp-not a { color: #e0a24f; }
+  .cp-toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px); opacity: 0; padding: 10px 16px; border-radius: 14px; background: #15110a; border: 1px solid #5a4320; color: #f3d38a; font-size: 13.5px; z-index: 50; transition: opacity .25s, transform .25s; pointer-events: none; max-width: 90vw; text-align: center; }
+  .cp-toast.on { opacity: 1; transform: translate(-50%, 0); }
+  @keyframes cpGel { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .cp-o { animation: none; } .cp-toast, .cp-gunler button { transition: none; } }
+
+  /* Açık tema: kartlar ve rozetler (tema.js genel renkleri çevirir; özel parçalar burada) */
+  html[data-tema="acik"] .cp-o { background: #fff; border-color: #d8ccb4; }
+  html[data-tema="acik"] .cp-o h3, html[data-tema="acik"] .cp-k li { color: #1b1813; }
+  html[data-tema="acik"] .cp-k li small, html[data-tema="acik"] .cp-gunler button span { color: #6b645a; }
+  html[data-tema="acik"] .cp-etk { color: #2b4aa8; }
+  html[data-tema="acik"] .cp-saat { background: #fbf0da; border-color: #d4bb8a; color: #6b4a12; }
+  html[data-tema="acik"] .cp-gunler button { background: #fff; border-color: #d8ccb4; }
+  html[data-tema="acik"] .cp-gunler button b { color: #1b1813; }
+  html[data-tema="acik"] .cp-gunler button.on { background: #fbf0da; border-color: #e0a24f; }
+  html[data-tema="acik"] .cp-ek button, html[data-tema="acik"] .cp-ek a { background: #fff; border-color: #d8ccb4; color: #1b1813; }
+  html[data-tema="acik"] .cp-alt button:not(.ana), html[data-tema="acik"] .cp-alt a:not(.ana) { background: #fbf0da; border-color: #d4bb8a; color: #6b4a12; }
+  html[data-tema="acik"] .cp-ara input { background: #fff; border-color: #d8ccb4; color: #1b1813; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="stick">
+    <header>
+      <a class="cp-hb" href="isbank.html" title="İş Bankası Gündemi" aria-label="İş Bankası Gündemi">🏛️</a>
+      <h1>🌍 COP31 Antalya</h1>
+      <a class="cp-hb" href="index.html" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
+    </header>
+  </div>
+
+  <section class="cp-hero" data-tema-koru-alan>
+    <h2>Türkiye İş Bankası · COP31 programı</h2>
+    <p>İş Bankası'nın COP31 programındaki oturumlar, konuşmacılar ve yerler gün gün. İstediğin oturumu tek dokunuşla takvimine ekleyebilirsin.</p>
+    <span class="cp-yer">📍 İklim Finansmanı Merkezi · Türkiye İş Bankası Standı ve diğer alanlar</span>
+    <div class="cp-simdi" id="cpSimdi" aria-live="polite"></div>
+  </section>
+
+  <nav class="cp-gunler" id="cpGunler" aria-label="Günler"></nav>
+  <div class="cp-ara"><input id="cpAra" type="search" placeholder="Konuşmacı ya da konu ara…" aria-label="Konuşmacı ya da konu ara" autocomplete="off" enterkeyhint="search"></div>
+  <div id="cpListe"><div class="cp-bos">Program yükleniyor…</div></div>
+
+  <div class="cp-alt">
+    <button type="button" class="ana" id="cpTumIcs">📅 Tüm programı takvimime ekle</button>
+    <a id="cpKaynak" href="https://www.isbank.com.tr/bankamizi-taniyin/cop-31" target="_blank" rel="noopener">🔗 Programın kaynağı · isbank.com.tr ↗</a>
+    <a id="cpDuyuru" href="https://www.isbank.com.tr/bankamizi-taniyin/turkiye-is-bankasi-cop31-de" target="_blank" rel="noopener">📰 İş Bankası'nın COP31 duyurusu ↗</a>
+  </div>
+  <p class="cp-not" id="cpNot">Program, Türkiye İş Bankası'nın yayımladığı COP31 Antalya etkinlik programından derlenmiştir. Saat ve oturumlarda değişiklik olabilir; en güncel hâli için kaynağa bak.</p>
+</div>
+<div class="cp-toast" id="cpToast" role="status"></div>
+<script src="cop31.js"></script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

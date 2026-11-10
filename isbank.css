@@ -1012,3 +1012,17 @@ html[data-tema="acik"] table.yt2 tr.yeksi td:first-child { color: #5a3d10 !impor
 /* Bilanço özeti: renksiz (nötr) değişimler de net okunsun */
 table.yt2 td.yd.n, table.yt2 .ydk.n { color: #cfcfcf; }
 html[data-tema="acik"] table.yt2 td.yd.n, html[data-tema="acik"] table.yt2 .ydk.n { color: #3a352d !important; }
+
+  /* COP31 şeridi (10 Kasım 2026): Gündem'in en üstünde, 19 Kasım'a kadar */
+  .copBant { display: flex; align-items: center; gap: 10px; margin: 2px 0 12px; padding: 11px 12px; border-radius: 16px; text-decoration: none; color: #e8eeff;
+    background: linear-gradient(120deg, #123a5c, #12304a 55%, #0f3d33); border: 1px solid #2c6a7a; box-shadow: 0 8px 20px rgba(10,40,60,.3); animation: copGel .45s cubic-bezier(.2,.7,.2,1); }
+  .copBant[hidden] { display: none; }
+  .copBant .cbI { font-size: 26px; line-height: 1; }
+  .copBant .cbM { flex: 1; min-width: 0; }
+  .copBant .cbM b { display: block; font-size: 14.5px; color: #fff; }
+  .copBant .cbM small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.35; color: #cfe6ff; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .copBant .cbM small b { display: inline; font-size: inherit; color: #9ff0c9; }
+  .copBant .cbG { flex: none; padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,.12); font-size: 12.5px; font-weight: 800; color: #f3d38a; }
+  .copBant:active { transform: scale(.98); }
+  @keyframes copGel { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .copBant { animation: none; } }
