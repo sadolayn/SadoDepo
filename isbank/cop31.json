@@ -20,6 +20,12 @@
      "ad": "David Carlin",
      "unvan": "D.A. Carlin & Company · Kurucu · Ana Konuşma"
     }
+   ],
+   "haber": [
+    {
+     "ad": "Bloomberg HT",
+     "url": "https://www.bloomberght.com/is-bankasi-cop31-de-iklim-finansmani-ve-surdurulebilir-tarimi-ele-aldi-3794001"
+    }
    ]
   },
   {
@@ -32,6 +38,12 @@
     {
      "ad": "Eyüphan Koç",
      "unvan": "Erguvan · Kurucu Ortak"
+    }
+   ],
+   "haber": [
+    {
+     "ad": "Patron Rehberi",
+     "url": "https://www.patronrehberi.com/ekonomi/58659/is-bankasi-cop31de-yeni-bir-platformu-tanitti/"
     }
    ]
   },
@@ -58,6 +70,12 @@
      "ad": "Hatice Erkiletlioğlu",
      "unvan": "Türkiye İş Bankası · Tarım Bankacılığı Pazarlama Birim Müdürü"
     }
+   ],
+   "haber": [
+    {
+     "ad": "Bloomberg HT",
+     "url": "https://www.bloomberght.com/is-bankasi-cop31-de-iklim-finansmani-ve-surdurulebilir-tarimi-ele-aldi-3794001"
+    }
    ]
   },
   {
@@ -79,6 +97,12 @@
      "ad": "İlker Mehmet Sağlam",
      "unvan": "İmece Mobil · Genel Müdür"
     }
+   ],
+   "haber": [
+    {
+     "ad": "Bloomberg HT",
+     "url": "https://www.bloomberght.com/is-bankasi-cop31-de-iklim-finansmani-ve-surdurulebilir-tarimi-ele-aldi-3794001"
+    }
    ]
   },
   {
@@ -87,7 +111,13 @@
    "s": "09:10",
    "yer": "İklim Finansmanı Merkezi Türkiye İş Bankası Standı",
    "baslik": "Ülkemizin ve Bankamızın Kurucusu Mustafa Kemal Atatürk’ü Anma Programı ve Saygı Duruşu",
-   "kisiler": []
+   "kisiler": [],
+   "haber": [
+    {
+     "ad": "Habertürk",
+     "url": "https://yerel-haberler.haberturk.com/antalya-haberleri/donusumun-anahtari-finansman-is-birligi-ve-risk-paylasimi-119518178"
+    }
+   ]
   },
   {
    "g": "2026-11-10",
@@ -111,6 +141,12 @@
     {
      "ad": "Ahmet Paksu",
      "unvan": "Tersan Tersanecilik · Yönetim Kurulu Başkan Yardımcısı"
+    }
+   ],
+   "haber": [
+    {
+     "ad": "Foreks",
+     "url": "https://www.foreks.com/haber/detay/6af30e549cc90f0fc225faa2/FRKS/tr/is-bankasi-cop31-de-iklim-finansmani-ve-donusum-paneli-duzenledi-10-11-26/"
     }
    ]
   },
@@ -136,6 +172,16 @@
     {
      "ad": "Ozan Gürsoy",
      "unvan": "Türkiye İş Bankası · Genel Müdür Yardımcısı"
+    }
+   ],
+   "haber": [
+    {
+     "ad": "Foreks",
+     "url": "https://www.foreks.com/haber/detay/6af30e549cc90f0fc225faa2/FRKS/tr/is-bankasi-cop31-de-iklim-finansmani-ve-donusum-paneli-duzenledi-10-11-26/"
+    },
+    {
+     "ad": "Habertürk",
+     "url": "https://yerel-haberler.haberturk.com/antalya-haberleri/donusumun-anahtari-finansman-is-birligi-ve-risk-paylasimi-119518178"
     }
    ]
   },
@@ -811,5 +857,6 @@
    ]
   }
  ],
- "duyuru": "https://www.isbank.com.tr/bankamizi-taniyin/turkiye-is-bankasi-cop31-de"
+ "duyuru": "https://www.isbank.com.tr/bankamizi-taniyin/turkiye-is-bankasi-cop31-de",
+ "haberNot": "Her oturumun 'haber' alanı yalnızca o oturumun yapıldığını anlatan haberleri tutar; 'video' alanı yalnızca resmî ya da güvenilir bir kaynağın yayımladığı oturum kaydına verilir."
 }

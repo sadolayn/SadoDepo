@@ -79,8 +79,20 @@
       (d === "simdi" ? '<span class="cp-rozet s">● Şu an</span>' : d === "gecti" ? '<span class="cp-rozet g">Bitti</span>' : "") + "</div>" +
       "<h3>" + esc(baslik(o)) + "</h3>" + (o.katilimci ? '<p class="cp-kat">' + esc(o.katilimci) + "</p>" : "") +
       (kisi ? '<ul class="cp-k">' + kisi + "</ul>" : "") +
+      medya(o, d) +
       (d === "gecti" ? "" : '<div class="cp-ek"><button type="button" data-ics="' + O.indexOf(o) + '">📅 Takvime ekle</button><a href="' + google(o) + '" target="_blank" rel="noopener" data-g="1">Google Takvim ↗</a></div>') +
       "</article>";
+  }
+  // Kayıt ve haber: cop31.json'da oturumun "video" ({ad, url}) ve "haber" ([{ad, url}]) alanları.
+  // Biten oturumda ikisi de yoksa "kayıt yayımlanırsa burada görünecek" notu çıkar.
+  var guvenli = function (u) { return /^https:\/\//.test(u || "") ? u : ""; };
+  function medya(o, d) {
+    var v = o.video && guvenli(o.video.url), H = (o.haber || []).filter(function (x) { return guvenli(x.url); });
+    if (!v && !H.length) return d === "gecti" ? '<p class="cp-yok">🎥 Kayıt yayımlanırsa burada görünecek</p>' : "";
+    return '<div class="cp-ek cp-md">' +
+      (v ? '<a class="vid" href="' + esc(v) + '" target="_blank" rel="noopener" data-m="video">🎥 Kaydı izle' + (o.video.ad ? " · " + esc(o.video.ad) : "") + " ↗</a>" : "") +
+      H.map(function (x) { return '<a href="' + esc(x.url) + '" target="_blank" rel="noopener" data-m="haber">📰 ' + esc(x.ad || "Haber") + " ↗</a>"; }).join("") +
+      (!v && d === "gecti" ? '<span class="cp-yok">🎥 Kayıt henüz yok</span>' : "") + "</div>";
   }
   function gunlerCiz() {
     var gunler = [], say = {};
@@ -119,6 +131,7 @@
   $("cpListe").addEventListener("click", function (e) {
     var b = e.target.closest("button[data-ics]"); if (b) { var o = O[+b.dataset.ics]; icsIndir([o], "cop31-" + o.g + "-" + o.b.replace(":", "") + ".ics"); rapor("ics"); return; }
     if (e.target.closest("a[data-g]")) rapor("google");
+    var m = e.target.closest("a[data-m]"); if (m) rapor(m.dataset.m);
   });
   $("cpTumIcs").onclick = function () {
     var kalan = O.filter(function (o) { return durum(o) !== "gecti"; });
