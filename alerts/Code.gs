@@ -133,7 +133,7 @@ function page_(r) {
 function cleanKeywords_(arr) {
   if (!Array.isArray(arr)) return [];
   const seen = {};
-  return arr.map(k => String(k || '').replace(/\s+/g, ' ').trim().replace(/^[=+\-@\s]+/, '')) // baştaki = + - @ atılır: E-Tablo bunları formül sayar
+  return arr.map(k => String(k || '').replace(/\s+/g, ' ').trim().replace(/^[=+\-@\s]+/, '')) /* baştaki = + - @ atılır: E-Tablo bunları formül sayar */
     .filter(k => k.length >= 2 && k.length <= 60)
     .filter(k => { const l = k.toLocaleLowerCase('tr'); if (seen[l]) return false; seen[l] = 1; return true; })
     .slice(0, CFG.MAX_KEYWORDS);
