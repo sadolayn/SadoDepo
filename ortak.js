@@ -134,8 +134,8 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", yukari); else yukari();
 
   // "‹ Geri · 🏠" çubuğu (11 Kasım 2026): sayfada aşağı inince belirir, en üste çıkınca (başlıktaki 🏠 göründüğünde) kaybolur.
-  // Telefonda sağ altta tek çubuk: ‹ Geri · 🏠 · ↑ (sağ elle tek el kullanımda baş parmağın altında; ayrı "↑" düğmesi gizlenir).
-  // Bilgisayarda içerik sütununun solunda "‹ Geri · 🏠 Ana sayfa", sağında ayrı "↑ Başa dön". Geri: site içinden gelindiyse önceki sayfa; doğrudan açıldıysa bir üst bölüm
+  // Tek çubuk: ‹ Geri · 🏠 · ↑ (ayrı "↑" düğmesi gizlenir). Telefonda sağ altta (sağ elle tek el kullanımda baş parmağın altında),
+  // bilgisayarda içerik sütununun solunda yazılı: "‹ Geri · 🏠 Ana sayfa · ↑ Başa dön". Geri: site içinden gelindiyse önceki sayfa; doğrudan açıldıysa bir üst bölüm
   // (başlıktaki ilk düğme ana sayfa değilse o, ör. COP31 → İş Bankası Gündemi, Kaza Tutanağı → Hesaplamalar; yoksa ana sayfa).
   // Ana sayfada, oyunlarda, alt çubuğu olmayan (data-footer="yok") ve kendi İleri/Geri çubuğu olan (data-gezinti="yok") sayfalarda yok.
   function gezinti() {
@@ -149,13 +149,15 @@
       "#ortakGez>*{display:flex;align-items:center;justify-content:center;gap:6px;min-width:44px;padding:0 14px;border:0;background:none;color:#e0a24f;font:700 15px/1 system-ui,-apple-system,sans-serif;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent}" +
       "#ortakGez>*+*{border-left:1px solid #3a2c14}#ortakGez .ev{font-size:19px;padding:0 12px}#ortakGez .ev span{font-size:15px;display:none}" +
       "#ortakGez>*:active{background:rgba(224,162,79,.16)}#ortakGez>*:focus-visible{outline:2px solid #f3d38a;outline-offset:-3px}" +
-      "#ortakGez .yk{display:none;font-size:19px;padding:0 15px}" +
-      "@media (min-width:760px){#ortakGez .ev span{display:inline}}" +
-      "@media (max-width:759px){#ortakGez{height:48px}#ortakGez .yk{display:flex}#ortakYukari{display:none!important}}" +
+      "#ortakGez .yk{font-size:19px;padding:0 15px}#ortakGez .yk span{font-size:15px;display:none}#ortakYukari{display:none!important}" +
+      "@media (min-width:760px){#ortakGez .ev span,#ortakGez .yk span{display:inline}}" +
+      "@media (max-width:759px){#ortakGez{height:48px}}" +
+      "#ortakGez.kisa .ev span,#ortakGez.kisa .yk span{display:none}#ortakGez.kisa>:first-child .yz{display:none}" +
+      "#ortakGez.dik{flex-direction:column;height:auto;border-radius:22px}#ortakGez.dik>*{height:44px;padding:0}#ortakGez.dik>*+*{border-left:0;border-top:1px solid #3a2c14}" +
       "@media (prefers-reduced-motion:reduce){#ortakGez{transition:none}}";
     document.head.appendChild(st);
     var n = document.createElement("nav"); n.id = "ortakGez"; n.setAttribute("aria-label", "Gezinti");
-    n.innerHTML = '<button type="button" aria-label="Geri dön">‹ Geri</button><a class="ev" href="index.html" aria-label="Ana sayfa">🏠<span>Ana sayfa</span></a><button type="button" class="yk" aria-label="Sayfanın başına dön">↑</button>';
+    n.innerHTML = '<button type="button" aria-label="Geri dön">‹<span class="yz"> Geri</span></button><a class="ev" href="index.html" aria-label="Ana sayfa">🏠<span>Ana sayfa</span></a><button type="button" class="yk" aria-label="Sayfanın başına dön">↑<span>Başa dön</span></button>';
     bd.appendChild(n);
     n.firstChild.onclick = function () {
       var ic = false; try { ic = !!document.referrer && new URL(document.referrer).origin === location.origin && new URL(document.referrer).pathname !== location.pathname; } catch (e) {}
@@ -168,9 +170,15 @@
       if (kz && kz.offsetHeight) alt = kz.offsetHeight + 12;
       if (tel && fab && fab.offsetHeight && getComputedStyle(fab).position === "fixed") alt = Math.max(alt, innerHeight - fab.getBoundingClientRect().top + 10);
       n.style.bottom = "calc(" + alt + "px + env(safe-area-inset-bottom))";
-      if (tel) { n.style.left = "auto"; n.style.right = "14px"; return; }
-      var sol = 14, c = document.querySelector(".wrap") || document.querySelector("main");
-      if (c) { var r = c.getBoundingClientRect(); if (r.left > n.offsetWidth + 40) sol = Math.max(14, r.left - 18 - n.offsetWidth); }
+      if (tel) { n.classList.remove("kisa", "dik"); n.style.left = "auto"; n.style.right = "14px"; return; }
+      // Sütunun solundaki boşluğa sığan en geniş biçim: yazılı → yalnız simgeler → dikey simgeler; hiçbiri sığmazsa yatay simgeler köşede
+      var c = document.querySelector(".wrap") || document.querySelector("main"), bos = c ? c.getBoundingClientRect().left : 0, bicim = [[], ["kisa"], ["kisa", "dik"]], i;
+      for (i = 0; i < bicim.length; i++) {
+        n.classList.remove("kisa", "dik"); bicim[i].forEach(function (k) { n.classList.add(k); });
+        if (bos >= n.offsetWidth + 32) break;
+      }
+      if (i === bicim.length) { n.classList.remove("dik"); n.classList.add("kisa"); } // hiçbiri sığmazsa: yatay simgeler, sol alt köşede
+      var sol = bos >= n.offsetWidth + 32 ? Math.max(14, bos - 18 - n.offsetWidth) : 14;
       n.style.right = "auto"; n.style.left = sol + "px";
     };
     // Başlıktaki 🏠 ekrandayken gizli, başlık yukarıda kaybolunca görünür (başlığı yapışkan sayfalarda: 160 px aşağı inince)
