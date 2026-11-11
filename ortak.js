@@ -133,8 +133,9 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", yukari); else yukari();
 
-  // Sol altta "‹ Geri · 🏠" çubuğu (11 Kasım 2026): sayfada aşağı inince belirir, en üste çıkınca (başlıktaki 🏠 göründüğünde) kaybolur.
-  // Sağ alttaki "↑ Başa dön" ile ayna gibi durur. Geri: site içinden gelindiyse önceki sayfa; doğrudan açıldıysa bir üst bölüm
+  // "‹ Geri · 🏠" çubuğu (11 Kasım 2026): sayfada aşağı inince belirir, en üste çıkınca (başlıktaki 🏠 göründüğünde) kaybolur.
+  // Telefonda sağ altta tek çubuk: ‹ Geri · 🏠 · ↑ (sağ elle tek el kullanımda baş parmağın altında; ayrı "↑" düğmesi gizlenir).
+  // Bilgisayarda içerik sütununun solunda "‹ Geri · 🏠 Ana sayfa", sağında ayrı "↑ Başa dön". Geri: site içinden gelindiyse önceki sayfa; doğrudan açıldıysa bir üst bölüm
   // (başlıktaki ilk düğme ana sayfa değilse o, ör. COP31 → İş Bankası Gündemi, Kaza Tutanağı → Hesaplamalar; yoksa ana sayfa).
   // Ana sayfada, oyunlarda, alt çubuğu olmayan (data-footer="yok") ve kendi İleri/Geri çubuğu olan (data-gezinti="yok") sayfalarda yok.
   function gezinti() {
@@ -148,23 +149,29 @@
       "#ortakGez>*{display:flex;align-items:center;justify-content:center;gap:6px;min-width:44px;padding:0 14px;border:0;background:none;color:#e0a24f;font:700 15px/1 system-ui,-apple-system,sans-serif;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent}" +
       "#ortakGez>*+*{border-left:1px solid #3a2c14}#ortakGez .ev{font-size:19px;padding:0 12px}#ortakGez .ev span{font-size:15px;display:none}" +
       "#ortakGez>*:active{background:rgba(224,162,79,.16)}#ortakGez>*:focus-visible{outline:2px solid #f3d38a;outline-offset:-3px}" +
+      "#ortakGez .yk{display:none;font-size:19px;padding:0 15px}" +
       "@media (min-width:760px){#ortakGez .ev span{display:inline}}" +
+      "@media (max-width:759px){#ortakGez{height:48px}#ortakGez .yk{display:flex}#ortakYukari{display:none!important}}" +
       "@media (prefers-reduced-motion:reduce){#ortakGez{transition:none}}";
     document.head.appendChild(st);
     var n = document.createElement("nav"); n.id = "ortakGez"; n.setAttribute("aria-label", "Gezinti");
-    n.innerHTML = '<button type="button" aria-label="Geri dön">‹ Geri</button><a class="ev" href="index.html" aria-label="Ana sayfa">🏠<span>Ana sayfa</span></a>';
+    n.innerHTML = '<button type="button" aria-label="Geri dön">‹ Geri</button><a class="ev" href="index.html" aria-label="Ana sayfa">🏠<span>Ana sayfa</span></a><button type="button" class="yk" aria-label="Sayfanın başına dön">↑</button>';
     bd.appendChild(n);
     n.firstChild.onclick = function () {
       var ic = false; try { ic = !!document.referrer && new URL(document.referrer).origin === location.origin && new URL(document.referrer).pathname !== location.pathname; } catch (e) {}
       if (ic && history.length > 1) history.back(); else location.href = ust;
     };
-    // Altta sabit bir çubuk varsa (Kaza Tutanağı'nın İleri/Geri çubuğu) onun üstünde durur; bilgisayarda içerik sütununun hemen solunda
+    n.querySelector(".yk").onclick = function () { window.scrollTo({ top: 0, behavior: "smooth" }); };
+    // Telefonda sağ alt; Takvim'in "+" düğmesi gibi sağ altta sabit bir düğme varsa onun üstünde durur. Bilgisayarda içerik sütununun hemen solunda.
     var yer = function () {
-      var alt = 16, kz = document.getElementById("kzNav"); if (kz && kz.offsetHeight) alt = kz.offsetHeight + 12;
+      var tel = innerWidth < 760, alt = 16, kz = document.getElementById("kzNav"), fab = document.getElementById("fab");
+      if (kz && kz.offsetHeight) alt = kz.offsetHeight + 12;
+      if (tel && fab && fab.offsetHeight && getComputedStyle(fab).position === "fixed") alt = Math.max(alt, innerHeight - fab.getBoundingClientRect().top + 10);
       n.style.bottom = "calc(" + alt + "px + env(safe-area-inset-bottom))";
+      if (tel) { n.style.left = "auto"; n.style.right = "14px"; return; }
       var sol = 14, c = document.querySelector(".wrap") || document.querySelector("main");
-      if (innerWidth >= 760 && c) { var r = c.getBoundingClientRect(); if (r.left > n.offsetWidth + 40) sol = Math.max(14, r.left - 18 - n.offsetWidth); }
-      n.style.left = sol + "px";
+      if (c) { var r = c.getBoundingClientRect(); if (r.left > n.offsetWidth + 40) sol = Math.max(14, r.left - 18 - n.offsetWidth); }
+      n.style.right = "auto"; n.style.left = sol + "px";
     };
     // Başlıktaki 🏠 ekrandayken gizli, başlık yukarıda kaybolunca görünür (başlığı yapışkan sayfalarda: 160 px aşağı inince)
     var f = function () { var r = hd.getBoundingClientRect(), on = r.bottom < 0 || window.scrollY > Math.max(160, hd.offsetTop + hd.offsetHeight + 40); n.classList.toggle("on", on); };
