@@ -241,6 +241,15 @@
   @media (prefers-reduced-motion: reduce) { .gik .gr, .gik .gs { animation: none; } }
   /* ===== Ana menü ===== */
   .mn { width: 100%; max-width: 380px; }
+  /* Geniş ekran (PC): menü iki sütuna açılır; telefonda hiçbir şey değişmez */
+  @media (min-width: 1000px) {
+    .mn { max-width: 860px; columns: 2; column-gap: 28px; }
+    .mn > .ara, .mn > .araAlt, .mn > .altL, .mn > .azP, .mn > .altMsg, .mn > .araYok, .mn > .fav, .mn > .sbB, .mn > .one.isb { column-span: all; }
+    .mn > .ara, .mn > .araAlt { max-width: 520px; margin-left: auto; margin-right: auto; }
+    nav.mn > h2 { break-after: avoid; margin-top: 0; padding-top: 26px; }
+    nav.mn:has(#araQ:not(:placeholder-shown)) { columns: 1; max-width: 520px; } /* arama sırasında tek sütun */
+    .mn > .rows, .mn > .tiles { break-inside: avoid; }
+  }
   .mn h2 { margin: 26px 2px 10px; font: italic 600 15px Georgia, "Times New Roman", serif; color: var(--accent); letter-spacing: .3px; display: flex; align-items: baseline; gap: 10px; }
   .mn h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #5a4320, transparent); }
   .mn h2 small { font: 12px system-ui, sans-serif; color: var(--muted); font-style: normal; }
