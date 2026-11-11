@@ -1,20 +1,20 @@
 {
-  "guncelleme": "2026-11-07T09:10:00+03:00",
+  "guncelleme": "2026-11-11T09:10:00+03:00",
   "kaynak": "https://www.maximum.com.tr/kampanyalar",
   "kampanyalar": [
-    {
-      "baslik": "Europcar'da 1.000 TL MaxiPuan",
-      "ozet": "Europcar araç kiralamalarında 1.000 TL MaxiPuan.",
-      "tur": "MaxiPuan",
-      "bitis": "2026-11-10",
-      "url": "https://www.maximum.com.tr/kampanyalar/europcar-da-maxipuan-firsati"
-    },
     {
       "baslik": "Shell istasyonlarında 500 TL MaxiPuan",
       "ozet": "Shell'de akaryakıta 450 TL MaxiPuan; ödemelerden en az birini mobil temassız ya da TR Karekodla yaparsan +50 TL, toplam 500 TL.",
       "tur": "MaxiPuan",
       "bitis": "2026-11-15",
       "url": "https://www.maximum.com.tr/kampanyalar/shell-maxipuan-kampanyasi"
+    },
+    {
+      "baslik": "MediaMarkt.com.tr'de 2.000 TL MaxiPuan",
+      "ozet": "9-20 Kasım'da mediamarkt.com.tr'de Maximum Kart ile tek seferde yapılan 25.000 TL ve üzeri ilk alışverişe 2.000 TL MaxiPuan.",
+      "tur": "MaxiPuan",
+      "bitis": "2026-11-20",
+      "url": "https://www.maximum.com.tr/kampanyalar/mediamarkt-maxipuan-kampanyasi"
     },
     {
       "baslik": "Inditex mağazalarında 1.000 TL MaxiPuan",
