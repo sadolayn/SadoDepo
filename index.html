@@ -72,6 +72,7 @@
   .top.odulOn .hello .mid { opacity: 0; }
   .odS { position: absolute; left: 0; right: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-decoration: none; opacity: 0; pointer-events: none; transition: opacity .6s ease; overflow: hidden; }
   .top.odulOn .odS { opacity: 1; pointer-events: auto; }
+  .top:not(.odulOn) .odS, .top:not(.odulOn) .odS * { animation-play-state: paused !important; } /* görünmezken işlemci yemesin (11 Kasım 2026) */
   .top .hello .clock, .top .hello .datec { transition: opacity .4s ease; }
   .top.odulOn.odDar .hello .clock, .top.odulOn.odDar .hello .datec { opacity: 0 !important; pointer-events: none; }
   .odS .ray { position: absolute; top: -140px; left: 50%; width: 420px; height: 420px; margin-left: -210px; border-radius: 50%;
@@ -241,14 +242,19 @@
   @media (prefers-reduced-motion: reduce) { .gik .gr, .gik .gs { animation: none; } }
   /* ===== Ana menü ===== */
   .mn { width: 100%; max-width: 380px; }
-  /* Geniş ekran (PC): menü iki sütuna açılır; telefonda hiçbir şey değişmez */
+  /* Geniş ekran (PC, 1000 px ve üstü): telefonda hiçbir şey değişmez (11 Kasım 2026)
+     - Menü iki sütunlu ızgara: bölümler satır satır dizilir (okuma sırası telefondakiyle aynı);
+       Mola + Sabah brifingi tek grupta durur, iki sütunun boyu dengelenir.
+     - Saat · logo · takvim ortada kalır; kayan yazı, YENİ şeridi ve görünüm düğmesi menüyle aynı 860 px hizaya çıkar. */
   @media (min-width: 1000px) {
-    .mn { max-width: 860px; columns: 2; column-gap: 28px; }
-    .mn > .ara, .mn > .araAlt, .mn > .altL, .mn > .azP, .mn > .altMsg, .mn > .araYok, .mn > .fav, .mn > .sbB, .mn > .one.isb { column-span: all; }
-    .mn > .ara, .mn > .araAlt { max-width: 520px; margin-left: auto; margin-right: auto; }
-    nav.mn > h2 { break-after: avoid; margin-top: 0; padding-top: 26px; }
-    nav.mn:has(#araQ:not(:placeholder-shown)) { columns: 1; max-width: 520px; } /* arama sırasında tek sütun */
-    .mn > .rows, .mn > .tiles { break-inside: avoid; }
+    .mn { max-width: 860px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; align-items: start; }
+    .mn > * { grid-column: 1 / -1; min-width: 0; }
+    .mn > .mnB { grid-column: auto; }
+    .mn > .ara, .mn > .araAlt { width: 100%; max-width: 520px; margin-left: auto; margin-right: auto; box-sizing: border-box; }
+    nav.mn:has(#araQ:not(:placeholder-shown)) { display: block; max-width: 520px; } /* arama sırasında tek sütun */
+    .top.kompakt { max-width: 860px; grid-template-columns: minmax(0, 1fr) 76px minmax(0, 268px) 76px minmax(0, 1fr);
+      grid-template-areas: "ust ust ust ust ust" ". saat logo tarih ." "mid mid mid mid mid" "kayan kayan kayan kayan kayan"; }
+    .top.kompakt > h1.logo img { width: min(230px, 100%); }
   }
   .mn h2 { margin: 26px 2px 10px; font: italic 600 15px Georgia, "Times New Roman", serif; color: var(--accent); letter-spacing: .3px; display: flex; align-items: baseline; gap: 10px; }
   .mn h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #5a4320, transparent); }
@@ -865,6 +871,7 @@
       <div><div class="t">İş Bankası Gündemi</div><div class="d">Tüm kampanyalar tek yerde, sana uygun olanı bul; İşCep ipuçları, İş Black · İş Plus, haberler, şubeler ve günün sorusu · kişisel derleme</div><div class="canli" id="isbCanli" hidden></div></div>
     </a>
 
+    <div class="mnB">
     <h2>Her sabah <small>güne başlarken</small></h2>
     <div class="rows">
       <a class="row" href="gazete.html" data-ara="resmi resmî gazete bddk tcmb spk masak yönetmelik tebliğ karar atama duyuru" data-yeni="gazete2|2026-10-22|YENİLENDİ"><span class="ik">📜</span><div><div class="t">Resmî Gazete</div><div class="d">Her sabah özet: bankacılığı ilgilendiren kararlar ve atamalar; BDDK, TCMB, SPK duyuruları takvimde</div></div><span class="ok">›</span></a>
@@ -872,7 +879,9 @@
       <a class="row" href="bolge.html" data-ara="bölge nabzı il ilçe yerel haber şehir" data-yeni="bolgem|2026-10-29|YENİ"><span class="ik">📍</span><div><div class="t" id="bolgemT">Bölge Nabzı</div><div class="d" id="bolgemD">İlini ya da ilçeni seç: atama, vefat, yatırım, konkordato… bölgende neler oluyor</div></div><span class="ok">›</span></a>
       <a class="row alr" href="alerts.html" data-ara="bildirim e-posta mail uyarı abonelik bülten kelime takip" data-yeni="alertsPush|2026-10-18|YENİ · BİLDİRİM"><span class="ik">🔔<i></i></span><div><div class="t">Sadolayn Alerts</div><div class="d">Takip ettiğin kelimeleri seç; her sabah 10:00'da ilgili haberler e-postana ve <b>telefonuna</b> gelsin</div></div><span class="ok">›</span></a>
     </div>
+    </div>
 
+    <div class="mnB">
     <h2>Hesap ve ajanda</h2>
     <div class="rows">
       <a class="row" href="banka.html" data-ara="hesaplayıcı mevduat getiri vadeli faiz stopaj kredi taksit tüketici konut taşıt tarım ticari ek hesap kmh bch rotatif kredi kartı gecikme çek iskonto iştira valör yapılandırma ara ödeme pdf" data-yeni="banka2|2026-10-20|YENİLENDİ"><span class="ik">🏦</span><div><div class="t">Bankacılık</div><div class="d">10 hesaplayıcı: mevduat getirisi, kredi taksidi, ek hesap, kart gecikme, çek iskonto… planı PDF olarak paylaş</div></div><span class="ok">›</span></a>
@@ -880,7 +889,9 @@
       <a class="row" href="gunce.html" data-ara="günce hedef çeyrek performans takip excel adet satış" data-yeni="gunce4|2026-10-22|YENİLENDİ"><span class="ik">📒</span><div><div class="t">Günce Tutma</div><div class="d">Çeyrek hedefini gir, her gün işaretle; kalanı, günlük gerekeni ve tutma ihtimalini gör, Excel'e aktar</div></div><span class="ok">›</span></a>
       <a class="row" href="takvim.html" data-ara="takvim ajanda tatil bayram resmî gün iş günü vergi son gün ziyaret toplantı izin" data-yeni="vergitk|2026-10-23|YENİLENDİ"><span class="ik">📅</span><div><div class="t">Takvim &amp; Ajanda</div><div class="d">Resmî ve dinî günler, iki tarih arası iş günü, vergi son günleri; ziyaret, toplantı ve izin ajandan</div></div><span class="ok">›</span></a>
     </div>
+    </div>
 
+    <div class="mnB">
     <h2>Cebindeki araçlar</h2>
     <div class="tiles">
       <a class="tile" href="piyasa.html" data-ara="döviz emtia kur dolar euro altın gram çeyrek gümüş platin paladyum petrol brent borsa piyasa alsaydım" data-yeni="emtia|2026-10-31|YENİLENDİ"><span class="ik">💱</span><div class="t">Döviz &amp; Emtia</div><div class="d">Kur, altın, gümüş, platin, paladyum ve petrol; 1-5 yıllık değişim, “alsaydım”</div></a>
@@ -888,7 +899,9 @@
       <a class="tile" href="yakin.html" data-ara="yakın eczane nöbetçi hastane şube atm toplanma alanı harita"><span class="ik">📍</span><div class="t">En Yakınımda</div><div class="d">Eczane, hastane, şube, ATM, toplanma alanı… 40'tan fazla yer</div></a>
       <a class="tile" href="hava.html" data-ara="hava durumu yağmur sıcaklık tahmin"><span class="ik">🌤️</span><div class="t">Hava Durumu</div><div class="d">Bulunduğun yer için saatlik ve 7 günlük tahmin</div></a>
     </div>
+    </div>
 
+    <div class="mnB">
     <h2>Mola <small>boş vakitler için</small></h2>
     <div class="rows">
       <a class="row" href="oyunlar.html" data-ara="oyun batak king balayı tavla solitaire uçuç bulmaca tahmin" data-yeni="oyunlar|2026-10-17|YENİ OYUN"><span class="ik">🎮</span><div><div class="t">Oyunlar</div><div class="d">Batak, King, Balayı King, Tavla, Solitaire, UçUç ve bulmacalar; Sadolayn'a karşı oyna, Yıldız topla</div></div><span class="ok">›</span></a>
@@ -904,6 +917,7 @@
           <div class="aclAlt" id="aclAlt"></div>
         </div>
       </div>
+    </div>
     </div>
   </nav>
   <div class="quote">

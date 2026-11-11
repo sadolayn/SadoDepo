@@ -239,3 +239,21 @@
   var d = new Date(); if (d.getMonth() !== 10 || d.getDate() !== 10) return;
   var s = document.createElement("script"); s.src = "anma.js"; s.defer = true; document.head.appendChild(s);
 })();
+
+// Ekran dışındaki sürekli (sonsuz) animasyonlar uyur, görününce kaldığı yerden sürer: pil ve işlemci için (11 Kasım 2026).
+// Tek seferlik giriş animasyonlarına dokunmaz. Bir öğe hiç uyumasın isterse kendisine ya da atasına class="uyumaz" verilir.
+(function () {
+  if (!("IntersectionObserver" in window) || !document.getAnimations) return;
+  var st = document.createElement("style"); st.textContent = ".uyku,.uyku::before,.uyku::after{animation-play-state:paused!important}"; document.head.appendChild(st);
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle("uyku", !e.isIntersecting); }); }, { rootMargin: "120px 0px" });
+  function tara() {
+    document.getAnimations().forEach(function (a) {
+      var ef = a.effect, t = ef && ef.target;
+      if (!t || !(t instanceof Element) || t._uyk || !ef.getTiming || ef.getTiming().iterations !== Infinity || t.closest(".uyumaz")) return;
+      if (ef.pseudoElement) return; // ::before/::after sahibiyle birlikte uyur
+      t._uyk = 1; io.observe(t);
+    });
+  }
+  function basla() { setTimeout(tara, 2500); setTimeout(tara, 9000); }
+  if (document.readyState === "complete") basla(); else addEventListener("load", basla);
+})();
