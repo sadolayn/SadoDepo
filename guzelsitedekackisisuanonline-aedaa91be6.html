@@ -120,7 +120,7 @@ const TATIL_DINI = { "Ramazan Bayramı": ["2026-03-19", "2026-03-22", "2027-03-0
 const tatil = (k) => TATIL_SABIT[k.slice(5)] || Object.keys(TATIL_DINI).find((ad) => { const t = TATIL_DINI[ad]; for (let i = 0; i < t.length; i += 2) if (k >= t[i] && k <= t[i + 1]) return true; return false; }) || "";
 // "Başından beri": sayacın ilk kaydettiği günden bugüne her gün (boş günler 0)
 function tumu(G) {
-  const K = Object.keys(G).filter((k) => /^\d{4}-\d{2}-\d{2}$/.test(k)).sort();
+  const K = Object.keys(G).filter((k) => /^\d{4}-\d{2}-\d{2}$/.test(k) && k >= "2026-10-01").sort(); // sayaç Ekim 2026'da başladı; daha eski (sahte) anahtar grafiği kilitlemesin
   if (!K.length) return;
   const bugun = gunOf(Date.now()), L = [];
   for (let t = Date.parse(K[0] + "T12:00:00Z"); ; t += 864e5) { const k = new Date(t).toISOString().slice(0, 10); if (k > bugun) break; L.push([k, Math.max(0, Math.floor(Number(G[k]) || 0))]); }
