@@ -55,7 +55,7 @@
   .top.kompakt { display: grid; grid-template-columns: 76px minmax(0, 1fr) 76px; column-gap: 6px; align-items: center; justify-items: center; max-width: 420px; margin: 0 auto;
     grid-template-areas: "ust ust ust" "saat logo tarih" "mid mid mid" "kayan kayan kayan"; }
   .top.kompakt > .temaUst { grid-area: ust; justify-self: end; align-self: center; }
-  .top.kompakt > .yeniS { grid-area: ust; justify-self: stretch; width: auto; margin-right: 48px; }
+  .top.kompakt > .yeniS { grid-area: ust; justify-self: stretch; width: auto; } /* 11 Kasım 2026: görünüm düğmesi aşağı taşındı, şerit tam genişlik */
   /* kupa günlerinde (eski düzen) düğme yine sağ üst köşede, YENİ şeridiyle aynı satırda */
   .top:not(.kompakt) > .temaUst { align-self: flex-end; }
   .top:not(.kompakt) > .temaUst:has(+ .yeniS:not([hidden])) { margin-bottom: -40px; z-index: 2; }
@@ -340,7 +340,7 @@
   .fv b { font: 600 14.5px Georgia, "Times New Roman", serif; line-height: 1.25; overflow-wrap: break-word; hyphens: manual; }
   .fv span { display: flex; flex-direction: column; min-width: 0; }
   .fv small { font: 11px system-ui, sans-serif; color: #9a9a9a; margin-top: 2px; overflow-wrap: break-word; }
-  .araAlt { display: flex; justify-content: flex-end; margin: 2px 2px 0; }
+  .araAlt { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 2px 2px 0; }
   #azBtn { background: none; border: 0; color: var(--accent); font: 600 13px system-ui, sans-serif; padding: 6px 4px; min-height: 30px; cursor: pointer; letter-spacing: normal; }
   #azBtn[aria-expanded="true"] { color: #f3dca8; }
   .altL, .azP { margin-top: 8px; border-radius: 16px; border: 1px solid var(--line); background: #070707; overflow: hidden; }
@@ -639,9 +639,13 @@
   html[data-tema="acik"] .kyN { color: #1f7a4c; }
   html[data-tema="acik"] .kyS li { border-color: #dcd3c2; }
   html[data-tema="acik"] .kyS small { color: #6b645a; }
-  /* Görünüm seçimi (9 Kasım 2026): köşede tek yuvarlak düğme; dokundukça Açık → Koyu → Sistem */
-  .temaUst { position: relative; display: flex; justify-content: flex-end; width: 40px; margin: 0 0 6px; }
+  /* Görünüm seçimi: dokundukça Açık → Koyu → Sistem. 11 Kasım 2026: sağ üst köşeden arama kutusunun altına,
+     "Tüm araçlar A-Z"nin karşısına taşındı; üstünde seçili görünüm yazar */
+  .temaUst { position: relative; display: flex; margin: 0; }
   .temaD { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; padding: 0; border: 1px solid var(--line); background: var(--card); color: var(--accent); cursor: pointer; transition: transform .15s ease, border-color .2s ease; }
+  .araAlt .temaD { width: auto; height: 32px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; padding: 0 12px 0 9px; font: 600 13px system-ui, sans-serif; letter-spacing: normal; }
+  .araAlt .temaD svg { width: 16px; height: 16px; }
+  .araAlt .temaN { display: none; }
   .temaD:active { transform: scale(.92); border-color: #e0a24f; }
   .temaD svg { width: 20px; height: 20px; display: none; }
   .temaD[data-s="acik"] .iA, .temaD[data-s="koyu"] .iK, .temaD[data-s="oto"] .iS { display: block; animation: tIk .3s cubic-bezier(.2,.7,.2,1); }
@@ -677,14 +681,6 @@
 </head>
 <body>
   <header class="top kompakt" id="top">
-    <div class="temaUst">
-      <span class="temaN" id="temaN" aria-hidden="true"></span>
-      <button type="button" class="temaD" id="temaSec" data-s="oto" aria-label="Görünüm">
-        <svg class="iA" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
-        <svg class="iK" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
-        <svg class="iS" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
-      </button>
-    </div>
     <div class="yeniS" id="yeniS" hidden aria-label="Sitede yeni bölümler"><span class="ysEt"><i></i>YENİ</span><div class="ysYol"><div class="ysSer" id="ysSer"></div></div></div>
     <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"><span class="ataYazi">Seni bir an olsun unutmadık 🖤</span></h1>
     <script>/* 10 Kasım: logonun yerinde gün boyu Atatürk fotoğrafı */ if (document.documentElement.classList.contains("matem10")) { var aI = document.querySelector("h1.logo img"); aI.src = "img/ata-10kasim.jpg"; aI.alt = "Mustafa Kemal Atatürk"; }</script>
@@ -863,7 +859,18 @@
       <input type="search" id="araQ" placeholder="Ara: çek iskonto, mevduat, resmî gazete…" aria-label="Araçlarda ara" autocomplete="off" enterkeyhint="go">
       <button type="button" id="araSil" aria-label="Aramayı temizle" hidden>✕</button>
     </div>
-    <div class="araAlt"><button type="button" id="azBtn" aria-expanded="false">🔤 Tüm araçlar A-Z ›</button></div>
+    <div class="araAlt">
+      <div class="temaUst">
+        <span class="temaN" id="temaN" aria-hidden="true"></span>
+        <button type="button" class="temaD" id="temaSec" data-s="oto" aria-label="Görünüm">
+          <svg class="iA" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+          <svg class="iK" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+          <svg class="iS" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+          <span class="temaAd" id="temaAd">Görünüm</span>
+        </button>
+      </div>
+      <button type="button" id="azBtn" aria-expanded="false">🔤 Tüm araçlar A-Z ›</button>
+    </div>
     <div class="altL" id="altL" hidden></div>
     <div class="azP" id="azP" hidden></div>
     <p class="altMsg" id="altMsg" hidden></p>
@@ -1708,6 +1715,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     function boya() {
       var s = Tema.secim(), t = Tema.tema();
       k.dataset.s = s;
+      var ad = document.getElementById("temaAd"); if (ad) ad.textContent = "Görünüm: " + AD[s];
       k.setAttribute("aria-label", "Görünüm: " + AD[s] + (s === "oto" ? " (telefona uyar, şu an " + (t === "acik" ? "açık" : "koyu") + ")" : "") + ". Değiştirmek için dokun.");
     }
     k.addEventListener("click", function () {
@@ -1744,7 +1752,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     // altyapısına geçiyor"); yalnızca duyuruda yazan söylenir, geçiş gününe kadar kalır
     ["https://www.denizbank.com/kampanya/kart-kampanyalari/cok-yakinda", "🤝 DenizBank kredi kartları <b>6 Aralık'tan</b> itibaren Maximum altyapısına geçiyor", "2026-12-06"],
     // 8 Kasım 2026: sayfanın en üstündeki görünüm seçimi; dokununca yukarı çıkar ve seçici kısa bir an parlar
-    ["tema", "🌓 Gözüne göre seç: sağ üst köşedeki düğmeye dokun: <b>Açık · Koyu · Sistem</b>; Sistem telefonunun ayarına uyar <b class=\"gir\">Seç</b>", "2026-11-22"],
+    ["tema", "🌓 Gözüne göre seç: arama kutusunun altındaki <b>Görünüm</b> düğmesine dokun: <b>Açık · Koyu · Sistem</b>; Sistem telefonunun ayarına uyar <b class=\"gir\">Seç</b>", "2026-11-22"],
     // İşCep ödülü satırı 5 Kasım'da çıkarıldı: üstteki kupa kartı zaten gösteriyor
     ["maximum", "🎁 Kampanyaları bulmak hiç bu kadar kolay olmamıştı: İş Bankası, Maximum ve Maximiles tek ekranda; arama, takvim ve <b>Bana uygun</b> <b class=\"gir\">İş Bankası Gündemi › Kampanyalar</b>", "2026-11-30"],
     ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
@@ -1807,7 +1815,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     e.preventDefault();
     if (MATEM && (!o || h === "anma")) return; // anma satırı ve kurdele bir yere götürmez
     if (h === "ppk") { ppk && ppk.tap && ppk.tap(); return; }
-    if (h === "tema") { window.Rapor && Rapor.bolum("kayan-tema"); window.scrollTo({ top: 0, behavior: "smooth" }); const t = document.getElementById("temaSec"); if (t && t.animate && !matchMedia("(prefers-reduced-motion: reduce)").matches) setTimeout(() => t.animate([{ transform: "scale(1)" }, { transform: "scale(1.25)" }, { transform: "scale(1)" }], { duration: 500, iterations: 2, easing: "ease-in-out" }), 450); return; }
+    if (h === "tema") { window.Rapor && Rapor.bolum("kayan-tema"); const t = document.getElementById("temaSec"); t && t.scrollIntoView({ behavior: "smooth", block: "center" }); if (t && t.animate && !matchMedia("(prefers-reduced-motion: reduce)").matches) setTimeout(() => t.animate([{ transform: "scale(1)" }, { transform: "scale(1.25)" }, { transform: "scale(1)" }], { duration: 500, iterations: 2, easing: "ease-in-out" }), 450); return; }
     if (h === "acilis") { window.Rapor && Rapor.bolum("kayan-acilis"); window.Acilis && window.Acilis.ac(); return; }
     if (/^https:\/\/www\.denizbank\.com\//.test(h)) { window.Rapor && Rapor.bolum("kayan-denizbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // DenizBank'ın kendi duyurusu
     if (/^https:\/\/www\.isbank\.com\.tr\//.test(h)) { window.Rapor && Rapor.bolum("kayan-isbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // İş Bankası'nın kendi duyurusu
