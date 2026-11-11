@@ -1,7 +1,16 @@
 {
-  "guncelleme": "2026-11-06T07:01:13+03:00",
+  "guncelleme": "2026-11-11T07:10:00+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
+    {
+      "tarih": "2026-11-10",
+      "kurum": "TCMB",
+      "baslik": "İki elektronik para kuruluşunun faaliyet izni iptal edildi",
+      "ozet": "TCMB, 10 Kasım 2026 tarihli kararlarıyla Ozan Elektronik Para A.Ş. ile A Ödeme ve Elektronik Para Hizmetleri A.Ş.'nin faaliyet izinlerini 6493 sayılı Kanun kapsamında iptal etti. Kararlar 11 Kasım'da Resmi Gazete'de yayımlandı.",
+      "onemli": false,
+      "url": "https://www.resmigazete.gov.tr/eskiler/2026/11/20261111-5.pdf",
+      "gazete": "2026-11-11"
+    },
     {
       "tarih": "2026-11-04",
       "kurum": "BDDK",
