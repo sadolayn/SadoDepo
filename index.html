@@ -970,10 +970,11 @@
         if (fark === -1) ekle(`🌙 Yarın ${ad}`, "Hayırlı arifeler");
       }
       const KANDIL = { "2026-01-15": "Miraç Kandili", "2026-02-02": "Berat Kandili", "2026-08-24": "Mevlid Kandili", "2026-12-10": "Regaip Kandili",
-        "2027-01-04": "Miraç Kandili", "2027-01-22": "Berat Kandili", "2027-08-13": "Mevlid Kandili" };
+        "2027-01-04": "Miraç Kandili", "2027-01-22": "Berat Kandili", "2027-08-13": "Mevlid Kandili", "2027-12-02": "Regaip Kandili", "2027-12-24": "Miraç Kandili",
+        "2028-01-11": "Berat Kandili", "2028-08-02": "Mevlid Kandili", "2028-11-23": "Regaip Kandili", "2028-12-13": "Miraç Kandili", "2028-12-30": "Berat Kandili" }; // Diyanet listesi
       if (KANDIL[ymd]) ekle(`✨ Bu gece ${KANDIL[ymd]}`, "Hayırlı kandiller");
-      if ({ "2026-03-16": 1, "2027-03-05": 1 }[ymd]) ekle("✨ Bu gece Kadir Gecesi", "Hayırlı geceler");
-      if (ymd === "2026-06-25") ekle("🥣 Bugün Aşure Günü");
+      if ({ "2026-03-16": 1, "2027-03-05": 1, "2028-02-22": 1 }[ymd]) ekle("✨ Bu gece Kadir Gecesi", "Hayırlı geceler");
+      if ({ "2026-06-25": 1, "2027-06-15": 1, "2028-06-03": 1 }[ymd]) ekle("🥣 Bugün Aşure Günü");
       const MILLI = { "04-23": "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı", "05-19": "19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı", "08-30": "30 Ağustos Zafer Bayramı", "10-29": "29 Ekim Cumhuriyet Bayramı" };
       if (MILLI[md]) ekle(`🇹🇷 ${MILLI[md]}mız kutlu olsun`, "İyi bayramlar");
       // Sabit günler: [ay-gün, mesaj, ana selam, anma]

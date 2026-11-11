@@ -57,8 +57,32 @@ const DINI = {
     ["08-24", "Mevlid Kandili"],
     ["12-10", "Üç Ayların başlangıcı · Regaip Kandili"],
   ],
-  2027: [],
-  2028: [],
+  // 2027 ve 2028: Diyanet İşleri Başkanlığı dini günler listesi (vakithesaplama.diyanet.gov.tr, 11 Kasım 2026'da alındı).
+  // 2028 listesinde kandiller "11/12 Ocak" gibi çift tarihli; kandil gecesi olan ilk gün yazıldı (2026-2027'deki tek tarihle aynı mantık).
+  2027: [
+    ["01-04", "Miraç Kandili"],
+    ["01-22", "Berat Kandili"],
+    ["02-08", "Ramazan başlangıcı"],
+    ["03-05", "Kadir Gecesi"],
+    ["06-06", "Hicri Yılbaşı"],
+    ["06-15", "Aşure Günü"],
+    ["08-13", "Mevlid Kandili"],
+    ["11-29", "Üç Ayların başlangıcı"],
+    ["12-02", "Regaip Kandili"],
+    ["12-24", "Miraç Kandili"],
+  ],
+  2028: [
+    ["01-11", "Berat Kandili"],
+    ["01-28", "Ramazan başlangıcı"],
+    ["02-22", "Kadir Gecesi"],
+    ["05-25", "Hicri Yılbaşı"],
+    ["06-03", "Aşure Günü"],
+    ["08-02", "Mevlid Kandili"],
+    ["11-18", "Üç Ayların başlangıcı"],
+    ["11-23", "Regaip Kandili"],
+    ["12-13", "Miraç Kandili"],
+    ["12-30", "Berat Kandili"],
+  ],
 };
 
 // Okul tatilleri (MEB çalışma takvimi). İş günü hesabına girmez; yalnızca Liste'de "Okul" olarak görünür.
