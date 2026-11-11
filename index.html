@@ -148,6 +148,14 @@
   .ysSer .ysDet { margin-right: 6px; color: #e9dcc0; }
   .ysSer .ysOnem { margin-right: 6px; padding: 1px 6px; border-radius: 5px; background: #d32f2f; color: #fff; font-size: 10.5px; font-weight: 800; letter-spacing: .5px; }
   @keyframes ysKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  /* SON DAKİKA modu (11 Kasım 2026): ekonomi/finans otoritelerinden önemli gelişme varsa üst şerit kırmızı çerçeveli altyazıya döner */
+  .yeniS.sd { border-color: #8f2a20; background: rgba(20,4,2,.78); }
+  .yeniS.sd .ysEt { color: #ff6b57; } .yeniS.sd .ysEt i { background: #ff4a33; }
+  .yeniS.sd .ysSer a { color: #f6e9d6; font-weight: 600; }
+  .yeniS.sd .ysSer a small { margin-left: 7px; font-size: 11.5px; font-weight: 500; color: #c9a77a; }
+  html[data-tema="acik"] .yeniS.sd { background: #fff; border-color: #d32f2f; }
+  html[data-tema="acik"] .yeniS.sd .ysEt { color: #c62828; } html[data-tema="acik"] .yeniS.sd .ysEt i { background: #d32f2f; }
+  html[data-tema="acik"] .yeniS.sd .ysSer a { color: #2a2218; } html[data-tema="acik"] .yeniS.sd .ysSer a small { color: #8a6a3a; }
   /* Bilgisayarda "animasyonları azalt" açıksa da üst şerit kaysın (alttaki kayan yazı gibi), sadece biraz yavaş */
   @media (prefers-reduced-motion: reduce) { .ysSer { animation-duration: calc(var(--sure, 40s) * 1.5); } .ysEt i { animation: none; } }
   /* ===== PPK (TCMB faiz kararı) kayan yazının başında: 2 gün önce uyarı, karar günü 14:15'ten sonra karar ===== */
@@ -1955,6 +1963,29 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   kutu.hidden = false;
   // Tıklama sayımı (anonim): GoatCounter'da "bolum-index/yeni-<bölüm>"
   ser.addEventListener("click", (e) => { const a = e.target.closest("a[data-r]"); if (a && window.Rapor) Rapor.bolum("yeni-" + a.dataset.r); });
+})();
+</script>
+<script>
+// SON DAKİKA (11 Kasım 2026): data/son_dakika.json'daki gelişmeler (scripts/son_dakika.py seçer: BDDK, SPK, MASAK, TCMB, Hazine,
+// TMSF, Borsa İstanbul, TÜİK; en az 3 farklı güvenilir kaynak ya da resmî duyuru; 12 saat kalır). Varsa üst şerit kırmızı altyazıya döner,
+// yoksa YENİ şeridi olduğu gibi kalır. Başlık kaynağın kendi başlığıdır; dokununca haberin kaynağı yeni sekmede açılır.
+(function () {
+  const kutu = document.getElementById("yeniS"), ser = document.getElementById("ysSer");
+  if (!kutu || !ser || !window.Ortak || document.documentElement.classList.contains("matem")) return;
+  const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const saat = (iso) => { const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Istanbul" }); };
+  Ortak.json("data/son_dakika.json").then((j) => {
+    const simdi = Date.now();
+    const L = ((j && j.haberler) || []).filter((x) => x && x.t && /^https:\/\//.test(x.u || "") && new Date(x.son) > simdi).slice(0, 3);
+    if (!L.length) return;
+    const tur = '<span style="display:inline-block;width:22px"></span>' + L.map((x) =>
+      `<a href="${esc(x.u)}" target="_blank" rel="noopener" data-sd="${esc(x.k || "")}">${esc(x.t)}<small>${esc(x.s)}${x.n >= 3 ? " · " + x.n + " kaynak" : ""}${x.d ? " · " + saat(x.d) : ""} ↗</small></a>`).join("");
+    ser.innerHTML = tur + tur;
+    kutu.classList.add("sd"); kutu.hidden = false; kutu.setAttribute("aria-label", "Son dakika");
+    kutu.querySelector(".ysEt").innerHTML = "<i></i>SON DAKİKA";
+    requestAnimationFrame(() => ser.style.setProperty("--sure", Math.max(24, Math.round(ser.scrollWidth / 2 / 45)) + "s"));
+    ser.addEventListener("click", (e) => { const a = e.target.closest("a[data-sd]"); if (a && window.Rapor) Rapor.bolum("sondakika-" + a.dataset.sd); });
+  }).catch(() => {});
 })();
 </script>
 <script>

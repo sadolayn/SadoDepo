@@ -1,6 +1,6 @@
 name: Güncel haberler
 # GitHub'ın zamanlayıcısı bu depoda tetiklenmediği için iş, bittiğinde
-# ~1 saat bekleyip kendini yeniden başlatır (zincir). Cron yalnızca yedek.
+# bekleyip kendini yeniden başlatır (zincir): gündüz 20 dk, gece ~1 saat. Cron yalnızca yedek.
 # PPK günü bekleme 14:01'e ayarlanır; karar kaydedilene kadar ~2,5 dakikada bir denenir.
 on:
   schedule:
@@ -32,13 +32,18 @@ jobs:
       - name: Haberler
         run: python scripts/haberler.py
         continue-on-error: true
+      # Son dakika şeridi: yalnızca toplanan başlıklardan seçer, dışarıya istek atmaz (scripts/son_dakika.py)
+      - name: Son dakika
+        run: python scripts/son_dakika.py
+        continue-on-error: true
       # isbank.com.tr'ye giden adımlar her saat değil, günde iki pencerede çalışır (İstanbul 09-10 ve 14-15).
+      # İş gündüz 20 dakikada bir döndüğü için pencere saatin yalnızca ilk 20 dakikasında açılır: banka sitesine saatte en fazla bir istek.
       - name: Banka sitesi penceresi mi?
         id: pencere
         run: |
-          H=$(TZ=Europe/Istanbul date +%H)
-          case "$H" in 09|10|14|15) echo "acik=1" >> "$GITHUB_OUTPUT" ;; *) echo "acik=0" >> "$GITHUB_OUTPUT" ;; esac
-          echo "İstanbul saati $H"
+          H=$(TZ=Europe/Istanbul date +%H); M=$(TZ=Europe/Istanbul date +%M)
+          case "$H" in 09|10|14|15) if [ "$((10#$M))" -lt 20 ]; then echo "acik=1" >> "$GITHUB_OUTPUT"; else echo "acik=0" >> "$GITHUB_OUTPUT"; fi ;; *) echo "acik=0" >> "$GITHUB_OUTPUT" ;; esac
+          echo "İstanbul saati $H:$M"
       - name: İş Bankası resmi finansal veriler
         if: steps.pencere.outputs.acik == '1'
         run: pip install -q openpyxl && python scripts/isbank_finans.py
@@ -54,7 +59,7 @@ jobs:
         run: |
           git config user.name "sadolayn-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/haberler.json data/piyasa.json data/ppk.json isbank/finans.json isbank/black.json isbank/banka_kampanya.json
+          git add data/haberler.json data/son_dakika.json data/piyasa.json data/ppk.json isbank/finans.json isbank/black.json isbank/banka_kampanya.json
           git diff --cached --quiet || (git commit -q -m "Haberler ve piyasa güncellendi" && git pull --rebase -q && git push -q)
       - name: Bir saat sonra yeniden başlat (PPK günü karar saatine göre)
         if: always()
@@ -63,6 +68,9 @@ jobs:
         run: |
           S=$(python scripts/ppk.py --sleep 2>/dev/null || echo 3300)
           case "$S" in ''|*[!0-9]*) S=3300 ;; esac
+          # Gündüz (İstanbul 07-22) son dakika için 20 dakikada bir; gece saatte bir
+          H=$(TZ=Europe/Istanbul date +%H)
+          if [ "$((10#$H))" -ge 7 ] && [ "$((10#$H))" -lt 22 ] && [ "$S" -gt 1200 ]; then S=1200; fi
           echo "Bekleme: $S sn"
           sleep "$S"
           gh workflow run haberler.yml --repo "${{ github.repository }}" --ref main
