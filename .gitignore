@@ -9,3 +9,7 @@ ham_*
 *.pem
 *.p12
 *.pfx
+
+# Python önbelleği
+__pycache__/
+*.pyc
