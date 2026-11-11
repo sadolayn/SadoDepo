@@ -133,6 +133,45 @@
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", yukari); else yukari();
 
+  // Sol altta "‹ Geri · 🏠" çubuğu (11 Kasım 2026): sayfada aşağı inince belirir, en üste çıkınca (başlıktaki 🏠 göründüğünde) kaybolur.
+  // Sağ alttaki "↑ Başa dön" ile ayna gibi durur. Geri: site içinden gelindiyse önceki sayfa; doğrudan açıldıysa bir üst bölüm
+  // (başlıktaki ilk düğme ana sayfa değilse o, ör. COP31 → İş Bankası Gündemi, Kaza Tutanağı → Hesaplamalar; yoksa ana sayfa).
+  // Ana sayfada, oyunlarda, alt çubuğu olmayan (data-footer="yok") ve kendi İleri/Geri çubuğu olan (data-gezinti="yok") sayfalarda yok.
+  function gezinti() {
+    var bd = document.body;
+    if (!bd || SAYFA === "index" || OYUNLAR.test(SAYFA) || bd.getAttribute("data-footer") === "yok" || bd.getAttribute("data-gezinti") === "yok" || document.getElementById("ortakGez")) return; // data-gezinti="yok": kendi alt çubuğu olan sayfa (Kaza Tutanağı)
+    var hd = document.querySelector("header"); if (!hd) return;
+    var ilk = hd.querySelector("a[href]"), ust = ilk && !/^(index\.html|\.\/?)$/.test(ilk.getAttribute("href")) ? ilk.getAttribute("href") : "index.html";
+    var st = document.createElement("style");
+    st.textContent = "#ortakGez{position:fixed;left:14px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:80;display:flex;align-items:stretch;height:44px;border-radius:999px;border:1px solid #5a4320;background:rgba(12,12,12,.92);box-shadow:0 6px 18px rgba(0,0,0,.6);overflow:hidden;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .2s ease,transform .2s ease;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}" +
+      "#ortakGez.on{opacity:1;transform:none;pointer-events:auto}" +
+      "#ortakGez>*{display:flex;align-items:center;justify-content:center;gap:6px;min-width:44px;padding:0 14px;border:0;background:none;color:#e0a24f;font:700 15px/1 system-ui,-apple-system,sans-serif;text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent}" +
+      "#ortakGez>*+*{border-left:1px solid #3a2c14}#ortakGez .ev{font-size:19px;padding:0 12px}#ortakGez .ev span{font-size:15px;display:none}" +
+      "#ortakGez>*:active{background:rgba(224,162,79,.16)}#ortakGez>*:focus-visible{outline:2px solid #f3d38a;outline-offset:-3px}" +
+      "@media (min-width:760px){#ortakGez .ev span{display:inline}}" +
+      "@media (prefers-reduced-motion:reduce){#ortakGez{transition:none}}";
+    document.head.appendChild(st);
+    var n = document.createElement("nav"); n.id = "ortakGez"; n.setAttribute("aria-label", "Gezinti");
+    n.innerHTML = '<button type="button" aria-label="Geri dön">‹ Geri</button><a class="ev" href="index.html" aria-label="Ana sayfa">🏠<span>Ana sayfa</span></a>';
+    bd.appendChild(n);
+    n.firstChild.onclick = function () {
+      var ic = false; try { ic = !!document.referrer && new URL(document.referrer).origin === location.origin && new URL(document.referrer).pathname !== location.pathname; } catch (e) {}
+      if (ic && history.length > 1) history.back(); else location.href = ust;
+    };
+    // Altta sabit bir çubuk varsa (Kaza Tutanağı'nın İleri/Geri çubuğu) onun üstünde durur; bilgisayarda içerik sütununun hemen solunda
+    var yer = function () {
+      var alt = 16, kz = document.getElementById("kzNav"); if (kz && kz.offsetHeight) alt = kz.offsetHeight + 12;
+      n.style.bottom = "calc(" + alt + "px + env(safe-area-inset-bottom))";
+      var sol = 14, c = document.querySelector(".wrap") || document.querySelector("main");
+      if (innerWidth >= 760 && c) { var r = c.getBoundingClientRect(); if (r.left > n.offsetWidth + 40) sol = Math.max(14, r.left - 18 - n.offsetWidth); }
+      n.style.left = sol + "px";
+    };
+    // Başlıktaki 🏠 ekrandayken gizli, başlık yukarıda kaybolunca görünür (başlığı yapışkan sayfalarda: 160 px aşağı inince)
+    var f = function () { var r = hd.getBoundingClientRect(), on = r.bottom < 0 || window.scrollY > Math.max(160, hd.offsetTop + hd.offsetHeight + 40); n.classList.toggle("on", on); };
+    window.addEventListener("scroll", f, { passive: true }); window.addEventListener("resize", function () { yer(); f(); }); yer(); f();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", gezinti); else gezinti();
+
   // Hangi bölüm gerçekten kullanılıyor? Bir kutu/bölümün içine ilk dokunuşta (düğme, giriş, seçim) o bölümün başlığı
   // anonim olarak GoatCounter'a "bolum-<sayfa>/<başlık>" diye sayılır; sayfa açılışında bir kez, kimlik ve çerez yok.
   function kullanimSayimi() {
