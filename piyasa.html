@@ -151,6 +151,12 @@
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
+<style>/* Geniş ekran (PC, 1000 px ve üstü): telefonda hiçbir şey değişmez */
+@media (min-width: 1000px) {
+  .wrap { max-width: 1000px; }
+  #tiles.grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+</style>
 </head>
 <body>
 <div class="wrap">

@@ -124,6 +124,19 @@
 <script src="rapor.js"></script>
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
+<style>/* Geniş ekran (PC, 1000 px ve üstü): telefonda hiçbir şey değişmez */
+@media (min-width: 1000px) {
+  .wrap { max-width: 1040px; }
+  #cats { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+  .stick .row { max-width: 640px; }
+  .trends { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; }
+  .trends .more { grid-column: 1 / -1; justify-self: center; }
+  .list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 36px; padding: 2px 20px; }
+  .list > .sep, .list > .empty, .list > :not(.n) { grid-column: 1 / -1; }
+  .list > .n:nth-child(1 of .n), .list > .n:nth-child(2 of .n) { border-top: none; }
+}
+@media (min-width: 1000px) { .list > .sep + .n, .list > .sep + .n + .n { border-top: none; } }
+</style>
 </head>
 <body>
 <div class="wrap">

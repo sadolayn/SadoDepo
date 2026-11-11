@@ -209,6 +209,14 @@
 <link rel="stylesheet" href="theme.css">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>/* Geniş ekran (PC, 1000 px ve üstü): telefonda hiçbir şey değişmez */
+@media (min-width: 1000px) {
+  .wrap { max-width: 860px; }
+  .mini > div { max-width: 860px; }
+  .stick .bar { max-width: 600px; margin-left: auto; margin-right: auto; }
+  #haftaBnk .hbnk ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+</style>
 </head>
 <body>
 <div class="wrap">

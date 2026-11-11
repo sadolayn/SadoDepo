@@ -30,6 +30,16 @@
 <script src="vergi.js"></script>
 <script src="yeni.js"></script>
 <link rel="stylesheet" href="theme.css">
+<style>/* Geniş ekran (PC, 1000 px ve üstü): telefonda hiçbir şey değişmez */
+@media (min-width: 1000px) {
+  .wrap { max-width: 1000px; }
+  .stick .tabs { max-width: 560px; margin-left: auto; margin-right: auto; }
+  #ay.panel.active { display: grid; grid-template-columns: minmax(0, 560px) minmax(0, 1fr); column-gap: 18px; align-items: start; }
+  #ay > .card:first-child { grid-row: 1 / span 10; }
+  .stick .sh.on { max-width: 560px; margin-left: 0; }
+  .fab { right: max(16px, calc(50vw - 500px)); }
+}
+</style>
 </head>
 <body>
 <div class="wrap">

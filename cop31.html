@@ -100,6 +100,15 @@
   html[data-tema="acik"] .cp-yok { color: #6b645a; }
   html[data-tema="acik"] .cp-ara input { background: #fff; border-color: #d8ccb4; color: #1b1813; }
 </style>
+<style>/* Geniş ekran (PC, 1000 px ve üstü): telefonda hiçbir şey değişmez */
+@media (min-width: 1000px) {
+  .wrap { max-width: 920px; }
+  #cpListe { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; align-items: start; }
+  #cpListe > :not(.cp-o) { grid-column: 1 / -1; }
+  .cp-ara { max-width: 600px; }
+}
+@media (min-width: 1000px) { .cp-gunler > * { flex: 1 1 0; } }
+</style>
 </head>
 <body>
 <div class="wrap">

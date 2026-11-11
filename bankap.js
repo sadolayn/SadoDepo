@@ -1565,6 +1565,7 @@ $("menuPan").addEventListener("click", (e) => {
 });
 // Hesap seçilince form ekrana gelsin: büyük menü yukarı kayar, üstte ince "Menü ▾" çubuğu kalır, ilk giriş kutusu hemen görünür
 function formaKay() {
+  if (matchMedia("(min-width: 1000px)").matches) { window.scrollTo({ top: 0, behavior: "smooth" }); return; } // PC: menü solda sabit, form zaten üstte
   const top = document.querySelector(".stick").getBoundingClientRect().bottom + window.scrollY - 34;
   window.scrollTo({ top: Math.max(0, top), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 }
