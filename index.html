@@ -1413,7 +1413,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   function sbYaz() {
     if (!sbVakit || !sbHazir) return;
     var haber = ["ppk", "iscep", "gazete", "takvim", "kampanya"].filter(function (k) { return SB[k]; }), ipc = !haber.length && SB.ipucu;
-    var aday = (ipc ? ["ipucu", "hedef"] : haber.concat("hedef")).map(function (k) { return SB[k]; }).filter(Boolean), el = $("sbB");
+    var son = !SB.kampanya && SB.yeni5 ? "yeni5" : "hedef"; // bugün yeni kampanya yazıldıysa 5 günlük sayı tekrar etmesin
+    var aday = (ipc ? ["ipucu", son] : haber.concat(son)).map(function (k) { return SB[k]; }).filter(Boolean), el = $("sbB");
     if (!aday.length || !el) return;
     var ik = el.querySelector(".sbI"); ik.textContent = ipc ? "💡" : "☕"; ik.classList.toggle("ipc", !!ipc);
     if (el.hidden) { el.hidden = false; window.aclBant = true; if (oku("aclGordu", "") !== B) el.classList.add("kirp"); }
@@ -1630,6 +1631,9 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
       }); });
       var yb = Object.keys(G).filter(function (a) { return G[a] === B; }).length;
       if (yb) { SB.kampanya = ["Bugün <b>" + yb + "</b> yeni kampanya", "<b>" + yb + "</b> yeni kampanya"]; sbYaz(); }
+      // 11 Kasım 2026: bandın son parçası çeyrek hedefi yerine son 5 günün yeni kampanyaları (İş Bankası kartındaki sayıyla aynı); yoksa çeyrek hedefi kalır
+      var y5 = Object.keys(G).filter(function (a) { return G[a] >= uc; }).length;
+      if (y5) { SB.yeni5 = ["Son 5 günde <b>" + y5 + "</b> yeni kampanya", "<b>" + y5 + "</b> yeni kampanya"]; sbYaz(); }
     })();
     if (!Bi.fk && !Ti.fk && !Bi.yn && !Ti.yn) return;
     function kutu(tur, ic, ad, alt, b, t) {
