@@ -24,10 +24,16 @@
       "Mavi": 4.21,
       "Lacivert": 4.19
     },
-    "kontrol": "2026-11-09",
+    "kontrol": "2026-11-12",
     "link": "https://www.isbank.com.tr/ek-hesap",
     "taksit_max": 12,
-    "kampanya": null,
+    "kampanya": {
+      "ad": "Taksitli Ek Hesap Kullanma Fırsatı",
+      "bas": "2026-11-06",
+      "bit": "2026-11-13",
+      "oran": "aylık %3,99'dan başlayan faiz",
+      "url": "https://www.isbank.com.tr/kampanyalar/indirimli-taksitli-ek-hesap-kampanyasi"
+    },
     "black": {
       "Black": 4.15,
       "Black Plus": 4.1
