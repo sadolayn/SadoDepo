@@ -1,8 +1,8 @@
 {
- "guncelleme": "2026-11-12T06:56",
+ "guncelleme": "2026-11-12T14:54",
  "isbank": {
   "bireysel": {
-   "toplam": 187,
+   "toplam": 188,
    "kategoriler": [
     {
      "ad": "İş’te Maaş’a Özel",
@@ -151,7 +151,7 @@
     {
      "ad": "Diğer Kampanyalar",
      "slug": "diger-kampanyalar",
-     "adet": 9,
+     "adet": 10,
      "url": "https://www.isbank.com.tr/kampanyalar/diger-kampanyalar",
      "kampanyalar": [
       {
@@ -234,6 +234,15 @@
        "ilk": "2000-01-01",
        "ne": "Faiz & Kredi",
        "nere": "Giyim & Kozmetik"
+      },
+      {
+       "baslik": "Adana 01 Burda AVM’de seçili mağazalarda Maximum Kart’la yapacağınız alışverişlerinizde yıl sonuna kadar toplam 3.000 TL’ye varan MaxiPuan kazanma fırsatı!",
+       "bitis": "2027-01-01",
+       "ozet": "26.10.2026-01.01.2027 arasında Adana 01 Burda AVM’de seçili mağazalarda yer alan İş Bankası POS’larından Maximum bireysel kredi kartları ile yapacağınız aylık toplam 5.000 TL ve üzeri alışverişe 500 TL, 10.000 TL ve…",
+       "url": "https://www.isbank.com.tr/kampanyalar/adana-01-burda-avmde-maxipuan-kazanma-firsati",
+       "ilk": "2026-11-12",
+       "ne": "MaxiPuan",
+       "nere": "Bankacılık"
       }
      ],
      "biten": 0
@@ -1362,9 +1371,9 @@
      "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
      "kampanyalar": [
       {
-       "baslik": "Avantajlı %3,99’dan Başlayan Faiz Oranıyla, Taksitli Ek Hesap Kullanma Fırsatı İş Bankası’nda!",
-       "bitis": "2026-11-13",
-       "ozet": "Nakit ihtiyacınızı kolayca karşılayabileceğiniz Taksitli Ek Hesap, aylık %3,99’dan başlayan faiz oranıyla şimdi daha avantajlı!",
+       "baslik": "Avantajlı %3,49’dan Başlayan Faiz Oranlarıyla, Taksitli Ek Hesap Kullanma Fırsatı İş Bankası’nda!",
+       "bitis": "2026-11-16",
+       "ozet": "Nakit ihtiyacınızı kolayca karşılayabileceğiniz Taksitli Ek Hesap, aylık %3,49’dan başlayan faiz oranlarıyla şimdi daha avantajlı!",
        "url": "https://www.isbank.com.tr/kampanyalar/indirimli-taksitli-ek-hesap-kampanyasi",
        "ilk": "2026-11-09",
        "ne": "Faiz & Kredi",
@@ -1928,7 +1937,7 @@
       {
        "baslik": "Maximiles Business Startup Kredi Kartı Sahiplerine Özel Microsoft Azure’dan 150.000 USD’ye Varan Cloud Kredisi!",
        "bitis": "2027-11-01",
-       "ozet": "Maximiles business startup kredi kart sahibi girişimciler, teknoloji girişimlerinin hızlı ve güvenli bir şekilde ölçeklenmesini sağlayan Microsoft for Startups programı ayrıcalıklarından yararlanıyor!",
+       "ozet": "Maximiles Business Startup Kredi Kart sahibi girişimciler, teknoloji girişimlerinin hızlı ve güvenli bir şekilde ölçeklenmesini sağlayan Microsoft for Startups programı ayrıcalıklarından yararlanıyor!",
        "url": "https://www.isbank.com.tr/kampanyalar/maximiles-business-startup-kredi-karti-sahiplerine-ozel-microsoft-azuredan-cloud-kredisi",
        "ilk": "2026-11-11",
        "ne": "MaxiMil",
@@ -1947,7 +1956,7 @@
       {
        "baslik": "Maximiles Business Startup Kredi Kartı sahiplerine özel, OpenAI ve Microsoft Azure çözümlerinde %65’e varan indirim!",
        "bitis": "2027-11-01",
-       "ozet": "Maximiles business startup kredi kart sahibi girişimciler, bulut altyapısı ve yapay zekâ entegrasyonlarını güçlendirecek OpenAI ve Microsoft Azure servislerine %65’e varan indirim avantajıyla sahip oluyor.",
+       "ozet": "Maximiles Business Startup Kredi Kart sahibi girişimciler, bulut altyapısı ve yapay zekâ entegrasyonlarını güçlendirecek OpenAI ve Microsoft Azure servislerine %65’e varan indirim avantajıyla sahip oluyor.",
        "url": "https://www.isbank.com.tr/kampanyalar/maximiles-business-startup-kredi-karti-sahiplerine-ozel-openai-ve-microsoft-azure-cozumlerinde-indirim-firsati",
        "ilk": "2026-11-11",
        "ne": "MaxiMil",
@@ -1956,7 +1965,7 @@
       {
        "baslik": "Maximiles Business Startup Kredi Kartı sahiplerine özel, Copilot, GitHub ve GitHub Copilot çözümlerinde %15’e varan indirim!",
        "bitis": "2027-11-01",
-       "ozet": "Maximiles business startup kredi kart sahibi girişimciler, yazılım ve teknoloji altyapınızı güçlendirecek GitHub ve GitHub Copilot’a %10 indirimle, yapay zekâ asistanı Microsoft Copilot’a ise %15 indirimle sahip oluyor.",
+       "ozet": "Maximiles Business Startup Kredi Kart sahibi girişimciler, yazılım ve teknoloji altyapınızı güçlendirecek GitHub ve GitHub Copilot’a %10 indirimle, yapay zekâ asistanı Microsoft Copilot’a ise %15 indirimle sahip oluyor.",
        "url": "https://www.isbank.com.tr/kampanyalar/maximiles-business-startup-kredi-karti-sahiplerine-ozel-copilot-ve-github-cozumlerinde-indirim-firsati",
        "ilk": "2026-11-11",
        "ne": "MaxiMil",
@@ -2394,7 +2403,7 @@
  },
  "maximum": {
   "bireysel": {
-   "toplam": 195,
+   "toplam": 197,
    "kampanyalar": [
     {
      "baslik": "E-Ticaret Alışverişlerinizde 3.000 TL'ye Varan MaxiPuan!",
@@ -4228,6 +4237,17 @@
      "nere": "Giyim & Kozmetik"
     },
     {
+     "baslik": "Troy Apple'da peşin fiyatına 6 aya varan taksit!",
+     "bitis": "2026-12-31",
+     "ozet": "Maximum Kart'ınızla Troy Apple Premium Partner mağazaları ve www.troyestore.com adresinden yapacağınız alışverişlere taksit fırsatı!",
+     "url": "https://www.maximum.com.tr/kampanyalar/troy-apple-magazalari-veya-wwwtroyestorecomtrden-pesin-fiyatina-taksit-firsati",
+     "oz": 1,
+     "bt": 1,
+     "ilk": "2026-11-12",
+     "ne": "Taksit",
+     "nere": "Elektronik & Beyaz Eşya"
+    },
+    {
      "baslik": "Desa'da 1.500 TL MaxiPuan!",
      "bitis": "2026-11-30",
      "ozet": "Desa mağazaları ile www.desa.com.tr adresinden tek seferde yapacağınız alışverişinize MaxiPuan kazanın!",
@@ -4337,6 +4357,17 @@
      "ilk": "2000-01-01",
      "ne": "Taksit",
      "nere": "Ev & Yaşam"
+    },
+    {
+     "baslik": "Adana 01 Burda AVM’de seçili mağazalarda Maximum Kart’la yapacağınız alışverişlerinizde yıl sonuna kadar toplam 3.000 TL’ye varan MaxiPuan kazanma fırsatı!",
+     "bitis": "2027-01-01",
+     "ozet": "26.10.2026-01.01.2027 arasında Adana 01 Burda AVM’de seçili mağazalarda yer alan İş Bankası POS’larından Maximum bireysel kredi kartları ile yapacağınız aylık toplam 5.000 TL ve üzeri alışverişe 500 TL, 10.000 TL ve…",
+     "url": "https://www.maximum.com.tr/kampanyalar/adana-01-burda-avmde-maxipuan-kazanma-firsati",
+     "oz": 1,
+     "bt": 1,
+     "ilk": "2026-11-12",
+     "ne": "MaxiPuan",
+     "nere": "Bankacılık"
     },
     {
      "baslik": "EuroLeague maç biletlerine Passo’da %20 İndirim Fırsatı!",
@@ -5343,7 +5374,7 @@
    ]
   },
   "ticari": {
-   "toplam": 18,
+   "toplam": 19,
    "kampanyalar": [
     {
      "baslik": "İş Bankası Ticari Kredi Kartı Yeni Müşterilerine Özel Faizsiz Taksit Kampanyası",
@@ -5434,6 +5465,16 @@
      "ilk": "2000-01-01",
      "ne": "MaxiMil",
      "nere": "Eğlence & Spor"
+    },
+    {
+     "baslik": "Startup Kredi Kartı Sahiplerine, OpenAI Ve Microsoft Azure Çözümlerinde İndirim!",
+     "bitis": "2027-11-01",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-business-startup-kredi-karti-sahiplerine-openai-ve-microsoft-azure-cozumlerinde-indirim",
+     "tv": 2,
+     "ilk": "2026-11-12",
+     "ne": "İndirim",
+     "nere": "Bankacılık"
     },
     {
      "baslik": "Maximiles Business Startup Kredi Kartı Sahiplerine Özel Gemini Enterprise Ürünlerinde %15 İndirim!",
