@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-11-12T14:54",
+ "guncelleme": "2026-11-12T16:52",
  "isbank": {
   "bireysel": {
    "toplam": 188,
@@ -1500,125 +1500,7 @@
      "slug": "ticari-kart-kampanyalari",
      "adet": 13,
      "url": "https://www.isbank.com.tr/kampanyalar/ticari-kart-kampanyalari?v=ticari",
-     "kampanyalar": [
-      {
-       "baslik": "TROY Ticari Kredi Kartlar ile SGK Ödemelerinize 2 Ay Vade ile Sonradan Taksitlendirme Kampanyası",
-       "bitis": "2026-11-30",
-       "ozet": "Maximum Business TROY Kredi Kartınız ile 1 Ekim - 30 Kasım 2026 tarihleri arasında Sosyal Güvenlik Kurumu’nun internet sitesinden veya İş Bankası kanallarından 5.000 TL ve üzeri, toplamda 1.000.000 TL’ye kadar peşin…",
-       "url": "https://www.isbank.com.tr/kampanyalar/maximum-business-troy-ile-sgk-odemelerinizi-taksitlendirme-kampanyasi",
-       "ilk": "2000-01-01",
-       "ne": "Taksit",
-       "nere": "Ödeme & Fatura"
-      },
-      {
-       "baslik": "İşCep'ten Müşterisi Olanlara Özel İndirimli Ticari TNA Ayrıcalığı",
-       "bitis": "2026-11-30",
-       "ozet": "1 Eylül-30 Kasım 2026 tarihleri arasında İşCep’te yer alan “Müşteri Olmak İstiyorum” özelliğiyle İş Bankası müşterisi olun, ticari kredi kartınızla Kasım ayında 36.407 TL taksitle, 1.050 TL ücretle 3 ay vadeli 100.000…",
-       "url": "https://www.isbank.com.tr/kampanyalar/iscepten-musterimiz-olanlara-ozel-indirimli-ticari-tna-ayricaligi",
-       "ilk": "2026-10-27",
-       "ne": "İndirim",
-       "nere": "Bankacılık"
-      },
-      {
-       "baslik": "Ticari Kartlar ile Yapacağınız Yurt Dışı Harcamalarınıza 2.500 TL’ye Varan MaxiPuan!",
-       "bitis": "2026-11-30",
-       "ozet": "İşCep Ticari veya İşPOS'tan kampanyaya katılın, 1 – 30 Kasım 2026 tarihleri arasında ticari kredi kartları ve ticari Bankamatik kartı ile yurt dışı online ve fiziki alışverişlerinizde her 5.000 TL ve üzeri harcamanıza…",
-       "url": "https://www.isbank.com.tr/kampanyalar/ticari-kredi-karti-ile-yurt-disi-harcamalara-maxipuan-firsati",
-       "ilk": "2026-11-01",
-       "ne": "MaxiPuan",
-       "nere": "Seyahat"
-      },
-      {
-       "baslik": "Ticari Kredi Kartlar ile Harcamaya MaxiPuan Kampanyası",
-       "bitis": "2026-11-30",
-       "ozet": "İşCep Ticari veya İşPOS’tan kampanyaya katılın, 1 – 30 Kasım 2026 tarihleri arasında ticari kredi kartınız ile tek seferde yapacağınız 25.000 TL ve üzeri ilk yurt içi harcamanızdan sonra farklı günlerde yapacağınız…",
-       "url": "https://www.isbank.com.tr/kampanyalar/ticari-kredi-kartiniz-ile-yapacaginiz-harcamalara-maxipuan-firsati",
-       "ilk": "2000-01-01",
-       "ne": "MaxiPuan",
-       "nere": "Bankacılık"
-      },
-      {
-       "baslik": "Eğitim Ödemelerine Sonradan Taksitlendirme Kampanyası",
-       "bitis": "2026-11-30",
-       "ozet": "İş Bankası Ticari Kredi Kartınız ile ekli listede yer alan okullardan yapacağınız 50.000 TL ve üzeri, toplamda 2.200.000 TL'ye kadar peşin alışverişlerinizi İşCep'ten 2 veya 3 ay vade ile sonradan taksitlendirme…",
-       "url": "https://www.isbank.com.tr/kampanyalar/ticari-egitim-odemelerine-sonradan-taksitlendirme-kampanyasi",
-       "ilk": "2000-01-01",
-       "ne": "Taksit",
-       "nere": "Eğitim & Kitap"
-      },
-      {
-       "baslik": "TROY Ticari Kredi Kartlarına Özel Seçili Sektörlerde 2 Taksit Fırsatı!",
-       "bitis": "2026-11-30",
-       "ozet": "1 - 30 Kasım 2026 tarihleri arasında Maximum Business TROY ticari kredi kartınız ile 100.000 TL ve üzeri, toplamda 500.000 TL'ye kadar gıda, elektronik-beyaz eşya, cep telefonu, giyim, mobilya, yapı-inşaat, araç bakım…",
-       "url": "https://www.isbank.com.tr/kampanyalar/troy-ticari-kredi-kartlarina-ozel-secili-sektorlerde-taksit-firsati",
-       "ilk": "2000-01-01",
-       "ne": "Taksit",
-       "nere": "Bankacılık"
-      },
-      {
-       "baslik": "İş Bankası Visa Ticari Kart Sahiplerine Enterprise Araç Kiralamalarda İndirim Fırsatı!",
-       "bitis": "2026-12-31",
-       "ozet": "İş Bankası Visa logolu ticari kartınız ile Enterprise web sitesi veya mobil uygulamasından yapacağınız araç kiralamalarında 31.12.2026 tarihine kadar %35 indirim fırsatından yararlanın.",
-       "url": "https://www.isbank.com.tr/kampanyalar/visa-ticari-kart-sahiplerine-enterprise-arac-kiralamalarda-indirim-firsati",
-       "ilk": "2000-01-01",
-       "ne": "İndirim",
-       "nere": "Araç & Akaryakıt"
-      },
-      {
-       "baslik": "Offismekan‘da uzun dönemli ofis kiralamalarınıza özel %20 indirim ve 12 ay taksit fırsatı!",
-       "bitis": "2026-12-31",
-       "ozet": "1 Ocak – 31 Aralık 2026 tarihleri arasında İş Bankası kredi kartları ile Offismekan'dan yapacağınız 100 bin TL ve üzeri ofis kiralamalarında %20 indirim ve vade farksız 12 aya kadar taksit fırsatı sizi bekliyor.",
-       "url": "https://www.isbank.com.tr/kampanyalar/ticari-offismekanda-uzun-donemli-ofis-kiralamalariniza-ozel-indirim-ve-taksit-firsati",
-       "ilk": "2000-01-01",
-       "ne": "İndirim",
-       "nere": "Ev & Yaşam"
-      },
-      {
-       "baslik": "Maximiles Business Kartlar ile Sabiha Gökçen Havalimanı’nda %50 İndirimli Lounge Hizmeti Ayrıcalığı!",
-       "bitis": "2027-04-16",
-       "ozet": "Maximiles Business Kredi Kartlarınız ile Plaza Premium Lounge Bosphorus (dış hatlar terminali) ve Plaza Premium Lounge’da (iç hatlar terminali) %50 indirimli hizmet ayrıcalığından yararlanın.",
-       "url": "https://www.isbank.com.tr/kampanyalar/sabiha-gokcen-havalimaninda-inidirimli-lounge-hizmeti-ayricaligi",
-       "ilk": "2000-01-01",
-       "ne": "MaxiMil",
-       "nere": "Seyahat"
-      },
-      {
-       "baslik": "Maximiles Business Kredi Kartları ile ALLWAYS Hızlı Geçiş hizmeti %50 İndirimli!",
-       "bitis": "2027-04-16",
-       "ozet": "Sabiha Gökçen Havalimanı’ndan yapacağınız seyahatlerde Maximiles Business Kredi Kartlarınız ile ALLWAYS Hızlı Geçiş hizmetinden %50 indirimli olarak yararlanın!",
-       "url": "https://www.isbank.com.tr/kampanyalar/maximiles-business-kredi-kartlari-ile-allways-hizli-gecis-hizmetinde-indirim-kampanyasi",
-       "ilk": "2000-01-01",
-       "ne": "MaxiMil",
-       "nere": "Seyahat"
-      },
-      {
-       "baslik": "Ticari Kredi Kartları ile Deniz Ticaret Odası Ödemelerinde %50 İndirim Ayrıcalığı!",
-       "bitis": "2027-06-17",
-       "ozet": "22 Temmuz 2026 – 17 Haziran 2027 tarihleri arasında İş Bankası ticari kredi kartları ile İstanbul ve Marmara, Ege, Akdeniz, Karadeniz Bölgeleri Deniz Ticaret Odası (İMEAK Deniz Ticaret Odası) İş Bankası üye…",
-       "url": "https://www.isbank.com.tr/kampanyalar/ticari-kredi-kartlari-ile-deniz-ticaret-odasi-odemelerinde-indirim-ayricaligi",
-       "ilk": "2000-01-01",
-       "ne": "İndirim",
-       "nere": "Bankacılık"
-      },
-      {
-       "baslik": "Maximiles Business ve Turizm Kartlar ile Restoranlarda %10 İndirim Ayrıcalığı!",
-       "bitis": "2026-11-30",
-       "ozet": "1-30 Kasım 2026 tarihleri arasında Maximiles Business, Maximum Business Turizm Kart, KTTO Logolu Maximiles Business Kart ve Maximiles TİM İhracatçı Kart ile tek seferde ve farklı günlerde yapacağınız 10.000 TL ve üzeri…",
-       "url": "https://www.isbank.com.tr/kampanyalar/maximiles-business-ve-turizm-kart-ile-restoranlarda-indirim-ayricaligi",
-       "ilk": "2000-01-01",
-       "ne": "MaxiMil",
-       "nere": "Market & Yemek"
-      },
-      {
-       "baslik": "İş Bankası TROY Ticari Kart ile Evidea'da İndirim Fırsatı!",
-       "bitis": "2026-12-06",
-       "ozet": "İş Bankası Ticari TROY Kart ile Evidea mağazaları, www.evidea.com ve Evidea mobil uygulamasından tek seferde yapılacak 1.500 TL ve üzeri alışverişe 300 TL indirim.",
-       "url": "https://www.isbank.com.tr/kampanyalar/is-bankasi-troy-ticari-kart-ile-evideada-indirim-firsati",
-       "ilk": "2026-11-03",
-       "ne": "İndirim",
-       "nere": "Bankacılık"
-      }
-     ],
+     "kampanyalar": [],
      "biten": 0
     },
     {
@@ -4621,17 +4503,6 @@
      "nere": "Eğitim & Kitap"
     },
     {
-     "baslik": "ETS'deki Seçili Otellerde 2026 Yaz Dönemi İçin Yapacağınız Rezervasyonlarınızda Anında %8 Ek İndirim",
-     "bitis": "2026-11-30",
-     "ozet": "",
-     "url": "https://www.maximiles.com.tr/kampanyalar/ets-deki-secili-otellerde-2026-yaz-donemi-icin-rezervasyonlarinizda-aninda-8-ek-indirim-kazanin",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "İndirim",
-     "nere": "Seyahat",
-     "es": "~etsdekiseciliotellerde2026yazdonemiicinyapacaginizrezervasyonlarinizdaaninda%8ekindirim"
-    },
-    {
      "baslik": "Giyim Ve Kozmetik MaxiPuan Kampanyası",
      "bitis": "2026-11-30",
      "ozet": "Maximum Mobil'den veya İşCep’ten kampanyaya katılın, giyim, giyim aksesuarı, ayakkabı, kozmetik ve optik sektörlerinde faaliyet gösteren firmaların Maximum anlaşmalı işyerlerinden 1 - 30 Kasım 2026 tarihleri arasında…",
@@ -4670,26 +4541,6 @@
      "ilk": "2000-01-01",
      "ne": "Taksit",
      "nere": "Araç & Akaryakıt"
-    },
-    {
-     "baslik": "Lastikcim.com'da Michelin Lastik Alışverişinize 4.000 TL MaxiPuan Fırsatı",
-     "bitis": "2026-11-30",
-     "ozet": "İşCep'ten kampanyaya katılın, 30 Kasım tarihine kadar Maximum Kart'ınızla Lastikcim.com üzerinden tek seferde yapacağınız 19.000 - 27.999 TL arasındaki Michelin lastik alışverişlerinize 2.000 TL MaxiPuan, 28.000…",
-     "url": "https://www.maximiles.com.tr/kampanyalar/lastikcim-com-da-michelin-lastik-alisverisinize-4-000-tl-maxipuan-firsati",
-     "tv": 2,
-     "ilk": "2026-11-06",
-     "ne": "MaxiPuan",
-     "nere": "Araç & Akaryakıt"
-    },
-    {
-     "baslik": "Lululemon'da 1.000 TL MaxiPuan Fırsatı",
-     "bitis": "2026-11-30",
-     "ozet": "İşCep'ten kampanyaya katılın, 31 Ağustos'a kadar Maximum Kart’ınızla lululemon mağazaları ve lululemon.com.tr adresinden tek seferde yapacağınız 10.000 TL ve üzeri alışverişlerde 1.000 TL MaxiPuan kazanın!",
-     "url": "https://www.maximiles.com.tr/kampanyalar/lululemon-da-1-000-tl-maxipuan",
-     "tv": 2,
-     "ilk": "2026-11-03",
-     "ne": "MaxiPuan",
-     "nere": "Giyim & Kozmetik"
     },
     {
      "baslik": "Market Alışverişlerinize 750 TL MaxiPuan Fırsatı!",
@@ -4752,26 +4603,6 @@
      "nere": "Araç & Akaryakıt"
     },
     {
-     "baslik": "20.000 TL Ve Üzeri CarrefourSA Alışverişlerinize 1.000 TL MaxiPuan!",
-     "bitis": "2026-11-30",
-     "ozet": "1 - 30 Kasım 2026 tarihleri arasında Maximum Kart’ınız ile CarrefourSA mağazaları ile CarrefourSA Online Market uygulaması veya carrefoursa.com’dan tek seferde yapacağınız 20.000 TL ve üzeri ilk taksitli alışverişinize…",
-     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-20-000-tl-ve-uzeri-carrefoursa-alisverislerinize-1-000-tl-maxipuan",
-     "tv": 2,
-     "ilk": "2026-11-03",
-     "ne": "MaxiPuan",
-     "nere": "Market & Yemek"
-    },
-    {
-     "baslik": "AdL'de 750 TL MaxiPuan!",
-     "bitis": "2026-11-30",
-     "ozet": "Kampanyaya katılın, 1 - 30 Kasım 2026 tarihleri arasında adL mağazaları ile www.adl.com.tr adresinden tek seferde yapacağınız 10.000 TL ve üzeri ilk alışverişinize 750 TL MaxiPuan kazanın!",
-     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-adl-de-750-tl-maxipuan-kampanyasi",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "MaxiPuan",
-     "nere": "Giyim & Kozmetik"
-    },
-    {
      "baslik": "ETS’deki Seçili Oteller Ve Turlarda 7.500 TL’ye Varan MaxiPuan Fırsatı!",
      "bitis": "2026-11-30",
      "ozet": "İşCep'ten kampanyaya katılın; 1 - 30 Kasım 2026 tarihleri arasında Maximum Kart’ınızla ETS’deki seçili yurt içi otelleri, Kıbrıs otelleri, yurt dışı turları veya gemi turları için seçili ödeme seçenekleri ile tek…",
@@ -4790,16 +4621,6 @@
      "ilk": "2000-01-01",
      "ne": "İndirim",
      "nere": "Seyahat"
-    },
-    {
-     "baslik": "Samsonite'ta 2.500 TL MaxiPuan!",
-     "bitis": "2026-11-30",
-     "ozet": "Samsonite mağazaları ile www.samsonite.com.tr adresinden yapacağınız alışverişinizde MaxiPuan kazanma fırsatı!",
-     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-samsonite-ta-2-500-tl-ye-varan-maxipuan-kampanyasi",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "MaxiPuan",
-     "nere": "Giyim & Kozmetik"
     },
     {
      "baslik": "Ucuzabilet.com’da Peşin Fiyatına 3 Aya Varan Taksit Fırsatı!",
@@ -4840,16 +4661,6 @@
      "ilk": "2026-11-01",
      "ne": "MaxiMil",
      "nere": "Genel"
-    },
-    {
-     "baslik": "Love My Body'de 750 TL MaxiPuan!",
-     "bitis": "2026-11-30",
-     "ozet": "Kampanyaya katılın, 1 - 30 Kasım 2026 tarihleri arasında Love My Body mağazaları ile www.lovemybody.com.tr adresinden tek seferde yapacağınız 10.000 TL ve üzeri ilk alışverişinize 750 TL MaxiPuan kazanın!",
-     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-tan-love-my-body-de-750-tl-maxipuan-kampanyasi",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "MaxiPuan",
-     "nere": "Giyim & Kozmetik"
     },
     {
      "baslik": "Marks & Spencer'da 800 TL'ye Varan MaxiPuan Fırsatı",
@@ -4912,16 +4723,6 @@
      "nere": "Elektronik & Beyaz Eşya"
     },
     {
-     "baslik": "Miele'de Peşin Fiyatına 6 Taksit!",
-     "bitis": "2026-11-30",
-     "ozet": "Maximum Kart’ınız ile Miele mağazaları ve shop.miele.com.tr’den yapacağınız alışverişlerinizde taksit fırsatı!",
-     "url": "https://www.maximiles.com.tr/kampanyalar/miele-de-pesin-fiyatina-6-taksit",
-     "tv": 2,
-     "ilk": "2026-11-06",
-     "ne": "Taksit",
-     "nere": "Elektronik & Beyaz Eşya"
-    },
-    {
      "baslik": "Mobil Temassız Ve TR Karekod Ödemelerinize Toplam 600 TL MaxiPuan!",
      "bitis": "2026-11-30",
      "ozet": "1-30 Kasım 2026 tarihleri arasında İş Bankası kartlarınızla Mobil Temassız ve TR Karekod Ödemelerinize Toplam 600 TL MaxiPuan Fırsatı!",
@@ -4949,26 +4750,6 @@
      "tv": 2,
      "ilk": "2000-01-01",
      "ne": "Taksit",
-     "nere": "Online Alışveriş"
-    },
-    {
-     "baslik": "Pazarama'da Peşin Fiyatına 9 Taksit Fırsatı!",
-     "bitis": "2026-11-30",
-     "ozet": "30 Ekim - 30 Kasım 2026 tarihleri arasında Maximum Kart'ınız ile Pazarama'dan yapacağınız alışverişlerinizde peşin fiyatına 9 taksit fırsatı!",
-     "url": "https://www.maximiles.com.tr/kampanyalar/pazarama-da-pesin-fiyatina-9-taksit-firsati",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "Taksit",
-     "nere": "Online Alışveriş"
-    },
-    {
-     "baslik": "Pazarama'da Toplam 1.000 TL Alışverişinize Ücretsiz Aylık Pazarama Plus Üyeliği Fırsatı!",
-     "bitis": "2026-11-30",
-     "ozet": "Pazarama'dan Maximum Kart’la yapacağınız alışverişlerinize, mevcut üyeliğiniz kapsamında Maximum Kart ile ödediğiniz aylık Pazarama Plus üyelik ücreti kartınıza iade!",
-     "url": "https://www.maximiles.com.tr/kampanyalar/pazarama-da-toplam-1-000-tl-alisverisinize-ucretsiz-aylik-pazarama-plus-uyeligi-firsati",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "İndirim",
      "nere": "Online Alışveriş"
     },
     {
@@ -5022,16 +4803,6 @@
      "nere": "Online Alışveriş"
     },
     {
-     "baslik": "Dolap Ve Trendyolmilla'da Peşin Fiyatına 3 Taksit Fırsatı",
-     "bitis": "2026-11-30",
-     "ozet": "01-30 Kasım 2026 tarihleri arasında Maximum Kart'ınız ile Trendyolmilla ve Dolap'tan yapacağınız alışverişlerinizde 3 taksit fırsatı!",
-     "url": "https://www.maximiles.com.tr/kampanyalar/trendyolmilla-ve-dolap-ta-pesin-fiyatina-3-taksit-firsati",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "Taksit",
-     "nere": "Giyim & Kozmetik"
-    },
-    {
      "baslik": "Türk Hava Yolları’nda 6’ya Varan Taksit Fırsatı!",
      "bitis": "2026-11-30",
      "ozet": "Maximum Kart'ınız ile turkishairlines.com’dan ve Turkish Airlines mobil uygulamasından gerçekleştireceğiniz yurt içi bilet alımlarında taksit fırsatı.",
@@ -5040,16 +4811,6 @@
      "ilk": "2000-01-01",
      "ne": "Taksit",
      "nere": "Seyahat"
-    },
-    {
-     "baslik": "Up Enerji Hızlı Öde İle Akaryakıt Alımlarında İndirim Fırsatı!",
-     "bitis": "2026-11-30",
-     "ozet": "Maximum Kart'ınıza özel 1 - 30 Kasım 2026 tarihleri arasında İşCep üzerinden “Aracım > Tüm İşlemler > Yakıt ve Şarj Hizmetleri > Hızlı Öde” adımlarını izleyerek gerçekleştirilen yakıt alışverişlerinde anında %3 indirim…",
-     "url": "https://www.maximiles.com.tr/kampanyalar/up-enerji-hizli-ode-ile-akaryakit-alimlarinda-indirim-firsati",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "İndirim",
-     "nere": "Araç & Akaryakıt"
     },
     {
      "baslik": "Yepy'de Peşin Fiyatına 3 Ve 6 Taksit Fırsatı!",
@@ -5100,6 +4861,127 @@
      "ilk": "2000-01-01",
      "ne": "MaxiMil",
      "nere": "Seyahat"
+    },
+    {
+     "baslik": "ETS'deki Seçili Otellerde 2026 Yaz Dönemi İçin Yapacağınız Rezervasyonlarınızda Anında %8 Ek İndirim",
+     "bitis": "2026-11-30",
+     "ozet": "",
+     "url": "https://www.maximiles.com.tr/kampanyalar/ets-deki-secili-otellerde-2026-yaz-donemi-icin-rezervasyonlarinizda-aninda-8-ek-indirim-kazanin",
+     "tv": 2,
+     "ne": "İndirim",
+     "nere": "Seyahat",
+     "es": "~etsdekiseciliotellerde2026yazdonemiicinyapacaginizrezervasyonlarinizdaaninda%8ekindirim",
+     "ilk": "2000-01-01"
+    },
+    {
+     "baslik": "Lastikcim.com'da Michelin Lastik Alışverişinize 4.000 TL MaxiPuan Fırsatı",
+     "bitis": "2026-11-30",
+     "ozet": "İşCep'ten kampanyaya katılın, 30 Kasım tarihine kadar Maximum Kart'ınızla Lastikcim.com üzerinden tek seferde yapacağınız 19.000 - 27.999 TL arasındaki Michelin lastik alışverişlerinize 2.000 TL MaxiPuan, 28.000…",
+     "url": "https://www.maximiles.com.tr/kampanyalar/lastikcim-com-da-michelin-lastik-alisverisinize-4-000-tl-maxipuan-firsati",
+     "tv": 2,
+     "ne": "MaxiPuan",
+     "nere": "Araç & Akaryakıt",
+     "ilk": "2026-11-06"
+    },
+    {
+     "baslik": "Lululemon'da 1.000 TL MaxiPuan Fırsatı",
+     "bitis": "2026-11-30",
+     "ozet": "İşCep'ten kampanyaya katılın, 31 Ağustos'a kadar Maximum Kart’ınızla lululemon mağazaları ve lululemon.com.tr adresinden tek seferde yapacağınız 10.000 TL ve üzeri alışverişlerde 1.000 TL MaxiPuan kazanın!",
+     "url": "https://www.maximiles.com.tr/kampanyalar/lululemon-da-1-000-tl-maxipuan",
+     "tv": 2,
+     "ne": "MaxiPuan",
+     "nere": "Giyim & Kozmetik",
+     "ilk": "2026-11-03"
+    },
+    {
+     "baslik": "20.000 TL Ve Üzeri CarrefourSA Alışverişlerinize 1.000 TL MaxiPuan!",
+     "bitis": "2026-11-30",
+     "ozet": "1 - 30 Kasım 2026 tarihleri arasında Maximum Kart’ınız ile CarrefourSA mağazaları ile CarrefourSA Online Market uygulaması veya carrefoursa.com’dan tek seferde yapacağınız 20.000 TL ve üzeri ilk taksitli alışverişinize…",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-20-000-tl-ve-uzeri-carrefoursa-alisverislerinize-1-000-tl-maxipuan",
+     "tv": 2,
+     "ne": "MaxiPuan",
+     "nere": "Market & Yemek",
+     "ilk": "2026-11-03"
+    },
+    {
+     "baslik": "AdL'de 750 TL MaxiPuan!",
+     "bitis": "2026-11-30",
+     "ozet": "Kampanyaya katılın, 1 - 30 Kasım 2026 tarihleri arasında adL mağazaları ile www.adl.com.tr adresinden tek seferde yapacağınız 10.000 TL ve üzeri ilk alışverişinize 750 TL MaxiPuan kazanın!",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-adl-de-750-tl-maxipuan-kampanyasi",
+     "tv": 2,
+     "ne": "MaxiPuan",
+     "nere": "Giyim & Kozmetik",
+     "ilk": "2000-01-01"
+    },
+    {
+     "baslik": "Samsonite'ta 2.500 TL MaxiPuan!",
+     "bitis": "2026-11-30",
+     "ozet": "Samsonite mağazaları ile www.samsonite.com.tr adresinden yapacağınız alışverişinizde MaxiPuan kazanma fırsatı!",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-samsonite-ta-2-500-tl-ye-varan-maxipuan-kampanyasi",
+     "tv": 2,
+     "ne": "MaxiPuan",
+     "nere": "Giyim & Kozmetik",
+     "ilk": "2000-01-01"
+    },
+    {
+     "baslik": "Love My Body'de 750 TL MaxiPuan!",
+     "bitis": "2026-11-30",
+     "ozet": "Kampanyaya katılın, 1 - 30 Kasım 2026 tarihleri arasında Love My Body mağazaları ile www.lovemybody.com.tr adresinden tek seferde yapacağınız 10.000 TL ve üzeri ilk alışverişinize 750 TL MaxiPuan kazanın!",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-tan-love-my-body-de-750-tl-maxipuan-kampanyasi",
+     "tv": 2,
+     "ne": "MaxiPuan",
+     "nere": "Giyim & Kozmetik",
+     "ilk": "2000-01-01"
+    },
+    {
+     "baslik": "Miele'de Peşin Fiyatına 6 Taksit!",
+     "bitis": "2026-11-30",
+     "ozet": "Maximum Kart’ınız ile Miele mağazaları ve shop.miele.com.tr’den yapacağınız alışverişlerinizde taksit fırsatı!",
+     "url": "https://www.maximiles.com.tr/kampanyalar/miele-de-pesin-fiyatina-6-taksit",
+     "tv": 2,
+     "ne": "Taksit",
+     "nere": "Elektronik & Beyaz Eşya",
+     "ilk": "2026-11-06"
+    },
+    {
+     "baslik": "Pazarama'da Peşin Fiyatına 9 Taksit Fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "30 Ekim - 30 Kasım 2026 tarihleri arasında Maximum Kart'ınız ile Pazarama'dan yapacağınız alışverişlerinizde peşin fiyatına 9 taksit fırsatı!",
+     "url": "https://www.maximiles.com.tr/kampanyalar/pazarama-da-pesin-fiyatina-9-taksit-firsati",
+     "tv": 2,
+     "ne": "Taksit",
+     "nere": "Online Alışveriş",
+     "ilk": "2000-01-01"
+    },
+    {
+     "baslik": "Pazarama'da Toplam 1.000 TL Alışverişinize Ücretsiz Aylık Pazarama Plus Üyeliği Fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "Pazarama'dan Maximum Kart’la yapacağınız alışverişlerinize, mevcut üyeliğiniz kapsamında Maximum Kart ile ödediğiniz aylık Pazarama Plus üyelik ücreti kartınıza iade!",
+     "url": "https://www.maximiles.com.tr/kampanyalar/pazarama-da-toplam-1-000-tl-alisverisinize-ucretsiz-aylik-pazarama-plus-uyeligi-firsati",
+     "tv": 2,
+     "ne": "İndirim",
+     "nere": "Online Alışveriş",
+     "ilk": "2000-01-01"
+    },
+    {
+     "baslik": "Dolap Ve Trendyolmilla'da Peşin Fiyatına 3 Taksit Fırsatı",
+     "bitis": "2026-11-30",
+     "ozet": "01-30 Kasım 2026 tarihleri arasında Maximum Kart'ınız ile Trendyolmilla ve Dolap'tan yapacağınız alışverişlerinizde 3 taksit fırsatı!",
+     "url": "https://www.maximiles.com.tr/kampanyalar/trendyolmilla-ve-dolap-ta-pesin-fiyatina-3-taksit-firsati",
+     "tv": 2,
+     "ne": "Taksit",
+     "nere": "Giyim & Kozmetik",
+     "ilk": "2000-01-01"
+    },
+    {
+     "baslik": "Up Enerji Hızlı Öde İle Akaryakıt Alımlarında İndirim Fırsatı!",
+     "bitis": "2026-11-30",
+     "ozet": "Maximum Kart'ınıza özel 1 - 30 Kasım 2026 tarihleri arasında İşCep üzerinden “Aracım > Tüm İşlemler > Yakıt ve Şarj Hizmetleri > Hızlı Öde” adımlarını izleyerek gerçekleştirilen yakıt alışverişlerinde anında %3 indirim…",
+     "url": "https://www.maximiles.com.tr/kampanyalar/up-enerji-hizli-ode-ile-akaryakit-alimlarinda-indirim-firsati",
+     "tv": 2,
+     "ne": "İndirim",
+     "nere": "Araç & Akaryakıt",
+     "ilk": "2000-01-01"
     },
     {
      "baslik": "Maximiles Black'inize Özel Swissotel Açık Hava Sineması Biletlerinde %20 İndirim!",
