@@ -1,7 +1,16 @@
 {
-  "guncelleme": "2026-11-11T07:10:00+03:00",
+  "guncelleme": "2026-11-12T07:25:00+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
+    {
+      "tarih": "2026-11-11",
+      "kurum": "TCMB",
+      "baslik": "Kredi büyüme sınırları 0,5 puan artırıldı; uzun vadeli yükümlülüklerin zorunlu karşılıklarına faiz ödenecek",
+      "ozet": "TCMB'nin 11 Kasım 2026 tarihli makroihtiyati çerçeve basın duyurusuyla (2026-49) sekiz haftalık büyüme sınırları yükseltildi: ihtiyaç ve taşıt kredilerinde %3'ten %3,5'e, KOBİ'lere TL kredilerde %5'ten %5,5'e, KOBİ dışı işletmelere TL kredilerde %2'den %2,5'e. Ayrıca bankaların ve finansman şirketlerinin 1 yıldan uzun vadeli TL ve YP mevduat dışı yükümlülükleri için tesis edilen zorunlu karşılıklara TL cinsinden faiz/telafi ödemesi yapılmasına karar verildi.",
+      "etki": "Bankaların bu kredi türlerinde sekiz haftada büyütebileceği tutar artıyor; zorunlu karşılık faiz/telafi oranı ve yürürlük tarihi okunan haberlerde yer almadı.",
+      "onemli": true,
+      "url": "https://www.aa.com.tr/tr/ekonomi/tcmb-kredi-buyume-sinirlarini-yukseltti/4121423"
+    },
     {
       "tarih": "2026-11-10",
       "kurum": "TCMB",
@@ -10,6 +19,14 @@
       "onemli": false,
       "url": "https://www.resmigazete.gov.tr/eskiler/2026/11/20261111-5.pdf",
       "gazete": "2026-11-11"
+    },
+    {
+      "tarih": "2026-11-09",
+      "kurum": "TMSF",
+      "baslik": "Tasfiye edilen fonlarla bağlantılı işlemlerde 31,6 milyar TL gönüllü iade",
+      "ozet": "TMSF, tasfiye edilen fonlarda şüpheli işlemlerle belli bir rakamın üzerinde kazanç elde eden yatırımcılar hakkında inceleme başlattığını ve gönüllü iade yoluyla şimdiye kadar 31,6 milyar TL tahsil edildiğini duyurdu. Kurum, kazanç eşiklerinin adım adım düşürülerek kapsamın genişletileceğini ve bu sürecin kişilerin suçlu ya da suçsuz olduğuna ilişkin nihai bir hüküm ifade etmediğini belirtti.",
+      "onemli": false,
+      "url": "https://www.evrensel.net/haber/6008646/tmsfden-gonullu-iade-islemlerine-iliskin-duyuru-simdiye-kadar-316-milyar-tahsil-edilmistir"
     },
     {
       "tarih": "2026-11-04",
