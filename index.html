@@ -258,6 +258,13 @@
     .mn { max-width: 860px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; align-items: start; }
     .mn > * { grid-column: 1 / -1; min-width: 0; }
     .mn > .mnB { grid-column: auto; }
+    /* 13 Kasım 2026: Sabah brifingi PC'de en altta tam genişlik; açılınca içi iki sütun */
+    .mn > .mnB.mnTam { grid-column: 1 / -1; }
+    .mnTam #aclSat { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; align-items: start; }
+    .mnTam #aclSat > .aclS:nth-child(2) { border-top: 0; }
+    .mnTam #aclSat > .aclP { grid-column: 1 / -1; border-top: 1px solid rgba(140,130,110,.28); margin-top: 2px; padding-top: 12px; }
+    .mnTam .aclPG { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+    .mnTam .aclSeg { max-width: 420px; }
     .mn > .ara, .mn > .araAlt { width: 100%; max-width: 520px; margin-left: auto; margin-right: auto; box-sizing: border-box; }
     nav.mn:has(#araQ:not(:placeholder-shown)) { display: block; max-width: 520px; } /* arama sırasında tek sütun */
     .top.kompakt { max-width: 860px; grid-template-columns: minmax(0, 1fr) 76px minmax(0, 268px) 76px minmax(0, 1fr);
@@ -922,7 +929,9 @@
     <div class="rows">
       <a class="row" href="oyunlar.html" data-ara="oyun batak king balayı tavla solitaire uçuç bulmaca tahmin" data-yeni="oyunlar|2026-10-17|YENİ OYUN"><span class="ik">🎮</span><div><div class="t">Oyunlar</div><div class="d">Batak, King, Balayı King, Tavla, Solitaire, UçUç ve bulmacalar; Sadolayn'a karşı oyna, Yıldız topla</div></div><span class="ok">›</span></a>
     </div>
+    </div>
 
+    <div class="mnB mnTam">
     <h2>Sabah brifingi <small>tek bakışta</small></h2>
     <div class="rows">
       <a class="row acl aclR" id="aclRow" href="#acilis" role="button" aria-expanded="false" aria-controls="acilis" data-ara="açılış kartı sabah brifing çeyrek iş günü ppk bölge kampanya faiz kredi" data-yeni="acilis3|2026-11-08|YENİLENDİ"><span class="ik">☕</span><div><div class="t">Açılış kartı</div><div class="d" id="aclD">Çeyrek, Resmî Gazete, bölgen, PPK ve kampanyalar</div></div><span class="ok">›</span></a>
