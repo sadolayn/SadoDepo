@@ -497,6 +497,8 @@
   .aclBar { display: block; height: 6px; border-radius: 3px; background: #262626; margin-top: 6px; overflow: hidden; }
   .aclBar i { display: block; height: 100%; background: linear-gradient(90deg, #f3d38a, #e0a24f); }
   .aclK { border-top: 1px solid #262626; padding: 10px 2px 2px; }
+  .aclPy:not(:empty) { border-top: 1px solid #262626; margin-top: 10px; padding-top: 4px; }
+  html[data-tema="acik"] .aclPy:not(:empty) { border-color: #dcd3c2; }
   .aclKB { display: flex; align-items: center; gap: 8px; }
   .aclKB .x { font-size: 13.5px; font-weight: 600; }
   .aclAlt { font-size: 11px; color: #8a8a8a; padding: 8px 2px 0; line-height: 1.5; }
@@ -950,6 +952,7 @@
         <div class="aclIc">
           <div id="aclSat"></div>
           <div class="aclK" id="aclK" hidden></div>
+          <div class="aclPy" id="aclPy"></div><!-- 13 Kasım 2026: Döviz & Emtia kampanyaların altında -->
           <div class="aclAlt" id="aclAlt"></div>
         </div>
       </div>
@@ -1492,7 +1495,10 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 
   // ---- 2) Satırlar: çeyrek, Gazete, PPK, takvim (sırası sabit) ----
   var SAT = {}, SIRA = ["ceyrek", "gazete", "iscep", "ipucu", "bolge", "ppk", "takvim", "piyasa"]; // piyasa kampanyaların hemen üstünde
-  function satir(ad, html) { SAT[ad] = html; $("aclSat").innerHTML = SIRA.map(function (k) { return SAT[k] || ""; }).join(""); goster(); }
+  function satir(ad, html) {
+    if (ad === "piyasa") { $("aclPy").innerHTML = html; goster(); return; } // Döviz & Emtia ayrı kutuda, Kampanyalar'ın altında (13 Kasım 2026)
+    SAT[ad] = html; $("aclSat").innerHTML = SIRA.map(function (k) { return SAT[k] || ""; }).join(""); goster();
+  }
   function kalip(href, ik, x, dis) { return '<a class="aclS" href="' + href + '"' + (dis ? ' target="_blank" rel="noopener"' : "") + '><span class="ik" aria-hidden="true">' + ik + '</span><span class="x">' + x + '</span><span class="ok" aria-hidden="true">›</span></a>'; }
 
   // Döviz & Emtia: döviz 1 birimin TL karşılığı; emtia uluslararası dolar fiyatı (ons / varil). Değişim, başlığın altındaki dönem seçicisine göre
@@ -1536,8 +1542,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
         '<div class="aclPG">' + kutular(b) + "</div>" + sepet(b) +
         '<details class="aclPN"><summary>ℹ️ Değerler nasıl okunur?</summary>Döviz: 1 birimin TL karşılığı. Emtia: uluslararası dolar fiyatı; altın, gümüş, platin ve paladyum 1 ons, petrol 1 varil Brent. ▲▼ kutularda seçilen dönemin başındaki kapanışa göre (günlükte bir önceki kapanış), kendi biriminde. Döviz &amp; Emtia sayfasında değişimler TL bazındadır; bu yüzden emtiada buradakinden küçük bir fark görülebilir (aradaki fark doların TL karşısındaki hareketidir). Sepetim: seçilen kalemlerin seçilen dönemdeki (gün, hafta, ay, 3 ay, 6 ay, yıl) değişiminin eşit ağırlıklı ortalaması, hepsi TL bazında; yatırım tavsiyesi değildir.</details></div>');
     }
-    $("aclSat").addEventListener("click", function (e) { var b = e.target.closest("button[data-don]"); if (!b) return; don = b.dataset.don; yaz("aclDonem", don); ciz(); });
-    $("aclSat").addEventListener("click", function (e) {
+    $("aclPy").addEventListener("click", function (e) { var b = e.target.closest("button[data-don]"); if (!b) return; don = b.dataset.don; yaz("aclDonem", don); ciz(); });
+    $("aclPy").addEventListener("click", function (e) {
       var b = e.target.closest("button[data-sep]"); if (!b) return;
       var k = b.dataset.sep, i = SEP.indexOf(k); if (i > -1) SEP.splice(i, 1); else SEP.push(k);
       yaz("aclSepet", SEP.join(",")); ciz();
@@ -1730,7 +1736,11 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   function durum(acik, kaydir) {
     K.hidden = !acik; row.setAttribute("aria-expanded", acik ? "true" : "false"); row.classList.toggle("acik", acik);
     if (acik) { yaz("aclGordu", B); OZ.gor = ""; ozetYaz(); var sb = $("sbB"); if (sb) sb.classList.remove("kirp"); }
-    if (acik && kaydir) row.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (acik && kaydir) { // üstteki yapışkan çubuğun altında kalmasın: "Sabah brifingi" başlığı görünecek kadar yukarıdan başla (13 Kasım 2026)
+      var bas = row.closest(".mnB"), hb = bas && bas.querySelector("h2") || row, bar = document.getElementById("bar");
+      var ust = bar && getComputedStyle(bar).display !== "none" ? bar.offsetHeight : 0;
+      window.scrollTo({ top: hb.getBoundingClientRect().top + window.scrollY - ust - 12, behavior: "smooth" });
+    }
   }
   durum(false); // her açılışta kapalı başlar; satıra dokununca açılır (site uzamasın)
   row.addEventListener("click", function (e) {
