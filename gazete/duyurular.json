@@ -1,7 +1,15 @@
 {
-  "guncelleme": "2026-11-12T07:25:00+03:00",
+  "guncelleme": "2026-11-13T06:55:50+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
+    {
+      "tarih": "2026-11-12",
+      "kurum": "TCMB",
+      "baslik": "Yılın son Enflasyon Raporu: yıl sonu tahminleri yükseltildi",
+      "ozet": "TCMB'nin 12 Kasım 2026'da açıkladığı Enflasyon Raporu 2026-IV'te yıl sonu enflasyon tahmini 2026 için %28'den %29,5'e, 2027 için %15'ten %21'e, 2028 için %9'dan %13,5'e yükseltildi. Haberlere göre 2026 yıl sonu gıda enflasyonu tahmini de %28,5'ten %31,3'e çıkarıldı.",
+      "onemli": false,
+      "url": "https://www.cnbce.com/haberler/tcmbnin-yilin-son-enflasyon-raporu-tahminler-degisti-h41633"
+    },
     {
       "tarih": "2026-11-11",
       "kurum": "TCMB",
