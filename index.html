@@ -74,7 +74,7 @@
   .top.odulOn .odS { opacity: 1; pointer-events: auto; }
   .top:not(.odulOn) .odS, .top:not(.odulOn) .odS * { animation-play-state: paused !important; } /* görünmezken işlemci yemesin (11 Kasım 2026) */
   .top .hello .clock, .top .hello .datec { transition: opacity .4s ease; }
-  .top.odulOn.odDar .hello .clock, .top.odulOn.odDar .hello .datec { opacity: 0 !important; pointer-events: none; }
+  .top.odulOn.odDar .hello .clock, .top.odulOn.odDar .hello .datec, .top.odulOn.odDar .tarihK .temaUst { opacity: 0 !important; pointer-events: none; }
   .odS .ray { position: absolute; top: -140px; left: 50%; width: 420px; height: 420px; margin-left: -210px; border-radius: 50%;
     background: repeating-conic-gradient(from 0deg, rgba(255,214,130,.22) 0deg 6deg, transparent 6deg 18deg);
     -webkit-mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 35%, transparent 68%); mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 35%, transparent 68%);
@@ -659,6 +659,15 @@
   @keyframes tIk { from { opacity: 0; transform: rotate(-60deg) scale(.7); } }
   .temaN { position: absolute; right: 48px; top: 50%; transform: translate(6px, -50%); opacity: 0; pointer-events: none; white-space: nowrap; padding: 5px 11px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); color: var(--accent); font: italic 600 13px Georgia, "Times New Roman", serif; transition: opacity .2s ease, transform .2s ease; z-index: 5; }
   .temaN.on { opacity: 1; transform: translate(0, -50%); }
+  /* 13 Kasım 2026: düğme takvim kartının hemen altında (telefon ve bilgisayar), yalnızca simge; ad, dokununca solunda belirir */
+  .tarihK { position: relative; justify-self: center; display: flex; flex-direction: column; align-items: center; }
+  .top.kompakt .hello .tarihK { grid-area: tarih; }
+  .tarihK .temaUst { position: absolute; top: calc(100% + 7px); left: 50%; transform: translateX(-50%); z-index: 3; }
+  .tarihK .temaD { width: 32px; height: 32px; }
+  .tarihK .temaD svg { width: 17px; height: 17px; }
+  .tarihK .temaAd { display: none; }
+  .tarihK .temaN { right: 40px; }
+  .araAlt:not(:has(.temaUst)) { justify-content: flex-end; }
   @media (prefers-reduced-motion: reduce) { .temaD svg { animation: none !important; } .temaN { transition: none; } }
   html[data-tema="acik"] .ysEt { color: #8f5d12; }
   html[data-tema="acik"] .ysEt i { background: #e0a24f; }
@@ -832,8 +841,19 @@
         <p class="greet" id="greet"></p>
         <p class="welcome" id="welcome">Hoş geldiniz</p>
       </div>
+      <div class="tarihK"><!-- 13 Kasım 2026: Görünüm düğmesi takvimin hemen altında, simge olarak -->
       <div class="datec" aria-label="Tarih" id="datec">
         <div class="m" id="dm"></div><div class="d" id="dd"></div><div class="w" id="dw"></div>
+      </div>
+        <div class="temaUst">
+          <span class="temaN" id="temaN" aria-hidden="true"></span>
+          <button type="button" class="temaD" id="temaSec" data-s="oto" aria-label="Görünüm">
+            <svg class="iA" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+            <svg class="iK" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+            <svg class="iS" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+            <span class="temaAd" id="temaAd">Görünüm</span>
+          </button>
+        </div>
       </div>
     </div>
     <!-- Kayan yazı: merak cümleleri + açık bir "gir, bak" düğmesi -->
@@ -867,15 +887,6 @@
       <button type="button" id="araSil" aria-label="Aramayı temizle" hidden>✕</button>
     </div>
     <div class="araAlt">
-      <div class="temaUst">
-        <span class="temaN" id="temaN" aria-hidden="true"></span>
-        <button type="button" class="temaD" id="temaSec" data-s="oto" aria-label="Görünüm">
-          <svg class="iA" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
-          <svg class="iK" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
-          <svg class="iS" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
-          <span class="temaAd" id="temaAd">Görünüm</span>
-        </button>
-      </div>
       <button type="button" id="azBtn" aria-expanded="false">🔤 Tüm araçlar A-Z ›</button>
     </div>
     <div class="altL" id="altL" hidden></div>
@@ -1085,7 +1096,7 @@
         // çakışma varsa sahne süresince ikisi yumuşakça gizlenir, sahne bitince geri gelir.
         const kes = (a, b) => a.width && b.width && a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
         const yr = yz ? [...yz.children].map((e) => e.getBoundingClientRect()) : [];
-        const engel = [top.querySelector(".clock"), top.querySelector(".datec")].filter(Boolean).map((e) => e.getBoundingClientRect());
+        const engel = [top.querySelector(".clock"), top.querySelector(".datec"), top.querySelector(".tarihK .temaD")].filter(Boolean).map((e) => e.getBoundingClientRect());
         top.classList.toggle("odDar", yr.some((y) => engel.some((e) => kes(y, e))));
       };
       const yenidenOlc = () => { if (top.classList.contains("odulOn")) olc(); };
@@ -1438,9 +1449,15 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   var SB = {}, SBP = [], sbHazir = false, sbSaat = new Date().getHours(), sbVakit = sbSaat >= 7 && sbSaat < 11 && isG(BUGUN);
   function sbYaz() {
     if (!sbVakit || !sbHazir) return;
-    var haber = ["ppk", "iscep", "gazete", "takvim", "kampanya"].filter(function (k) { return SB[k]; }), ipc = !haber.length && SB.ipucu;
+    var haber = ["ppk", "iscep", "gazete", "duyuru", "takvim", "kampanya"].filter(function (k) { return SB[k]; }), ipc = !haber.length && SB.ipucu;
     var son = !SB.kampanya && SB.yeni5 ? "yeni5" : "hedef"; // bugün yeni kampanya yazıldıysa 5 günlük sayı tekrar etmesin
-    var aday = (ipc ? ["ipucu", son] : haber.concat(son)).map(function (k) { return SB[k]; }).filter(Boolean), el = $("sbB");
+    // 13 Kasım 2026: geniş ekranda (bilgisayar, açık katlanır) bant Açılış kartı gibi uzar: önce çeyrek · faiz · PPK, sonra haberler; en çok 7 parça.
+    // Telefonda öncelik yine haberlerde, en çok 3 parça; çeyrek/faiz/PPK yalnızca yer kalırsa sona eklenir.
+    var genis = innerWidth >= 760, bilgi = ["cyr", "pf", "ppkg"].filter(function (k) { return SB[k]; });
+    if (SB[son] === SB.cyr) son = null; // Günce'de hedef yoksa "hedef" yerine çeyrek satırı zaten bilgi parçalarında
+    var sira = (ipc ? ["ipucu", son] : haber.concat(son)).filter(Boolean), azami = genis ? 7 : 3;
+    sira = genis ? bilgi.concat(sira) : sira.concat(bilgi);
+    var aday = sira.map(function (k) { return SB[k]; }).filter(Boolean), el = $("sbB");
     if (!aday.length || !el) return;
     var ik = el.querySelector(".sbI"); ik.textContent = ipc ? "💡" : "☕"; ik.classList.toggle("ipc", !!ipc);
     if (el.hidden) { el.hidden = false; window.aclBant = true; if (oku("aclGordu", "") !== B) el.classList.add("kirp"); }
@@ -1449,7 +1466,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     function diz(ilkKisa) { // ilk parça uzun ya da kısa hâliyle başlayıp sığanları sırayla ekler; seçilenlerin öncelik sırasını da döndürür
       var sec = [], sira = [];
       aday.forEach(function (a, j) {
-        if (sec.length >= 3) return;
+        if (sec.length >= azami) return;
         var secenek = [].concat(a); if (!sec.length && ilkKisa) secenek = secenek.slice(-1);
         for (var i = 0; i < secenek.length; i++) {
           if (/^Bugün/.test(secenek[i]) && sec.some(function (x) { return /^Bugün/.test(x); })) continue; // "Bugün … · Bugün …" tekrarı olmasın
@@ -1460,6 +1477,12 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     }
     var u = diz(false), k = diz(true), en = k.sec.length > u.sec.length || (k.sec.length === u.sec.length && k.sira < u.sira) ? k : u; // daha çok parça, eşitse daha öncelikli olanlar
     if (en === u && k.sec.length >= u.sec.length && !sigar(u.sec.join(" · "))) en = k; // uzun hâli tek başına bile taşıyorsa kısası
+    if (genis) { // geniş ekranda: önce hepsini kısa hâliyle sığdır, sonra yer kaldıkça uzun hâllerine geç (uzun bir başlık çeyrek/hedefi dışarı itmesin)
+      var ks = [], kx = [];
+      aday.forEach(function (x) { var s2 = [].concat(x); if (ks.length < azami && sigar(ks.concat(s2[s2.length - 1]).join(" · "))) { ks.push(s2[s2.length - 1]); kx.push(s2); } });
+      kx.forEach(function (x, i) { if (x.length > 1) { var dene = ks.slice(); dene[i] = x[0]; if (sigar(dene.join(" · "))) ks = dene; } });
+      if (ks.length > en.sec.length) en = { sec: ks };
+    }
     t.innerHTML = en.sec.join(" · ");
   }
   window.addEventListener("resize", sbYaz); // katlanan ekran açılıp kapanınca yeniden sığdır
@@ -1545,7 +1568,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     } catch (e) {}
     if (!h) h = "<small>Hedeflerini Günce'ye girersen burada görünür 🎯</small>";
     OZ.ceyrek = "📅 Çeyrekte <b>" + sayi(kal, kal % 1 ? 1 : 0) + "</b> iş günü"; ozetYaz();
-    if (!SB.hedef) SB.hedef = "Çeyrekte <b>" + sayi(kal, kal % 1 ? 1 : 0) + "</b> iş günü"; sbYaz();
+    SB.cyr = "Çeyrekte <b>" + sayi(kal, kal % 1 ? 1 : 0) + "</b> iş günü";
+    if (!SB.hedef) SB.hedef = SB.cyr; sbYaz();
     satir("ceyrek", kalip("gunce.html", "📅", "<b>" + (qn + 1) + ". çeyrek:</b> %" + yuz + " tamamlandı, <b>" + sayi(kal, kal % 1 ? 1 : 0) + " iş günü</b> kaldı" +
       '<span class="aclBar"><i style="width:' + yuz + '%"></i></span>' + h));
   })();
@@ -1567,6 +1591,14 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   })();
 
   // Resmî Gazete
+  // Kurum duyurusu (13 Kasım 2026): bugün ya da dün yayımlanan BDDK/TCMB/SPK… duyurusu banda haber olarak girer (önemli olan önce)
+  SBP.push(Ortak.json("gazete/duyurular.json").then(function (j) {
+    var dun = anah(ekle(BUGUN, -1)), L = (j.duyurular || []).filter(function (x) { return x && x.baslik && x.tarih >= dun && x.tarih <= B; })
+      .sort(function (a, b) { return (b.onemli === true) - (a.onemli === true) || b.tarih.localeCompare(a.tarih); });
+    if (!L.length) return;
+    var x = L[0], ne = x.tarih === B ? "" : "Dün ";
+    SB.duyuru = [ne + esc(x.kurum) + ": <b>" + esc(x.baslik) + "</b>", ne + "<b>" + esc(x.kurum) + "</b> duyurusu"]; sbYaz();
+  }).catch(function () {}));
   SBP.push(Ortak.json("gazete/index.json").then(function (L) {
     var t = (L || [])[0]; if (!t) return;
     return Ortak.json("gazete/" + t + ".json").then(function (g) {
@@ -1625,7 +1657,10 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     // Özet satırı: politika faizi (son PPK kararı, data/ppk.json) ve sonraki toplantıya kalan gün
     if (son.rate != null) OZ.pf = "📈 Politika faizi <b>%" + sayi(son.rate, son.rate % 1 ? 2 : 0) + "</b>";
     if (sonra) OZ.ppk = "🏛️ PPK " + (g === 0 ? "<b>bugün</b>" : "<b>" + g + "</b> gün");
-    if (sonra === B) { SB.ppk = "Bugün <b>PPK</b> günü"; sbYaz(); }
+    if (son.rate != null) SB.pf = "Politika faizi <b>%" + sayi(son.rate, son.rate % 1 ? 2 : 0) + "</b>";
+    if (sonra && g > 0) SB.ppkg = ["PPK'ya <b>" + g + "</b> gün", "PPK <b>" + g + "</b> gün"];
+    if (sonra === B) SB.ppk = "Bugün <b>PPK</b> günü";
+    sbYaz();
     ozetYaz();
     satir("ppk", kalip(son.url || "https://www.tcmb.gov.tr", "🏛️", x, true));
   }).catch(function () {}));
@@ -1761,7 +1796,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     // altyapısına geçiyor"); yalnızca duyuruda yazan söylenir, geçiş gününe kadar kalır
     ["https://www.denizbank.com/kampanya/kart-kampanyalari/cok-yakinda", "🤝 DenizBank kredi kartları <b>6 Aralık'tan</b> itibaren Maximum altyapısına geçiyor", "2026-12-06"],
     // 8 Kasım 2026: sayfanın en üstündeki görünüm seçimi; dokununca yukarı çıkar ve seçici kısa bir an parlar
-    ["tema", "🌓 Gözüne göre seç: arama kutusunun altındaki <b>Görünüm</b> düğmesine dokun: <b>Açık · Koyu · Sistem</b>; Sistem telefonunun ayarına uyar <b class=\"gir\">Seç</b>", "2026-11-22"],
+    ["tema", "🌓 Gözüne göre seç: takvimin altındaki <b>◐ Görünüm</b> düğmesine dokun: <b>Açık · Koyu · Sistem</b>; Sistem telefonunun ayarına uyar <b class=\"gir\">Seç</b>", "2026-11-22"],
     // İşCep ödülü satırı 5 Kasım'da çıkarıldı: üstteki kupa kartı zaten gösteriyor
     ["maximum", "🎁 Kampanyaları bulmak hiç bu kadar kolay olmamıştı: İş Bankası, Maximum ve Maximiles tek ekranda; arama, takvim ve <b>Bana uygun</b> <b class=\"gir\">İş Bankası Gündemi › Kampanyalar</b>", "2026-11-30"],
     ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
@@ -1956,9 +1991,10 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 (function () {
   const GUN = 5;
   const YENI = [
-    ["↩️", "Geri · 🏠 · ↑", "sayfalarda aşağı inince: telefonda sağ altta, bilgisayarda sol altta; geldiğin yere döner", "haberler.html", "2026-11-11"],
+    ["↩️", "Geri · 🏠 · ↑", "sayfalarda aşağı inince sağ altta, kaydırma çubuğunun yanında; bilgisayarda 📱 Telefonda aç sol altta", "haberler.html", "2026-11-13"],
+    ["🌓", "Görünüm", "artık takvimin hemen altında: Açık · Koyu · Sistem", "#datec", "2026-11-13"],
     ["🖥️", "Bilgisayarda", "ana sayfa ve 10 sayfa geniş ekranda iki sütun", "banka.html", "2026-11-11"],
-    ["☕", "Sabah bandı", "son 5 günün yeni kampanya sayısı", "#acilis", "2026-11-11"],
+    ["☕", "Sabah bandı", "bilgisayarda daha uzun: çeyrek, faiz, PPK, kampanya ve kurum duyurusu", "#acilis", "2026-11-13"],
     ["🧭", "Pusula", "Hesaplamalar'da: telefonu düz tut, yönünü gör", "hesap.html#pusula", "2026-11-06"],
     ["🏬", "Bölge Nabzı", "AVM & proje düğmesi: yerel firmaların mağaza ve proje haberleri", "bolge.html", "2026-11-06"],
     ["🌍", "Bölge Nabzı › Dünya", "24 ülkede ekonomi, ticaret ve gurbetçi haberleri", "bolge.html#dunya", "2026-11-05"],
