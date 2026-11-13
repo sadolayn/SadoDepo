@@ -6,7 +6,7 @@
    2) Veri çekme ve hata kartı:
       Ortak.json(url)                 → no-store ile çeker; olmazsa son kaydedilen kopyaya düşer
       Ortak.hata(el, {ne, tekrar})    → tüm sayfalarda aynı görünen "alınamadı" kartı
-   3) Bilgisayardan açanlara sağ altta "📱 Telefonda aç" düğmesi: o sayfanın karekodunu gösterir.
+   3) Bilgisayardan açanlara sol altta "📱 Telefonda aç" düğmesi: o sayfanın karekodunu gösterir.
       Karekod yalnızca sayfanın adresini içerir (lib/qrcode.js, MIT, Kazuhiko Arase). İstemeyen sayfa: <body data-karekod="yok">
 */
 (function () {
@@ -135,7 +135,7 @@
 
   // "‹ Geri · 🏠" çubuğu (11 Kasım 2026): sayfada aşağı inince belirir, en üste çıkınca (başlıktaki 🏠 göründüğünde) kaybolur.
   // Tek çubuk: ‹ Geri · 🏠 · ↑ (ayrı "↑" düğmesi gizlenir). Telefonda sağ altta (sağ elle tek el kullanımda baş parmağın altında),
-  // bilgisayarda içerik sütununun solunda yazılı: "‹ Geri · 🏠 Ana sayfa · ↑ Başa dön". Geri: site içinden gelindiyse önceki sayfa; doğrudan açıldıysa bir üst bölüm
+  // bilgisayarda içerik sütununun sağında yazılı: "‹ Geri · 🏠 Ana sayfa · ↑ Başa dön". Geri: site içinden gelindiyse önceki sayfa; doğrudan açıldıysa bir üst bölüm
   // (başlıktaki ilk düğme ana sayfa değilse o, ör. COP31 → İş Bankası Gündemi, Kaza Tutanağı → Hesaplamalar; yoksa ana sayfa).
   // Ana sayfada, oyunlarda, alt çubuğu olmayan (data-footer="yok") ve kendi İleri/Geri çubuğu olan (data-gezinti="yok") sayfalarda yok.
   function gezinti() {
@@ -164,22 +164,23 @@
       if (ic && history.length > 1) history.back(); else location.href = ust;
     };
     n.querySelector(".yk").onclick = function () { window.scrollTo({ top: 0, behavior: "smooth" }); };
-    // Telefonda sağ alt; Takvim'in "+" düğmesi gibi sağ altta sabit bir düğme varsa onun üstünde durur. Bilgisayarda içerik sütununun hemen solunda.
+    // Telefonda sağ alt; Takvim'in "+" düğmesi gibi sağ altta sabit bir düğme varsa onun üstünde durur. Bilgisayarda içerik sütununun hemen sağında.
     var yer = function () {
       var tel = innerWidth < 760, alt = 16, kz = document.getElementById("kzNav"), fab = document.getElementById("fab");
       if (kz && kz.offsetHeight) alt = kz.offsetHeight + 12;
       if (tel && fab && fab.offsetHeight && getComputedStyle(fab).position === "fixed") alt = Math.max(alt, innerHeight - fab.getBoundingClientRect().top + 10);
       n.style.bottom = "calc(" + alt + "px + env(safe-area-inset-bottom))";
       if (tel) { n.classList.remove("kisa", "dik"); n.style.left = "auto"; n.style.right = "14px"; return; }
-      // Sütunun solundaki boşluğa sığan en geniş biçim: yazılı → yalnız simgeler → dikey simgeler; hiçbiri sığmazsa yatay simgeler köşede
-      var c = document.querySelector(".wrap") || document.querySelector("main"), bos = c ? c.getBoundingClientRect().left : 0, bicim = [[], ["kisa"], ["kisa", "dik"]], i;
+      // Bilgisayarda (13 Kasım 2026'dan beri) sütunun SAĞINDA: kaydırma çubuğu ve fare orada. Sağdaki boşluğa sığan en geniş biçim:
+      // yazılı → yalnız simgeler → dikey simgeler; hiçbiri sığmazsa yatay simgeler köşede. "📱 Telefonda aç" sol alta geçti.
+      var c = document.querySelector(".wrap") || document.querySelector("main"), bos = c ? innerWidth - c.getBoundingClientRect().right : 0, bicim = [[], ["kisa"], ["kisa", "dik"]], i;
       for (i = 0; i < bicim.length; i++) {
         n.classList.remove("kisa", "dik"); bicim[i].forEach(function (k) { n.classList.add(k); });
         if (bos >= n.offsetWidth + 32) break;
       }
-      if (i === bicim.length) { n.classList.remove("dik"); n.classList.add("kisa"); } // hiçbiri sığmazsa: yatay simgeler, sol alt köşede
-      var sol = bos >= n.offsetWidth + 32 ? Math.max(14, bos - 18 - n.offsetWidth) : 14;
-      n.style.right = "auto"; n.style.left = sol + "px";
+      if (i === bicim.length) { n.classList.remove("dik"); n.classList.add("kisa"); } // hiçbiri sığmazsa: yatay simgeler, sağ alt köşede
+      var sag = bos >= n.offsetWidth + 32 ? Math.max(14, bos - 18 - n.offsetWidth) : 14;
+      n.style.left = "auto"; n.style.right = sag + "px";
     };
     // Başlıktaki 🏠 ekrandayken gizli, başlık yukarıda kaybolunca görünür (başlığı yapışkan sayfalarda: 160 px aşağı inince)
     var f = function () { var r = hd.getBoundingClientRect(), on = r.bottom < 0 || window.scrollY > Math.max(160, hd.offsetTop + hd.offsetHeight + 40); n.classList.toggle("on", on); };
@@ -243,7 +244,7 @@
     if (!masaustu) return;
     var st = document.createElement("style");
     st.textContent =
-      "#telAc{position:fixed;right:18px;bottom:18px;z-index:9000;display:flex;align-items:center;gap:7px;padding:10px 15px;border-radius:99px;border:1px solid #6b5222;background:rgba(18,16,12,.94);color:#f3dca8;font:600 13.5px system-ui,-apple-system,'Segoe UI',sans-serif;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.5)}" +
+      "#telAc{position:fixed;left:18px;bottom:18px;z-index:9000;display:flex;align-items:center;gap:7px;padding:10px 15px;border-radius:99px;border:1px solid #6b5222;background:rgba(18,16,12,.94);color:#f3dca8;font:600 13.5px system-ui,-apple-system,'Segoe UI',sans-serif;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.5)}" +
       "#telAc:hover{border-color:#e0a24f;color:#fff}" +
       "#telAcK{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px}" +
       "#telAcK .in{width:100%;max-width:340px;background:#111;border:1px solid #2c2c2c;border-radius:20px;padding:20px 20px 16px;text-align:center;color:#eee;font:14px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif}" +
