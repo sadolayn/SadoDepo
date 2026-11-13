@@ -1026,3 +1026,22 @@ html[data-tema="acik"] table.yt2 td.yd.n, html[data-tema="acik"] table.yt2 .ydk.
   .copBant:active { transform: scale(.98); }
   @keyframes copGel { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .copBant { animation: none; } }
+
+/* Süzgeç fark edilsin (13 Kasım 2026): liste başlığında "🎛️ Süzgeç" düğmesi; kapalı süzgeç düğmesinde üç başlık hap olarak */
+.ksag .kyolS { display: flex; align-items: center; gap: 8px; }
+.ksag .kyolS .kyol { flex: 1; min-width: 0; }
+.ksuzK { display: inline-flex; gap: 4px; flex: none; }
+.ksag .ksuz, .ksag .ktemiz { min-height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--kk, #e0a24f); background: color-mix(in srgb, var(--kk, #e0a24f) 22%, #000); color: #fff; font: 700 13px system-ui, -apple-system, sans-serif; cursor: pointer; white-space: nowrap; transition: transform .15s ease; }
+.ksag .ksuz.on { background: var(--kk, #e0a24f); color: #fff; }
+.ksag .ktemiz { padding: 0 10px; background: transparent; color: var(--kk, #e0a24f); }
+.ksag .ksuz:active, .ksag .ktemiz:active { transform: scale(.95); }
+html[data-tema="acik"] .ksag .ksuz { background: color-mix(in srgb, var(--kk, #e0a24f) 14%, #fff); color: #1b1813; }
+html[data-tema="acik"] .ksag .ksuz.on { background: var(--kk, #e0a24f); color: #fff; }
+/* Işık: düğmenin üstünden iki kez hafif bir parıltı geçer, sonra durur */
+.ksag .ksuz { position: relative; overflow: hidden; }
+.ksag .ksuz.parla::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 60%; pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.75), transparent); transform: translateX(-120%); opacity: 0;
+  animation: kSuzIsik 1.3s cubic-bezier(.2,.7,.2,1) .6s 2; }
+@keyframes kSuzIsik { 0% { transform: translateX(-120%); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateX(230%); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .ksag .ksuz.parla::after { animation: none; } }
+html[data-tema="acik"] .ksag .ksuz.parla::after { background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--kk, #e0a24f) 55%, transparent), transparent); }

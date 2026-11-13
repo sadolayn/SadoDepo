@@ -576,6 +576,13 @@ function campCard(k) {
 let KH = null, kKay = "isbank", kSeg = "bireysel", kNe = "", kNere = "", kKim = "", kOne = false, kKatAcik = false;
 // Ayrıntılı süzgeç (Kimin için · Ne kazanırım · Nerede) varsayılan kapalı: kampanyalar ilk ekranda görünsün
 let kFiltAcik = false; try { kFiltAcik = sessionStorage.getItem("kFiltAcik") === "1"; } catch (e) {}
+// Süzgeç düğmesinde ışık (13 Kasım 2026): sayfanın ilk 5 açılışında, açılış başına bir kez; listeye dokunup süzgeci kullanan bir daha görmez
+let kParlaDurum = null;
+const kParla = () => {
+  if (kParlaDurum !== null) return kParlaDurum && !(kParlaDurum = false) || false;
+  try { const n = +(localStorage.getItem("kSuzParla") || 0); kParlaDurum = n < 5; if (kParlaDurum) localStorage.setItem("kSuzParla", n + 1); } catch (e) { kParlaDurum = false; }
+  return kParlaDurum && !(kParlaDurum = false) || false;
+};
 // Sıralama (5 Kasım 2026): "yeni" = listeye giriş günü en yeni üstte (ilk görülme tarihi olmayan eski kampanyalar altta, bitişe göre); "bitis" = en erken biten üstte
 let kSira = "yeni";
 try { const k = JSON.parse(localStorage.getItem("isbankKamp") || "{}"); kKay = k.kay || kKay; kSeg = k.seg || kSeg; kNe = k.ne || ""; kNere = k.nere || ""; kKim = k.kim || ""; kOne = !!k.one; if (k.sira === "bitis") kSira = "bitis"; } catch (e) {}
@@ -774,6 +781,15 @@ function renderKampanyalar() {
   t.classList.toggle("araniyor", !!kAra.trim());
   let govde = () => "";
   const bagla = () => {
+    // Işık düğme ekranda göründüğünde yanar (sayfa açılınca liste başlığı çoğu zaman aşağıda kalıyor)
+    const pb = document.querySelector(".ksuz[data-parla]");
+    // Açılış perdesi ya da üst kutu üstünü örterken yanmaz: düğme gerçekten görünene kadar bekler (en çok 1 dk)
+    if (pb) { let n = 0; const t = setInterval(() => {
+      if (!pb.isConnected || ++n > 150) return clearInterval(t);
+      const r = pb.getBoundingClientRect(); if (r.top < 0 || r.bottom > innerHeight) return;
+      const ust = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      if (ust && pb.contains(ust)) { clearInterval(t); setTimeout(() => pb.classList.add("parla"), 300); }
+    }, 400); }
     const i = $("kAra"), sil = $("kAraSil");
     i.oninput = () => { kAra = i.value; sil.hidden = !kAra; t.classList.toggle("araniyor", !!kAra.trim()); $("kGovde").innerHTML = kAra.trim() ? kAraHtml() : kYeni ? kYeniHtml() : kSih.acik ? kSihHtml() : govde(); };
     sil.onclick = () => { kAra = ""; i.value = ""; sil.hidden = true; t.classList.remove("araniyor"); $("kGovde").innerHTML = kYeni ? kYeniHtml() : kSih.acik ? kSihHtml() : govde(); i.focus(); };
@@ -784,6 +800,15 @@ function renderKampanyalar() {
     $("kGovde").onclick = (e) => {
       const ys = e.target.closest("[data-yseg]"); if (ys) { kYeniSeg = ys.dataset.yseg; $("kGovde").innerHTML = kYeniHtml(); return; }
       const sr = e.target.closest("[data-sira]"); if (sr) { kSira = sr.dataset.sira; kKaydet(); renderKampanyalar(); return; }
+      if (e.target.closest("[data-ktemiz]")) { kNe = kNere = kKim = ""; kKaydet(); renderKampanyalar(); return; }
+      if (e.target.closest("[data-ksuz]")) {
+        kFiltAcik = true; try { sessionStorage.setItem("kFiltAcik", "1"); localStorage.setItem("kSuzParla", "9"); } catch (x) {} renderKampanyalar();
+        if (window.Rapor) Rapor.bolum("kamp-suzgec-liste");
+        const k = $("altkutu");
+        if (k.classList.contains("dar")) { e.stopPropagation(); k.classList.add("acik"); }
+        else window.scrollTo({ top: Math.max(0, $("tfil").getBoundingClientRect().top + scrollY - $("imini").offsetHeight - 70), behavior: "smooth" });
+        return;
+      }
       const o = e.target.closest("[data-ornek]"); if (o) { const i = $("kAra"); i.value = o.dataset.ornek; i.oninput(); return; }
       const b = e.target.closest("[data-sh]"); if (!b) return;
       const i = b.dataset.sh.indexOf(":"), a = b.dataset.sh.slice(0, i), v = b.dataset.sh.slice(i + 1), cevir = (L) => (L.includes(v) ? L.filter((x) => x !== v) : [...L, v]);
@@ -801,7 +826,10 @@ function renderKampanyalar() {
   const liste = kSirala(L.filter((k) => uy(k, "")));
   const yol = [kayAd, kSeg === "ticari" ? "Ticari" : "Bireysel", kNe && kIkon("ne", kNe) + " " + kNe, kNere && kIkon("nere", kNere) + " " + kKisa(kNere), kKim && (GK.find((g) => g[0] === kKim) || K_HERKES)[1] + " " + kKim].filter(Boolean).join(" › ");
   const sb2 = (v, ad) => `<button type="button" data-sira="${v}" class="${kSira === v ? "on" : ""}">${ad}</button>`;
-  const sag = `<div class="ksag" style="--kk:${renk}"><div class="kyol">${esc(yol)} · <b>${liste.length} adet</b></div>`
+  // 13 Kasım 2026: süzgeç liste başlığında da var; liste kaydırılınca üst kutu gözden çıkıyor, süzgeç fark edilmiyordu
+  const suzN = [kKim, kNe, kNere].filter(Boolean).length;
+  const suzBtn = `<span class="ksuzK">${suzN ? `<button type="button" data-ksuz="1" class="ksuz on">🎛️ ${suzN} süzgeç</button><button type="button" data-ktemiz="1" class="ktemiz" aria-label="Süzgeci temizle">✕</button>` : `<button type="button" data-ksuz="1" class="ksuz"${kParla() ? " data-parla=\"1\"" : ""}>🎛️ Süzgeç</button>`}</span>`;
+  const sag = `<div class="ksag" style="--kk:${renk}"><div class="kyolS"><div class="kyol">${esc(yol)} · <b>${liste.length} adet</b></div>${suzBtn}</div>`
     + `<div class="kyseg ksira" role="group" aria-label="Sıralama">${sb2("yeni", "🆕 En yeni üstte")}${sb2("bitis", "⏳ Bitişe göre")}</div></div>`;
   const acil = liste.filter((k) => k.bitis && daysLeft(k.bitis) <= 3).length;
   const V0 = KH[kKay][kSeg], kayp = V0.toplam - L.length, biten = (V0.kategoriler || []).reduce((a, c) => a + (c.biten || 0), 0);
