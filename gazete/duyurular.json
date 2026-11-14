@@ -1,7 +1,16 @@
 {
-  "guncelleme": "2026-11-13T06:55:50+03:00",
+  "guncelleme": "2026-11-14T07:02:47+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
+    {
+      "tarih": "2026-11-13",
+      "kurum": "SPK",
+      "baslik": "Kredili işlemlerde özkaynak esnekliği yıl sonuna kadar uzatıldı",
+      "ozet": "SPK, kredili işlemlerde özkaynak oranının aracı kurumların risk politikasına göre esnetilerek uygulanabilmesine yönelik geçici tedbirin süresini bir kez daha uzattı; haberlere göre tedbir 31 Aralık 2026 seans sonuna kadar sürecek. Tedbir 17 Eylül'de getirilmiş, ardından 30 Ekim'e ve 13 Kasım'a kadar uzatılmıştı. Yeni oran getirilmedi, yalnızca süre uzatıldı.",
+      "etki": "Kredili hisse işlemi yapan yatırımcılar için esnek özkaynak uygulaması 31 Aralık 2026 seans sonuna kadar devam ediyor.",
+      "onemli": false,
+      "url": "https://www.cnbce.com/borsa/spkdan-borsada-kredili-islem-karari-sure-yil-sonuna-kadar-uzatildi-h41795"
+    },
     {
       "tarih": "2026-11-12",
       "kurum": "TCMB",
@@ -44,15 +53,6 @@
       "onemli": false,
       "url": "https://www.cnbce.com/haberler/bddkdan-golden-global-yatirim-bankasi-karari-faaliyet-izni-kaldirildi-h41147",
       "gazete": "2026-11-06"
-    },
-    {
-      "tarih": "2026-10-30",
-      "kurum": "SPK",
-      "baslik": "Kredili işlemlerde özkaynak esnekliği 13 Kasım'a kadar uzatıldı",
-      "ozet": "SPK, kredili işlemlerde asgari %35 olan özkaynak oranının aracı kurumların risk politikasına göre %20'ye kadar uygulanabilmesine yönelik geçici tedbiri 2026/78 sayılı bültenle (30 Ekim) bir kez daha uzattı; tedbir 13 Kasım 2026 seans sonuna kadar sürecek. Tedbir ilk olarak 17 Eylül'de getirilmiş, 3 Ekim'de (2026/68 bülten, 65/1779 sayılı karar) 30 Ekim'e kadar uzatılmıştı. Yeni oran getirilmedi, yalnızca süre uzatıldı.",
-      "etki": "Kredili hisse işlemi yapan yatırımcılar için esnek özkaynak uygulaması 13 Kasım seans sonuna kadar devam ediyor.",
-      "onemli": false,
-      "url": "https://paratic.com/spkdan-kredili-islemler-icin-yeni-karar-sure-uzatildi/"
     },
     {
       "tarih": "2026-10-27",
