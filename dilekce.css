@@ -128,3 +128,43 @@ html[data-tema="acik"] .dl-bik { color: #fff; }
 /* Düzenleyicide alt çubuk varken "↑" düğmesi çubuğun üstünde dursun */
 body.dl-acik #ortakYukari { bottom: calc(80px + env(safe-area-inset-bottom)) !important; }
 .dl-kagit .k-p.liste { text-indent: 0; padding-left: 2.2em; }
+
+/* Alt çubuk: 5 düğme, simge üstte (14 Kasım 2026) */
+.dl-bar { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+.dl-bar button { min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11.5px; }
+.dl-bar button b { font-size: 18px; font-weight: 400; line-height: 1; }
+
+/* Süre hatırlatıcısı */
+.dl-hat { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 11px 12px; border-radius: 14px; border: 1px solid #1f3a2c; background: #07120c; animation: dlGir .45s cubic-bezier(.2,.7,.2,1) both; }
+.dl-hatTx { flex: 1; min-width: 0; font-size: 12.5px; line-height: 1.4; color: #a9c9b6; }
+.dl-hatTx b { display: block; font-size: 14px; color: #3fc283; margin-bottom: 1px; }
+.dl-hat button { flex: 0 0 auto; min-height: 40px; padding: 0 12px; border-radius: 12px; border: 1px solid #3fc283; background: #0d2016; color: #c9f0da; font: 700 12.5px system-ui, sans-serif; cursor: pointer; transition: transform .15s ease; }
+.dl-hat button:active { transform: scale(.96); }
+.dl-hat.eksik { border-color: #262626; background: #0d0d0d; }
+.dl-hat.eksik b { color: #bdbdbd; }
+.dl-hat.eksik button { display: none; }
+
+/* İmza */
+.dl-imzaK { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+.dl-imzaOn { flex: 0 0 120px; height: 56px; border-radius: 12px; background: #fffdf7; border: 1px solid #262626; display: grid; place-items: center; overflow: hidden; }
+.dl-imzaOn span { font-size: 11px; color: #9a9384; }
+.dl-imzaOn img { max-width: 92%; max-height: 86%; }
+.dl-imzaBt { display: flex; flex-wrap: wrap; gap: 6px; }
+.dl-imzaBt button { min-height: 38px; padding: 0 12px; border-radius: 999px; border: 1px solid #5a4320; background: #0d0a05; color: #f3d38a; font: 600 13px system-ui, sans-serif; cursor: pointer; }
+.dl-imzaBt #dlImzaSil { border-color: #262626; background: #111; color: #bdbdbd; }
+.dl-imzaNot { margin: 6px 0 0; font-size: 11.5px; line-height: 1.4; color: #8a8a8a; }
+.dl-kagit .k-imza img { display: block; margin: .2em auto 0; max-width: 78%; max-height: 4.2em; }
+.dl-modal { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 14px; background: rgba(0,0,0,.78); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: dlMod .2s ease both; }
+.dl-modal[hidden] { display: none; }
+.dl-mkutu { width: min(720px, 100%); padding: 16px; border-radius: 18px; background: #0d0d0d; border: 1px solid #5a4320; animation: dlGir .3s cubic-bezier(.2,.7,.2,1) both; }
+.dl-mkutu h3 { margin: 0; font: 600 17px Georgia, serif; color: #f3d38a; }
+.dl-mkutu p { margin: 4px 0 10px; font-size: 12.5px; color: #8a8a8a; line-height: 1.4; }
+.dl-tuval { position: relative; height: min(46vh, 240px); border-radius: 14px; background: #fffdf7; overflow: hidden; touch-action: none; }
+.dl-tuval canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
+.dl-tuval i { position: absolute; left: 8%; right: 8%; bottom: 22%; border-top: 1px dashed #cfc5ad; font: italic 11px Georgia, serif; color: #b3a98f; padding-top: 3px; pointer-events: none; }
+.dl-mbt { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 8px; margin-top: 12px; }
+.dl-mbt button { min-height: 46px; border-radius: 13px; border: 1px solid #262626; background: #141414; color: #f2f2f2; font: 700 14px system-ui, sans-serif; cursor: pointer; }
+.dl-mbt button.ok { background: #e0a24f; border-color: #e0a24f; color: #1a1206; }
+@keyframes dlMod { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .dl-hat, .dl-modal, .dl-mkutu { animation: none; } }
+@media print { .dl-hat, .dl-modal { display: none !important; } .dl-kagit .k-imza img { max-height: 18mm; } }

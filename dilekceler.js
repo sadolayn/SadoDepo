@@ -45,7 +45,7 @@
       f: [["kurum", "Kurum (başlık)", "ör. ANKARA BÜYÜKŞEHİR BELEDİYE BAŞKANLIĞINA"], ["talep", "İstediğin bilgi ya da belgeler", "Her birini ayrı satıra yaz", "ta"], ["yol", "Cevap nasıl gelsin?", "", "s", ["e-posta", "posta", "elden teslim"]]],
       k: "{kurum}", kn: "Bilgi edinme başvurusu", tc: true, kp: GARZ,
       m: ["4982 sayılı Bilgi Edinme Hakkı Kanunu kapsamında aşağıda belirttiğim bilgi ve belgelerin tarafıma verilmesini talep ediyorum:", "{talep}", "İstenen bilgi ve belgelerin {yol} yoluyla tarafıma iletilmesini rica ediyorum."],
-      nt: "Kurumlar başvuruyu genellikle 15 iş günü içinde cevaplar. Çoğu kurumun sitesinde ve CİMER'de çevrim içi başvuru da var." },
+      nt: "Kurum 15 iş günü içinde cevap verir; bilgi başka birimden ya da kurumdan geliyorsa bu süre 30 iş gününe çıkabilir. Çoğu kurumun sitesinde ve CİMER'de çevrim içi başvuru da var." },
     { id: "sikayet", kat: "genel", ik: "📣", ad: "Şikâyet dilekçesi (genel)", ac: "Bir kuruma yaşadığın sorunu bildir, çözüm iste.", ara: "şikayet genel sorun aksaklık",
       f: [KURUM, ["konu", "Konu", "ör. Hizmet aksaklığı hakkında"], ["olay", "Ne oldu?", "Tarih, yer ve olayı kısaca anlat", "ta"], ["istek", "Ne istiyorsun?", "ör. sorunun giderilmesini"]],
       k: "{kurum}", kn: "{konu}", kp: ARZ,
@@ -94,7 +94,7 @@
       f: [KAMU, KUNVAN, BIRIM, ["ayr", "Ayrılış tarihi", "", "d"]],
       k: "{kurum}", kn: "İstifa", kp: GARZ,
       m: ["{birim} biriminde {unvan} olarak görev yapmaktayım. 657 sayılı Devlet Memurları Kanunu hükümleri çerçevesinde {ayr} tarihi itibarıyla görevimden kendi isteğimle çekiliyorum.", "İstifamın kabulü ile gerekli işlemlerin yapılmasını talep ediyorum."],
-      nt: "Memurlukta istifa edenin, yerine biri atanana kadar bir süre görevine devam etmesi gerekebilir; kurumunun personel birimine danış." },
+      nt: "İstifan kabul edilene ya da yerine atanan gelene kadar görevine devam etmen gerekir; bu bekleme kural olarak en fazla bir aydır. Devir teslimle yükümlüysen süre uzayabilir; personel birimine danış." },
 
     // ===== BELEDİYE =====
     { id: "bel-gurultu", kat: "belediye", ik: "🔊", ad: "Gürültü şikâyeti", ac: "İşyeri, inşaat ya da komşudan kaynaklanan sürekli gürültü için.", ara: "gürültü şikayet zabıta müzik inşaat komşu",
@@ -189,7 +189,7 @@
       f: [SIRKET, MAKIS, UNVAN, ["neden", "Mazeret", "ör. evlenmem"], ["gun", "Kaç gün?", "ör. 3", "n"], ["bas", "Başlangıç", "", "d"]],
       k: "{sirket}\n{makIs}", kn: "Mazeret izni talebi", kp: BILARZ, yer: false, e: ["Mazereti gösteren belge"],
       m: ["Şirketinizde {unvan} olarak çalışmaktayım. {neden} nedeniyle {bas} tarihinden itibaren {gun} gün ücretli mazeret izni kullanmak istiyorum."],
-      nt: "İş Kanunu'na göre evlenme, evlat edinme ve anne, baba, eş, kardeş ya da çocuğun ölümünde 3 gün; eşin doğumunda 5 gün ücretli izin var." },
+      nt: "İş Kanunu Ek Madde 2'ye göre evlenme, evlat edinme ve anne, baba, eş, kardeş ya da çocuğun ölümünde 3 gün; eşin doğumunda 10 gün (1 Mayıs 2026'dan beri) ücretli izin var. Süreler takvim günüdür." },
     { id: "is-ucretsiz", kat: "is", ik: "⏳", ad: "Ücretsiz izin talebi", ac: "Ücret almadan bir süre izin kullanmak için.", ara: "ücretsiz izin işçi",
       f: [SIRKET, MAKIS, UNVAN, ["neden", "Gerekçe", "ör. ailevi nedenler"], ["gun", "Kaç gün?", "ör. 15", "n"], ["bas", "Başlangıç", "", "d"]],
       k: "{sirket}\n{makIs}", kn: "Ücretsiz izin talebi", kp: BILARZ, yer: false,
@@ -219,7 +219,7 @@
       k: "{il} TÜKETİCİ HAKEM HEYETİ BAŞKANLIĞINA", yapi: true, yer: false, e: ["Fatura fotokopisi", "Firmayla yazışmalar", "Kimlik fotokopisi"],
       m: [["BAŞVURU SAHİBİ", "{ad}, T.C. Kimlik No: {tc}\n{adres}"], ["KARŞI TARAF", "{firma}\n{firmaAdres}"], ["UYUŞMAZLIK TUTARI", "{tutar}"], ["KONU", "{urun} ile ilgili uyuşmazlık"], ["AÇIKLAMALAR", "{olay}"],
         ["HUKUKİ NEDENLER", "6502 sayılı Tüketicinin Korunması Hakkında Kanun ve ilgili mevzuat"], ["SONUÇ VE İSTEM", "Yukarıda açıklanan nedenlerle {istek} karar verilmesini saygılarımla talep ederim."]],
-      nt: "e-Devlet'teki Tüketici Hakem Heyeti başvurusuyla çevrim içi de başvurabilirsin. Heyetin bakabileceği tutar sınırı her yıl güncellenir; Ticaret Bakanlığı sitesinden kontrol et." },
+      nt: "e-Devlet'te Tüketici Bilgi Sistemi (TÜBİS) üzerinden çevrim içi de başvurabilirsin. 2026'da 186.000 TL'nin altındaki uyuşmazlıklar heyete gider; sınır her yıl güncellenir." },
     { id: "abone-iptal", kat: "tuketici", ik: "🔌", ad: "Abonelik iptali ve güvence iadesi", ac: "Taşınırken elektrik, su ya da doğal gaz aboneliğini kapat.", ara: "abonelik iptal güvence bedeli depozito elektrik su doğalgaz taşınma",
       f: [["kurum", "Kurum (başlık)", "ör. ASKİ GENEL MÜDÜRLÜĞÜNE"], HIZMET, ["aboneNo", "Abone / tesisat no", "", "n"], ["aAdres", "Abonelik adresi", ""], ["iTarih", "Kapatma tarihi", "", "d"], ["iban", "Güvence bedeli için IBAN", "TR…", "?"]],
       k: "{kurum}", kn: "Abonelik iptali ve güvence bedeli iadesi", tc: true, kp: RICA,
@@ -274,7 +274,7 @@
       f: [["site", "Site / apartman adı", "ör. Gül Sitesi"], ["blok", "Blok / daire", "ör. B blok, daire 12"], ["gundem", "Gündem önerin", "Her maddeyi ayrı satıra yaz", "ta"]],
       k: "{site} YÖNETİMİNE", kn: "Kat malikleri kurulunun olağanüstü toplantıya çağrılması", kp: GARZ,
       m: ["Sitemizin {blok} malikiyim. Aşağıdaki konuların görüşülmesi için 634 sayılı Kat Mülkiyeti Kanunu kapsamında kat malikleri kurulunun olağanüstü toplantıya çağrılmasını talep ediyorum.", "Gündem önerim:", "{gundem}"],
-      nt: "Olağanüstü toplantı çağrısı için diğer kat maliklerinin de imzası gerekebilir; dilekçeyi birlikte imzalayabilirsiniz." },
+      nt: "Olağanüstü toplantıyı yönetici, denetçi ya da kat maliklerinin en az üçte biri yazılı olarak isteyebilir. Dilekçeyi diğer maliklerle birlikte imzalayın." },
     { id: "kira-fesih", kat: "konut", ik: "🔑", ad: "Kiracının tahliye bildirimi", ac: "Ev sahibine evden çıkacağını ve sözleşmeyi bitirdiğini bildir.", ara: "kira sözleşmesi fesih tahliye ev sahibi bildirim çıkış",
       f: [["evSahibi", "Ev sahibinin adı soyadı", ""], ["kAdres", "Kiralanan konutun adresi", ""], ["szTarih", "Kira sözleşmesinin tarihi", "", "d"], ["bitis", "Evi teslim tarihin", "", "d"]],
       k: "SAYIN {evSahibi}", kn: "Kira sözleşmesinin sona erdirilmesi hakkında bildirim", kp: "Saygılarımla.", yer: false,
@@ -303,13 +303,13 @@
       k: "{il} CUMHURİYET BAŞSAVCILIĞINA", yapi: true, yer: false,
       m: [["ŞİKÂYETÇİ", "{ad}, T.C. Kimlik No: {tc}\n{adres}"], ["ŞÜPHELİ", "{supheli}"], ["SUÇ", "{suc}"], ["SUÇ TARİHİ VE YERİ", "{sTarih}"], ["AÇIKLAMALAR", "{olay}"], ["DELİLLER", "{delil}"],
         ["SONUÇ VE İSTEM", "Yukarıda açıklanan nedenlerle şüpheli hakkında gerekli soruşturmanın yapılmasını ve cezalandırılması için kamu davası açılmasını saygılarımla talep ederim."]],
-      nt: "Şikâyeti karakola, jandarmaya ya da adliyedeki savcılık bürosuna verebilirsin. Şikâyete bağlı suçlarda 6 aylık süre var; geciktirme." },
+      nt: "Şikâyeti karakola, jandarmaya ya da adliyedeki savcılık bürosuna verebilirsin. Şikâyete bağlı suçlarda, fiili ve faili öğrendiğin günden itibaren 6 ay içinde şikâyet etmen gerekir." },
     { id: "trafik-itiraz", kat: "hukuk", ik: "🚦", ad: "Trafik cezasına itiraz", ac: "Trafik idari para cezasına sulh ceza hâkimliğinde itiraz et.", ara: "trafik cezası itiraz sulh ceza hakimliği radar idari para cezası",
       f: [["il", "İl", "ör. Ankara"], ["idare", "Cezayı veren birim", "ör. Ankara Emniyet Müdürlüğü"], ["seri", "Ceza tutanağı seri / sıra no", ""], ["cTarih", "Cezanın tarihi", "", "d"], ["teb", "Sana tebliğ tarihi", "", "d"], ["plaka", "Plaka", "ör. 06 ABC 123"], ["olay", "İtiraz gerekçen", "Neden haksız olduğunu kısaca anlat", "ta"], ["delil", "Deliller", "", "ta", "Ceza tutanağı, tebliğ belgesi ve her türlü yasal delil"]],
       k: "{il} NÖBETÇİ SULH CEZA HÂKİMLİĞİNE", yapi: true, yer: false, e: ["Ceza tutanağının fotokopisi", "Kimlik fotokopisi"],
       m: [["İTİRAZ EDEN", "{ad}, T.C. Kimlik No: {tc}\n{adres}"], ["KARŞI TARAF", "{idare}"], ["KONU", "{cTarih} tarihli, {seri} seri/sıra numaralı trafik idari para cezası karar tutanağına itirazımdan ibarettir. (Tebliğ tarihi: {teb})"],
         ["AÇIKLAMALAR", "{plaka} plakalı aracım için düzenlenen söz konusu ceza hukuka aykırıdır. Şöyle ki:\n{olay}"], ["HUKUKİ NEDENLER", "5326 sayılı Kabahatler Kanunu, 2918 sayılı Karayolları Trafik Kanunu ve ilgili mevzuat"], ["DELİLLER", "{delil}"],
         ["SONUÇ VE İSTEM", "Yukarıda açıklanan nedenlerle idari para cezasının iptaline karar verilmesini saygılarımla talep ederim."]],
-      nt: "İtiraz, cezanın tebliğinden itibaren 15 gün içinde yapılmalı. Dilekçe adliyedeki ön büroya verilir; masraf istenebilir. Süreyi ve usulü mutlaka teyit et." }
+      nt: "İtiraz, cezanın tebliğinden itibaren 15 gün içinde, cezayı veren idarenin bulunduğu yerdeki sulh ceza hâkimliğine yapılır; süre kaçarsa ceza kesinleşir. Cezayla birlikte trafikten men gibi ek bir yaptırım da varsa yetkili yer idare mahkemesi olabilir." }
   ];
 })();

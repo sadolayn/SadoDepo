@@ -55,6 +55,10 @@
       <div><h2 class="dl-bad" id="dlAd"></h2><p class="dl-bac" id="dlAc"></p></div>
     </div>
     <div class="dl-not" id="dlNot" hidden></div>
+    <div class="dl-hat" id="dlHat" hidden>
+      <div class="dl-hatTx"><b id="dlHatT"></b><span id="dlHatA"></span></div>
+      <button type="button" id="dlHatB">📅 Takvime ekle</button>
+    </div>
 
     <form id="dlForm" autocomplete="on" onsubmit="return false">
       <div class="card dl-kart"><h3 class="dl-st"><b>1</b>Kime ve ne için</h3><div id="dlAlanlar"></div></div>
@@ -66,6 +70,11 @@
           <div><label for="g_eposta">E-posta <small>(isteğe bağlı)</small></label><div class="field"><input id="g_eposta" data-g="eposta" type="email" autocomplete="email" placeholder="ad@ornek.com"></div></div>
         </div>
         <label for="g_adres">Adresin</label><textarea id="g_adres" data-g="adres" rows="2" autocomplete="street-address" placeholder="Mahalle, sokak, no, ilçe / il"></textarea>
+        <div class="dl-imzaK">
+          <div class="dl-imzaOn" id="dlImzaOn" aria-hidden="true"><span>İmza yok</span></div>
+          <div class="dl-imzaBt"><button type="button" id="dlImzaAt">✍️ Ekrana imza at</button><button type="button" id="dlImzaSil" hidden>🗑️ Sil</button></div>
+        </div>
+        <p class="dl-imzaNot">İsteğe bağlı. İmzan yalnızca bu sayfa açıkken PDF ve Word'e eklenir; hiçbir yere kaydedilmez. Islak imza isteyen kurum için çıktıyı kalemle imzala.</p>
         <label class="dl-hatirla"><input type="checkbox" id="dlHatirla"> <span>Bilgilerimi bu cihazda hatırla <small>(T.C. kimlik no hariç)</small></span></label>
       </div>
       <div class="card dl-kart"><h3 class="dl-st"><b>3</b>Tarih ve ekler</h3>
@@ -92,14 +101,24 @@
 </div>
 
 <nav class="dl-bar" id="dlBar" hidden aria-label="Dilekçe işlemleri">
-  <button type="button" class="dl-pdf" id="dlPdf">📄 PDF indir</button>
-  <button type="button" id="dlPay">📤 Paylaş</button>
-  <button type="button" id="dlKop">📋 Kopyala</button>
-  <button type="button" id="dlYaz">🖨️ Yazdır</button>
+  <button type="button" class="dl-pdf" id="dlPdf"><b>📄</b>PDF</button>
+  <button type="button" id="dlDocx"><b>📘</b>Word</button>
+  <button type="button" id="dlPay"><b>📤</b>Paylaş</button>
+  <button type="button" id="dlKop"><b>📋</b>Kopyala</button>
+  <button type="button" id="dlYaz"><b>🖨️</b>Yazdır</button>
 </nav>
+<div class="dl-modal" id="dlModal" hidden role="dialog" aria-modal="true" aria-labelledby="dlModalT">
+  <div class="dl-mkutu">
+    <h3 id="dlModalT">✍️ İmzanı at</h3>
+    <p>Parmağınla çizgi çizgi imzala. Telefonu yan çevirirsen alan genişler.</p>
+    <div class="dl-tuval"><canvas id="dlTuval" aria-label="İmza alanı"></canvas><i>imza</i></div>
+    <div class="dl-mbt"><button type="button" id="dlTemizle">↺ Temizle</button><button type="button" id="dlVazgec">Vazgeç</button><button type="button" class="ok" id="dlImzaOk">✅ Kullan</button></div>
+  </div>
+</div>
 <div class="dl-toast" id="dlToast" role="status" aria-live="polite"></div>
 
 <script src="dilekceler.js"></script>
+<script src="dilekcedocx.js"></script>
 <script src="dilekcep.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
