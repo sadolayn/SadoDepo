@@ -2,6 +2,7 @@ const $ = (id) => document.getElementById(id);
 // ===== Sekmeler =====
 $("tabs").addEventListener("click", (e) => {
   const b = e.target.closest("button[data-t]"); if (!b) return;
+  if (b.dataset.t === "dilekce") { window.Rapor && Rapor.bolum("dilekce"); location.href = "dilekce.html"; return; } // Dilekçe Örnekleri ayrı sayfada (14 Kasım 2026)
   if (b.dataset.t === "kaza") { window.Rapor && Rapor.bolum("kaza"); location.href = "kaza.html"; return; } // Kaza Tutanağı Asistanı ayrı sayfada (8 Kasım 2026)
   document.querySelectorAll("#tabs button").forEach((x) => x.classList.toggle("on", x === b));
   document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("on", p.id === b.dataset.t));
@@ -653,7 +654,7 @@ const bmYonlendir = () => { if (location.hash === "#bulmaca") location.replace("
 bmYonlendir(); window.addEventListener("hashchange", bmYonlendir);
 // Açılışta sekme: adresteki #sekme, yoksa en son açık sekme (sayfa yenilense de aynı yerde kalınır; 8 Kasım)
 try {
-  const h = location.hash.slice(1), var_ = (x) => x && x !== "kaza" && document.querySelector(`#tabs [data-t="${x}"]`); // kaza ayrı sayfa: açılışta oraya atlanmaz
+  const h = location.hash.slice(1), var_ = (x) => x && x !== "kaza" && x !== "dilekce" && document.querySelector(`#tabs [data-t="${x}"]`); // kaza ayrı sayfa: açılışta oraya atlanmaz
   let son = null; try { son = localStorage.getItem("hesapTab"); } catch (e) {}
   const t = var_(h) ? h : var_(son) ? son : "calc"; document.querySelector(`#tabs [data-t="${t}"]`).click();
   // Adresteki #sekme yüzünden tarayıcının bölüme atlamasını geri al: sayfa en üstten açılsın

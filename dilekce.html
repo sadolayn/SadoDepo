@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="tr" data-tema-koru="\.dl-kagit\b">
+<head>
+<meta charset="utf-8">
+<script src="tema.js"></script>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dilekçe Örnekleri</title>
+<meta name="description" content="Kurumlara hazır dilekçe örnekleri: bilgilerini yaz, tarihi seç, PDF olarak indir.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SADOLAYN">
+<meta property="og:title" content="Dilekçe Örnekleri · SADOLAYN">
+<meta property="og:description" content="“Bilgi paylaştıkça büyür”">
+<meta property="og:url" content="https://sadolayn.github.io/SadoDepo/dilekce.html">
+<meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="tr_TR">
+<link rel="stylesheet" href="hesap.css">
+<link rel="stylesheet" href="dilekce.css">
+<script src="pwa.js"></script>
+<script src="ortak.js"></script>
+<script src="rapor.js"></script>
+<link rel="stylesheet" href="theme.css">
+</head>
+<body data-gezinti="yok">
+<div class="wrap">
+  <div class="stick">
+    <header>
+      <a class="dl-hb" href="hesap.html" title="Hesaplamalar" aria-label="Hesaplamalar">🧮</a>
+      <h1>📝 Dilekçe Örnekleri</h1>
+      <a class="dl-hb" href="index.html" title="Ana sayfa" aria-label="Ana sayfa">🏠</a>
+    </header>
+  </div>
+
+  <!-- Liste -->
+  <main id="dlListe">
+    <p class="dl-giris"><i>Hazır metin, doğru düzen, imzaya hazır.</i> Dilekçeni seç, bilgilerini yaz, PDF olarak indir.</p>
+    <div class="dl-ara"><span aria-hidden="true">🔎</span><input id="dlAra" type="search" placeholder="Ara: istifa, nakil, KVKK, fatura…" aria-label="Dilekçe ara" autocomplete="off" enterkeyhint="search"></div>
+    <div class="dl-kat" id="dlKat" role="tablist" aria-label="Kategoriler"></div>
+    <div id="dlSon"></div>
+    <div id="dlGruplar"></div>
+    <p class="dl-bos" id="dlBos" hidden>Aradığını bulamadım 🙂 <b>Serbest dilekçe</b> ile kendi metnini yazabilirsin.</p>
+    <p class="dl-uyari">ℹ️ Örnekler genel bilgi içindir, hukuki danışmanlık yerine geçmez; süre ve usulü ilgili kurumdan teyit et. Yazdıkların yalnızca bu cihazda kalır, hiçbir yere gönderilmez.</p>
+  </main>
+
+  <!-- Düzenleyici -->
+  <section id="dlDuz" hidden>
+    <button type="button" class="dl-geri" id="dlGeri">‹ Tüm dilekçeler</button>
+    <div class="dl-bas">
+      <span class="dl-bik" id="dlIk" aria-hidden="true"></span>
+      <div><h2 class="dl-bad" id="dlAd"></h2><p class="dl-bac" id="dlAc"></p></div>
+    </div>
+    <div class="dl-not" id="dlNot" hidden></div>
+
+    <form id="dlForm" autocomplete="on" onsubmit="return false">
+      <div class="card dl-kart"><h3 class="dl-st"><b>1</b>Kime ve ne için</h3><div id="dlAlanlar"></div></div>
+      <div class="card dl-kart"><h3 class="dl-st"><b>2</b>Senin bilgilerin</h3>
+        <label for="g_ad">Adın soyadın</label><div class="field"><input id="g_ad" data-g="ad" autocomplete="name" placeholder="ör. Ayşe Yılmaz"></div>
+        <label for="g_tc">T.C. kimlik no <small>(gerekirse)</small></label><div class="field"><input id="g_tc" data-g="tc" inputmode="numeric" maxlength="11" autocomplete="off" placeholder="11 hane"></div>
+        <div class="two">
+          <div><label for="g_tel">Telefon</label><div class="field"><input id="g_tel" data-g="tel" type="tel" autocomplete="tel" placeholder="05xx xxx xx xx"></div></div>
+          <div><label for="g_eposta">E-posta <small>(isteğe bağlı)</small></label><div class="field"><input id="g_eposta" data-g="eposta" type="email" autocomplete="email" placeholder="ad@ornek.com"></div></div>
+        </div>
+        <label for="g_adres">Adresin</label><textarea id="g_adres" data-g="adres" rows="2" autocomplete="street-address" placeholder="Mahalle, sokak, no, ilçe / il"></textarea>
+        <label class="dl-hatirla"><input type="checkbox" id="dlHatirla"> <span>Bilgilerimi bu cihazda hatırla <small>(T.C. kimlik no hariç)</small></span></label>
+      </div>
+      <div class="card dl-kart"><h3 class="dl-st"><b>3</b>Tarih ve ekler</h3>
+        <div class="two">
+          <div><label for="g_tarih">Dilekçe tarihi</label><input type="date" id="g_tarih"></div>
+          <div id="dlYerK"><label for="g_yer">Şehir <small>(başlık altı)</small></label><div class="field"><input id="g_yer" data-g="yer" placeholder="ör. Ankara"></div></div>
+        </div>
+        <label for="g_ekler">Ekler <small>(her biri ayrı satır)</small></label><textarea id="g_ekler" rows="3" placeholder="ör. Kimlik fotokopisi"></textarea>
+      </div>
+    </form>
+
+    <div class="dl-onb">
+      <h3 class="dl-ot">Önizleme</h3>
+      <button type="button" class="dl-duzbtn" id="dlDuzBtn" aria-pressed="false">✏️ Metni düzenle</button>
+    </div>
+    <div class="dl-elle" id="dlElle" hidden>
+      <p>Metni dilediğin gibi değiştir; paragrafları boş satırla ayır. Başlık, tarih ve imza yeri kendiliğinden kalır.</p>
+      <textarea id="dlMetin" rows="12" aria-label="Dilekçe metni"></textarea>
+      <button type="button" id="dlSablon">↺ Şablon metnine dön</button>
+    </div>
+    <div class="dl-kagitK"><article class="dl-kagit" id="dlKagit" aria-label="Dilekçe önizlemesi"></article></div>
+    <p class="dl-bosNot" id="dlEksik" aria-live="polite"></p>
+  </section>
+</div>
+
+<nav class="dl-bar" id="dlBar" hidden aria-label="Dilekçe işlemleri">
+  <button type="button" class="dl-pdf" id="dlPdf">📄 PDF indir</button>
+  <button type="button" id="dlPay">📤 Paylaş</button>
+  <button type="button" id="dlKop">📋 Kopyala</button>
+  <button type="button" id="dlYaz">🖨️ Yazdır</button>
+</nav>
+<div class="dl-toast" id="dlToast" role="status" aria-live="polite"></div>
+
+<script src="dilekceler.js"></script>
+<script src="dilekcep.js"></script>
+<script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
+<script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
