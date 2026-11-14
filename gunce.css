@@ -251,3 +251,9 @@
   .pz-stamp { position: absolute; top: 70px; right: 10px; transform: rotate(-14deg); border: 3px double #16824f; color: #16824f; border-radius: 8px; padding: 4px 8px; font: 800 14px system-ui, sans-serif; letter-spacing: 1px; opacity: .85; animation: pzStamp .5s 1.6s both; }
   @keyframes pzStamp { from { transform: rotate(-14deg) scale(2.2); opacity: 0; } }
   .pz-bc { height: 34px; margin: 12px auto 4px; width: 75%; background: repeating-linear-gradient(90deg, #262626 0 2px, transparent 2px 4px, #262626 4px 5px, transparent 5px 8px, #262626 8px 11px, transparent 11px 12px); }
+
+/* Bilgisayar (1000 px ve üstü): solda rapor ve günlük işaretleme, sağda takvim, olasılık, fiş ve yedek. Telefonda değişiklik yok. */
+@media (min-width: 1000px) {
+  .wrap { max-width: 1120px; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); column-gap: 22px; align-items: start; }
+  .wrap > .stick, .wrap > .note { grid-column: 1 / -1; }
+}

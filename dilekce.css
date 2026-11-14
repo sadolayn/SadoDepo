@@ -168,3 +168,37 @@ body.dl-acik #ortakYukari { bottom: calc(80px + env(safe-area-inset-bottom)) !im
 @keyframes dlMod { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .dl-hat, .dl-modal, .dl-mkutu { animation: none; } }
 @media print { .dl-hat, .dl-modal { display: none !important; } .dl-kagit .k-imza img { max-height: 18mm; } }
+
+/* ===== Bilgisayar (1000 px ve üstü): liste üç sütun; düzenleyicide form solda, A4 önizleme sağda sabit. Telefonda değişiklik yok. ===== */
+@media (min-width: 1000px) {
+  .wrap { max-width: 1240px; }
+  :root { --dlSol: 470px; --dlAra: 32px; }
+  #dlListe { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 24px; align-items: end; }
+  #dlListe > .dl-giris { grid-column: 1; margin-bottom: 0; }
+  #dlListe > .dl-ara { grid-column: 2; }
+  #dlListe > .dl-kat, #dlListe > #dlSon, #dlListe > #dlGruplar, #dlListe > .dl-bos, #dlListe > .dl-uyari { grid-column: 1 / -1; }
+  .dl-giris i { font-size: 22px; }
+  .dl-kat { flex-wrap: wrap; overflow: visible; margin: 0; padding: 14px 0 4px; }
+  .dl-satirlar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dl-row { height: 100%; align-items: flex-start; }
+  .dl-row .ok { align-self: center; }
+  .dl-row:hover { border-color: #5a4320; background: #0d0a05; }
+  .dl-kat button:hover, .dl-son button:hover { border-color: #e0a24f; }
+  .dl-uyari { max-width: 760px; }
+
+  #dlDuz:not([hidden]) { display: grid; grid-template-columns: var(--dlSol) minmax(0, 1fr); column-gap: var(--dlAra); align-items: start; }
+  .dl-sag { position: sticky; top: 84px; }
+  .dl-sag { display: flex; flex-direction: column; }
+  .dl-sag > .dl-onb { margin-top: 2px; }
+  .dl-sag > .dl-bosNot { order: -1; margin: 0 2px 8px; }
+  .dl-sag > .dl-onb { order: -2; }
+  .dl-kagitK { max-height: calc(100vh - 250px); overflow: auto; border-radius: 8px; scrollbar-width: thin; scrollbar-color: #5a4320 transparent; }
+  .dl-elle textarea { min-height: 160px; }
+  .dl-kagit { font-size: clamp(12px, 2.05cqw, 15.5px); padding: 9% 9% 8% 11%; }
+  .dl-bar { left: auto; right: max(14px, calc((100vw - 1240px) / 2)); width: calc(min(100vw - 28px, 1240px) - var(--dlSol) - var(--dlAra)); max-width: none; margin: 0; border: 1px solid #1c1c1c; border-bottom: 0; border-radius: 16px 16px 0 0; padding: 10px 10px 10px; }
+  .dl-bar button { flex-direction: row; gap: 7px; font-size: 13.5px; min-height: 46px; }
+  .dl-bar button b { font-size: 17px; }
+  .dl-bar button:hover { border-color: #e0a24f; }
+  .dl-bar .dl-pdf:hover { filter: brightness(1.06); }
+  body.dl-acik #ortakYukari { bottom: calc(80px + env(safe-area-inset-bottom)) !important; }
+}

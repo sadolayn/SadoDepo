@@ -205,3 +205,6 @@ footer.copyright { margin-bottom: 20px; }
   .kz-adim.on { animation: none; }
   .kz-bar i, .kz-btn, .kz-slot, .kz-ch, .kz-toast, .kz-sw span::after { transition: none; }
 }
+
+/* Bilgisayar (1000 px ve üstü): adımlar daha geniş ve rahat; tutanak telefonda doldurulacak şekilde kaldı. */
+@media (min-width: 1000px) { .wrap, .kz-nav { max-width: 780px; } }

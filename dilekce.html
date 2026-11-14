@@ -49,6 +49,7 @@
 
   <!-- Düzenleyici -->
   <section id="dlDuz" hidden>
+   <div class="dl-sol">
     <button type="button" class="dl-geri" id="dlGeri">‹ Tüm dilekçeler</button>
     <div class="dl-bas">
       <span class="dl-bik" id="dlIk" aria-hidden="true"></span>
@@ -85,7 +86,8 @@
         <label for="g_ekler">Ekler <small>(her biri ayrı satır)</small></label><textarea id="g_ekler" rows="3" placeholder="ör. Kimlik fotokopisi"></textarea>
       </div>
     </form>
-
+   </div>
+   <div class="dl-sag">
     <div class="dl-onb">
       <h3 class="dl-ot">Önizleme</h3>
       <button type="button" class="dl-duzbtn" id="dlDuzBtn" aria-pressed="false">✏️ Metni düzenle</button>
@@ -97,6 +99,7 @@
     </div>
     <div class="dl-kagitK"><article class="dl-kagit" id="dlKagit" aria-label="Dilekçe önizlemesi"></article></div>
     <p class="dl-bosNot" id="dlEksik" aria-live="polite"></p>
+   </div>
   </section>
 </div>
 

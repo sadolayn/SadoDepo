@@ -553,3 +553,15 @@
   .sjShTamam { width: 100%; margin-top: 10px; padding: 13px; border-radius: 14px; border: 0; background: linear-gradient(160deg, #2fd3a0, #17946f); color: #04140e; font: inherit; font-size: 16px; font-weight: 900; cursor: pointer; }
   /* Adres #sekme ile açılınca tarayıcı bölüme atlar; bölümün üstü sabit başlığın altında kalmasın */
   .panel { scroll-margin-top: calc(var(--sh, 120px) + 14px); }
+
+/* Bilgisayar (1000 px ve üstü): sekmeler tek sıra; kart kart araçlar iki sütun, tek kartlılar rahat okuma genişliğinde.
+   Hesap makinesi ve rulo bilerek olduğu gibi kalır (rulo makinenin yazıcısından çıkıyor). Telefonda değişiklik yok. */
+@media (min-width: 1000px) {
+  .wrap { max-width: 1100px; }
+  .tabs { grid-template-columns: repeat(11, 1fr); }
+  .tabs button { padding: 8px 2px; font-size: 12px; }
+  .tabs button:not(.on):hover { background: #161616; color: var(--ink); }
+  #tarih.on, #yuzde.on, #klavye.on { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 16px; align-items: start; }
+  #calc.on { max-width: 520px; margin: 0 auto; }
+  #faiz.on, #mesafe.on, #pusula.on, #sarj.on, #cetvel.on { max-width: 760px; margin: 0 auto; }
+}

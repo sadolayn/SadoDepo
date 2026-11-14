@@ -167,6 +167,11 @@
   @media (prefers-reduced-motion: reduce) { .radar .sweep, .blip, .tk-et { animation: none; } .tk-run { animation-duration: 90s; } }
   /* açık mod elle düzeltme */
   html[data-tema="acik"] .push h3 small { background: #dff3e8; color: #17603e; }
+/* Bilgisayar (1000 px ve üstü): radar üstte tam genişlik; altında solda kelimeler, sağda abonelik ve SSS. Telefonda değişiklik yok. */
+@media (min-width: 1000px) {
+  .wrap { max-width: 1120px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 22px; align-items: start; }
+  .wrap > .stick, .wrap > .radar-hero { grid-column: 1 / -1; }
+}
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>
@@ -197,6 +202,7 @@
     <div class="ticker" aria-label="Son başlıklar"><span class="tk-et">● GÜNDEM</span><div class="tk-win"><div class="tk-run" id="tk">Gündem yükleniyor…</div></div></div>
   </section>
 
+  <div class="aSol"><!-- Bilgisayarda sol sütun; telefonda sıradan bir kutu -->
   <div class="flow">
     <div><b>1</b><span>Kelimeni yaz</span></div><i></i>
     <div><b>2</b><span>E-posta ya da bildirim</span></div><i></i>
@@ -227,6 +233,8 @@
     <div><b>Sadolayn Alerts <small>· örnek bildirim · 10:00</small></b><span id="biTx"></span></div>
   </div>
 
+  </div>
+  <div class="aSag"><!-- Bilgisayarda sağ sütun -->
   <div class="card">
     <label for="email">E-posta adresin</label>
     <input id="email" type="email" placeholder="ornek@mail.com" autocomplete="email" inputmode="email" style="width:100%">
@@ -253,6 +261,7 @@
     <p><b>Nasıl çıkarım?</b> Her e-postanın altında "Abonelikten çık" bağlantısı var, tek tıkla biter.</p>
     <p><b>Telefon bildirimi nasıl çalışır?</b> “Bildirim aç” deyip izin verince telefonun, seçtiğin kelimelerle kaydedilir; e-posta istemez. Android'de Chrome ile hemen çalışır. iPhone'da önce siteyi Safari'den “Ana Ekrana Ekle” yapıp oradan açman gerekir (Apple kuralı). İstediğin an aynı karttan kapatabilirsin.</p>
     <p><b>Gizlilik ve KVKK aydınlatma:</b> Bu bülten kişisel bir projedir ve herhangi bir kurumla bağı yoktur. Abone olurken yalnızca e-posta adresin ve seçtiğin kelimeler, telefon bildiriminde ise yalnızca bildirim kaydı ve kelimeler alınır. Bu bilgiler sadece sana haber göndermek için, Google altyapısında saklanır; kimseyle paylaşılmaz, reklam için kullanılmaz. Onay vermeden hiçbir bülten gönderilmez. Abonelikten istediğin an çıkabilirsin; bilgilerinin tamamen silinmesini istersen ana sayfadaki öneri formundan yazman yeterli. 6698 sayılı KVKK'nın 11. maddesindeki hakların saklıdır. Veri sorumlusu: Sadolayn (site sahibi) · iletişim: sadolaynalerts@gmail.com; silme talepleri için bu adrese yazabilir ya da ana sayfadaki öneri formunu kullanabilirsin.</p>
+  </div>
   </div>
 </div>
 
