@@ -202,6 +202,17 @@ body{padding:18px 16px 40px}
 .yerS .secili b{font-size:16px}
 .ykn .konumS{margin:0}
 [hidden]{display:none!important}
+.osbP{margin-top:12px;border:1px solid rgba(224,162,79,.35);border-radius:16px;background:rgba(224,162,79,.05);padding:12px;animation:gel .3s cubic-bezier(.2,.7,.2,1) both}
+.osbP h5{margin:0 0 2px;font:italic 400 17px Georgia,serif;color:var(--gold2);display:flex;align-items:center;gap:8px}
+.osbP h5 button{margin-left:auto;border:0;background:rgba(255,255,255,.07);color:#ccc;width:28px;height:28px;border-radius:50%;cursor:pointer}
+.osbP .k{font-size:11.5px;color:var(--mut);margin:0 0 8px}
+.osbR{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid rgba(255,255,255,.07)}
+.osbR .ad{flex:1;min-width:0;font-weight:600;font-size:14px}
+.osbR .ad small{display:block;font-weight:400;font-size:11.5px;color:var(--mut)}
+.osbR .ad .yk{color:#7fe0b0}
+.osbR a{flex:none;font:600 12px system-ui;padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#e6e6e6}
+.osbR a.fl{border-color:rgba(224,162,79,.5);color:var(--gold2)}
+.osbR.sen .ad::before{content:"📍 ";}
 </style>
 </head>
 <body>
@@ -216,6 +227,7 @@ body{padding:18px 16px 40px}
     <div class="ust2"><div class="sek2" role="tablist"><button data-g="san" role="tab">🏭 Sanayi &amp; Ticaret</button><button data-g="tar" role="tab">🌾 Tarım</button></div>
       <div class="cap" role="radiogroup" aria-label="Çap" id="capK" hidden><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div></div>
     <div class="fg" id="yknSek"></div>
+    <div class="osbP" id="osbP" hidden></div>
     <p class="not" id="not"></p></div>
   <p class="ac">Bu sayfa yalnızca deneme içindir; sitede hiçbir yerden bağlantısı yoktur. Bankanın müşteri bilgisi kullanılmaz; firma listeleri OSB'lerin kendi sitelerinden, diğerleri Google Haritalar'dan gelir. Segment etiketleri tahminîdir. Bölge seçimi Bölge Nabzı'yla ortaktır ve yalnızca bu cihazda saklanır; konum kaydedilmez.</p>
 </div>
@@ -248,23 +260,45 @@ var G={
       ["🏪","Hal & komisyoncu","harita","sebze meyve hali","Nakit yoğun","kb","POS · çek"],
       ["🫒","Gıda işleme","harita","gıda üretim tesisi","Üretici","ust","işletme · ihracat"]]};
 var ZOOM={1000:15,3000:13,5000:12,10000:11};
+function deEk(ad){var k=ad.toLocaleLowerCase("tr"),v=(k.match(/[aeıioöuü]/g)||["e"]).pop();return ad+"'"+(/[çfhkpsşt]$/.test(k)?"t":"d")+(/[aıou]/.test(v)?"a":"e")}
 function yerMetin(){var c=S.ilce&&S.ilce!=="Merkez"?S.ilce:"";return(c?c+" ":"")+S.il}
 function url(x){
-  if(x[2]==="rehber"){if(!S.il)return null;return"https://www.google.com/search?hl=tr&q="+encodeURIComponent(S.il+' "'+x[3]+'" ("firma rehberi" OR "katılımcı listesi" OR "firmalarımız" OR "katılımcılarımız")')}
+  if(x[2]==="rehber")return S.il?"#osb":null;
   if(konum)return"https://www.google.com/maps/search/"+encodeURIComponent(x[3])+"/@"+konum[0].toFixed(5)+","+konum[1].toFixed(5)+","+ZOOM[r]+"z";
   if(S.il)return"https://www.google.com/maps/search/"+encodeURIComponent(x[3]+" "+yerMetin());
   return null;
 }
 function ciz(){
+  if(typeof cizOsb==="function")setTimeout(cizOsb,0);
   var var_=!!S.il;$("secili").hidden=!var_;$("yerSec").hidden=var_;if(var_)$("yerAd").textContent=(S.ilce&&S.ilce!=="Merkez"?S.ilce+" · ":"")+S.il;
   $("capK").hidden=!konum;$("konumBtn").classList.toggle("on",!!konum);$("konumBtn").textContent=konum?"📍 Konum açık":"📍 Konumumu kullan";
   document.querySelectorAll("#capK button").forEach(function(b){var on=+b.dataset.r===r;b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
   document.querySelectorAll(".sek2 button").forEach(function(b){var on=b.dataset.g===g;b.classList.toggle("on",on);b.setAttribute("aria-selected",on)});
   $("yknSek").innerHTML=G[g].map(function(x,i){var u=url(x);
-    return'<a class="'+(x[2]==="rehber"?"rh ":"")+(u?"":"pas")+'" href="'+esc(u||"#")+'" target="_blank" rel="noopener" style="animation-delay:'+(i*.03)+'s"><span class="sg '+x[5]+'">'+x[4]+'</span><span class="e">'+x[0]+'</span><span class="t">'+x[1]+'</span><span class="f">'+x[6]+"</span></a>"}).join("");
+    return'<a class="'+(x[2]==="rehber"?"rh ":"")+(u?"":"pas")+'" href="'+esc(u||"#")+'"'+(x[2]==="rehber"?' data-rh="1"':' target="_blank" rel="noopener"')+' style="animation-delay:'+(i*.03)+'s"><span class="sg '+x[5]+'">'+x[4]+'</span><span class="e">'+x[0]+'</span><span class="t">'+x[1]+'</span><span class="f">'+x[6]+"</span></a>"}).join("");
   $("not").textContent=!S.il&&!konum?"Başlamak için bölgeni seç ya da konumunu kullan.":
-    (S.il?"📋 Firma rehberi "+S.il+" OSB'lerinin kendi sitelerindeki listeyi arar. ":"📋 Firma rehberi için bölgeni seç. ")+(konum?"Harita kutuları bulunduğun yerin çevresinde arar.":"Harita kutuları "+yerMetin().replace(" "+S.il,", "+S.il)+" içinde arar; sahadaysan konumunu kullan.");
+    (S.il?"📋 Firma rehberi "+deEk(S.il)+"ki OSB'leri tek tek listeler; her birinin kendi sitesindeki firma listesini açar. Her OSB liste yayımlamıyor; bulamazsan haritaya bak. ":"📋 Firma rehberi için bölgeni seç. ")+(konum?"Harita kutuları bulunduğun yerin çevresinde arar.":"Harita kutuları "+yerMetin().replace(" "+S.il,", "+S.il)+" içinde arar; sahadaysan konumunu kullan.");
 }
+
+var OSB=null,acik=false;
+var DUR={a:"altyapı hazırlanıyor",k:"kamulaştırma yapılıyor",p:"planlama aşamasında"};
+function osbAd(a){return /OSB/i.test(a)?a:a+" OSB"}
+function cizOsb(){
+  var P=$("osbP");if(!acik||!S.il){P.hidden=true;return}
+  P.hidden=false;
+  if(!OSB){P.innerHTML='<p class="k">Liste yükleniyor…</p>';fetch("data/osb.json").then(function(r){return r.json()}).then(function(j){OSB=j;cizOsb()}).catch(function(){P.innerHTML='<p class="k">Liste yüklenemedi, sonra tekrar dene.</p>'});return}
+  var tar=g==="tar",L=(OSB.iller[S.il]||[]).filter(function(o){return tar?o.t:!o.t});
+  var ic=S.ilce&&S.ilce!=="Merkez"?sade(S.ilce):"";
+  L=L.map(function(o){return{o:o,sen:!!ic&&sade(o.a).indexOf(ic)>=0}}).sort(function(a,b){return(b.sen-a.sen)||((a.o.d==="f"?0:1)-(b.o.d==="f"?0:1))});
+  var h='<h5>'+(tar?"🌾 Tarım OSB'leri":"🏭 OSB'ler")+" · "+esc(S.il)+'<button type="button" id="osbK" aria-label="Kapat">✕</button></h5><p class="k">'+L.length+" bölge · Kaynak: OSBÜK listesi. Firma listesi, OSB'nin kendi sitesinde arar.</p>";
+  if(!L.length)h+='<p class="k">'+esc(deEk(S.il))+(tar?" tarıma dayalı OSB görünmüyor. Sanayi sekmesindeki OSB'lere bak.":" OSB görünmüyor.")+"</p>";
+  h+=L.map(function(x){var o=x.o,ad=osbAd(o.a),q=encodeURIComponent(o.a.replace(/\(.*?\)/g,"").trim()+" OSB "+S.il);
+    var fl=o.w?'<a class="fl" href="https://www.google.com/search?hl=tr&q='+encodeURIComponent("site:"+o.w+" (firmalar OR firma OR katılımcılar OR katılımcı)")+'" target="_blank" rel="noopener">📋 Firmalar</a>':"";
+    var alt=o.d!=="f"?DUR[o.d]:o.w?o.w:"kendi sitesi yok";
+    return'<div class="osbR'+(x.sen?" sen":"")+'"><div class="ad">'+esc(ad)+'<small class="'+(o.d==="f"?"":"yk")+'">'+esc(alt)+'</small></div>'+fl+'<a href="https://www.google.com/maps/search/'+q+'" target="_blank" rel="noopener">🗺️ Harita</a></div>'}).join("");
+  P.innerHTML=h;$("osbK").onclick=function(){acik=false;cizOsb()};
+}
+$("yknSek").addEventListener("click",function(e){var a=e.target.closest("a[data-rh]");if(!a)return;e.preventDefault();if(a.classList.contains("pas"))return;acik=!acik;cizOsb();if(acik)setTimeout(function(){$("osbP").scrollIntoView({behavior:"smooth",block:"nearest"})},60)});
 fetch("data/ililce.json").then(function(r){return r.json()}).then(function(j){Object.keys(j).forEach(function(il){LISTE.push({il:il,ilce:"",s:sade(il)});j[il].forEach(function(c){LISTE.push({il:il,ilce:c,s:sade(c)})})})}).catch(function(){});
 $("yaz").addEventListener("input",function(){var q=sade(this.value.trim());if(q.length<2){$("oner").hidden=true;return}
   var b=LISTE.filter(function(x){return x.s.indexOf(q)===0}).slice(0,8);
