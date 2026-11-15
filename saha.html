@@ -221,6 +221,10 @@ body{padding:18px 16px 40px}
 .ykn .konumS{margin:0}
 [hidden]{display:none!important}
 .osbP{margin-top:12px;border:1px solid rgba(224,162,79,.35);border-radius:16px;background:rgba(224,162,79,.05);padding:12px;animation:gel .3s cubic-bezier(.2,.7,.2,1) both}
+.osbP.parla{animation:parla 1.1s ease}
+@keyframes parla{0%{box-shadow:0 0 0 0 rgba(224,162,79,.7)}100%{box-shadow:0 0 0 14px rgba(224,162,79,0)}}
+@media (prefers-reduced-motion:reduce){.osbP.parla{animation:none}}
+.osbP{margin:12px 0 0}
 .osbP h5{margin:0 0 2px;font:italic 400 17px Georgia,serif;color:var(--gold2);display:flex;align-items:center;gap:8px}
 .osbP h5 button{margin-left:auto;border:0;background:rgba(255,255,255,.07);color:#ccc;width:28px;height:28px;border-radius:50%;cursor:pointer}
 .osbP .k{font-size:11.5px;color:var(--mut);margin:0 0 8px}
@@ -249,8 +253,8 @@ body{padding:18px 16px 40px}
     </div>
     <div class="ust2"><div class="sek2" role="tablist"><button data-g="san" role="tab">🏭 Sanayi &amp; Ticaret</button><button data-g="tar" role="tab">🌾 Tarım</button></div>
       <div class="cap" role="radiogroup" aria-label="Çap" id="capK" hidden><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div></div>
-    <div class="fg" id="yknSek"></div>
     <div class="osbP" id="osbP" hidden></div>
+    <div class="fg" id="yknSek"></div>
     <p class="not" id="not"></p></div>
   <p class="ac">Bankanın müşteri bilgisi kullanılmaz; OSB listesi OSBÜK'ten, firma listeleri OSB'lerin kendi sitelerinden, diğerleri Google Haritalar'dan gelir. Segment etiketleri tahminîdir. Bölge seçimi Bölge Nabzı'yla ortaktır ve yalnızca bu cihazda saklanır; konum kaydedilmez.</p>
 </div>
@@ -321,7 +325,7 @@ function cizOsb(){
     return'<div class="osbR'+(x.sen?" sen":"")+'"><div class="ad">'+esc(ad)+'<small class="'+(o.d==="f"?"":"yk")+'">'+esc(alt)+'</small></div>'+fl+'<a href="https://www.google.com/maps/search/'+q+'" target="_blank" rel="noopener">🗺️ Harita</a></div>'}).join("");
   P.innerHTML=h;$("osbK").onclick=function(){acik=false;cizOsb()};
 }
-$("yknSek").addEventListener("click",function(e){var t=e.target.closest("a[href]");if(t&&window.Rapor)Rapor.bolum("saha-"+(t.dataset.rh?"rehber":"harita"));var a=e.target.closest("a[data-rh]");if(!a)return;e.preventDefault();if(a.classList.contains("pas"))return;acik=!acik;cizOsb();if(acik)setTimeout(function(){$("osbP").scrollIntoView({behavior:"smooth",block:"nearest"})},60)});
+$("yknSek").addEventListener("click",function(e){var t=e.target.closest("a[href]");if(t&&window.Rapor)Rapor.bolum("saha-"+(t.dataset.rh?"rehber":"harita"));var a=e.target.closest("a[data-rh]");if(!a)return;e.preventDefault();if(a.classList.contains("pas"))return;acik=true;cizOsb();setTimeout(function(){var P=$("osbP");if(P.hidden)return;window.scrollTo({top:P.getBoundingClientRect().top+window.scrollY-14,behavior:"smooth"});P.classList.remove("parla");void P.offsetWidth;P.classList.add("parla")},60)});
 fetch("data/ililce.json").then(function(r){return r.json()}).then(function(j){Object.keys(j).forEach(function(il){LISTE.push({il:il,ilce:"",s:sade(il)});j[il].forEach(function(c){LISTE.push({il:il,ilce:c,s:sade(c)})})})}).catch(function(){});
 $("yaz").addEventListener("input",function(){var q=sade(this.value.trim());if(q.length<2){$("oner").hidden=true;return}
   var b=LISTE.filter(function(x){return x.s.indexOf(q)===0}).slice(0,8);
