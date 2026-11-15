@@ -717,6 +717,7 @@
 .pk .mt { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 6px; }
 .pk.yakin { border-color: rgba(232,181,43,.6); box-shadow: inset 0 0 0 1px rgba(232,181,43,.2); }
 .pk.genis { grid-column: 1 / -1; }
+#pkTtl { margin-top: 10px; animation: none; }
 .pk.ttl .ad { font: italic 400 18px Georgia, "Times New Roman", serif; color: #f3d38a; margin-top: 4px; }
 .hft { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
 .hft div { border-radius: 10px; padding: 5px 0 4px; text-align: center; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.07); font-size: 11px; color: var(--muted); }
@@ -746,10 +747,9 @@
 @keyframes rdrD { to { transform: rotate(360deg); } }
 @media (min-width: 1000px) {
   .pnl { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 10px; }
-  .pk.ttl, .pk.py { grid-column: span 2; }
-  .pk.genis { grid-column: span 2; }
-  /* PC'de küçük dört kutu üstte, tatil ve piyasa altta yan yana */
-  .pk.kmp, .pk.sah { order: 1; } .pk.ttl, .pk.py { order: 2; }
+  .pk.genis { grid-column: 1 / -1; }
+  /* PC'de küçük dört kutu üstte, piyasa altta tam genişlik */
+  .pk.kmp, .pk.sah { order: 1; } .pk.py { order: 2; }
 }
 /* Açık mod */
 html[data-tema="acik"] .pk { background: #fff; box-shadow: 0 1px 0 rgba(90,60,20,.04); }
@@ -954,7 +954,6 @@ html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 9
     <section class="pnl" id="pnl" aria-label="Tek bakışta">
       <a class="pk" href="takvim.html" id="pkCy"><h3>Çeyrek</h3><span class="n" id="cyN">–</span><span class="a">iş günü kaldı</span><div class="cb"><i id="cyB"></i></div><div class="mt"><span id="cyBas"></span><span id="cyBit"></span></div></a>
       <a class="pk" href="takvim.html" id="pkPpk"><h3>Sonraki PPK</h3><span class="n" id="ppkN">–</span><span class="a" id="ppkT"></span><span class="a" id="ppkF"></span></a>
-      <a class="pk ttl genis" href="takvim.html"><h3>Tatile kalan <i>Takvim ›</i></h3><span class="n" id="ttN">–</span><div class="ad" id="ttAd"></div><span class="a" id="ttA"></span><div class="hft" id="ttH"></div><div class="sonra" id="ttS"></div></a>
       <a class="pk py genis" href="piyasa.html"><h3>Piyasa <i>Tümü ›</i></h3><div class="kr" id="pkKur"></div></a>
       <a class="pk kmp" href="isbank.html#maximum" id="pkKmp"><h3>Kampanyalar</h3><span class="n" id="kmN">–</span><span class="a">farklı kampanya</span><span class="yr" id="kmY" hidden><i></i><span></span></span></a>
       <a class="pk sah" href="saha.html" data-yeni="saha|2026-11-15|YENİ"><h3><span style="display:flex;align-items:center;gap:7px"><span class="rdr" aria-hidden="true"></span>Saha Radarı</span></h3><span class="t">Kime gidelim?</span><span class="a">81 ilin OSB'leri ve firma listeleri, dış ticaret, tarım</span></a>
@@ -1012,6 +1011,7 @@ html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 9
       <a class="tile" href="yakin.html" data-ara="yakın eczane nöbetçi hastane şube atm toplanma alanı harita"><span class="ik">📍</span><div class="t">En Yakınımda</div><div class="d">Eczane, hastane, şube, ATM, toplanma alanı… 40'tan fazla yer</div></a>
       <a class="tile" href="hava.html" data-ara="hava durumu yağmur sıcaklık tahmin"><span class="ik">🌤️</span><div class="t">Hava Durumu</div><div class="d">Bulunduğun yer için saatlik ve 7 günlük tahmin</div></a>
     </div>
+    <a class="pk ttl" id="pkTtl" href="takvim.html" data-ara="tatile kalan tatil bayram yılbaşı resmî tatil arife köprü"><h3>Tatile kalan <i>Takvim ›</i></h3><span class="n" id="ttN">–</span><div class="ad" id="ttAd"></div><span class="a" id="ttA"></span><div class="hft" id="ttH"></div><div class="sonra" id="ttS"></div></a>
     </div>
 
     <div class="mnB">
