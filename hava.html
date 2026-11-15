@@ -176,6 +176,10 @@
   #out > .hvSun, #out > .hvGun, #out > .hvGece { grid-column: 2; }
   #out > .hvB > h2:first-child { margin-top: 0; }
   #out > .hvB > :last-child { margin-bottom: 0; }
+  /* 24 saatin tamamı kaydırmadan görünsün: 8'erli 3 sıra */
+  #out > .hvSaat .hours { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; overflow: visible; padding-bottom: 0; }
+  #out > .hvSaat .hour { width: auto; padding: 8px 2px; }
+  #out > .hvSaat .hour .i { font-size: 21px; margin: 4px 0; }
 }
 </style>
 <script src="pwa.js"></script>
@@ -321,7 +325,7 @@ function hvDiz() {
   if (!hvGenis.matches || !B.length) return;
   B.forEach((b) => { b.style.gridRowEnd = "span " + Math.ceil(b.getBoundingClientRect().height + 16); });
   if (!hvRO && window.ResizeObserver) { hvRO = new ResizeObserver(() => { clearTimeout(hvDiz.z); hvDiz.z = setTimeout(hvDiz, 60); }); }
-  if (hvRO) { hvRO.disconnect(); B.forEach((b) => hvRO.observe(b.firstElementChild || b)); }
+  if (hvRO) { hvRO.disconnect(); B.forEach((b) => hvRO.observe(b)); }
 }
 if (hvGenis.addEventListener) hvGenis.addEventListener("change", hvDiz);
 

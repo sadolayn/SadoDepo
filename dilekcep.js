@@ -80,6 +80,12 @@
     aktifKat = b.dataset.k; katCiz(); listeCiz();
   });
   $("dlAra").addEventListener("input", listeCiz);
+  // Klavye: "/" arama kutusuna götürür, Esc aramayı temizler (bilgisayarda kolaylık)
+  document.addEventListener("keydown", function (e) {
+    var hedef = e.target, yaziyor = /^(INPUT|TEXTAREA|SELECT)$/.test(hedef.tagName) || hedef.isContentEditable;
+    if (e.key === "/" && !yaziyor && !e.ctrlKey && !e.metaKey && !e.altKey && !$("dlListe").hidden) { e.preventDefault(); $("dlAra").focus(); $("dlAra").select(); }
+    else if (e.key === "Escape" && hedef.id === "dlAra" && hedef.value) { hedef.value = ""; listeCiz(); }
+  });
   document.addEventListener("click", function (e) {
     var b = e.target.closest("#dlGruplar .dl-row, #dlSon button[data-id]"); if (!b) return;
     ac(b.dataset.id, true);

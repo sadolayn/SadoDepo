@@ -11,6 +11,7 @@ header h1 { font-size: 19px; text-align: center; flex: 1; }
 .dl-ara:focus-within { border-color: #e0a24f; }
 .dl-ara input { flex: 1; min-width: 0; background: transparent; border: 0; color: #f2f2f2; font: inherit; font-size: 16px; padding: 12px 0; outline: none; }
 .dl-ara input::-webkit-search-cancel-button { filter: invert(.6); }
+.dl-kbd { display: none; } /* yalnızca bilgisayarda görünür */
 .dl-kat { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 4px; margin: 0 -14px; padding-left: 14px; padding-right: 14px; scrollbar-width: none; }
 .dl-kat::-webkit-scrollbar { display: none; }
 .dl-kat button { flex: 0 0 auto; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid #262626; background: #0d0d0d; color: #bdbdbd; font: 600 13px system-ui, sans-serif; cursor: pointer; white-space: nowrap; transition: transform .15s ease, border-color .2s ease, background-color .2s ease, color .2s ease; }
@@ -185,6 +186,8 @@ body.dl-acik #ortakYukari { bottom: calc(80px + env(safe-area-inset-bottom)) !im
   .dl-row:hover { border-color: #5a4320; background: #0d0a05; }
   .dl-kat button:hover, .dl-son button:hover { border-color: #e0a24f; }
   .dl-uyari { max-width: 760px; }
+  .dl-kbd { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 7px; border: 1px solid #333; border-bottom-width: 2px; background: #141414; color: #8a8a8a; font: 600 12px ui-monospace, monospace; transition: opacity .2s ease; }
+  .dl-ara:focus-within .dl-kbd { opacity: 0; }
 
   #dlDuz:not([hidden]) { display: grid; grid-template-columns: var(--dlSol) minmax(0, 1fr); column-gap: var(--dlAra); align-items: start; }
   .dl-sag { position: sticky; top: 84px; }
