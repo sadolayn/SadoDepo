@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#000000">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Saha Radarı</title>
-<meta name="description" content="Bölgendeki OSB'ler ve firma listeleri, ihracatçı, ithalatçı, tarım işletmeleri: saha ziyareti için tek yerde.">
+<meta name="description" content="Bölgende ne üretiliyor? OSB'ler, firma rehberleri, dış ticaret ve tarım tek yerde.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SADOLAYN">
 <meta property="og:title" content="Saha Radarı · SADOLAYN">
@@ -247,8 +247,8 @@ body{padding:18px 16px 40px}
 <body>
 <div class="sar">
   <div class="bas"><a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Ana sayfa" aria-label="Ana sayfa">🏠</a><h1>📡 Saha Radarı</h1></div>
-  <p class="gir">Bölgendeki OSB'ler ve firma listeleri, dış ticaret ve tarım işletmeleri; ziyaretten önce kime gideceğini bul.</p>
-  <div class="c ykn g"><h3 style="justify-content:flex-start;align-items:center;gap:8px"><span class="rdr" aria-hidden="true"></span>Yakınındaki firmalar <span id="yknDurum" style="letter-spacing:0;text-transform:none;font-size:11.5px;font-weight:500;margin-left:auto"></span></h3>
+  <p class="gir">Bölgende ne üretiliyor? OSB'ler, fabrikalar, dış ticaret ve tarım tek yerde. İş ya da staj arayan, tedarikçi bulmak isteyen ya da yaşadığı yeri tanımak isteyen herkes için.</p>
+  <div class="c ykn g"><h3 style="justify-content:flex-start;align-items:center;gap:8px"><span class="rdr" aria-hidden="true"></span>Bölgendeki üretim <span id="yknDurum" style="letter-spacing:0;text-transform:none;font-size:11.5px;font-weight:500;margin-left:auto"></span></h3>
     <div class="yerS">
       <div id="yerSec" class="yerK"><input id="yaz" type="search" placeholder="Bölgen: il ya da ilçe yaz" autocomplete="off" aria-label="İl ya da ilçe"><div class="oner" id="oner" hidden></div></div>
       <div class="secili" id="secili" hidden><span aria-hidden="true">📍</span><b id="yerAd"></b><button type="button" id="sil" aria-label="Bölgeyi değiştir">✕</button></div>
@@ -259,7 +259,7 @@ body{padding:18px 16px 40px}
     <div class="osbP" id="osbP" hidden></div>
     <div class="fg" id="yknSek"></div>
     <p class="not" id="not"></p></div>
-  <p class="ac">Bankanın müşteri bilgisi kullanılmaz; OSB listesi OSBÜK'ten, firma listeleri OSB'lerin kendi sitelerinden, diğerleri Google Haritalar'dan gelir. Segment etiketleri tahminîdir. Bölge seçimi Bölge Nabzı'yla ortaktır ve yalnızca bu cihazda saklanır; konum kaydedilmez.</p>
+  <p class="ac">Tüm bilgiler herkese açık kaynaklardan gelir: OSB listesi OSBÜK'ten, firma listeleri OSB'lerin kendi sitelerinden, diğerleri Google Haritalar'dan. Seçtiğin bölge Bölge Nabzı'yla ortak kullanılır ve yalnızca bu cihazda kalır; konumun kaydedilmez.</p>
 </div>
 <script>
 (function(){
@@ -269,26 +269,25 @@ var S={il:"",ilce:""},LISTE=[],g="san",r=3000,konum=null;
 try{var v=JSON.parse(localStorage.getItem("bolgem")||"null");if(v&&typeof v==="object"){S.il=v.il||"";S.ilce=v.ilce||""}}catch(e){}
 try{var k=+localStorage.getItem("sSahaCap");if(k)r=k;var gg=localStorage.getItem("sSahaGrup");if(gg==="san"||gg==="tar")g=gg}catch(e){}
 function sakla(){try{var v=JSON.parse(localStorage.getItem("bolgem")||"{}")||{};v.il=S.il;v.ilce=S.ilce;v.elle="";localStorage.setItem("bolgem",JSON.stringify(v))}catch(e){}}
-/* [simge, ad, tür, arama, segment, sınıf, satış açısı]  tür: rehber = OSB sitelerindeki firma listesi (il gerekir), harita = Google Haritalar */
+/* [simge, ad, tür, arama, etiket, sınıf, açıklama]  tür: rehber = OSB sitelerindeki firma listesi (il gerekir), harita = Google Haritalar */
 var G={
- san:[["📋","OSB firma rehberi","rehber","organize sanayi","Firma listesi","lst","unvan · sektör · iletişim"],
-      ["🏭","OSB'deki firmalar","harita","OSB fabrika","Üst segment","ust","yatırım · maaş · dış ticaret"],
-      ["⚙️","Fabrika & üretim","harita","fabrika","Üretici","ust","yatırım · leasing"],
-      ["🌍","İhracatçılar","harita","ihracat firması","Dış ticaret","ust","akreditif · döviz"],
-      ["🚢","İthalatçılar","harita","ithalat firması","Dış ticaret","ust","akreditif · vesaik · döviz"],
-      ["🛃","Gümrük müşavirleri","harita","gümrük müşaviri","Aracı","tr","dış ticaret firmalarına kapı"],
-      ["🚚","Lojistik","harita","lojistik nakliye firması","Filo sahibi","kb","taşıt · filo"],
-      ["📦","Toptan & distribütör","harita","distribütör toptan","KOBİ ağırlıklı","kb","çek · DBS"],
-      ["⛽","Akaryakıt","harita","akaryakıt istasyonu","Nakit yoğun","kb","POS · nakit yönetimi"],
-      ["🚘","Oto bayi","harita","otomobil bayi","Bayi","kb","taşıt kredisi · stok"]],
- tar:[["📋","Tarım OSB firma rehberi","rehber","tarıma dayalı","Firma listesi","lst","sera · hayvancılık · gıda"],
-      ["🌾","Ziraat odası","harita","ziraat odası","Üretici ağı","tr","toplu ziyaret · tanışma"],
-      ["🐄","Hayvancılık & süt","harita","süt çiftliği","Üretici","tr","hayvan alımı · yem"],
-      ["🌱","Sera & fidan","harita","sera","Üretici","tr","sera yatırımı"],
-      ["🚜","Tarım makineleri","harita","tarım makineleri bayi","Bayi","kb","traktör · ekipman"],
-      ["🧪","Gübre & zirai ilaç","harita","zirai ilaç bayi","Bayi","kb","bayi finansmanı · çek"],
-      ["🏪","Hal & komisyoncu","harita","sebze meyve hali","Nakit yoğun","kb","POS · çek"],
-      ["🫒","Gıda işleme","harita","gıda üretim tesisi","Üretici","ust","işletme · ihracat"]]};
+ san:[["📋","OSB firma rehberi","rehber","organize sanayi","Rehber","lst","unvan · sektör · iletişim"],
+      ["🏭","OSB'deki firmalar","harita","OSB fabrika","Sanayi","ust","bölgedeki fabrikalar haritada"],
+      ["⚙️","Fabrika & üretim","harita","fabrika","Sanayi","ust","üreticiler ve atölyeler"],
+      ["🌍","İhracatçılar","harita","ihracat firması","Dış ticaret","ust","yurt dışına satan firmalar"],
+      ["🚢","İthalatçılar","harita","ithalat firması","Dış ticaret","ust","yurt dışından alan firmalar"],
+      ["🛃","Gümrük müşavirleri","harita","gümrük müşaviri","Hizmet","tr","dış ticaret işlemleri"],
+      ["🚚","Lojistik","harita","lojistik nakliye firması","Hizmet","kb","nakliye ve depo"],
+      ["📦","Toptan & distribütör","harita","distribütör toptan","Ticaret","kb","toptancılar ve dağıtıcılar"],
+      ["🚘","Oto bayi","harita","otomobil bayi","Ticaret","kb","satış ve servis"]],
+ tar:[["📋","Tarım OSB firma rehberi","rehber","tarıma dayalı","Rehber","lst","sera · hayvancılık · gıda"],
+      ["🌾","Ziraat odası","harita","ziraat odası","Kurum","tr","üreticilerin buluşma noktası"],
+      ["🐄","Hayvancılık & süt","harita","süt çiftliği","Üretici","tr","çiftlikler ve süt üreticileri"],
+      ["🌱","Sera & fidan","harita","sera","Üretici","tr","seralar ve fidanlıklar"],
+      ["🚜","Tarım makineleri","harita","tarım makineleri bayi","Ticaret","kb","traktör ve ekipman"],
+      ["🧪","Gübre & zirai ilaç","harita","zirai ilaç bayi","Ticaret","kb","tarım girdileri"],
+      ["🏪","Hal & komisyoncu","harita","sebze meyve hali","Ticaret","kb","sebze-meyve ticareti"],
+      ["🫒","Gıda işleme","harita","gıda üretim tesisi","Sanayi","ust","gıda fabrikaları"]]};
 var ZOOM={1000:15,3000:13,5000:12,10000:11};
 function deEk(ad){var k=ad.toLocaleLowerCase("tr"),v=(k.match(/[aeıioöuü]/g)||["e"]).pop();return ad+"'"+(/[çfhkpsşt]$/.test(k)?"t":"d")+(/[aıou]/.test(v)?"a":"e")}
 function yerMetin(){var c=S.ilce&&S.ilce!=="Merkez"?S.ilce:"";return(c?c+" ":"")+S.il}

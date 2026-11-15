@@ -301,8 +301,7 @@
     ["haberler", "📰", "Güncel Haberler", "Haberler"],
     ["bolge", "📍", "Bölge Nabzı", "Bölge"],
     ["alerts", "🔔", "Sadolayn Alerts", "Alerts"],
-    ["SAHA VE HESAP"],
-    ["saha", "📡", "Saha Radarı", "Saha"],
+    ["İŞ VE HESAP"],
     ["banka", "🏦", "Bankacılık", "Bankacılık"],
     ["firma", "🧭", "Yol Gösteren", "Firma"],
     ["gunce", "📒", "Günce Tutma", "Günce"],
@@ -312,6 +311,7 @@
     ["hesap", "🧮", "Hesaplamalar", "Hesapla"],
     ["yakin", "📌", "En Yakınımda", "Yakınımda"],
     ["hava", "🌤️", "Hava Durumu", "Hava"],
+    ["saha", "📡", "Saha Radarı", "Saha"],
     ["MOLA"],
     ["oyunlar", "🎮", "Oyunlar", "Oyunlar"]
   ];

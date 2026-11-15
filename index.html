@@ -741,10 +741,10 @@
 .pk .yr { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font: 600 12px system-ui, sans-serif; color: #7fe0b0; background: rgba(63,194,131,.12); border: 1px solid rgba(63,194,131,.3); padding: 4px 10px; border-radius: 999px; }
 .pk .yr i { width: 7px; height: 7px; border-radius: 50%; background: #3fc283; animation: yrNb 2s ease-in-out infinite; }
 @keyframes yrNb { 50% { opacity: .35; transform: scale(.7); } }
-.pk.sah { background: radial-gradient(120% 90% at 100% 0, rgba(80,110,255,.32), transparent 60%), linear-gradient(150deg, #1f2f66, #121a3a); border-color: #2b3a78; color: #fff; }
-.pk.sah h3 { color: #aab3d8; }
+.pk.sah { background: radial-gradient(120% 90% at 100% 0, rgba(63,194,131,.28), transparent 60%), linear-gradient(150deg, #1d3b2c, #0f2219); border-color: #2c5a41; color: #fff; }
+.pk.sah h3 { color: #a8d8bf; }
 .pk.sah .t { display: block; font: italic 400 21px Georgia, "Times New Roman", serif; margin-top: 8px; }
-.pk.sah .a { color: #c3cbe8; }
+.pk.sah .a { color: #c2e3d1; }
 .rdr { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid rgba(243,211,138,.7); position: relative; overflow: hidden; flex: none; }
 .rdr::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, rgba(243,211,138,.9), transparent 28%); animation: rdrD 2.8s linear infinite; }
 @keyframes rdrD { to { transform: rotate(360deg); } }
@@ -764,7 +764,7 @@ html[data-tema="acik"] .pk.ttl .ad { color: #8a5a12; }
 html[data-tema="acik"] .kr .u { color: #1a7a4c; } html[data-tema="acik"] .kr .d { color: #b8442a; }
 html[data-tema="acik"] .pk.kmp { background: linear-gradient(150deg, #e3f5ea, #fff); }
 html[data-tema="acik"] .pk .yr { color: #1a7a4c; background: #e3f5ea; border-color: #a9dcbf; }
-html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 90% at 100% 0, rgba(80,110,255,.32), transparent 60%), linear-gradient(150deg, #1f2f66, #121a3a); border-color: #2b3a78; }
+html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 90% at 100% 0, rgba(63,194,131,.28), transparent 60%), linear-gradient(150deg, #1d3b2c, #0f2219); border-color: #2c5a41; }
 @media (prefers-reduced-motion: reduce) { .pk, .pk .yr i, .rdr::after { animation: none; } .pk .cb i { transition: none; } }
 </style>
 </head>
@@ -959,7 +959,7 @@ html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 9
       <a class="pk" href="takvim.html" id="pkPpk"><h3>Sonraki PPK</h3><span class="n" id="ppkN">–</span><span class="a" id="ppkT"></span><span class="a" id="ppkF"></span></a>
       <a class="pk py genis" href="piyasa.html"><h3>Piyasa <i>Tümü ›</i></h3><div class="kr" id="pkKur"></div></a>
       <a class="pk kmp" href="isbank.html#maximum" id="pkKmp"><h3>Kampanyalar</h3><span class="n" id="kmN">–</span><span class="a">farklı kampanya</span><span class="yr" id="kmY" hidden><i></i><span></span></span></a>
-      <a class="pk sah" href="saha.html" data-yeni="saha|2026-11-15|YENİ"><h3><span style="display:flex;align-items:center;gap:7px"><span class="rdr" aria-hidden="true"></span>Saha Radarı</span></h3><span class="t">Kime gidelim?</span><span class="a">81 ilin OSB'leri ve firma listeleri, dış ticaret, tarım</span></a>
+      <a class="pk sah" href="saha.html" data-yeni="saha|2026-11-15|YENİ"><h3><span style="display:flex;align-items:center;gap:7px"><span class="rdr" aria-hidden="true"></span>Saha Radarı</span></h3><span class="t">Bölgende ne üretiliyor?</span><span class="a">81 ilin OSB'leri, fabrikalar, dış ticaret, tarım</span></a>
     </section>
     <div class="ara" role="search">
       <span class="araIk" aria-hidden="true">🔎</span>
@@ -1000,7 +1000,7 @@ html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 9
     <div class="rows">
       <a class="row" href="banka.html" data-ara="hesaplayıcı mevduat getiri vadeli faiz stopaj kredi taksit tüketici konut taşıt tarım ticari ek hesap kmh bch rotatif kredi kartı gecikme çek iskonto iştira valör yapılandırma ara ödeme pdf" data-yeni="banka2|2026-10-20|YENİLENDİ"><span class="ik">🏦</span><div><div class="t">Bankacılık</div><div class="d">10 hesaplayıcı: mevduat getirisi, kredi taksidi, ek hesap, kart gecikme, çek iskonto… planı PDF olarak paylaş</div></div><span class="ok">›</span></a>
       <a class="row" href="firma.html" data-ara="firma istihbarat şirket ticaret sicil gazetesi vergi levhası mersis belge doğrulama ilan yol gösteren" data-yeni="yolgosteren|2026-10-28|YENİ"><span class="ik">🧭</span><div><div class="t">Yol Gösteren</div><div class="d">Firmayı tanımak için resmî kaynaklar tek yerde: ilanlar, sicil, vergi ve belge doğrulama</div></div><span class="ok">›</span></a>
-      <a class="row" href="saha.html" data-ara="saha radarı osb organize sanayi firma listesi katılımcı ihracatçı ithalatçı gümrük müşaviri lojistik tarım ziyaret potansiyel müşteri" data-yeni="saha|2026-11-15|YENİ"><span class="ik">📡</span><div><div class="t">Saha Radarı</div><div class="d">Ziyaret için: 81 ilin OSB'leri ve firma listeleri, ihracatçı, ithalatçı, lojistik ve tarım işletmeleri</div></div><span class="o">›</span></a>
+      <a class="row" href="saha.html" data-ara="saha radarı osb organize sanayi firma listesi katılımcı ihracatçı ithalatçı gümrük müşaviri lojistik tarım üretim fabrika iş staj tedarikçi" data-yeni="saha|2026-11-15|YENİ"><span class="ik">📡</span><div><div class="t">Saha Radarı</div><div class="d">Bölgende ne üretiliyor? 81 ilin OSB'leri ve firma rehberleri, ihracatçı, ithalatçı, lojistik ve tarım</div></div><span class="o">›</span></a>
       <a class="row" href="gunce.html" data-ara="günce hedef çeyrek performans takip excel adet satış" data-yeni="gunce4|2026-10-22|YENİLENDİ"><span class="ik">📒</span><div><div class="t">Günce Tutma</div><div class="d">Çeyrek hedefini gir, her gün işaretle; kalanı, günlük gerekeni ve tutma ihtimalini gör, Excel'e aktar</div></div><span class="ok">›</span></a>
       <a class="row" href="takvim.html" data-ara="takvim ajanda tatil bayram resmî gün iş günü vergi son gün ziyaret toplantı izin" data-yeni="vergitk|2026-10-23|YENİLENDİ"><span class="ik">📅</span><div><div class="t">Takvim &amp; Ajanda</div><div class="d">Resmî ve dinî günler, iki tarih arası iş günü, vergi son günleri; ziyaret, toplantı ve izin ajandan</div></div><span class="ok">›</span></a>
     </div>
