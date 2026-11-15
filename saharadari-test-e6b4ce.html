@@ -7,7 +7,7 @@
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#07080c">
 <link rel="icon" type="image/png" href="img/icon.png">
-<title>Fırsat radarı · test</title>
+<title>Saha radarı · test</title>
 <style>
 @font-face{font-family:"Georgia";font-style:italic;font-weight:400 700;src:local("Georgia Italic"),url(lib/gelasio-italic-latin-ext.woff2) format("woff2")}
 
@@ -193,127 +193,91 @@ body{padding:18px 16px 40px}
 .konumS .cap{flex:1;min-width:200px;margin:0}
 .uyari{font-size:12px;color:#e8b52b;margin:8px 0 0}
 @media (max-width:760px){.osb{grid-template-columns:1fr}}
+
+.fg a.rh{border-color:rgba(224,162,79,.45);background:linear-gradient(160deg,rgba(224,162,79,.13),rgba(255,255,255,.03))}
+.sg.lst{background:var(--gold);color:#1a1205}
+.yerS{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.yerS .yerK{flex:1;min-width:200px;margin:0}
+.yerS .secili{flex:1;min-width:200px;margin:0;padding:8px 10px}
+.yerS .secili b{font-size:16px}
+.ykn .konumS{margin:0}
+[hidden]{display:none!important}
 </style>
-<script src="bolgesorgu.js"></script>
 </head>
 <body>
 <div class="sar">
-  <div class="bas"><img src="img/logo.png" alt="Sadolayn"><h1>Fırsat radarı</h1><span>TEST</span></div>
-
-  <div class="c g">
-    <h3>Bölgen</h3>
-    <div id="yerSec" class="yerK"><input id="yaz" type="search" placeholder="İl ya da ilçe yaz · ör. Turgutlu" autocomplete="off" aria-label="İl ya da ilçe"><div class="oner" id="oner" hidden></div></div>
-    <div class="secili" id="secili" hidden><span aria-hidden="true">📍</span><div><b id="yerAd"></b><br><span>Bölge Nabzı'yla aynı seçim, bu cihazda saklanır</span></div><button type="button" id="sil" aria-label="Bölgeyi değiştir">✕</button></div>
-    <div class="ust2" style="margin-top:14px"><div class="sek2" role="tablist"><button class="on" data-g="san" role="tab" aria-selected="true">🏭 Sanayi &amp; Ticaret</button><button data-g="tar" role="tab" aria-selected="false">🌾 Tarım</button></div></div>
-  </div>
-
-  <div class="c g blk" style="animation-delay:.05s">
-    <h3><span class="rdr" aria-hidden="true"></span>Bu ay bölgende</h3>
-    <p class="ac2" style="margin-top:8px">Yerel haberlerden son 1 ayın sinyalleri. Dokununca haber araması açılır; başlığında bölgen ve konu geçenler gelir.</p>
-    <div class="fg" id="sinyal"></div>
-    <p class="uyari" id="sinyalU">Önce yukarıdan bölgeni seç.</p>
-  </div>
-
-  <div class="c g blk" style="animation-delay:.1s">
-    <h3 id="osbB">OSB rehberi</h3>
-    <p class="ac2" style="margin-top:8px" id="osbA"></p>
-    <div class="osb" id="osb"></div>
-  </div>
-
-  <div class="c g blk" style="animation-delay:.15s">
-    <h3>Haritada keşfet <span id="yknDurum" style="letter-spacing:0;text-transform:none;font-size:11.5px;font-weight:500;margin-left:auto"></span></h3>
-    <div class="konumS" style="margin-top:12px"><button type="button" id="konumBtn">📍 Konumumu kullan</button>
+  <div class="bas"><img src="img/logo.png" alt="Sadolayn"><h1>Saha radarı</h1><span>TEST</span></div>
+  <div class="c ykn g"><h3 style="justify-content:flex-start;align-items:center;gap:8px"><span class="rdr" aria-hidden="true"></span>Yakınındaki firmalar <span id="yknDurum" style="letter-spacing:0;text-transform:none;font-size:11.5px;font-weight:500;margin-left:auto"></span></h3>
+    <div class="yerS">
+      <div id="yerSec" class="yerK"><input id="yaz" type="search" placeholder="Bölgen: il ya da ilçe yaz" autocomplete="off" aria-label="İl ya da ilçe"><div class="oner" id="oner" hidden></div></div>
+      <div class="secili" id="secili" hidden><span aria-hidden="true">📍</span><b id="yerAd"></b><button type="button" id="sil" aria-label="Bölgeyi değiştir">✕</button></div>
+      <div class="konumS"><button type="button" id="konumBtn">📍 Konumumu kullan</button></div>
+    </div>
+    <div class="ust2"><div class="sek2" role="tablist"><button data-g="san" role="tab">🏭 Sanayi &amp; Ticaret</button><button data-g="tar" role="tab">🌾 Tarım</button></div>
       <div class="cap" role="radiogroup" aria-label="Çap" id="capK" hidden><button data-r="1000">1 km</button><button data-r="3000">3 km</button><button data-r="5000">5 km</button><button data-r="10000">10 km</button></div></div>
-    <p class="ac2" id="kesA"></p>
-    <div class="fg" id="kesif"></div>
-  </div>
-
-  <p class="ac">Bu sayfa yalnızca deneme içindir; sitede hiçbir yerden bağlantısı yoktur. Bankanın müşteri bilgisi kullanılmaz; her şey herkese açık arama ve haritadan gelir. Konumun yalnızca telefonunda kullanılır, kaydedilmez.</p>
+    <div class="fg" id="yknSek"></div>
+    <p class="not" id="not"></p></div>
+  <p class="ac">Bu sayfa yalnızca deneme içindir; sitede hiçbir yerden bağlantısı yoktur. Bankanın müşteri bilgisi kullanılmaz; firma listeleri OSB'lerin kendi sitelerinden, diğerleri Google Haritalar'dan gelir. Segment etiketleri tahminîdir. Bölge seçimi Bölge Nabzı'yla ortaktır ve yalnızca bu cihazda saklanır; konum kaydedilmez.</p>
 </div>
 <script>
 (function(){
-var $=function(i){return document.getElementById(i)},esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+var $=function(i){return document.getElementById(i)},esc=function(t){return String(t==null?"":t).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
 var sade=function(t){return String(t).toLocaleLowerCase("tr").replace(/[çğıöşüâî]/g,function(h){return{ç:"c",ğ:"g",ı:"i",ö:"o",ş:"s",ü:"u",â:"a",î:"i"}[h]})};
-var S={il:"",ilce:"",elle:""},ILMAP=null,LISTE=[],g="san",r=3000,konum=null;
-try{var v=JSON.parse(localStorage.getItem("bolgem")||"null");if(v&&typeof v==="object"){S.il=v.il||"";S.ilce=v.ilce||"";S.elle=""}}catch(e){}
+var S={il:"",ilce:""},LISTE=[],g="san",r=3000,konum=null;
+try{var v=JSON.parse(localStorage.getItem("bolgem")||"null");if(v&&typeof v==="object"){S.il=v.il||"";S.ilce=v.ilce||""}}catch(e){}
 try{var k=+localStorage.getItem("sSahaCap");if(k)r=k;var gg=localStorage.getItem("sSahaGrup");if(gg==="san"||gg==="tar")g=gg}catch(e){}
 function sakla(){try{var v=JSON.parse(localStorage.getItem("bolgem")||"{}")||{};v.il=S.il;v.ilce=S.ilce;v.elle="";localStorage.setItem("bolgem",JSON.stringify(v))}catch(e){}}
-
-/* [simge, ad, neden önemli, başlıkta aranacak ifadeler] */
-var SINYAL={
- san:[["💰","Teşvik alanlar","yatırım kredisi · leasing",'"teşvik belgesi" OR "yatırım teşvik" OR "teşvik aldı"'],
-      ["🏗️","Yeni tesis & kapasite","yatırım · inşaat dönemi finansmanı",'"temeli atıldı" OR "yeni tesis" OR "kapasite artırımı" OR "fabrika açılışı"'],
-      ["📜","İhale kazananlar","teminat mektubu",'"ihaleyi kazandı" OR "ihalesini kazandı" OR "ihaleyi aldı"'],
-      ["🌍","İhracat başarısı","dış ticaret · döviz",'"ihracat şampiyonu" OR "en çok ihracat" OR "ihracat rekoru" OR "ihracatta"'],
-      ["🏅","Büyük firmalar","üst segment ilişki",'"İSO 500" OR "ilk 500" OR "ikinci 500" OR "1000 ihracatçı"'],
-      ["🤝","Ortaklık & satın alma","nakit yönetimi · yeniden yapılanma",'"satın aldı" OR "ortaklık" OR "birleşme" OR "sermaye artırımı"'],
-      ["👷","İşçi alımı","maaş ödemesi",'"işçi alımı" OR "personel alımı" OR "istihdam edecek"'],
-      ["⚖️","Konkordato & iflas","risk takibi",'konkordato OR iflas OR "icradan satılık"']],
- tar:[["🌾","Tarım OSB'leri","yatırım · üretici ağı",'"tarıma dayalı" OR TDİOSB OR "ihtisas OSB"'],
-      ["🎁","Hibe & destek","hibe öncesi köprü finansman",'hibe OR TKDK OR "kırsal kalkınma" OR "destek programı"'],
-      ["🐄","Hayvancılık yatırımı","hayvan alımı · ahır yatırımı",'"besi çiftliği" OR "süt çiftliği" OR "modern ahır" OR hayvancılık'],
-      ["🌱","Sera & seracılık","sera yatırımı",'sera OR seracılık OR "jeotermal sera" OR "topraksız tarım"'],
-      ["📦","Lisanslı depo & hal","ürün senedi · çek",'"lisanslı depo" OR ELÜS OR "hal kayıt" OR "toptancı hali"'],
-      ["🚜","Hasat & rekolte","sezon finansmanı",'hasat OR hasadı OR rekolte OR "alım fiyatı"'],
-      ["🫒","Gıda işleme","işletme · ihracat",'"gıda fabrikası" OR "zeytinyağı fabrikası" OR "süt fabrikası" OR "un fabrikası"'],
-      ["⛈️","Afet & zirai don","risk · erteleme ihtiyacı",'"zirai don" OR "dolu yağışı" OR kuraklık OR "tarım arazileri"']]};
-/* Haritada keşif: [simge, ad, harita araması, segment etiketi, sınıf] */
-var KESIF={
- san:[["🏭","OSB'deki firmalar","OSB fabrika","Üst segment","ust"],["⚙️","Fabrika & üretim","fabrika","Üretici","ust"],["🌍","İhracatçılar","ihracat firması","Dış ticaret","ust"],
-      ["🚚","Lojistik","lojistik firması","Filo sahibi","kb"],["📦","Toptan & distribütör","distribütör toptan","KOBİ ağırlıklı","kb"],["🧱","Yapı malzemesi","yapı malzemeleri toptan","KOBİ ağırlıklı","kb"]],
- tar:[["🐄","Hayvancılık & süt","süt çiftliği","Üretici","tr"],["🌱","Sera & fidan","sera","Üretici","tr"],["🚜","Tarım makineleri","tarım makineleri bayi","Bayi","kb"],
-      ["🧪","Gübre & zirai ilaç","zirai ilaç bayi","Bayi","kb"],["🏪","Hal & komisyoncu","sebze meyve hali","Nakit yoğun","kb"],["🌽","Lisanslı depo","lisanslı depo","Depolama","ust"],
-      ["🫒","Gıda işleme","gıda üretim tesisi","Üretici","ust"],["🌾","Ziraat odası","ziraat odası","Üretici ağı","tr"]]};
+/* [simge, ad, tür, arama, segment, sınıf, satış açısı]  tür: rehber = OSB sitelerindeki firma listesi (il gerekir), harita = Google Haritalar */
+var G={
+ san:[["📋","OSB firma rehberi","rehber","organize sanayi","Firma listesi","lst","unvan · sektör · iletişim"],
+      ["🏭","OSB'deki firmalar","harita","OSB fabrika","Üst segment","ust","yatırım · maaş · dış ticaret"],
+      ["⚙️","Fabrika & üretim","harita","fabrika","Üretici","ust","yatırım · leasing"],
+      ["🌍","İhracatçılar","harita","ihracat firması","Dış ticaret","ust","akreditif · döviz"],
+      ["🚚","Lojistik","harita","lojistik nakliye firması","Filo sahibi","kb","taşıt · filo"],
+      ["📦","Toptan & distribütör","harita","distribütör toptan","KOBİ ağırlıklı","kb","çek · DBS"],
+      ["⛽","Akaryakıt","harita","akaryakıt istasyonu","Nakit yoğun","kb","POS · nakit yönetimi"],
+      ["🚘","Oto bayi","harita","otomobil bayi","Bayi","kb","taşıt kredisi · stok"]],
+ tar:[["📋","Tarım OSB firma rehberi","rehber","tarıma dayalı","Firma listesi","lst","sera · hayvancılık · gıda"],
+      ["🌾","Ziraat odası","harita","ziraat odası","Üretici ağı","tr","toplu ziyaret · tanışma"],
+      ["🐄","Hayvancılık & süt","harita","süt çiftliği","Üretici","tr","hayvan alımı · yem"],
+      ["🌱","Sera & fidan","harita","sera","Üretici","tr","sera yatırımı"],
+      ["🚜","Tarım makineleri","harita","tarım makineleri bayi","Bayi","kb","traktör · ekipman"],
+      ["🧪","Gübre & zirai ilaç","harita","zirai ilaç bayi","Bayi","kb","bayi finansmanı · çek"],
+      ["🏪","Hal & komisyoncu","harita","sebze meyve hali","Nakit yoğun","kb","POS · çek"],
+      ["🫒","Gıda işleme","harita","gıda üretim tesisi","Üretici","ust","işletme · ihracat"]]};
 var ZOOM={1000:15,3000:13,5000:12,10000:11};
 function yerMetin(){var c=S.ilce&&S.ilce!=="Merkez"?S.ilce:"";return(c?c+" ":"")+S.il}
-
-function cizYer(){
-  var var_=!!S.il;$("secili").hidden=!var_;$("yerSec").hidden=var_;
-  if(var_)$("yerAd").textContent=(S.ilce&&S.ilce!=="Merkez"?S.ilce+" · ":"")+S.il;
-  cizSinyal();cizOsb();cizKesif();
+function url(x){
+  if(x[2]==="rehber"){if(!S.il)return null;return"https://www.google.com/search?hl=tr&q="+encodeURIComponent(S.il+' "'+x[3]+'" ("firma rehberi" OR "katılımcı listesi" OR "firmalarımız" OR "katılımcılarımız")')}
+  if(konum)return"https://www.google.com/maps/search/"+encodeURIComponent(x[3])+"/@"+konum[0].toFixed(5)+","+konum[1].toFixed(5)+","+ZOOM[r]+"z";
+  if(S.il)return"https://www.google.com/maps/search/"+encodeURIComponent(x[3]+" "+yerMetin());
+  return null;
 }
-function cizSinyal(){
-  var L=SINYAL[g];$("sinyalU").hidden=!!S.il;
-  $("sinyal").innerHTML=L.map(function(x,i){var u=S.il&&window.BolgeSorgu?BolgeSorgu.gn(S,ILMAP,x[3],"30d"):"#";
-    return'<a class="'+(S.il?"":"pas")+'" href="'+esc(u)+'" target="_blank" rel="noopener" style="animation-delay:'+(i*.03)+'s"><span class="e">'+x[0]+'</span><span class="t">'+x[1]+'</span><span class="f">'+x[2]+"</span></a>"}).join("");
-}
-function cizOsb(){
-  var il=S.il,y=yerMetin();
-  if(!il){$("osbB").textContent=g==="tar"?"Tarım OSB rehberi":"OSB rehberi";$("osbA").textContent="Bölgeni seçince ildeki OSB'ler ve firma rehberleri burada açılır.";$("osb").innerHTML="";return}
-  var tar=g==="tar",ad=tar?"tarıma dayalı ihtisas organize sanayi bölgesi":"organize sanayi bölgesi";
-  $("osbB").textContent=tar?"Tarım OSB rehberi":"OSB rehberi";
-  $("osbA").textContent=tar?"Tarıma dayalı ihtisas OSB'lerde seracılık, hayvancılık ve gıda işleme firmaları toplanır.":"OSB'lerin kendi sitelerindeki firma rehberi en güvenilir liste: unvan, sektör ve iletişim çoğunlukla orada.";
-  var B=[["🗺️",(tar?"Tarım OSB'leri":"OSB'ler")+" haritada",il+"'deki bölgeler","https://www.google.com/maps/search/"+encodeURIComponent(ad+" "+il)],
-         ["📋","Firma rehberleri","OSB sitelerindeki katılımcı listeleri","https://www.google.com/search?hl=tr&q="+encodeURIComponent(il+' "'+(tar?"tarıma dayalı":"organize sanayi")+'" ("firma rehberi" OR "katılımcı listesi" OR "firmalarımız" OR "katılımcılarımız")')],
-         ["🏭",tar?"Tarım OSB'sindeki firmalar":"OSB'deki firmalar","haritada, adresi OSB olanlar","https://www.google.com/maps/search/"+encodeURIComponent((tar?"TDİOSB ":"OSB ")+il)]];
-  $("osb").innerHTML=B.map(function(b){return'<a href="'+esc(b[3])+'" target="_blank" rel="noopener"><span>'+b[0]+" "+esc(b[1])+"</span><small>"+esc(b[2])+"</small></a>"}).join("");
-}
-function cizKesif(){
+function ciz(){
+  var var_=!!S.il;$("secili").hidden=!var_;$("yerSec").hidden=var_;if(var_)$("yerAd").textContent=(S.ilce&&S.ilce!=="Merkez"?S.ilce+" · ":"")+S.il;
   $("capK").hidden=!konum;$("konumBtn").classList.toggle("on",!!konum);$("konumBtn").textContent=konum?"📍 Konum açık":"📍 Konumumu kullan";
   document.querySelectorAll("#capK button").forEach(function(b){var on=+b.dataset.r===r;b.classList.toggle("on",on);b.setAttribute("aria-checked",on)});
-  $("kesA").textContent=konum?"Bulunduğun yerin çevresinde arar.":S.il?yerMetin()+" içinde arar. Sahadaysan konumunu kullan.":"Bölgeni seç ya da konumunu kullan.";
-  var hazir=konum||S.il;
-  $("kesif").innerHTML=KESIF[g].map(function(x,i){var u=!hazir?"#":konum?"https://www.google.com/maps/search/"+encodeURIComponent(x[2])+"/@"+konum[0].toFixed(5)+","+konum[1].toFixed(5)+","+ZOOM[r]+"z":"https://www.google.com/maps/search/"+encodeURIComponent(x[2]+" "+yerMetin());
-    return'<a class="'+(hazir?"":"pas")+'" href="'+esc(u)+'" target="_blank" rel="noopener" style="animation-delay:'+(i*.03)+'s"><span class="sg '+x[4]+'">'+x[3]+'</span><span class="e">'+x[0]+'</span><span class="t">'+x[1]+"</span></a>"}).join("");
+  document.querySelectorAll(".sek2 button").forEach(function(b){var on=b.dataset.g===g;b.classList.toggle("on",on);b.setAttribute("aria-selected",on)});
+  $("yknSek").innerHTML=G[g].map(function(x,i){var u=url(x);
+    return'<a class="'+(x[2]==="rehber"?"rh ":"")+(u?"":"pas")+'" href="'+esc(u||"#")+'" target="_blank" rel="noopener" style="animation-delay:'+(i*.03)+'s"><span class="sg '+x[5]+'">'+x[4]+'</span><span class="e">'+x[0]+'</span><span class="t">'+x[1]+'</span><span class="f">'+x[6]+"</span></a>"}).join("");
+  $("not").textContent=!S.il&&!konum?"Başlamak için bölgeni seç ya da konumunu kullan.":
+    (S.il?"📋 Firma rehberi "+S.il+" OSB'lerinin kendi sitelerindeki listeyi arar. ":"📋 Firma rehberi için bölgeni seç. ")+(konum?"Harita kutuları bulunduğun yerin çevresinde arar.":"Harita kutuları "+yerMetin().replace(" "+S.il,", "+S.il)+" içinde arar; sahadaysan konumunu kullan.");
 }
-/* il / ilçe önerisi (Bölge Nabzı'yla aynı veri) */
-fetch("data/ililce.json").then(function(r){return r.json()}).then(function(j){ILMAP=j;Object.keys(j).forEach(function(il){LISTE.push({il:il,ilce:"",s:sade(il)});j[il].forEach(function(c){LISTE.push({il:il,ilce:c,s:sade(c)})})});cizYer()}).catch(function(){});
+fetch("data/ililce.json").then(function(r){return r.json()}).then(function(j){Object.keys(j).forEach(function(il){LISTE.push({il:il,ilce:"",s:sade(il)});j[il].forEach(function(c){LISTE.push({il:il,ilce:c,s:sade(c)})})})}).catch(function(){});
 $("yaz").addEventListener("input",function(){var q=sade(this.value.trim());if(q.length<2){$("oner").hidden=true;return}
   var b=LISTE.filter(function(x){return x.s.indexOf(q)===0}).slice(0,8);
-  $("oner").innerHTML=b.length?b.map(function(x,i){return'<button type="button" data-i="'+LISTE.indexOf(x)+'">'+esc(x.ilce||x.il)+"<small>"+(x.ilce?esc(x.il):"il geneli")+"</small></button>"}).join(""):'<button type="button" disabled>Bulunamadı</button>';
+  $("oner").innerHTML=b.length?b.map(function(x){return'<button type="button" data-i="'+LISTE.indexOf(x)+'">'+esc(x.ilce||x.il)+"<small>"+(x.ilce?esc(x.il):"il geneli")+"</small></button>"}).join(""):'<button type="button" disabled>Bulunamadı</button>';
   $("oner").hidden=false});
-$("oner").addEventListener("click",function(e){var b=e.target.closest("button[data-i]");if(!b)return;var x=LISTE[+b.dataset.i];S.il=x.il;S.ilce=x.ilce;$("yaz").value="";$("oner").hidden=true;sakla();cizYer()});
-$("sil").onclick=function(){S.il="";S.ilce="";cizYer();setTimeout(function(){$("yaz").focus()},50)};
-document.querySelectorAll(".sek2 button").forEach(function(b){b.onclick=function(){g=b.dataset.g;try{localStorage.setItem("sSahaGrup",g)}catch(e){}
-  document.querySelectorAll(".sek2 button").forEach(function(x){x.classList.toggle("on",x===b);x.setAttribute("aria-selected",x===b)});cizSinyal();cizOsb();cizKesif()}});
-document.querySelectorAll("#capK button").forEach(function(b){b.setAttribute("role","radio");b.onclick=function(){r=+b.dataset.r;try{localStorage.setItem("sSahaCap",r)}catch(e){}cizKesif()}});
-$("konumBtn").onclick=function(){if(konum){konum=null;$("yknDurum").textContent="";cizKesif();return}
+$("oner").addEventListener("click",function(e){var b=e.target.closest("button[data-i]");if(!b)return;var x=LISTE[+b.dataset.i];S.il=x.il;S.ilce=x.ilce;$("yaz").value="";$("oner").hidden=true;sakla();ciz()});
+$("sil").onclick=function(){S.il="";S.ilce="";ciz();setTimeout(function(){$("yaz").focus()},50)};
+document.querySelectorAll(".sek2 button").forEach(function(b){b.onclick=function(){g=b.dataset.g;try{localStorage.setItem("sSahaGrup",g)}catch(e){}ciz()}});
+document.querySelectorAll("#capK button").forEach(function(b){b.setAttribute("role","radio");b.onclick=function(){r=+b.dataset.r;try{localStorage.setItem("sSahaCap",r)}catch(e){}ciz()}});
+$("konumBtn").onclick=function(){if(konum){konum=null;ciz();return}
   if(!navigator.geolocation){$("yknDurum").textContent="konum desteklenmiyor";return}
   $("yknDurum").textContent="konum alınıyor…";
-  navigator.geolocation.getCurrentPosition(function(p){konum=[p.coords.latitude,p.coords.longitude];$("yknDurum").textContent="";cizKesif()},
+  navigator.geolocation.getCurrentPosition(function(p){konum=[p.coords.latitude,p.coords.longitude];$("yknDurum").textContent="";ciz()},
     function(){$("yknDurum").textContent="konum izni verilmedi"},{enableHighAccuracy:false,timeout:10000,maximumAge:300000})};
-document.querySelectorAll(".sek2 button").forEach(function(x){var on=x.dataset.g===g;x.classList.toggle("on",on);x.setAttribute("aria-selected",on)});
-cizYer();
+ciz();
 })();
 </script>
 </body>
