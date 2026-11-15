@@ -288,6 +288,90 @@
     };
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", karekod); else karekod();
+
+  // ---- 4) Site menüsü (15 Kasım 2026): PC'de solda yan menü (1200 px ve üstü), telefonda altta sağa kayan çubuk (1000 px altı) ----
+  // Sıra ikisinde de aynı. Bulunulan sayfa altınla yanar; telefonda çubuk açılışta ona kayar. Menüye yeni sayfa eklemek için yalnızca MENU dizisine satır ekle.
+  // Oyunlarda, alt bilgisi olmayan (data-footer="yok") ve kendi alt çubuğu olan (data-gezinti="yok") sayfalarda yok; istemeyen sayfa: <body data-menu="yok">.
+  // "📱 Telefonda aç" yan menünün içine, en alta taşınır (menünün üstüne binmesin diye).
+  var MENU = [
+    ["GÜNDEM"],
+    ["index", "🏠", "Ana sayfa", "Ana sayfa"],
+    ["isbank", "📈", "İş Bankası Gündemi", "Gündem"],
+    ["gazete", "📜", "Resmî Gazete", "Gazete"],
+    ["haberler", "📰", "Güncel Haberler", "Haberler"],
+    ["bolge", "📍", "Bölge Nabzı", "Bölge"],
+    ["alerts", "🔔", "Sadolayn Alerts", "Alerts"],
+    ["SAHA VE HESAP"],
+    ["saha", "📡", "Saha Radarı", "Saha"],
+    ["banka", "🏦", "Bankacılık", "Bankacılık"],
+    ["firma", "🧭", "Yol Gösteren", "Firma"],
+    ["gunce", "📒", "Günce Tutma", "Günce"],
+    ["takvim", "📅", "Takvim & Ajanda", "Takvim"],
+    ["ARAÇLAR"],
+    ["piyasa", "💱", "Döviz & Emtia", "Döviz"],
+    ["hesap", "🧮", "Hesaplamalar", "Hesapla"],
+    ["yakin", "📌", "En Yakınımda", "Yakınımda"],
+    ["hava", "🌤️", "Hava Durumu", "Hava"],
+    ["MOLA"],
+    ["oyunlar", "🎮", "Oyunlar", "Oyunlar"]
+  ];
+  var UST = { cop31: "isbank" }; // alt sayfalar menüde üst sayfalarını yakar
+  function siteMenu() {
+    var bd = document.body;
+    if (!bd || OYUNLAR.test(SAYFA) || bd.getAttribute("data-footer") === "yok" || bd.getAttribute("data-gezinti") === "yok" || bd.getAttribute("data-menu") === "yok" || document.getElementById("sMenu")) return;
+    var ben = UST[SAYFA] || SAYFA, esc = function (t) { return String(t).replace(/&/g, "&amp;"); };
+    var st = document.createElement("style");
+    st.textContent =
+      "#sMenu,#sTab{display:none}" +
+      // PC: yan menü
+      "@media (min-width:1200px){html.smVar body{padding-left:236px}" +
+      "html.smVar .bar,html.smVar .mini,html.smVar .imini,html.smVar .imenu,html.smVar .menuPan{left:220px!important}" +
+      "#sMenu{display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:220px;z-index:45;overflow-y:auto;padding:20px 12px 16px;box-sizing:border-box;background:rgba(8,8,8,.94);border-right:1px solid #262626;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;scrollbar-width:thin}" +
+      "#sMenu .lg{display:block;margin:0 8px 14px}#sMenu .lg img{height:38px;display:block}" +
+      "#sMenu h6{margin:14px 10px 6px;font:700 10.5px system-ui,sans-serif;letter-spacing:.14em;color:#8a8a8a}" +
+      "#sMenu a.m{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:11px;color:#f2f2f2;opacity:.84;font-size:14px;text-decoration:none;transition:background .2s,opacity .2s}" +
+      "#sMenu a.m:hover{background:rgba(224,162,79,.08);opacity:1}" +
+      "#sMenu a.m.on{background:linear-gradient(90deg,rgba(224,162,79,.16),rgba(224,162,79,.02));color:#f3d38a;opacity:1;box-shadow:inset 2px 0 0 #e0a24f}" +
+      "#sMenu .alt{margin-top:auto;padding-top:14px}#sMenu #telAc{position:static;width:100%;justify-content:center;box-shadow:none}}" +
+      // Telefon: altta kayan çubuk
+      "@media (max-width:999px){html.tbVar body{padding-bottom:calc(92px + env(safe-area-inset-bottom))!important}" +
+      "#sTab{display:block;position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:50;max-width:560px;margin:0 auto;border-radius:20px;background:rgba(14,14,14,.86);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid #2a2a2a;box-shadow:0 10px 30px rgba(0,0,0,.4);overflow:hidden}" +
+      "#sTab .ic{display:flex;gap:2px;padding:7px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}#sTab .ic::-webkit-scrollbar{display:none}" +
+      "#sTab.sg .ic{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 34px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 34px),transparent)}" +
+      "#sTab.sl .ic{-webkit-mask-image:linear-gradient(90deg,transparent,#000 34px);mask-image:linear-gradient(90deg,transparent,#000 34px)}" +
+      "#sTab.sg.sl .ic{-webkit-mask-image:linear-gradient(90deg,transparent,#000 34px,#000 calc(100% - 34px),transparent);mask-image:linear-gradient(90deg,transparent,#000 34px,#000 calc(100% - 34px),transparent)}" +
+      "#sTab a{flex:0 0 auto;min-width:62px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 6px;border-radius:13px;font:600 11px system-ui,sans-serif;color:#b8b8b8;text-decoration:none;transition:background .2s,transform .15s;-webkit-tap-highlight-color:transparent}" +
+      "#sTab a span{font-size:19px;line-height:1.2}#sTab a.on{color:#f3d38a;background:rgba(224,162,79,.14)}#sTab a:active{transform:scale(.94)}" +
+      // alttaki öteki sabit düğmeler çubuğun üstüne çıkar
+      "html.tbVar #ortakGez,html.tbVar #ortakYukari{bottom:calc(84px + env(safe-area-inset-bottom))!important}" +
+      "html.tbVar .fab{bottom:calc(88px + env(safe-area-inset-bottom))!important}" +
+      "html.tbVar .toast,html.tbVar .cp-toast,html.tbVar #kTost,html.tbVar .ortakEski,html.tbVar .atoast{bottom:calc(92px + env(safe-area-inset-bottom))!important}}" +
+      // Açık mod
+      "html[data-tema=\"acik\"] #sMenu{background:rgba(250,247,241,.97);border-right-color:#e0d5c2}html[data-tema=\"acik\"] #sMenu h6{color:#7a6f60}" +
+      "html[data-tema=\"acik\"] #sMenu a.m{color:#1b1813}html[data-tema=\"acik\"] #sMenu a.m.on{color:#8a5a12;box-shadow:inset 2px 0 0 #8a5a12}" +
+      "html[data-tema=\"acik\"] #sTab{background:rgba(255,255,255,.92);border-color:#dccfb6;box-shadow:0 10px 30px rgba(90,60,20,.15)}" +
+      "html[data-tema=\"acik\"] #sTab a{color:#5a5248}html[data-tema=\"acik\"] #sTab a.on{color:#8a5a12;background:#f6ecd9}" +
+      "@media (prefers-reduced-motion:reduce){#sTab a,#sMenu a.m{transition:none}}@media print{#sMenu,#sTab{display:none!important}}";
+    document.head.appendChild(st);
+    var yan = '<a class="lg" href="index.html" aria-label="Ana sayfa"><img src="img/logo.png" alt="Sadolayn"></a>', alt = "";
+    MENU.forEach(function (m) {
+      if (m.length === 1) { yan += "<h6>" + m[0] + "</h6>"; return; }
+      var on = m[0] === ben, a = ' href="' + m[0] + '.html"' + (on ? ' class="m on" aria-current="page"' : ' class="m"');
+      yan += "<a" + a + ">" + m[1] + " " + esc(m[2]) + "</a>";
+      alt += "<a" + a.replace(' class="m on"', ' class="on"').replace(' class="m"', "") + "><span>" + m[1] + "</span>" + esc(m[3]) + "</a>";
+    });
+    var as = document.createElement("aside"); as.id = "sMenu"; as.setAttribute("aria-label", "Site menüsü"); as.innerHTML = yan + '<div class="alt"></div>';
+    var nv = document.createElement("nav"); nv.id = "sTab"; nv.setAttribute("aria-label", "Hızlı geçiş"); nv.innerHTML = '<div class="ic">' + alt + "</div>";
+    bd.appendChild(as); bd.appendChild(nv);
+    document.documentElement.classList.add("smVar", "tbVar");
+    var tel = document.getElementById("telAc"); if (tel) as.querySelector(".alt").appendChild(tel);
+    // Çubuk: bulunulan sayfaya kay; kaydırılacak yer varsa kenarda hafif solma
+    var ic = nv.firstChild, on = ic.querySelector(".on");
+    var kenar = function () { var x = ic.scrollLeft, w = ic.scrollWidth - ic.clientWidth; nv.classList.toggle("sl", x > 4); nv.classList.toggle("sg", x < w - 4); };
+    if (on) ic.scrollLeft = Math.max(0, on.offsetLeft - (ic.clientWidth - on.offsetWidth) / 2);
+    ic.addEventListener("scroll", kenar, { passive: true }); addEventListener("resize", kenar); kenar();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", siteMenu); else siteMenu();
 })();
 // 10 Kasım: günün ilk girişinde anma ekranı, 09.05'te site açıksa siren (anma.js yalnızca o gün yüklenir)
 (function () {
