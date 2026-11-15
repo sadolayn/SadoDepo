@@ -2,12 +2,30 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="tema.js"></script>
 <meta name="robots" content="noindex, nofollow">
-<meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#07080c">
 <link rel="icon" type="image/png" href="img/icon.png">
-<title>Saha radarı · test</title>
+<link rel="apple-touch-icon" href="img/icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saha Radarı</title>
+<meta name="description" content="Bölgendeki OSB'ler ve firma listeleri, ihracatçı, ithalatçı, tarım işletmeleri: saha ziyareti için tek yerde.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SADOLAYN">
+<meta property="og:title" content="Saha Radarı · SADOLAYN">
+<meta property="og:description" content="“Bilgi paylaştıkça büyür”">
+<meta property="og:url" content="https://sadolayn.github.io/SadoDepo/saha.html">
+<meta property="og:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sadolayn — Bilgi paylaştıkça büyür">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
+<script src="pwa.js"></script>
+<script src="ortak.js"></script>
+<script src="rapor.js"></script>
+<script type="module" src="sayac.js"></script>
 <style>
 @font-face{font-family:"Georgia";font-style:italic;font-weight:400 700;src:local("Georgia Italic"),url(lib/gelasio-italic-latin-ext.woff2) format("woff2")}
 
@@ -213,11 +231,16 @@ body{padding:18px 16px 40px}
 .osbR a{flex:none;font:600 12px system-ui;padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#e6e6e6}
 .osbR a.fl{border-color:rgba(224,162,79,.5);color:var(--gold2)}
 .osbR.sen .ad::before{content:"📍 ";}
+
+.bas a{flex:none}
+.bas h1{font-size:23px}
+.gir{font-size:13.5px;color:var(--mut);margin:-6px 0 14px;line-height:1.4}
 </style>
 </head>
 <body>
 <div class="sar">
-  <div class="bas"><img src="img/logo.png" alt="Sadolayn"><h1>Saha radarı</h1><span>TEST</span></div>
+  <div class="bas"><a href="index.html" style="display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#161616;border:1px solid #e0a24f;font-size:22px;line-height:1;text-decoration:none" title="Ana sayfa" aria-label="Ana sayfa">🏠</a><h1>📡 Saha Radarı</h1></div>
+  <p class="gir">Bölgendeki OSB'ler ve firma listeleri, dış ticaret ve tarım işletmeleri; ziyaretten önce kime gideceğini bul.</p>
   <div class="c ykn g"><h3 style="justify-content:flex-start;align-items:center;gap:8px"><span class="rdr" aria-hidden="true"></span>Yakınındaki firmalar <span id="yknDurum" style="letter-spacing:0;text-transform:none;font-size:11.5px;font-weight:500;margin-left:auto"></span></h3>
     <div class="yerS">
       <div id="yerSec" class="yerK"><input id="yaz" type="search" placeholder="Bölgen: il ya da ilçe yaz" autocomplete="off" aria-label="İl ya da ilçe"><div class="oner" id="oner" hidden></div></div>
@@ -229,7 +252,7 @@ body{padding:18px 16px 40px}
     <div class="fg" id="yknSek"></div>
     <div class="osbP" id="osbP" hidden></div>
     <p class="not" id="not"></p></div>
-  <p class="ac">Bu sayfa yalnızca deneme içindir; sitede hiçbir yerden bağlantısı yoktur. Bankanın müşteri bilgisi kullanılmaz; firma listeleri OSB'lerin kendi sitelerinden, diğerleri Google Haritalar'dan gelir. Segment etiketleri tahminîdir. Bölge seçimi Bölge Nabzı'yla ortaktır ve yalnızca bu cihazda saklanır; konum kaydedilmez.</p>
+  <p class="ac">Bankanın müşteri bilgisi kullanılmaz; OSB listesi OSBÜK'ten, firma listeleri OSB'lerin kendi sitelerinden, diğerleri Google Haritalar'dan gelir. Segment etiketleri tahminîdir. Bölge seçimi Bölge Nabzı'yla ortaktır ve yalnızca bu cihazda saklanır; konum kaydedilmez.</p>
 </div>
 <script>
 (function(){
@@ -298,7 +321,7 @@ function cizOsb(){
     return'<div class="osbR'+(x.sen?" sen":"")+'"><div class="ad">'+esc(ad)+'<small class="'+(o.d==="f"?"":"yk")+'">'+esc(alt)+'</small></div>'+fl+'<a href="https://www.google.com/maps/search/'+q+'" target="_blank" rel="noopener">🗺️ Harita</a></div>'}).join("");
   P.innerHTML=h;$("osbK").onclick=function(){acik=false;cizOsb()};
 }
-$("yknSek").addEventListener("click",function(e){var a=e.target.closest("a[data-rh]");if(!a)return;e.preventDefault();if(a.classList.contains("pas"))return;acik=!acik;cizOsb();if(acik)setTimeout(function(){$("osbP").scrollIntoView({behavior:"smooth",block:"nearest"})},60)});
+$("yknSek").addEventListener("click",function(e){var t=e.target.closest("a[href]");if(t&&window.Rapor)Rapor.bolum("saha-"+(t.dataset.rh?"rehber":"harita"));var a=e.target.closest("a[data-rh]");if(!a)return;e.preventDefault();if(a.classList.contains("pas"))return;acik=!acik;cizOsb();if(acik)setTimeout(function(){$("osbP").scrollIntoView({behavior:"smooth",block:"nearest"})},60)});
 fetch("data/ililce.json").then(function(r){return r.json()}).then(function(j){Object.keys(j).forEach(function(il){LISTE.push({il:il,ilce:"",s:sade(il)});j[il].forEach(function(c){LISTE.push({il:il,ilce:c,s:sade(c)})})})}).catch(function(){});
 $("yaz").addEventListener("input",function(){var q=sade(this.value.trim());if(q.length<2){$("oner").hidden=true;return}
   var b=LISTE.filter(function(x){return x.s.indexOf(q)===0}).slice(0,8);
