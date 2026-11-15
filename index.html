@@ -2,6 +2,9 @@
 <html lang="tr" data-tema-motor="yok">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<script src="kalkan.js"></script>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" href="img/icon.png">
 <link rel="apple-touch-icon" href="img/icon.png">
@@ -146,7 +149,7 @@
   .ysSer .ysNot { font-size: 11px; color: #8a7a5e; }
   .ysSer .ysSon { margin-right: 34px; }
   .ysSer .ysDet { margin-right: 6px; color: #e9dcc0; }
-  .ysSer .ysOnem { margin-right: 6px; padding: 1px 6px; border-radius: 5px; background: #d32f2f; color: #fff; font-size: 10.5px; font-weight: 800; letter-spacing: .5px; }
+  .ysSer .ysOnem { margin-right: 6px; padding: 1px 6px; border-radius: 5px; background: #d32f2f; color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .5px; }
   @keyframes ysKay { from { transform: translateX(0); } to { transform: translateX(-50%); } }
   /* SON DAKİKA modu (11 Kasım 2026): ekonomi/finans otoritelerinden önemli gelişme varsa üst şerit kırmızı çerçeveli altyazıya döner */
   .yeniS.sd { border-color: #8f2a20; background: rgba(20,4,2,.78); }
@@ -173,7 +176,7 @@
   .ppkK { position: relative; width: 100%; max-width: 420px; background: #0f0d0a; border: 1px solid #5a4320; border-radius: 16px; padding: 16px 16px 14px; color: #dcd3c2; box-shadow: 0 -6px 30px rgba(0,0,0,.6); animation: ppkUp .22s ease-out; }
   @keyframes ppkUp { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
   .ppkK .x { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%; border: 0; background: #1c1812; color: #bfae8e; font-size: 16px; cursor: pointer; }
-  .ppkK .pE { display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: .9px; color: #0b1220; background: #cfd8e6; border-radius: 6px; padding: 2px 7px; margin-bottom: 8px; }
+  .ppkK .pE { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .9px; color: #0b1220; background: #cfd8e6; border-radius: 6px; padding: 2px 7px; margin-bottom: 8px; }
   .ppkK .pE.uy { background: #ef8a5d; color: #1a0a05; }
   .ppkK .pT { font-size: 17px; font-weight: 700; line-height: 1.3; color: #fff; padding-right: 30px; }
   .ppkK .pS { font-size: 13px; color: #bfae8e; margin-top: 6px; line-height: 1.5; }
@@ -706,7 +709,7 @@
 @media (hover: hover) { .pk:hover { border-color: #5a4320; } }
 .pk:nth-child(2) { animation-delay: .05s; } .pk:nth-child(3) { animation-delay: .1s; } .pk:nth-child(4) { animation-delay: .15s; } .pk:nth-child(5) { animation-delay: .2s; } .pk:nth-child(6) { animation-delay: .25s; }
 @keyframes pkGel { from { opacity: 0; transform: translateY(10px); } }
-.pk h3 { margin: 0; font: 700 10.5px system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.pk h3 { margin: 0; font: 700 11px system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; align-items: center; gap: 6px; }
 .pk h3 i { font-style: normal; letter-spacing: 0; text-transform: none; font-size: 12px; color: var(--accent); font-weight: 600; }
 .pk .n { display: block; font: 300 38px/1.05 system-ui, sans-serif; letter-spacing: -.03em; margin-top: 8px; font-variant-numeric: tabular-nums; }
 .pk .n small { font: 500 14px system-ui, sans-serif; color: var(--accent); margin-left: 4px; letter-spacing: 0; }
@@ -1347,7 +1350,7 @@ html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 9
   .kyOk { position: fixed; right: 6px; z-index: 90; display: flex; flex-direction: column; align-items: flex-end; gap: 0; pointer-events: auto; cursor: pointer; animation: kyZip 1.1s ease-in-out infinite; }
   .kyOk.alt { bottom: calc(6px + env(safe-area-inset-bottom)); } .kyOk.ust { top: 6px; }
   .kyOk span { background: #3fc283; color: #062615; font-weight: 800; font-size: 11.5px; line-height: 1.2; text-align: center; padding: 4px 8px; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.6); }
-  .kyOk span small { display: block; font-weight: 600; font-size: 10.5px; opacity: .8; }
+  .kyOk span small { display: block; font-weight: 600; font-size: 11px; opacity: .8; }
   .kyOk b { color: #3fc283; font-size: 24px; line-height: 1; margin-right: 6px; text-shadow: 0 2px 8px rgba(0,0,0,.8); }
   @keyframes kyZip { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(var(--z, 7px)); } }
   .kyOk.ust { --z: -7px; }
@@ -1872,7 +1875,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   const dizi = [
     ["video", "<svg class=\"kyTrb\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><rect width=\"30\" height=\"20\" fill=\"#e30a17\"/><circle cx=\"11\" cy=\"10\" r=\"5\" fill=\"#fff\"/><circle cx=\"12.25\" cy=\"10\" r=\"4\" fill=\"#e30a17\"/><polygon points=\"16.2,10 19.9,8.8 17.6,11.9 17.6,8.1 19.9,11.2\" fill=\"#fff\"/></svg><b>Cumhuriyet Bayramımız kutlu olsun!</b> İş Bankası'nın 29 Ekim videosu <b class=\"gir\">İş Bankası Gündemi › Video</b>", "2026-10-29", "onem"],
     // 9 Kasım 2026: COP31 (Antalya, 9–20 Kasım 2026); kaynak İş Bankası'nın 6.11.2026 tarihli "Türkiye İş Bankası COP31'de" duyurusu, rol adı birebir ("İklim Destekçisi"); zirve bitince kalkar
-    ["cop31.html", "🌍 <b>COP31 İklim Zirvesi</b> 9–20 Kasım'da Antalya'da; İş Bankası zirvede <b>“İklim Destekçisi”</b> olarak yer alıyor <b class=\"gir\">Program</b>", "2026-11-20", "onem"], // 10 Kasım: dokununca İş Bankası'nın COP31 programı (cop31.html)
+    ["cop31.html", "🌍 <b>COP31 İklim Zirvesi</b> 9–20 Kasım'da Antalya'da; İş Bankası COP31'de <b>“İklim Destekçisi”</b> olarak yer alıyor <b class=\"gir\">Program</b>", "2026-11-20", "onem"], // 10 Kasım: dokununca İş Bankası'nın COP31 programı (cop31.html)
     // COP31 oturumları artık program dosyasından (isbank/cop31.json) aşağıda eklenir (10 Kasım 2026)
     // 6 Kasım 2026: Genel Müdür H. Cahit Çınar'ın Eylül 2026 sonuçlarına ilişkin değerlendirmesi (Fintechtime / Fintech Dünyası'ndaki açıklama metni); Haberler'deki alıntı kartına gider
     ["haber", "💬 İş Bankası Genel Müdürü H. Cahit Çınar: “Bundan sonra da <b>bir bankanın çok daha ötesinde bir kurum</b> olarak kaynaklarımızı ülkemizin katma değerli üretimine fayda sağlamak ve tüm paydaşlarımız için kalıcı değer üretmek için kullanmaya devam edeceğiz” <b class=\"gir\">İş Bankası Gündemi › Haber</b>", "2026-11-20", "onem"],

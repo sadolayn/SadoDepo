@@ -2,6 +2,9 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<script src="kalkan.js"></script>
 <script src="tema.js"></script>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" href="img/icon.png">
@@ -22,7 +25,7 @@
 <meta property="og:locale" content="tr_TR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="lib/leaflet/leaflet.css">
 <style>
   :root { --bg:#000; --card:#0d0d0d; --field:#161616; --ink:#f2f2f2; --muted:#8a8a8a; --accent:#e0a24f; --line:#262626; --red:#e0473a; --green:#3fc283; }
   * { box-sizing: border-box; }
@@ -174,7 +177,7 @@
   <p class="note">Harita ve yerler Google Haritalar'dan gösterilir; konum arama <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (Nominatim) ile yapılır.</p>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 const $ = (x) => document.getElementById(x);
 const GROUPS = [
