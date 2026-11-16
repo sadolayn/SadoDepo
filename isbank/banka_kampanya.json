@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-11-15",
+ "kontrol": "2026-11-16",
  "kategoriler": [
   {
    "slug": "iste-maasa-ozel",
@@ -224,7 +224,7 @@
    "slug": "diger-kampanyalar",
    "ic": "✨",
    "ad": "Diğer kampanyalar",
-   "adet": 10,
+   "adet": 12,
    "url": "https://www.isbank.com.tr/kampanyalar/diger-kampanyalar",
    "kampanyalar": [
     {
@@ -280,6 +280,18 @@
      "bitis": "2026-12-31",
      "ozet": "Sephora’da Anında Alışveriş Kredisi ve Taksitli Ek Hesap ile 3 aya varan vade Fırsatlarıyla Avantajlı Ödeme Koşulları İş Bankası’nda!",
      "url": "https://www.isbank.com.tr/kampanyalar/isbankasindan-sephorada-ozel-yapacaginiz-alisverislerde-firsatlar"
+    },
+    {
+     "baslik": "Zen Pırlanta'da %10 İndirim!",
+     "bitis": "2026-11-30",
+     "ozet": "16 - 30 Kasım 2026 tarihleri arasında , İşCep'ten veya Maximum Mobil’den kampanyaya katılarak Zen Pırlanta mağazaları ve zenpirlanta.com adresinde geçerli tek k",
+     "url": "https://www.isbank.com.tr/kampanyalar/zen-pirlantada-indirim"
+    },
+    {
+     "baslik": "Zen Pırlanta'da 5.000 TL MaxiPuan!",
+     "bitis": "2026-11-30",
+     "ozet": "Maximum Mobil’den veya İşCep'ten kampanyaya katılın, 16 - 30 Kasım 2026 tarihleri arasında Maximum Kart'ınızla seçili Zen Pırlanta mağazaları ve zenpirlanta.com",
+     "url": "https://www.isbank.com.tr/kampanyalar/zen-pirlantada-maxipuan"
     }
    ]
   }
