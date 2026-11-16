@@ -1,14 +1,7 @@
 {
-  "guncelleme": "2026-11-11T09:10:00+03:00",
+  "guncelleme": "2026-11-16T09:10:00+03:00",
   "kaynak": "https://www.maximum.com.tr/kampanyalar",
   "kampanyalar": [
-    {
-      "baslik": "Shell istasyonlarında 500 TL MaxiPuan",
-      "ozet": "Shell'de akaryakıta 450 TL MaxiPuan; ödemelerden en az birini mobil temassız ya da TR Karekodla yaparsan +50 TL, toplam 500 TL.",
-      "tur": "MaxiPuan",
-      "bitis": "2026-11-15",
-      "url": "https://www.maximum.com.tr/kampanyalar/shell-maxipuan-kampanyasi"
-    },
     {
       "baslik": "MediaMarkt.com.tr'de 2.000 TL MaxiPuan",
       "ozet": "9-20 Kasım'da mediamarkt.com.tr'de Maximum Kart ile tek seferde yapılan 25.000 TL ve üzeri ilk alışverişe 2.000 TL MaxiPuan.",
@@ -176,6 +169,13 @@
       "tur": "Taksit",
       "bitis": "2026-12-31",
       "url": "https://www.isbank.com.tr/kampanyalar/ucuzabiletcomda-pesin-fiyatina-taksit-firsati"
+    },
+    {
+      "baslik": "Petrol Ofisi'nde 550 TL'ye varan MaxiPuan",
+      "ozet": "16 Kasım–31 Aralık 2026'da anlaşmalı Petrol Ofisi istasyonlarında farklı günlerde yapılan 1.600 TL ve üzeri 4. yakıt alışverişine 450 TL MaxiPuan; toplamda 550 TL'ye varan MaxiPuan.",
+      "tur": "MaxiPuan",
+      "bitis": "2026-12-31",
+      "url": "https://www.maximum.com.tr/kampanyalar/petrol-ofisinde-maxipuan-firsati"
     }
   ]
 }
