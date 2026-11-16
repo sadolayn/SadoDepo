@@ -5,7 +5,7 @@
  ],
  "kontrol": "2026-11-16",
  "degisim": "2026-11-16",
- "hash": "3d7239ab6cfc68b7",
+ "hash": "82bb9bd2a5b1a44b",
  "kampanyalar": [
   {
    "baslik": "İş’te Maaş’a Özel (2)",
@@ -48,7 +48,7 @@
    "ilk": "2000-01-01"
   },
   {
-   "baslik": "Otomotiv Kampanyaları (9)",
+   "baslik": "Otomotiv Kampanyaları (10)",
    "url": "https://www.isbank.com.tr/kampanyalar/otomotiv-kampanyalari",
    "ilk": "2000-01-01"
   },
@@ -216,6 +216,16 @@
    "baslik": "Detaylı Bilgi",
    "url": "https://www.isbank.com.tr/kampanyalar/avantajli-hisse-senedi-komisyon-oranlari-ayricaligi",
    "ilk": "2026-10-28"
+  },
+  {
+   "baslik": "Detaylı Bilgi",
+   "url": "https://www.isbank.com.tr/kampanyalar/borusan-nextte-arac-alim-satim-islemlerinde-indirim-ayricaligi",
+   "ilk": "2026-11-16"
+  },
+  {
+   "baslik": "Detaylı Bilgi",
+   "url": "https://www.isbank.com.tr/kampanyalar/borusan-next-servisten-mekanik-islemlerinde-indirim-ayricaligi ",
+   "ilk": "2026-11-16"
   },
   {
    "baslik": "Detaylı Bilgi",
@@ -442,6 +452,8 @@
   "/kampanyalar/maximiles-ve-maximiles-black-sahiplerine-ozel-indirimli-lounge-ayricaligi": "2026-10-28",
   "/kampanyalar/swissotel-the-bosphorusda-secili-mekan-ve-etkinliklerde-indirim-ayricaligi": "2026-10-28",
   "/kampanyalar/is-black-plus-kart-sahiplerine-secili-kahve-dukkanlarinda-indirim-ayricaligi": "2026-10-28",
-  "/kampanyalar/beyaz-esya-kampanyalari": "2026-11-05"
+  "/kampanyalar/beyaz-esya-kampanyalari": "2026-11-05",
+  "/kampanyalar/borusan-nextte-arac-alim-satim-islemlerinde-indirim-ayricaligi": "2026-11-16",
+  "/kampanyalar/borusan-next-servisten-mekanik-islemlerinde-indirim-ayricaligi ": "2026-11-16"
  }
 }
