@@ -73,6 +73,15 @@
 
   var OYUNLAR = /^(batak|king|balayi|tavla|solitaire|pilot|tahmin|bilmece|bulmaca|satranc|amiral|solotest)$/;
   var SAYFA = (location.pathname.split("/").pop() || "index.html").replace(/\.html$/, "");
+  // Menü yeri ilk boyamadan önce ayrılır: yan menü ve alt çubuk sonradan gelince sayfa zıplamasın (16 Kasım 2026).
+  // Sayfa sonradan menüsüz çıkarsa (data-menu/footer="yok") siteMenu bu ayırmayı geri alır.
+  if (!OYUNLAR.test(SAYFA) && !/^(guzelsitedekackisisuanonline|404|acilis)/.test(SAYFA)) {
+    document.documentElement.classList.add("smVar");
+    var onSt = document.createElement("style"); onSt.id = "sMenuYer";
+    onSt.textContent = "@media (min-width:1200px){html.smVar body{padding-left:236px}html.smVar::before{content:'';position:fixed;top:0;left:0;bottom:0;width:220px;background:#080808;border-right:1px solid #262626;z-index:44}" +
+      "html[data-tema=\"acik\"].smVar::before{background:#faf7f1;border-right-color:#e0d5c2}}";
+    document.head.appendChild(onSt);
+  }
   function footer() {
     if (!document.body || document.body.getAttribute("data-footer") === "yok" || document.querySelector("footer.copyright")) return;
     var f = document.createElement("footer"); f.className = "copyright";
@@ -318,7 +327,8 @@
   var UST = { cop31: "isbank", kaza: "hesap", dilekce: "hesap" }; // alt sayfalar menüde üst sayfalarını yakar
   function siteMenu() {
     var bd = document.body;
-    if (!bd || OYUNLAR.test(SAYFA) || bd.getAttribute("data-footer") === "yok" || bd.getAttribute("data-menu") === "yok" || document.getElementById("sMenu")) return;
+    if (!bd || OYUNLAR.test(SAYFA) || bd.getAttribute("data-footer") === "yok" || bd.getAttribute("data-menu") === "yok") { document.documentElement.classList.remove("smVar"); return; }
+    if (document.getElementById("sMenu")) return;
     // Kendi alt çubuğu olan sayfalar (Kaza Tutanağı, Dilekçe): PC'de yan menü var, telefonda alttaki menü çubuğu yok (çakışmasın)
     var kendiAlt = bd.getAttribute("data-gezinti") === "yok";
     var ben = UST[SAYFA] || SAYFA, esc = function (t) { return String(t).replace(/&/g, "&amp;"); };
