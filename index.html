@@ -780,6 +780,8 @@
 .k4 .ksg button b { font-variant-numeric: tabular-nums; }
 .k4 .bos { font-size: 12px; color: var(--muted); }
 @media (min-width: 1000px) { .k4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; } }
+/* Telefonda yalnızca Faiz & Kredi ve Yeni gelen; Süresi doluyor ve Tarım bilgisayarda (yer kaplamasın) */
+@media (max-width: 999px) { .k4 .kb.sic, .k4 .kb.tar { display: none; } }
 html[data-tema="acik"] .k4 .kb { background: #fbf8f2; } html[data-tema="acik"] .k4 .ksg button { background: #fff; }
 html[data-tema="acik"] .k4 .kb.sic { background: #fdf0ec; border-color: #f0c2b4; } html[data-tema="acik"] .k4 .kb.tar { background: #fbf2e2; border-color: #e6cf9f; }
 html[data-tema="acik"] .pk.pym .km .u { color: #1a7a4c; } html[data-tema="acik"] .pk.pym .km .d { color: #b8442a; }
