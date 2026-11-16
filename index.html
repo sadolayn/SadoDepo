@@ -737,7 +737,7 @@
 .kr b { display: block; font: 600 18px system-ui, sans-serif; color: var(--ink); font-variant-numeric: tabular-nums; margin: 1px 0; }
 .kr .u { color: #3fc283; } .kr .d { color: #ef6a4c; }
 .kr svg { display: block; width: 100%; height: 22px; margin-top: 4px; }
-.pk.kmp { background: linear-gradient(150deg, rgba(63,194,131,.12), rgba(255,255,255,.02)); }
+
 .pk .yr { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font: 600 12px system-ui, sans-serif; color: #7fe0b0; background: rgba(63,194,131,.12); border: 1px solid rgba(63,194,131,.3); padding: 4px 10px; border-radius: 999px; }
 .pk .yr i { width: 7px; height: 7px; border-radius: 50%; background: #3fc283; animation: yrNb 2s ease-in-out infinite; }
 @keyframes yrNb { 50% { opacity: .35; transform: scale(.7); } }
@@ -751,9 +751,39 @@
 @media (min-width: 1000px) {
   .pnl { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 10px; }
   .pk.genis { grid-column: 1 / -1; }
-  /* PC'de küçük dört kutu üstte, piyasa altta tam genişlik */
-  .pk.kmp, .pk.sah { order: 1; } .pk.py { order: 2; }
+  /* PC'de küçük dört kutu üstte, kampanyalar altta tam genişlik */
+  .pk.pym, .pk.sah { order: 1; } .pk.kmp { order: 2; }
 }
+/* Küçük piyasa kutusu ve dört bölümlü Kampanyalar (16 Kasım 2026) */
+.pk.pym .km { margin-top: 8px; display: grid; gap: 6px; }
+.pk.pym .km div { display: flex; align-items: baseline; gap: 6px; font-size: 12.5px; color: var(--muted); }
+.pk.pym .km div span:first-child { flex: 1; }
+.pk.pym .km b { font: 600 15px system-ui, sans-serif; color: var(--ink); font-variant-numeric: tabular-nums; }
+.pk.pym .km .u, .pk.pym .km .d { font-size: 11px; min-width: 48px; text-align: right; }
+.pk.pym .km .u { color: #3fc283; } .pk.pym .km .d { color: #ef6a4c; }
+.pk.kmp { cursor: default; }
+.pk.kmp h3 a { color: var(--accent); text-decoration: none; letter-spacing: 0; text-transform: none; font-size: 12px; font-weight: 600; }
+.pk.kmp h3 b { color: var(--ink); letter-spacing: 0; margin-left: 4px; font-weight: 600; }
+.k4 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.k4 .kb { border: 1px solid var(--line); border-radius: 14px; padding: 10px 10px 9px; background: rgba(255,255,255,.025); display: flex; flex-direction: column; min-width: 0; }
+.k4 .kb.sic { border-color: rgba(239,106,76,.45); background: rgba(239,106,76,.06); }
+.k4 .kb.tar { border-color: rgba(224,162,79,.45); background: rgba(224,162,79,.06); }
+.k4 .kbu { display: flex; justify-content: space-between; align-items: flex-start; }
+.k4 .kbu span { font-size: 20px; line-height: 1; }
+.k4 .kbu b { font: 300 30px/1 system-ui, sans-serif; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.k4 .kad { font: 700 14px system-ui, sans-serif; margin-top: 6px; }
+.k4 .kal { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
+.k4 .ksg { display: grid; gap: 5px; margin-top: auto; }
+.k4 .ksg button { display: flex; justify-content: space-between; align-items: center; gap: 6px; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--ink); border-radius: 10px; padding: 7px 9px; font: 600 12px system-ui, sans-serif; cursor: pointer; transition: border-color .2s, transform .15s; min-height: 32px; -webkit-tap-highlight-color: transparent; }
+.k4 .ksg button:hover { border-color: #5a4320; } .k4 .ksg button:active { transform: scale(.97); }
+.k4 .ksg button[disabled] { opacity: .45; cursor: default; }
+.k4 .ksg button b { font-variant-numeric: tabular-nums; }
+.k4 .bos { font-size: 12px; color: var(--muted); }
+@media (min-width: 1000px) { .k4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; } }
+html[data-tema="acik"] .k4 .kb { background: #fbf8f2; } html[data-tema="acik"] .k4 .ksg button { background: #fff; }
+html[data-tema="acik"] .k4 .kb.sic { background: #fdf0ec; border-color: #f0c2b4; } html[data-tema="acik"] .k4 .kb.tar { background: #fbf2e2; border-color: #e6cf9f; }
+html[data-tema="acik"] .pk.pym .km .u { color: #1a7a4c; } html[data-tema="acik"] .pk.pym .km .d { color: #b8442a; }
+html[data-tema="acik"] .pk.kmp { background: #fff; }
 /* Açık mod */
 html[data-tema="acik"] .pk { background: #fff; box-shadow: 0 1px 0 rgba(90,60,20,.04); }
 html[data-tema="acik"] .pk .cb, html[data-tema="acik"] .hft div { background: #f3ede2; border-color: #e3d8c4; }
@@ -762,7 +792,7 @@ html[data-tema="acik"] .hft .tt { background: linear-gradient(160deg, #e0a24f, #
 html[data-tema="acik"] .hft .ar { background: linear-gradient(90deg, #f3ede2 50%, #ecc98a 50%); }
 html[data-tema="acik"] .pk.ttl .ad { color: #8a5a12; }
 html[data-tema="acik"] .kr .u { color: #1a7a4c; } html[data-tema="acik"] .kr .d { color: #b8442a; }
-html[data-tema="acik"] .pk.kmp { background: linear-gradient(150deg, #e3f5ea, #fff); }
+html[data-tema="acik"] .pk.kmp { background: #fff; }
 html[data-tema="acik"] .pk .yr { color: #1a7a4c; background: #e3f5ea; border-color: #a9dcbf; }
 html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 90% at 100% 0, rgba(63,194,131,.28), transparent 60%), linear-gradient(150deg, #1d3b2c, #0f2219); border-color: #2c5a41; }
 @media (prefers-reduced-motion: reduce) { .pk, .pk .yr i, .rdr::after { animation: none; } .pk .cb i { transition: none; } }
@@ -957,8 +987,8 @@ html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 9
     <section class="pnl" id="pnl" aria-label="Tek bakışta">
       <a class="pk" href="takvim.html" id="pkCy"><h3>Çeyrek</h3><span class="n" id="cyN">–</span><span class="a">iş günü kaldı</span><div class="cb"><i id="cyB"></i></div><div class="mt"><span id="cyBas"></span><span id="cyBit"></span></div></a>
       <a class="pk" href="takvim.html" id="pkPpk"><h3>Sonraki PPK</h3><span class="n" id="ppkN">–</span><span class="a" id="ppkT"></span><span class="a" id="ppkF"></span></a>
-      <a class="pk py genis" href="piyasa.html"><h3>Piyasa <i>Tümü ›</i></h3><div class="kr" id="pkKur"></div></a>
-      <a class="pk kmp" href="isbank.html#maximum" id="pkKmp"><h3>Kampanyalar</h3><span class="n" id="kmN">–</span><span class="a">farklı kampanya</span><span class="yr" id="kmY" hidden><i></i><span></span></span></a>
+      <div class="pk kmp genis" id="pkKmp"><h3><span>Kampanyalar <b id="kmN"></b></span><a href="isbank.html#maximum">Tümü ›</a></h3><div class="k4" id="kmK"></div></div>
+      <a class="pk pym" href="piyasa.html"><h3>Piyasa <i>›</i></h3><div class="km" id="pkKur"></div></a>
       <a class="pk sah" href="saha.html" data-yeni="saha|2026-11-15|YENİ"><h3><span style="display:flex;align-items:center;gap:7px"><span class="rdr" aria-hidden="true"></span>Saha Radarı</span></h3><span class="t">Bölgende ne üretiliyor?</span><span class="a">81 ilin OSB'leri, fabrikalar, dış ticaret, tarım</span></a>
     </section>
     <div class="ara" role="search">
@@ -2487,33 +2517,57 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     if (P.last) { var c = P.last.change; $("ppkF").innerHTML = "Faiz <b>%" + tr(P.last.rate, P.last.rate % 1 ? 2 : 0) + "</b>" + (c ? " · son karar " + (c < 0 ? "−" : "+") + Math.round(Math.abs(c) * 100) + " baz puan" : " · son karar sabit"); }
   }).catch(function () {});
 
-  // Piyasa: son 7 kayıt ve küçük çizgi
+  // Piyasa (küçük kutu): son değer ve günlük değişim
   json("data/piyasa.json").then(function (D) {
     $("pkKur").innerHTML = [["Dolar", "usd", 2], ["Euro", "eur", 2], ["Gram altın", "xau", 0]].map(function (a) {
-      var v = (D[a[1]] || []).slice(-7); if (v.length < 2) return "";
-      var son = v[v.length - 1], onc = v[v.length - 2], yz = (son - onc) / onc * 100, mn = Math.min.apply(0, v), mx = Math.max.apply(0, v);
-      var pts = v.map(function (q, i) { return (i * 100 / (v.length - 1)).toFixed(1) + "," + (20 - (q - mn) / ((mx - mn) || 1) * 17).toFixed(1); }).join(" ");
-      var rk = yz < 0 ? "#ef6a4c" : a[1] === "xau" ? "#e0a24f" : "#3fc283";
-      return "<div>" + a[0] + "<b>" + tr(son, a[2]) + '</b><span class="' + (yz < 0 ? "d" : "u") + '">' + (yz < 0 ? "▼" : "▲") + " %" + tr(Math.abs(yz), 2) + '</span><svg viewBox="0 0 100 22" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="' + rk + '" stroke-width="2" vector-effect="non-scaling-stroke" points="' + pts + '"/></svg></div>';
+      var v = (D[a[1]] || []).slice(-2); if (v.length < 2) return "";
+      var son = v[1], yz = (v[1] - v[0]) / v[0] * 100;
+      return "<div><span>" + a[0] + "</span><b>" + tr(son, a[2]) + '</b><span class="' + (yz < 0 ? "d" : "u") + '">' + (yz < 0 ? "▼" : "▲") + " %" + tr(Math.abs(yz), 2) + "</span></div>";
     }).join("");
   }).catch(function () {});
 
-  // Kampanyalar: İş Bankası Gündemi kartıyla aynı sayım (aynı kampanya birden çok yerdeyse bir kez)
+  // Kampanyalar: dört bölüm (Faiz & Kredi · Yeni gelen · Süresi doluyor · Tarım), her biri bireysel / ticari.
+  // Sayım İş Bankası Gündemi ve Açılış kartıyla aynı: üç site birlikte, aynı kampanya bir kez. Düğmeler İş Bankası Gündemi'nde süzülmüş listeyi açar.
   var ayni = function (t) { return (t || "").toLocaleLowerCase("tr").replace(/[’'`]/g, "").replace(/[çğıöşüâîû]/g, function (h) { return { ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" }[h]; }).replace(/[^a-z0-9%]/g, ""); };
-  var gun = function (once) { return new Date(Date.now() + 3 * 3600e3 - once * 864e5).toISOString().slice(0, 10); };
+  var gun = function (n) { return new Date(Date.now() + 3 * 3600e3 + n * 864e5).toISOString().slice(0, 10); };
   json("isbank/kampanya_hepsi.json").then(function (K) {
-    var bg = gun(0), uc = gun(4), G = {};
+    var bg = gun(0), uc = gun(-4), hf = gun(6), TUM = {}, S = { bireysel: {}, ticari: {} };
     ["isbank", "maximum", "maximiles"].forEach(function (kay) {
-      var S = K[kay] || {};
-      Object.keys(S).forEach(function (sg) {
-        var v = S[sg] || {}, LL = v.kampanyalar || [].concat.apply([], (v.kategoriler || []).map(function (c) { return c.kampanyalar || []; }));
-        LL.forEach(function (k) { if (!k || !k.baslik || (k.bitis && k.bitis < bg)) return; var a = k.es || ayni(k.baslik), ilk = k.ilk && k.ilk > "2000-01-01" ? k.ilk : "0"; if (!(a in G) || ilk < G[a]) G[a] = ilk; });
+      Object.keys(K[kay] || {}).forEach(function (sg) {
+        var v = K[kay][sg] || {}, LL = v.kampanyalar || [].concat.apply([], (v.kategoriler || []).map(function (c) { return c.kampanyalar || []; }));
+        LL.forEach(function (k) {
+          if (!k || !k.baslik || (k.bitis && k.bitis < bg)) return;
+          var a = k.es || ayni(k.baslik), ilk = k.ilk && k.ilk > "2000-01-01" ? k.ilk : "0"; TUM[a] = 1;
+          var G = S[sg]; if (!G) return;
+          if (!G[a]) G[a] = { ne: k.ne || "", nere: k.nere || "", ilk: ilk, bit: k.bitis || "" };
+          else { var g = G[a]; if (ilk < g.ilk) g.ilk = ilk; if (!g.ne && k.ne) g.ne = k.ne; if (!g.nere && k.nere) g.nere = k.nere; if (k.bitis && (!g.bit || k.bitis > g.bit)) g.bit = k.bitis; }
+        });
       });
     });
-    var n = 0, y3 = 0; Object.keys(G).forEach(function (a) { n++; if (G[a] >= uc) y3++; });
-    if (!n) return;
+    var say = function (sg, f) { var G = S[sg]; return Object.keys(G).filter(function (a) { return f(G[a]); }).length; };
+    var B4 = [
+      ["fk", "🏦", "Faiz &amp; Kredi", "şu an geçerli", function (g) { return g.ne === "Faiz & Kredi"; }, ""],
+      ["yeni", "🆕", "Yeni gelen", "son 5 günde", function (g) { return g.ilk >= uc; }, ""],
+      ["bit", "⏳", "Süresi doluyor", "7 gün içinde bitiyor", function (g) { return g.bit && g.bit <= hf; }, "sic"],
+      ["tar", "🌾", "Tarım", "çiftçiye ve tarıma özel", function (g) { return g.nere === "Tarım"; }, "tar"]];
+    var n = Object.keys(TUM).length; if (!n) return;
     $("kmN").textContent = n.toLocaleString("tr-TR");
-    if (y3) { $("kmY").hidden = false; $("kmY").lastChild.textContent = y3 + " yeni geldi"; $("pkKmp").href = "isbank.html#yeni"; }
+    $("kmK").innerHTML = B4.map(function (b) {
+      var bi = say("bireysel", b[4]), ti = say("ticari", b[4]);
+      var dg = function (sg, ad, x) { return '<button type="button" data-git="' + b[0] + "|" + sg + '"' + (x ? "" : " disabled") + "><span>" + ad + "</span><b>" + x + "</b></button>"; };
+      return '<div class="kb ' + b[5] + '"><div class="kbu"><span aria-hidden="true">' + b[1] + "</span><b>" + (bi + ti) + '</b></div><div class="kad">' + b[2] + '</div><div class="kal">' + b[3] + "</div>" +
+        '<div class="ksg">' + (b[0] === "tar" && !bi ? "" : dg("bireysel", "👤 Bireysel", bi)) + dg("ticari", "🏢 Ticari", ti) + "</div></div>";
+    }).join("");
+    $("kmK").addEventListener("click", function (e) {
+      var d = e.target.closest("button[data-git]"); if (!d || d.disabled) return;
+      var p = d.dataset.git.split("|"), o = {}; try { o = JSON.parse(localStorage.getItem("isbankKamp") || "{}") || {}; } catch (x) {}
+      if (window.Rapor) Rapor.bolum("pano-kamp-" + p[0] + "-" + p[1]);
+      if (p[0] === "bit") { try { sessionStorage.setItem("kTakSeg", p[1]); } catch (x) {} location.href = "isbank.html#ktakvim"; return; } // Kampanya takvimi: bitişler gün gün
+      o.seg = p[1]; o.nere = p[0] === "tar" ? "Tarım" : ""; o.kim = ""; o.one = false; o.ne = p[0] === "fk" ? "Faiz & Kredi" : "";
+      if (p[0] === "fk" || p[0] === "tar") o.kay = "isbank";
+      try { localStorage.setItem("isbankKamp", JSON.stringify(o)); } catch (x) {}
+      location.href = "isbank.html#" + (p[0] === "yeni" ? "yeniliste" : "kliste");
+    });
   }).catch(function () {});
 })();
 </script>

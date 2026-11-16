@@ -1022,7 +1022,9 @@ function renderCamps() {
   $("tfil").onclick = (e) => { const b = e.target.closest("button[data-t]"); if (!b) return; campTur = b.dataset.t; renderCamps(); icerigeKay(); };
 }
 // Takvimde bir güne dokununca o gün biten kampanyalar
+let kTakGit = false; // ana sayfadan gelince sayfa takvime iner
 let calGun = null, calAy = 0, calAyMax = 3, calKay = "hepsi", calSeg = "bireysel";
+try { const s = sessionStorage.getItem("kTakSeg"); if (s === "bireysel" || s === "ticari") { calSeg = s; kTakGit = true; } sessionStorage.removeItem("kTakSeg"); } catch (e) {} // ana sayfadaki "Süresi doluyor" düğmesinden
 function bindCal() {
   $("jIcs").onclick = icsReminder;
   const yeniden = (kay) => { $("list").innerHTML = campCal(); bindCal(); const g = $("calGunList"); if (g && calGun && kay) g.scrollIntoView({ behavior: "smooth", block: "start" }); };
@@ -2166,6 +2168,7 @@ function renderList() {
     if (!SEEN._yv) { vids.forEach((x) => { if (!x.d || (Date.now() - new Date(x.d)) / 864e5 > 7) SEEN["y:" + x.u] = 1; }); SEEN._yv = 1; seenSave(); }
     renderList(); renderChips(); ilkCizim = false;
     if (kGit && cat === "Maximum" && $("kGovde")) setTimeout(() => bolumeGit($("kGovde")), 60);
+    if (kTakGit && cat === "KTakvim" && $("ccal")) { kTakGit = false; setTimeout(() => bolumeGit($("ccal")), 60); }
     // Ana sayfadaki kampanya etiketlerinden gelinse de sayfa baştan açılır: İş Bankası Gündemi menüsü atlanmaz, Kampanyalar seçili hazır bekler
   } catch (e) {
     Ortak.hata("list", { ne: "İş Bankası gündemi" });
