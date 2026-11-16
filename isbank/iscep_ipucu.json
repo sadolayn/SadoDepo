@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-11-09",
+ "kontrol": "2026-11-16",
  "not": "Haftada bir isbank.com.tr ile karşılaştırılır. src=uygulama olanlar İşCep uygulamasında görülen, isbank.com.tr'de ayrıca anlatılmayan özelliklerdir.",
  "kategoriler": [
   {
@@ -242,7 +242,7 @@
    "k": "ayar",
    "ic": "📞",
    "t": "Sahte arama tespiti: seni banka mı arıyor, dolandırıcı mı?",
-   "d": "Banka Arama Bilgilendirme açıksa Çözüm Merkezi aramaları ekranda \"Türkiye İş Bankası Müşteri Hizmetleri\", şüpheli numaralar \"Olası Şüpheli Çağrı\" olarak görünür. Android ve iPhone.",
+   "d": "Banka Arama Bilgilendirme açıksa Çözüm Merkezi aramaları ekranda \"Türkiye İş Bankası Müşteri Hizmetleri\", şüpheli numaralar \"Olası Şüpheli Çağrı\" olarak görünür. Arama bilgilendirme Android ve iPhone'da, Sahte Arama Tespiti Android'de.",
    "n": "Profil ve Ayarlar › Güvenlik ve İşlem Ayarları › Banka Arama Bilgilendirme › Sahte Arama Tespiti İzni (açılan ekranda telefonun “Arayan Kimliği ve Spam Uygulaması” menüsünden İşCep'e izin ver)",
    "u": "https://www.isbank.com.tr/antivirus-ve-gelen-arama-bilgilendirme",
    "src": "isbank.com.tr",
