@@ -2469,6 +2469,16 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     $("ttS").innerHTML = L.filter(function (o) { return o !== t && o.ig > 0; }).slice(0, 2).map(function (o) { return "<span>" + o.ad + " <b>" + o.kalan + " gün</b> · " + o.sure + " gün tatil</span>"; }).join("");
   }
 
+  // Tatile kalan: telefonda Cebindeki araçlar'ın altında; PC'de Mola sütununa geçer, iki sütun dengede kalır (16 Kasım 2026)
+  (function () {
+    var tt = $("pkTtl"); if (!tt || !window.matchMedia) return;
+    var evi = tt.parentNode, yeri = tt.nextSibling, mola = [].slice.call(document.querySelectorAll(".mnB h2")).filter(function (h) { return /^Mola/.test(h.textContent); })[0];
+    if (!mola) return; mola = mola.parentNode;
+    var mq = matchMedia("(min-width: 1000px)");
+    var yerlestir = function () { if (mq.matches) mola.appendChild(tt); else evi.insertBefore(tt, yeri); };
+    yerlestir(); if (mq.addEventListener) mq.addEventListener("change", yerlestir); else if (mq.addListener) mq.addListener(yerlestir);
+  })();
+
   var json = function (u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw 0; return r.json(); }); };
   // Sonraki PPK; karara 2 gün kala kutu sarı çerçeveli.
   json("data/ppk.json").then(function (P) {
