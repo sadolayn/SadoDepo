@@ -315,17 +315,19 @@
     ["MOLA"],
     ["oyunlar", "🎮", "Oyunlar", "Oyunlar"]
   ];
-  var UST = { cop31: "isbank" }; // alt sayfalar menüde üst sayfalarını yakar
+  var UST = { cop31: "isbank", kaza: "hesap", dilekce: "hesap" }; // alt sayfalar menüde üst sayfalarını yakar
   function siteMenu() {
     var bd = document.body;
-    if (!bd || OYUNLAR.test(SAYFA) || bd.getAttribute("data-footer") === "yok" || bd.getAttribute("data-gezinti") === "yok" || bd.getAttribute("data-menu") === "yok" || document.getElementById("sMenu")) return;
+    if (!bd || OYUNLAR.test(SAYFA) || bd.getAttribute("data-footer") === "yok" || bd.getAttribute("data-menu") === "yok" || document.getElementById("sMenu")) return;
+    // Kendi alt çubuğu olan sayfalar (Kaza Tutanağı, Dilekçe): PC'de yan menü var, telefonda alttaki menü çubuğu yok (çakışmasın)
+    var kendiAlt = bd.getAttribute("data-gezinti") === "yok";
     var ben = UST[SAYFA] || SAYFA, esc = function (t) { return String(t).replace(/&/g, "&amp;"); };
     var st = document.createElement("style");
     st.textContent =
       "#sMenu,#sTab{display:none}" +
       // PC: yan menü
       "@media (min-width:1200px){html.smVar body{padding-left:236px}" +
-      "html.smVar .bar,html.smVar .mini,html.smVar .imini,html.smVar .imenu,html.smVar .menuPan{left:220px!important}" +
+      "html.smVar .bar,html.smVar .mini,html.smVar .imini,html.smVar .imenu,html.smVar .menuPan,html.smVar .kz-nav,html.smVar .dl-bar{left:220px!important}" +
       "#sMenu{display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:220px;z-index:45;overflow-y:auto;padding:20px 12px 16px;box-sizing:border-box;background:rgba(8,8,8,.94);border-right:1px solid #262626;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;scrollbar-width:thin}" +
       "#sMenu .lg{display:block;margin:0 8px 14px}#sMenu .lg img{height:38px;display:block}" +
       "#sMenu h6{margin:14px 10px 6px;font:700 11px system-ui,sans-serif;letter-spacing:.14em;color:#8a8a8a}" +
@@ -362,8 +364,9 @@
     });
     var as = document.createElement("aside"); as.id = "sMenu"; as.setAttribute("aria-label", "Site menüsü"); as.innerHTML = yan + '<div class="alt"></div>';
     var nv = document.createElement("nav"); nv.id = "sTab"; nv.setAttribute("aria-label", "Hızlı geçiş"); nv.innerHTML = '<div class="ic">' + alt + "</div>";
-    bd.appendChild(as); bd.appendChild(nv);
-    document.documentElement.classList.add("smVar", "tbVar");
+    bd.appendChild(as); document.documentElement.classList.add("smVar");
+    if (kendiAlt) { var tl = document.getElementById("telAc"); if (tl) as.querySelector(".alt").appendChild(tl); return; }
+    bd.appendChild(nv); document.documentElement.classList.add("tbVar");
     var tel = document.getElementById("telAc"); if (tel) as.querySelector(".alt").appendChild(tel);
     // Çubuk: bulunulan sayfaya kay; kaydırılacak yer varsa kenarda hafif solma
     var ic = nv.firstChild, on = ic.querySelector(".on");
