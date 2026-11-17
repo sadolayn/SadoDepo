@@ -69,7 +69,7 @@
 :root { --masa: #1a2bb8; --kred: #d3261f; --kblue: #1f5fc4; --kgreen: #17803d; }
 .table { background: linear-gradient(135deg, color-mix(in srgb, var(--masa), #fff 14%) 0%, var(--masa) 55%, color-mix(in srgb, var(--masa), #000 28%) 100%) !important; border-color: color-mix(in srgb, var(--masa), #fff 22%) !important; transition: background .4s; }
 .card { width: var(--cw, 56px); height: calc(var(--cw, 56px) * 1.45); border-radius: calc(var(--cw, 56px) * .12); position: relative; flex: none;
-  background: linear-gradient(180deg, #ffffff 0%, #f6f3ec 100%); color: #15161a; border: 1px solid rgba(0,0,0,.2);
+  background: linear-gradient(180deg, #ffffff 0%, #edf2f8 100%); color: #15161a; border: 1px solid rgba(0,0,0,.2);
   box-shadow: 0 1px 2px rgba(0,0,0,.35), 0 3px 8px rgba(0,0,0,.22); font-weight: 800; overflow: hidden; }
 .card.red { color: var(--kred); }
 .card.k-d { color: var(--kd, var(--kred)); }

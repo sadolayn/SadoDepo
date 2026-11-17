@@ -13,9 +13,9 @@
   const css = document.createElement("style");
   css.textContent = `.isimBox{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:6px 0 4px}
 .isimBox>div{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#a9a39a;text-align:left;margin:0}
-.isimBox input{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:12px;border:1px solid #3a3226;background:#161310;color:#f3e3c4;font:inherit;font-size:16px;font-weight:600}
+.isimBox input{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:12px;border:1px solid #232a34;background:#161310;color:#f3e3c4;font:inherit;font-size:16px;font-weight:600}
 .isimBox input:focus{outline:none;border-color:#e0a24f}
-.isimBox .fix{padding:10px 12px;border-radius:12px;border:1px dashed #3a3226;color:#e9c98f;font-size:16px;font-weight:700}
+.isimBox .fix{padding:10px 12px;border-radius:12px;border:1px dashed #232a34;color:#e9c98f;font-size:16px;font-weight:700}
 .isimBox small{font-size:10.5px;color:#6f6a62}`;
   document.head.appendChild(css);
   window.ISIM = {

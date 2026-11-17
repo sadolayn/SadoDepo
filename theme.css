@@ -66,12 +66,12 @@ html:not([data-tema="acik"]) footer.copyright a { color: #c8c8c8 !important; }
    tema.js sayfayı <html data-tema="acik"> ile işaretler. Oyun sayfaları tema.js yüklemez, hep koyu kalır.
    Zemin sıcak kâğıt beyazı, kartlar beyaz, altın yazılar okunabilsin diye koyulaştırıldı (beyaz üzerinde ≥4.5:1). */
 html[data-tema="acik"] {
-  --s-bg: #f6f3ec;
+  --s-bg: #edf2f8;
   --s-card: #ffffff;
-  --s-field: #f1ece2;
-  --s-line: #c9bda6;
-  --s-ink: #1b1813;
-  --s-muted: #5a5248;
+  --s-field: #e6edf5;
+  --s-line: #b7c3d3;
+  --s-ink: #10151c;
+  --s-muted: #3d4653;
   --s-gold: #8a5a12;      /* yazı altını (koyu) */
   --s-gold-dolgu: #e0a24f; /* düğme/rozet dolgusu: koyu yazıyla kullanılır */
   --s-ok: #1f8a57;
@@ -82,13 +82,13 @@ html[data-tema="acik"] {
 html[data-tema="acik"] .s-tile { border-color: color-mix(in srgb, var(--c) 45%, #fff); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 22%, #fff), color-mix(in srgb, var(--c) 7%, #fff)); color: color-mix(in srgb, var(--c) 55%, #000); }
 html[data-tema="acik"] .s-tile.on { border-color: color-mix(in srgb, var(--c) 70%, #000); color: #000; }
 /* Ortak parçalar (ortak.js footer, yukarı düğmesi, hata kutusu, hareket.css) */
-html[data-tema="acik"] footer.copyright { color: #5f594f !important; }
-html[data-tema="acik"] footer.copyright span { color: #6b645a !important; }
-html[data-tema="acik"] footer.copyright a { color: #4a443b !important; }
+html[data-tema="acik"] footer.copyright { color: #3d4653 !important; }
+html[data-tema="acik"] footer.copyright span { color: #454e5b !important; }
+html[data-tema="acik"] footer.copyright a { color: #2e3642 !important; }
 html[data-tema="acik"] #ortakYukari { background: rgba(255,255,255,.95) !important; color: #8f5d12 !important; border-color: #e2cfa6 !important; box-shadow: 0 6px 18px rgba(80,60,20,.18) !important; }
-html[data-tema="acik"] .ortakHata { background: #fff; border-color: #c9bda6; color: #3a352d; }
-html[data-tema="acik"] .ortakHata b { color: #1b1813; }
-html[data-tema="acik"] .ortakHata small { color: #6b645a; }
+html[data-tema="acik"] .ortakHata { background: #fff; border-color: #b7c3d3; color: #232a34; }
+html[data-tema="acik"] .ortakHata b { color: #10151c; }
+html[data-tema="acik"] .ortakHata small { color: #454e5b; }
 html[data-tema="acik"] .ortakEski { background: #fff7e6; border-color: #e2cfa6; color: #6b4a12; box-shadow: 0 6px 18px rgba(80,60,20,.18); }
 html[data-tema="acik"] .row.bas { background: #f6ecd9; }
 
@@ -102,7 +102,7 @@ html[data-tema="acik"] .row.bas { background: #f6ecd9; }
 html[data-tema="acik"] :where(.tabs button, .menu button, #cats .chip, #tabs button, .tfil.mtiles button.mt):not(.active):not(.on) {
   background: linear-gradient(160deg, color-mix(in srgb, var(--c) 22%, #fff), color-mix(in srgb, var(--c) 8%, #fff)) !important;
   border-color: color-mix(in srgb, var(--c) 50%, #fff) !important;
-  color: color-mix(in srgb, var(--c) 35%, #1b1813) !important;
+  color: color-mix(in srgb, var(--c) 35%, #10151c) !important;
 }
 html[data-tema="acik"] :where(.tabs button, .menu button, #cats .chip, #tabs button, .tfil.mtiles button.mt):is(.active, .on) {
   background: linear-gradient(160deg, color-mix(in srgb, var(--c) 35%, #fff), color-mix(in srgb, var(--c) 65%, #fff)) !important;

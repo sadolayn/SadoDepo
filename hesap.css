@@ -203,7 +203,7 @@
   #tabs [data-t="calc"] { --c: #e0a24f; } #tabs [data-t="cetvel"] { --c: #3fbfd6; } #tabs [data-t="mesafe"] { --c: #5aa9f0; } #tabs [data-t="faiz"] { --c: #3fc283; }
   #tabs [data-t="tarih"] { --c: #ef5a5a; } #tabs [data-t="yuzde"] { --c: #b48cf0; } #tabs [data-t="bulmaca"] { --c: #ff4fa3; }
   /* ===== Hesap makinesi: albenili gövde ===== */
-  .calc { position: relative; background: linear-gradient(160deg, #4a443c 0%, #2b2722 38%, #1d1a16 70%, #2a251f 100%); border: 1px solid #5a5248;
+  .calc { position: relative; background: linear-gradient(160deg, #4a443c 0%, #2b2722 38%, #1d1a16 70%, #2a251f 100%); border: 1px solid #3d4653;
     box-shadow: 0 18px 40px rgba(0,0,0,.75), 0 0 0 1px #0b0a09, 0 0 0 3px #6b5222, 0 0 22px rgba(224,162,79,.18), inset 0 1px 0 rgba(255,255,255,.12); }
   .calc::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: repeating-linear-gradient(90deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px); }
   .calc::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -14px; height: 14px; border-radius: 50%; background: radial-gradient(closest-side, rgba(224,162,79,.25), transparent); pointer-events: none; }

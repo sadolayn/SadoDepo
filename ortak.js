@@ -78,8 +78,10 @@
   if (!OYUNLAR.test(SAYFA) && !/^(guzelsitedekackisisuanonline|404|acilis)/.test(SAYFA)) {
     document.documentElement.classList.add("smVar");
     var onSt = document.createElement("style"); onSt.id = "sMenuYer";
-    onSt.textContent = "@media (min-width:1200px){html.smVar body{padding-left:236px}html.smVar::before{content:'';position:fixed;top:0;left:0;bottom:0;width:220px;background:#080808;border-right:1px solid #262626;z-index:44}" +
-      "html[data-tema=\"acik\"].smVar::before{background:#faf7f1;border-right-color:#e0d5c2}}";
+    onSt.textContent = "@media (min-width:1200px){html.smVar body{padding-left:236px}html.smVar::before{content:'';position:fixed;top:0;left:0;bottom:0;width:220px;background:#080808;border-right:1px solid #262626;z-index:44}}" +
+      // Dar pencere (1000–1199 px; ör. MacBook'ta Safari tam ekran değilken): menü yalnızca simgeli ince şerit olur
+      "@media (min-width:1000px) and (max-width:1199px){html.smVar body{padding-left:76px}html.smVar::before{content:'';position:fixed;top:0;left:0;bottom:0;width:64px;background:#080808;border-right:1px solid #262626;z-index:44}}" +
+      "html[data-tema=\"acik\"].smVar::before{background:#f5f8fc;border-right-color:#d3dce8}";
     document.head.appendChild(onSt);
   }
   function footer() {
@@ -345,6 +347,13 @@
       "#sMenu a.m:hover{background:rgba(224,162,79,.08);opacity:1}" +
       "#sMenu a.m.on{background:linear-gradient(90deg,rgba(224,162,79,.16),rgba(224,162,79,.02));color:#f3d38a;opacity:1;box-shadow:inset 2px 0 0 #e0a24f}" +
       "#sMenu .alt{margin-top:auto;padding-top:14px}#sMenu #telAc{position:static;width:100%;justify-content:center;box-shadow:none}}" +
+      // Dar pencere: simgeli ince şerit (adlar fareyle üstüne gelince görünür)
+      "@media (min-width:1000px) and (max-width:1199px){html.smVar body{padding-left:76px}" +
+      "html.smVar .bar,html.smVar .mini,html.smVar .imini,html.smVar .imenu,html.smVar .menuPan,html.smVar .kz-nav,html.smVar .dl-bar{left:64px!important}" +
+      "#sMenu{display:flex;flex-direction:column;align-items:center;position:fixed;top:0;left:0;bottom:0;width:64px;z-index:45;overflow-y:auto;padding:12px 6px;box-sizing:border-box;background:rgba(8,8,8,.94);border-right:1px solid #262626;scrollbar-width:none}" +
+      "#sMenu .lg{margin:0 0 6px}#sMenu .lg img{height:20px;display:block}#sMenu h6{font-size:0;margin:6px 0;width:28px;height:1px;background:rgba(128,128,128,.4)}" +
+      "#sMenu a.m{display:flex;justify-content:center;align-items:center;width:44px;height:38px;border-radius:11px;font-size:19px;text-decoration:none;opacity:.9}#sMenu a.m .l{display:none}" +
+      "#sMenu a.m:hover{background:rgba(224,162,79,.12);opacity:1}#sMenu a.m.on{background:rgba(224,162,79,.2);box-shadow:inset 2px 0 0 #e0a24f;opacity:1}#sMenu .alt{display:none}}" +
       // Telefon: altta kayan çubuk
       "@media (max-width:999px){html.tbVar body{padding-bottom:calc(92px + env(safe-area-inset-bottom))!important}" +
       "#sTab{display:block;position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:50;max-width:560px;margin:0 auto;border-radius:20px;background:rgba(14,14,14,.86);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid #2a2a2a;box-shadow:0 10px 30px rgba(0,0,0,.4);overflow:hidden}" +
@@ -359,17 +368,17 @@
       "html.tbVar .fab{bottom:calc(88px + env(safe-area-inset-bottom))!important}" +
       "html.tbVar .toast,html.tbVar .cp-toast,html.tbVar #kTost,html.tbVar .ortakEski,html.tbVar .atoast{bottom:calc(92px + env(safe-area-inset-bottom))!important}}" +
       // Açık mod
-      "html[data-tema=\"acik\"] #sMenu{background:rgba(250,247,241,.97);border-right-color:#e0d5c2}html[data-tema=\"acik\"] #sMenu h6{color:#7a6f60}" +
-      "html[data-tema=\"acik\"] #sMenu a.m{color:#1b1813}html[data-tema=\"acik\"] #sMenu a.m.on{color:#8a5a12;box-shadow:inset 2px 0 0 #8a5a12}" +
-      "html[data-tema=\"acik\"] #sTab{background:rgba(255,255,255,.92);border-color:#dccfb6;box-shadow:0 10px 30px rgba(90,60,20,.15)}" +
-      "html[data-tema=\"acik\"] #sTab a{color:#5a5248}html[data-tema=\"acik\"] #sTab a.on{color:#8a5a12;background:#f6ecd9}" +
+      "html[data-tema=\"acik\"] #sMenu{background:rgba(245,248,252,.97);border-right-color:#d3dce8}html[data-tema=\"acik\"] #sMenu h6{color:#525c6a}" +
+      "html[data-tema=\"acik\"] #sMenu a.m{color:#10151c;opacity:1}html[data-tema=\"acik\"] #sMenu a.m.on{color:#8a5a12;box-shadow:inset 2px 0 0 #8a5a12}" +
+      "html[data-tema=\"acik\"] #sTab{background:rgba(255,255,255,.92);border-color:#d3dce8;box-shadow:0 10px 30px rgba(90,60,20,.15)}" +
+      "html[data-tema=\"acik\"] #sTab a{color:#3d4653}html[data-tema=\"acik\"] #sTab a.on{color:#8a5a12;background:#f6ecd9}" +
       "@media (prefers-reduced-motion:reduce){#sTab a,#sMenu a.m{transition:none}}@media print{#sMenu,#sTab{display:none!important}}";
     document.head.appendChild(st);
     var yan = '<a class="lg" href="index.html" aria-label="Ana sayfa"><img src="img/logo.png" alt="Sadolayn"></a>', alt = "";
     MENU.forEach(function (m) {
       if (m.length === 1) { yan += "<h6>" + m[0] + "</h6>"; return; }
       var on = m[0] === ben, a = ' href="' + m[0] + '.html"' + (on ? ' class="m on" aria-current="page"' : ' class="m"');
-      yan += "<a" + a + ">" + m[1] + " " + esc(m[2]) + "</a>";
+      yan += "<a" + a + ' title="' + esc(m[2]) + '"><span class="e" aria-hidden="true">' + m[1] + '</span><span class="l">' + esc(m[2]) + "</span></a>";
       alt += "<a" + a.replace(' class="m on"', ' class="on"').replace(' class="m"', "") + "><span>" + m[1] + "</span>" + esc(m[3]) + "</a>";
     });
     var as = document.createElement("aside"); as.id = "sMenu"; as.setAttribute("aria-label", "Site menüsü"); as.innerHTML = yan + '<div class="alt"></div>';

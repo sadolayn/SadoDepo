@@ -60,25 +60,25 @@
     var a = Math.round(c[3] * 1000) / 1000;
     return a >= 1 ? "rgb(" + c[0] + ", " + c[1] + ", " + c[2] + ")" : "rgba(" + c[0] + ", " + c[1] + ", " + c[2] + ", " + a + ")";
   }
-  var SICAK = [1.2, 4]; // nötr renklere verilecek hafif sıcaklık (kâğıt tonu)
+  var SICAK = [-0.6, -3.5]; // nötr renklere verilecek hafif serinlik (17 Kasım 2026: zemin kremden çok açık maviye geçti)
 
   // Zemin rengi: koyu → açık. bilgi.parlak: dokunulmadı ve opak/parlak (üstündeki yazı korunur)
   function zemin(c, k) {
     var r = c[0], g = c[1], b = c[2], a = c[3], L = lab(r, g, b), C = Math.hypot(L[1], L[2]);
     if (a === 0) return c;
     if (a < 0.8 && C < 8) { // yarı saydam nötr
-      if (L[0] < 20) return k.sabit ? [40, 30, 15, Math.min(0.45, a * 0.6)] : [255, 255, 255, Math.min(0.92, a + 0.3)];
-      if (L[0] > 85) return [60, 45, 20, Math.min(0.12, a * 0.5)];
+      if (L[0] < 20) return k.sabit ? [15, 25, 45, Math.min(0.45, a * 0.6)] : [255, 255, 255, Math.min(0.92, a + 0.3)];
+      if (L[0] > 85) return [20, 40, 75, Math.min(0.12, a * 0.5)];
       return c;
     }
     if (a < 0.8) return c; // renkli saydam tonlar (altın %10 gibi) açıkta da güzel durur
     if (L[0] >= 35) { k.parlak = true; return c; }
     var o;
     if (C < 8) {
-      if (r + g + b === 0) o = [246, 243, 236];
+      if (r + g + b === 0) o = [237, 242, 248];
       else if (L[0] < 9) o = [255, 255, 255];
-      else if (L[0] < 22) o = rgbL(94.5, SICAK[0], SICAK[1] + 1.5);
-      else o = rgbL(90, SICAK[0], SICAK[1] + 2);
+      else if (L[0] < 22) o = rgbL(95, SICAK[0], SICAK[1]);
+      else o = rgbL(91, SICAK[0], SICAK[1] - 1);
     } else {
       var s = Math.min(12, C * 0.5) / C;
       o = rgbL(97 - L[0] * 0.25, L[1] * s, L[2] * s);
@@ -90,23 +90,23 @@
     var a = c[3];
     if (a === 0) return c;
     var L = lab(c[0], c[1], c[2]), C = Math.hypot(L[1], L[2]);
-    if (a < 1 && C < 8 && L[0] > 85) return [27, 24, 19, Math.max(a, 0.55)];
-    // Hedef beyaza karşı 5.2: kâğıt zeminde (#f6f3ec) ve hafif renkli kartlarda da 4.5'in üstünde kalsın
-    if (kontrast(c[0], c[1], c[2]) >= 6.5) return c;
+    if (a < 1 && C < 8 && L[0] > 85) return [16, 21, 28, Math.max(a, 0.7)];
+    // Hedef beyaza karşı 5.2: kâğıt zeminde (#edf2f8) ve hafif renkli kartlarda da 4.5'in üstünde kalsın
+    if (kontrast(c[0], c[1], c[2]) >= 7.5) return c; // 17 Kasım 2026: yazılar daha net (6.5 → 7.5)
     var hedef, aa = L[1], bb = L[2];
-    if (C < 8) { hedef = Math.min(L[0], 8 + (100 - L[0]) * 30 / 42); aa = SICAK[0]; bb = SICAK[1]; } // gri yazı: açık modda biraz daha koyu (≈7:1), koyu moddaki canlılıkla aynı
+    if (C < 8) { hedef = Math.min(L[0], 6 + (100 - L[0]) * 24 / 42); aa = SICAK[0]; bb = SICAK[1]; } // gri yazı: açık modda biraz daha koyu (≈7:1), koyu moddaki canlılıkla aynı
     else hedef = L[0];
     var o = rgbL(hedef, aa, bb);
-    while (kontrast(o[0], o[1], o[2]) < 6.5 && hedef > 5) { hedef -= 1.5; o = rgbL(hedef, aa, bb); }
+    while (kontrast(o[0], o[1], o[2]) < 7.5 && hedef > 5) { hedef -= 1.5; o = rgbL(hedef, aa, bb); }
     return o.concat(a);
   }
   function cizgi(c) {
     var L = lab(c[0], c[1], c[2]), C = Math.hypot(L[1], L[2]);
     if (c[3] === 0) return c;
     if (C < 8) {
-      if (L[0] < 9) return [220, 211, 194, c[3]];   // satır ayırıcı: kâğıtta belli olsun
-      if (L[0] < 40) return [201, 189, 166, c[3]];  // kart/giriş kenarlığı ≈1,9:1 (önce 1,3 idi: silik görünüyordu)
-      if (L[0] > 88) return [154, 143, 126, c[3]];
+      if (L[0] < 9) return [211, 220, 232, c[3]];   // satır ayırıcı: kâğıtta belli olsun
+      if (L[0] < 40) return [176, 189, 206, c[3]];  // kart/giriş kenarlığı ≈1,9:1 (önce 1,3 idi: silik görünüyordu)
+      if (L[0] > 88) return [122, 135, 152, c[3]];
       return c;
     }
     if (L[0] < 40) { var s = Math.min(34, C * 0.9) / C; return rgbL(74, L[1] * s, L[2] * s).concat(c[3]); } // renkli kenarlık: biraz daha dolgun
@@ -114,8 +114,8 @@
   }
   function golge(c) {
     var L = lab(c[0], c[1], c[2]), C = Math.hypot(L[1], L[2]);
-    if (C < 8 && L[0] < 20) return [60, 45, 20, Math.min(0.18, c[3] * 0.3)];
-    if (C < 8 && L[0] > 85) return [60, 45, 20, Math.min(0.08, c[3] * 0.4)];
+    if (C < 8 && L[0] < 20) return [20, 40, 75, Math.min(0.18, c[3] * 0.3)];
+    if (C < 8 && L[0] > 85) return [20, 40, 75, Math.min(0.08, c[3] * 0.4)];
     return c;
   }
   function yaziGolge(c) {
@@ -347,13 +347,13 @@
     d.setAttribute("data-tema-secim", s);
     d.style.colorScheme = t === "acik" ? "light" : "dark";
     var m = document.querySelector('meta[name="theme-color"]');
-    if (m) m.setAttribute("content", t === "acik" ? "#f6f3ec" : "#000000");
+    if (m) m.setAttribute("content", t === "acik" ? "#edf2f8" : "#000000");
     if (t === "acik" && motorVar) {
       if (document.readyState === "loading") {
         // Önceki ziyaretten kalan boyayı hemen uygula; yoksa sayfa hazır olana kadar kısa süre gizle (siyah parlama olmasın)
         var on = ""; try { on = sessionStorage.getItem("temaOn:" + SAYFA) || ""; } catch (e) {}
         if (on && !onbellek) { onbellek = document.createElement("style"); onbellek.setAttribute("data-tema-uretim", ""); onbellek.textContent = on; (document.head || d).appendChild(onbellek); }
-        else if (!on && !gizle) { gizle = document.createElement("style"); gizle.setAttribute("data-tema-uretim", ""); gizle.textContent = "html{background:#f6f3ec!important}body{visibility:hidden!important}"; (document.head || d).appendChild(gizle); setTimeout(function () { if (gizle) { gizle.remove(); gizle = null; } }, 1500); }
+        else if (!on && !gizle) { gizle = document.createElement("style"); gizle.setAttribute("data-tema-uretim", ""); gizle.textContent = "html{background:#edf2f8!important}body{visibility:hidden!important}"; (document.head || d).appendChild(gizle); setTimeout(function () { if (gizle) { gizle.remove(); gizle = null; } }, 1500); }
       } else hazir();
     } else if (t === "koyu") gozcuDurdur();
     try { document.dispatchEvent(new CustomEvent("tema", { detail: { tema: t, secim: s } })); } catch (e) {}
@@ -369,7 +369,7 @@
   };
   document.addEventListener("DOMContentLoaded", function () {
     var m = document.querySelector('meta[name="theme-color"]');
-    if (m) m.setAttribute("content", d.getAttribute("data-tema") === "acik" ? "#f6f3ec" : "#000000");
+    if (m) m.setAttribute("content", d.getAttribute("data-tema") === "acik" ? "#edf2f8" : "#000000");
     if (d.getAttribute("data-tema") === "acik") hazir();
   });
   // Geç yüklenen <link> stilleri için
