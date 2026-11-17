@@ -786,6 +786,17 @@ html[data-tema="acik"] .k4 .kb { background: #f5f8fc; } html[data-tema="acik"] .
 html[data-tema="acik"] .k4 .kb.sic { background: #fdf0ec; border-color: #f0c2b4; } html[data-tema="acik"] .k4 .kb.tar { background: #fbf2e2; border-color: #e6cf9f; }
 html[data-tema="acik"] .pk.pym .km .u { color: #1a7a4c; } html[data-tema="acik"] .pk.pym .km .d { color: #b8442a; }
 html[data-tema="acik"] .pk.kmp { background: #fff; }
+/* "Ana ekranına ekle" hatırlatması: yalnızca telefonda, kurmamış ve en az 2. kez gelen ziyaretçiye; kapatınca 30 gün çıkmaz (18 Kasım 2026) */
+.kurHat { display: flex; align-items: center; gap: 10px; margin: 10px 0 2px; padding: 9px 8px 9px 12px; border: 1px solid #5a4320; border-radius: 14px; background: rgba(224,162,79,.08); animation: pkGel .45s cubic-bezier(.2,.7,.2,1) both; }
+.kurHat[hidden] { display: none; }
+.kurHat > span { font-size: 20px; }
+.kurHat #kurHatAc { flex: 1; text-align: left; background: none; border: 0; color: var(--ink); font: inherit; padding: 2px 0; cursor: pointer; min-height: 36px; }
+.kurHat #kurHatAc b { display: block; font: 700 14px system-ui, sans-serif; color: var(--accent); }
+.kurHat #kurHatAc small { font-size: 12px; color: var(--muted); }
+.kurHat #kurHatKapat { flex: none; width: 36px; height: 36px; border-radius: 50%; border: 0; background: none; color: var(--muted); font-size: 15px; cursor: pointer; }
+@media (min-width: 1000px) { .kurHat { display: none !important; } }
+html[data-tema="acik"] .kurHat { background: #fbf4e6; border-color: #e6cf9f; }
+@media (prefers-reduced-motion: reduce) { .kurHat { animation: none; } }
 /* Açık mod */
 html[data-tema="acik"] .pk { background: #fff; box-shadow: 0 1px 0 rgba(90,60,20,.04); }
 html[data-tema="acik"] .pk .cb, html[data-tema="acik"] .hft div { background: #e6edf5; border-color: #d3dce8; }
@@ -993,6 +1004,7 @@ html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 9
       <a class="pk pym" href="piyasa.html"><h3>Piyasa <i>›</i></h3><div class="km" id="pkKur"></div></a>
       <a class="pk sah" href="saha.html" data-yeni="saha|2026-11-15|YENİ"><h3><span style="display:flex;align-items:center;gap:7px"><span class="rdr" aria-hidden="true"></span>Saha Radarı</span></h3><span class="t">Bölgende ne üretiliyor?</span><span class="a">81 ilin OSB'leri, fabrikalar, dış ticaret, tarım</span></a>
     </section>
+    <div class="kurHat" id="kurHat" hidden><span aria-hidden="true">📲</span><button type="button" id="kurHatAc"><b>Ana ekranına ekle</b><small>Tek dokunuşla aç, uygulama gibi kullan</small></button><button type="button" id="kurHatKapat" aria-label="Kapat">✕</button></div>
     <div class="ara" role="search">
       <span class="araIk" aria-hidden="true">🔎</span>
       <input type="search" id="araQ" placeholder="Ara: çek iskonto, mevduat, resmî gazete…" aria-label="Araçlarda ara" autocomplete="off" enterkeyhint="go">
@@ -2510,6 +2522,22 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     var yerlestir = function () { if (mq.matches) mola.appendChild(tt); else evi.insertBefore(tt, yeri); };
     yerlestir(); if (mq.addEventListener) mq.addEventListener("change", yerlestir); else if (mq.addListener) mq.addListener(yerlestir);
   })();
+
+  // "Ana ekranına ekle" hatırlatması; dokununca alttaki mevcut kurulum düğmesini çalıştırır (aynı yönergeler)
+  (function () {
+    var h = $("kurHat"), kur = $("kur"); if (!h || !kur) return;
+    try {
+      var n = (+localStorage.getItem("sGelis") || 0) + 1; localStorage.setItem("sGelis", n);
+      var kapali = +localStorage.getItem("sKurHat") || 0;
+      if (matchMedia("(display-mode: standalone)").matches || navigator.standalone || /kaynak=uygulama/.test(location.search) || n < 2 || Date.now() - kapali < 30 * 864e5) return;
+    } catch (e) { return; }
+    h.hidden = false;
+    var kapat = function () { h.hidden = true; try { localStorage.setItem("sKurHat", Date.now()); } catch (e) {} };
+    $("kurHatKapat").onclick = function () { if (window.Rapor) Rapor.bolum("kur-hatirlat-kapat"); kapat(); };
+    $("kurHatAc").onclick = function () { if (window.Rapor) Rapor.bolum("kur-hatirlat-ac"); kapat(); kur.click(); setTimeout(function () { var y = $("kurYardim"); if (y && !y.hidden) y.scrollIntoView({ behavior: "smooth", block: "center" }); }, 150); };
+  })();
+  // Saha Radarı kullanım sayımı (anonim): ana sayfadaki karta ve menü satırına dokunma
+  [].forEach.call(document.querySelectorAll('a.pk.sah, a.row[href="saha.html"]'), function (a) { a.addEventListener("click", function () { if (window.Rapor) Rapor.bolum(a.classList.contains("pk") ? "saha-kart" : "saha-satir"); }); });
 
   var json = function (u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw 0; return r.json(); }); };
   // Sonraki PPK; karara 2 gün kala kutu sarı çerçeveli.
