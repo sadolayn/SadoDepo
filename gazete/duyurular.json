@@ -1,7 +1,16 @@
 {
-  "guncelleme": "2026-11-16T07:00:35+03:00",
+  "guncelleme": "2026-11-17T22:30:00+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
+    {
+      "tarih": "2026-11-17",
+      "kurum": "TMSF",
+      "baslik": "Adil Katılım Bankası dâhil dört şirkete TMSF yönetim kayyımı olarak atandı",
+      "ozet": "İstanbul Cumhuriyet Başsavcılığının 17 Kasım 2026 tarihli açıklamasına göre, yürütülen fon soruşturması kapsamında Adil Katılım Bankası A.Ş., Adil Varlık Yönetim A.Ş., Adil Tasarruf Finansman A.Ş. ve Dünya Varlık Yönetim A.Ş.'ye TMSF yönetim kayyımı olarak atandı. Karar Ceza Muhakemesi Kanunu'nun 133/1. maddesine dayanıyor; şirketlerin yönetim organlarının yetkileri ile ortaklık payları ve menkul kıymetleri idare yetkisi TMSF'ye verildi.",
+      "etki": "Bankanın faaliyetlerine ve katılım fonu sahiplerine ilişkin ayrı bir açıklama, okunan haberlerde yer almadı; TMSF ve BDDK'nin duyuruları izlenmeli.",
+      "onemli": true,
+      "url": "https://www.ekoturk.com/piyasalar/fon-sorusturmasinda-dort-sirkete-tmsf-kayyim-atandi"
+    },
     {
       "tarih": "2026-11-13",
       "kurum": "SPK",
@@ -10,6 +19,14 @@
       "etki": "Kredili hisse işlemi yapan yatırımcılar için esnek özkaynak uygulaması 31 Aralık 2026 seans sonuna kadar devam ediyor.",
       "onemli": false,
       "url": "https://www.cnbce.com/borsa/spkdan-borsada-kredili-islem-karari-sure-yil-sonuna-kadar-uzatildi-h41795"
+    },
+    {
+      "tarih": "2026-11-13",
+      "kurum": "SPK",
+      "baslik": "SPK bülteni: üç paydaki işlemler nedeniyle 65 kişiye iki yıl işlem yasağı",
+      "ozet": "SPK'nin 13 Kasım 2026 tarihli ve 2026/80 sayılı bültenine ilişkin haberlere göre, üç paydaki işlemler nedeniyle 65 kişi hakkında suç duyurusunda bulunulmasına ve iki yıl işlem yasağı uygulanmasına karar verildi; 36 kişinin sermaye piyasası lisansları yasak süresince iptal edildi. Kurul ayrıca izinsiz sermaye piyasası faaliyetiyle bağlantılı olduğu belirtilen 12 internet sitesine erişimin engellenmesi için hukuki işlem başlatılmasına karar verdi.",
+      "onemli": false,
+      "url": "https://www.endeks24.com/spk-karcl-edata-ve-grtho-da-65-kisiye-2-yil-islem-yasagi-getirdi"
     },
     {
       "tarih": "2026-11-12",
