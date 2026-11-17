@@ -1,5 +1,5 @@
 {
-  "guncelleme": "2026-11-17T22:30:00+03:00",
+  "guncelleme": "2026-11-18T09:30:00+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
     {
@@ -10,6 +10,14 @@
       "etki": "Bankanın faaliyetlerine ve katılım fonu sahiplerine ilişkin ayrı bir açıklama, okunan haberlerde yer almadı; TMSF ve BDDK'nin duyuruları izlenmeli.",
       "onemli": true,
       "url": "https://www.ekoturk.com/piyasalar/fon-sorusturmasinda-dort-sirkete-tmsf-kayyim-atandi"
+    },
+    {
+      "tarih": "2026-11-17",
+      "kurum": "TMSF",
+      "baslik": "Alnus Yatırım ve Altınbaş Holding de TMSF'nin kayyım listesinde",
+      "ozet": "Haberlere göre, fon soruşturması sürerken TMSF'nin internet sitesindeki güncel kayyım listesine 17 Kasım 2026'da Alnus Yatırım Menkul Değerler ve Altınbaş Holding'in de aralarında bulunduğu şirketler eklendi. Kararın hukuki dayanağına ve TMSF'nin bu şirketlerdeki yetkisinin kapsamına ilişkin ayrıntılı bir resmî açıklama, okunan haberlerde yer almadı.",
+      "onemli": false,
+      "url": "https://www.ekonomim.com/gundem/fon-sorusturmasinda-kritik-gelisme-alnus-yatirim-ve-altinbas-holding-de-tmsfye-gecti-haberi-931815"
     },
     {
       "tarih": "2026-11-13",

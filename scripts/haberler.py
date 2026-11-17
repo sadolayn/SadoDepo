@@ -262,13 +262,20 @@ for cat, items in cats.items():
     items.sort(key=lambda x: x["d"] or "", reverse=True)
     for x in items:
         k = norm(x["t"])[:70]
-        if k in seen or x["u"] in seen: continue
+        if x["u"] in seen: continue
+        if k in seen:
+            # Aynı başlık birden çok kaynakta varsa Ekonomi sekmesinde Ekonomim'inki gösterilir
+            if cat == "ekonomi" and x["s"] == "Ekonomim":
+                for i, y in enumerate(uniq):
+                    if norm(y["t"])[:70] == k and y["s"] != "Ekonomim": uniq[i] = dict(x, d=y["d"]); seen.add(x["u"]); break
+            continue
         seen.add(k); seen.add(x["u"]); uniq.append(x)
-    # Tek kaynağın listeyi doldurmaması için kaynak başına en fazla 12 başlık
+    # Tek kaynağın listeyi doldurmaması için kaynak başına en fazla 12 başlık.
+    # Ekonomi sekmesinde Ekonomim öne alınır: payı 24 başlık (18 Kasım 2026, kullanıcı isteği)
     per, capped = {}, []
     for x in uniq:
         per[x["s"]] = per.get(x["s"], 0) + 1
-        if per[x["s"]] <= 12: capped.append(x)
+        if per[x["s"]] <= (24 if cat == "ekonomi" and x["s"] == "Ekonomim" else 12): capped.append(x)
     cats[cat] = capped[:80]
 print("::notice::" + " | ".join(f"{c}: {', '.join(v)}" for c, v in ok_src.items()))
 total = sum(len(v) for v in cats.values())
