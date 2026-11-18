@@ -203,6 +203,21 @@ const ISQ_ALL = [].concat(
     ["Kasım 2026'da İşCep art arda kaçıncı kez \"Dünyanın En İyi Bireysel Mobil Bankacılık Uygulaması\" seçildi?", ["2. kez", "3. kez", "4. kez", "5. kez"], 2],
   ], "2026-11-02"),
 
+  // --- Kolay Adres tanımlama (isbank.com.tr/kolay-adres, 18 Kasım 2026'da kontrol edildi) ---
+  K("iscep", [
+    ["Aynı hesaba en fazla kaç Kolay Adres tanımlanabilir?", ["1", "3", "5", "10"], 2],
+    ["Cep numaranı İş Bankası'ndaki hesabına Kolay Adres olarak tanımladıysan, aynı numarayı başka bir bankadaki hesabına da tanımlayabilir misin?", ["Evet, en fazla 2 bankada", "Evet, sınırsız bankada", "Hayır, bir Kolay Adres yalnızca tek bir hesaba bağlanır", "Yalnızca hafta içi mesai saatlerinde"], 2],
+    ["İşCep'te Kolay Adres tanımlama hangi menünün altında?", ["Para Aktar", "Kartlar", "Yatırım", "Başvurular"], 0],
+  ], "2026-11-18"),
+
+  // --- Ticari Kazanç Hesabı (isbank.com.tr/kazanc-hesap-ticari ve bankanın 18.11.2026 açıklaması) ---
+  K("kart", [
+    ["Ticari Kazanç Hesabı'nda vadesiz hesapta belirlenen tutarın üstündeki bakiye her iş günü saat kaçta vadeli hesaba aktarılır?", ["12.00", "15.30", "17.45", "23.59"], 2],
+    ["Ticari Kazanç Hesabı'na aktarılan bakiye ne tür bir faiz getirisi sağlar?", ["Aylık faiz", "Gecelik faiz", "3 aylık faiz", "Yıllık faiz"], 1],
+    ["Ticari Kazanç Hesabı ile ticari vadesiz hesabın toplamı 1.000.001 – 2.500.000,99 TL arasındaysa vadesiz hesapta ne kadar tutulur?", ["100.000 TL", "250.000 TL", "500.000 TL", "1.000.000 TL"], 1],
+    ["Ticari Kazanç Hesabı'nda vadesiz hesaptaki para bir ödemeye yetmezse ne olur?", ["İşlem reddedilir", "Vade sonu beklenir", "Eksik tutar Kazanç Hesabı'ndan otomatik aktarılır", "İşlem ertesi iş günü yapılır"], 2],
+  ], "2026-11-18"),
+
   // --- Kasım 2026 kampanyaları (isbank.com.tr, maximum.com.tr ve maximiles.com.tr kampanya sayfaları, 1 Kasım 2026; 30 Kasım'da düşer) ---
   K("kart", [
     ["Kasım 2026 Market Kampanyası: Maximum anlaşmalı marketlerde tek seferde en az kaç TL alışverişe MaxiPuan veriliyor?", ["10.000 TL", "15.000 TL", "20.000 TL", "25.000 TL"], 1, "2026-11-30"],
