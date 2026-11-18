@@ -11,7 +11,7 @@ function rows(id, list) {
   $(id).innerHTML = list.map(([k, v, cls]) => `<div class="${cls || ""}"><span>${k}</span><span>${v}</span></div>`).join("");
 }
 // Tutar alanlarını binlik ayırıcıyla biçimlendir
-for (const id of ["b_tutar", "m_tutar", "v_min", "t_tutar", "t_ucret", "ao_x", "ys_p", "k_borc", "k_odenen", "k2_deger", "k2_tutar", "k2_masraf", "tr_tutar", "tc_tutar", "t_butce", "k2_butce", "tc_butce", "ta_deger", "ta_noter", "ta_tutar"]) {
+for (const id of ["b_tutar", "m_tutar", "v_min", "t_tutar", "t_ucret", "ao_x", "ys_p", "k_borc", "k_odenen", "k2_deger", "k2_tutar", "k2_masraf", "tr_tutar", "tc_tutar", "kh_tutar", "t_butce", "k2_butce", "tc_butce", "ta_deger", "ta_noter", "ta_tutar"]) {
   $(id).addEventListener("blur", () => {
     if (id === "ta_noter" && !$(id).value.trim()) return;
     const n = num(id);
@@ -1533,6 +1533,39 @@ renderCekList();
   Ortak.json("data/kredi_oran.json").then((j) => { if (j && j.ek_hesap && j.ek_hesap.aylik) { EK = Object.assign(EK, j.ek_hesap); uygula(); } }).catch(() => {});
 })();
 
+// ---------- Ticari Kazanç Hesabı ----------
+// Kademeler bankanın resmî ürün sayfasındaki tablodan (18.11.2026): [toplam bakiye üst sınırı, vadesizde tutulacak tutar]
+const KH_KADEME = [[50000.99, 5000], [100000.99, 10000], [250000.99, 25000], [500000.99, 50000], [1000000.99, 100000], [2500000.99, 250000], [5000000.99, 500000], [7500000.99, 750000], [10000000.99, 1000000], [15000000.99, 1500000], [20000000.99, 2000000]];
+let khOzet = "";
+function calcKH() {
+  const T = num("kh_tutar"), r = num("kh_faiz"), st = $("kh_stopaj").value.trim() ? num("kh_stopaj") : 0;
+  const tam = (n) => n.toLocaleString("tr-TR", { maximumFractionDigits: 2 });
+  const ix = isFinite(T) && T >= 1 ? KH_KADEME.findIndex(([ust]) => T <= ust) : -1;
+  $("kh_tablo").innerHTML = KH_KADEME.map(([ust, v], i) => `<div class="r${i === ix ? " sec" : ""}"><span>${tam(i ? KH_KADEME[i - 1][0] + 0.01 : 1)} – ${tam(ust)} TL</span><b>${tam(v)} TL</b></div>`).join("");
+  const uy = $("kh_uyari"), set = (id, v) => ($(id).textContent = v);
+  khOzet = "";
+  if (ix < 0) {
+    $("kh_bol").hidden = true; uy.hidden = !(isFinite(T) && T > KH_KADEME[KH_KADEME.length - 1][0]);
+    uy.textContent = "Resmî tablo 20.000.000,99 TL'ye kadar; üstü için vadesizde kalacak tutar sayfada belirtilmiyor.";
+    ["khs_gece", "khs_hs", "khs_ay"].forEach((id) => set(id, "–")); set("khs_geceB", ""); return;
+  }
+  const kalan = Math.min(T, KH_KADEME[ix][1]), akt = Math.max(0, T - KH_KADEME[ix][1]);
+  $("kh_bol").hidden = false; $("kh_cv").style.flexGrow = kalan; $("kh_ca").style.flexGrow = akt;
+  set("kh_v", tl(kalan)); set("kh_a", tl(akt));
+  uy.hidden = akt > 0; uy.textContent = "Bu bakiyede vadesizde kalacak tutarın üstünde para yok; vadeliye aktarım olmaz.";
+  const ok = isFinite(r) && r > 0 && isFinite(st) && st >= 0 && st < 100;
+  if (!ok) { ["khs_gece", "khs_hs", "khs_ay"].forEach((id) => set(id, "–")); set("khs_geceB", ""); return; }
+  const brut = akt * r / 100 / 365, net = brut * (1 - st / 100);
+  set("khs_gece", tl(net)); set("khs_geceB", st > 0 ? `brüt ${tl(brut)}` : "stopaj hesaba katılmadı");
+  set("khs_hs", tl(net * 3)); set("khs_ay", tl(net * 30));
+  khOzet = ozetMetni("TİCARİ KAZANÇ HESABI", [
+    [`Toplam bakiye: ${tl(T)}`, `Vadesizde kalır: ${tl(kalan)}`, `Gece faiz kazanır: ${tl(akt)}`],
+    [`Yıllık faiz: ${pct(r)}` + (st > 0 ? ` · Stopaj: ${pct(st)}` : ""), `Bir gecelik ${st > 0 ? "net" : "brüt"}: ${tl(net)}`, `Hafta sonu (3 gün): ${tl(net * 3)}`, `30 gün (bakiye sabitse): ${tl(net * 30)}`],
+  ], "Basit faiz, yıl 365 gün. Kademe tablosu: isbank.com.tr (18.11.2026).");
+}
+document.querySelectorAll("#tkh input").forEach((e) => e.addEventListener("input", calcKH));
+calcKH(); ozetBagla("kh", () => khOzet);
+
 // ---------- Faiz oranı girilmeden sonuç yok ----------
 // Oran alanı boşken ona bağlı sonuçlar gizlenir, yerine "Faiz oranını gir" notu çıkar; nota dokununca alan açılır.
 function fyKontrol() {
@@ -1585,7 +1618,7 @@ try {
   if (t) document.querySelector(`.tabs button[data-tab="${t}"]`)?.click();
 } catch (e) {}
 miniGuncelle();
-(function () { const B = ["mev", "tk", "ek", "kk", "konut", "tasit"], T = ["bch", "tic", "cek", "tarim"];
+(function () { const B = ["mev", "tk", "ek", "kk", "konut", "tasit"], T = ["bch", "tic", "cek", "tarim", "tkh"];
   [...B, ...T].forEach((id) => { const h = document.querySelector(`#${id} .card h2`); if (!h) return; const r = document.createElement("span"); r.className = "grp " + (B.includes(id) ? "b" : "t"); r.textContent = B.includes(id) ? "👤 Bireysel" : "🏢 Ticari"; h.parentElement.insertBefore(r, h); }); })();
 
 document.querySelectorAll("#bch input, #bch select").forEach((e) => e.addEventListener("input", calcBCH));
