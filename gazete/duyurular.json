@@ -1,7 +1,17 @@
 {
-  "guncelleme": "2026-11-18T09:30:00+03:00",
+  "guncelleme": "2026-11-18T06:58:03+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
+    {
+      "tarih": "2026-11-18",
+      "kurum": "BDDK",
+      "baslik": "Adil Katılım Bankası'nın yönetim ve denetimi TMSF'ye devredildi",
+      "ozet": "BDDK'nin 17 Kasım 2026 tarihli ve 11601 sayılı kararıyla Adil Katılım Bankası A.Ş.'nin temettü hariç ortaklık hakları ile yönetim ve denetimi, 5411 sayılı Bankacılık Kanunu'nun 71. maddesinin birinci fıkrasının (a), (c) ve (d) bentleri uyarınca TMSF'ye devredildi. Karar 18 Kasım 2026 tarihli Resmî Gazete'de yayımlandı. Banka, bir gün önce fon soruşturması kapsamında TMSF'ye yönetim kayyımı olarak bırakılmıştı.",
+      "etki": "Katılım fonu sahiplerine ve bankanın faaliyetlerine ilişkin ayrıntılar okunan haberlerde yer almadı, henüz açıklanmadı.",
+      "onemli": true,
+      "url": "https://www.resmigazete.gov.tr/eskiler/2026/11/20261118-6.pdf",
+      "gazete": "2026-11-18"
+    },
     {
       "tarih": "2026-11-17",
       "kurum": "TMSF",
@@ -198,24 +208,6 @@
       "etki": "Düşük tutarlı ön ödemeli kart ve e-para işlemlerinde kimlik tespiti kolaylaşır; havale ve EFT kuralları aynı kalır.",
       "onemli": true,
       "url": "https://hukukcularevi.com/masak-limitleri-degisti-mi-23-eylul-2026-genel-teblig-33-34-on-odemeli-kart-5500-mobil-odeme-6500-eft-havale-bm-yaptirim-listesi/"
-    },
-    {
-      "tarih": "2026-09-17",
-      "kurum": "SPK",
-      "baslik": "7 portföy yönetim şirketinin 130 fonu için tasfiye kararı",
-      "ozet": "SPK, yedi portföy yönetim şirketinin kurucusu olduğu 130 yatırım fonunun tasfiyesine karar verdi ve bu şirketlerin TEFAS'taki tüm fonlarını alım ve satıma kapattı. Liste sonraki bültenle 131 fona güncellendi.",
-      "etki": "Bu fonlar TEFAS'ta alınıp satılamıyor; tasfiye ve ödeme takvimine ilişkin gelişmeler SPK ve TEFAS duyurularıyla açıklanıyor.",
-      "onemli": true,
-      "url": "https://tr.investing.com/news/stock-market-news/spk-7-portfoy-yonetim-sirketinin-130-fonu-icin-tasfiye-karar-ald-4069549"
-    },
-    {
-      "tarih": "2026-09-17",
-      "kurum": "BDDK",
-      "baslik": "Bankaların geri aldığı kendi hisseleri sermayeden düşülmeyecek",
-      "ozet": "BDDK, Borsa İstanbul'da işlem gören halka açık bankaların 16 Eylül 2026'dan sonra borsadan geri aldığı kendi paylarının çekirdek sermayeden indirim kalemi olarak dikkate alınmamasına ve kredi ile piyasa riskine esas tutar hesabına katılmamasına karar verdi. Uygulama 31 Aralık 2026'ya kadar geçerli.",
-      "etki": "Halka açık bankalar hisse geri alımı yaparken sermaye yeterliliği oranları bu alımlardan olumsuz etkilenmeyecek.",
-      "onemli": true,
-      "url": "https://tr.euronews.com/business/2026/09/17/bddkdan-borsa-istanbul-onlemi-bankalara-esneklik-saglanacak"
     }
   ]
 }
