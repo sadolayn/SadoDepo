@@ -1565,6 +1565,8 @@ function calcKH() {
 }
 document.querySelectorAll("#tkh input").forEach((e) => e.addEventListener("input", calcKH));
 calcKH(); ozetBagla("kh", () => khOzet);
+// Bankanın oran sayfasında 18.11.2026'da tüm dilimler için %35 yazıyordu; tek dokunuşla alana yazılır (otomatik doldurulmaz, oran değişebilir)
+$("kh_oranBtn").addEventListener("click", () => { const i = $("kh_faiz"); i.value = "35"; i.dispatchEvent(new Event("input", { bubbles: true })); i.dispatchEvent(new Event("change", { bubbles: true })); });
 
 // ---------- Faiz oranı girilmeden sonuç yok ----------
 // Oran alanı boşken ona bağlı sonuçlar gizlenir, yerine "Faiz oranını gir" notu çıkar; nota dokununca alan açılır.
