@@ -1723,7 +1723,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   // Resmî Gazete
   // Kurum duyurusu (13 Kasım 2026): bugün ya da dün yayımlanan BDDK/TCMB/SPK… duyurusu banda haber olarak girer (önemli olan önce)
   SBP.push(Ortak.json("gazete/duyurular.json").then(function (j) {
-    var dun = anah(ekle(BUGUN, -1)), L = (j.duyurular || []).filter(function (x) { return x && x.baslik && x.tarih >= dun && x.tarih <= B; })
+    var dun = anah(ekle(BUGUN, -1)), L = (j.duyurular || []).filter(function (x) { return x && x.baslik && x.bant !== false && x.tarih >= dun && x.tarih <= B; })
       .sort(function (a, b) { return (b.onemli === true) - (a.onemli === true) || b.tarih.localeCompare(a.tarih); });
     if (!L.length) return;
     var x = L[0], ne = x.tarih === B ? "" : "Dün ";
@@ -1966,7 +1966,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   ciz();
   // Kurum Duyuruları'ndaki son 3 günün ÖNEMLİ duyuruları kayan yazının başına (Resmî Gazete sayfasındaki bölüme gider)
   Ortak.json("gazete/duyurular.json").then((j) => {
-    const yeni = (j.duyurular || []).filter((x) => x && x.onemli && x.baslik && (Date.now() - new Date(x.tarih + "T12:00:00")) / 864e5 <= 3).slice(0, 2); // 3 gün kalır (2 Kasım 2026: 7 gün uzun geldi)
+    const yeni = (j.duyurular || []).filter((x) => x && x.onemli && x.bant !== false && x.baslik && (Date.now() - new Date(x.tarih + "T12:00:00")) / 864e5 <= 3).slice(0, 2); // 3 gün kalır (2 Kasım 2026: 7 gün uzun geldi)
     if (!yeni.length) return;
     const e = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     dizi.unshift(...yeni.map((x) => ["gazete.html?kurum", `<b class="yn">ÖNEMLİ</b>🏛️ ${e(x.kurum)}: ${e(x.baslik)} <b class="gir">Ayrıntı</b>`, "", "onem"]));

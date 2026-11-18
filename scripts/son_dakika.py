@@ -177,7 +177,7 @@ def main():
     try:
         with open(DUYURU, encoding="utf-8") as f:
             for x in json.load(f).get("duyurular", []):
-                if (x.get("onemli") and x.get("tarih") == bugun and (x.get("url") or "").startswith("https://") and x.get("baslik")
+                if (x.get("onemli") and x.get("bant") is not False and x.get("tarih") == bugun and (x.get("url") or "").startswith("https://") and x.get("baslik")
                         and not re.search(DISLA, kucuk(x.get("baslik", "") + " " + x.get("ozet", "")))):
                     hid = "resmi-" + re.sub(r"\W+", "-", kucuk(x.get("kurum", "") + "-" + x["baslik"]))[:70]
                     yeni[hid] = {"id": hid, "k": x.get("kurum", ""), "t": f'{x.get("kurum", "")}: {x["baslik"]}', "s": f'{x.get("kurum", "")} duyurusu',
