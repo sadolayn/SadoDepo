@@ -26,7 +26,9 @@ const GRUP = [
     ["💳", "Maaş promosyonu", 'promosyon OR promosyonu OR "promosyon anlaşması" OR "promosyon ihalesi"'],
     ["🏪", "Açılış", '"açılış töreni" OR "hizmete açıldı" OR "hizmete girdi" OR "açılışı yapıldı" OR "açılışını yaptı"'],
     ["🏬", "AVM & proje", 'AVM OR proje OR projesi OR "satışa çıktı" OR "yatırım fırsatı" OR "ticaret merkezi"'],
-    ["⚖️", "Konkordato & iflas", 'konkordato OR iflas OR "icradan satılık"'],
+    // 18 Kasım 2026: tek kutu ikiye ayrıldı — risk tarafı (konkordato, iflas) ve fırsat tarafı (icra, iflas, kamu ve büyük taşınmaz satışları)
+    ["⚖️", "Konkordato & iflas", 'konkordato OR iflas OR "geçici mühlet" OR "kesin mühlet" OR "iflasına karar"'],
+    ["🔨", "Büyük satışlar", '"satışa çıkıyor" OR "satışa çıkarıldı" OR "satışa sunuldu" OR "icradan satılık" OR "açık artırma" OR "muhammen bedel" OR "ihaleyle satılacak"'],
   ]],
   ["Kamu & şehir", "#5aa9f0", [
     ["🏛️", "Belediye & ihale", 'belediye OR ihale OR "meclis kararı" OR altyapı'],

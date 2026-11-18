@@ -70,6 +70,14 @@
   .sure button.on { background: var(--c); color: #1a0d04; font-weight: 800; }
   .tum { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 58px; border-radius: 12px; background: var(--c); color: #1a0d04; font-size: 16px; font-weight: 800; text-decoration: none; }
   .tum small { font-size: 12px; font-weight: 700; color: #4a2410; }
+  /* Bu hafta bölgende: iki hızlı düğme (son 7 gün) ve resmî ilan köprüsü — 18 Kasım 2026 */
+  .hft { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 4px; }
+  .hft a { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; border: 1px solid #5a4320; background: rgba(224,162,79,.08); color: inherit; text-decoration: none; min-height: 48px; transition: transform .15s, border-color .2s; }
+  .hft a:active { transform: scale(.975); }
+  .hft a b { display: block; font-size: 14px; } .hft a small { display: block; font-size: 11.5px; color: #8a8a8a; }
+  .hft a > span:first-child { font-size: 20px; }
+  .ilanK { display: flex; align-items: center; gap: 10px; margin: 12px 0 4px; padding: 10px 12px; border-radius: 12px; border: 1px solid #262626; color: inherit; text-decoration: none; min-height: 48px; }
+  .ilanK > span:nth-child(1) { flex: 1; } .ilanK b { display: block; font-size: 14px; } .ilanK small { font-size: 12px; color: #8a8a8a; }
   /* Dünya: ülke + il (ör. Aydın ile ilgili Almanya haberleri) */
   .tum.ikinci { min-height: 52px; padding: 6px 10px; background: transparent; border: 1px solid var(--c); color: var(--c2); font-size: 15px; text-align: center; }
   .tum.ikinci small { color: #c9a88c; font-weight: 600; }
@@ -185,7 +193,9 @@
     <section class="kart" aria-label="Konular" style="margin-top:14px">
       <div class="kBas"><h2>Konular <small>başlığında yer ve konu geçen haberler</small></h2><button type="button" id="kSure" class="kSure" aria-label="Süreyi değiştir"></button></div>
       <div class="donem" id="donem"></div>
+      <div class="hft" id="hft" aria-label="Bu hafta bölgende"></div>
       <div id="konular" class="konular"></div>
+      <a class="ilanK" href="firma.html">🔎 <span><b>Satışın resmî ilanını bul</b><small>ilan.gov.tr ve UYAP e-Satış, Yol Gösteren'de</small></span><span>›</span></a>
       <small class="ipucu">Liste boş gelirse o sürede o konuda haber çıkmamış demektir; süreyi uzatabilirsin.</small>
         <small class="ipucu uyari">🗓️ Aramalar <b class="sureNot">son 7 günle</b> açılır. Google bazen eski bir haberi yeni sanabilir; önemli bir haberde <b>yayın tarihine</b> bir göz at.</small>
     </section>
@@ -368,6 +378,7 @@ function ciz() {
   $("tum").innerHTML = `Bölgenin tüm haberleri ↗<small>${sureAd} · ${donem()}</small>`;
   $("kSure").textContent = "⏱ " + sureAd;
   $("donem").innerHTML = `📅 <span><b>${donem()}</b> arası haberler, en yeni üstte</span>`;
+  $("hft").innerHTML = [["🔨", "Büyük satışlar"], ["⚖️", "Konkordato & iflas"]].map(([ic, n]) => { const k = GRUP.flatMap((g) => g[2]).find((x) => x[1] === n); return k ? `<a href="${esc(BolgeSorgu.gn(S, ILMAP, k[2], "7d"))}" target="_blank" rel="noopener" data-hft="${esc(n)}"><span>${ic}</span><span><b>${esc(n)}</b><small>son 7 gün ↗</small></span></a>` : ""; }).join("");
   $("konular").innerHTML = GRUP.map(([g, renk, L]) => `<div class="grp" style="--g:${renk}"><div class="grpB">${esc(g)}</div><div class="izgara">${L.map(([ic, n, q]) => `<a href="${esc(gn(q))}" target="_blank" rel="noopener"><span class="ik">${ic}</span><span class="ad">${esc(n)}</span><span class="ok">↗</span></a>`).join("")}</div></div>`).join("");
   $("harita").innerHTML = [
     ["🏦", "İş Bankası şubeleri", "adres, çalışma saatleri, puanlar ve yorumlar", "Türkiye İş Bankası"],
