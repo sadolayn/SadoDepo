@@ -547,8 +547,8 @@
         <div><label>Yıllık faiz</label><div class="field"><input id="kh_faiz" data-hatirla type="text" inputmode="decimal" value="" placeholder="Oranı gir"><span class="unit">%</span></div></div>
         <div><label>Stopaj</label><div class="field"><input id="kh_stopaj" type="text" inputmode="decimal" value="17,5"><span class="unit">%</span></div></div>
       </div>
-      <button type="button" class="khOran" id="kh_oranBtn">Bankanın sayfasındaki oran: <b>%35</b> · kullan</button>
-      <p class="hint" style="margin-top:4px">Oran tablosunda tüm tutar dilimleri için %35 yazıyor (18.11.2026'da bakıldı). Sayfada yürürlük tarihi ve "yıllık/brüt" ibaresi yok; hesap oranı yıllık kabul eder. Güncel oran: <a href="https://www.isbank.com.tr/kazanc-hesabi-faiz-oranlari-ticari" target="_blank" rel="noopener noreferrer">faiz oranları sayfası ↗</a></p>
+      <button type="button" class="khOran" id="kh_oranBtn">Bankanın sayfasındaki oran: <b id="kh_oranB">%35</b> · kullan</button>
+      <p class="hint" style="margin-top:4px">Oran tablosunda tüm tutar dilimleri için <span id="kh_oranY">%35</span> yazıyor (son kontrol <span id="kh_oranT">18.11.2026</span>). Sayfada yürürlük tarihi ve "yıllık/brüt" ibaresi yok; hesap oranı yıllık kabul eder. Güncel oran: <a href="https://www.isbank.com.tr/kazanc-hesabi-faiz-oranlari-ticari" target="_blank" rel="noopener noreferrer">faiz oranları sayfası ↗</a></p>
       <div class="khBol" id="kh_bol" hidden>
         <div class="khCub"><i id="kh_cv"></i><i id="kh_ca"></i></div>
         <div class="khEt"><span>Vadesizde kalır<b id="kh_v">–</b></span><span>Gece faiz kazanır<b id="kh_a">–</b></span></div>

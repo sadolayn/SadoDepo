@@ -1566,7 +1566,14 @@ function calcKH() {
 document.querySelectorAll("#tkh input").forEach((e) => e.addEventListener("input", calcKH));
 calcKH(); ozetBagla("kh", () => khOzet);
 // Bankanın oran sayfasında 18.11.2026'da tüm dilimler için %35 yazıyordu; tek dokunuşla alana yazılır (otomatik doldurulmaz, oran değişebilir)
-$("kh_oranBtn").addEventListener("click", () => { const i = $("kh_faiz"); i.value = "35"; i.dispatchEvent(new Event("input", { bubbles: true })); i.dispatchEvent(new Event("change", { bubbles: true })); });
+// Oran isbank/tkh.json'dan okunur (her gün kontrol edilip güncellenir); dosya gelmezse 35 kalır
+let KH_ORAN = 35;
+fetch("isbank/tkh.json", { cache: "no-cache" }).then((r) => r.json()).then((j) => {
+  if (!(typeof j.oran === "number" && j.oran > 0 && j.oran < 200 && /^\d{4}-\d{2}-\d{2}$/.test(j.bakildi || ""))) return;
+  KH_ORAN = j.oran; const y = "%" + String(j.oran).replace(".", ","), [Y, A, G] = j.bakildi.split("-");
+  $("kh_oranB").textContent = y; $("kh_oranY").textContent = y; $("kh_oranT").textContent = `${G}.${A}.${Y}`;
+}).catch(() => {});
+$("kh_oranBtn").addEventListener("click", () => { const i = $("kh_faiz"); i.value = String(KH_ORAN).replace(".", ","); i.dispatchEvent(new Event("input", { bubbles: true })); i.dispatchEvent(new Event("change", { bubbles: true })); });
 
 // ---------- Faiz oranı girilmeden sonuç yok ----------
 // Oran alanı boşken ona bağlı sonuçlar gizlenir, yerine "Faiz oranını gir" notu çıkar; nota dokununca alan açılır.
