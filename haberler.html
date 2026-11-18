@@ -89,6 +89,7 @@
   .n .fire.l2 { background:#2b0f06; color:#ff8a4c; border-color:#7a2e14; }
   .n.hot { box-shadow:inset 3px 0 0 #ff6a3d; margin-left:-14px; padding-left:14px; }
   .sbar { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding:10px 12px; border-radius:14px; background:#1c0b05; border:1px solid #ff6a3d; color:#ffd9c7; font-size:13.5px; }
+  .sbar.tkhK { background:#0c1240; border-color:#4a63ff; color:#c9d2ff; } .sbar.tkhK a { color:#e6eaff; text-decoration:none; } .sbar.tkhK small { color:#9fabe0; } .sbar.tkhK small a { color:#c9d2ff; font-weight:600; display:inline-block; min-height:24px; line-height:24px; }
   .sbar.tkose { text-decoration:none; background:#0f1a08; border-color:#8bc34a; color:#e3f2c8; } .sbar.tkose small { color:#a5c48a; } .sbar.tkose small a { color:#c5e1a5; font-weight:600; text-decoration:none; }
   .sbar .st { flex:1; min-width:0; }
   .sbar b { font-weight:600; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.3; }
@@ -258,6 +259,11 @@ function tarimKose() {
   if (story || cat !== "tarim") return "";
   return `<a class="sbar tkose" href="https://www.isbank.com.tr/is-ticari/tarim-bankaciligi" target="_blank" rel="noopener">🌾 <span class="st"><b>İş Bankası Tarım Bankacılığı ↗</b><small>İmece Kart, İmeceMobil ve tarım kredileri bankanın tek sayfasında</small></span></a>`;
 }
+// İş Bankası sekmesinde yeni ürün köşesi (18 Kasım 2026): Ticari Kazanç Hesabı'nın resmî sayfası + Bankacılık'taki hesaplayıcı; 18 Aralık'ta kendiliğinden kalkar
+function tkhKose() {
+  if (story || cat !== "isbank" || new Date() > new Date("2026-12-18T23:59:59+03:00")) return "";
+  return `<div class="sbar tkhK">🆕 <span class="st"><a href="https://www.isbank.com.tr/kazanc-hesap-ticari" target="_blank" rel="noopener noreferrer"><b>Yeni ürün: Ticari Kazanç Hesabı ↗</b></a><small>Bankanın resmî ürün sayfası · <a href="banka.html#tkh">Gecelik getiriyi hesapla ›</a></small></span></div>`;
+}
 function trendCards() {
   // Gündem kartları yalnızca Gündem sekmesinde: başka sekmede üstte hep aynı kartlar kalınca seçilen sekmenin haberleri ekranın altında kalıyor, sekme değişmemiş gibi görünüyordu
   if (!story && cat !== "gundem") return "";
@@ -282,7 +288,7 @@ function render() {
   $("cats").innerHTML = CATS.map(([k, n]) => { const h = TR.chip[k]; return `<span class="chip ${k === cat && !story ? "on" : ""} ${h ? "h" + h.l : ""}" data-k="${k}"><i>${CIC[k] || "📰"}</i><span class="cn">${n}</span>${h ? `<span class="bd">${h.n}</span>` : ""}</span>`; }).join("");
   const YZ = D.yazarlar || [], isY = cat === "yazarlar" && !story;
   if (isY && yaz && !YZ.some((y) => y.k === yaz)) yaz = "";
-  $("alert").innerHTML = ppkKart() + tarimKose() + (isY ? `<div class="chips yz">${[["", "Hepsi"], ...YZ.map((y) => [y.k, y.n])].map(([k, n]) => `<span class="chip ${k === yaz ? "on" : ""}" data-y="${k}">${esc(n)}</span>`).join("")}</div>` : trendCards());
+  $("alert").innerHTML = ppkKart() + tarimKose() + tkhKose() + (isY ? `<div class="chips yz">${[["", "Hepsi"], ...YZ.map((y) => [y.k, y.n])].map(([k, n]) => `<span class="chip ${k === yaz ? "on" : ""}" data-y="${k}">${esc(n)}</span>`).join("")}</div>` : trendCards());
   const st = story && TR.stories.find((x) => x.id === story);
   const items = st ? st.items : isY ? YZ.filter((y) => !yaz || y.k === yaz).flatMap((y) => y.items.map((x) => ({ ...x, a: y.n }))).sort((a, b) => (b.d || "").localeCompare(a.d || "")) : cat === "isbank" ? (D.cats[cat] || []).filter((x) => !Ortak.tikTuzagi(x.t)) : (D.cats[cat] || []); // İş Bankası sekmesinde tık tuzağı başlıklar elenir
   const srcs = [...new Set(items.map((x) => x.s))].sort((a, b) => a.localeCompare(b, "tr"));
