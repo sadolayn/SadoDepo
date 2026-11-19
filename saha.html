@@ -338,10 +338,21 @@ $("oner").addEventListener("click",function(e){var b=e.target.closest("button[da
 $("sil").onclick=function(){S.il="";S.ilce="";ciz();setTimeout(function(){$("yaz").focus()},50)};
 document.querySelectorAll(".sek2 button").forEach(function(b){b.onclick=function(){g=b.dataset.g;try{localStorage.setItem("sSahaGrup",g)}catch(e){}ciz()}});
 document.querySelectorAll("#capK button").forEach(function(b){b.setAttribute("role","radio");b.onclick=function(){r=+b.dataset.r;try{localStorage.setItem("sSahaCap",r)}catch(e){}ciz()}});
+/* Konum açılınca bölgeyi de bulunduğun il/ilçeye çevir (OpenStreetMap). Koordinat kaydedilmez, yalnızca il/ilçe. */
+function yerBul(k){
+  $("yknDurum").textContent="bölgen bulunuyor…";
+  fetch("https://nominatim.openstreetmap.org/reverse?lat="+k[0]+"&lon="+k[1]+"&format=json&accept-language=tr&zoom=10").then(function(r){return r.json()}).then(function(j){
+    var a=(j&&j.address)||{},il=a.province||a.state||"",ilce=a.town||a.county||a.city_district||a.district||a.city||"";
+    var x=LISTE.filter(function(y){return !y.ilce&&y.s===sade(il)})[0];
+    if(!x){$("yknDurum").textContent="";return}
+    var c=ilce&&sade(ilce)!==x.s?LISTE.filter(function(y){return y.il===x.il&&y.ilce&&y.s===sade(ilce)})[0]:null;
+    S.il=x.il;S.ilce=c?c.ilce:"";sakla();$("yknDurum").textContent="";ciz();
+  }).catch(function(){$("yknDurum").textContent=""});
+}
 $("konumBtn").onclick=function(){if(konum){konum=null;ciz();return}
   if(!navigator.geolocation){$("yknDurum").textContent="konum desteklenmiyor";return}
   $("yknDurum").textContent="konum alınıyor…";
-  navigator.geolocation.getCurrentPosition(function(p){konum=[p.coords.latitude,p.coords.longitude];$("yknDurum").textContent="";ciz()},
+  navigator.geolocation.getCurrentPosition(function(p){konum=[p.coords.latitude,p.coords.longitude];$("yknDurum").textContent="";ciz();yerBul(konum)},
     function(){$("yknDurum").textContent="konum izni verilmedi"},{enableHighAccuracy:false,timeout:10000,maximumAge:300000})};
 ciz();
 })();
