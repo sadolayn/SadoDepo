@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-11-18",
+ "kontrol": "2026-11-19",
  "kategoriler": [
   {
    "slug": "iste-maasa-ozel",
@@ -77,7 +77,7 @@
    "slug": "bireysel-kredi-kampanyalari",
    "ic": "🏦",
    "ad": "Bireysel kredi",
-   "adet": 3,
+   "adet": 2,
    "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
    "kampanyalar": [
     {
@@ -91,12 +91,6 @@
      "bitis": "2026-11-30",
      "ozet": "İşCep’ten İş Bankası müşterisi olun, yatırım hesabı açarak hisse senedi işlemlerinizde %0,05 komisyon oranı ayrıcalığından yararlanın!",
      "url": "https://www.isbank.com.tr/kampanyalar/iscepten-is-bankali-olanlara-avantajli-hisse-senedi-komisyon-ayricaligi"
-    },
-    {
-     "baslik": "İşCep'ten İş Bankalı Olanlar 1 Ay Boyunca Faizsiz Ek Hesap Ayrıcalığından Yararlanıyor!",
-     "bitis": "2026-11-30",
-     "ozet": "İşCep’ten İş Bankası müşterisi olun, 30.000 TL’ye varan faizsiz Ek Hesap ayrıcalığından yararlanın!",
-     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-isbankali-olanlar-1ay-boyunca-faizsiz-ek-hesap-ayricaligindan-yararlaniyor"
     }
    ]
   },
@@ -152,7 +146,7 @@
    "slug": "iscep-kampanyalari",
    "ic": "📲",
    "ad": "İşCep'e özel",
-   "adet": 8,
+   "adet": 9,
    "url": "https://www.isbank.com.tr/kampanyalar/iscep-kampanyalari",
    "kampanyalar": [
     {
@@ -174,16 +168,22 @@
      "url": "https://www.isbank.com.tr/kampanyalar/rent-go-arac-kiralama-kampanyasi"
     },
     {
-     "baslik": "İşCep'ten İş Bankalı Olanlara Faizsiz Taksitli Nakit Avans Ayrıcalığı!",
-     "bitis": "2026-11-18",
-     "ozet": "​İşCep’ten İş Bankası müşterisi olun, 25.000 TL’ye varan Faizsiz Taksitli Nakit Avans ayrıcalığından yararlanın!",
-     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-isbankali-olanlara-faizsiz-taksitli-nakit-avans-ayricaligi"
+     "baslik": "İşCep'ten İş Bankalı Olanlar 1 Ay Boyunca % 0,99 Faiz Oranlı Ek Hesap Ayrıcalığından Yararlanıyor!",
+     "bitis": "2026-11-30",
+     "ozet": "İşCep’ten İş Bankası müşterisi olun, 50.000 TL’ye varan % 0,99 Faiz Oranlı Ek Hesap ayrıcalığından yararlanın!",
+     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-is-bankali-olanlar-1-ay-boyunca-indirimli-faiz-oranli-ek-hesap-ayricaligindan-yararlaniyor"
     },
     {
-     "baslik": "İşCep’ten İş Bankası müşterisi olun ilk fatura talimatınız ile 300 TL MaxiPuan kazanın!",
+     "baslik": "İşCep'ten İş Bankalı Olanlara Ücretsiz Para Transferi Ayrıcalığı!",
      "bitis": "2026-11-30",
-     "ozet": "Siz de İşCep’te yer alan “Müşteri Olmak İstiyorum” özelliğiyle İş Bankası müşterisi olun, ilk fatura ödeme talimatınıza 300 TL MaxiPuan kazanın!",
-     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-is-bankasi-musterisi-olun-ilk-fatura-talimatiniz-ile-maxipuan-kazanin"
+     "ozet": "İş Bankalı olmanın en hızlı ve en dijital yolu İşCep’te!",
+     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-is-bankali-olanlara-ucretsiz-para-transferi-ayricaligi"
+    },
+    {
+     "baslik": "İşCep'ten İş Bankalı Olanlar %0,99 Faiz Oranlı Anında Kredi Fırsatından Yararlanıyor!",
+     "bitis": "2026-11-30",
+     "ozet": "50.000 TL’ye Varan %0,99 Faizli 3 Aya Kadar Vadeli Anında Kredi Fırsatından Yararlanın",
+     "url": "https://www.isbank.com.tr/kampanyalar/iscep-is-bankali-olanlar-aninda-kredi-firsati"
     },
     {
      "baslik": "İşCep Evim'e Özel KonutKonfor Harcamalarınıza %20 İndirim Fırsatı!",
