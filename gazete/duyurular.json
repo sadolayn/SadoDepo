@@ -1,5 +1,5 @@
 {
-  "guncelleme": "2026-11-18T06:58:03+03:00",
+  "guncelleme": "2026-11-19T07:00:20+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
     {
@@ -30,6 +30,16 @@
       "ozet": "Haberlere göre, fon soruşturması sürerken TMSF'nin internet sitesindeki güncel kayyım listesine 17 Kasım 2026'da Alnus Yatırım Menkul Değerler ve Altınbaş Holding'in de aralarında bulunduğu şirketler eklendi. Kararın hukuki dayanağına ve TMSF'nin bu şirketlerdeki yetkisinin kapsamına ilişkin ayrıntılı bir resmî açıklama, okunan haberlerde yer almadı.",
       "onemli": false,
       "url": "https://www.ekonomim.com/gundem/fon-sorusturmasinda-kritik-gelisme-alnus-yatirim-ve-altinbas-holding-de-tmsfye-gecti-haberi-931815",
+      "bant": false
+    },
+    {
+      "tarih": "2026-11-15",
+      "kurum": "SPK",
+      "baslik": "Tasfiyedeki fonların payları şirketlere kapanış fiyatından geri satılabiliyor",
+      "ozet": "SPK, olağanüstü tasfiye kapsamındaki yatırım fonlarının portföyündeki payların ilgili halka açık şirketlere geri alım yoluyla satılmasına ilişkin açıklama yaptı. Mevzuata göre bu paylar, borsadaki son işlem gününün kapanış fiyatı esas alınarak şirketlere satılabiliyor. SPK, payların borsada doğrudan satılmasının satış baskısı yaratıp fon varlıklarının daha düşük bedelle nakde dönmesine yol açabileceğini belirtti.",
+      "etki": "SPK'ya göre amaç, fon varlıklarını objektif bir fiyattan nakde çevirerek katılma payı sahiplerinin çıkarlarını korumak.",
+      "onemli": false,
+      "url": "https://www.ntv.com.tr/turkiye/spkdan-olaganustu-tasfiye-aciklamasi-amac-yatirimciyi-korumak-1751021",
       "bant": false
     },
     {
