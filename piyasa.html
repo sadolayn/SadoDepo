@@ -125,6 +125,13 @@
   .gOrn button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 10px; min-height: 48px; border-radius: 12px; background: var(--field); border: 1px solid var(--line); color: var(--ink); font-size: 12.5px; cursor: pointer; text-align: left; transition: transform .15s, border-color .2s ease, background .2s ease; }
   .gOrn button b { font-size: 15px; font-variant-numeric: tabular-nums; }
   .gOrn button:active { transform: scale(.975); }
+  /* Samsung İnternet: art arda dokunuşlar çift dokunma yakınlaştırmasına takılıp tıklama kaybolmasın */
+  button, .chip, input { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .gOrn button { -webkit-user-select: none; user-select: none; }
+  .gSec { margin: 8px 0 0; font-size: 12.5px; color: var(--accent); min-height: 18px; }
+  .gSon.yeni { animation: gYeni .45s cubic-bezier(.2,.7,.2,1); }
+  @keyframes gYeni { from { opacity: .45; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .gSon.yeni { animation: none; } }
   .gOrn button.on { border-color: var(--accent); background: rgba(224,162,79,.12); }
   .gOrn button.on b { color: var(--accent); }
   .gEnfS { display: grid; grid-template-columns: 1fr 120px; gap: 8px; align-items: end; }
@@ -584,6 +591,8 @@ function renderGelecek() {
   document.querySelectorAll("#gOrn button").forEach((b) => b.classList.toggle("on", b.dataset.k === g.ak && sayi(b.dataset.v) === r));
   document.querySelectorAll("#gEnfK button").forEach((b) => b.classList.toggle("on", e != null && sayi(b.dataset.e) === e));
   document.querySelectorAll("#gYilK button").forEach((b) => b.classList.toggle("on", +b.dataset.y === n));
+  const sec = g.ak && A.find((a) => a.k === g.ak);
+  $("gSec").textContent = sec && r > -100 ? `✓ ${sec.ic} ${sec.n} seçildi: yılda %${nf(r, 1)} · sonuç aşağıda ↓` : "";
   if (!amt || !(n >= 1 && n <= 30) || !(r > -100 && r <= 500) || (e != null && !(e > -100 && e <= 500))) {
     $("gRes").innerHTML = '<div class="note" style="text-align:center;padding:16px 0 4px">Tutarı, yılı ve yıllık artış varsayımını gir; sonuç burada çıksın.</div>'; return;
   }
@@ -666,6 +675,7 @@ function build() {
     </div>
     <div class="gOrnB">Son 10 yılda TL bazında yıllık ortalama artış · dokun, alana yazsın</div>
     <div class="gOrn" id="gOrn"></div>
+    <div class="gSec" id="gSec" aria-live="polite"></div>
     <div class="gAd"><span>3</span>Alım gücü <small>isteğe bağlı</small></div>
     <div class="gEnfS">
       <div><label class="f" for="gEnf">Yıllık enflasyon varsayımı (%)</label><input id="gEnf" type="text" inputmode="decimal" placeholder="Boş bırakılabilir"></div>
@@ -723,9 +733,10 @@ function build() {
   $("gYil").addEventListener("input", () => { S.g.yil = $("gYil").value; save(); renderGelecek(); });
   $("gArt").addEventListener("input", () => { S.g.art = $("gArt").value; S.g.ak = ""; save(); renderGelecek(); });
   $("gEnf").addEventListener("input", () => { S.g.enf = $("gEnf").value; save(); renderGelecek(); });
-  $("gYilK").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return; S.g.yil = b.dataset.y; $("gYil").value = S.g.yil; save(); renderGelecek(); };
-  $("gOrn").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return; S.g.art = b.dataset.v.replace(".", ","); S.g.ak = b.dataset.k; $("gArt").value = S.g.art; save(); renderGelecek(); };
-  $("gEnfK").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return; S.g.enf = b.dataset.e.replace(".", ","); $("gEnf").value = S.g.enf; save(); renderGelecek(); };
+  $("gYilK").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return; S.g.yil = b.dataset.y; $("gYil").value = S.g.yil; save(); renderGelecek(); gIsle(); };
+  const gIsle = () => { const k = $("gRes").querySelector(".gSon"); if (k) { k.classList.remove("yeni"); void k.offsetWidth; k.classList.add("yeni"); } };
+  $("gOrn").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return; S.g.art = b.dataset.v.replace(".", ","); S.g.ak = b.dataset.k; $("gArt").value = S.g.art; save(); renderGelecek(); gIsle(); };
+  $("gEnfK").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return; S.g.enf = b.dataset.e.replace(".", ","); $("gEnf").value = S.g.enf; save(); renderGelecek(); gIsle(); };
 
   renderTiles(); renderChart(); renderTable(); renderSim(); renderGelecek();
 }
