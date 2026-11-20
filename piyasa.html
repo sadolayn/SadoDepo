@@ -114,6 +114,36 @@
   input[type=date] { color-scheme: dark; }
   .quick { display: flex; gap: 6px; flex-wrap: wrap; margin: -4px 0 12px; }
   .quick button { padding: 5px 10px; border-radius: 14px; background: var(--field); border: 1px solid var(--line); color: var(--muted); font-size: 12px; cursor: pointer; }
+  .gel .gBas { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .gel .gEt { font-size: 11px; color: var(--muted); border: 1px dashed var(--line); border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+  .gAd { display: flex; align-items: center; gap: 8px; font: italic 600 15px Georgia, serif; color: var(--ink); margin: 16px 0 10px; }
+  .gAd span { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; font: 700 12px system-ui, sans-serif; color: #000; background: var(--accent); font-style: normal; }
+  .gAd small { font: 12px system-ui, sans-serif; color: var(--muted); }
+  .gY { margin-top: -4px; }
+  .gOrnB { font-size: 12px; color: var(--muted); margin: -2px 0 8px; }
+  .gOrn { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 6px; }
+  .gOrn button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 10px; min-height: 48px; border-radius: 12px; background: var(--field); border: 1px solid var(--line); color: var(--ink); font-size: 12.5px; cursor: pointer; text-align: left; transition: transform .15s, border-color .2s ease, background .2s ease; }
+  .gOrn button b { font-size: 15px; font-variant-numeric: tabular-nums; }
+  .gOrn button:active { transform: scale(.975); }
+  .gOrn button.on { border-color: var(--accent); background: rgba(224,162,79,.12); }
+  .gOrn button.on b { color: var(--accent); }
+  .gEnfS { display: grid; grid-template-columns: 1fr 120px; gap: 8px; align-items: end; }
+  .gSon { margin-top: 18px; border: 1px solid #5a4320; border-radius: 16px; padding: 16px 14px 12px; background: linear-gradient(160deg, rgba(224,162,79,.14), rgba(224,162,79,.02) 60%); }
+  .gSon .l { font-size: 12px; color: var(--muted); letter-spacing: .5px; text-align: center; }
+  .gSon .big { font: italic 700 34px Georgia, serif; text-align: center; color: var(--ink); margin: 4px 0 10px; font-variant-numeric: tabular-nums; }
+  .gSon .pl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .gSon .pl div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
+  .gSon .pl small { display: block; font-size: 11.5px; color: var(--muted); }
+  .gSon .pl b { font-size: 16px; font-variant-numeric: tabular-nums; }
+  .gSon .chart { height: 170px; margin: 12px 0 4px; }
+  .gLej { font-size: 11.5px; color: var(--muted); text-align: center; }
+  .gKil { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .gKil div { border: 1px solid var(--line); border-radius: 12px; padding: 9px 11px; background: var(--field); }
+  .gKil div.sec { border-color: var(--accent); }
+  .gKil small { display: block; font-size: 11.5px; color: var(--muted); }
+  .gKil b { display: block; font-size: 15.5px; font-variant-numeric: tabular-nums; margin-top: 1px; }
+  .gKil i { display: block; font-style: normal; font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+  @media (prefers-reduced-motion: reduce) { .gOrn button { transition: none; } }
   .quick .yilK { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
   .quick .yilK input { width: 56px; padding: 5px 8px; border-radius: 14px; font-size: 13px; text-align: center; }
   .quick button.on { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
@@ -254,10 +284,11 @@ function drawLine(el, xs, ys, fmt, opt = {}) {
   }
   // x eksen: yıllar; 400 günden kısa aralıkta ay adları (1 yılda iki ayda bir, yıl başında yıl yazılır)
   const gun = xs.length > 1 ? (Date.parse(xs[xs.length - 1]) - Date.parse(xs[0])) / 864e5 : 0, ayl = gun < 400, iki = gun >= 200;
-  let xl = "", lastY = "";
+  let xl = "", lastY = "", sonX = -99; // etiketler en az 36 piksel aralıklı (sık yıllarda üst üste binmesin)
   xs.forEach((s, i) => {
     const y = ayl ? s.slice(0, 7) : s.slice(0, 4);
-    if (y !== lastY && i > 0 && (!iki || +s.slice(5, 7) % 2 === 1)) {
+    if (y !== lastY && i > 0 && (!iki || +s.slice(5, 7) % 2 === 1) && X(i) - sonX >= 36) {
+      sonX = X(i);
       xl += `<line x1="${X(i)}" x2="${X(i)}" y1="${pt}" y2="${H - pb}" stroke="#181818"/>`
         + `<text x="${X(i) + 3}" y="${H - 6}" fill="#6f6f6f" font-size="11">${ayl ? (s.slice(5, 7) === "01" ? s.slice(0, 4) : fdate(s, { month: "short" })) : y}</text>`;
     }
@@ -311,9 +342,13 @@ function shortNum(v) {
   if (a >= 100) return nf(v, 0);
   return nf(v, a >= 10 ? 1 : 2);
 }
-function sample(lo, hi, max = 260) { // grafik için en fazla ~260 nokta
-  const out = [], step = Math.max(1, Math.ceil((hi - lo + 1) / max));
-  for (let i = lo; i <= hi; i += step) out.push(i);
+function sample(lo, hi, max = 260) { // grafik için en fazla ~260 nokta, zamana göre eşit aralıklı
+  // (2020 öncesi veri aylık, sonrası günlük: sıraya göre seçilirse eski yıllar grafikte sıkışır)
+  const t0 = Date.parse(D.dates[lo]), t1 = Date.parse(D.dates[hi]), out = [lo];
+  for (let k = 1; k < max; k++) {
+    const i = idxOn(new Date(t0 + (t1 - t0) * k / max).toISOString().slice(0, 10));
+    if (i > out[out.length - 1] && i < hi) out.push(i);
+  }
   if (out[out.length - 1] !== hi) out.push(hi);
   return out;
 }
@@ -535,29 +570,41 @@ function renderSim() {
 const sayi = (v) => { const x = Number(String(v).trim().replace(/\s/g, "").replace(",", ".")); return isFinite(x) ? x : NaN; };
 function gOrnekler() {
   const last = D.dates[N - 1], s10 = shiftYears(last, -10);
-  if (s10 < D.dates[0]) return "";
+  if (s10 < D.dates[0]) return ["", ""];
   const i0 = idxOn(s10), yil = (new Date(last) - new Date(D.dates[i0])) / (365.25 * 864e5);
   const cagr = (a, b) => (Math.pow(b / a, 1 / yil) - 1) * 100;
-  const L = A.filter((a) => D[a.k][i0] > 0).map((a) => `<button type="button" data-v="${cagr(D[a.k][i0], D[a.k][N - 1]).toFixed(1)}">${a.ic} ${a.n} %${nf(cagr(D[a.k][i0], D[a.k][N - 1]), 1)}</button>`);
-  L.push(`<button type="button" data-e="${cagr(cpiAt(D.dates[i0]), cpiAt(last)).toFixed(1)}">📈 Enflasyon %${nf(cagr(cpiAt(D.dates[i0]), cpiAt(last)), 1)}</button>`);
-  return L.join("");
+  const v = A.filter((a) => D[a.k][i0] > 0).map((a) => { const r = cagr(D[a.k][i0], D[a.k][N - 1]);
+    return `<button type="button" data-k="${a.k}" data-v="${r.toFixed(1)}"><span>${a.ic} ${a.n}</span><b>%${nf(r, 1)}</b></button>`; }).join("");
+  const e = cagr(cpiAt(D.dates[i0]), cpiAt(last));
+  return [v, `<button type="button" data-e="${e.toFixed(1)}"><span>📈 Son 10 yıl</span><b>%${nf(e, 1)}</b></button>`];
 }
 function renderGelecek() {
   const g = S.g, amt = Math.max(0, Number(String(g.tut).replace(/\./g, "").replace(",", ".")) || 0);
   const n = Math.round(sayi(g.yil)), r = sayi(g.art), e = String(g.enf).trim() === "" ? null : sayi(g.enf);
-  document.querySelectorAll("#gOrn button").forEach((b) => b.classList.toggle("on", (b.dataset.v != null && sayi(b.dataset.v) === r) || (b.dataset.e != null && e != null && sayi(b.dataset.e) === e)));
+  document.querySelectorAll("#gOrn button").forEach((b) => b.classList.toggle("on", b.dataset.k === g.ak && sayi(b.dataset.v) === r));
+  document.querySelectorAll("#gEnfK button").forEach((b) => b.classList.toggle("on", e != null && sayi(b.dataset.e) === e));
+  document.querySelectorAll("#gYilK button").forEach((b) => b.classList.toggle("on", +b.dataset.y === n));
   if (!amt || !(n >= 1 && n <= 30) || !(r > -100 && r <= 500) || (e != null && !(e > -100 && e <= 500))) {
-    $("gRes").innerHTML = '<div class="note" style="text-align:center;padding:12px 0">Tutar, yıl (1–30) ve yıllık artış varsayımını gir.</div>'; return;
+    $("gRes").innerHTML = '<div class="note" style="text-align:center;padding:16px 0 4px">Tutarı, yılı ve yıllık artış varsayımını gir; sonuç burada çıksın.</div>'; return;
   }
-  const deg = (y) => amt * Math.pow(1 + r / 100, y), alim = (y) => deg(y) / Math.pow(1 + e / 100, y);
-  const yillar = [...new Set([5, 10, 20, n])].filter((y) => y <= 30).sort((a, b) => a - b);
-  $("gRes").innerHTML = `
-    <div class="hero"><div class="l">${n} yıl sonra (varsayımla)</div><div class="big num">${tl(deg(n))}</div>
-      ${e != null ? `<div class="num ${cls(alim(n) - amt)}" style="font-weight:700">Bugünkü alım gücüyle ≈ ${tl(alim(n))}</div>` : ""}</div>
-    <div class="tbl"><table class="num"><thead><tr><th>Yıl</th><th>Tutar</th>${e != null ? "<th>Bugünkü alım gücüyle</th>" : ""}</tr></thead><tbody>
-      ${yillar.map((y) => `<tr${y === n ? ' class="tot"' : ""}><td>${y} yıl</td><td>${tl(deg(y))}</td>${e != null ? `<td class="${cls(alim(y) - amt)}">${tl(alim(y))}</td>` : ""}</tr>`).join("")}
-    </tbody></table></div>
-    <div class="note" style="margin-top:8px">Hesap: tutar × (1 + %${nf(r, 1)})<sup>yıl</sup>${e != null ? `; alım gücü, her yıl %${nf(e, 1)} enflasyon varsayılarak bugünün parasına çevrilir` : ""}. Örnek oranlar yalnızca geçmişi gösterir; geçmiş getiriler gelecekte de olacağı anlamına gelmez. Vergi, komisyon ve alış-satış farkı hesaba katılmaz.</div>`;
+  const deg = (y) => amt * Math.pow(1 + r / 100, y), alim = (y) => deg(y) / Math.pow(1 + (e || 0) / 100, y);
+  const ad = g.ak ? (A.find((a) => a.k === g.ak) || {}).n : "";
+  const kisa = (v) => (v >= 1e7 ? nf(v / 1e6, 1) + " milyon TL" : tl(v));
+  const kil = [...new Set([5, 10, 15, 20, 25, 30].filter((y) => y < n).slice(-3).concat(n))];
+  $("gRes").innerHTML = `<div class="gSon">
+    <div class="l">${n} yıl sonra · yılda %${nf(r, 1)} artış varsayımıyla${ad ? ` (${ad} örneği)` : ""}</div>
+    <div class="big">${tl(deg(n))}</div>
+    <div class="pl">
+      <div><small>Paranın katı</small><b>×${nf(deg(n) / amt, deg(n) / amt >= 100 ? 0 : 1)}</b></div>
+      <div><small>${e != null ? `Bugünkü alım gücüyle (enflasyon %${nf(e, 1)})` : "Alım gücü"}</small><b class="${e != null ? cls(alim(n) - amt) : ""}">${e != null ? "≈ " + tl(alim(n)) : "Enflasyon gir"}</b></div>
+    </div>
+    <div class="chart" id="gChart"></div>
+    <div class="gLej"><span style="color:var(--accent)">━</span> Tutar${e != null ? ` · <span style="color:#9a9a9a">╍</span> Bugünkü alım gücüyle` : ""} · ince kesikli çizgi bugünkü ${tl(amt)}</div>
+    <div class="gKil">${kil.map((y) => `<div${y === n ? ' class="sec"' : ""}><small>${y} yıl sonra</small><b>${kisa(deg(y))}</b>${e != null ? `<i>alım gücüyle ≈ ${kisa(alim(y))}</i>` : ""}</div>`).join("")}</div>
+  </div>
+  <div class="note" style="margin-top:10px">Hesap: tutar × (1 + %${nf(r, 1)})<sup>yıl</sup>${e != null ? `; alım gücü her yıl %${nf(e, 1)} enflasyonla bugünün parasına çevrilir` : ""}. Örnek oranlar yalnızca geçmişi gösterir; geçmiş getiriler gelecekte de olacağı anlamına gelmez. Vergi, komisyon ve alış-satış farkı hesaba katılmaz.</div>`;
+  const bugun = D.dates[N - 1], ys = [...Array(n + 1)].map((_, y) => y);
+  drawLine($("gChart"), ys.map((y) => shiftYears(bugun, y)), ys.map(deg), (v) => tl(v), { base: amt, baseLabel: "Bugün", label: "Senaryo grafiği", ...(e != null ? { ref: ys.map(alim), refLabel: "Alım gücü" } : {}) });
 }
 
 function build() {
@@ -605,18 +652,25 @@ function build() {
     </div>
     <div class="note" id="simnote" style="margin-top:10px"></div></div>
 
-  <div class="card"><h2>Gelecek senaryosu</h2>
-    <p class="note" style="margin:-4px 0 12px">Gelecek bilinemez; burada yalnızca senin girdiğin yıllık artış varsayımıyla bileşik hesap yapılır. Tahmin ya da yatırım tavsiyesi değildir.</p>
+  <div class="card gel"><div class="gBas"><h2>Gelecek senaryosu</h2><span class="gEt">Senaryo · tahmin değil</span></div>
+    <p class="note" style="margin:-2px 0 14px">Gelecek bilinemez; yalnızca senin girdiğin yıllık artış varsayımıyla bileşik hesap yapılır. Yatırım tavsiyesi değildir.</p>
+    <div class="gAd"><span>1</span>Ne kadar, ne zamana?</div>
     <div class="inrow">
       <div><label class="f" for="gTut">Tutar (TL)</label><input id="gTut" type="text" inputmode="numeric"></div>
-      <div><label class="f" for="gYil">Kaç yıl sonra?</label><input id="gYil" type="number" min="1" max="30" inputmode="numeric"></div>
+      <div><label class="f" for="gYil">Kaç yıl sonra? (1–30)</label><input id="gYil" type="number" min="1" max="30" inputmode="numeric"></div>
     </div>
-    <div class="inrow">
-      <div><label class="f" for="gArt">Yıllık artış varsayımı (%)</label><input id="gArt" type="text" inputmode="decimal" placeholder="örn. 25"></div>
-      <div><label class="f" for="gEnf">Yıllık enflasyon (%) · isteğe bağlı</label><input id="gEnf" type="text" inputmode="decimal" placeholder="boş bırakılabilir"></div>
+    <div class="quick gY" id="gYilK">${[5, 10, 15, 20].map((y) => `<button type="button" data-y="${y}">${y} yıl</button>`).join("")}</div>
+    <div class="gAd"><span>2</span>Yılda ne kadar artsın?</div>
+    <div class="inrow" style="grid-template-columns:1fr">
+      <div><label class="f" for="gArt">Yıllık artış varsayımı (%)</label><input id="gArt" type="text" inputmode="decimal" placeholder="Yaz ya da aşağıdan seç"></div>
     </div>
-    <div class="note" style="margin:0 0 6px">Örnek olarak geçmişten al: son 10 yılın yıllık ortalaması (TL bazında)</div>
-    <div class="quick" id="gOrn"></div>
+    <div class="gOrnB">Son 10 yılda TL bazında yıllık ortalama artış · dokun, alana yazsın</div>
+    <div class="gOrn" id="gOrn"></div>
+    <div class="gAd"><span>3</span>Alım gücü <small>isteğe bağlı</small></div>
+    <div class="gEnfS">
+      <div><label class="f" for="gEnf">Yıllık enflasyon varsayımı (%)</label><input id="gEnf" type="text" inputmode="decimal" placeholder="Boş bırakılabilir"></div>
+      <div class="gOrn" id="gEnfK"></div>
+    </div>
     <div id="gRes"></div></div>
 
   <div class="note" style="text-align:center;padding:0 8px">${D.source} Altın gram fiyatı uluslararası ons fiyatından hesaplanır; kuyumcu ve banka alış-satış fiyatları farklıdır. Enflasyon: TÜİK TÜFE aylık değişimleri. Yatırım tavsiyesi değildir.</div>`;
@@ -658,18 +712,20 @@ function build() {
     };
     S.w = { ...P[b.dataset.p] }; save(); renderBasket();
   };
-  let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { renderChart(); if (S.mode === "sepet") renderBasket(); }, 150); });
+  let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { renderChart(); if (S.mode === "sepet") renderBasket(); renderGelecek(); }, 150); });
 
   // Gelecek senaryosu
-  S.g = Object.assign({ tut: S.amt || 100000, yil: 10, art: "", enf: "" }, S.g || {});
+  S.g = Object.assign({ tut: S.amt || 100000, yil: 10, art: "", enf: "", ak: "" }, S.g || {});
   $("gTut").value = nf(Number(S.g.tut) || 0, 0); $("gYil").value = S.g.yil; $("gArt").value = S.g.art; $("gEnf").value = S.g.enf;
-  $("gOrn").innerHTML = gOrnekler();
+  const [gv, ge] = gOrnekler(); $("gOrn").innerHTML = gv; $("gEnfK").innerHTML = ge;
   $("gTut").addEventListener("input", () => { S.g.tut = Number(String($("gTut").value).replace(/\./g, "").replace(",", ".")) || 0; save(); renderGelecek(); });
   $("gTut").addEventListener("blur", () => { $("gTut").value = nf(Number(S.g.tut) || 0, 0); });
-  ["gYil", "gArt", "gEnf"].forEach((id) => $(id).addEventListener("input", () => { S.g[{ gYil: "yil", gArt: "art", gEnf: "enf" }[id]] = $(id).value; save(); renderGelecek(); }));
-  $("gOrn").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return;
-    if (b.dataset.v != null) { S.g.art = b.dataset.v.replace(".", ","); $("gArt").value = S.g.art; } else { S.g.enf = b.dataset.e.replace(".", ","); $("gEnf").value = S.g.enf; }
-    save(); renderGelecek(); };
+  $("gYil").addEventListener("input", () => { S.g.yil = $("gYil").value; save(); renderGelecek(); });
+  $("gArt").addEventListener("input", () => { S.g.art = $("gArt").value; S.g.ak = ""; save(); renderGelecek(); });
+  $("gEnf").addEventListener("input", () => { S.g.enf = $("gEnf").value; save(); renderGelecek(); });
+  $("gYilK").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return; S.g.yil = b.dataset.y; $("gYil").value = S.g.yil; save(); renderGelecek(); };
+  $("gOrn").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return; S.g.art = b.dataset.v.replace(".", ","); S.g.ak = b.dataset.k; $("gArt").value = S.g.art; save(); renderGelecek(); };
+  $("gEnfK").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return; S.g.enf = b.dataset.e.replace(".", ","); $("gEnf").value = S.g.enf; save(); renderGelecek(); };
 
   renderTiles(); renderChart(); renderTable(); renderSim(); renderGelecek();
 }
