@@ -72,7 +72,7 @@ const ISQ_ALL = [].concat(
     ["İş Bankası'nın tarım üreticilerine girdi alımları için sunduğu kartın adı nedir?", ["Başak Kart", "İmece Kart", "Üretici Kart", "Bereket Kart"], 1],
     ["Kredi kartı kampanyalarını, harcama ve MaxiPuan takibini tek yerde toplayan İş Bankası uygulaması hangisidir?", ["Maximum Mobil", "İşCep Cüzdan", "Bonus Flaş", "Axess Mobil"], 0],
     ["İş Bankası'nda kredili mevduat hesabının (KMH) yaygın adı nedir?", ["Artı Para", "Ek Hesap", "Avans Hesap", "Esnek Hesap"], 1],
-    ["İş Bankası'nda limiti 100.000 TL'nin üzerinde olan kredi kartlarında asgari ödeme tutarı dönem borcunun yüzde kaçıdır?", ["%10", "%20", "%40", "%50"], 2],
+    ["BDDK'nin 19 Kasım 2026 kararına göre limiti 100.000 TL'nin üzerinde olup 200.000 TL'yi aşmayan kredi kartlarında asgari ödeme tutarı dönem borcunun yüzde kaçıdır?", ["%20", "%30", "%40", "%50"], 1],
   ]),
 
   // --- İşCep ve dijital ---

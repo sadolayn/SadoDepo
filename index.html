@@ -1918,6 +1918,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   // Önemli duyuru (ÖNEMLİ rozeti, PPK satırından hemen sonra): Resmi Gazete sayfasındaki "yapım aşamasında" kutusuna gider
   const dizi = [
     ["video", "<svg class=\"kyTrb\" viewBox=\"0 0 30 20\" aria-hidden=\"true\"><rect width=\"30\" height=\"20\" fill=\"#e30a17\"/><circle cx=\"11\" cy=\"10\" r=\"5\" fill=\"#fff\"/><circle cx=\"12.25\" cy=\"10\" r=\"4\" fill=\"#e30a17\"/><polygon points=\"16.2,10 19.9,8.8 17.6,11.9 17.6,8.1 19.9,11.2\" fill=\"#fff\"/></svg><b>Cumhuriyet Bayramımız kutlu olsun!</b> İş Bankası'nın 29 Ekim videosu <b class=\"gir\">İş Bankası Gündemi › Video</b>", "2026-10-29", "onem"],
+    // 20 Kasım 2026: yapılandırma HAZIRLIĞI haberi (Ekonomim; Sabah yazarı Dilek Güngör'ün aktardığı bilgiler). Resmî karar yok: yalnızca "değerlendiriliyor" denir, vade/faiz kesinmiş gibi yazılmaz. Bir hafta kalır
+    ["https://www.ekonomim.com/ekonomi/kredi-karti-ve-ihtiyac-kredisi-borclarina-yeni-yapilandirma-hazirligi-haberi-932457", "📰 Kredi kartı ve ihtiyaç kredisi borçlarına <b>yeni yapılandırma hazırlığı</b>: haberlere göre BDDK 48–60 ay vade seçeneklerini değerlendiriyor; resmî karar henüz açıklanmadı <b class=\"gir\">Haberi oku</b>", "2026-11-27", "onem"],
     // 9 Kasım 2026: COP31 (Antalya, 9–20 Kasım 2026); kaynak İş Bankası'nın 6.11.2026 tarihli "Türkiye İş Bankası COP31'de" duyurusu, rol adı birebir ("İklim Destekçisi"); zirve bitince kalkar
     ["cop31.html", "🌍 <b>COP31 İklim Zirvesi</b> 9–20 Kasım'da Antalya'da; İş Bankası COP31'de <b>“İklim Destekçisi”</b> olarak yer alıyor <b class=\"gir\">Program</b>", "2026-11-20", "onem"], // 10 Kasım: dokununca İş Bankası'nın COP31 programı (cop31.html)
     // COP31 oturumları artık program dosyasından (isbank/cop31.json) aşağıda eklenir (10 Kasım 2026)
@@ -1998,6 +2000,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
     if (h === "tema") { window.Rapor && Rapor.bolum("kayan-tema"); const t = document.getElementById("temaSec"); t && t.scrollIntoView({ behavior: "smooth", block: "center" }); if (t && t.animate && !matchMedia("(prefers-reduced-motion: reduce)").matches) setTimeout(() => t.animate([{ transform: "scale(1)" }, { transform: "scale(1.25)" }, { transform: "scale(1)" }], { duration: 500, iterations: 2, easing: "ease-in-out" }), 450); return; }
     if (h === "acilis") { window.Rapor && Rapor.bolum("kayan-acilis"); window.Acilis && window.Acilis.ac(); return; }
     if (/^https:\/\/www\.denizbank\.com\//.test(h)) { window.Rapor && Rapor.bolum("kayan-denizbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // DenizBank'ın kendi duyurusu
+    if (/^https:\/\/www\.ekonomim\.com\//.test(h)) { window.Rapor && Rapor.bolum("kayan-ekonomim"); window.open(h, "_blank", "noopener"); return; } // Ekonomim haberi (yeni sekmede)
     if (/^https:\/\/www\.isbank\.com\.tr\//.test(h)) { window.Rapor && Rapor.bolum("kayan-isbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // İş Bankası'nın kendi duyurusu
     if (h === "cop31.html") { window.Rapor && Rapor.bolum("kayan-cop31"); location.href = h; return; }
     if (h.includes(".html")) { window.Rapor && Rapor.bolum(h.includes("kurum") ? "kayan-kurum" : "kayan-gazete-yakinda"); location.href = h; return; }
