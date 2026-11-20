@@ -1,8 +1,8 @@
 {
- "guncelleme": "2026-11-20T15:14",
+ "guncelleme": "2026-11-20T17:09",
  "isbank": {
   "bireysel": {
-   "toplam": 191,
+   "toplam": 192,
    "kategoriler": [
     {
      "ad": "İş’te Maaş’a Özel",
@@ -1258,7 +1258,7 @@
     {
      "ad": "İşCep Kampanyaları",
      "slug": "iscep-kampanyalari",
-     "adet": 8,
+     "adet": 9,
      "url": "https://www.isbank.com.tr/kampanyalar/iscep-kampanyalari",
      "kampanyalar": [
       {
@@ -1287,6 +1287,15 @@
        "ilk": "2000-01-01",
        "ne": "İndirim",
        "nere": "Araç & Akaryakıt"
+      },
+      {
+       "baslik": "İşCep'ten İş Bankalı Olanlar % 0,99 Faiz Oranlı Ek Hesap Ayrıcalığından Yararlanıyor!",
+       "bitis": "2026-11-30",
+       "ozet": "İşCep’ten İş Bankası müşterisi olun, 50.000 TL’ye varan % 0,99 Faiz Oranlı Ek Hesap ayrıcalığından yararlanın!",
+       "url": "https://www.isbank.com.tr/kampanyalar/iscepten-is-bankali-olanlar-1-ay-boyunca-indirimli-faiz-oranli-ek-hesap-ayricaligindan-yararlaniyor",
+       "ilk": "2026-11-19",
+       "ne": "Faiz & Kredi",
+       "nere": "Bankacılık"
       },
       {
        "baslik": "İşCep'ten İş Bankalı Olanlara Ücretsiz Para Transferi Ayrıcalığı!",
