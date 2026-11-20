@@ -2,8 +2,8 @@
 """Uzun dönem (Aralık 2005 – Ekim 2020) aylık kapanış fiyatlarını (TL) data/piyasa_uzun.json'a yazar.
 Günlük veri (data/piyasa.json) Ekim 2020 sonunda başlar; "Geçmişte yatırsaydın" hesabı 20 yıla kadar geriye
 gidebilsin diye bu dosya bir kez üretilir (geçmiş değişmediği için düzenli çalışması gerekmez).
-Kurlar: Avrupa Merkez Bankası (frankfurter.app), her ayın son iş günü. Madenler ve Brent: Yahoo Finance aylık
-kapanış (USD), TL/gram ve TL/varil'e çevrilir. Yalnızca işlenmiş sayılar yazılır, ham yanıt kaydedilmez."""
+Kurlar: Avrupa Merkez Bankası (frankfurter.app), her ayın son iş günü. Madenler ve Brent: Yahoo Finance günlük
+verisinden ayın son işlem günü kapanışı (USD), TL/gram ve TL/varil'e çevrilir. Yalnızca işlenmiş sayılar yazılır, ham yanıt kaydedilmez."""
 import json, urllib.request, datetime as dt, http.cookiejar, time, sys, os
 
 OZ = 31.1034768
@@ -35,8 +35,11 @@ p1 = int(dt.datetime(2005, 11, 1).timestamp()); p2 = int(dt.datetime(2020, 11, 1
 def yahoo(sym):
     for i in range(4):
         try:
-            j = json.loads(get(f"https://query2.finance.yahoo.com/v8/finance/chart/{sym}?period1={p1}&period2={p2}&interval=1mo&crumb={crumb}", op))["chart"]["result"][0]
-            return {dt.datetime.utcfromtimestamp(t + 86400 * 3).strftime("%Y-%m"): c for t, c in zip(j["timestamp"], j["indicators"]["quote"][0]["close"]) if c}
+            j = json.loads(get(f"https://query2.finance.yahoo.com/v8/finance/chart/{sym}?period1={p1}&period2={p2}&interval=1d&crumb={crumb}", op))["chart"]["result"][0]
+            gun = {dt.datetime.utcfromtimestamp(t).strftime("%Y-%m-%d"): c for t, c in zip(j["timestamp"], j["indicators"]["quote"][0]["close"]) if c}
+            ay = {}
+            for d in sorted(gun): ay[d[:7]] = gun[d]  # ayın son işlem günü kapanışı (aylık mumda eksik aylar olabiliyor)
+            return ay
         except Exception as e:
             print(f"::warning::yahoo {sym} {i}: {str(e)[:80]}"); time.sleep(8)
     return {}
@@ -45,7 +48,7 @@ seri = {}
 for k, sym in {"xau": "GC=F", "xag": "SI=F", "xpt": "PL=F", "xpd": "PA=F", "brent": "BZ=F"}.items():
     seri[k] = yahoo(sym)
     print(f"::notice::Yahoo {sym}: {len(seri[k])} ay" + (f" ({min(seri[k])} – {max(seri[k])})" if seri[k] else ""))
-if any(len(seri[k]) < 150 for k in ("xau", "xag", "xpt", "xpd")):
+if any(len(seri[k]) < 170 for k in ("xau", "xag", "xpt", "xpd")):
     sys.exit("::error::Maden verisi eksik")
 
 out = {k: [] for k in ("usd", "eur", "gbp", "xau", "xag", "xpt", "xpd", "brent")}
