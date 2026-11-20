@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-11-19",
+ "kontrol": "2026-11-20",
  "kategoriler": [
   {
    "slug": "iste-maasa-ozel",
@@ -146,7 +146,7 @@
    "slug": "iscep-kampanyalari",
    "ic": "📲",
    "ad": "İşCep'e özel",
-   "adet": 9,
+   "adet": 8,
    "url": "https://www.isbank.com.tr/kampanyalar/iscep-kampanyalari",
    "kampanyalar": [
     {
@@ -166,12 +166,6 @@
      "bitis": "2026-12-31",
      "ozet": "Rent Go araç kiralama hizmeti %50 indirim fırsatıyla İşCep Aracım’da!",
      "url": "https://www.isbank.com.tr/kampanyalar/rent-go-arac-kiralama-kampanyasi"
-    },
-    {
-     "baslik": "İşCep'ten İş Bankalı Olanlar 1 Ay Boyunca % 0,99 Faiz Oranlı Ek Hesap Ayrıcalığından Yararlanıyor!",
-     "bitis": "2026-11-30",
-     "ozet": "İşCep’ten İş Bankası müşterisi olun, 50.000 TL’ye varan % 0,99 Faiz Oranlı Ek Hesap ayrıcalığından yararlanın!",
-     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-is-bankali-olanlar-1-ay-boyunca-indirimli-faiz-oranli-ek-hesap-ayricaligindan-yararlaniyor"
     },
     {
      "baslik": "İşCep'ten İş Bankalı Olanlara Ücretsiz Para Transferi Ayrıcalığı!",
