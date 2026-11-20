@@ -1,0 +1,20 @@
+name: Piyasa uzun dönem (tek seferlik)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  uzun:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/piyasa_uzun.py
+      - name: Commit
+        run: |
+          git config user.name "sadolayn-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/piyasa_uzun.json
+          git diff --cached --quiet || (git commit -m "Piyasa: uzun dönem aylık veri (2005-2020)" && git pull --rebase -q && git push)
