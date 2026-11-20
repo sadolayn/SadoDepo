@@ -114,6 +114,8 @@
   input[type=date] { color-scheme: dark; }
   .quick { display: flex; gap: 6px; flex-wrap: wrap; margin: -4px 0 12px; }
   .quick button { padding: 5px 10px; border-radius: 14px; background: var(--field); border: 1px solid var(--line); color: var(--muted); font-size: 12px; cursor: pointer; }
+  .quick .yilK { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .quick .yilK input { width: 56px; padding: 5px 8px; border-radius: 14px; font-size: 13px; text-align: center; }
   .quick button.on { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
   .res { display: grid; gap: 8px; }
   .ri { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 10px 12px; background: var(--field); border: 1px solid var(--line); border-radius: 12px; }
@@ -343,13 +345,13 @@ function renderTiles() {
   }).join("");
 }
 
-// Grafik aralıkları (6 Kasım 2026: 1, 3 ve 6 ay eklendi; veri Ekim 2020'de başladığı için 10 yıl yok, "Tümü" ~6 yıl)
-const RANGES = ["1A", "3A", "6A", "1Y", "3Y", "5Y", "Tümü"];
+// Grafik aralıkları (20 Kasım 2026: uzun dönem aylık veriyle 10 yıl eklendi; "Tümü" Aralık 2005'ten beri)
+const RANGES = ["1A", "3A", "6A", "1Y", "3Y", "5Y", "10Y", "Tümü"];
 function renderChart() {
   const a = AK[S.sel], last = D.dates[N - 1];
   const ay = (m) => { const d = new Date(last + "T12:00:00"); d.setMonth(d.getMonth() - m); return iso(d); };
   if (!RANGES.includes(S.range)) S.range = "1Y";
-  const from = { "1A": ay(1), "3A": ay(3), "6A": ay(6), "1Y": shiftYears(last, -1), "3Y": shiftYears(last, -3), "5Y": shiftYears(last, -5), "Tümü": D.dates[0] }[S.range];
+  const from = { "1A": ay(1), "3A": ay(3), "6A": ay(6), "1Y": shiftYears(last, -1), "3Y": shiftYears(last, -3), "5Y": shiftYears(last, -5), "10Y": shiftYears(last, -10), "Tümü": D.dates[0] }[S.range];
   const lo = idxOn(from), idx = sample(lo, N - 1);
   const ys = idx.map((i) => D[a.k][i]), xs = idx.map((i) => D.dates[i]);
   const ch = (D[a.k][N - 1] / D[a.k][lo] - 1) * 100;
@@ -414,10 +416,13 @@ function simInputs() {
   return { amt, i0: idxOn(date) };
 }
 
+// Başlangıç gününde fiyatı olmayan varlıklar (ör. Brent verisi 2007 ortasında başlar)
+const veriYok = (i0) => A.filter((a) => !(D[a.k][i0] > 0));
 function renderSingle() {
   const { amt, i0 } = simInputs();
   const c = cpiChg(D.dates[i0], D.dates[N - 1]), need = amt * (1 + c / 100);
-  const list = A.map((a) => {
+  const yok = veriYok(i0);
+  const list = A.filter((a) => !yok.includes(a)).map((a) => {
     const p0 = D[a.k][i0], p1 = D[a.k][N - 1], units = amt / p0, now = units * p1;
     return { a, units, now, p: (now / amt - 1) * 100 };
   });
@@ -446,6 +451,7 @@ function renderSingle() {
       <div class="then num">Faizsiz, yastık altı · bugünkü alım gücü <b class="down">${tl(tlReal)}</b> · ${tl(amt - tlReal)} değer kaybı</div><div class="pct num down">${pct(real(0, c))}</div>
       <div class="bar"><i style="width:${(tlReal / maxNow) * 100}%;background:#e0473a"></i></div></div>
       <div class="note" style="text-align:center;margin:2px 0 0">TL'de tutulan ${tl(amt)}, enflasyon yüzünden bugün ${fdate(D.dates[i0])} tarihindeki ${tl(tlReal)} kadar mal alabiliyor.</div>`;
+  if (yok.length) h += `<div class="note" style="text-align:center;margin:6px 0 0">${yok.map((a) => a.ic + " " + a.n).join(", ")}: bu tarihte veri yok, listede gösterilmedi.</div>`;
   $("single").innerHTML = h;
 }
 
@@ -453,6 +459,7 @@ const BA = [...A, { k: "try", n: "TL (yastık altı)", s: "TL", u: "", ic: "💴
 const price = (k, i) => (k === "try" ? 1 : D[k][i]);
 function renderBasket() {
   const { amt, i0 } = simInputs();
+  const yokK = veriYok(i0).map((a) => a.k);
   const sumAll = BA.reduce((s, a) => s + (Number(S.w[a.k]) || 0), 0);
   const kalan = Math.max(0, 100 - sumAll);
   $("wsum").innerHTML = sumAll > 100
@@ -466,9 +473,11 @@ function renderBasket() {
   if (!amt) { $("bres").innerHTML = '<div class="note" style="text-align:center;padding:16px 0">Tutar gir.</div>'; return; }
   // Oranlar %100'den azsa kalan kısım TL olarak durur (ölçeklenmez); fazlaysa %100'e ölçeklenir
   const div = Math.max(100, sumAll);
-  const wOf = (k) => ((Number(S.w[k]) || 0) + (k === "try" ? kalan : 0)) / div;
+  // Başlangıçta fiyatı olmayan varlığın payı TL olarak durur
+  const yokPay = yokK.reduce((t, k) => t + (Number(S.w[k]) || 0), 0);
+  const wOf = (k) => (yokK.includes(k) ? 0 : (Number(S.w[k]) || 0) + (k === "try" ? kalan + yokPay : 0)) / div;
   const units = {};
-  BA.forEach((a) => { units[a.k] = (amt * wOf(a.k)) / price(a.k, i0); });
+  BA.forEach((a) => { const w = wOf(a.k); units[a.k] = w ? (amt * w) / price(a.k, i0) : 0; });
   const valAt = (i) => BA.reduce((s, a) => s + units[a.k] * price(a.k, i), 0);
   const now = valAt(N - 1), p = (now / amt - 1) * 100;
   const yrs = (new Date(D.dates[N - 1]) - new Date(D.dates[i0])) / (365.25 * 864e5);
@@ -500,7 +509,7 @@ function renderBasket() {
     <div class="note" style="text-align:center;margin:-4px 0 12px">${rp >= 0 ? "✅ Sepetin enflasyonu yendi" : "⚠️ Sepetin enflasyonun gerisinde kaldı"}: alım gücünü korumak için ${tl(need)} gerekiyordu.</div>
     <div class="chart" id="bchart" style="height:180px"></div>
     <div class="note" style="margin:6px 0 12px"><span style="color:var(--accent)">━</span> Sepet değeri · <span style="color:#9a9a9a">╍</span> Enflasyonla aynı hızda artsaydı · alttaki ince kesikli çizgi başlangıçtaki ${tl(amt)}</div>
-    <div class="res">${parts}</div>`;
+    <div class="res">${parts}</div>${yokPay ? `<div class="note" style="margin-top:6px">${veriYok(i0).filter((a) => S.w[a.k] > 0).map((a) => a.ic + " " + a.n).join(", ")} için bu tarihte veri yok; o pay TL olarak sayıldı.</div>` : ""}`;
   const idx = sample(i0, N - 1, 200);
   const d0 = D.dates[i0];
   drawLine($("bchart"), idx.map((i) => D.dates[i]), idx.map(valAt), (v) => tl(v), { base: amt, baseLabel: "Başlangıç", label: "Sepet değeri", ref: idx.map((i) => amt * cpiAt(D.dates[i]) / cpiAt(d0)), refLabel: "Enflasyon" });
@@ -509,6 +518,8 @@ function renderBasket() {
 function markQuick() {
   const last = D.dates[N - 1], cur = $("sdate").value;
   document.querySelectorAll("#quick button").forEach((b) => b.classList.toggle("on", cur === shiftYears(last, -b.dataset.y)));
+  const y = [...Array(YIL_MAX)].map((_, i) => i + 1).find((n) => cur === shiftYears(last, -n));
+  if (document.activeElement !== $("yilKac")) $("yilKac").value = y || "";
 }
 function renderSim() {
   markQuick();
@@ -516,8 +527,37 @@ function renderSim() {
   $("singleBox").style.display = S.mode === "tek" ? "" : "none";
   $("basketBox").style.display = S.mode === "sepet" ? "" : "none";
   const { i0 } = simInputs();
-  $("simnote").textContent = `Hesap ${fdate(D.dates[i0])} kapanışı ile ${fdate(D.dates[N - 1])} arasındadır. Enflasyon TÜİK TÜFE, ${cpiLast()} verisine kadar.`;
+  $("simnote").textContent = `Hesap ${fdate(D.dates[i0])} kapanışı ile ${fdate(D.dates[N - 1])} arasındadır.${i0 < UZUN ? " Kasım 2020 öncesinde veri aylıktır: seçtiğin günden önceki son ay sonu kapanışı kullanılır." : ""} Enflasyon TÜİK TÜFE, ${cpiLast()} verisine kadar.`;
   if (S.mode === "tek") renderSingle(); else renderBasket();
+}
+
+/* ---------- Gelecek senaryosu (yalnızca kullanıcının varsayımıyla bileşik hesap) ---------- */
+const sayi = (v) => { const x = Number(String(v).trim().replace(/\s/g, "").replace(",", ".")); return isFinite(x) ? x : NaN; };
+function gOrnekler() {
+  const last = D.dates[N - 1], s10 = shiftYears(last, -10);
+  if (s10 < D.dates[0]) return "";
+  const i0 = idxOn(s10), yil = (new Date(last) - new Date(D.dates[i0])) / (365.25 * 864e5);
+  const cagr = (a, b) => (Math.pow(b / a, 1 / yil) - 1) * 100;
+  const L = A.filter((a) => D[a.k][i0] > 0).map((a) => `<button type="button" data-v="${cagr(D[a.k][i0], D[a.k][N - 1]).toFixed(1)}">${a.ic} ${a.n} %${nf(cagr(D[a.k][i0], D[a.k][N - 1]), 1)}</button>`);
+  L.push(`<button type="button" data-e="${cagr(cpiAt(D.dates[i0]), cpiAt(last)).toFixed(1)}">📈 Enflasyon %${nf(cagr(cpiAt(D.dates[i0]), cpiAt(last)), 1)}</button>`);
+  return L.join("");
+}
+function renderGelecek() {
+  const g = S.g, amt = Math.max(0, Number(String(g.tut).replace(/\./g, "").replace(",", ".")) || 0);
+  const n = Math.round(sayi(g.yil)), r = sayi(g.art), e = String(g.enf).trim() === "" ? null : sayi(g.enf);
+  document.querySelectorAll("#gOrn button").forEach((b) => b.classList.toggle("on", (b.dataset.v != null && sayi(b.dataset.v) === r) || (b.dataset.e != null && e != null && sayi(b.dataset.e) === e)));
+  if (!amt || !(n >= 1 && n <= 30) || !(r > -100 && r <= 500) || (e != null && !(e > -100 && e <= 500))) {
+    $("gRes").innerHTML = '<div class="note" style="text-align:center;padding:12px 0">Tutar, yıl (1–30) ve yıllık artış varsayımını gir.</div>'; return;
+  }
+  const deg = (y) => amt * Math.pow(1 + r / 100, y), alim = (y) => deg(y) / Math.pow(1 + e / 100, y);
+  const yillar = [...new Set([5, 10, 20, n])].filter((y) => y <= 30).sort((a, b) => a - b);
+  $("gRes").innerHTML = `
+    <div class="hero"><div class="l">${n} yıl sonra (varsayımla)</div><div class="big num">${tl(deg(n))}</div>
+      ${e != null ? `<div class="num ${cls(alim(n) - amt)}" style="font-weight:700">Bugünkü alım gücüyle ≈ ${tl(alim(n))}</div>` : ""}</div>
+    <div class="tbl"><table class="num"><thead><tr><th>Yıl</th><th>Tutar</th>${e != null ? "<th>Bugünkü alım gücüyle</th>" : ""}</tr></thead><tbody>
+      ${yillar.map((y) => `<tr${y === n ? ' class="tot"' : ""}><td>${y} yıl</td><td>${tl(deg(y))}</td>${e != null ? `<td class="${cls(alim(y) - amt)}">${tl(alim(y))}</td>` : ""}</tr>`).join("")}
+    </tbody></table></div>
+    <div class="note" style="margin-top:8px">Hesap: tutar × (1 + %${nf(r, 1)})<sup>yıl</sup>${e != null ? `; alım gücü, her yıl %${nf(e, 1)} enflasyon varsayılarak bugünün parasına çevrilir` : ""}. Örnek oranlar yalnızca geçmişi gösterir; geçmiş getiriler gelecekte de olacağı anlamına gelmez. Vergi, komisyon ve alış-satış farkı hesaba katılmaz.</div>`;
 }
 
 function build() {
@@ -544,7 +584,8 @@ function build() {
       <div><label class="f" for="amt">Tutar (TL)</label><input id="amt" type="text" inputmode="numeric" value="${nf(S.amt, 0)}"></div>
       <div><label class="f" for="sdate">Başlangıç tarihi</label><input id="sdate" type="date" min="${D.dates[0]}" max="${last}" value="${S.date}"></div>
     </div>
-    <div class="quick" id="quick">${[1, 2, 3, 4, 5].map((y) => `<button data-y="${y}">${y} yıl önce</button>`).join("")}</div>
+    <div class="quick" id="quick">${[1, 3, 5, 10, 15, 20].filter((y) => shiftYears(last, -y) >= D.dates[0]).map((y) => `<button data-y="${y}">${y} yıl önce</button>`).join("")}
+      <label class="yilK"><input id="yilKac" type="number" min="1" max="${YIL_MAX}" inputmode="numeric" placeholder="17" aria-label="Kaç yıl önce"> yıl önce</label></div>
     <div class="seg" id="smode"><button data-m="tek">Tek tek</button><button data-m="sepet">🧺 Sepetim</button></div>
     <div id="singleBox"><div class="res" id="single"></div></div>
     <div id="basketBox">
@@ -564,6 +605,20 @@ function build() {
     </div>
     <div class="note" id="simnote" style="margin-top:10px"></div></div>
 
+  <div class="card"><h2>Gelecek senaryosu</h2>
+    <p class="note" style="margin:-4px 0 12px">Gelecek bilinemez; burada yalnızca senin girdiğin yıllık artış varsayımıyla bileşik hesap yapılır. Tahmin ya da yatırım tavsiyesi değildir.</p>
+    <div class="inrow">
+      <div><label class="f" for="gTut">Tutar (TL)</label><input id="gTut" type="text" inputmode="numeric"></div>
+      <div><label class="f" for="gYil">Kaç yıl sonra?</label><input id="gYil" type="number" min="1" max="30" inputmode="numeric"></div>
+    </div>
+    <div class="inrow">
+      <div><label class="f" for="gArt">Yıllık artış varsayımı (%)</label><input id="gArt" type="text" inputmode="decimal" placeholder="örn. 25"></div>
+      <div><label class="f" for="gEnf">Yıllık enflasyon (%) · isteğe bağlı</label><input id="gEnf" type="text" inputmode="decimal" placeholder="boş bırakılabilir"></div>
+    </div>
+    <div class="note" style="margin:0 0 6px">Örnek olarak geçmişten al: son 10 yılın yıllık ortalaması (TL bazında)</div>
+    <div class="quick" id="gOrn"></div>
+    <div id="gRes"></div></div>
+
   <div class="note" style="text-align:center;padding:0 8px">${D.source} Altın gram fiyatı uluslararası ons fiyatından hesaplanır; kuyumcu ve banka alış-satış fiyatları farklıdır. Enflasyon: TÜİK TÜFE aylık değişimleri. Yatırım tavsiyesi değildir.</div>`;
 
   $("tiles").onclick = (e) => { const b = e.target.closest(".tile"); if (!b) return; S.sel = b.dataset.k; save(); renderTiles(); renderChart(); $("chart").scrollIntoView({ behavior: "smooth", block: "center" }); };
@@ -575,6 +630,7 @@ function build() {
   $("amt").addEventListener("input", () => { const v = simInputs().amt; S.amt = v; save(); renderSim(); });
   $("amt").addEventListener("blur", () => { $("amt").value = nf(S.amt, 0); });
   $("sdate").addEventListener("change", () => { S.date = $("sdate").value; save(); renderSim(); });
+  $("yilKac").addEventListener("input", () => { const y = Math.round(Number($("yilKac").value)); if (!(y >= 1 && y <= YIL_MAX)) return; S.date = shiftYears(last, -y); $("sdate").value = S.date; save(); renderSim(); });
   $("quick").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; S.date = shiftYears(last, -b.dataset.y); $("sdate").value = S.date; save(); renderSim(); };
   // Toplam %100'ü (yani yatırılan tutarı) geçemez: bir kalem kalan payı aşarsa diğerleri orantılı olarak azalır
   const setW = (k, v) => {
@@ -604,12 +660,34 @@ function build() {
   };
   let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { renderChart(); if (S.mode === "sepet") renderBasket(); }, 150); });
 
-  renderTiles(); renderChart(); renderTable(); renderSim();
+  // Gelecek senaryosu
+  S.g = Object.assign({ tut: S.amt || 100000, yil: 10, art: "", enf: "" }, S.g || {});
+  $("gTut").value = nf(Number(S.g.tut) || 0, 0); $("gYil").value = S.g.yil; $("gArt").value = S.g.art; $("gEnf").value = S.g.enf;
+  $("gOrn").innerHTML = gOrnekler();
+  $("gTut").addEventListener("input", () => { S.g.tut = Number(String($("gTut").value).replace(/\./g, "").replace(",", ".")) || 0; save(); renderGelecek(); });
+  $("gTut").addEventListener("blur", () => { $("gTut").value = nf(Number(S.g.tut) || 0, 0); });
+  ["gYil", "gArt", "gEnf"].forEach((id) => $(id).addEventListener("input", () => { S.g[{ gYil: "yil", gArt: "art", gEnf: "enf" }[id]] = $(id).value; save(); renderGelecek(); }));
+  $("gOrn").onclick = (ev) => { const b = ev.target.closest("button"); if (!b) return;
+    if (b.dataset.v != null) { S.g.art = b.dataset.v.replace(".", ","); $("gArt").value = S.g.art; } else { S.g.enf = b.dataset.e.replace(".", ","); $("gEnf").value = S.g.enf; }
+    save(); renderGelecek(); };
+
+  renderTiles(); renderChart(); renderTable(); renderSim(); renderGelecek();
 }
 
 const getJ = (u) => Ortak.json(u);
-Promise.all([getJ("data/piyasa.json"), getJ("data/tufe.json")])
-  .then(([j, t]) => { D = j; N = j.dates.length; if (!Array.isArray(j.brent)) [A, BA].forEach((L) => { const i = L.findIndex((a) => a.k === "brent"); if (i > -1) L.splice(i, 1); }); buildCpi(t); build(); })
+// Uzun dönem aylık veri (Aralık 2005 – Ekim 2020) varsa günlük verinin başına eklenir; yoksa sayfa eskisi gibi 2020'den başlar
+let UZUN = 0, YIL_MAX = 5;
+function uzunEkle(j, u) {
+  if (!u || !Array.isArray(u.dates)) return;
+  const n = u.dates.findIndex((d) => d >= j.dates[0]), k = n < 0 ? u.dates.length : n;
+  if (!k) return;
+  for (const key of Object.keys(j)) if (Array.isArray(j[key]) && key !== "dates") j[key] = (Array.isArray(u[key]) ? u[key].slice(0, k) : Array(k).fill(null)).concat(j[key]);
+  j.dates = u.dates.slice(0, k).concat(j.dates); UZUN = k;
+}
+Promise.all([getJ("data/piyasa.json"), getJ("data/tufe.json"), getJ("data/piyasa_uzun.json").catch(() => null)])
+  .then(([j, t, u]) => { uzunEkle(j, u); D = j; N = j.dates.length;
+    const ilk = new Date(j.dates[0] + "T12:00:00"), son = new Date(j.dates[N - 1] + "T12:00:00");
+    YIL_MAX = Math.max(1, Math.floor((son - ilk) / (365.25 * 864e5))); if (!Array.isArray(j.brent)) [A, BA].forEach((L) => { const i = L.findIndex((a) => a.k === "brent"); if (i > -1) L.splice(i, 1); }); buildCpi(t); build(); })
   .catch((e) => { console.error(e); Ortak.hata("app", { ne: "Piyasa verileri" }); $("upd").textContent = ""; });
 </script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
