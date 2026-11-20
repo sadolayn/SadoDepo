@@ -3,6 +3,15 @@
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
     {
+      "tarih": "2026-11-20",
+      "kurum": "BDDK",
+      "baslik": "Konut kredisinde %75 azaltım artık en az iki konutu olanlara uygulanacak",
+      "ozet": "BDDK'nin 19.11.2026 tarihli ve 11604 sayılı Kurul Kararı'yla, konut edinimi amaçlı kredilerde ve taşıt kredileri hariç konut teminatlı kredilerde 29.01.2026 tarihli ve 11364 sayılı kararda belirlenen azami kredi/değer oranı, tüketicinin kendisinin, eşinin veya 18 yaş altındaki çocuklarının malik olduğu en az iki konutun bulunması hâlinde yüzde 75 azaltılarak uygulanacak. İkiden fazla konutta hisseli tapu sahibi olanlar hariç, bir konut tapusunda yüzde 50 veya daha az hissesi olanların bu nitelikteki bir konutu dikkate alınmayacak. 6306 sayılı Kanun kapsamında riskli yapı tespiti nedeniyle yıkılan ya da yıkım kararı alınan konutlardan yalnızca biri konut malikliği değerlendirmesinde dikkate alınmayacak.",
+      "etki": "Önceki uygulamada (24.08.2023 tarihli ve 10656 sayılı karar) yüzde 75 azaltım en az bir konutu olanlara uygulanıyordu; yeni kararla eşik en az iki konuta çıktı. Karar metninde yürürlük için ayrı bir tarih belirtilmedi.",
+      "onemli": true,
+      "url": "https://www.cnnturk.com/ekonomi/bddkdan-konut-kredisi-karari-iki-ve-uzeri-konutu-olanlara-yuzde-75-siniri-3495887"
+    },
+    {
       "tarih": "2026-11-18",
       "kurum": "BDDK",
       "baslik": "Adil Katılım Bankası'nın yönetim ve denetimi TMSF'ye devredildi",
