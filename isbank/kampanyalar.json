@@ -1,14 +1,7 @@
 {
-  "guncelleme": "2026-11-20T14:04:19+03:00",
+  "guncelleme": "2026-11-21T09:10:00+03:00",
   "kaynak": "https://www.maximum.com.tr/kampanyalar",
   "kampanyalar": [
-    {
-      "baslik": "MediaMarkt.com.tr'de 2.000 TL MaxiPuan",
-      "ozet": "9-20 Kasım'da mediamarkt.com.tr'de Maximum Kart ile tek seferde yapılan 25.000 TL ve üzeri ilk alışverişe 2.000 TL MaxiPuan.",
-      "tur": "MaxiPuan",
-      "bitis": "2026-11-20",
-      "url": "https://www.maximum.com.tr/kampanyalar/mediamarkt-maxipuan-kampanyasi"
-    },
     {
       "baslik": "Inditex mağazalarında 1.000 TL MaxiPuan",
       "ozet": "Zara, Massimo Dutti, Bershka, Pull&Bear ve diğer Inditex mağazalarında toplam 15.000 TL ve üzeri alışverişe 1.000 TL MaxiPuan.",
@@ -148,6 +141,13 @@
       "tur": "MaxiPuan",
       "bitis": "2026-11-30",
       "url": "https://www.maximum.com.tr/kampanyalar/yatsanda-maxipuan-firsati"
+    },
+    {
+      "baslik": "Yenilenen Maximum Mobil'den ilk mobil temassız ya da TR Karekod ödemesine 100 TL MaxiPuan",
+      "ozet": "Yenilenen Maximum Mobil aracılığıyla yapılan ilk 1.000 TL ve üzeri mobil temassız veya TR Karekod ödemesine 100 TL MaxiPuan.",
+      "tur": "MaxiPuan",
+      "bitis": "2026-11-30",
+      "url": "https://www.maximum.com.tr/kampanyalar/maximum-mobil-ile-maxipuan-firsati"
     },
     {
       "baslik": "Trendyol'da peşin fiyatına 9 taksit",
