@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="kalkan.js"></script>
 <meta name="robots" content="noindex, nofollow">
@@ -55,7 +55,7 @@
   /* Masada Sadolayn logosu */
   .board::before {
     content: ""; position: absolute; left: 6%; right: 6%; top: 46%; height: 30%; pointer-events: none; z-index: 0;
-    background: url("img/logo.png") center / contain no-repeat; opacity: .17; filter: grayscale(1) brightness(3);
+    background: url("img/logo.webp") center / contain no-repeat; opacity: .17; filter: grayscale(1) brightness(3);
   }
   .slot { position: absolute; z-index: 0; border-radius: 7px; background: rgba(0,0,0,.16); border: 1.5px solid rgba(255,255,255,.16); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.3); font: 700 26px Georgia, "Times New Roman", serif; }
   .slot.stk { font: 22px system-ui; color: rgba(255,255,255,.55); cursor: pointer; }

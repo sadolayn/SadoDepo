@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="kalkan.js"></script>
 <meta name="robots" content="noindex, nofollow">
@@ -25,9 +25,10 @@
 <meta property="og:locale" content="tr_TR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Great+Vibes&display=swap" rel="stylesheet">
+<!-- Yazı tipleri sitenin kendisinden (22 Kasım 2026; önceden Google Fonts): ziyaretçinin adresi Google'a gitmez. -->
+<style>@font-face { font-family: "Dancing Script"; font-weight: 700; font-display: swap; src: url(lib/dancingscript-700-latin-tr.woff2) format("woff2"); }
+@font-face { font-family: "Great Vibes"; font-weight: 400; font-display: swap; src: url(lib/greatvibes-latin-tr.woff2) format("woff2"); }</style>
+<link rel="preload" href="lib/dancingscript-700-latin-tr.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   :root { --bg:#000; --card:#0d0d0d; --ink:#f2f2f2; --muted:#8a8a8a; --accent:#e0a24f; --red:#e0473a; --win:#3fc283; --line:#262626; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }

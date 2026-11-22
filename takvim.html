@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="kalkan.js"></script>
 <script src="tema.js"></script>
@@ -58,7 +58,7 @@
     <button data-tab="yil">Yıllık</button>
     <button data-tab="ajanda">Ajanda</button>
     <button data-tab="hesap">İş günü</button>
-    <button data-tab="liste">Liste</button>
+    <button data-tab="liste" data-yeni="takvimAktar|2026-11-22|•">Liste</button>
     <button data-tab="vergi" data-yeni="vergitk|2026-10-23|•">Vergi</button>
   </div>
   <div class="sh on" data-sh="ay">
@@ -237,6 +237,8 @@
 </div>
 <div class="atoast" id="aToast"></div>
 <script src="takvimp.js"></script>
+<script src="ics.js"></script>
+<script src="takvimaktar.js"></script>
 <script data-goatcounter="https://sadolayn.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script>(function(){var s=document.querySelector(".stick");if(!s)return;var f=function(){s.classList.toggle("stuck",window.scrollY>4)};window.addEventListener("scroll",f,{passive:true});f();})();</script>
 </body>

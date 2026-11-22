@@ -2,7 +2,7 @@
 <html lang="tr" data-tema-motor="yok">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="kalkan.js"></script>
 <meta name="robots" content="noindex, nofollow">
@@ -11,6 +11,7 @@
 <meta name="theme-color" content="#000000">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="tema.js"></script>
+<script>/* Ana sayfa düzeni (22 Kasım 2026, duzen.js): gizlenen bölümler ve kompakt görünüm ilk boyamadan önce */ (function () { try { var d = JSON.parse(localStorage.getItem("anaDuzen") || "null"); if (!d) return; var c = document.documentElement.classList; (d.gizli || []).forEach(function (k) { if (/^[a-z]+$/.test(k)) c.add("dzG-" + k); }); if (d.kompakt) c.add("dzKompakt"); } catch (e) {} })();</script>
 <script>/* 10 Kasım matemi: 9 Kasım öğleden 10 Kasım gece yarısına kadar kayan yazı siyah, solunda yas kurdelesi */
 (function () { var n = new Date(); if (n.getMonth() === 10 && (n.getDate() === 10 || (n.getDate() === 9 && n.getHours() >= 12))) document.documentElement.classList.add("matem", "matem10"); /* 9 Kasım akşamı: fotoğraf da hemen geldi */ if (/ata10/.test(location.search)) document.documentElement.classList.add("matem", "matem10"); })();</script>
 <title>SADOLAYN</title>
@@ -809,12 +810,54 @@ html[data-tema="acik"] .pk.kmp { background: #fff; }
 html[data-tema="acik"] .pk .yr { color: #1a7a4c; background: #e3f5ea; border-color: #a9dcbf; }
 html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 90% at 100% 0, rgba(63,194,131,.28), transparent 60%), linear-gradient(150deg, #1d3b2c, #0f2219); border-color: #2c5a41; }
 @media (prefers-reduced-motion: reduce) { .pk, .pk .yr i, .rdr::after { animation: none; } .pk .cb i { transition: none; } }
+
+/* ===== 22 Kasım 2026: ✨ Sen yokken kartı (degisen.js) ===== */
+.dgs { margin: 0 0 12px; padding: 11px 12px 9px 14px; border-radius: 16px; border: 1px solid #5a4320; background: linear-gradient(160deg, rgba(224,162,79,.11), rgba(224,162,79,.02)); animation: pkGel .45s cubic-bezier(.2,.7,.2,1) both; transition: opacity .2s ease, transform .2s ease; }
+.dgs[hidden] { display: none; }
+.dgs.kapan { opacity: 0; transform: scale(.98); }
+.dgsB { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.dgsB h3 { margin: 0; font: italic 700 16.5px Georgia, "Times New Roman", serif; color: #f3d38a; display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 8px; }
+.dgsB h3 small { font: 500 11.5px system-ui, sans-serif; color: var(--muted); }
+.dgsX { flex: none; width: 32px; height: 32px; margin: -4px -4px 0 0; border-radius: 10px; border: 0; background: transparent; color: var(--muted); font-size: 15px; cursor: pointer; }
+.dgsC { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 9px; }
+.dgsC a { display: block; min-height: 36px; padding: 8px 10px; border-radius: 12px; line-height: 1.35; border: 1px solid var(--line); background: rgba(255,255,255,.035); color: var(--ink); font: 500 12.5px system-ui, sans-serif; text-decoration: none; animation: pkGel .45s cubic-bezier(.2,.7,.2,1) both; }
+.dgsC a:nth-child(2) { animation-delay: .06s; } .dgsC a:nth-child(3) { animation-delay: .12s; } .dgsC a:nth-child(n+4) { animation-delay: .18s; }
+.dgsC a:active, .dgsS:active { transform: scale(.975); border-color: #5a4320; }
+.dgsC a b { color: #f3d38a; font-weight: 700; } .dgsC .u { color: #7fe0b0; font-weight: 600; white-space: nowrap; } .dgsC .d { color: #ffab95; font-weight: 600; white-space: nowrap; }
+.dgsS { display: flex; align-items: center; gap: 10px; margin-top: 8px; padding: 9px 11px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.03); color: var(--ink); text-decoration: none; font-size: 13.5px; line-height: 1.35; }
+.dgsS.alr { border-color: #2c5a41; background: rgba(63,194,131,.08); }
+.dgsS .i { font-size: 17px; flex: none; } .dgsS > span:last-child { flex: 1; min-width: 0; }
+.dgsS small { display: block; margin-top: 1px; font-size: 11.5px; color: var(--muted); }
+.dgsN { margin: 8px 0 0; font-size: 11px; color: var(--muted); }
+html[data-tema="acik"] .dgs { background: linear-gradient(160deg, #fdf3df, #fff); border-color: #e6cf9f; }
+html[data-tema="acik"] .dgsB h3, html[data-tema="acik"] .dgsC a b { color: #8a5a12; }
+html[data-tema="acik"] .dgsC a, html[data-tema="acik"] .dgsS { background: #fff; border-color: #d3dce8; }
+html[data-tema="acik"] .dgsC .u { color: #1a7a4c; } html[data-tema="acik"] .dgsC .d { color: #b8442a; }
+html[data-tema="acik"] .dgsS.alr { background: #e9f7ef; border-color: #a9dcbf; }
+
+/* ===== 22 Kasım 2026: 🧩 Ana sayfayı düzenle (duzen.js) — gizlenen bölümler ve kompakt görünüm ===== */
+html.dzG-dgs #dgs, html.dzG-pnl #pnl, html.dzG-fav #fav, html.dzG-isb .mn > a.one.isb, html.dzG-payl section.paylas,
+html.dzG-sabah .mn > [data-dz="sabah"], html.dzG-hesap .mn > [data-dz="hesap"], html.dzG-arac .mn > [data-dz="arac"],
+html.dzG-mola .mn > [data-dz="mola"], html.dzG-brif .mn > [data-dz="brif"] { display: none !important; }
+html.dzKompakt .row .d, html.dzKompakt .tile .d, html.dzKompakt .one .d { display: none; }
+html.dzKompakt .row { padding-top: 10px; padding-bottom: 10px; gap: 12px; }
+html.dzKompakt .row .ik { font-size: 20px; width: 30px; }
+html.dzKompakt .row .t { font-size: 16px; }
+html.dzKompakt .tiles { gap: 8px; }
+html.dzKompakt .tile { min-height: 0; flex-direction: row; align-items: center; gap: 10px; padding: 11px 12px; }
+html.dzKompakt .tile .ik { font-size: 20px; } html.dzKompakt .tile .t { margin-top: 0; font-size: 15px; }
+html.dzKompakt .one { padding-top: 12px; padding-bottom: 12px; }
+html.dzKompakt .mn h2 { margin-top: 20px; margin-bottom: 8px; }
+html.dzKompakt .favIp { display: none; }
+.araAlt .dzBtn { margin-right: auto; min-height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--accent); font: 600 13px system-ui, sans-serif; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.araAlt .dzBtn:active { transform: scale(.96); border-color: #5a4320; }
+@media (prefers-reduced-motion: reduce) { .dgs, .dgsC a { animation: none; transition: none; } }
 </style>
 </head>
 <body>
   <header class="top kompakt" id="top">
     <div class="yeniS" id="yeniS" hidden aria-label="Sitede yeni bölümler"><span class="ysEt"><i></i>YENİ</span><div class="ysYol"><div class="ysSer" id="ysSer"></div></div></div>
-    <h1 class="logo"><img src="img/logo.png" alt="SADOLAYN"><span class="ataYazi">Seni bir an olsun unutmadık 🖤</span></h1>
+    <h1 class="logo"><img src="img/logo.webp" alt="SADOLAYN"><span class="ataYazi">Seni bir an olsun unutmadık 🖤</span></h1>
     <script>/* 10 Kasım: logonun yerinde gün boyu Atatürk fotoğrafı */ if (document.documentElement.classList.contains("matem10")) { var aI = document.querySelector("h1.logo img"); aI.src = "img/ata-10kasim.jpg"; aI.alt = "Mustafa Kemal Atatürk"; }</script>
     <a class="odS" id="odS" href="isbank.html#odul" aria-label="İşCep art arda 4. kez Dünyanın En İyi Bireysel Mobil Bankacılık Uygulaması seçildi, haberi oku" tabindex="-1">
       <div class="ray"></div><div class="hale"></div>
@@ -991,12 +1034,13 @@ html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 9
           <line id="sh2" x1="50" y1="60" x2="50" y2="13" stroke="#ff9a5a" stroke-width="1.4" stroke-linecap="round"/>
           <circle cx="50" cy="50" r="4" fill="#e0a24f" stroke="#070707" stroke-width="1.5"/>
         </svg><div class="dig" id="dig2"></div></div>
-    <div class="bl"><img src="img/logo.png" alt=""><span id="greet2"></span></div>
+    <div class="bl"><img src="img/logo.webp" alt=""><span id="greet2"></span></div>
     <div class="datec"><div class="m" id="dm2"></div><div class="d" id="dd2"></div><div class="w" id="dw2"></div></div>
   </div>
   <!-- Ana menü: 4 başlık altında gruplu (İş Bankası kartı en üstte tek başına) -->
   <nav class="mn" aria-label="Ana menü">
     <a class="sbB" id="sbB" href="#acilis" hidden><span class="sbI" aria-hidden="true">☕</span><span class="sbT" id="sbT"></span><span class="sbO" aria-hidden="true">›</span></a>
+    <div class="dgs" id="dgs" hidden aria-live="polite" aria-label="Son bakışından beri değişenler"></div>
     <section class="pnl" id="pnl" aria-label="Tek bakışta">
       <a class="pk" href="takvim.html" id="pkCy"><h3>Çeyrek</h3><span class="n" id="cyN">–</span><span class="a">iş günü kaldı</span><div class="cb"><i id="cyB"></i></div><div class="mt"><span id="cyBas"></span><span id="cyBit"></span></div></a>
       <a class="pk" href="takvim.html" id="pkPpk"><h3>Sonraki PPK</h3><span class="n" id="ppkN">–</span><span class="a" id="ppkT"></span><span class="a" id="ppkF"></span></a>
@@ -1011,6 +1055,7 @@ html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 9
       <button type="button" id="araSil" aria-label="Aramayı temizle" hidden>✕</button>
     </div>
     <div class="araAlt">
+      <button type="button" id="dzBtn" class="dzBtn" aria-haspopup="dialog" data-yeni="anaDuzen|2026-11-22|YENİ">🧩 Düzenle</button>
       <button type="button" id="azBtn" aria-expanded="false">🔤 Tüm araçlar A-Z ›</button>
     </div>
     <div class="altL" id="altL" hidden></div>
@@ -1083,6 +1128,7 @@ html[data-tema="acik"] .pk.sah { color: #fff; background: radial-gradient(120% 9
     </div>
     </div>
   </nav>
+<script src="duzen.js"></script>
   <div class="quote">
     <q>Bilgi paylaştıkça büyür</q>
     <span>SADOLAYN</span>
@@ -1906,6 +1952,8 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
 </script>
 <script src="yeni.js"></script>
 <script src="yedek.js"></script>
+<script src="alarm.js"></script>
+<script src="degisen.js"></script>
 <script>
 // Kayan yazı: ayrıntı vermeyen merak cümleleri, sonunda "hepsi ve daha fazlası İş Bankası Gündemi'nde".
 // Şeridin tamamı ve sağdaki "Göz at" düğmesi dokunulabilir; dokunulan cümlenin bölümü açılır.
@@ -2192,7 +2240,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   var el = document.getElementById("isbCanli"); if (!el || !window.fetch) return;
   var ayni = function (t) { return (t || "").toLocaleLowerCase("tr").replace(/[’'`]/g, "").replace(/[çğıöşüâîû]/g, function (h) { return { ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" }[h]; }).replace(/[^a-z0-9%]/g, ""); };
   var gun = function (once) { return new Date(Date.now() + 3 * 3600e3 - once * 864e5).toISOString().slice(0, 10); }; // İstanbul günü
-  fetch("isbank/kampanya_hepsi.json", { cache: "no-cache" }).then(function (r) { return r.json(); }).then(function (K) {
+  Ortak.json("isbank/kampanya_hepsi.json").then(function (K) {
     var bugun = gun(0), uc = gun(4), G = {}; // son 5 gün
     ["isbank", "maximum", "maximiles"].forEach(function (kay) {
       var S = K[kay] || {};
@@ -2547,7 +2595,7 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   // Saha Radarı kullanım sayımı (anonim): ana sayfadaki karta ve menü satırına dokunma
   [].forEach.call(document.querySelectorAll('a.pk.sah, a.row[href="saha.html"]'), function (a) { a.addEventListener("click", function () { if (window.Rapor) Rapor.bolum(a.classList.contains("pk") ? "saha-kart" : "saha-satir"); }); });
 
-  var json = function (u) { return fetch(u, { cache: "no-cache" }).then(function (r) { if (!r.ok) throw 0; return r.json(); }); };
+  var json = function (u) { return Ortak.json(u); }; // ortak.js aynı dosyayı tek kez indirir
   // Sonraki PPK; karara 2 gün kala kutu sarı çerçeveli.
   json("data/ppk.json").then(function (P) {
     var s = (P.meetings || []).map(function (m) { return new Date(m + "T00:00:00"); }).filter(function (m) { return m >= bugun; })[0];

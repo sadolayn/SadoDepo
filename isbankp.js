@@ -677,16 +677,54 @@ function kKart(k, renk, ticari) {
         const sg = k._seg || (ticari ? "ticari" : kSeg), ky = Object.keys(K_KAY).find((x) => k.url.includes(K_KAY[x][2])) || "isbank";
         const L = { isbank: "https://www.isbank.com.tr/kampanyalar" + (sg === "ticari" ? "/ticari-kart-kampanyalari?v=ticari" : ""), maximum: "https://www.maximum.com.tr/kampanyalar/" + sg, maximiles: "https://www.maximiles.com.tr/kampanyalar" }[ky];
         return `<div class="kalt">Sayfa açılmazsa: <a href="${L}" target="_blank" rel="noopener">${K_KAY[ky][0]} ${K_KAY[ky][1]} kampanya listesi ↗</a></div>`; })()}
-      <button type="button" class="kkop" data-kop="${esc(k.baslik + (bit ? " · son gün " + bit : "") + "\n" + k.url)}">🔗 Linki kopyala</button>
+      <div class="kbtns"><button type="button" class="kkop" data-kop="${esc(k.baslik + (bit ? " · son gün " + bit : "") + "\n" + k.url)}">🔗 Linki kopyala</button>${kHatBtn(k, n)}</div>
     </div>`;
 }
+// ⏰ Hatırlat (22 Kasım 2026): kampanya bu cihazda takibe alınır; bitmesine 3 gün kala ana sayfada çıkar.
+// İstenirse telefon takvimine de eklenir (ics.js). Liste yalnızca cihazda durur: "kmpTakip" = [{u, b, s, t}]
+const KHAT = "kmpTakip", kHatIdx = {};
+function kHatOku() { try { const L = JSON.parse(localStorage.getItem(KHAT) || "[]"); return Array.isArray(L) ? L : []; } catch (e) { return []; } }
+function kHatYaz(L) { try { localStorage.setItem(KHAT, JSON.stringify(L.slice(-40))); } catch (e) {} }
+function kHatBtn(k, n) {
+  if (!k.bitis || !(n > 0) || !/^https:\/\//.test(k.url || "")) return "";
+  kHatIdx[k.url] = { u: k.url, b: k.baslik, s: k.bitis };
+  const on = kHatOku().some((x) => x.u === k.url);
+  return `<button type="button" class="kkop khat${on ? " on" : ""}" data-hat="${esc(k.url)}" aria-pressed="${on}">${on ? "✓ Takipte" : "⏰ Hatırlat"}</button>`;
+}
+function kHatPanel(x) {
+  let p = $("kHatP"); if (p) p.remove();
+  const g = Math.max(0, daysLeft(x.s)), bit = new Date(x.s + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
+  p = document.createElement("div"); p.id = "kHatP"; p.setAttribute("role", "status");
+  p.innerHTML = `<div class="khIc"><b>⏰ Takibe alındı</b><span>${g <= 3 ? "Bitmesine az kaldı; ana sayfada hemen görünür." : `Bitmesine 3 gün kala (${bit} son gün) ana sayfada hatırlatırım.`} Bu liste yalnızca bu cihazda tutulur.</span>
+    <div class="khB"><button type="button" class="khT">📅 Telefon takvimine de ekle</button><button type="button" class="khK">Tamam</button></div></div>`;
+  document.body.appendChild(p); requestAnimationFrame(() => p.classList.add("goster"));
+  const kapa = () => { p.classList.remove("goster"); setTimeout(() => p.remove(), 260); };
+  p.querySelector(".khK").onclick = kapa; clearTimeout(kHatPanel.z); kHatPanel.z = setTimeout(kapa, 12000);
+  p.querySelector(".khT").onclick = () => {
+    if (!window.ICS) return kapa();
+    const kisa = x.b.length > 60 ? x.b.slice(0, 57) + "…" : x.b;
+    ICS.indir("kampanya-hatirlatma", [{ uid: "kmp-" + x.s + "-" + x.u.replace(/[^a-z0-9]/gi, "").slice(-40), gun: x.s, baslik: "⏰ Son gün: " + kisa, aciklama: "Sadolayn kampanya hatırlatması. Koşullar ve katılım için resmî sayfaya bak.", url: x.u, alarmlar: g > 3 ? ["-P2DT15H", "PT9H"] : ["PT9H"] }], "Sadolayn kampanyalar");
+    window.Rapor && Rapor.bolum("kampanya-takvime");
+    kapa();
+  };
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest(".khat"); if (!b) return;
+  const u = b.dataset.hat, x = kHatIdx[u]; if (!x) return;
+  let L = kHatOku().filter((y) => y.s >= new Date(Date.now() - 864e5).toISOString().slice(0, 10)); // bitmiş olanlar kendiliğinden temizlenir
+  const on = L.some((y) => y.u === u);
+  L = on ? L.filter((y) => y.u !== u) : L.concat([{ u: x.u, b: x.b, s: x.s, t: Date.now() }]);
+  kHatYaz(L);
+  document.querySelectorAll(".khat").forEach((c) => { if (c.dataset.hat === u) { c.classList.toggle("on", !on); c.setAttribute("aria-pressed", String(!on)); c.textContent = on ? "⏰ Hatırlat" : "✓ Takipte"; } });
+  if (!on) { kHatPanel(x); window.Rapor && Rapor.bolum("kampanya-hatirlat"); }
+});
 // Linki kopyala: başlık + son gün + bağlantı panoya; WhatsApp, SMS, e-postaya yapıştırılır
 function kKopyala(metin) {
   const bitti = () => { let t = $("kTost"); if (!t) { t = document.createElement("div"); t.id = "kTost"; document.body.appendChild(t); } t.textContent = "✓ Link kopyalandı, istediğin yere yapıştır"; t.className = "goster"; clearTimeout(kKopyala.z); kKopyala.z = setTimeout(() => (t.className = ""), 2200); };
   const eski = () => { const a = document.createElement("textarea"); a.value = metin; a.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); } catch (e) {} a.remove(); bitti(); };
   if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(metin).then(bitti, eski); else eski();
 }
-document.addEventListener("click", (e) => { const b = e.target.closest(".kkop"); if (b) kKopyala(b.dataset.kop); });
+document.addEventListener("click", (e) => { const b = e.target.closest(".kkop[data-kop]"); if (b) kKopyala(b.dataset.kop); });
 // 🏪 İşyeri & POS: işyeri açacak ya da POS kullanan için üç kaynaktaki POS, yazarkasa ve esnaf kampanyaları
 const kPosListe = () => (KH && KH.isbank ? kTumu("ticari").filter((k) => /esnaf|pos/i.test(k.kim) || /\bpos\b|yazarkasa|ökc|üye işyeri|esnaf|kobi|işyeri/i.test(k.baslik + " " + (k.ozet || ""))) : []);
 // Başlıktaki kazanç tutarı: tutarın ardından puan / mil / indirim / iade gelmeli ("30.000 TL ve üzeri" harcama eşiğidir, sayılmaz)

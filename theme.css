@@ -104,10 +104,11 @@ html[data-tema="acik"] :where(.tabs button, .menu button, #cats .chip, #tabs but
   border-color: color-mix(in srgb, var(--c) 50%, #fff) !important;
   color: color-mix(in srgb, var(--c) 35%, #10151c) !important;
 }
+/* Kendi rengi (--c) olmayan sekmede seçili olan görünmüyordu (ör. Takvim sekmeleri); 22 Kasım 2026'dan beri Sadolayn altını */
 html[data-tema="acik"] :where(.tabs button, .menu button, #cats .chip, #tabs button, .tfil.mtiles button.mt):is(.active, .on) {
-  background: linear-gradient(160deg, color-mix(in srgb, var(--c) 35%, #fff), color-mix(in srgb, var(--c) 65%, #fff)) !important;
-  border-color: color-mix(in srgb, var(--c) 80%, #000) !important;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--c, #e0a24f) 35%, #fff), color-mix(in srgb, var(--c, #e0a24f) 65%, #fff)) !important;
+  border-color: color-mix(in srgb, var(--c, #e0a24f) 80%, #000) !important;
   color: #000 !important;
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--c) 35%, transparent) !important;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--c, #e0a24f) 35%, transparent) !important;
 }
 html[data-tema="acik"] .menu button.hasnew:not(.active) { border-color: #d32f2f !important; }

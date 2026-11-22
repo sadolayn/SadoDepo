@@ -63,3 +63,19 @@ Ne değişir:
 6. Yeni hesapla `testDigestToMe` çalıştır; örnek bülten yeni hesabın gelen kutusuna gelmeli.
 
 Aboneler, abone listesi ve telefon bildirimleri olduğu gibi kalır; her e-posta aboneye ayrı gider, aboneler birbirini görmez.
+
+## Düzeltme 6 — kuralarm.gs (🔔 fiyat alarmı bildirimi)
+
+Sitedeki Döviz & Emtia sayfasında kurulan alarmların telefona bildirim olarak gelmesi için (bilgisayardan, ~3 dk):
+
+1. Apps Script'te sol menüden **Dosyalar ＋ → Komut dosyası** → adı `kuralarm` → `alerts/kuralarm.gs` içeriğinin tamamını yapıştır → Kaydet.
+   Dosya listesinde **en altta** olmalı (Code, duzelt, abonelik'ten sonra).
+2. Üstteki işlev listesinden **kurAlarmKur** seç → **Çalıştır** (izin isterse ver). Saatlik kontrol kurulur, tabloya `KurAlarm` sayfası eklenir.
+3. **Dağıt → Dağıtımları yönet → ✏️ düzenle → Sürüm: Yeni sürüm → Dağıt.** Adres değişmez.
+4. Kontrol: `…/exec` adresini tarayıcıda aç → `"v":6` görünmeli.
+
+Kurulmadan önce de alarmlar çalışır: seviye gelince siteyi açan kişiye ana sayfada ve Döviz & Emtia'da gösterilir.
+Kurulunca site bunu kendiliğinden anlar ve "📲 Telefon bildirimi açık" der.
+
+Saklanan: bildirim anahtarı, varlık (dolar, euro, sterlin, gram altın, gram gümüş, Brent), yön, seviye, tarih. Ad, e-posta, konum yok.
+Her alarm bir kez çalar; çalan alarm 7 gün sonra tablodan silinir. Geçersiz olmuş telefonların alarmları kendiliğinden temizlenir.

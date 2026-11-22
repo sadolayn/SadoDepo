@@ -10,7 +10,7 @@
       Karekod yalnızca sayfanın adresini içerir (lib/qrcode.js, MIT, Kazuhiko Arase). İstemeyen sayfa: <body data-karekod="yok">
 */
 (function () {
-  var FOOTER = 'Copyright © {Y} Sadolayn. All rights reserved.<br><span style="font-size:11.5px;letter-spacing:.3px;color:#8a8a8a">Tüm hakları saklıdır.</span><br><span style="display:block;max-width:420px;margin:6px auto 0;font-size:12px;line-height:1.5;color:#9a9a9a">Kişisel bir verimlilik ve derleme sitesidir; hiçbir banka ya da kurumun resmî uygulaması değildir. Türkiye İş Bankası A.Ş. ile bağı yoktur, banka tarafından hazırlanmamıştır. Banka adları ilgili kurumun tescilli markasıdır; resmî bilgi için <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:#b5b5b5;display:inline-block;padding:5px 2px;margin:-5px 0">isbank.com.tr</a>.<br>Ziyaretler isimsiz sayılır (GoatCounter ve Firebase sayacı; çerez, kimlik ve IP tutulmaz); yalnızca kendi isteğinle yazdıkların (öneri formu, Alerts e-postası ve bildirim kaydı) saklanır. Ana sayfadaki "Önerileriniz ve görüşleriniz" formuna yazdıkların yalnızca site sahibine ulaşır.</span>';
+  var FOOTER = 'Copyright © {Y} Sadolayn. All rights reserved.<br><span style="font-size:11.5px;letter-spacing:.3px;color:#8a8a8a">Tüm hakları saklıdır.</span><br><span style="display:block;max-width:420px;margin:6px auto 0;font-size:12px;line-height:1.5;color:#9a9a9a">Kişisel bir verimlilik ve derleme sitesidir; hiçbir banka ya da kurumun resmî uygulaması değildir. Türkiye İş Bankası A.Ş. ile bağı yoktur, banka tarafından hazırlanmamıştır. Banka adları ilgili kurumun tescilli markasıdır; resmî bilgi için <a href="https://www.isbank.com.tr" target="_blank" rel="noopener" style="color:#b5b5b5;display:inline-block;padding:5px 2px;margin:-5px 0">isbank.com.tr</a>.<br>Ziyaretler isimsiz sayılır (GoatCounter ve Firebase sayacı; çerez, kimlik ve IP tutulmaz); yalnızca kendi isteğinle yazdıkların (öneri formu, Alerts e-postası, bildirim kaydı ve fiyat alarmı) saklanır. Ana sayfadaki "Önerileriniz ve görüşleriniz" formuna yazdıkların yalnızca site sahibine ulaşır.</span>';
 
   var css = document.createElement("style");
   css.textContent =
@@ -23,9 +23,10 @@
   document.head.appendChild(css);
 
   function abs(u) { try { return new URL(u, location.href).href.split("?")[0]; } catch (e) { return u; } }
+  var HAFIZA = {};
   var eskiGosterildi = false;
   function eskiVeri() {
-    if (eskiGosterildi) return; eskiGosterildi = true;
+    if (eskiGosterildi || navigator.onLine === false) return; eskiGosterildi = true; // çevrimdışıyken üstteki şerit söylüyor
     var go = function () {
       var d = document.createElement("div"); d.className = "ortakEski";
       d.innerHTML = "📴 Güncel veri alınamadı; en son kaydedilen bilgiler gösteriliyor <button aria-label='Kapat'>✕</button>";
@@ -46,19 +47,29 @@
       var k = t.replace(/İ/g, "i").replace(/I/g, "ı").toLowerCase();
       return /hisse|borsa|temettü|hedef fiyat|teknik analiz|forum|isctr|hızlı ol|son dakika|kaçırma|şok |flaş|bomba|müjde|(^|\s)işte\s/.test(k);
     },
+    // Aynı dosyayı bir sayfada birkaç parça isterse 30 sn içinde tek kez indirilir (22 Kasım 2026: ana sayfa kampanya
+    // dosyasını 3, piyasa dosyasını 2 kez indiriyordu). Her isteyen metni kendisi çözer; biri veriyi değiştirse öteki etkilenmez.
     json: function (url, opt) {
-      var u = url + (url.indexOf("?") < 0 ? "?" : "&") + "t=" + Date.now();
-      return fetch(u, Object.assign({ cache: "no-store" }, opt || {})).then(function (r) {
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        if (r.headers.get("x-ortak-yedek")) eskiVeri();
-        return r.json();
-      }).catch(function (err) {
-        if (!window.caches) throw err;
-        return caches.match(abs(url), { ignoreSearch: true }).then(function (c) {
-          if (!c) throw err;
-          eskiVeri(); return c.json();
+      var k = abs(url), h = HAFIZA[url];
+      if (opt || !h || Date.now() - h.t > 30000) {
+        var u = url + (url.indexOf("?") < 0 ? "?" : "&") + "t=" + Date.now();
+        var p = fetch(u, Object.assign({ cache: "no-store" }, opt || {})).then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          if (r.headers.get("x-ortak-yedek")) eskiVeri();
+          else try { localStorage.setItem("sSonAg", String(Date.now())); } catch (e) {} // çevrimdışı şeridindeki "son güncel veri" saati
+          return r.text();
+        }).catch(function (err) {
+          if (!window.caches) throw err;
+          return caches.match(k, { ignoreSearch: true }).then(function (c) {
+            if (!c) throw err;
+            eskiVeri(); return c.text();
+          });
         });
-      });
+        if (opt) return p.then(JSON.parse);
+        h = HAFIZA[url] = { t: Date.now(), p: p };
+        p.catch(function () { if (HAFIZA[url] === h) delete HAFIZA[url]; });
+      }
+      return h.p.then(JSON.parse);
     },
     /** el: kutu ya da id; o: { ne: "Haberler", tekrar: fonksiyon (yoksa sayfa yenilenir), not: ek açıklama } */
     hata: function (el, o) {
@@ -236,7 +247,7 @@
   }
 
   // Sayfa internetten değil, cihazdaki son kopyadan geldiyse (ağ siteyi engelliyor ya da bağlantı yok) üstte söyle
-  if (window.__yedek) {
+  if (window.__yedek && navigator.onLine !== false) {
     var uy = function () {
       var d = document.createElement("div");
       d.style.cssText = "position:relative;z-index:60;margin:0 0 8px;padding:10px 14px;border-radius:0 0 14px 14px;background:#2a2410;border:1px solid #6b5520;border-top:0;color:#f3d79c;font:13.5px/1.45 system-ui,-apple-system,'Segoe UI',sans-serif;text-align:center";
@@ -245,6 +256,38 @@
     };
     if (document.body) uy(); else document.addEventListener("DOMContentLoaded", uy);
   }
+
+  // ---- Çevrimdışı şeridi (22 Kasım 2026) ----
+  // İnternet gidince üstte ince bir şerit: "📴 Çevrimdışısın · kayıtlı bilgiler, son güncel veri 07:12". Dokununca saklanır.
+  // Bağlantı gelince yeşile döner ve "Yenile" önerir; 5 sn sonra kaybolur. Saat yalnızca bu cihazda tutulur (sSonAg).
+  (function () {
+    var bar = null, z = null;
+    var st = document.createElement("style");
+    st.textContent = "#cvrS{position:fixed;left:50%;top:calc(8px + env(safe-area-inset-top));z-index:9998;transform:translate(-50%,-160%);max-width:calc(100% - 20px);display:flex;align-items:center;gap:8px;padding:6px 13px;white-space:nowrap;min-height:32px;box-sizing:border-box;border-radius:999px;background:#1d1a12;border:1px solid #6b5520;color:#f3d79c;font:600 12.5px/1.3 system-ui,-apple-system,'Segoe UI',sans-serif;box-shadow:0 6px 18px rgba(0,0,0,.45);cursor:pointer;transition:transform .3s cubic-bezier(.2,.7,.2,1),background-color .25s ease,border-color .25s ease,color .25s ease}" +
+      "#cvrS.ac{transform:translate(-50%,0)}#cvrS.on{background:#0f2a1c;border-color:#2c7a52;color:#bff0d2}" +
+      "#cvrS small{font-weight:500;opacity:.85}#cvrS button{border:0;border-radius:999px;min-height:26px;padding:0 11px;background:rgba(255,255,255,.14);color:inherit;font:700 12px system-ui,sans-serif;cursor:pointer}" +
+      "html[data-tema=\"acik\"] #cvrS{background:#fbf4e6;border-color:#d8b77a;color:#6b4510;box-shadow:0 6px 18px rgba(40,50,70,.16)}html[data-tema=\"acik\"] #cvrS.on{background:#e9f7ef;border-color:#7cc9a0;color:#145c39}html[data-tema=\"acik\"] #cvrS button{background:rgba(0,0,0,.07)}" +
+      "@media (prefers-reduced-motion: reduce){#cvrS{transition:none}}";
+    document.head.appendChild(st);
+    function saat() {
+      try { var t = +localStorage.getItem("sSonAg"); if (!t) return ""; var d = new Date(t), b = new Date();
+        return (d.toDateString() === b.toDateString() ? "" : d.toLocaleDateString("tr-TR", { day: "numeric", month: "short" }) + " ") + d.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; }
+    }
+    function gizle() { if (bar) bar.classList.remove("ac"); }
+    function goster(on) {
+      if (!document.body) return;
+      if (!bar) { bar = document.createElement("div"); bar.id = "cvrS"; bar.setAttribute("role", "status"); bar.setAttribute("aria-live", "polite"); document.body.appendChild(bar);
+        bar.addEventListener("click", function (e) { if (e.target.closest("button")) location.reload(); else gizle(); }); }
+      clearTimeout(z); bar.classList.toggle("on", on);
+      if (on) { bar.innerHTML = "✅ Bağlantı geri geldi <button type='button'>Yenile</button>"; z = setTimeout(gizle, 5000); }
+      else { var s = saat(); bar.innerHTML = "📴 Çevrimdışısın <small>· " + (s ? "son güncel veri " + s : "kayıtlı bilgiler gösteriliyor") + "</small>"; }
+      requestAnimationFrame(function () { requestAnimationFrame(function () { bar.classList.add("ac"); }); });
+    }
+    window.addEventListener("offline", function () { goster(false); });
+    window.addEventListener("online", function () { if (bar && bar.classList.contains("ac")) goster(true); });
+    var bas = function () { if (navigator.onLine === false) goster(false); };
+    if (document.body) bas(); else document.addEventListener("DOMContentLoaded", bas);
+  })();
 
   // ---- 3) Telefonda aç: bilgisayarda sayfanın karekodu ----
   var ME = (document.currentScript && document.currentScript.src) || "";
@@ -374,7 +417,7 @@
       "html[data-tema=\"acik\"] #sTab a{color:#3d4653}html[data-tema=\"acik\"] #sTab a.on{color:#8a5a12;background:#f6ecd9}" +
       "@media (prefers-reduced-motion:reduce){#sTab a,#sMenu a.m{transition:none}}@media print{#sMenu,#sTab{display:none!important}}";
     document.head.appendChild(st);
-    var yan = '<a class="lg" href="index.html" aria-label="Ana sayfa"><img src="img/logo.png" alt="Sadolayn"></a>', alt = "";
+    var yan = '<a class="lg" href="index.html" aria-label="Ana sayfa"><img src="img/logo.webp" alt="Sadolayn"></a>', alt = "";
     MENU.forEach(function (m) {
       if (m.length === 1) { yan += "<h6>" + m[0] + "</h6>"; return; }
       var on = m[0] === ben, a = ' href="' + m[0] + '.html"' + (on ? ' class="m on" aria-current="page"' : ' class="m"');

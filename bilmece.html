@@ -3,7 +3,7 @@
 <head>
 <meta name="theme-color" content="#000000">
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="kalkan.js"></script>
 <meta name="robots" content="noindex, nofollow">
@@ -24,8 +24,8 @@
 <meta property="og:locale" content="tr_TR">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://sadolayn.github.io/SadoDepo/img/og.jpg">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<!-- Inter sitenin kendisinden (22 Kasım 2026; önceden Google Fonts) -->
+<style>@font-face { font-family: "Inter"; font-style: normal; font-weight: 400 800; font-display: swap; src: url(lib/inter-latin-tr.woff2) format("woff2"); }</style>
 <style>
   /* Sayı Bilmecesi: 80 seviye (1–40 zor, 41–80 Gizli Kural) + İşlem Bulmacası (30). Bilmeceler bu sayfada. */
   :root { --bg: #000; --card: #0d0d0d; --edge: #262626; --key: #161616; --ink: #e8e8e8; --dim: #8d8d8d; --ok: #3fc283; --bad: #ef6a4c; --gold: #e0a24f; }
@@ -40,7 +40,7 @@
   .mod button { border-radius: 999px; } .mod button.on { background: var(--gold); color: #000; font-weight: 600; }
   .stage { flex: 1; min-height: 320px; background: var(--card); border: 1px solid var(--edge); border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 44px 10px 18px; position: relative; overflow: hidden; }
   /* Masada belli belirsiz Sadolayn imzası (diğer oyunlarda olduğu gibi) */
-  .stage::before { content: ""; position: absolute; left: 12%; right: 12%; bottom: 10px; height: 18%; background: url("img/logo.png") center / contain no-repeat; opacity: .04; filter: grayscale(1) brightness(3); pointer-events: none; }
+  .stage::before { content: ""; position: absolute; left: 12%; right: 12%; bottom: 10px; height: 18%; background: url("img/logo.webp") center / contain no-repeat; opacity: .04; filter: grayscale(1) brightness(3); pointer-events: none; }
   .sv { position: absolute; left: 16px; right: 16px; top: 14px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--dim); letter-spacing: .3px; }
   .sv .bar { flex: 1; height: 4px; border-radius: 4px; background: #222; overflow: hidden; }
   .sv .bar i { display: block; height: 100%; width: var(--pr, 0%); background: var(--gold); border-radius: 4px; }

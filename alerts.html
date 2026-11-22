@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://unpkg.com https://gc.zgo.at https://*.firebasedatabase.app; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: wss:; frame-src https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://docs.google.com https://script.google.com; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="kalkan.js"></script>
 <script src="tema.js"></script>
@@ -571,6 +571,32 @@ async function pushOff() {
   } catch (e) {}
   pushSt = null; pSave(); renderPush(); pMsg("Bildirimler kapatıldı. İstediğin zaman yeniden açabilirsin.");
 }
+// 🔔 Fiyat alarmı için bildirim izni (22 Kasım 2026): Döviz & Emtia'daki "Bildirime izin ver" bağlantısı buraya gelir.
+// Yalnızca bu cihazın bildirim anahtarı alınır ve cihazda saklanır ("kurAlarmToken"); kelime aboneliği açılmaz, e-posta istenmez.
+if (location.hash === "#fiyat-alarmi") addEventListener("load", () => {
+  const d = document.createElement("div");
+  d.style.cssText = "position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center;padding:14px";
+  d.innerHTML = `<div role="dialog" aria-modal="true" aria-labelledby="faB" style="width:100%;max-width:440px;background:#0d0d0d;border:1px solid #5a4320;border-radius:20px;padding:18px 16px 14px;color:#ddd;font:14px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif">
+    <div style="font-size:30px;line-height:1">🔔</div><b id="faB" style="display:block;margin:6px 0 4px;font:italic 700 19px Georgia,'Times New Roman',serif;color:#f3d38a">Fiyat alarmı bildirimi</b>
+    <div style="color:#bbb;font-size:13.5px">Kurduğun seviye gelince telefonuna bildirim gelsin. Bunun için tarayıcı bir kez izin soracak. Ad, e-posta ya da konum istenmez.</div>
+    <div id="faM" style="font-size:13px;color:#ffab95;margin-top:8px"></div>
+    <div style="display:flex;gap:8px;margin-top:12px"><button type="button" id="faE" style="flex:1;min-height:46px;border:0;border-radius:13px;background:linear-gradient(160deg,#f3d38a,#e0a24f);color:#1a1205;font:700 14.5px system-ui,sans-serif">🔔 İzin ver</button>
+    <button type="button" id="faV" style="min-height:46px;padding:0 16px;border-radius:13px;border:1px solid #333;background:transparent;color:#bbb;font:600 14px system-ui,sans-serif">Vazgeç</button></div></div>`;
+  document.body.appendChild(d);
+  const geri = () => location.replace("piyasa.html#alarm"), m = (t) => { $("faM").textContent = t; };
+  $("faV").onclick = geri;
+  $("faE").onclick = async () => {
+    if (P.ios && !P.standalone) return m("iPhone'da bildirim için önce siteyi ana ekrana ekle (Paylaş → Ana Ekrana Ekle), sonra oradan aç.");
+    if (!P.ok || !P.ready()) return m("Bu tarayıcı bildirim desteklemiyor. Android'de Chrome ile dene.");
+    $("faE").disabled = true; $("faE").textContent = "Hazırlanıyor…";
+    try {
+      if (Notification.permission !== "granted" && (await Notification.requestPermission()) !== "granted") { m("İzin verilmedi. Alarm yine de siteyi açtığında görünür."); $("faE").disabled = false; $("faE").textContent = "🔔 İzin ver"; return; }
+      const t = await fcmToken(); if (!t) throw new Error("token");
+      try { localStorage.setItem("kurAlarmToken", t); } catch (e) {}
+      $("faE").textContent = "✓ Tamam"; setTimeout(geri, 500);
+    } catch (e) { m("Bildirim açılamadı; sayfayı yenileyip tekrar dene."); $("faE").disabled = false; $("faE").textContent = "🔔 İzin ver"; }
+  };
+});
 // Bildirime dokununca: bugünün haberlerini göster
 if (location.hash === "#bugun") {
   if (pushSt && pushSt.kws && pushSt.kws.length) kws = pushSt.kws.slice();
