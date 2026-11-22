@@ -8,7 +8,7 @@
   var KEY = "anaDuzen", H = document.documentElement, nav = document.querySelector("nav.mn"); if (!nav) return;
   var BOL = [ // anahtar, simge, ad, açıklama, taşınabilir mi
     ["dgs", "✨", "Sen yokken", "son bakışından beri değişenler", 0],
-    ["pnl", "📊", "Tek bakışta", "çeyrek, PPK, kampanya, piyasa kutucukları", 0],
+    ["pnl", "📊", "Tek bakışta", "çeyrek, PPK, kampanya, piyasa, tatile kalan", 0],
     ["fav", "⭐", "Favorilerim", "sabitlediğin araçlar", 0],
     ["isb", "🏦", "İş Bankası Gündemi", "kampanyalar ve haberler kartı", 1],
     ["sabah", "☀️", "Her sabah", "Resmî Gazete, haberler, Bölge Nabzı, Alerts", 1],

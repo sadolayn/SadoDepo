@@ -1346,15 +1346,8 @@ try {
     $("ttS").innerHTML = L.filter(function (o) { return o !== t && o.ig > 0; }).slice(0, 2).map(function (o) { return "<span>" + o.ad + " <b>" + o.kalan + " gün</b> · " + o.sure + " gün tatil</span>"; }).join("");
   }
 
-  // Tatile kalan: telefonda Cebindeki araçlar'ın altında; PC'de Mola sütununa geçer, iki sütun dengede kalır (16 Kasım 2026)
-  (function () {
-    var tt = $("pkTtl"); if (!tt || !window.matchMedia) return;
-    var evi = tt.parentNode, yeri = tt.nextSibling, mola = [].slice.call(document.querySelectorAll(".mnB h2")).filter(function (h) { return /^Mola/.test(h.textContent); })[0];
-    if (!mola) return; mola = mola.parentNode;
-    var mq = matchMedia("(min-width: 1000px)");
-    var yerlestir = function () { if (mq.matches) mola.appendChild(tt); else evi.insertBefore(tt, yeri); };
-    yerlestir(); if (mq.addEventListener) mq.addEventListener("change", yerlestir); else if (mq.addListener) mq.addListener(yerlestir);
-  })();
+  // Tatile kalan (22 Kasım 2026): artık "Tek bakışta" kutucuklarının altında ince bir şerit (index.html'de #pnl içinde);
+  // önceki sürümde telefonda Cebindeki araçlar'ın altında, PC'de Mola sütunundaydı ve sayfanın ortasında büyük yer kaplıyordu.
 
   // "Ana ekranına ekle" hatırlatması; dokununca alttaki mevcut kurulum düğmesini çalıştırır (aynı yönergeler)
   (function () {

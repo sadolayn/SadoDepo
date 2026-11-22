@@ -167,6 +167,19 @@
 .pk.yakin { border-color: rgba(232,181,43,.6); box-shadow: inset 0 0 0 1px rgba(232,181,43,.2); }
 .pk.genis { grid-column: 1 / -1; }
 #pkTtl { margin-top: 10px; animation: none; }
+/* Tatile kalan şeridi (22 Kasım 2026): Tek bakışta'nın altında tek satır; hafta şeridi gizli, PC'de sonraki iki tatil sağda */
+#pnl > #pkTtl.serit { grid-column: 1 / -1; margin: 0; padding: 11px 14px; min-height: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "n ad ok" "n a ok"; column-gap: 12px; row-gap: 1px; align-items: center; }
+#pkTtl.serit h3 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; margin: 0; } /* ekran okuyucu için kalır */
+#pkTtl.serit .n { grid-area: n; margin: 0; font-size: 34px; line-height: 1; }
+#pkTtl.serit .ad { grid-area: ad; margin: 0; font-size: 17px; line-height: 1.2; }
+#pkTtl.serit .ad::before { content: "Tatile kalan · "; font: 700 11px system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); vertical-align: 2px; }
+#pkTtl.serit .a { grid-area: a; margin: 0; font-size: 12px; }
+#pkTtl.serit .hft, #pkTtl.serit .sonra { display: none; }
+#pkTtl.serit::after { content: "›"; grid-area: ok; color: var(--accent); font-size: 22px; line-height: 1; }
+@media (min-width: 1000px) {
+  #pnl > #pkTtl.serit { order: 1; grid-template-columns: auto minmax(0, 1fr) auto auto; grid-template-areas: "n ad so ok" "n a so ok"; }
+  #pkTtl.serit .sonra { display: flex; grid-area: so; flex-direction: column; align-items: flex-end; gap: 3px; margin: 0; }
+}
 .pk.ttl .ad { font: italic 400 18px Georgia, "Times New Roman", serif; color: #f3d38a; margin-top: 4px; }
 .hft { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
 .hft div { border-radius: 10px; padding: 5px 0 4px; text-align: center; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.07); font-size: 11px; color: var(--muted); }
