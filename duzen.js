@@ -44,6 +44,31 @@
     H.classList.toggle("dzKompakt", !!D.kompakt);
   }
   sirala(); siniflar(false);
+
+  // ---------- PC sütun dengesi (22 Kasım 2026) ----------
+  // 1000 px ve üstünde menü ızgarası 2 (1680+ px'te 3) sütun. Her bölümün boyu ölçülür, 2 px'lik satırlardan o kadar yer ayrılır;
+  // böylece bir bölüm, kısa kalan sütunun altındaki boşluğa çıkar. Telefonda ve arama sırasında (tek sütun) hiçbir şey yapılmaz.
+  var dz = 0;
+  function dengele() {
+    dz = 0;
+    var kids = [].slice.call(nav.children), grid = innerWidth >= 1000 && getComputedStyle(nav).display === "grid";
+    if (!grid) { nav.classList.remove("dengeli"); kids.forEach(function (e) { e.style.gridRowEnd = ""; }); return; }
+    kids.forEach(function (e) {
+      var cs = getComputedStyle(e); if (cs.display === "none" || cs.position === "absolute" || cs.position === "fixed") { e.style.gridRowEnd = ""; return; }
+      var h = e.getBoundingClientRect().height + parseFloat(cs.marginTop || 0) + parseFloat(cs.marginBottom || 0);
+      e.style.gridRowEnd = "span " + Math.max(1, Math.ceil(h / 2));
+    });
+    nav.classList.add("dengeli");
+  }
+  function sonra() { if (!dz) dz = requestAnimationFrame(dengele); }
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(sonra);
+    [].forEach.call(nav.children, function (e) { ro.observe(e); });
+    new MutationObserver(function (L) { L.forEach(function (m) { [].forEach.call(m.addedNodes, function (n) { if (n.nodeType === 1) ro.observe(n); }); }); sonra(); }).observe(nav, { childList: true });
+    addEventListener("resize", sonra);
+    if (q) q.addEventListener("input", sonra);
+    sonra();
+  }
   // Arama sırasında gizli bölümler de taransın
   var q = document.getElementById("araQ");
   if (q) q.addEventListener("input", function () { siniflar(!!q.value.trim()); });
@@ -98,7 +123,7 @@
       '<div class="dzGr">Üst ve alt kısım</div><div class="dzL">' + ust.map(function (k) { return satir(k, 0, 1); }).join("") + "</div>" +
       '<div class="dzAlt"><button type="button" class="dzSif">Varsayılana dön</button><button type="button" class="dzTam">Tamam</button></div>';
   }
-  function uygula() { yaz(D); sirala(); siniflar(false); }
+  function uygula() { yaz(D); sirala(); siniflar(false); if (typeof sonra === "function") sonra(); }
   function kapa() {
     if (!sh || sh.hidden) return;
     sh.classList.remove("ac"); document.removeEventListener("keydown", tus);

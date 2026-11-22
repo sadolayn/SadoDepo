@@ -275,6 +275,15 @@
       grid-template-areas: "ust ust ust ust ust" ". saat logo tarih ." "mid mid mid mid mid" "kayan kayan kayan kayan kayan"; }
     .top.kompakt > h1.logo img { width: min(230px, 100%); }
     .top.kompakt > .yeniS { max-width: none; } /* üst şerit de menüyle aynı genişlikte (11 Kasım 2026) */
+    /* 22 Kasım 2026: sütun dengesi. duzen.js her bölümün boyunu ölçüp 2 px'lik satırlarla yer ayırır; bölüm, boş kalan
+       kısa sütunun altına çıkar (okuma sırası korunur). Betik çalışmazsa .dengeli sınıfı gelmez, eski düzen kalır. */
+    .mn.dengeli { grid-auto-rows: 2px; row-gap: 0; }
+  }
+  /* 22 Kasım 2026: geniş ekran (1680 px ve üstü) üç sütun; üst bölüm ve logo da aynı ölçekte büyür */
+  @media (min-width: 1680px) {
+    .mn { max-width: 1140px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .top.kompakt { max-width: 1140px; }
+    .top.kompakt > h1.logo img { width: min(270px, 100%); }
   }
   .mn h2 { margin: 26px 2px 10px; font: italic 600 15px Georgia, "Times New Roman", serif; color: var(--accent); letter-spacing: .3px; display: flex; align-items: baseline; gap: 10px; }
   .mn h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #5a4320, transparent); }
