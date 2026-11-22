@@ -611,7 +611,7 @@ function renderGelecek() {
     <div class="gLej"><span style="color:var(--accent)">━</span> Tutar${e != null ? ` · <span style="color:#9a9a9a">╍</span> Bugünkü alım gücüyle` : ""} · ince kesikli çizgi bugünkü ${tl(amt)}</div>
     <div class="gKil">${kil.map((y) => `<div${y === n ? ' class="sec"' : ""}><small>${y} yıl sonra</small><b>${kisa(deg(y))}</b>${e != null ? `<i>alım gücüyle ≈ ${kisa(alim(y))}</i>` : ""}</div>`).join("")}</div>
   </div>
-  <div class="note" style="margin-top:10px">Hesap: tutar × (1 + %${nf(r, 1)})<sup>yıl</sup>${e != null ? `; alım gücü her yıl %${nf(e, 1)} enflasyonla bugünün parasına çevrilir` : ""}. Örnek oranlar yalnızca geçmişi gösterir; geçmiş getiriler gelecekte de olacağı anlamına gelmez. Vergi, komisyon ve alış-satış farkı hesaba katılmaz.</div>`;
+  <div class="note" style="margin-top:10px">Hesap: tutar × (1 + %${nf(r, 1)})<sup style="font-size:11px">yıl</sup>${e != null ? `; alım gücü her yıl %${nf(e, 1)} enflasyonla bugünün parasına çevrilir` : ""}. Örnek oranlar yalnızca geçmişi gösterir; geçmiş getiriler gelecekte de olacağı anlamına gelmez. Vergi, komisyon ve alış-satış farkı hesaba katılmaz.</div>`;
   const bugun = D.dates[N - 1], ys = [...Array(n + 1)].map((_, y) => y);
   drawLine($("gChart"), ys.map((y) => shiftYears(bugun, y)), ys.map(deg), (v) => tl(v), { base: amt, baseLabel: "Bugün", label: "Senaryo grafiği", ...(e != null ? { ref: ys.map(alim), refLabel: "Alım gücü" } : {}) });
 }
