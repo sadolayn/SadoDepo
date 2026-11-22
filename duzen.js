@@ -11,16 +11,19 @@
     ["pnl", "📊", "Tek bakışta", "çeyrek, PPK, kampanya, piyasa, tatile kalan", 0],
     ["fav", "⭐", "Favorilerim", "sabitlediğin araçlar", 0],
     ["isb", "🏦", "İş Bankası Gündemi", "kampanyalar ve haberler kartı", 1],
-    ["sabah", "☀️", "Her sabah", "Resmî Gazete, haberler, Bölge Nabzı, Alerts", 1],
     ["hesap", "🧮", "Hesap ve ajanda", "Bankacılık, Yol Gösteren, Günce, Takvim", 1],
+    ["sabah", "☀️", "Her sabah", "Resmî Gazete, haberler, Bölge Nabzı, Alerts", 1],
     ["arac", "🧰", "Cebindeki araçlar", "Döviz, hesaplamalar, yakınımda, hava", 1],
-    ["mola", "🎮", "Mola", "oyunlar", 1],
     ["brif", "☕", "Sabah brifingi", "açılış kartı", 1],
+    ["mola", "🎮", "Mola", "oyunlar", 1],
     ["payl", "🎁", "Paylaş kutusu", "arkadaşına öner, bilgisayarına ekle", 0],
   ];
   var BK = {}; BOL.forEach(function (b) { BK[b[0]] = b; });
   var VARS = BOL.filter(function (b) { return b[4]; }).map(function (b) { return b[0]; });
-  function oku() { var d = null; try { d = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {} d = d || {}; d.gizli = (d.gizli || []).filter(function (k) { return BK[k]; }); d.sira = (d.sira || []).filter(function (k) { return BK[k] && BK[k][4]; }); VARS.forEach(function (k) { if (d.sira.indexOf(k) < 0) d.sira.push(k); }); d.kompakt = !!d.kompakt; return d; }
+  // 23 Kasım 2026: varsayılan sıra değişti (Hesap ve ajanda üste, Mola en alta). Sırasını hiç değiştirmemiş olanlar yeni sırayı alır.
+  var ESKI_SIRA = "isb,sabah,hesap,arac,mola,brif";
+  function oku() { var d = null; try { d = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {} d = d || {};
+    if (d.sira && d.sira.join(",") === ESKI_SIRA) d.sira = null; d.gizli = (d.gizli || []).filter(function (k) { return BK[k]; }); d.sira = (d.sira || []).filter(function (k) { return BK[k] && BK[k][4]; }); VARS.forEach(function (k) { if (d.sira.indexOf(k) < 0) d.sira.push(k); }); d.kompakt = !!d.kompakt; return d; }
   function yaz(d) { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {} }
   var D = oku();
 

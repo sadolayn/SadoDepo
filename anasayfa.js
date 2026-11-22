@@ -1427,3 +1427,21 @@ try {
   }).catch(function () {});
 })();
 } catch (e) { console.error("anasayfa: C düzeni kutucukları (15 Kasım 2026). Veriler sitenin kendi dosyala", e); }
+
+// ---- Gizli: saate dokunan "Dünya saati"ni görür (23 Kasım 2026) ----
+// Menüde ya da sayfada adı geçmez; dunya.js yalnızca ilk dokunuşta yüklenir. Dokunulan saat bir an altın parlar.
+try {
+  (function () {
+    var yuk = null;
+    function ac(e) {
+      var c = e.currentTarget; c.classList.remove("dsDok"); void c.offsetWidth; c.classList.add("dsDok");
+      if (window.DunyaSaati) return DunyaSaati.ac();
+      if (yuk) return;
+      yuk = document.createElement("script"); yuk.src = "dunya.js";
+      yuk.onload = function () { if (window.DunyaSaati) DunyaSaati.ac(); };
+      yuk.onerror = function () { yuk.remove(); yuk = null; };
+      document.head.appendChild(yuk);
+    }
+    document.querySelectorAll(".clock").forEach(function (c) { c.addEventListener("click", ac); });
+  })();
+} catch (e) { console.error("anasayfa: dünya saati", e); }
