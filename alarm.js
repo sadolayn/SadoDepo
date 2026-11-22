@@ -93,6 +93,7 @@
     "html[data-tema=\"acik\"] .alrBil.on{border-color:#a9dcbf;color:#1a7a4c}html[data-tema=\"acik\"] .alrYon.u{color:#1a7a4c}html[data-tema=\"acik\"] .alrYon.a{color:#b8442a}";
   document.head.appendChild(css);
 
+  function sonGun() { var g = P && P.dates && P.dates[P.dates.length - 1]; return g ? new Date(g + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" }) : ""; }
   function uzak(a) { var s = son(P, a.k); if (!s) return ""; var f = (a.e - s) / s * 100; return Math.abs(f) < 0.05 ? "çok yakın" : "%" + nf(Math.abs(f), 1) + " uzakta"; }
   function satir(a, i) {
     var v = VK[a.k], s = son(P, a.k);
@@ -132,7 +133,7 @@
   function formBagla() {
     var inp = $("alrD"), v = VK[sec.k], s = son(P, sec.k);
     if (!inp.value) inp.value = nf(oneri(sec.y === "ust" ? 2 : -2), ond(oneri(2), v[4]));
-    var sim = function () { $("alrSim").innerHTML = "Şu an <b>" + nf(s, v[4]) + " " + v[3] + "</b> · son veri " + esc((P.updated || "").replace(/^(\d{4})-(\d\d)-(\d\d)/, "$3.$2.$1")); };
+    var sim = function () { $("alrSim").innerHTML = "Şu an <b>" + nf(s, v[4]) + " " + v[3] + "</b> · son veri " + esc(sonGun()); };
     sim();
     $("alrF").onclick = function (e) {
       var b = e.target.closest("button"); if (!b) return;
