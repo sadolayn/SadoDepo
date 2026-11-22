@@ -2539,10 +2539,10 @@ window.goatcounter = { path: function (p) { return p.replace(/\/index\.html(?=$|
   var hs = function (d) { return d.getDay() === 0 || d.getDay() === 6; };
   var izin = function (d) { return hs(d) || !!TAM[ymd(d)]; };
 
-  // Çeyrek: kalan iş günü (bugün dahil)
+  // Çeyrek: kalan iş günü (bugün dahil). Arife yarım gündür, 0,5 sayılır (22 Kasım 2026; Açılış kartındaki çeyrek sayısıyla aynı)
   var ay = bugun.getMonth(), cb = new Date(bugun.getFullYear(), ay - ay % 3, 1), cs = new Date(bugun.getFullYear(), ay - ay % 3 + 3, 0), top = 0, kal = 0;
-  for (var x = new Date(cb); x <= cs; x = ekle(x, 1)) if (!izin(x)) { top++; if (x >= bugun) kal++; }
-  $("cyN").innerHTML = kal + "<small>gün</small>";
+  for (var x = new Date(cb); x <= cs; x = ekle(x, 1)) if (!izin(x)) { var dg = ARIFE[ymd(x)] ? 0.5 : 1; top += dg; if (x >= bugun) kal += dg; }
+  $("cyN").innerHTML = tr(kal, kal % 1 ? 1 : 0) + "<small>gün</small>";
   $("cyBas").textContent = cb.getDate() + " " + AY[cb.getMonth()]; $("cyBit").textContent = cs.getDate() + " " + AY[cs.getMonth()];
   requestAnimationFrame(function () { setTimeout(function () { $("cyB").style.width = Math.round((top - kal) / top * 100) + "%"; }, 50); });
 

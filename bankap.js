@@ -7,6 +7,17 @@ function num(id) {
   Sayi.isaretle(el);
   return r.n;
 }
+// Kutuya özel sınırlar (22 Kasım 2026). sayi.js birime göre varsayılanı zaten uygular: eksi olmaz, TL en fazla 100 milyar,
+// vade (ay) 1–360 tam sayı, gün tam sayı. Burada oranların üst sınırı ve "olağan dışı" uyarısı var; uyarıda hesap sürer.
+{
+  const AYLIK = { max: 50, ust: 10, ustMetin: "Yıllık oran mı yazdın?" }, YILLIK = { max: 500, ust: 150, ustMetin: "Çok yüksek görünüyor" }, YUZDE = { max: 100 };
+  const S = { k_gun: { max: 90 } };
+  ["e_faiz", "et_faiz", "t_faiz", "ys_r", "ta_faiz", "k2_faiz", "tc_faiz", "k_akdi", "k_gec"].forEach((id) => (S[id] = AYLIK));
+  ["b_faiz", "m_faiz", "m2_faiz", "tr_faiz", "kh_faiz", "c_faiz"].forEach((id) => (S[id] = YILLIK));
+  ["b_bsmv", "b_kkdf", "m_stopaj", "v_p1", "v_p2", "t_bsmv", "t_kkdf", "k2_tahsis", "tr_kkdf", "tr_bsmv", "kh_stopaj", "tc_bsmv", "tc_kkdf",
+    "c_oran", "c_bsmv", "c_kkdf", "c_kom", "k_asg", "k_vergi"].forEach((id) => (S[id] = YUZDE));
+  Sayi.sinir(S);
+}
 function rows(id, list) {
   $(id).innerHTML = list.map(([k, v, cls]) => `<div class="${cls || ""}"><span>${k}</span><span>${v}</span></div>`).join("");
 }
@@ -381,7 +392,8 @@ function calcTK() {
   $("t_dnote").innerHTML = okIlk || !ilk
     ? `İlk taksit tarihi kullandırımdan en az 5, en fazla 45 gün sonra olmalı (bankaya göre değişir).${ilk ? ` Şu an: <b>${gIlk} gün</b>.` : ""}`
     : `<span style="color:#ef8a5d">⚠️ İlk taksit tarihi kullandırım tarihinden en az 5, en fazla 45 gün sonra olmalı (şu an ${gIlk} gün). Uygun tarih: ${shortD(addDays(bas, 5))} – ${shortD(addDays(bas, 45))}.</span>`;
-  if (!(P > 0) || !n || !ilk || !okIlk) { $("ts_warn").hidden = true; ["ts_taksit", "ts_toplam", "ts_masraf", "ts_sig", "ts_net"].forEach((x) => ($(x).textContent = "–")); $("ts_ilk").textContent = ""; tkSummary = ""; $("t_out").textContent = "–"; rows("t_rows", []); rows("t_prows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
+  // eksi/aşırı oran ya da masraf (sayi.js) → NaN: plan çizilmez
+  if (!(P > 0) || !n || !ilk || !okIlk || ![r, bsmv, kkdf, oran, diger].every(Number.isFinite)) { $("ts_warn").hidden = true; ["ts_taksit", "ts_toplam", "ts_masraf", "ts_sig", "ts_net"].forEach((x) => ($(x).textContent = "–")); $("ts_ilk").textContent = ""; tkSummary = ""; $("t_out").textContent = "–"; rows("t_rows", []); rows("t_prows", []); $("t_plan").innerHTML = ""; calcAO(); return; }
   const dues = []; for (let k = 0; k < n; k++) dues.push(addMonthsC(ilk, k));
   // İlk dönem: ilk taksit kullandırımdan tam 1 ay sonraysa 1 ay faiz; değilse gün/30 (kırık dönem)
   const g1 = dayDiff(bas, ilk), tamAy = ymd(addMonthsC(bas, 1)) === ymd(ilk);
@@ -519,6 +531,8 @@ function calcAO(c) {
     const yn = Math.round(num("ys_n")), yr = num("ys_r") / 100;
     let pes = num("ys_p");
     if (!(yn > 0)) return clearY("Yeni vadeyi gir.");
+    if (!isFinite(pes)) return clearY("Peşin tutarı kontrol et."); // eksi ya da bozuk giriş (sayi.js) → NaN
+    if (!isFinite(yr)) return clearY("Yeni faizi kontrol et.");
     const eksik = pes < acc;
     if (eksik) pes = acc;
     const BC = R2(B - (pes - acc));
@@ -565,7 +579,8 @@ function calcKK() {
     $("k_akdi").value = String(t[0]).replace(".", ",");
     $("k_gec").value = String(t[1]).replace(".", ",");
   }
-  const O = Math.min(num("k_odenen"), B), asg = B * num("k_asg") / 100;
+  const O0 = num("k_odenen"), O = Math.min(O0, B), asg = B * num("k_asg") / 100;
+  Sayi.uyar($("k_odenen"), O0 > B && B > 0 ? "Borçtan fazla · borç kadar sayıldı" : ""); // eksi ödeme sayi.js'de zaten reddedilir
   const ra = num("k_akdi") / 100, rg = num("k_gec") / 100, g = num("k_gun"), v = num("k_vergi") / 100;
   const kalan = B - O;
   let akdiMatrah, gecMatrah;
@@ -1077,7 +1092,7 @@ function calcTic() {
     : ok ? `İlk taksite <b>${gun} gün</b>. ` + (kay ? `${shortD(ilk)} ${ilk.toLocaleDateString("tr-TR", { weekday: "long" })} olduğu için ilk taksit <b>${shortD(ilkK)}</b> tarihine kayar. ` : "") + `Ödeme günü: her ayın <b>${ilk.getDate()}.</b> günü; hafta sonu ya da bayrama denk gelirse ilk iş günü.`  +
     (!kay && isHoliday(addDays(ilk, -1)) && ilk.getDate() > 1 ? `<br><span style="color:#e0a24f">💡 Sözleşmedeki ödeme günü ${shortD(addDays(ilk, -1))} ise (tatil ya da hafta sonu olduğu için planda ${shortD(ilk)} görünür) burada da ${shortD(addDays(ilk, -1))} gir; yoksa sonraki taksit günleri kayar.</span>` : "") : '<span style="color:#ef8a5d">⚠️ Ödeme başlangıç tarihi kredi veriliş tarihinden sonra olmalı.</span>';
   const clear = () => { ["tcs_taksit", "tcs_faiz", "tcs_vergi", "tcs_toplam"].forEach((x) => ($(x).textContent = "–")); $("tcs_ilk").textContent = ""; $("tc_out").textContent = "–"; rows("tc_rows", []); $("tc_plan").innerHTML = ""; tcLast = null; tcSummary = ""; };
-  if (!P || !n || n > 600 || !ok) return clear();
+  if (!P || !n || n > 600 || !ok || ![r, bsmv, kkdf].every(Number.isFinite)) return clear(); // eksi/aşırı oran (sayi.js) → NaN
   const { T, plan, dues, g } = tcCore(P, r, n, bsmv, kkdf, bas, ilk);
   const sum = (k) => R2(plan.reduce((s, x) => s + x[k], 0));
   const tF = sum("f"), tV = sum("v"), tFo = sum("fo"), top = sum("t");
@@ -1234,7 +1249,14 @@ function calcCek() {
   else if (dayInfo(isl).half) warns.push(`🟠 Kullandırım tarihi ${shortD(isl)}: ${islWhy}.`);
   const res = [];
   CEKLER.forEach((c, i) => {
-    const T = parseNum(c.t), v = pDate(c.v);
+    // Tutar kutudan sınır denetimiyle okunur (eksi ya da 100 milyar TL üstü çek hesaba girmez); kutu henüz çizilmediyse metinden
+    const el = document.querySelector(`#c_list input[data-i="${i}"][data-k="t"]`), r = el ? Sayi.oku(el) : Sayi.coz(c.t);
+    const T = el ? r.n : r.n < 0 ? NaN : r.n, v = pDate(c.v);
+    if (!r.bos && !(T > 0)) {
+      const neden = r.neden || (r.ok && r.n < 0 ? "Eksi olamaz" : "");
+      warns.push(`🔴 ${i + 1}. çek: tutarı kontrol et${neden ? ` (${neden.charAt(0).toLocaleLowerCase("tr-TR") + neden.slice(1)})` : ""}; bu çek hesaba katılmadı.`);
+      return;
+    }
     if (!T || !v) return;
     const vIs = nextBizC(v);
     const val = vg === 0 ? vIs : addBiz(vIs, vg);

@@ -47,6 +47,9 @@ function tik(big) {
 }
 // Türkçe sayı okuma/yazma
 function num(v) { return v && v.tagName ? Sayi.oku(v).n : Sayi.coz(v).n; } // biçim doğrulamalı okuma (sayi.js): "12abc" gibi girişler NaN → sonuç "–"
+// Kutuya özel sınırlar (22 Kasım 2026). Birime göre varsayılan sayi.js'de: eksi olmaz, TL en fazla 100 milyar, gün tam sayı.
+// ± gün kutusu (aN) ve Yüzde'deki A/B sayıları serbest. ÖTV %220'ye kadar çıkabildiği için üst sınır ‰ değil %1000.
+Sayi.sinir({ fR: { max: 500, ust: 150, ustMetin: "Çok yüksek görünüyor" }, fBsmv: { max: 100 }, fKkdf: { max: 100 }, fTax: { max: 100 }, vO: { max: 1000 }, mBoy: { max: 300 }, mEye: { max: 300 } });
 const tl = (n, d = 2) => (isFinite(n) ? n.toLocaleString("tr-TR", { minimumFractionDigits: d, maximumFractionDigits: d }) : "–");
 const nf = (n, d = 2) => (isFinite(n) ? n.toLocaleString("tr-TR", { maximumFractionDigits: d }) : "–");
 const rows = (id, list) => ($(id).innerHTML = list.map(([k, v]) => `<div><span>${k}</span><b>${v}</b></div>`).join(""));
