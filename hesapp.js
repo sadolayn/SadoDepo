@@ -60,7 +60,7 @@ const gcd = (a, b) => { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) [a, 
 const Q = (n, d = 1n) => { if (d < 0n) { n = -n; d = -d; } const g = gcd(n, d); return { n: n / g, d: d / g }; };
 const qAdd = (a, b) => Q(a.n * b.d + b.n * a.d, a.d * b.d), qSub = (a, b) => Q(a.n * b.d - b.n * a.d, a.d * b.d);
 const qMul = (a, b) => Q(a.n * b.n, a.d * b.d), qDiv = (a, b) => (b.n === 0n ? null : Q(a.n * b.d, a.d * b.n));
-const esc = (t) => String(t == null ? "" : t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]); // PPK karar linki için
+const esc = Ortak.esc; // ortak.js (PPK karar linki için)
 function qParse(s) { s = s.replace(",", "."); const neg = s.startsWith("-"); if (neg) s = s.slice(1); const [i, f = ""] = s.split("."); const n = BigInt((i || "0") + f) * (neg ? -1n : 1n); return Q(n, 10n ** BigInt(f.length)); }
 function qFmt(q, maxDigits = 12) {
   const neg = q.n < 0n; let n = neg ? -q.n : q.n; const d = q.d; let ip = n / d, rem = n % d;

@@ -109,7 +109,8 @@
 })();
 </script>
 <script type="module">
-const FB_DB = "https://sadolaynsadosan-default-rtdb.europe-west1.firebasedatabase.app", V = "10.12.2";
+const FB_DB = "https://sadolaynsadosan-default-rtdb.europe-west1.firebasedatabase.app", FBV = ["13.4.0", "10.12.2"]; // 22 Kasım 2026: 13.4.0, yüklenemezse eski
+async function fbYukle(...m) { let son; for (const v of FBV) { try { return await Promise.all(m.map((x) => import(`https://www.gstatic.com/firebasejs/${v}/firebase-${x}.js`))); } catch (e) { son = e; } } throw son; }
 const $ = (id) => document.getElementById(id);
 const AD = { index: "🏠 Ana sayfa", isbank: "🏛️ İş Bankası Gündemi", banka: "🏦 Bankacılık", hesap: "🧮 Hesaplamalar", gunce: "📒 Günce", gazete: "📜 Resmî Gazete", haberler: "📰 Güncel Haberler", oyunlar: "🎲 Oyunlar", batak: "♠️ Batak", king: "👑 King", tavla: "🎯 Tavla", solitaire: "🃏 Solitaire", pilot: "✈️ UçUç", tahmin: "🔢 Asal Tahmin", bilmece: "🧩 Sayı Bilmecesi", balayi: "💞 Balayı", hava: "🌤️ Hava", takvim: "📅 Takvim", yakin: "📍 En Yakınımda", piyasa: "💱 Döviz & Emtia", alerts: "🔔 Sadolayn Alerts" };
 // "Beni sayma" iki sayaca da uygulanır: canlı/tekil sayaç (canli_ben) ve GoatCounter sayfa raporu (skipgc = "t" görünce saymaz)
@@ -137,8 +138,7 @@ function tumu(G) {
   requestAnimationFrame(() => { $("tumG").scrollLeft = $("tumG").scrollWidth; });
 }
 try {
-  const { initializeApp } = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`);
-  const { getDatabase, ref, onValue } = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-database.js`);
+  const [{ initializeApp }, { getDatabase, ref, onValue }] = await fbYukle("app", "database");
   const db = getDatabase(initializeApp({ databaseURL: FB_DB }));
   let son = null;
   onValue(ref(db, "online"), (snap) => {

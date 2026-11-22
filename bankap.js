@@ -1228,7 +1228,7 @@ const dayWhy = (d) => { const i = dayInfo(d); return i.hol ? i.name : i.we ? (d.
 const parseNum = (v) => Sayi.coz(v).n; // çek tutarları: aynı biçim doğrulaması (geçersiz → NaN, çek hesaba girmez)
 let CEKLER = [{ t: "1.000.000", v: "2026-11-27" }];
 try { const sv = JSON.parse(localStorage.getItem("cekler") || "null"); if (Array.isArray(sv) && sv.length) CEKLER = sv; } catch (e) {}
-const kacC = (t) => String(t == null ? "" : t).replace(/[&<>"']/g, (c) => "&#" + c.charCodeAt(0) + ";");
+const kacC = Ortak.esc; // ortak.js
 function renderCekList() {
   $("c_list").innerHTML = CEKLER.map((c, i) => `<div class="ckrow">
       <div><label style="margin-top:0">${i + 1}. çek tutarı</label><div class="field"><input data-i="${i}" data-k="t" type="text" inputmode="decimal" value="${kacC(c.t)}"><span class="unit">TL</span></div></div>
@@ -1466,7 +1466,7 @@ renderCekList();
   const trh = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
   const bugun = ymd(new Date());
   const gunFark = (a, b) => Math.round((new Date(b + "T12:00:00") - new Date(a + "T12:00:00")) / 864e5);
-  const escB = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const escB = Ortak.esc; // ortak.js
   const lnk = (u, t) => u ? `<a href="${escB(u)}" target="_blank" rel="noopener">${escB(t)} ↗</a>` : escB(t);
   let oranElle = false, tOranElle = false, vade = 12, secili = null; // secili: hangi düğmeye basıldı (aynı orana sahip düğmelerden yalnızca o yansın)
   // Dönemli oranlar: maaş kampanyası + JSON'dan gelen ek kampanyalar ({ad, oran, bas, bit, url}). Süresi dolan kendiliğinden gizlenir.

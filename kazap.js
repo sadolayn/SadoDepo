@@ -59,7 +59,7 @@
   var B_HIZLI = [["surucu", "ad"], ["surucu", "tel"], ["arac", "plaka"], ["police", "sirket"], ["police", "no"]];
 
   /* ---------- yardımcılar ---------- */
-  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (ch) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]; }); }
+  function esc(s) { return Ortak.esc(s); } // ortak.js
   function p2(n) { return String(n).padStart(2, "0"); }
   function ymd(d) { return d.getFullYear() + "-" + p2(d.getMonth() + 1) + "-" + p2(d.getDate()); }
   function hm(d) { return p2(d.getHours()) + ":" + p2(d.getMinutes()); }

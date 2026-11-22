@@ -6,7 +6,7 @@
 (function () {
   var kart = document.getElementById("dgs"); if (!kart || !window.Ortak) return;
   var KEY = "senYokken", PENCERE = 30 * 60e3;
-  var esc = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var esc = Ortak.esc; // ortak.js
   var nf = function (v, d) { return Number(v).toLocaleString("tr-TR", { minimumFractionDigits: d, maximumFractionDigits: d }); };
   var gunTR = function (once) { return new Date(Date.now() + 3 * 3600e3 - (once || 0) * 864e5).toISOString().slice(0, 10); }; // İstanbul günü
   var bugun = gunTR(0);

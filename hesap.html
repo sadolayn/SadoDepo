@@ -441,7 +441,7 @@
 // ===== Klavye ve karakter cebi =====
 (function () {
   const $k = (id) => document.getElementById(id);
-  const kac = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const kac = Ortak.esc; // ortak.js
 
   // Kopyala + kısa bildirim
   let tost, tostZ;

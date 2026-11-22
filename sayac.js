@@ -2,14 +2,15 @@
 // Yazılan tek şey: hangi sayfa, telefon mu bilgisayar mı, zaman. İsim, cihaz kodu, konum, IP yok.
 // Sekme kapanınca kayıt Firebase tarafından kendiliğinden silinir. Günlük sayaç her cihazda günde bir artar.
 const FB_DB = "https://sadolaynsadosan-default-rtdb.europe-west1.firebasedatabase.app";
-const V = "10.12.2";
+// 22 Kasım 2026: Firebase 13.4.0 (13.3.0 takılan sayaç işlemlerini düzeltti). CDN'den yüklenemezse eski sürüm denenir; iki parça hep aynı sürümden gelir.
+const FBV = ["13.4.0", "10.12.2"];
+async function fbYukle(...m) { let son; for (const v of FBV) { try { return await Promise.all(m.map((x) => import(`https://www.gstatic.com/firebasejs/${v}/firebase-${x}.js`))); } catch (e) { son = e; } } throw son; }
 (async function () {
   try {
     if (localStorage.getItem("canli_ben") === "1") return; // site sahibi kendini saymasın
   } catch (e) {}
   try {
-    const { initializeApp } = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`);
-    const { getDatabase, ref, set, onDisconnect, serverTimestamp, runTransaction } = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-database.js`);
+    const [{ initializeApp }, { getDatabase, ref, set, onDisconnect, serverTimestamp, runTransaction }] = await fbYukle("app", "database");
     const db = getDatabase(initializeApp({ databaseURL: FB_DB }, "canli"));
     const id = Math.random().toString(36).slice(2, 12) + Date.now().toString(36).slice(-4);
     const sayfa = ((location.pathname.split("/").pop() || "index.html").replace(/\.html$/, "") || "index").slice(0, 30);

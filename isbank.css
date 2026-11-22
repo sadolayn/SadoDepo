@@ -1001,6 +1001,7 @@ html[data-tema="acik"] #kHatP b { color: #8a5a12; } html[data-tema="acik"] #kHat
   .menu button, .menu button:nth-child(n+6) { grid-column: span 1 !important; }
   .menu button[data-k="Soru"] { grid-column: 1 / -1 !important; }
   .menu button span { font-size: 11px; } /* 22 Kasım 2026: en küçük yazı 11 px kuralı (önce 10,5) */
+  .menu button[data-k="Maximum"] span { transform: scaleX(.8); } /* 320 px: "Kampanyalar" kutunun kenarına değmesin */
   .longbar { font-size: 12px; }
 }
 /* Bilanço özeti · açık mod */

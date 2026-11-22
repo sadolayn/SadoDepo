@@ -52,7 +52,7 @@
   if (!/piyasa\.html$/.test(location.pathname) || !window.Ortak) return;
   var P = null, acik = false, sec = { k: "usd", y: "ust" }, durum = { v: 0, tok: "" };
   var $ = function (i) { return document.getElementById(i); };
-  var esc = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var esc = Ortak.esc; // ortak.js
   var css = document.createElement("style");
   css.textContent =
     "#alrK h2{display:flex;align-items:center;gap:8px}" +

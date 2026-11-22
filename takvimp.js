@@ -417,7 +417,7 @@ const tAd = (x) => (isRange(x) ? izAd(x) : (TYPES[x.t] || TYPES.not).ad);
 let A = { items: [], hak: {}, dev: {} };
 try { const j = JSON.parse(localStorage.getItem(AKEY) || "null"); if (j && Array.isArray(j.items)) A = { items: j.items, hak: j.hak || {}, dev: j.dev || {} }; } catch (e) {}
 function saveA() { try { localStorage.setItem(AKEY, JSON.stringify(A)); } catch (e) { atoast("Kaydedilemedi: tarayıcı depolamaya izin vermiyor"); } }
-const esc = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const esc = Ortak.esc; // ortak.js
 const byDate = (a, b) => (a.d + (a.tm || "99")).localeCompare(b.d + (b.tm || "99"));
 const isRange = (x) => x.t === "izin" || x.t === "diger";
 const shD = (k) => { const d = parse(k); return `${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}`; };

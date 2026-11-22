@@ -264,7 +264,7 @@ html[data-tema="acik"] body{background:#edf2f8!important}
 </div>
 <script>
 (function(){
-var $=function(i){return document.getElementById(i)},esc=function(t){return String(t==null?"":t).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+var $=function(i){return document.getElementById(i)},esc=Ortak.esc;
 var sade=function(t){return String(t).toLocaleLowerCase("tr").replace(/[çğıöşüâî]/g,function(h){return{ç:"c",ğ:"g",ı:"i",ö:"o",ş:"s",ü:"u",â:"a",î:"i"}[h]})};
 var S={il:"",ilce:""},LISTE=[],g="san",r=3000,konum=null;
 try{var v=JSON.parse(localStorage.getItem("bolgem")||"null");if(v&&typeof v==="object"){S.il=v.il||"";S.ilce=v.ilce||""}}catch(e){}

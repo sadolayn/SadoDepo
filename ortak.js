@@ -24,6 +24,7 @@
 
   function abs(u) { try { return new URL(u, location.href).href.split("?")[0]; } catch (e) { return u; } }
   var HAFIZA = {};
+  var ESC = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
   var eskiGosterildi = false;
   function eskiVeri() {
     if (eskiGosterildi || navigator.onLine === false) return; eskiGosterildi = true; // çevrimdışıyken üstteki şerit söylüyor
@@ -36,7 +37,17 @@
     if (document.body) go(); else document.addEventListener("DOMContentLoaded", go);
   }
 
+  // Hareket azaltma (22 Kasım 2026): telefonda "Animasyonları kaldır" ayarı açıksa her sayfada (oyunlar dahil) hareketler anında biter.
+  // Süre 0 değil 0,01 ms: animasyon/geçiş bitişini (animationend, transitionend) bekleyen oyunlar da akmaya devam eder.
+  (function () {
+    var st = document.createElement("style"); st.id = "hareketAzalt";
+    st.textContent = "@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;transition-delay:0s!important;scroll-behavior:auto!important}}";
+    (document.head || document.documentElement).appendChild(st);
+  })();
   window.Ortak = {
+    // HTML'e yazılacak metni zararsız yapar (& < > " '). 22 Kasım 2026'dan beri sitedeki tek kopya; sayfalar buna bağlanır.
+    // null ve undefined boş yazı olur (önceki bazı kopyalar "null" ya da 0 için boş yazıyordu).
+    esc: function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return ESC[c]; }); },
     // Tık tuzağı başlık: ünlem/soru işareti, çoğu büyük harf, hisse/forum/"hızlı olun" kalıpları.
     // İş Bankası haber listelerinde (isbank.html Güncel, haberler.html İş Bankası) elenir; ana sayfanın kendi süzgeci var.
     tikTuzagi: function (t) {

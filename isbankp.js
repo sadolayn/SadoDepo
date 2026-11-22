@@ -1,5 +1,5 @@
 const $ = (x) => document.getElementById(x);
-const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const esc = Ortak.esc; // ortak.js
 const CATS = [
   ["Tarihçe", "#e0a24f", "🏛️"],
   ["Şubeler", "#3a50f0", "🏦"],

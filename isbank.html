@@ -156,7 +156,7 @@ window.ataOyna = function (film, ozelNot, yas) {
   b.hidden = false;
   b.addEventListener("click", function () { window.Rapor && Rapor.bolum("cop31-serit"); });
   var bugun = new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10), AY = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
-  var esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var esc = Ortak.esc; // ortak.js
   (window.Ortak ? Ortak.json("isbank/cop31.json") : fetch("isbank/cop31.json").then(function (r) { return r.json(); })).then(function (j) {
     var O = (j.oturumlar || []).filter(function (o) { return Date.parse(o.g + "T" + o.s + ":00+03:00") > Date.now(); });
     var bg = O.filter(function (o) { return o.g === bugun; }), o = O[0];

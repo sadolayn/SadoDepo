@@ -8,7 +8,7 @@
   var AY = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
   var GUN = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
   var KISA = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
-  var esc = function (t) { return String(t == null ? "" : t).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var esc = Ortak.esc; // ortak.js
   var fold = function (t) { return String(t || "").replace(/İ/g, "i").replace(/I/g, "ı").toLowerCase().replace(/ı/g, "i").replace(/ş/g, "s").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ö/g, "o").replace(/ç/g, "c").replace(/â/g, "a"); };
   var rapor = function (n) { try { window.Rapor && Rapor.bolum("cop31-" + n); } catch (e) {} };
   var D = null, O = [], secili = "", aranan = "";
