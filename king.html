@@ -108,6 +108,20 @@
   .seat-s { bottom: 8px; left: 50%; transform: translateX(-50%); }
 
   .slot { position: absolute; width: var(--cw); height: calc(var(--cw) * 1.45); }
+  /* Şu an ne oynanıyor (22 Kasım 2026, arkadaş önerisi): masanın sol altında, büyük */
+  .oyunR { position: absolute; left: 8px; bottom: 8px; z-index: 2; max-width: calc(50% - 52px); padding: 6px 10px 7px; border-radius: 12px; background: rgba(0,0,0,.62); border: 1px solid #5a4320; pointer-events: none; line-height: 1.2; }
+  .oyunR:empty { display: none; }
+  .oyunR .ot { display: block; font: 800 11px system-ui, sans-serif; letter-spacing: .12em; color: #9a9a9a; }
+  .oyunR .ot.ceza { color: #ff8f78; } .oyunR .ot.koz { color: #7fe0b0; }
+  .oyunR .oad { display: block; margin-top: 1px; font: italic 700 19px Georgia, "Times New Roman", serif; color: #f3d38a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .oyunR .oad .su { font-style: normal; font-size: 22px; vertical-align: -1px; } .oyunR .oad .su.red { color: #ff6b6b; } .oyunR .oad .su.blk { color: #fff; }
+  .oyunR .oa { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.3; color: #c9c9c9; }
+  .oyunR.yeni { animation: oyunRGel .45s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes oyunRGel { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .oyunR.yeni { animation: none; } }
+  html[data-tema="acik"] .oyunR { background: rgba(255,255,255,.9); border-color: #e6cf9f; }
+  html[data-tema="acik"] .oyunR .oad { color: #8a5a12; } html[data-tema="acik"] .oyunR .oa { color: #3d4653; }
+  html[data-tema="acik"] .oyunR .ot.ceza { color: #b8442a; } html[data-tema="acik"] .oyunR .ot.koz { color: #1a7a4c; } html[data-tema="acik"] .oyunR .oad .su.blk { color: #10151c; }
   .slot-n { top: calc(50% - var(--cw) * 1.45 - 6px); left: calc(50% - var(--cw) / 2); }
   .slot-s { top: calc(50% + 6px); left: calc(50% - var(--cw) / 2); }
   /* Dört kart kare bir artı oluşturur: yandaki kartlar ortadaki kartlara yaslanır (eskiden 12px açıktaydı) */
@@ -305,6 +319,7 @@
   <div class="slot slot-e" id="slot1"></div>
   <div class="slot slot-n" id="slot2"></div>
   <div class="slot slot-w" id="slot3"></div>
+  <div class="oyunR" id="oyunR" aria-live="polite"></div>
 </div>
 
 <div class="status" id="status"></div>
@@ -551,6 +566,20 @@ function renderInfo() {
   renderPens();
   $("info").innerHTML = `<span style="white-space:nowrap">El: <b>${Math.min(G.round + 1, 20)}/20</b>${G.stake ? `<small style="font-size:11px"> · ⭐${Token.fmt(G.stake)}</small>` : ""}</span><br>${phase === "play" || phase === "end" ? `<b>${contractName(contract)}</b>${contract === "koz" ? `<small style="font-size:11px;color:#9a9a9a"> · ${yukOn() ? "yükseltmeli" : "yükseltmesiz"}</small>` : ""}` : "Seçim: " + (chooser != null ? NAMES[chooser] : "–")}`;
   $("scores").innerHTML = G.scores.map((s, p) => `<div>${NAMES[p]}<b class="${s < 0 ? "neg" : s > 0 ? "pos" : ""}">${s}</b></div>`).join("");
+  renderOyunR();
+}
+// Masanın sol altında büyük "şu an ne oynanıyor" rozeti (yalnızca oyun sürerken)
+const KOZ_AD = { "♠": "Maça", "♥": "Kupa", "♦": "Karo", "♣": "Sinek" };
+const CEZA_KISA = { el: "her el −50", kupa: "her kupa −30", erkek: "her papaz, vale −60", kiz: "her kız −100", rifki: "kupa papazı −320", son: "son 2 el, her biri −180" };
+function renderOyunR() {
+  const el = $("oyunR"); if (!el) return;
+  const on = (phase === "play" || phase === "end") && contract;
+  const html = !on ? "" : contract === "koz"
+    ? `<span class="ot koz">KOZ</span><span class="oad">${trump ? `<span class="su ${isRed(trump) ? "red" : "blk"}">${trump}</span> ${KOZ_AD[trump] || ""}` : "Koz"}</span><span class="oa">${yukOn() ? "yükseltmeli" : "yükseltmesiz"}${chooser != null ? " · " + NAMES[chooser] : ""}</span>`
+    : `<span class="ot ceza">CEZA</span><span class="oad">${CEZALAR[contract].ad}</span><span class="oa">${CEZA_KISA[contract] || CEZALAR[contract].aciklama}</span>`;
+  if (el.dataset.k === html) return;
+  el.dataset.k = html; el.innerHTML = html;
+  el.classList.remove("yeni"); if (html) { void el.offsetWidth; el.classList.add("yeni"); }
 }
 // Koltukta mini cetvel: 3 üçgen (ceza) + 2 daire (koz); söylenenler boyalı
 // Geçmiş + şu an oynanan oyun (simgeler için)

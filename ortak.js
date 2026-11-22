@@ -258,7 +258,8 @@
   }
 
   // ---- Çevrimdışı şeridi (22 Kasım 2026) ----
-  // İnternet gidince üstte ince bir şerit: "📴 Çevrimdışısın · kayıtlı bilgiler, son güncel veri 07:12". Dokununca saklanır.
+  // İnternet gidince üstte ince bir şerit: "📴 Çevrimdışısın · son güncel veri 07:12". Oyunlarda 3, diğer sayfalarda 6 sn sonra
+  // ya da dokununca çekilir; üstteki bilgileri kapatmasın.
   // Bağlantı gelince yeşile döner ve "Yenile" önerir; 5 sn sonra kaybolur. Saat yalnızca bu cihazda tutulur (sSonAg).
   (function () {
     var bar = null, z = null;
@@ -280,7 +281,9 @@
         bar.addEventListener("click", function (e) { if (e.target.closest("button")) location.reload(); else gizle(); }); }
       clearTimeout(z); bar.classList.toggle("on", on);
       if (on) { bar.innerHTML = "✅ Bağlantı geri geldi <button type='button'>Yenile</button>"; z = setTimeout(gizle, 5000); }
-      else { var s = saat(); bar.innerHTML = "📴 Çevrimdışısın <small>· " + (s ? "son güncel veri " + s : "kayıtlı bilgiler gösteriliyor") + "</small>"; }
+      else { var s = saat(); bar.innerHTML = "📴 Çevrimdışısın <small>· " + (s ? "son güncel veri " + s : "kayıtlı bilgiler gösteriliyor") + "</small>";
+        // Sayfanın üst kısmını uzun süre kapatmasın (22 Kasım 2026: King'de oynanan oyunun adı görünmüyordu)
+        z = setTimeout(gizle, document.querySelector('script[src*="oyunsaat.js"]') ? 3000 : 6000); }
       requestAnimationFrame(function () { requestAnimationFrame(function () { bar.classList.add("ac"); }); });
     }
     window.addEventListener("offline", function () { goster(false); });
