@@ -66,7 +66,7 @@
       var gecti = function (x, y) { var d1 = ((x - hedef + 540) % 360) - 180, d2 = ((y - hedef + 540) % 360) - 180; return d1 < 0 && d2 >= 0; };
       if (gecti(la, lb)) {
         var lo = a, hi = b; for (var i = 0; i < 30; i++) { var m = (lo + hi) / 2; if (gecti(gunes(lo).lam, gunes(m).lam)) hi = m; else lo = m; }
-        out.push({ t: hi, ad: AD[hedef], ack: ACK[hedef] });
+        out.push({ t: hi, ad: AD[hedef], ack: ACK[hedef], h: hedef });
       }
       a = b; la = lb;
     }
@@ -102,8 +102,18 @@
     ".dsAlt{font-size:12.5px;color:#9a917e;margin:0 0 10px}.dsAlt b{color:#e8e2d4;font-weight:600;font-variant-numeric:tabular-nums}" +
     ".dsH{position:relative;border-radius:16px;overflow:hidden;border:1px solid #2a2418;background:#05070b;touch-action:none;cursor:crosshair}" +
     ".dsH canvas{display:block;width:100%;height:auto}" +
-    ".dsArac{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 2px 0}.dsIp{font-size:12px;color:#9a917e;line-height:1.3}" +
-    ".dsOyn{flex:none;min-height:34px;padding:0 12px;border-radius:999px;border:1px solid #5a4320;background:rgba(224,162,79,.1);color:#f3d38a;font:700 12.5px system-ui,sans-serif;cursor:pointer}.dsOyn[aria-pressed=\"true\"]{background:#e0a24f;color:#1a1205}" +
+    ".dsIp{margin:7px 2px 0;min-height:32px;font-size:12px;color:#9a917e;line-height:1.35}.dsIp b{color:#f3d38a;font-weight:600}" +
+    ".dsArac{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 2px 0;flex-wrap:wrap}.dsOynG{display:flex;gap:6px}" +
+    ".dsOyn{flex:none;min-height:34px;padding:0 12px;border-radius:999px;border:1px solid #5a4320;background:rgba(224,162,79,.1);color:#f3d38a;font:700 12.5px system-ui,sans-serif;cursor:pointer}.dsOyn[aria-pressed=\"true\"]{background:#e0a24f;color:#1a1205}.dsOyn:active,.dsBuy:active{transform:scale(.96)}" +
+    ".dsM{margin-top:10px}.dsM h3 small{font-weight:600;letter-spacing:0;text-transform:none;color:#6f6858;margin-left:6px}" +
+    ".dsMG{position:relative;height:78px;margin:10px 0 2px}.dsMP{position:absolute;left:0;top:0;bottom:0;right:62px}.dsMP svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}" +
+    ".dsMG .l{position:absolute;right:0;width:56px;font:700 11px/1 system-ui,sans-serif;transform:translateY(-50%)}.dsMG .l.y,.dsMG .l.o{color:rgba(255,170,110,.9)}.dsMG .l.e{color:rgba(120,190,255,.95)}" +
+    ".dsMG .n{position:absolute;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;border:2px solid #050505}.dsMG .n.ek{background:#78beff}.dsMG .n.gd{background:#ffaa6e}" +
+    ".dsMG .b{position:absolute;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:#fff3c8;box-shadow:0 0 0 3px rgba(243,211,138,.35),0 0 14px #f3d38a}" +
+    ".dsMA{display:flex;justify-content:space-between;font-size:11px;color:#6f6858;margin:0 62px 8px 0}.dsK p{letter-spacing:normal;word-spacing:normal}" +
+    ".dsMS{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}@media (min-width:760px){.dsMS{grid-template-columns:repeat(4,1fr)}}" +
+    ".dsMS li{display:flex;flex-direction:column;gap:2px;padding:9px 10px;border-radius:12px;border:1px solid #2a2418;background:rgba(255,255,255,.02)}" +
+    ".dsMS li b{font:600 12.5px system-ui,sans-serif;color:#e8e2d4}.dsMS li small{font-size:11.5px;color:#8f8672}.dsMS li em{font:italic 700 24px/1.1 Georgia,'Times New Roman',serif;color:#f3d38a}.dsMS li em small{font:600 11.5px system-ui,sans-serif;color:#9a917e;margin-left:4px}" +
     ".dsCor{position:absolute;inset:0;pointer-events:none}" +
     ".dsGir{position:absolute;color:#9fd3ff;opacity:.9;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px}" +
     ".dsGir svg{display:block;animation:dsDon 3.2s linear infinite}.dsGir.g svg{animation-direction:reverse}" +
@@ -115,7 +125,7 @@
     ".dsL li{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;line-height:1.45;color:#cfc6b0}.dsL li b{display:block;color:#fff;font-weight:600}" +
     ".cz{flex:none;width:26px;height:14px;margin-top:3px;font-style:normal;text-align:center;line-height:14px}" +
     ".cz.gw{border-top:2px solid #f3d38a;height:0;margin-top:9px}.cz.mr{border-top:1px solid rgba(160,170,200,.5);height:0;margin-top:9px}.cz.gg{height:12px;border-bottom:2px solid #c9a35e;border-radius:0 0 50% 50%}" +
-    ".cz.ek{border-top:2px solid rgba(120,190,255,.8);height:0;margin-top:9px}.cz.dn{border-top:2px dashed rgba(255,170,110,.75);height:0;margin-top:9px}.cz.yl{border-top:2px dotted rgba(243,211,138,.85);height:0;margin-top:9px}" +
+    ".cz.ek{border-top:2px solid rgba(120,190,255,.8);height:0;margin-top:9px}.cz.dn{border-top:2px dashed rgba(255,170,110,.75);height:0;margin-top:9px}.cz.yl{border-top:2px dotted rgba(243,211,138,.85);height:0;margin-top:9px}.cz.an{width:9px;height:16px;margin:2px 9px 0;border:2px dotted rgba(255,236,190,.8);border-radius:50%}" +
     ".dsDaha{display:block;margin:8px auto 0;min-height:36px;padding:0 16px;border-radius:999px;border:1px solid #3a3020;background:transparent;color:#cfc6b0;font:600 12.5px system-ui,sans-serif;cursor:pointer}" +
     ".dsZ{display:flex;align-items:center;gap:10px;margin:10px 2px 4px}.dsZ input{flex:1;accent-color:#e0a24f;height:28px}" +
     ".dsZ span{min-width:92px;font:600 12.5px system-ui,sans-serif;color:#cfc6b0;font-variant-numeric:tabular-nums;text-align:right}" +
@@ -147,8 +157,13 @@
     "@media (prefers-reduced-motion: reduce){.dsO,.dsK,.dsBO{transition:none}.dsGir svg{animation:none}}";
   document.head.appendChild(css);
 
-  var O, K, cv, cx, W = 0, Hh = 0, dpr = 1, kayma = 0, prob = { lat: IST[1], lon: IST[2], ad: "İstanbul" }, secSehir = 0, zSaat = null, zHarita = null, geri = null, sonCiz = 0;
-  function simdi() { return Date.now() + kayma * 6e4; }
+  var O, K, cv, cx, W = 0, Hh = 0, dpr = 1, kayma = 0, gunK = 0, prob = { lat: IST[1], lon: IST[2], ad: "İstanbul" }, secSehir = 0, zSaat = null, zHarita = null, geri = null, sonCiz = 0;
+  function simdi() { return Date.now() + (kayma + gunK * 1440) * 6e4; }
+  function kayYazi() {
+    var m = kayma ? (kayma > 0 ? sure(kayma) + " sonra" : sure(-kayma) + " önce") : "";
+    if (!gunK) return m || "şimdi";
+    return fmt(IST[3], { day: "numeric", month: "short", year: "numeric" }).format(simdi()) + (kayma ? " · " + (kayma > 0 ? "+" : "−") + sure(Math.abs(kayma)) : "");
+  }
   function xy(lat, lon) { return [(lon + 180) / 360 * W, (LAT0 - lat) / (LAT0 - LAT1) * Hh]; }
 
   function kur() {
@@ -157,16 +172,19 @@
       '<button type="button" class="dsX" aria-label="Kapat">✕</button>' +
       '<div class="dsB" id="dsB">🌍 Dünya saati</div><div class="dsAlt" id="dsAlt"></div>' +
       '<div class="dsH" id="dsH"><canvas id="dsCv" role="img" aria-label="Gece ve gündüzü gösteren canlı dünya haritası"></canvas><div class="dsCor" aria-hidden="true"></div></div>' +
-      '<div class="dsArac"><span class="dsIp">Haritaya dokun: o boylamın güneş saati</span><button type="button" class="dsBuy" id="dsBuy"></button></div>' +
-      '<div class="dsZ"><button type="button" class="dsOyn" aria-pressed="false">▶ Oynat</button><input type="range" id="dsKay" min="-720" max="720" step="15" value="0" aria-label="Zamanı kaydır"><span id="dsKayY">şimdi</span><button type="button" id="dsSimdi" hidden>Şimdi</button></div>' +
+      '<p class="dsIp" id="dsIp" aria-live="polite"></p>' +
+      '<div class="dsArac"><div class="dsOynG"><button type="button" class="dsOyn" data-m="gun" aria-pressed="false">▶ Günü oynat</button><button type="button" class="dsOyn" data-m="yil" aria-pressed="false">▶ Yılı oynat</button></div><button type="button" class="dsBuy" id="dsBuy"></button></div>' +
+      '<div class="dsZ"><input type="range" id="dsKay" min="-720" max="720" step="15" value="0" aria-label="Zamanı kaydır"><span id="dsKayY">şimdi</span><button type="button" id="dsSimdi" hidden>Şimdi</button></div>' +
       '<div class="dsG"><div class="dsC dsP" id="dsP"></div><div class="dsC dsT" id="dsT"></div></div>' +
+      '<div class="dsC dsM" id="dsM"></div>' +
       '<details class="dsC dsL"><summary>🧭 Haritadaki çizgiler ne anlatıyor?</summary><ul>' +
       '<li><i class="cz gw"></i><span><b>Greenwich (0° boylam)</b> Saat dilimlerinin başlangıcı. Buradan doğuya her 15° bir saat ileri, batıya bir saat geri; 1° = 4 dakika.</span></li>' +
       '<li><i class="cz mr"></i><span><b>İnce dikey çizgiler</b> 15°\'lik saat dilimleri (üstteki sayılar UTC farkı). Ülkeler sınırlarına göre saat seçtiği için gerçek dilimler bu çizgilerden sapar.</span></li>' +
       '<li><i class="cz gg"></i><span><b>Altın eğri</b> Gece-gündüz çizgisi. Ekinokslarda kutuptan kutba dümdüz iner; yaz ve kışta eğilir.</span></li>' +
       '<li><i class="cz ek"></i><span><b>Ekvator (0° enlem)</b> Dünya\'yı kuzey ve güney yarım küreye böler. Burada gece ve gündüz yıl boyu yaklaşık 12\'şer saattir; mart ve eylül ekinokslarında güneş tam tepesindedir.</span></li>' +
-      '<li><i class="cz dn"></i><span><b>Yengeç ve Oğlak dönenceleri (23,44°)</b> Güneşin tam tepeye gelebildiği en kuzey ve en güney enlemler: haziran gün dönümünde Yengeç\'in, aralık gün dönümünde Oğlak\'ın tepesindedir. 23,44°, Dünya\'nın eksen eğikliğidir; aradaki kuşak tropikal bölgedir.</span></li>' +
-      '<li><i class="cz yl"></i><span><b>Noktalı altın çizgi</b> Güneşin bugünkü yolu: güneş gün boyunca bu enlemin üzerinden batıya ilerler. "Oynat"a basınca izleyebilirsin.</span></li>' +
+      '<li><i class="cz dn"></i><span><b>Yengeç ve Oğlak dönenceleri (23,44°)</b> Güneşin tam tepeye gelebildiği en kuzey ve en güney enlemler: haziran gün dönümünde Yengeç\'in, aralık gün dönümünde Oğlak\'ın tepesindedir. 23,44°, Dünya\'nın eksen eğikliğidir; aradaki kuşak tropikal bölgedir. "Yılı oynat"a basınca güneşin bu iki çizgi arasında gidip geldiğini görürsün.</span></li>' +
+      '<li><i class="cz yl"></i><span><b>Noktalı altın çizgi</b> Güneşin bugünkü yolu: güneş gün boyunca bu enlemin üzerinden batıya ilerler. "Günü oynat"a basınca izleyebilirsin.</span></li>' +
+      '<li><i class="cz an"></i><span><b>Sekiz şekli (analema)</b> "Yılı oynat"ta görünür: her gün aynı saatte güneşin tepede olduğu nokta. Yukarı aşağı gidişi eksen eğikliğinden, sağa sola kayması zaman denkleminden gelir (güneş saati yıl boyunca ±16 dk oynar).</span></li>' +
       '<li><i class="cz gi">🌀</i><span><b>Girdaplar (Coriolis)</b> Dünya döndüğü için büyük hava kütleleri sapar: kasırgalar kuzey yarım kürede saat yönünün tersine, güney yarım kürede saat yönünde döner. ' +
       'Lavabo ya da kovadaki girdabın yönünü ise bu etki belirlemez; o ölçekte çok zayıftır, kabın şekli ve suyun ilk hareketi belirler.</span></li></ul></details>' +
       '<div class="dsS" id="dsS"></div><button type="button" class="dsDaha" id="dsDaha" aria-expanded="false">＋ 12 şehir daha</button>' +
@@ -176,8 +194,8 @@
     O.addEventListener("click", function (e) { if (e.target === O || e.target.closest(".dsX")) kapa(); });
     var kay = O.querySelector("#dsKay");
     kay.addEventListener("input", function () { oynat(false); kayma = +kay.value; yenile(true); });
-    O.querySelector("#dsSimdi").addEventListener("click", function () { oynat(false); kayma = 0; kay.value = 0; yenile(true); });
-    O.querySelector(".dsZ .dsOyn").addEventListener("click", function () { oynat(!oyn); });
+    O.querySelector("#dsSimdi").addEventListener("click", function () { oynat(false); kayma = 0; gunK = 0; kay.value = 0; yenile(true); });
+    [].forEach.call(O.querySelectorAll(".dsOyn"), oynDugme);
     O.querySelector("#dsDaha").addEventListener("click", function () { tumSehir = !tumSehir; this.setAttribute("aria-expanded", String(tumSehir)); this.textContent = tumSehir ? "− Daha az şehir" : "＋ 12 şehir daha"; yaziGuncelle(true); });
     O.querySelector("#dsS").addEventListener("click", function (e) {
       var b = e.target.closest("button[data-i]"); if (!b) return; var c = SEHIR[+b.dataset.i];
@@ -210,12 +228,12 @@
     B = { o: document.createElement("div") }; B.o.className = "dsBO"; B.o.hidden = true;
     B.o.innerHTML = '<div class="dsBI" role="dialog" aria-modal="true" aria-label="Büyük dünya haritası"><div class="dsBU"><b>🌍 Dünya saati</b><span id="dsBZ"></span><button type="button" aria-label="Küçült">✕</button></div>' +
       '<div class="dsBC"><canvas role="img" aria-label="Şehir adlarıyla büyük dünya haritası"></canvas><div class="dsCor" aria-hidden="true"></div></div>' +
-      '<div class="dsBA"><button type="button" class="dsOyn" aria-pressed="false">▶ Oynat</button><input type="range" min="-720" max="720" step="15" value="0" aria-label="Zamanı kaydır"><span></span></div></div>';
+      '<div class="dsBA"><button type="button" class="dsOyn" data-m="gun" aria-pressed="false">▶ Günü oynat</button><button type="button" class="dsOyn" data-m="yil" aria-pressed="false">▶ Yılı oynat</button><input type="range" min="-720" max="720" step="15" value="0" aria-label="Zamanı kaydır"><span></span></div></div>';
     document.body.appendChild(B.o);
     B.i = B.o.firstChild; B.cv = B.o.querySelector("canvas"); B.cx = B.cv.getContext("2d"); B.k = B.o.querySelector(".dsBA input"); B.ky = B.o.querySelector(".dsBA span");
     B.o.querySelector(".dsBU button").addEventListener("click", buyukKapa);
     B.k.addEventListener("input", function () { oynat(false); kayma = +B.k.value; O.querySelector("#dsKay").value = kayma; yenile(true); });
-    B.o.querySelector(".dsOyn").addEventListener("click", function () { oynat(!oyn); });
+    [].forEach.call(B.o.querySelectorAll(".dsOyn"), oynDugme);
     var bas = false;
     var konum = function (e) {
       if (!don) { var r = B.cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; }
@@ -243,8 +261,8 @@
     if (!buyuk || !B.w) return; // tam ekrana geçiş sürerken boyut henüz yok
     var k = [W, Hh, cx, dpr, sonCiz]; W = B.w; Hh = B.h; cx = B.cx; dpr = B.dpr; cizB = true;
     try { ciz(); } finally { W = k[0]; Hh = k[1]; cx = k[2]; dpr = k[3]; sonCiz = k[4]; cizB = false; }
-    var t = simdi(); B.o.querySelector("#dsBZ").innerHTML = "UTC <i>" + saat(t, "UTC") + "</i> · İstanbul <i>" + saat(t, IST[3]) + "</i>";
-    B.k.value = kayma; B.ky.textContent = kayma ? (kayma > 0 ? sure(kayma) + " sonra" : sure(-kayma) + " önce") : "şimdi";
+    var t = simdi(); B.o.querySelector("#dsBZ").innerHTML = gunK || (oyn && oyn.mod === "yil") ? yilYazi(true) : "UTC <i>" + saat(t, "UTC") + "</i> · İstanbul <i>" + saat(t, IST[3]) + "</i>";
+    B.k.value = Math.round(kayma / 15) * 15; B.ky.textContent = kayYazi();
   }
   function buyukAc() {
     if (!B) buyukKur();
@@ -284,24 +302,77 @@
       return '<div class="dsGir ' + g[2] + '" style="left:' + x.toFixed(1) + "px;top:" + y.toFixed(1) + 'px"><svg width="' + boy + '" height="' + boy + '" viewBox="-12 -12 24 24" aria-hidden="true"><circle r="2.4" fill="currentColor"/><path d="' + GIR_YOL[g[2]] + '" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>' + (yaziVar ? "<small>" + g[3] + "</small>" : "") + "</div>";
     }).join("");
   }
-  // Günü oynat: 24 saat yaklaşık 12 saniyede akar (dakikada 120 dk)
-  var oyn = null, tumSehir = false;
-  function oynat(ac) {
-    if (!ac) { if (oyn) { cancelAnimationFrame(oyn.id); oyn = null; } dugmeler(false); return; }
-    if (oyn) return; dugmeler(true);
-    oyn = { son: performance.now(), yazi: 0 };
+  // Oynatma. Gün: 24 saat yaklaşık 24 saniyede akar. Yıl: saat sabit kalır, günler ilerler (365 gün ≈ 30 sn);
+  // ekinoks ve gün dönümlerinde kısa bir mola verilir.
+  var oyn = null, tumSehir = false, GUN_HIZ = 0.06, YIL_HIZ = 365 / 30000, MOLA = 2200;
+  var OLAY_YAZI = { 0: "Güneş ekvatorun tepesinde; gece ve gündüz her yerde eşite yakın.", 90: "Güneş Yengeç Dönencesi'nin tepesinde; kuzeyde yılın en uzun günü.",
+    180: "Güneş ekvatorun tepesinde; gece ve gündüz her yerde eşite yakın.", 270: "Güneş Oğlak Dönencesi'nin tepesinde; kuzeyde yılın en kısa günü." };
+  function oynDugme(b) { b.addEventListener("click", function () { oynat(oyn && oyn.mod === b.dataset.m ? null : b.dataset.m); }); }
+  function oynat(mod) {
+    if (oyn) { cancelAnimationFrame(oyn.id); oyn = null; dugmeler(null); }
+    if (!mod) { if (O && !O.hidden) yenile(true); return; }
+    var taban = Date.now() + kayma * 6e4;
+    oyn = { mod: mod, son: performance.now(), yazi: 0, g: gunK, dur: 0, olay: null,
+      ev: mod === "yil" ? gokOlaylari(taban, 4).map(function (x) { return { d: (gunNo(x.t) - gunNo(taban) + 365) % 365, ad: x.ad, h: x.h, t: x.t }; }) : null }; // olayın İstanbul takvimindeki günü
+    dugmeler(mod);
     var adim = function (z) {
       if (!oyn) return; var dt = Math.min(100, z - oyn.son); oyn.son = z;
-      kayma += dt * 0.12; if (kayma > 720) kayma -= 1440;
-      var v = Math.round(kayma / 15) * 15; O.querySelector("#dsKay").value = v; if (B) B.k.value = v;
-      ciz(); buyukCiz();
+      if (oyn.mod === "gun") {
+        kayma += dt * GUN_HIZ; if (kayma > 720) kayma -= 1440;
+        var v = Math.round(kayma / 15) * 15; O.querySelector("#dsKay").value = v; if (B) B.k.value = v;
+        ciz(); buyukCiz();
+      } else if (z >= oyn.dur) {
+        var once = oyn.g; oyn.g += dt * YIL_HIZ; var tur = oyn.g >= 365; if (tur) oyn.g -= 365;
+        var e = oyn.ev.filter(function (x) { return tur ? (x.d > once || x.d <= oyn.g) : (x.d > once && x.d <= oyn.g); })[0];
+        if (e) { oyn.g = e.d; oyn.dur = z + MOLA; oyn.olay = e; } else if (oyn.olay && z > oyn.dur + 900) oyn.olay = null;
+        var gk = Math.round(oyn.g) % 365;
+        if (gk !== gunK || e) { gunK = gk; ciz(); buyukCiz(); hafifYazi(); }
+      }
       if (z - oyn.yazi > 700) { oyn.yazi = z; yaziGuncelle(true); }
       oyn.id = requestAnimationFrame(adim);
     };
     oyn.id = requestAnimationFrame(adim);
   }
-  function dugmeler(acik) {
-    [].forEach.call(document.querySelectorAll(".dsOyn"), function (b) { b.setAttribute("aria-pressed", String(acik)); b.textContent = acik ? "⏸ Durdur" : "▶ Oynat"; });
+  function dugmeler(mod) {
+    [].forEach.call(document.querySelectorAll(".dsOyn"), function (b) {
+      var acik = b.dataset.m === mod; b.setAttribute("aria-pressed", String(acik));
+      b.textContent = acik ? "⏸ Durdur" : b.dataset.m === "yil" ? "▶ Yılı oynat" : "▶ Günü oynat";
+    });
+  }
+  // Yıl modunda haritanın altındaki satır: tarih, güneşin enlemi, İstanbul'da gün uzunluğu; olay günlerinde açıklama
+  function yilYazi(kisa) {
+    var t = simdi(), g = gunes(t), tarih = fmt(IST[3], { day: "numeric", month: "long", year: "numeric" }).format(t);
+    var k1 = kisa ? "<i>" : "<b>", k2 = kisa ? "</i>" : "</b>";
+    if (oyn && oyn.olay && Math.round(oyn.g) === oyn.olay.d) return k1 + tarih + " · " + oyn.olay.ad + k2 + " " + OLAY_YAZI[oyn.olay.h];
+    var db = dogBat(IST[1], IST[2], t), uz = db.dog ? sure((db.bat - db.dog) / 6e4) : null;
+    return k1 + tarih + k2 + " · güneş " + en(g.dek) + " enleminin tepesinde" + (uz && !kisa ? " · İstanbul'da gün " + uz : "");
+  }
+  // Mevsim takvimi: önümüzdeki 365 günde güneşin tepede olduğu enlem, ekinokslar ve gün dönümleri, kalan günler
+  var MV = null, ANL = null;
+  function gunNo(t) { return Math.floor((t + tzFark(IST[3], t) * 6e4) / 864e5); }
+  function mevsim() {
+    var kap = O.querySelector("#dsM"), simd = Date.now(), bugun = gunNo(simd);
+    var yY = function (dek) { return (50 - dek / 23.44 * 42).toFixed(1); }; // 0–100 arası yüzde: üst Yengeç, orta Ekvator, alt Oğlak
+    if (!MV || MV.gun !== bugun) {
+      var ev = gokOlaylari(simd, 4), egri = [];
+      for (var d = 0; d <= 365; d += 3) egri.push(d / 365 * 100 + "," + yY(gunes(simd + d * 864e5).dek));
+      var gunT = function (x) { return fmt(IST[3], { day: "numeric", month: "long", year: "numeric", weekday: "long" }).format(x); };
+      kap.innerHTML = "<h3>Mevsim takvimi<small>bugünden bir yıl</small></h3>" +
+        '<div class="dsMG"><div class="dsMP"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' +
+        '<line x1="0" x2="100" y1="8" y2="8" stroke="rgba(255,170,110,.55)" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"/>' +
+        '<line x1="0" x2="100" y1="50" y2="50" stroke="rgba(120,190,255,.6)" vector-effect="non-scaling-stroke"/>' +
+        '<line x1="0" x2="100" y1="92" y2="92" stroke="rgba(255,170,110,.55)" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"/>' +
+        '<polyline points="' + egri.join(" ") + '" fill="none" stroke="#e0a24f" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>' +
+        ev.map(function (x) { var dd = (x.t - simd) / 864e5; return '<i class="n ' + (x.h % 180 ? "gd" : "ek") + '" style="left:' + (dd / 365 * 100).toFixed(2) + "%;top:" + yY(gunes(x.t).dek) + '%"></i>'; }).join("") +
+        '<i class="b"></i></div><span class="l y" style="top:8%">Yengeç</span><span class="l e" style="top:50%">Ekvator</span><span class="l o" style="top:92%">Oğlak</span></div><div class="dsMA"><span>Bugün</span><span>1 yıl sonra</span></div><ul class="dsMS">' +
+        ev.map(function (x) {
+          var k = gunNo(x.t) - bugun;
+          return '<li><b>' + (x.h % 180 ? "🔆 " : "⚖️ ") + x.ad + "</b><small>" + gunT(x.t) + "</small><em>" + (k === 0 ? "bugün" : k === 1 ? "yarın" : k + "<small>gün kaldı</small>") + "</em></li>";
+        }).join("") + "</ul>";
+      MV = { gun: bugun, b: kap.querySelector(".b") };
+    }
+    var t = simdi(), gd = Math.max(0, Math.min(365, (t - simd) / 864e5));
+    MV.b.style.left = (gd / 365 * 100).toFixed(2) + "%"; MV.b.style.top = yY(gunes(t).dek) + "%";
   }
 
   function boyutla() {
@@ -343,9 +414,9 @@
     // Ekvator, dönenceler ve güneşin bugünkü yolu
     var yaz = Math.max(10, Math.min(12, W / 70));
     cx.font = "600 " + yaz + "px system-ui,sans-serif"; cx.textBaseline = "middle";
-    var dar = W < 560;
+    var anlY = null, dar = W < 560, vurgu = oyn && oyn.olay && Math.round(oyn.g) === oyn.olay.d ? [0, 23.44, 0, -23.44][oyn.olay.h / 90] : null;
     [[0, "Ekvator", "Ekvator", "rgba(120,190,255,.6)", [], 1.4], [23.44, "Yengeç Dönencesi", "Yengeç D.", "rgba(255,170,110,.55)", [6, 4], 1.2], [-23.44, "Oğlak Dönencesi", "Oğlak D.", "rgba(255,170,110,.55)", [6, 4], 1.2]].forEach(function (d) {
-      var y = xy(d[0], 0)[1]; cx.strokeStyle = d[3]; cx.setLineDash(d[4]); cx.lineWidth = d[5]; cx.beginPath(); cx.moveTo(0, y); cx.lineTo(W, y); cx.stroke(); cx.setLineDash([]);
+      var y = xy(d[0], 0)[1], vr = vurgu !== null && Math.abs(vurgu - d[0]) < 0.1; cx.strokeStyle = vr ? d[3].replace(/[\d.]+\)$/, "1)") : d[3]; cx.setLineDash(d[4]); cx.lineWidth = vr ? 3 : d[5]; cx.beginPath(); cx.moveTo(0, y); cx.lineTo(W, y); cx.stroke(); cx.setLineDash([]);
       var et = dar ? d[2] : d[1], fs = dar ? 10 : yaz; cx.font = "700 " + fs + "px system-ui,sans-serif";
       var tw = cx.measureText(et).width + 8; cx.fillStyle = "rgba(3,5,10,.72)"; cx.fillRect(3, y - fs - 4, tw, fs + 4);
       cx.fillStyle = d[3].replace(/[\d.]+\)$/, ".95)"); cx.fillText(et, 7, y - fs / 2 - 2);
@@ -353,6 +424,13 @@
     cx.font = "600 " + yaz + "px system-ui,sans-serif";
     var gy = xy(g.dek, 0)[1]; cx.setLineDash([1.5, 4]); cx.lineWidth = 1.6; cx.strokeStyle = "rgba(243,211,138,.6)"; cx.beginPath(); cx.moveTo(0, gy); cx.lineTo(W, gy); cx.stroke(); cx.setLineDash([]); cx.lineWidth = 1;
     var yer = [];
+    if (gunK || (oyn && oyn.mod === "yil")) {
+      var ak = Math.floor((Date.now() + kayma * 6e4) / 6e4);
+      if (!ANL || ANL.k !== ak) { ANL = { k: ak, p: [] }; for (var ad = 0; ad < 365; ad += 2) { var ga = gunes(ak * 6e4 + ad * 864e5); ANL.p.push([ga.lat, ga.lon]); } }
+      cx.fillStyle = "rgba(255,236,190,.6)"; var ust = ANL.p[0], alt = ANL.p[0];
+      ANL.p.forEach(function (q) { var pp = xy(q[0], q[1]); if (q[0] > ust[0]) ust = q; if (q[0] < alt[0]) alt = q; cx.beginPath(); cx.arc(pp[0], pp[1], dar ? 0.8 : 1.1, 0, 6.283); cx.fill(); });
+      anlY = !dar && [xy(ust[0], ust[1]), xy(alt[0], alt[1]), xy(0, (ust[1] + alt[1]) / 2)]; // etiketi şehirlerden sonra boş bir yere yazılır
+    }
     if (!dar) {
       var gyx = xy(0, -132)[0], gyy = gy + (g.dek < -12 ? -yaz * 0.9 : yaz * 0.9), gyw = cx.measureText("güneşin bugünkü yolu").width;
       cx.fillStyle = "rgba(243,211,138,.85)"; cx.fillText("güneşin bugünkü yolu", gyx, gyy); yer.push([gyx - 2, gyy - yaz * 0.7, gyw + 4, yaz * 1.4]);
@@ -396,6 +474,15 @@
       cx.fillStyle = sec ? "#1a1205" : "#f1e6cc"; cx.textBaseline = "middle"; cx.fillText(et2, bx + 5, by + hh2 / 2 + 0.5);
     });
     cx.font = "600 " + yaz + "px system-ui,sans-serif";
+    if (anlY) {
+      var aw = cx.measureText("analema").width + 4, ah = yaz * 1.4;
+      var aday = [[anlY[0][0] - aw / 2, anlY[0][1] - yaz * 0.8 - ah], [anlY[1][0] - aw / 2, anlY[1][1] + yaz * 0.8], [anlY[2][0] + 10, anlY[2][1] - ah / 2], [anlY[2][0] - 10 - aw, anlY[2][1] - ah / 2]];
+      for (var ai = 0; ai < aday.length; ai++) {
+        var q2 = aday[ai]; if (q2[0] < 2 || q2[0] + aw > W - 2 || q2[1] < 2 || q2[1] + ah > Hh - 2) continue;
+        if (yer.some(function (q) { return q2[0] < q[0] + q[2] && q2[0] + aw > q[0] && q2[1] < q[1] + q[3] && q2[1] + ah > q[1]; })) continue;
+        cx.fillStyle = "rgba(255,236,190,.85)"; cx.textBaseline = "middle"; cx.fillText("analema", q2[0] + 2, q2[1] + ah / 2); break;
+      }
+    }
     // Güneş
     var sp = xy(g.lat, g.lon), sr = Math.max(9, W / 55);
     var sg = cx.createRadialGradient(sp[0], sp[1], 0, sp[0], sp[1], sr * 2.6); sg.addColorStop(0, "rgba(255,236,170,1)"); sg.addColorStop(0.25, "rgba(255,206,110,.85)"); sg.addColorStop(0.6, "rgba(255,170,60,.25)"); sg.addColorStop(1, "rgba(255,150,40,0)");
@@ -411,10 +498,16 @@
 
   // ---------- Yazılar ----------
   var sonDk = -1;
-  function yaziGuncelle(tam) {
+  function hafifYazi() {
     var t = simdi(), g = gunes(t), istT = IST[3];
     O.querySelector("#dsAlt").innerHTML = "UTC <b>" + saat(t, "UTC", true) + "</b> · İstanbul <b>" + saat(t, istT, true) + "</b> · Güneş şu an <b>" + en(g.lat) + ", " + boy(g.lon) + "</b> noktasında tepede";
-    var ky = O.querySelector("#dsKayY"); ky.textContent = kayma ? (kayma > 0 ? sure(kayma) + " sonra" : sure(-kayma) + " önce") : "şimdi"; O.querySelector("#dsSimdi").hidden = !kayma;
+    O.querySelector("#dsKayY").textContent = kayYazi(); O.querySelector("#dsSimdi").hidden = !(kayma || gunK);
+    O.querySelector("#dsIp").innerHTML = gunK || (oyn && oyn.mod === "yil") ? yilYazi() : "Haritaya dokun: o boylamın güneş saati";
+    mevsim();
+  }
+  function yaziGuncelle(tam) {
+    hafifYazi();
+    var t = simdi(), g = gunes(t), istT = IST[3];
     var dk = Math.floor(t / 6e4); if (!tam && dk === sonDk) return; sonDk = dk; // kartlar dakikada bir (düğmeler her saniye yeniden çizilip dokunuşu kaçırmasın)
     // 4 dakika kuralı kartı
     var lon = prob.lon, dkG = lon * 4, ad = prob.ad || ("Boylam " + boy(lon)), al = yuk(prob.lat, lon, g);
@@ -429,13 +522,11 @@
     html += '<div class="kural">⏱️ Dünya 24 saatte 360° döner: <b>15° = 1 saat, 1° = 4 dakika</b>. Güneş saati bugün ortalamadan <b>' + sure(Math.abs(g.eot)) + " " + (g.eot >= 0 ? "ileri" : "geri") + "</b> (zaman denklemi; yıl boyunca ±16 dk oynar).</div>";
     O.querySelector("#dsP").innerHTML = html;
     // Gök takvimi
-    var db = dogBat(IST[1], IST[2], t), uzun = db.dog ? (db.bat - db.dog) / 6e4 : null, ev = gokOlaylari(t, 2);
-    var gunTR = function (x) { return fmt(istT, { day: "numeric", month: "long", weekday: "long" }).format(x); };
-    var kalanGun = function (x) { return Math.ceil((x - t) / 864e5); };
+    var db = dogBat(IST[1], IST[2], t), uzun = db.dog ? (db.bat - db.dog) / 6e4 : null;
     O.querySelector("#dsT").innerHTML = "<h3>Gökyüzü · İstanbul</h3><ul>" +
       (db.dog ? '<li><span class="i">🌅</span><span>Gün doğumu <b>' + saat(db.dog, istT) + "</b> · batımı <b>" + saat(db.bat, istT) + "</b><small>Gün " + sure(uzun) + " · güneş " + saat(db.ogle, istT) + "'de tepede</small></span></li>" : "") +
       '<li><span class="i">☀️</span><span>Güneş bugün <b>' + en(g.dek) + "</b> enleminin tepesinde<small>" + (Math.abs(g.dek) < 1 ? "Ekinoks günlerinde gece-gündüz çizgisi kutuptan kutba dümdüz iner" : "Ekinokslarda gece-gündüz çizgisi dümdüz iner; bugün eğik, çünkü güneş " + (g.dek < 0 ? "Oğlak" : "Yengeç") + " Dönencesi'ne doğru") + "</small></span></li>" +
-      ev.map(function (x) { return '<li><span class="i">' + (/ekinoks/.test(x.ad) ? "⚖️" : "🔆") + "</span><span>" + x.ad + ": <b>" + gunTR(x.t) + "</b> · " + kalanGun(x.t) + " gün<small>" + x.ack + "</small></span></li>"; }).join("") + "</ul>";
+      "</ul>";
     // Şehirler
     var istG = gunAnah(istT, t), istF = tzFark(istT, t);
     O.querySelector("#dsS").innerHTML = SEHIR.map(function (c, i) {
