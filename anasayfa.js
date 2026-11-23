@@ -1442,6 +1442,13 @@ try {
       yuk.onerror = function () { yuk.remove(); yuk = null; };
       document.head.appendChild(yuk);
     }
-    document.querySelectorAll(".clock").forEach(function (c) { c.addEventListener("click", ac); });
+    document.querySelectorAll(".clock").forEach(function (c) {
+      c.addEventListener("click", ac);
+      if (c.closest("[aria-hidden='true']")) return; // üst şeritteki küçük saat: şerit ekran okuyucudan gizli
+      // 23 Kasım 2026: klavye ve ekran okuyucu için gerçek düğme gibi davranır; odak çerçevesi yalnızca klavyeyle gelir
+      c.setAttribute("role", "button"); c.tabIndex = 0; c.setAttribute("aria-haspopup", "dialog");
+      c.setAttribute("aria-label", "Dünya saati"); if (document.getElementById("dig")) c.setAttribute("aria-describedby", "dig");
+      c.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); ac(e); } });
+    });
   })();
 } catch (e) { console.error("anasayfa: dünya saati", e); }

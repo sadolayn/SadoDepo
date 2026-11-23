@@ -380,3 +380,6 @@ html.dzKompakt .favIp { display: none; }
 .clock.dsDok { animation: dsDok .5s ease; }
 @keyframes dsDok { 0% { filter: drop-shadow(0 0 0 rgba(243,211,138,0)); } 40% { filter: drop-shadow(0 0 14px rgba(243,211,138,.9)); } 100% { filter: drop-shadow(0 0 0 rgba(243,211,138,0)); } }
 @media (prefers-reduced-motion: reduce) { .clock.dsDok { animation: none; } }
+.hello .clock[role="button"] { border-radius: 14px; }
+.hello .clock[role="button"]:focus { outline: none; }
+.hello .clock[role="button"]:focus-visible { outline: 2px solid #f3d38a; outline-offset: 4px; }

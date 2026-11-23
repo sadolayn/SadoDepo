@@ -370,6 +370,17 @@
     O.classList.remove("ac"); clearInterval(zSaat); document.removeEventListener("keydown", tus);
     setTimeout(function () { O.hidden = true; document.body.style.overflow = ""; if (geri && geri.focus) geri.focus({ preventScroll: true }); }, 300);
   }
-  function tus(e) { if (e.key === "Escape") { if (buyuk) buyukKapa(); else kapa(); } }
+  // Odak tuzağı (23 Kasım 2026): Tab açık pencerenin içinde döner, arkadaki sayfaya kaçmaz
+  function odaklar(kap) { return [].filter.call(kap.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])'), function (x) { return x.getClientRects().length && !x.closest("[hidden]"); }); }
+  function tuzak(e, kap) {
+    var L = odaklar(kap); if (!L.length) return;
+    var ilk = L[0], son = L[L.length - 1], a = document.activeElement;
+    if (!kap.contains(a)) { e.preventDefault(); ilk.focus(); return; }
+    if (e.shiftKey && a === ilk) { e.preventDefault(); son.focus(); } else if (!e.shiftKey && a === son) { e.preventDefault(); ilk.focus(); }
+  }
+  function tus(e) {
+    if (e.key === "Escape") { if (buyuk) buyukKapa(); else kapa(); }
+    else if (e.key === "Tab") tuzak(e, buyuk && B ? B.i : K);
+  }
   window.DunyaSaati = { ac: ac, kapa: kapa, _gunes: gunes, _dogBat: dogBat, _gok: gokOlaylari, _kara: kara };
 })();

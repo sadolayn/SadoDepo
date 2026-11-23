@@ -101,6 +101,7 @@
     ".dzS.oynadi{border-color:#e0a24f}" +
     ".dzAlt{display:flex;gap:8px}.dzAlt button{min-height:46px;border-radius:13px;font:700 14px system-ui,sans-serif;cursor:pointer}" +
     ".dzSif{padding:0 14px;border:1px solid #333;background:transparent;color:#bbb}.dzTam{flex:1;border:0;background:linear-gradient(160deg,#f3d38a,#e0a24f);color:#1a1205}" +
+    "@media (min-width:760px){.dzSh{align-items:center;padding:24px}.dzK{border-radius:22px;border-bottom:1px solid #2a2a2a;padding:16px 18px 18px;transform:translateY(16px) scale(.98)}.dzSh.ac .dzK{transform:none}.dzK .grab{display:none}}" + // bilgisayarda ortada (23 Kasım 2026)
     "@media (prefers-reduced-motion: reduce){.dzSh,.dzK,.dzSw,.dzSw::after,.dzS{transition:none}}" +
     "html[data-tema=\"acik\"] .dzK{background:#fff;border-color:#c9d3e0}html[data-tema=\"acik\"] .dzK h3{color:#8a5a12}html[data-tema=\"acik\"] .dzK>p{color:#3d4653}" +
     "html[data-tema=\"acik\"] .dzKmp{background:#fbf4e6;border-color:#e6cf9f}html[data-tema=\"acik\"] .dzKmp b,html[data-tema=\"acik\"] .dzS b{color:#10151c}" +
@@ -132,7 +133,13 @@
     sh.classList.remove("ac"); document.removeEventListener("keydown", tus);
     setTimeout(function () { sh.hidden = true; document.body.style.overflow = ""; if (geri) geri.focus({ preventScroll: true }); }, 250);
   }
-  function tus(e) { if (e.key === "Escape") kapa(); }
+  function tus(e) {
+    if (e.key === "Escape") return kapa();
+    if (e.key !== "Tab" || !sh) return; // odak tuzağı (23 Kasım 2026): Tab pencerenin içinde döner
+    var L = [].filter.call(sh.querySelectorAll("button:not([disabled]), input:not([disabled])"), function (x) { return x.getClientRects().length; });
+    if (!L.length) return; var ilk = L[0], son = L[L.length - 1], a = document.activeElement;
+    if (!sh.contains(a)) { e.preventDefault(); ilk.focus(); } else if (e.shiftKey && a === ilk) { e.preventDefault(); son.focus(); } else if (!e.shiftKey && a === son) { e.preventDefault(); ilk.focus(); }
+  }
   function ac() {
     geri = document.activeElement;
     if (!sh) {
