@@ -105,11 +105,12 @@
     ".dsIp{margin:7px 2px 0;min-height:32px;font-size:12px;color:#9a917e;line-height:1.35}.dsIp b{color:#f3d38a;font-weight:600}" +
     ".dsArac{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:4px 2px 0;flex-wrap:wrap}.dsOynG{display:flex;gap:6px}" +
     ".dsOyn{flex:none;min-height:34px;padding:0 12px;border-radius:999px;border:1px solid #5a4320;background:rgba(224,162,79,.1);color:#f3d38a;font:700 12.5px system-ui,sans-serif;cursor:pointer}.dsOyn[aria-pressed=\"true\"]{background:#e0a24f;color:#1a1205}.dsOyn:active,.dsBuy:active{transform:scale(.96)}" +
-    ".dsM{margin-top:10px}.dsM h3 small{font-weight:600;letter-spacing:0;text-transform:none;color:#6f6858;margin-left:6px}" +
+    ".dsM{margin-top:10px}.dsC.dsT h3 small{color:#f3d38a}.dsC h3 small{font-weight:600;letter-spacing:0;text-transform:none;color:#6f6858;margin-left:6px}" +
     ".dsMG{position:relative;height:78px;margin:10px 0 2px}.dsMP{position:absolute;left:0;top:0;bottom:0;right:62px}.dsMP svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}" +
     ".dsMG .l{position:absolute;right:0;width:56px;font:700 11px/1 system-ui,sans-serif;transform:translateY(-50%)}.dsMG .l.y,.dsMG .l.o{color:rgba(255,170,110,.9)}.dsMG .l.e{color:rgba(120,190,255,.95)}" +
     ".dsMG .n{position:absolute;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;border:2px solid #050505}.dsMG .n.ek{background:#78beff}.dsMG .n.gd{background:#ffaa6e}" +
     ".dsMG .b{position:absolute;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;border-radius:50%;background:#fff3c8;box-shadow:0 0 0 3px rgba(243,211,138,.35),0 0 14px #f3d38a}" +
+    ".dsMG .bt{position:absolute;z-index:1;padding:2px 8px;border-radius:999px;background:#f3d38a;color:#1a1205;font:700 11.5px/1.35 system-ui,sans-serif;white-space:nowrap;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.5)}.dsMG .bt[hidden]{display:none}" +
     ".dsMA{display:flex;justify-content:space-between;font-size:11px;color:#6f6858;margin:0 62px 8px 0}.dsK p{letter-spacing:normal;word-spacing:normal}" +
     ".dsMS{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}@media (min-width:760px){.dsMS{grid-template-columns:repeat(4,1fr)}}" +
     ".dsMS li{display:flex;flex-direction:column;gap:2px;padding:9px 10px;border-radius:12px;border:1px solid #2a2418;background:rgba(255,255,255,.02)}" +
@@ -364,15 +365,20 @@
         '<line x1="0" x2="100" y1="92" y2="92" stroke="rgba(255,170,110,.55)" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"/>' +
         '<polyline points="' + egri.join(" ") + '" fill="none" stroke="#e0a24f" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>' +
         ev.map(function (x) { var dd = (x.t - simd) / 864e5; return '<i class="n ' + (x.h % 180 ? "gd" : "ek") + '" style="left:' + (dd / 365 * 100).toFixed(2) + "%;top:" + yY(gunes(x.t).dek) + '%"></i>'; }).join("") +
-        '<i class="b"></i></div><span class="l y" style="top:8%">Yengeç</span><span class="l e" style="top:50%">Ekvator</span><span class="l o" style="top:92%">Oğlak</span></div><div class="dsMA"><span>Bugün</span><span>1 yıl sonra</span></div><ul class="dsMS">' +
+        '<i class="b"></i><span class="bt" hidden></span></div><span class="l y" style="top:8%">Yengeç</span><span class="l e" style="top:50%">Ekvator</span><span class="l o" style="top:92%">Oğlak</span></div><div class="dsMA"><span>Bugün</span><span>1 yıl sonra</span></div><ul class="dsMS">' +
         ev.map(function (x) {
           var k = gunNo(x.t) - bugun;
           return '<li><b>' + (x.h % 180 ? "🔆 " : "⚖️ ") + x.ad + "</b><small>" + gunT(x.t) + "</small><em>" + (k === 0 ? "bugün" : k === 1 ? "yarın" : k + "<small>gün kaldı</small>") + "</em></li>";
         }).join("") + "</ul>";
-      MV = { gun: bugun, b: kap.querySelector(".b") };
+      MV = { gun: bugun, b: kap.querySelector(".b"), bt: kap.querySelector(".bt") };
     }
     var t = simdi(), gd = Math.max(0, Math.min(365, (t - simd) / 864e5));
-    MV.b.style.left = (gd / 365 * 100).toFixed(2) + "%"; MV.b.style.top = yY(gunes(t).dek) + "%";
+    var bx = (gd / 365 * 100).toFixed(2) + "%", by = yY(gunes(t).dek) + "%"; MV.b.style.left = bx; MV.b.style.top = by;
+    MV.bt.hidden = gunNo(t) === bugun;
+    if (!MV.bt.hidden) {
+      MV.bt.textContent = fmt(IST[3], { day: "numeric", month: "short" }).format(t); MV.bt.style.left = bx; MV.bt.style.top = by;
+      MV.bt.style.transform = "translate(" + (gd < 36 ? "-12%" : gd > 329 ? "-88%" : "-50%") + "," + (parseFloat(by) < 30 ? "12px" : "calc(-100% - 12px)") + ")";
+    }
   }
 
   function boyutla() {
@@ -503,7 +509,27 @@
     O.querySelector("#dsAlt").innerHTML = "UTC <b>" + saat(t, "UTC", true) + "</b> · İstanbul <b>" + saat(t, istT, true) + "</b> · Güneş şu an <b>" + en(g.lat) + ", " + boy(g.lon) + "</b> noktasında tepede";
     O.querySelector("#dsKayY").textContent = kayYazi(); O.querySelector("#dsSimdi").hidden = !(kayma || gunK);
     O.querySelector("#dsIp").innerHTML = gunK || (oyn && oyn.mod === "yil") ? yilYazi() : "Haritaya dokun: o boylamın güneş saati";
-    mevsim();
+    mevsim(); gokKarti(t, g);
+  }
+  // "16 Nisan'da" (TDK: belirli tarihte ay adı büyük harf, ek kesme işaretiyle)
+  var AY_EK = ["ta", "ta", "ta", "da", "ta", "da", "da", "ta", "de", "de", "da", "ta"];
+  function tarihEk(t) { var p = {}; fmt(IST[3], { day: "numeric", month: "long" }).formatToParts(t).forEach(function (x) { p[x.type] = x.value; }); return p.day + " " + p.month + "'" + AY_EK[+fmt(IST[3], { month: "numeric" }).format(t) - 1]; }
+  // "13:03'te", "12:50'de", "15:00'te": ek, saatin okunuşunun son sözcüğüne göre
+  function saatEk(s) {
+    var h = +s.slice(0, 2), m = +s.slice(3, 5), n = m || h;
+    var e = n % 10 ? ["", "de", "de", "te", "te", "te", "da", "de", "de", "da"][n % 10] : ["da", "da", "de", "da", "ta", "de"][n / 10];
+    return s + "'" + e;
+  }
+  var gokSon = "";
+  function gokKarti(t, g) {
+    var istT = IST[3], bugunMu = gunNo(t) === gunNo(Date.now()), db = dogBat(IST[1], IST[2], t), uzun = db.dog ? (db.bat - db.dog) / 6e4 : null;
+    var yon = gunes(t + 864e5).dek - g.dek, yari = g.dek < 0 ? "güneyinde" : "kuzeyinde";
+    var gidis = (g.dek < 0) === (yon < 0) ? (g.dek < 0 ? "Oğlak" : "Yengeç") + " Dönencesi'ne doğru ilerliyor" : "ekvatora doğru dönüyor";
+    var h = "<h3>Gökyüzü · İstanbul" + (bugunMu ? "" : "<small>" + fmt(istT, { day: "numeric", month: "long", year: "numeric", weekday: "long" }).format(t) + "</small>") + "</h3><ul>" +
+      (db.dog ? '<li><span class="i">🌅</span><span>Gün doğumu <b>' + saat(db.dog, istT) + "</b> · batımı <b>" + saat(db.bat, istT) + "</b><small>Gün " + sure(uzun) + " · güneş " + saatEk(saat(db.ogle, istT)) + " tepede</small></span></li>" : "") +
+      '<li><span class="i">☀️</span><span>Güneş ' + (bugunMu ? "bugün" : tarihEk(t)) + " <b>" + en(g.dek) + "</b> enleminin tepesinde<small>" +
+      (Math.abs(g.dek) < 1 ? "Ekinoks günlerinde gece-gündüz çizgisi kutuptan kutba dümdüz iner" : "Ekinokslarda gece-gündüz çizgisi dümdüz iner; " + (bugunMu ? "bugün" : "o gün") + " eğik, çünkü güneş ekvatorun " + yari + " ve " + gidis) + "</small></span></li></ul>";
+    if (h !== gokSon) { gokSon = h; O.querySelector("#dsT").innerHTML = h; }
   }
   function yaziGuncelle(tam) {
     hafifYazi();
@@ -521,12 +547,6 @@
     }
     html += '<div class="kural">⏱️ Dünya 24 saatte 360° döner: <b>15° = 1 saat, 1° = 4 dakika</b>. Güneş saati bugün ortalamadan <b>' + sure(Math.abs(g.eot)) + " " + (g.eot >= 0 ? "ileri" : "geri") + "</b> (zaman denklemi; yıl boyunca ±16 dk oynar).</div>";
     O.querySelector("#dsP").innerHTML = html;
-    // Gök takvimi
-    var db = dogBat(IST[1], IST[2], t), uzun = db.dog ? (db.bat - db.dog) / 6e4 : null;
-    O.querySelector("#dsT").innerHTML = "<h3>Gökyüzü · İstanbul</h3><ul>" +
-      (db.dog ? '<li><span class="i">🌅</span><span>Gün doğumu <b>' + saat(db.dog, istT) + "</b> · batımı <b>" + saat(db.bat, istT) + "</b><small>Gün " + sure(uzun) + " · güneş " + saat(db.ogle, istT) + "'de tepede</small></span></li>" : "") +
-      '<li><span class="i">☀️</span><span>Güneş bugün <b>' + en(g.dek) + "</b> enleminin tepesinde<small>" + (Math.abs(g.dek) < 1 ? "Ekinoks günlerinde gece-gündüz çizgisi kutuptan kutba dümdüz iner" : "Ekinokslarda gece-gündüz çizgisi dümdüz iner; bugün eğik, çünkü güneş " + (g.dek < 0 ? "Oğlak" : "Yengeç") + " Dönencesi'ne doğru") + "</small></span></li>" +
-      "</ul>";
     // Şehirler
     var istG = gunAnah(istT, t), istF = tzFark(istT, t);
     O.querySelector("#dsS").innerHTML = SEHIR.map(function (c, i) {
