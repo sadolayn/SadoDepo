@@ -14,7 +14,12 @@
     ["İstanbul", 41.01, 28.98, "Europe/Istanbul", "a"], ["Londra", 51.51, -0.13, "Europe/London", "l"], ["Frankfurt", 50.11, 8.68, "Europe/Berlin", "s"],
     ["Moskova", 55.76, 37.62, "Europe/Moscow", "s"], ["Dubai", 25.2, 55.27, "Asia/Dubai", "s"], ["Pekin", 39.9, 116.4, "Asia/Shanghai", "l"],
     ["Singapur", 1.35, 103.82, "Asia/Singapore", "a"], ["Tokyo", 35.68, 139.69, "Asia/Tokyo", "s"], ["Sidney", -33.87, 151.21, "Australia/Sydney", "s"],
-    ["New York", 40.71, -74.01, "America/New_York", "s"], ["Los Angeles", 34.05, -118.24, "America/Los_Angeles", "l"], ["São Paulo", -23.55, -46.63, "America/Sao_Paulo", "s"]];
+    ["New York", 40.71, -74.01, "America/New_York", "s"], ["Los Angeles", 34.05, -118.24, "America/Los_Angeles", "l"], ["São Paulo", -23.55, -46.63, "America/Sao_Paulo", "s"],
+    // 23 Kasım 2026: ek şehirler (Ekvator çevresi, Afrika, Latin Amerika, Pasifik)
+    ["Meksiko", 19.43, -99.13, "America/Mexico_City", "l", 1], ["Bogota", 4.71, -74.07, "America/Bogota", "s", 1], ["Buenos Aires", -34.6, -58.38, "America/Argentina/Buenos_Aires", "l", 1],
+    ["Kahire", 30.04, 31.24, "Africa/Cairo", "a", 1], ["Lagos", 6.52, 3.38, "Africa/Lagos", "l", 1], ["Kinşasa", -4.32, 15.31, "Africa/Kinshasa", "l", 1],
+    ["Nairobi", -1.29, 36.82, "Africa/Nairobi", "s", 1], ["Johannesburg", -26.2, 28.05, "Africa/Johannesburg", "s", 1], ["Mumbai", 19.08, 72.88, "Asia/Kolkata", "s", 1],
+    ["Cakarta", -6.21, 106.85, "Asia/Jakarta", "a", 1], ["Auckland", -36.85, 174.76, "Pacific/Auckland", "l", 1], ["Honolulu", 21.31, -157.86, "Pacific/Honolulu", "s", 1]];
   var IST = SEHIR[0], LAT0 = 84, LAT1 = -60; // haritada görünen enlemler (Antarktika kesilir)
   var R = Math.PI / 180, D = 180 / Math.PI;
 
@@ -97,7 +102,21 @@
     ".dsAlt{font-size:12.5px;color:#9a917e;margin:0 0 10px}.dsAlt b{color:#e8e2d4;font-weight:600;font-variant-numeric:tabular-nums}" +
     ".dsH{position:relative;border-radius:16px;overflow:hidden;border:1px solid #2a2418;background:#05070b;touch-action:none;cursor:crosshair}" +
     ".dsH canvas{display:block;width:100%;height:auto}" +
-    ".dsIp{position:absolute;left:10px;bottom:8px;font-size:11.5px;color:#9a917e;pointer-events:none;text-shadow:0 1px 3px #000}" +
+    ".dsArac{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 2px 0}.dsIp{font-size:12px;color:#9a917e;line-height:1.3}" +
+    ".dsOyn{flex:none;min-height:34px;padding:0 12px;border-radius:999px;border:1px solid #5a4320;background:rgba(224,162,79,.1);color:#f3d38a;font:700 12.5px system-ui,sans-serif;cursor:pointer}.dsOyn[aria-pressed=\"true\"]{background:#e0a24f;color:#1a1205}" +
+    ".dsCor{position:absolute;inset:0;pointer-events:none}" +
+    ".dsGir{position:absolute;color:#9fd3ff;opacity:.9;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px}" +
+    ".dsGir svg{display:block;animation:dsDon 3.2s linear infinite}.dsGir.g svg{animation-direction:reverse}" +
+    ".dsGir small{font:600 10.5px/1.15 system-ui,sans-serif;color:#cfe8ff;text-align:center;white-space:nowrap;text-shadow:0 1px 3px #000;background:rgba(3,6,12,.6);border-radius:6px;padding:1px 5px}" +
+    "@keyframes dsDon{to{transform:rotate(-360deg)}}" +
+    ".dsL{margin-top:10px}.dsL summary{cursor:pointer;font:700 13.5px system-ui,sans-serif;color:#f3d38a;list-style:none;min-height:28px;display:flex;align-items:center}.dsL summary::-webkit-details-marker{display:none}" +
+    ".dsL summary::after{content:'›';margin-left:auto;font-size:18px;transition:transform .2s ease}.dsL[open] summary::after{transform:rotate(90deg)}" +
+    ".dsL ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:9px}@media (min-width:760px){.dsL ul{grid-template-columns:1fr 1fr;column-gap:18px}}" +
+    ".dsL li{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;line-height:1.45;color:#cfc6b0}.dsL li b{display:block;color:#fff;font-weight:600}" +
+    ".cz{flex:none;width:26px;height:14px;margin-top:3px;font-style:normal;text-align:center;line-height:14px}" +
+    ".cz.gw{border-top:2px solid #f3d38a;height:0;margin-top:9px}.cz.mr{border-top:1px solid rgba(160,170,200,.5);height:0;margin-top:9px}.cz.gg{height:12px;border-bottom:2px solid #c9a35e;border-radius:0 0 50% 50%}" +
+    ".cz.ek{border-top:2px solid rgba(120,190,255,.8);height:0;margin-top:9px}.cz.dn{border-top:2px dashed rgba(255,170,110,.75);height:0;margin-top:9px}.cz.yl{border-top:2px dotted rgba(243,211,138,.85);height:0;margin-top:9px}" +
+    ".dsDaha{display:block;margin:8px auto 0;min-height:36px;padding:0 16px;border-radius:999px;border:1px solid #3a3020;background:transparent;color:#cfc6b0;font:600 12.5px system-ui,sans-serif;cursor:pointer}" +
     ".dsZ{display:flex;align-items:center;gap:10px;margin:10px 2px 4px}.dsZ input{flex:1;accent-color:#e0a24f;height:28px}" +
     ".dsZ span{min-width:92px;font:600 12.5px system-ui,sans-serif;color:#cfc6b0;font-variant-numeric:tabular-nums;text-align:right}" +
     ".dsZ button{min-height:32px;padding:0 12px;border-radius:999px;border:1px solid #5a4320;background:rgba(224,162,79,.1);color:#f3d38a;font:600 12.5px system-ui,sans-serif;cursor:pointer}" +
@@ -115,7 +134,7 @@
     ".dsS .fk{display:block;font-size:11.5px;color:#8f8672;margin-top:1px}" +
     ".dsT ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.dsT li{display:flex;gap:10px;align-items:baseline}.dsT li .i{font-size:16px}.dsT li b{color:#f3d38a;font-weight:600}.dsT li small{display:block;color:#8f8672;font-size:11.5px}" +
     ".dsN{margin:12px 2px 0;font-size:11px;color:#6f6858;line-height:1.5}" +
-    ".dsBuy{position:absolute;right:8px;bottom:8px;z-index:2;min-height:34px;padding:0 12px;border-radius:999px;border:1px solid rgba(243,211,138,.55);background:rgba(5,6,10,.78);color:#f3d38a;font:700 12.5px system-ui,sans-serif;cursor:pointer;backdrop-filter:blur(4px)}" +
+    ".dsBuy{flex:none;min-height:34px;padding:0 12px;border-radius:999px;border:1px solid rgba(243,211,138,.55);background:rgba(5,6,10,.78);color:#f3d38a;font:700 12.5px system-ui,sans-serif;cursor:pointer;backdrop-filter:blur(4px)}" +
     ".dsBuy:active{transform:scale(.96)}" +
     ".dsBO{position:fixed;inset:0;z-index:460;background:#030406;color:#e8e2d4;font:13px/1.4 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:0;transition:opacity .3s ease}.dsBO.ac{opacity:1}.dsBO[hidden]{display:none}" +
     ".dsBI{position:absolute;left:0;top:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px 12px;box-sizing:border-box}" +
@@ -123,9 +142,9 @@
     ".dsBU{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}" +
     ".dsBU b{font:italic 700 17px Georgia,'Times New Roman',serif;color:#f3d38a}.dsBU span{color:#9a917e;font-variant-numeric:tabular-nums}.dsBU span i{font-style:normal;color:#fff}" +
     ".dsBU button{width:36px;height:36px;flex:none;border-radius:11px;border:1px solid #3a3020;background:rgba(10,10,10,.8);color:#cfc6b0;font-size:15px;cursor:pointer}" +
-    ".dsBC{border-radius:14px;overflow:hidden;border:1px solid #2a2418;touch-action:none;cursor:crosshair;line-height:0}.dsBC canvas{display:block}" +
+    ".dsBC{position:relative;border-radius:14px;overflow:hidden;border:1px solid #2a2418;touch-action:none;cursor:crosshair;line-height:0}.dsBC canvas{display:block}" +
     ".dsBA{display:flex;align-items:center;gap:10px;width:100%}.dsBA input{flex:1;accent-color:#e0a24f;height:26px}.dsBA span{min-width:92px;text-align:right;color:#cfc6b0;font:600 12px system-ui,sans-serif}" +
-    "@media (prefers-reduced-motion: reduce){.dsO,.dsK,.dsBO{transition:none}}";
+    "@media (prefers-reduced-motion: reduce){.dsO,.dsK,.dsBO{transition:none}.dsGir svg{animation:none}}";
   document.head.appendChild(css);
 
   var O, K, cv, cx, W = 0, Hh = 0, dpr = 1, kayma = 0, prob = { lat: IST[1], lon: IST[2], ad: "İstanbul" }, secSehir = 0, zSaat = null, zHarita = null, geri = null, sonCiz = 0;
@@ -137,17 +156,29 @@
     O.innerHTML = '<div class="dsK" role="dialog" aria-modal="true" aria-labelledby="dsB">' +
       '<button type="button" class="dsX" aria-label="Kapat">✕</button>' +
       '<div class="dsB" id="dsB">🌍 Dünya saati</div><div class="dsAlt" id="dsAlt"></div>' +
-      '<div class="dsH" id="dsH"><canvas id="dsCv" role="img" aria-label="Gece ve gündüzü gösteren canlı dünya haritası"></canvas><div class="dsIp" id="dsIp">Haritada bir yere dokun: o boylamın güneş saati</div><button type="button" class="dsBuy" id="dsBuy"></button></div>' +
-      '<div class="dsZ"><input type="range" id="dsKay" min="-720" max="720" step="15" value="0" aria-label="Zamanı kaydır"><span id="dsKayY">şimdi</span><button type="button" id="dsSimdi" hidden>Şimdi</button></div>' +
+      '<div class="dsH" id="dsH"><canvas id="dsCv" role="img" aria-label="Gece ve gündüzü gösteren canlı dünya haritası"></canvas><div class="dsCor" aria-hidden="true"></div></div>' +
+      '<div class="dsArac"><span class="dsIp">Haritaya dokun: o boylamın güneş saati</span><button type="button" class="dsBuy" id="dsBuy"></button></div>' +
+      '<div class="dsZ"><button type="button" class="dsOyn" aria-pressed="false">▶ Oynat</button><input type="range" id="dsKay" min="-720" max="720" step="15" value="0" aria-label="Zamanı kaydır"><span id="dsKayY">şimdi</span><button type="button" id="dsSimdi" hidden>Şimdi</button></div>' +
       '<div class="dsG"><div class="dsC dsP" id="dsP"></div><div class="dsC dsT" id="dsT"></div></div>' +
-      '<div class="dsS" id="dsS"></div>' +
+      '<details class="dsC dsL"><summary>🧭 Haritadaki çizgiler ne anlatıyor?</summary><ul>' +
+      '<li><i class="cz gw"></i><span><b>Greenwich (0° boylam)</b> Saat dilimlerinin başlangıcı. Buradan doğuya her 15° bir saat ileri, batıya bir saat geri; 1° = 4 dakika.</span></li>' +
+      '<li><i class="cz mr"></i><span><b>İnce dikey çizgiler</b> 15°\'lik saat dilimleri (üstteki sayılar UTC farkı). Ülkeler sınırlarına göre saat seçtiği için gerçek dilimler bu çizgilerden sapar.</span></li>' +
+      '<li><i class="cz gg"></i><span><b>Altın eğri</b> Gece-gündüz çizgisi. Ekinokslarda kutuptan kutba dümdüz iner; yaz ve kışta eğilir.</span></li>' +
+      '<li><i class="cz ek"></i><span><b>Ekvator (0° enlem)</b> Dünya\'yı kuzey ve güney yarım küreye böler. Burada gece ve gündüz yıl boyu yaklaşık 12\'şer saattir; mart ve eylül ekinokslarında güneş tam tepesindedir.</span></li>' +
+      '<li><i class="cz dn"></i><span><b>Yengeç ve Oğlak dönenceleri (23,44°)</b> Güneşin tam tepeye gelebildiği en kuzey ve en güney enlemler: haziran gün dönümünde Yengeç\'in, aralık gün dönümünde Oğlak\'ın tepesindedir. 23,44°, Dünya\'nın eksen eğikliğidir; aradaki kuşak tropikal bölgedir.</span></li>' +
+      '<li><i class="cz yl"></i><span><b>Noktalı altın çizgi</b> Güneşin bugünkü yolu: güneş gün boyunca bu enlemin üzerinden batıya ilerler. "Oynat"a basınca izleyebilirsin.</span></li>' +
+      '<li><i class="cz gi">🌀</i><span><b>Girdaplar (Coriolis)</b> Dünya döndüğü için büyük hava kütleleri sapar: kasırgalar kuzey yarım kürede saat yönünün tersine, güney yarım kürede saat yönünde döner. ' +
+      'Lavabo ya da kovadaki girdabın yönünü ise bu etki belirlemez; o ölçekte çok zayıftır, kabın şekli ve suyun ilk hareketi belirler.</span></li></ul></details>' +
+      '<div class="dsS" id="dsS"></div><button type="button" class="dsDaha" id="dsDaha" aria-expanded="false">＋ 12 şehir daha</button>' +
       '<p class="dsN">Her 15° boylam 1 saat, her 1° boylam 4 dakika eder: Dünya 24 saatte 360° döner. Saat dilimleri siyasi sınırlara göre çizildiği için şehirlerin saati çoğu zaman güneş saatinden farklıdır. ' +
       'Güneş hesapları NOAA formülleriyle, dakika düzeyinde yaklaşıktır. Harita verisi: Natural Earth. Bu sayfa hiçbir yere bağlanmaz, konum sormaz.</p></div>';
     document.body.appendChild(O); K = O.firstChild; cv = O.querySelector("#dsCv"); cx = cv.getContext("2d");
     O.addEventListener("click", function (e) { if (e.target === O || e.target.closest(".dsX")) kapa(); });
     var kay = O.querySelector("#dsKay");
-    kay.addEventListener("input", function () { kayma = +kay.value; yenile(true); });
-    O.querySelector("#dsSimdi").addEventListener("click", function () { kayma = 0; kay.value = 0; yenile(true); });
+    kay.addEventListener("input", function () { oynat(false); kayma = +kay.value; yenile(true); });
+    O.querySelector("#dsSimdi").addEventListener("click", function () { oynat(false); kayma = 0; kay.value = 0; yenile(true); });
+    O.querySelector(".dsZ .dsOyn").addEventListener("click", function () { oynat(!oyn); });
+    O.querySelector("#dsDaha").addEventListener("click", function () { tumSehir = !tumSehir; this.setAttribute("aria-expanded", String(tumSehir)); this.textContent = tumSehir ? "− Daha az şehir" : "＋ 12 şehir daha"; yaziGuncelle(true); });
     O.querySelector("#dsS").addEventListener("click", function (e) {
       var b = e.target.closest("button[data-i]"); if (!b) return; var c = SEHIR[+b.dataset.i];
       secSehir = +b.dataset.i; prob = { lat: c[1], lon: c[2], ad: c[0] }; yenile(true);
@@ -178,12 +209,13 @@
   function buyukKur() {
     B = { o: document.createElement("div") }; B.o.className = "dsBO"; B.o.hidden = true;
     B.o.innerHTML = '<div class="dsBI" role="dialog" aria-modal="true" aria-label="Büyük dünya haritası"><div class="dsBU"><b>🌍 Dünya saati</b><span id="dsBZ"></span><button type="button" aria-label="Küçült">✕</button></div>' +
-      '<div class="dsBC"><canvas role="img" aria-label="Şehir adlarıyla büyük dünya haritası"></canvas></div>' +
-      '<div class="dsBA"><input type="range" min="-720" max="720" step="15" value="0" aria-label="Zamanı kaydır"><span></span></div></div>';
+      '<div class="dsBC"><canvas role="img" aria-label="Şehir adlarıyla büyük dünya haritası"></canvas><div class="dsCor" aria-hidden="true"></div></div>' +
+      '<div class="dsBA"><button type="button" class="dsOyn" aria-pressed="false">▶ Oynat</button><input type="range" min="-720" max="720" step="15" value="0" aria-label="Zamanı kaydır"><span></span></div></div>';
     document.body.appendChild(B.o);
     B.i = B.o.firstChild; B.cv = B.o.querySelector("canvas"); B.cx = B.cv.getContext("2d"); B.k = B.o.querySelector(".dsBA input"); B.ky = B.o.querySelector(".dsBA span");
     B.o.querySelector(".dsBU button").addEventListener("click", buyukKapa);
-    B.k.addEventListener("input", function () { kayma = +B.k.value; O.querySelector("#dsKay").value = kayma; yenile(true); });
+    B.k.addEventListener("input", function () { oynat(false); kayma = +B.k.value; O.querySelector("#dsKay").value = kayma; yenile(true); });
+    B.o.querySelector(".dsOyn").addEventListener("click", function () { oynat(!oyn); });
     var bas = false;
     var konum = function (e) {
       if (!don) { var r = B.cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; }
@@ -204,6 +236,7 @@
     var w = Math.min(iw - 24, (ih - 104) * 360 / (LAT0 - LAT1)); w = Math.max(280, Math.floor(w));
     B.w = w; B.h = Math.round(w * (LAT0 - LAT1) / 360); B.dpr = Math.min(2, window.devicePixelRatio || 1);
     B.cv.width = Math.round(B.w * B.dpr); B.cv.height = Math.round(B.h * B.dpr); B.cv.style.width = B.w + "px"; B.cv.style.height = B.h + "px";
+    girdaplar(B.o.querySelector(".dsCor"), B.w, B.h);
     buyukCiz();
   }
   function buyukCiz() {
@@ -231,10 +264,51 @@
     if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
     setTimeout(function () { B.o.hidden = true; var d = O && O.querySelector("#dsBuy"); if (d) d.focus({ preventScroll: true }); }, 300);
   }
+  // Girdaplar: kuzeyde saat yönünün tersine, güneyde saat yönünde dönen iki kasırga simgesi (Coriolis)
+  var GIR = [[22, -52, "k", "Kuzey: saat yönünün tersine ↺"], [-14, 82, "g", "Güney: saat yönünde ↻"]];
+  // Üç kollu sarmal; kollar dönüşün gerisinde kalır (uydu görüntülerindeki gibi). Kuzeyde dışa doğru saat yönünde kıvrılıp
+  // saat yönünün tersine döner; güneyde tam aynası.
+  function girYol(yon) {
+    var d = "";
+    for (var j = 0; j < 3; j++) for (var s = 0; s <= 1.0001; s += 0.125) {
+      var rr = 2.8 + s * 8.4, a = j * 2.0944 + yon * s * 2.2;
+      d += (s ? "L" : "M") + (rr * Math.cos(a)).toFixed(2) + " " + (rr * Math.sin(a)).toFixed(2);
+    }
+    return d;
+  }
+  var GIR_YOL = { k: girYol(1), g: girYol(-1) };
+  function girdaplar(kap, w, h) {
+    if (!kap) return; var yaziVar = w >= 560, boy = Math.round(Math.max(18, Math.min(34, w / 26)));
+    kap.innerHTML = GIR.map(function (g) {
+      var x = (g[1] + 180) / 360 * w, y = (LAT0 - g[0]) / (LAT0 - LAT1) * h;
+      return '<div class="dsGir ' + g[2] + '" style="left:' + x.toFixed(1) + "px;top:" + y.toFixed(1) + 'px"><svg width="' + boy + '" height="' + boy + '" viewBox="-12 -12 24 24" aria-hidden="true"><circle r="2.4" fill="currentColor"/><path d="' + GIR_YOL[g[2]] + '" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>' + (yaziVar ? "<small>" + g[3] + "</small>" : "") + "</div>";
+    }).join("");
+  }
+  // Günü oynat: 24 saat yaklaşık 12 saniyede akar (dakikada 120 dk)
+  var oyn = null, tumSehir = false;
+  function oynat(ac) {
+    if (!ac) { if (oyn) { cancelAnimationFrame(oyn.id); oyn = null; } dugmeler(false); return; }
+    if (oyn) return; dugmeler(true);
+    oyn = { son: performance.now(), yazi: 0 };
+    var adim = function (z) {
+      if (!oyn) return; var dt = Math.min(100, z - oyn.son); oyn.son = z;
+      kayma += dt * 0.12; if (kayma > 720) kayma -= 1440;
+      var v = Math.round(kayma / 15) * 15; O.querySelector("#dsKay").value = v; if (B) B.k.value = v;
+      ciz(); buyukCiz();
+      if (z - oyn.yazi > 700) { oyn.yazi = z; yaziGuncelle(true); }
+      oyn.id = requestAnimationFrame(adim);
+    };
+    oyn.id = requestAnimationFrame(adim);
+  }
+  function dugmeler(acik) {
+    [].forEach.call(document.querySelectorAll(".dsOyn"), function (b) { b.setAttribute("aria-pressed", String(acik)); b.textContent = acik ? "⏸ Durdur" : "▶ Oynat"; });
+  }
+
   function boyutla() {
     var w = Math.round(O.querySelector("#dsH").clientWidth) || 360;
     dpr = Math.min(2, window.devicePixelRatio || 1); W = w; Hh = Math.round(w * (LAT0 - LAT1) / 360);
     cv.width = Math.round(W * dpr); cv.height = Math.round(Hh * dpr); cv.style.height = Hh + "px";
+    girdaplar(O.querySelector(".dsCor"), W, Hh);
   }
 
   // ---------- Harita çizimi ----------
@@ -269,11 +343,20 @@
     // Ekvator, dönenceler ve güneşin bugünkü yolu
     var yaz = Math.max(10, Math.min(12, W / 70));
     cx.font = "600 " + yaz + "px system-ui,sans-serif"; cx.textBaseline = "middle";
-    [[0, "Ekvator"], [23.44, "Yengeç Dönencesi"], [-23.44, "Oğlak Dönencesi"]].forEach(function (d) {
-      var y = xy(d[0], 0)[1]; cx.strokeStyle = "rgba(160,170,200,.18)"; cx.setLineDash([2, 5]); cx.lineWidth = 1; cx.beginPath(); cx.moveTo(0, y); cx.lineTo(W, y); cx.stroke();
-      if (W >= 560) { cx.setLineDash([]); cx.fillStyle = "rgba(170,180,205,.55)"; cx.fillText(d[1], 6, y - yaz * 0.7); }
+    var dar = W < 560;
+    [[0, "Ekvator", "Ekvator", "rgba(120,190,255,.6)", [], 1.4], [23.44, "Yengeç Dönencesi", "Yengeç D.", "rgba(255,170,110,.55)", [6, 4], 1.2], [-23.44, "Oğlak Dönencesi", "Oğlak D.", "rgba(255,170,110,.55)", [6, 4], 1.2]].forEach(function (d) {
+      var y = xy(d[0], 0)[1]; cx.strokeStyle = d[3]; cx.setLineDash(d[4]); cx.lineWidth = d[5]; cx.beginPath(); cx.moveTo(0, y); cx.lineTo(W, y); cx.stroke(); cx.setLineDash([]);
+      var et = dar ? d[2] : d[1], fs = dar ? 10 : yaz; cx.font = "700 " + fs + "px system-ui,sans-serif";
+      var tw = cx.measureText(et).width + 8; cx.fillStyle = "rgba(3,5,10,.72)"; cx.fillRect(3, y - fs - 4, tw, fs + 4);
+      cx.fillStyle = d[3].replace(/[\d.]+\)$/, ".95)"); cx.fillText(et, 7, y - fs / 2 - 2);
     });
-    var gy = xy(g.dek, 0)[1]; cx.setLineDash([1, 4]); cx.strokeStyle = "rgba(243,211,138,.35)"; cx.beginPath(); cx.moveTo(0, gy); cx.lineTo(W, gy); cx.stroke(); cx.setLineDash([]);
+    cx.font = "600 " + yaz + "px system-ui,sans-serif";
+    var gy = xy(g.dek, 0)[1]; cx.setLineDash([1.5, 4]); cx.lineWidth = 1.6; cx.strokeStyle = "rgba(243,211,138,.6)"; cx.beginPath(); cx.moveTo(0, gy); cx.lineTo(W, gy); cx.stroke(); cx.setLineDash([]); cx.lineWidth = 1;
+    var yer = [];
+    if (!dar) {
+      var gyx = xy(0, -132)[0], gyy = gy + (g.dek < -12 ? -yaz * 0.9 : yaz * 0.9), gyw = cx.measureText("güneşin bugünkü yolu").width;
+      cx.fillStyle = "rgba(243,211,138,.85)"; cx.fillText("güneşin bugünkü yolu", gyx, gyy); yer.push([gyx - 2, gyy - yaz * 0.7, gyw + 4, yaz * 1.4]);
+    }
     // Meridyenler: her 15° bir saat
     for (var m = -165; m <= 180; m += 15) {
       var mx = xy(0, m)[0], gw = m === 0;
@@ -294,12 +377,20 @@
     var ey = Math.max(11, Math.min(13, W / 72));
     SEHIR.forEach(function (c, i) {
       var p = xy(c[1], c[2]), sec = i === secSehir;
-      cx.fillStyle = sec ? "#fff" : "rgba(243,211,138,.9)"; cx.beginPath(); cx.arc(p[0], p[1], sec ? 3.4 : 2.2, 0, 6.283); cx.fill();
+      cx.fillStyle = sec ? "#fff" : c[5] ? "rgba(243,211,138,.75)" : "rgba(243,211,138,.9)"; cx.beginPath(); cx.arc(p[0], p[1], sec ? 3.4 : c[5] ? 1.8 : 2.2, 0, 6.283); cx.fill();
       if (sec) { cx.strokeStyle = "rgba(255,255,255,.6)"; cx.lineWidth = 1; cx.beginPath(); cx.arc(p[0], p[1], 7, 0, 6.283); cx.stroke(); }
       if (W < 560) return;
-      var et2 = c[0] + (cizB ? "  " + saat(t, c[3]) : ""); cx.font = "600 " + ey + "px system-ui,sans-serif";
-      var tw2 = cx.measureText(et2).width + 10, hh2 = ey + 7, yon = c[4] || "s", bx = yon === "l" ? p[0] - 7 - tw2 : yon === "s" ? p[0] + 7 : p[0] - tw2 / 2, by = yon === "a" ? p[1] + 7 : yon === "u" ? p[1] - 7 - hh2 : p[1] - hh2 / 2;
-      bx = Math.max(2, Math.min(W - tw2 - 2, bx));
+      var et2 = c[0] + (cizB ? "  " + saat(t, c[3]) : ""); cx.font = (c[5] ? "500 " : "600 ") + (c[5] ? ey - 1 : ey) + "px system-ui,sans-serif";
+      var tw2 = cx.measureText(et2).width + 10, hh2 = ey + 7, bx, by, tamam = false;
+      var dene = [c[4] || "s", "s", "l", "u", "a"];
+      for (var di = 0; di < dene.length && !tamam; di++) {
+        var yon = dene[di];
+        bx = yon === "l" ? p[0] - 7 - tw2 : yon === "s" ? p[0] + 7 : p[0] - tw2 / 2; by = yon === "a" ? p[1] + 7 : yon === "u" ? p[1] - 7 - hh2 : p[1] - hh2 / 2;
+        bx = Math.max(2, Math.min(W - tw2 - 2, bx)); by = Math.max(2, Math.min(Hh - hh2 - 2, by));
+        tamam = !yer.some(function (q) { return bx < q[0] + q[2] + 2 && bx + tw2 + 2 > q[0] && by < q[1] + q[3] + 1 && by + hh2 + 1 > q[1]; });
+      }
+      if (!tamam && c[5] && !sec) return; // ek şehrin adı sığmıyorsa yalnızca noktası
+      yer.push([bx, by, tw2, hh2]);
       cx.fillStyle = sec ? "rgba(243,211,138,.92)" : "rgba(4,5,9,.72)"; cx.strokeStyle = sec ? "rgba(255,255,255,.7)" : "rgba(243,211,138,.35)"; cx.lineWidth = 1;
       cx.beginPath(); if (cx.roundRect) cx.roundRect(bx, by, tw2, hh2, 6); else cx.rect(bx, by, tw2, hh2); cx.fill(); cx.stroke();
       cx.fillStyle = sec ? "#1a1205" : "#f1e6cc"; cx.textBaseline = "middle"; cx.fillText(et2, bx + 5, by + hh2 / 2 + 0.5);
@@ -348,12 +439,13 @@
     // Şehirler
     var istG = gunAnah(istT, t), istF = tzFark(istT, t);
     O.querySelector("#dsS").innerHTML = SEHIR.map(function (c, i) {
+      if (c[5] && !tumSehir && i !== secSehir) return "";
       var a = yuk(c[1], c[2], g), ik = a > 0 ? "☀️" : a > -6 ? (gunesSaati(t, c[2], true) < "12:00" ? "🌅" : "🌇") : "🌙", f = tzFark(c[3], t) - istF, gd = gunAnah(c[3], t);
       var gunE = gd === istG ? "" : (gd > istG ? " · yarın" : " · dün");
       return '<button type="button" data-i="' + i + '" class="' + (i === secSehir ? "sec" : "") + '" aria-pressed="' + (i === secSehir) + '"><span class="ad"><span>' + c[0] + "</span><span>" + ik + '</span></span><span class="sa">' + saat(t, c[3]) + '</span><span class="fk">' + (i === 0 ? "UTC" + sure(istF, true).replace(" sa", "") : (f ? sure(f, true) : "aynı saat")) + gunE + "</span></button>";
     }).join("");
   }
-  function yenile(harita) { var c = harita || Date.now() - sonCiz > 30000; yaziGuncelle(harita); if (c) { ciz(); buyukCiz(); } else if (buyuk && Math.floor(simdi() / 6e4) !== B.dk) { B.dk = Math.floor(simdi() / 6e4); buyukCiz(); } }
+  function yenile(harita) { var c = harita || Date.now() - sonCiz > 10000; yaziGuncelle(harita); if (c) { ciz(); buyukCiz(); } else if (buyuk && Math.floor(simdi() / 6e4) !== B.dk) { B.dk = Math.floor(simdi() / 6e4); buyukCiz(); } }
 
   function ac() {
     if (!O) kur();
@@ -367,6 +459,7 @@
   function kapa() {
     if (!O || O.hidden) return;
     if (buyuk) buyukKapa();
+    oynat(false);
     O.classList.remove("ac"); clearInterval(zSaat); document.removeEventListener("keydown", tus);
     setTimeout(function () { O.hidden = true; document.body.style.overflow = ""; if (geri && geri.focus) geri.focus({ preventScroll: true }); }, 300);
   }
