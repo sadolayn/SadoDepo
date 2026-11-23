@@ -39,9 +39,11 @@
 
   // Hareket azaltma (22 Kasım 2026): telefonda "Animasyonları kaldır" ayarı açıksa her sayfada (oyunlar dahil) hareketler anında biter.
   // Süre 0 değil 0,01 ms: animasyon/geçiş bitişini (animationend, transitionend) bekleyen oyunlar da akmaya devam eder.
+  // Kayan yazılar bu kuralın dışında (23 Kasım 2026): bilgisayarda "animasyon efektleri" kapalıyken de yavaşça kaymaya devam eder,
+  // üstüne gelince ya da dokununca durur (ana sayfa .kySer ve .ysSer, İş Bankası Gündemi .jt-r).
   (function () {
     var st = document.createElement("style"); st.id = "hareketAzalt";
-    st.textContent = "@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;transition-delay:0s!important;scroll-behavior:auto!important}}";
+    st.textContent = "@media (prefers-reduced-motion: reduce){*:not(.kySer):not(.ysSer):not(.jt-r),*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;transition-delay:0s!important;scroll-behavior:auto!important}}";
     (document.head || document.documentElement).appendChild(st);
   })();
   window.Ortak = {
