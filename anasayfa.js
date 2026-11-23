@@ -739,9 +739,13 @@ try {
     ...(function () { try { return window.aclBant || localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
     // 18 Kasım 2026: yeni ürün; kaynak isbank.com.tr/kazanc-hesap-ticari ve bankanın 18.11.2026 açıklaması (AA/DHA). Yalnızca sayfada yazanlar; ay sonunda kalkar
     ["banka.html#tkh", "🆕 İş Bankası'ndan yeni ürün: <b>Ticari Kazanç Hesabı</b>, işletmenin vadesiz hesabında belirlenen tutarın üstündeki bakiye her iş günü 17.45'te vadeliye geçip <b>gecelik faiz</b> kazanıyor <b class=\"gir\">Hesapla</b>", "2026-11-30", "onem"],
-    // 5 Kasım 2026: DenizBank kredi kartları Maximum'a geçiyor; kaynak DenizBank'ın kendi duyurusu ("6 Aralık 2026'dan itibaren … Maximum
-    // altyapısına geçiyor"); yalnızca duyuruda yazan söylenir, geçiş gününe kadar kalır
-    ["https://www.denizbank.com/kampanya/kart-kampanyalari/cok-yakinda", "🤝 DenizBank kredi kartları <b>6 Aralık'tan</b> itibaren Maximum altyapısına geçiyor", "2026-12-06"],
+    // 23 Kasım 2026: İş Bankası–DenizBank Maximum iş birliği (DHA, 23.11.2026; Fintech Dünyası ve Fintechtime aynı açıklama). Yalnızca açıklamada
+    // yazanlar: imzalayanlar ve unvanları, 6 Aralık 2026, "500 bini aşkın" üye iş yeri, Çınar'ın sözü birebir. İmza yeri/tarihi açıklamada yok, yazılmaz.
+    // "ust" işareti: ana sayfanın en üstündeki GÜNDEM şeridinde geçer (alttaki kayan yazıda tekrar etmez); geçiş gününe kadar kalır.
+    // (5 Kasım'daki DenizBank duyurusu satırı bunun yerine kaldırıldı.)
+    ["https://www.dha.com.tr/ekonomi/is-bankasi-ve-denizbanktan-maximum-is-birligi-2986761", "🤝 <b>İş Bankası ile DenizBank</b> Maximum'un 25. yılında ödeme sistemlerinde iş birliğine imza attı: DenizBank kredi kartları <b>6 Aralık 2026</b> itibarıyla Maximum özellikleri kazanıyor<small>DHA · 23 Kasım ↗</small>", "2026-12-06", "ust", "denizbank-maximum"],
+    ["https://www.dha.com.tr/ekonomi/is-bankasi-ve-denizbanktan-maximum-is-birligi-2986761", "✍️ Anlaşmayı İş Bankası Genel Müdürü <b>H. Cahit Çınar</b> ve DenizBank Genel Müdürü <b>Recep Baştuğ</b> imzaladı. Çınar: “Tüm DenizBank müşterilerine ‘Maximum dünyasına hoş geldiniz’ diyoruz”", "2026-12-06", "ust", "denizbank-cinar"],
+    ["https://www.dha.com.tr/ekonomi/is-bankasi-ve-denizbanktan-maximum-is-birligi-2986761", "🛍️ DenizBank kredi kartı kullanıcıları Maximum'un <b>500 bini aşkın</b> üye iş yerinde taksitli alışveriş yapabilecek; DenizBank üye iş yerleri de Maximum Kart sahiplerine açılacak", "2026-12-06", "ust", "denizbank-isyeri"],
     // 8 Kasım 2026: sayfanın en üstündeki görünüm seçimi; dokununca yukarı çıkar ve seçici kısa bir an parlar
     ["tema", "🌓 Gözüne göre seç: takvimin altındaki <b>◐ Görünüm</b> düğmesine dokun: <b>Açık · Koyu · Sistem</b>; Sistem telefonunun ayarına uyar <b class=\"gir\">Seç</b>", "2026-11-22"],
     // İşCep ödülü satırı 5 Kasım'da çıkarıldı: üstteki kupa kartı zaten gösteriyor
@@ -754,24 +758,28 @@ try {
   if (MATEM) dizi.unshift(["anma", "Cumhuriyetimizin ve Türkiye İş Bankası'nın Kurucusu Ulu Önder <b>Mustafa Kemal Atatürk</b>'ü, tarifsiz bir özlem, derin bir saygı ve sonsuz minnetle anıyoruz. <b class=\"yil\">1881 – ∞</b>", "", "anma"]);
   // PPK satırı (TCMB faiz kararı) varsa en başa gelir; ana sayfadaki PPK betiği Kayan.ppk(...) ile verir
   let ppk = null;
-  // Matemde siyah şeritte yalnızca anma yazısı geçer; haber satırları (ÖNEMLİ duyurular, COP31, PPK) en üstteki şeride taşınır
+  // Matemde siyah şeritte yalnızca anma yazısı geçer; haber satırları (ÖNEMLİ duyurular, COP31, PPK) en üstteki şeride taşınır.
+  // 23 Kasım 2026: "ust" işaretli satırlar her gün en üstteki GÜNDEM şeridinde geçer (YENİ satırları varsa arkalarına eklenir; SON DAKİKA hepsinin önüne geçer).
+  let ustSon = "";
   function ustSerit() {
     const k = document.getElementById("yeniS"), s2 = document.getElementById("ysSer"); if (!k || !s2) return;
     const tem = (x) => x.replace(/<b class="gir">.*?<\/b>/g, "").replace(/<b class="yn">(.*?)<\/b>/, "<b>$1</b>");
     const adres = (h) => /^https?:/.test(h) ? h : h.includes(".html") ? h : "isbank.html#" + h;
-    const L = dizi.filter((d) => d[3] === "onem" && (!d[2] || bugunTR <= d[2])).map(([h, x]) => `<a href="${adres(h)}"${/^https?:/.test(h) ? ' target="_blank" rel="noopener"' : ""}>${tem(x)}</a>`);
-    if (ppk) L.unshift(`<a href="#" data-ppk="1">${tem(ppk.html)}</a>`);
-    if (!L.length) { k.hidden = true; return; }
+    const L = dizi.filter((d) => (d[3] === "ust" || (MATEM && d[3] === "onem")) && (!d[2] || bugunTR <= d[2])).map(([h, x, , , g]) => `<a href="${adres(h)}"${/^https?:/.test(h) ? ' target="_blank" rel="noopener"' : ""}${g ? ` data-g="${g}"` : ""}>${tem(x)}</a>`);
+    if (ppk && MATEM) L.unshift(`<a href="#" data-ppk="1">${tem(ppk.html)}</a>`);
+    if (!L.length) { if (MATEM) k.hidden = true; return; }
     const tur = '<span style="display:inline-block;width:22px"></span>' + L.join("");
+    if (tur === ustSon) return; // aynı içerik: şeridi baştan başlatma
+    ustSon = tur; k.dataset.gundem = 1; window.ustGundemTur = tur;
     s2.innerHTML = tur + tur; k.hidden = false;
     k.querySelector(".ysEt").innerHTML = "<i></i>GÜNDEM"; k.setAttribute("aria-label", "Gündem");
     requestAnimationFrame(() => s2.style.setProperty("--sure", Math.max(28, Math.round(s2.scrollWidth / 2 / 40)) + "s"));
-    if (!k.dataset.ppkDinle) { k.dataset.ppkDinle = 1; s2.addEventListener("click", (e) => { if (e.target.closest("[data-ppk]")) { e.preventDefault(); ppk && ppk.tap && ppk.tap(); } }); }
+    if (!k.dataset.ppkDinle) { k.dataset.ppkDinle = 1; s2.addEventListener("click", (e) => { if (e.target.closest("[data-ppk]")) { e.preventDefault(); ppk && ppk.tap && ppk.tap(); } const a = e.target.closest("a[data-g]"); if (a && window.Rapor) Rapor.bolum("gundem-" + a.dataset.g); }); }
   }
   function ciz() {
     const tek = (ppk && !MATEM ? `<span class="kyOge ppk" data-h="ppk">${ppk.html}</span>` : "") +
-      dizi.filter((d) => (!d[2] || bugunTR <= d[2]) && (!MATEM || d[3] === "anma")).map(([h, x, , k]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}${k ? " " + k : ""}" data-h="${h}">${x}</span>`).join("");
-    if (MATEM) ustSerit();
+      dizi.filter((d) => (!d[2] || bugunTR <= d[2]) && (!MATEM || d[3] === "anma") && d[3] !== "ust").map(([h, x, , k]) => `<span class="kyOge${x === CAGRI[1] ? " son" : ""}${k ? " " + k : ""}" data-h="${h}">${x}</span>`).join("");
+    ustSerit();
     ser.innerHTML = tek + tek; // iki kopya: kesintisiz döngü
     kutu.hidden = false;
     requestAnimationFrame(() => { const w = ser.scrollWidth / 2; ser.style.setProperty("--sure", Math.max(25, Math.round(w / 55)) + "s"); });
@@ -967,7 +975,7 @@ try {
   const kutu = document.getElementById("yeniS"), ser = document.getElementById("ysSer");
   if (!kutu || !ser || !L.length || document.documentElement.classList.contains("matem")) return; // matemde bu şerit gündem haberlerini taşır
   const esc = Ortak.esc; // ortak.js
-  const tur = '<span style="display:inline-block;width:22px"></span>' + L.map(([e, ad, not, u]) => `<a href="${esc(u)}" data-r="${esc(ad)}">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("") + `<span class="ysNot ysSon">sitede yeni ✦</span>`;
+  const tur = (kutu.dataset.gundem && window.ustGundemTur || "") + '<span style="display:inline-block;width:22px"></span>' + L.map(([e, ad, not, u]) => `<a href="${esc(u)}" data-r="${esc(ad)}">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("") + `<span class="ysNot ysSon">sitede yeni ✦</span>`;
   ser.innerHTML = tur + tur; // iki tur yan yana: kesintisiz döngü
   requestAnimationFrame(() => ser.style.setProperty("--sure", Math.max(28, Math.round(ser.scrollWidth / 2 / 40)) + "s"));
   kutu.hidden = false;

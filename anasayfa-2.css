@@ -40,6 +40,7 @@
   html[data-tema="acik"] :is(.kyOge.son, .kyOge.ppk, .kyOge.onem) { color: #10151c; }
   html[data-tema="acik"] .kyOge::after, html[data-tema="acik"] .ysSer a::after { color: #c9a66a; }
   html[data-tema="acik"] .ysSer .ysNot { color: #454e5b; }
+  html[data-tema="acik"] .ysSer a small { color: #7a5a2a; }
   /* PPK penceresi */
   html[data-tema="acik"] .ppkSh { background: rgba(40,30,15,.35); }
   html[data-tema="acik"] .ppkK { background: #fff; border-color: #d4bb8a; color: #232a34; box-shadow: 0 -6px 30px rgba(60,40,10,.2); }
