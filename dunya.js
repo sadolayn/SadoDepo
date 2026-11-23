@@ -10,11 +10,11 @@
   if (window.DunyaSaati) return;
   var KARA_B64 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//8AAP///gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB////h///////fAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/7//5////////wAAAAAAAAAA4owAAAAPgAAAAAAAAAAAAAAAAAAAAAAAAAAA///8A///////+AAAAB7/wAAAAAAAAAAH8AAAAAAAAAAAAAAAAAAAAAAAAAHxn//4////////4AAAAA/8AAAAAAAAAAAAD4AAAAAAAAAAAAAAAAAAAAAAEYAAAP/Af///////8AAAAAPHAAAAAAAAAAAAA4AAAAAAAAAAAAAAAAAAAAAD9iCc+//AH///////5AAAAAAAAAAAAAB4AAAAD/8AAAAAAAAAAAAAAAAAAAAAD/wfz78AAAf/////8AAAAAAAAAAAAH4AAAB////AAAB/gAAAAAAAAAAAAAAGA4AAAeYAAAH/////8AAAAAAAAAAAAOAAAAH///6AAAAAAAAAAAAAAAAAAAAP+AYc+c7gAAD/////4AAAAAAAAAAAA4ACAH/////+DwAGAAAAAAAAAAAAAAAf/+4+4//4AAB/////wAAAAAAAAAAADwAHl3///////4APwAAAAAwAAAAAAAAOf/8M4///AAB/////wAAAAAAAAAAADwAff////////83//gAAABAAAf8gAACAH//B8f//8AA////+wAAAAAAB/AAAAAAfv/////////////8AAAAAB///+F//H//j+Bwf8AA3////AAAAAAA//4AAQA+fv/////////////+/n8wAP///////+QYDfzwf+AAf///4AAAAAAH///wMHf//n/////////////////+AD////////+////4Z/wA///4AAAAAAAH///+M////v//////////////////4E/////////////gD/8Af//wAAAAAAAf///+v//////////////////////vwf////////////7AD+YAf/wAA/8AAAA/8f+D///////////////////////AgLf///////////zw//gAP/gAAP8AAAB/4/+f//////////////////////+AAB////////////DIA/gAH/gAADAAAAP/z/////////////////////////+AAH///////////4AwwPAAD/AAAAAAAA//H/////////////////////////6AAP///////////wAA/AAAB/AAAAAAAB/+H//////////////////////jP/AAAH//z////////wAA/4AAAOAAAAAAAB//D//////////////////////A/YAAAA/5AD///////gAA/4QAAAAAAAAAAB//g7////////////////////+DgAAAAADwAA///////4AA/94AAAAAAAAAYA5+D///////////////////8AAHAAAAAADYAAP//////4AAf/8AAAAAAAAA8AA+C///////////////////wAAfgAAAAAMAAAH///////wAf/+AAAAAAAAA4AOcH///////////////////AAA/gAAAAAgAAAB///////+A///AAAAAAAABcAPQH//////////////////+AAA/AAAAAEAAAAAP///////x///wAAAAAAAHOAFD///////////////////+AAA+AAAAAAAAAABP///////x///8AAAAAAAPHAf/////////////////////6AA8AAAAAAAAAAAD///////5///8AAAAAAAPPz//////////////////////+AA4AAAAAAAAAAAD///////////8AAAAAAAAfn//////////////////////7AAwAAAAAAAAAAAD///////////kAAAAAAAAYf//////////////////////7AAAAAAAAAAAAAAB/////////+MPAAAAAAAAA///////////////////////zAAAAAAAAAAAAAAAf/////////wfAAAAAAAAP///////////////////////yAAAAAAAAAAAAAAAf/////////gCgAAAAAAAH///////////////////////iAAAAAAAAAAAAAAAP/////////xAAAAAAAAAD//////P/x//////////////CAAAAAAAAAAAAAAAP/////////+AAAAAAAAAB/////Hf/B/////////////+AAAAAAAAAAAAAAAAP////////8wAAAAAAAAAB//H/+CP+H/////////////8CAAAAAAAAAAAAAAAP////////wAAAAAAAAAHj/jz/+AD/H/////////////4HgAAAAAAAAAAAAAAf////////gAAAAAAAAAH/4Fw/8AB/D////////////+APAAAAAAAAAAAAAAAP////////gAAAAAAAAAH/4Acf+PB/g////////////8AIAAAAAAAAAAAAAAAP///////8AAAAAAAAAAH/gMGfN///x///////////v4AMAAAAAAAAAAAAAAAP///////8AAAAAAAAAAH/AMCOP///h//////////+ZwAMAAAAAAAAAAAAAAAH///////4AAAAAAAAAAH/AACHH///g//////////8BwAcAAAAAAAAAAAAAAAH///////wAAAAAAAAAAH+AAYGH///w//////////+w4AYAAAAAAAAAAAAAAAD///////wAAAAAAAAAAAgf+AABu//////////////g4D4AAAAAAAAAAAAAAAB///////wAAAAAAAAAAAh/+AAAA//////////////A8f4AAAAAAAAAAAAAAAB///////gAAAAAAAAAAB//8AAAA//////////////Ah+AAAAAAAAAAAAAAAAAP/////+AAAAAAAAAAAD//+AAAB//////////////gDwAAAAAAAAAAAAAAAAAH/////8AAAAAAAAAAAH///4OAB//////////////gDAAAAAAAAAAAAAAAAAAG/////4AAAAAAAAAAAP///8P4T//////////////wCAAAAAAAAAAAAAAAAAACf////4AAAAAAAAAAAP/////////////////////gAAAAAAAAAAAAAAAAAAABf//jgYAAAAAAAAAAAP/////////P///////////wAAAAAAAAAAAAAAAAAAAAv//AAYAAAAAAAAAAA//////////n///////////wAAAAAAAAAAAAAAAAAAAB3/+AAcAAAAAAAAAAB///////9//j///////////gAAAAAAAAAAAAAAAAAAAAb/+AAMAAAAAAAAAAD///////8//wH//////////AAAAAAAAAAAAAAAAAAAAAJ/+AAEAAAAAAAAAAH///////+f/8B//////////AAAAAAAAAAAAAAAAAAAAAM/8AAAAAAAAAAAAAH///////+f/84Af///////8QAAAAAAAAAAAAAAAAAAAACf8AAAAAAAAAAAAAP////////P//+AP///////4wAAAAAAAAAAAAAAAAAAAAAP8AAuAAAAAAAAAAf////////H///AH///////ggAAAAAAAAAAAAAAAAAAAAAP+AYBgAAAAAAAAAf////////n//+AD//4P//cAAAAAAAAAAAAAAAAAAAAAAAP+A4A8AAAAAAAAAf////////j//+AAf/4H/+AAAAAAAAAAAAAAAAgAAAAAAAH/B4ABwAAAAAAAAP////////h//8AAf/gD/8YAAAAAAAAAAAAAAAAAAAAAAAD/3wAh4AAAAAAAAP////////x//4AAf/AD/8QAQAAAAAAAAAAAAAAAAAAAAAAf/wAAAAAAAAAAAP////////4//gAAf+AD/+AAwAAAAAAAAAAAAAAAAAAAAAAH/wAAAAAAAAAAAf////////4f+AAAf8ADf/AAwAAAAAAAAAAAAAAAAAAAAAAAH/AAAAAAAAAAAf////////8f8AAAPwAAP/gAwAAAAAAAAAAAAAAAAAAAAAAAD/gAAAAAAAAAAf////////+fgAAAPwAAP/gAwAAAAAAAAAAAAAAAAAAAAAAAA/gAAAAAAAAAAf/////////eAAAAHwAAP/gAEAAAAAAAAAAAAAAAAAAAAAAAAHAAAAAAAAAAAf/////////wAAAAHwAAE/gACAAAAAAAAAAAAAAAAAAAAAAAADABYAAAAAAAAP/////////gIAAAHwAAEfgAJAAAAAAAAAAAAAAAAAAAAAAAADgP/IAAAAAAAH//////////4AAADwAAIPABEAAAAAAAAAAAAAAAAAAAAAAAAAyPf+AAAAAAAD//////////4AAADoAAMEAAEAAAAAAAAAAAAAAAAAAAAAAAAAd///AAAAAAAB//////////wAAABIAAMAAAHAAAAAAAAAAAAAAAAAAAAAAAAAE///gAAAAAAB//////////wAAAAMAAEAAALgAAAAAAAAAAAAAAAAAAAAAAAAA///wAAAAAAAf/////////gAAAAMAADAAMDAAAAAAAAAAAAAAAAAAAAAAAAAAf///gAAAAAAP/B///////gAAAAAABDgAOAAAAAAAAAAAAAAAAAAAAAAAAAAAf///wAAAAAACAAn//////AAAAAAAAxgA8AAAAAAAAAAAAAAAAAAAAAAAAAAAf///4AAAAAAAAAD/////+AAAAAAAAZgB8AAAAAAAAAAAAAAAAAAAAAAAAAAA////4AAAAAAAAAD/////8AAAAAAAAOwH8AAAAAAAAAAAAAAAAAAAAAAAAAAB////8AAAAAAAAAH/////4AAAAAAAAHQf8AQAAAAAAAAAAAAAAAAAAAAAAAAD////8AAAAAAAAAD/////gAAAAAAAAHgf8cAAAAAAAAAAAAAAAAAAAAAAAAAH/////AAAAAAAAAH/////AAAAAAAAADwf8ASgAAAAAAAAAAAAAAAAAAAAAAAH/////4AAAAAAAAH/////AAAAAAAAAD4P5wAxAAAAAAAAAAAAAAAAAAAAAAAH/////+AAAAAAAAD////+AAAAAAAAAB+P5wAz4AAAAAAAAAAAAAAAAAAAAAAH//////4AAAAAAAB////8AAAAAAAAAA8AxYif/AAAAAAAAAAAAAAAAAAAAAAH//////8AAAAAAAA////8AAAAAAAAAAcAAIAH/gIAAAAAAAAAAAAAAAAAAAAH///////gAAAAAAA////4AAAAAAAAAAMABAAA/wwAAAAAAAAAAAAAAAAAAAAH///////gAAAAAAA////4AAAAAAAAAADgAAAIf8AAAAAAAAAAAAAAAAAAAAAD///////gAAAAAAAf///8AAAAAAAAAAB/AAAA/4AAAAAAAAAAAAAAAAAAAAAB///////gAAAAAAAf///4AAAAAAAAAAABexgAOMAAAAAAAAAAAAAAAAAAAAAB///////AAAAAAAAf///8AAAAAAAAAAAABCAAAHAAAAAAAAAAAAAAAAAAAAAA///////AAAAAAAAf///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//////+AAAAAAAAP///8AAAAAAAAAAAAAACgCAAAAAAAAAAAAAAAAAAAAAAAf/////8AAAAAAAAf///+AQAAAAAAAAAAAAB+CAAAAAAAAAAAAAAAAAAAAAAAP/////4AAAAAAAA////+AwAAAAAAAAAAAAD8HAAAAAAAAAAAAAAAAAAAAAAAP/////4AAAAAAAA////+AwAAAAAAAAAAAAz8DgAAAAAAAAAAAAAAAAAAAAAAH/////4AAAAAAAA////+DwAAAAAAAAAAAD/8HgAAAAAAAAAAAAAAAAAAAAAAB/////4AAAAAAAA////8PwAAAAAAAAAAAD//HwAAAAAAAAAAAAAAAAAAAAAAA/////4AAAAAAAA////wPgAAAAAAAAAAAP///wAAAAAAAAAAAAAAAAAAAAAAAf////wAAAAAAAA////gPgAAAAAAAAAAAP///wAAAAAAAAAAAAAAAAAAAAAAAP////wAAAAAAAAf//+APgAAAAAAAAAAAf///8AAAAAAAAAAAAAAAAAAAAAAAP////wAAAAAAAAf//+APgAAAAAAAAAAD////+AAAAAAAAAAAAAAAAAAAAAAAP////gAAAAAAAAP//+AfAAAAAAAAAAAf////+AAEAAAAAAAAAAAAAAAAAAAAP////AAAAAAAAAP///AfAAAAAAAAAAA//////AAAAAAAAAAAAAAAAAAAAAAAf///4AAAAAAAAAP///APAAAAAAAAAAA//////gAAAAAAAAAAAAAAAAAAAAAAf///gAAAAAAAAAP//+AOAAAAAAAAAAB//////wAAAAAAAAAAAAAAAAAAAAAAf///AAAAAAAAAAH//4AEAAAAAAAAAAA//////4AAAAAAAAAAAAAAAAAAAAAAf//+AAAAAAAAAAH//4AAAAAAAAAAAAA//////4AAAAAAAAAAAAAAAAAAAAAAf///AAAAAAAAAAH//4AAAAAAAAAAAAA//////4AAAAAAAAAAAAAAAAAAAAAAf//+AAAAAAAAAAD//wAAAAAAAAAAAAA//////8AAAAAAAAAAAAAAAAAAAAAAf//8AAAAAAAAAAB//gAAAAAAAAAAAAAf/////4AAAAAAAAAAAAAAAAAAAAAA///4AAAAAAAAAAB//gAAAAAAAAAAAAAf/////4AAAAAAAAAAAAAAAAAAAAAA///wAAAAAAAAAAA//AAAAAAAAAAAAAAf/////4AAAAAAAAAAAAAAAAAAAAAA///wAAAAAAAAAAA/+AAAAAAAAAAAAAAP/AP//wAAAAAAAAAAAAAAAAAAAAAA///gAAAAAAAAAAA/4AAAAAAAAAAAAAAf8AG//wAAAAAAAAAAAAAAAAAAAAAA//3AAAAAAAAAAAAYAAAAAAAAAAAAAAAeAAF//gAAAAAAAAAAAAAAAAAAAAAB//4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB//gAABAAAAAAAAAAAAAAAAAAB//4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/AAAAgAAAAAAAAAAAAAAAAAD//4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/AAAAQAAAAAAAAAAAAAAAAAD//wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADYAAAAcAAAAAAAAAAAAAAAAAB/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAAAAD/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAAAAD/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcAAADQAAAAAAAAAAAAAAAAAD/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcAAAHAAAAAAAAAAAAAAAAAAB/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAeAAAAAAAAAAAAAAAAAAD/gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAAAAAD+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAAAAAH+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAAAD/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAvAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAAAAAH4AAAAAAr/PgBj/AAAAAAAAAAAAAAAAAAAAAAAAAHgAAAAAAAAAAAAAAAAAD//gAAB//////////gAAAAAAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAAAB////8A////////////iAAAAAAAAAAAAAAAAAAAAAAz8AAAAAAAAAAAAAAAGH////4D/////////////8AAAAAAAAAAAAAAAAAAAAEf8AAAAAAAAAEAe/nB//////4//////////////+gAAAAAAAAAAAAAAAAAAAH9+AAAAAAAAf+///////////x////////////////4AAAAAAAAAAAAAAHAAAA5+AAAAAAAA/////////////v////////////////wAAAAAAAAABgAAB//+P//+AAAAAAAP/////////////////////////////+AAAAAAAAAAiWfIAf/////+AAAAAAA//////////////////////////////4AAAAAAAAH////////////wAAAAAAF//////////////////////////////gAAAAAAAH////////////wAAAAAA////////////////////////////////gAAAAAD+f///////////8AAAAAAf////////////////////////////////wAAAAAA////////////+AEAAD8A/////////////////////////////////2AAAADwB////////////w4AAH+AD///////////////////////////////8AAAAAAAA////////////4AHA/gAH///////////////////////////////8AAAAAAAf//////////////gAAA//////////////////////////////////AAAAAAAP//////////////8D////////////////////////////////////8AAAAHX//////////////////////////////////////////////////////8A/gD/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////";
   var ISIK = [[41.9,12.5,1],[43.9,12.4,1],[47.1,9.5,1],[-26.5,31.2,1],[49.6,6.1,1],[6.9,158.1,1],[7.1,171.4,1],[-8.5,179.2,1],[7.5,134.6,1],[26.1,-9.7,1],[43.7,7.4,1],[1.3,173.0,1],[-11.7,43.2,1],[42.5,1.5,1],[10.7,-61.5,1],[-2.0,30.1,1],[-26.3,31.1,1],[4.8,31.6,1],[52.1,4.3,1],[46.1,14.5,1],[48.2,17.1,1],[25.3,51.5,1],[42.5,19.3,1],[6.9,79.9,1],[16.4,120.6,1],[-6.2,35.8,1],[46.9,7.5,1],[27.1,-13.2,1],[42.7,21.2,1],[15.3,-61.4,1],[11.6,43.1,1],[2.9,101.7,1],[35.0,135.7,1],[13.5,-16.6,1],[42.0,21.4,1],[13.1,-59.6,1],[6.5,2.6,1],[-3.4,29.4,1],[13.2,-61.2,1],[14.0,-61.0,1],[17.3,-62.7,1],[-20.2,57.5,1],[12.1,-61.7,1],[26.2,50.6,1],[17.1,-61.9,1],[-34.9,-56.2,1],[6.1,1.2,1],[36.8,10.2,2],[24.5,54.4,1],[37.9,58.4,1],[-15.4,28.3,1],[-17.8,31.0,1],[-8.6,125.6,1],[-17.7,168.3,1],[14.1,-87.2,1],[6.8,-58.2,1],[64.1,-21.9,1],[18.5,-72.3,1],[0.3,32.6,1],[5.8,-55.2,1],[13.5,2.1,1],[38.6,68.8,1],[-25.3,-57.6,1],[12.2,-86.3,1],[8.5,-13.2,1],[33.7,73.1,1],[27.7,85.3,1],[-29.1,26.2,1],[-25.7,28.2,1],[-9.5,147.2,1],[-9.4,159.9,1],[9.0,-79.5,1],[34.0,-6.8,1],[47.0,28.9,1],[-26.0,32.6,1],[2.1,45.4,1],[23.6,58.4,1],[6.9,79.9,1],[47.9,106.9,1],[-22.6,17.1,1],[9.1,7.5,1],[11.9,-15.6,1],[32.0,35.9,1],[54.7,25.3,1],[57.0,24.1,1],[42.9,74.6,1],[-29.3,27.5,1],[-18.9,47.5,1],[-0.2,-78.5,1],[9.9,-84.1,1],[13.7,-89.2,1],[18.0,-76.8,1],[12.1,15.0,1],[3.8,8.8,1],[15.3,38.9,1],[45.8,16.0,1],[59.4,24.7,1],[-14.0,33.8,1],[14.6,-90.5,1],[0.4,9.5,1],[-18.1,178.4,1],[-33.0,-71.6,1],[18.1,-16.0,1],[12.7,-8.0,1],[33.9,35.5,1],[41.7,44.8,1],[51.2,71.4,1],[18.0,102.6,1],[-4.3,15.3,1],[9.5,-13.7,1],[6.8,-5.3,1],[45.4,-75.7,1],[44.8,20.5,1],[4.9,114.9,1],[-19.0,-65.3,1],[17.3,-88.8,1],[4.4,18.6,1],[3.9,11.5,1],[41.3,19.8,1],[40.2,44.5,1],[40.4,49.9,2],[11.6,104.9,1],[-16.5,-68.2,1],[6.4,2.4,1],[42.7,23.3,1],[53.9,27.6,1],[27.5,89.6,1],[-24.6,25.9,1],[-35.3,149.1,1],[12.4,-1.5,1],[43.9,18.4,1],[19.8,96.1,1],[-21.1,-175.2,1],[9.6,44.1,1],[-4.6,55.4,1],[0.3,6.7,1],[-13.8,-171.8,1],[35.9,14.5,1],[4.2,73.5,1],[31.8,35.2,1],[14.9,-23.5,1],[25.1,-77.4,1],[35.2,33.4,1],[-41.3,174.8,1],[21.0,105.8,2],[39.9,32.9,2],[47.5,19.1,1],[15.4,44.2,2],[44.4,26.1,1],[33.5,36.3,2],[38.7,-9.1,2],[15.6,32.5,2],[59.9,10.7,1],[52.2,21.0,1],[39.0,125.8,2],[-6.8,39.3,2],[53.3,-6.3,1],[6.3,-10.8,1],[3.1,101.7,1],[23.1,-82.4,2],[50.1,14.4,1],[29.4,48.0,2],[18.5,-69.9,2],[5.6,-0.2,2],[32.9,13.2,2],[32.1,34.8,2],[60.2,24.9,1],[55.7,12.6,1],[5.3,-4.0,2],[-15.8,-47.9,2],[50.8,4.3,1],[23.7,90.4,3],[-8.8,13.2,2],[36.8,3.0,2],[16.8,96.2,2],[37.8,-122.4,2],[39.7,-105.0,2],[29.7,-95.3,2],[25.8,-80.2,2],[33.7,-84.4,2],[41.8,-87.6,3],[10.5,-66.9,2],[50.4,30.5,2],[25.2,55.3,1],[41.3,69.3,2],[40.4,-3.7,2],[46.2,6.1,1],[59.3,18.1,1],[13.8,100.5,2],[-12.0,-77.1,3],[14.7,-17.5,2],[-26.2,28.0,2],[52.4,4.9,1],[33.6,-7.6,2],[37.6,127.0,3],[14.6,121.0,3],[25.7,-100.3,2],[52.5,13.4,2],[43.8,87.6,2],[30.7,104.1,2],[34.7,135.5,3],[-4.3,15.3,2],[28.6,77.2,1],[13.0,77.6,2],[38.0,23.7,2],[33.3,44.4,2],[9.0,38.7,2],[35.7,51.4,2],[49.3,-123.1,2],[43.7,-79.4,2],[-34.6,-58.4,3],[34.5,69.2,2],[48.2,16.4,2],[-37.8,145.0,2],[25.0,121.6,2],[-36.8,174.8,1],[34.0,-118.2,3],[38.9,-77.0,2],[40.7,-74.0,3],[51.5,-0.1,3],[41.0,29.0,3],[24.6,46.7,2],[-33.9,18.4,2],[55.8,37.6,3],[19.4,-99.1,3],[6.4,3.4,3],[41.9,12.5,2],[39.9,116.4,3],[-1.3,36.8,2],[-6.2,106.8,3],[4.6,-74.1,2],[30.1,31.2,3],[31.2,121.4,3],[35.7,139.7,3],[19.1,72.9,3],[48.9,2.4,3],[-33.4,-70.7,2],[22.6,88.4,3],[-22.9,-43.2,3],[-23.6,-46.6,3],[-33.9,151.2,2],[1.3,103.9,2],[22.3,114.2,2]];
-  var SEHIR = [ // ad, enlem, boylam, saat dilimi
-    ["İstanbul", 41.01, 28.98, "Europe/Istanbul"], ["Londra", 51.51, -0.13, "Europe/London"], ["Frankfurt", 50.11, 8.68, "Europe/Berlin"],
-    ["Moskova", 55.76, 37.62, "Europe/Moscow"], ["Dubai", 25.2, 55.27, "Asia/Dubai"], ["Pekin", 39.9, 116.4, "Asia/Shanghai"],
-    ["Singapur", 1.35, 103.82, "Asia/Singapore"], ["Tokyo", 35.68, 139.69, "Asia/Tokyo"], ["Sidney", -33.87, 151.21, "Australia/Sydney"],
-    ["New York", 40.71, -74.01, "America/New_York"], ["Los Angeles", 34.05, -118.24, "America/Los_Angeles"], ["São Paulo", -23.55, -46.63, "America/Sao_Paulo"]];
+  var SEHIR = [ // ad, enlem, boylam, saat dilimi, haritada yazının yeri (s: sağ, l: sol, a: alt, u: üst)
+    ["İstanbul", 41.01, 28.98, "Europe/Istanbul", "a"], ["Londra", 51.51, -0.13, "Europe/London", "l"], ["Frankfurt", 50.11, 8.68, "Europe/Berlin", "s"],
+    ["Moskova", 55.76, 37.62, "Europe/Moscow", "s"], ["Dubai", 25.2, 55.27, "Asia/Dubai", "s"], ["Pekin", 39.9, 116.4, "Asia/Shanghai", "l"],
+    ["Singapur", 1.35, 103.82, "Asia/Singapore", "a"], ["Tokyo", 35.68, 139.69, "Asia/Tokyo", "s"], ["Sidney", -33.87, 151.21, "Australia/Sydney", "s"],
+    ["New York", 40.71, -74.01, "America/New_York", "s"], ["Los Angeles", 34.05, -118.24, "America/Los_Angeles", "l"], ["São Paulo", -23.55, -46.63, "America/Sao_Paulo", "s"]];
   var IST = SEHIR[0], LAT0 = 84, LAT1 = -60; // haritada görünen enlemler (Antarktika kesilir)
   var R = Math.PI / 180, D = 180 / Math.PI;
 
@@ -115,7 +115,17 @@
     ".dsS .fk{display:block;font-size:11.5px;color:#8f8672;margin-top:1px}" +
     ".dsT ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.dsT li{display:flex;gap:10px;align-items:baseline}.dsT li .i{font-size:16px}.dsT li b{color:#f3d38a;font-weight:600}.dsT li small{display:block;color:#8f8672;font-size:11.5px}" +
     ".dsN{margin:12px 2px 0;font-size:11px;color:#6f6858;line-height:1.5}" +
-    "@media (prefers-reduced-motion: reduce){.dsO,.dsK{transition:none}}";
+    ".dsBuy{position:absolute;right:8px;bottom:8px;z-index:2;min-height:34px;padding:0 12px;border-radius:999px;border:1px solid rgba(243,211,138,.55);background:rgba(5,6,10,.78);color:#f3d38a;font:700 12.5px system-ui,sans-serif;cursor:pointer;backdrop-filter:blur(4px)}" +
+    ".dsBuy:active{transform:scale(.96)}" +
+    ".dsBO{position:fixed;inset:0;z-index:460;background:#030406;color:#e8e2d4;font:13px/1.4 system-ui,-apple-system,'Segoe UI',sans-serif;opacity:0;transition:opacity .3s ease}.dsBO.ac{opacity:1}.dsBO[hidden]{display:none}" +
+    ".dsBI{position:absolute;left:0;top:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px 12px;box-sizing:border-box}" +
+    ".dsBI.don{transform-origin:top left;transform:rotate(90deg) translateY(-100%)}" +
+    ".dsBU{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%}" +
+    ".dsBU b{font:italic 700 17px Georgia,'Times New Roman',serif;color:#f3d38a}.dsBU span{color:#9a917e;font-variant-numeric:tabular-nums}.dsBU span i{font-style:normal;color:#fff}" +
+    ".dsBU button{width:36px;height:36px;flex:none;border-radius:11px;border:1px solid #3a3020;background:rgba(10,10,10,.8);color:#cfc6b0;font-size:15px;cursor:pointer}" +
+    ".dsBC{border-radius:14px;overflow:hidden;border:1px solid #2a2418;touch-action:none;cursor:crosshair;line-height:0}.dsBC canvas{display:block}" +
+    ".dsBA{display:flex;align-items:center;gap:10px;width:100%}.dsBA input{flex:1;accent-color:#e0a24f;height:26px}.dsBA span{min-width:92px;text-align:right;color:#cfc6b0;font:600 12px system-ui,sans-serif}" +
+    "@media (prefers-reduced-motion: reduce){.dsO,.dsK,.dsBO{transition:none}}";
   document.head.appendChild(css);
 
   var O, K, cv, cx, W = 0, Hh = 0, dpr = 1, kayma = 0, prob = { lat: IST[1], lon: IST[2], ad: "İstanbul" }, secSehir = 0, zSaat = null, zHarita = null, geri = null, sonCiz = 0;
@@ -127,7 +137,7 @@
     O.innerHTML = '<div class="dsK" role="dialog" aria-modal="true" aria-labelledby="dsB">' +
       '<button type="button" class="dsX" aria-label="Kapat">✕</button>' +
       '<div class="dsB" id="dsB">🌍 Dünya saati</div><div class="dsAlt" id="dsAlt"></div>' +
-      '<div class="dsH" id="dsH"><canvas id="dsCv" role="img" aria-label="Gece ve gündüzü gösteren canlı dünya haritası"></canvas><div class="dsIp" id="dsIp">Haritada bir yere dokun: o boylamın güneş saati</div></div>' +
+      '<div class="dsH" id="dsH"><canvas id="dsCv" role="img" aria-label="Gece ve gündüzü gösteren canlı dünya haritası"></canvas><div class="dsIp" id="dsIp">Haritada bir yere dokun: o boylamın güneş saati</div><button type="button" class="dsBuy" id="dsBuy"></button></div>' +
       '<div class="dsZ"><input type="range" id="dsKay" min="-720" max="720" step="15" value="0" aria-label="Zamanı kaydır"><span id="dsKayY">şimdi</span><button type="button" id="dsSimdi" hidden>Şimdi</button></div>' +
       '<div class="dsG"><div class="dsC dsP" id="dsP"></div><div class="dsC dsT" id="dsT"></div></div>' +
       '<div class="dsS" id="dsS"></div>' +
@@ -143,8 +153,8 @@
       secSehir = +b.dataset.i; prob = { lat: c[1], lon: c[2], ad: c[0] }; yenile(true);
     });
     var basili = false;
-    var dokun = function (e) {
-      var r = cv.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    var dokun = function (e) { var r = cv.getBoundingClientRect(); sec_((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height); };
+    sec_ = function (x, y) {
       var lon = Math.max(-180, Math.min(180, x * 360 - 180)), lat = LAT0 - y * (LAT0 - LAT1), yak = null, ym = 1e9;
       SEHIR.forEach(function (c, i) { var d = Math.hypot(c[2] - lon, (c[1] - lat) * 1.2); if (d < ym) { ym = d; yak = i; } });
       if (ym < 6) { var c = SEHIR[yak]; prob = { lat: c[1], lon: c[2], ad: c[0] }; secSehir = yak; }
@@ -156,6 +166,70 @@
     cv.addEventListener("pointerup", function () { basili = false; });
     cv.addEventListener("pointercancel", function () { basili = false; });
     addEventListener("resize", function () { if (!O.hidden) { boyutla(); ciz(); } });
+    O.querySelector("#dsBuy").textContent = KABA ? "↻ Yan çevir" : "⤢ Büyüt";
+    O.querySelector("#dsBuy").setAttribute("aria-label", KABA ? "Haritayı yan çevirip büyüt" : "Haritayı tam ekran büyüt");
+    O.querySelector("#dsBuy").addEventListener("click", buyukAc);
+  }
+
+  // ---------- Yan çevrilmiş / tam ekran büyük harita ----------
+  // Telefonda tam ekrana geçip yatay kilitlenir (Android); kilit olmazsa (ör. iPhone) harita 90° döndürülerek gösterilir.
+  var KABA = window.matchMedia && matchMedia("(pointer: coarse)").matches, sec_ = null;
+  var B = null, buyuk = false, don = false, tamEkran = false, cizB = false;
+  function buyukKur() {
+    B = { o: document.createElement("div") }; B.o.className = "dsBO"; B.o.hidden = true;
+    B.o.innerHTML = '<div class="dsBI" role="dialog" aria-modal="true" aria-label="Büyük dünya haritası"><div class="dsBU"><b>🌍 Dünya saati</b><span id="dsBZ"></span><button type="button" aria-label="Küçült">✕</button></div>' +
+      '<div class="dsBC"><canvas role="img" aria-label="Şehir adlarıyla büyük dünya haritası"></canvas></div>' +
+      '<div class="dsBA"><input type="range" min="-720" max="720" step="15" value="0" aria-label="Zamanı kaydır"><span></span></div></div>';
+    document.body.appendChild(B.o);
+    B.i = B.o.firstChild; B.cv = B.o.querySelector("canvas"); B.cx = B.cv.getContext("2d"); B.k = B.o.querySelector(".dsBA input"); B.ky = B.o.querySelector(".dsBA span");
+    B.o.querySelector(".dsBU button").addEventListener("click", buyukKapa);
+    B.k.addEventListener("input", function () { kayma = +B.k.value; O.querySelector("#dsKay").value = kayma; yenile(true); });
+    var bas = false;
+    var konum = function (e) {
+      if (!don) { var r = B.cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; }
+      // 90° dönmüş kutu: ekrandaki (X, Y) → kutu içi (Y, kutuYüksekliği − X)
+      var x = e.clientY, y = B.ih - e.clientX, ox = B.cv.offsetLeft, oy = B.cv.offsetTop; // tuvalin .dsBI içindeki yeri
+      return [(x - ox) / B.w, (y - oy) / B.h];
+    };
+    B.cv.addEventListener("pointerdown", function (e) { bas = true; try { B.cv.setPointerCapture(e.pointerId); } catch (x) {} var k = konum(e); sec_(k[0], k[1]); });
+    B.cv.addEventListener("pointermove", function (e) { if (bas) { var k = konum(e); sec_(k[0], k[1]); } });
+    B.cv.addEventListener("pointerup", function () { bas = false; }); B.cv.addEventListener("pointercancel", function () { bas = false; });
+    addEventListener("resize", function () { if (buyuk) setTimeout(buyukYerlestir, 60); });
+    document.addEventListener("fullscreenchange", function () { if (buyuk && tamEkran && !document.fullscreenElement) buyukKapa(); });
+  }
+  function buyukYerlestir() {
+    var vw = innerWidth, vh = innerHeight; don = vh > vw * 1.1; // kilit tutmadıysa dikey ekranda döndür
+    var iw = don ? vh : vw, ih = don ? vw : vh; B.ih = ih;
+    B.i.classList.toggle("don", don); B.i.style.width = iw + "px"; B.i.style.height = ih + "px";
+    var w = Math.min(iw - 24, (ih - 104) * 360 / (LAT0 - LAT1)); w = Math.max(280, Math.floor(w));
+    B.w = w; B.h = Math.round(w * (LAT0 - LAT1) / 360); B.dpr = Math.min(2, window.devicePixelRatio || 1);
+    B.cv.width = Math.round(B.w * B.dpr); B.cv.height = Math.round(B.h * B.dpr); B.cv.style.width = B.w + "px"; B.cv.style.height = B.h + "px";
+    buyukCiz();
+  }
+  function buyukCiz() {
+    if (!buyuk || !B.w) return; // tam ekrana geçiş sürerken boyut henüz yok
+    var k = [W, Hh, cx, dpr, sonCiz]; W = B.w; Hh = B.h; cx = B.cx; dpr = B.dpr; cizB = true;
+    try { ciz(); } finally { W = k[0]; Hh = k[1]; cx = k[2]; dpr = k[3]; sonCiz = k[4]; cizB = false; }
+    var t = simdi(); B.o.querySelector("#dsBZ").innerHTML = "UTC <i>" + saat(t, "UTC") + "</i> · İstanbul <i>" + saat(t, IST[3]) + "</i>";
+    B.k.value = kayma; B.ky.textContent = kayma ? (kayma > 0 ? sure(kayma) + " sonra" : sure(-kayma) + " önce") : "şimdi";
+  }
+  function buyukAc() {
+    if (!B) buyukKur();
+    buyuk = true; B.o.hidden = false; tamEkran = false; B.w = 0;
+    var sonra = function () { buyukYerlestir(); requestAnimationFrame(function () { B.o.classList.add("ac"); B.o.querySelector(".dsBU button").focus({ preventScroll: true }); }); };
+    var fs = B.o.requestFullscreen ? B.o.requestFullscreen({ navigationUI: "hide" }) : null;
+    if (fs && fs.then) fs.then(function () {
+      tamEkran = true;
+      var kilit = screen.orientation && screen.orientation.lock ? screen.orientation.lock("landscape") : null;
+      if (kilit && kilit.then) kilit.then(function () { setTimeout(sonra, 250); }, sonra); else sonra();
+    }, sonra); else sonra();
+    window.Rapor && Rapor.bolum("dunya-saati-buyuk");
+  }
+  function buyukKapa() {
+    if (!buyuk) return; buyuk = false; B.o.classList.remove("ac");
+    try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) {}
+    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function () {});
+    setTimeout(function () { B.o.hidden = true; var d = O && O.querySelector("#dsBuy"); if (d) d.focus({ preventScroll: true }); }, 300);
   }
   function boyutla() {
     var w = Math.round(O.querySelector("#dsH").clientWidth) || 360;
@@ -216,12 +290,21 @@
       var y2 = Math.max(0, Math.min(Hh, xy(tl, 0)[1])); if (x === 0) cx.moveTo(x, y2); else cx.lineTo(x, y2);
     }
     cx.stroke();
-    // Şehirler
+    // Şehirler: nokta; harita genişse adı (yan çevrilmiş büyük haritada saatiyle birlikte)
+    var ey = Math.max(11, Math.min(13, W / 72));
     SEHIR.forEach(function (c, i) {
       var p = xy(c[1], c[2]), sec = i === secSehir;
       cx.fillStyle = sec ? "#fff" : "rgba(243,211,138,.9)"; cx.beginPath(); cx.arc(p[0], p[1], sec ? 3.4 : 2.2, 0, 6.283); cx.fill();
       if (sec) { cx.strokeStyle = "rgba(255,255,255,.6)"; cx.lineWidth = 1; cx.beginPath(); cx.arc(p[0], p[1], 7, 0, 6.283); cx.stroke(); }
+      if (W < 560) return;
+      var et2 = c[0] + (cizB ? "  " + saat(t, c[3]) : ""); cx.font = "600 " + ey + "px system-ui,sans-serif";
+      var tw2 = cx.measureText(et2).width + 10, hh2 = ey + 7, yon = c[4] || "s", bx = yon === "l" ? p[0] - 7 - tw2 : yon === "s" ? p[0] + 7 : p[0] - tw2 / 2, by = yon === "a" ? p[1] + 7 : yon === "u" ? p[1] - 7 - hh2 : p[1] - hh2 / 2;
+      bx = Math.max(2, Math.min(W - tw2 - 2, bx));
+      cx.fillStyle = sec ? "rgba(243,211,138,.92)" : "rgba(4,5,9,.72)"; cx.strokeStyle = sec ? "rgba(255,255,255,.7)" : "rgba(243,211,138,.35)"; cx.lineWidth = 1;
+      cx.beginPath(); if (cx.roundRect) cx.roundRect(bx, by, tw2, hh2, 6); else cx.rect(bx, by, tw2, hh2); cx.fill(); cx.stroke();
+      cx.fillStyle = sec ? "#1a1205" : "#f1e6cc"; cx.textBaseline = "middle"; cx.fillText(et2, bx + 5, by + hh2 / 2 + 0.5);
     });
+    cx.font = "600 " + yaz + "px system-ui,sans-serif";
     // Güneş
     var sp = xy(g.lat, g.lon), sr = Math.max(9, W / 55);
     var sg = cx.createRadialGradient(sp[0], sp[1], 0, sp[0], sp[1], sr * 2.6); sg.addColorStop(0, "rgba(255,236,170,1)"); sg.addColorStop(0.25, "rgba(255,206,110,.85)"); sg.addColorStop(0.6, "rgba(255,170,60,.25)"); sg.addColorStop(1, "rgba(255,150,40,0)");
@@ -270,7 +353,7 @@
       return '<button type="button" data-i="' + i + '" class="' + (i === secSehir ? "sec" : "") + '" aria-pressed="' + (i === secSehir) + '"><span class="ad"><span>' + c[0] + "</span><span>" + ik + '</span></span><span class="sa">' + saat(t, c[3]) + '</span><span class="fk">' + (i === 0 ? "UTC" + sure(istF, true).replace(" sa", "") : (f ? sure(f, true) : "aynı saat")) + gunE + "</span></button>";
     }).join("");
   }
-  function yenile(harita) { yaziGuncelle(harita); if (harita || Date.now() - sonCiz > 30000) ciz(); }
+  function yenile(harita) { var c = harita || Date.now() - sonCiz > 30000; yaziGuncelle(harita); if (c) { ciz(); buyukCiz(); } else if (buyuk && Math.floor(simdi() / 6e4) !== B.dk) { B.dk = Math.floor(simdi() / 6e4); buyukCiz(); } }
 
   function ac() {
     if (!O) kur();
@@ -283,9 +366,10 @@
   }
   function kapa() {
     if (!O || O.hidden) return;
+    if (buyuk) buyukKapa();
     O.classList.remove("ac"); clearInterval(zSaat); document.removeEventListener("keydown", tus);
     setTimeout(function () { O.hidden = true; document.body.style.overflow = ""; if (geri && geri.focus) geri.focus({ preventScroll: true }); }, 300);
   }
-  function tus(e) { if (e.key === "Escape") kapa(); }
+  function tus(e) { if (e.key === "Escape") { if (buyuk) buyukKapa(); else kapa(); } }
   window.DunyaSaati = { ac: ac, kapa: kapa, _gunes: gunes, _dogBat: dogBat, _gok: gokOlaylari, _kara: kara };
 })();
