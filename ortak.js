@@ -396,9 +396,10 @@
     var st = document.createElement("style");
     st.textContent =
       "#sMenu,#sTab{display:none}" +
-      // PC: yan menü
+      // PC: yan menü. Sabit (fixed) çubuklar menünün sağına kayar. 24 Kasım 2026: .bar ve .mini yerine #bar ve #mini; aynı sınıf adlı
+      // ilerleme çubukları (Hava Durumu 7 günlük, Günce) da 220 px kayıp kartın dışına taşıyordu.
       "@media (min-width:1200px){html.smVar body{padding-left:236px}" +
-      "html.smVar .bar,html.smVar .mini,html.smVar .imini,html.smVar .imenu,html.smVar .menuPan,html.smVar .kz-nav,html.smVar .dl-bar{left:220px!important}" +
+      "html.smVar #bar,html.smVar #mini,html.smVar .imini,html.smVar .imenu,html.smVar .menuPan,html.smVar .kz-nav,html.smVar .dl-bar{left:220px!important}" +
       "#sMenu{display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:220px;z-index:45;overflow-y:auto;padding:20px 12px 16px;box-sizing:border-box;background:rgba(8,8,8,.94);border-right:1px solid #262626;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;scrollbar-width:thin}" +
       "#sMenu .lg{display:block;margin:0 8px 14px}#sMenu .lg img{height:38px;display:block}" +
       "#sMenu h6{margin:14px 10px 6px;font:700 11px system-ui,sans-serif;letter-spacing:.14em;color:#8a8a8a}" +
@@ -408,7 +409,7 @@
       "#sMenu .alt{margin-top:auto;padding-top:14px}#sMenu #telAc{position:static;width:100%;justify-content:center;box-shadow:none}}" +
       // Dar pencere: simgeli ince şerit (adlar fareyle üstüne gelince görünür)
       "@media (min-width:1000px) and (max-width:1199px){html.smVar body{padding-left:76px}" +
-      "html.smVar .bar,html.smVar .mini,html.smVar .imini,html.smVar .imenu,html.smVar .menuPan,html.smVar .kz-nav,html.smVar .dl-bar{left:64px!important}" +
+      "html.smVar #bar,html.smVar #mini,html.smVar .imini,html.smVar .imenu,html.smVar .menuPan,html.smVar .kz-nav,html.smVar .dl-bar{left:64px!important}" +
       "#sMenu{display:flex;flex-direction:column;align-items:center;position:fixed;top:0;left:0;bottom:0;width:64px;z-index:45;overflow-y:auto;padding:12px 6px;box-sizing:border-box;background:rgba(8,8,8,.94);border-right:1px solid #262626;scrollbar-width:none}" +
       "#sMenu .lg{margin:0 0 6px}#sMenu .lg img{height:20px;display:block}#sMenu h6{font-size:0;margin:6px 0;width:28px;height:1px;background:rgba(128,128,128,.4)}" +
       "#sMenu a.m{display:flex;justify-content:center;align-items:center;width:44px;height:38px;border-radius:11px;font-size:19px;text-decoration:none;opacity:.9}#sMenu a.m .l{display:none}" +
