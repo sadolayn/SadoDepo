@@ -610,6 +610,8 @@ let kkOzet = "";
 
 // ---------- Konut ----------
 // BDDK 29.01.2026 tarihli 11364 sayılı karar: ekspertiz değerine ve enerji sınıfına göre azami kredi/değer oranı
+// BDDK 19.11.2026 tarihli 11604 sayılı karar: alıcının, eşinin veya 18 yaş altındaki çocuklarının en az iki konutu varsa bu oran %75 azaltılır
+// (önceki uygulamada eşik en az bir konuttu). Hisseli tapu ve riskli yapı istisnaları notta anlatılır; hesap yalnızca seçime bakar.
 const LTV_BANDS = [
   { max: 5e6, ad: "5 milyon TL'ye kadar", AB: 90, C: 80, D: 70 },
   { max: 7e6, ad: "5 – 7 milyon TL", AB: 80, C: 70, D: 60 },
@@ -622,13 +624,14 @@ let eksOn = false;
 function renderLtv() {
   const v = num("k2_deger"), cls = $("k2_enerji").value, P = num("k2_tutar");
   if (!eksOn || !v) { $("k2_ltv").className = "ltvbox"; $("k2_ltv").innerHTML = eksOn ? "Ekspertiz değerini girince azami kredi oranı burada görünür." : ""; return null; }
-  const bi = ltvBand(v), band = LTV_BANDS[bi], rate = band[cls];
+  const bi = ltvBand(v), band = LTV_BANDS[bi], cok = $("k2_evler").value === "2", rate = cok ? band[cls] * 0.25 : band[cls];
+  const rateY = String(rate).replace(".", ",");
   const maxKredi = v * rate / 100;
   const over = P > maxKredi + 0.5;
   const clsAd = { AB: "A/B", C: "C", D: "D ve altı" }[cls];
   let rowsH = LTV_BANDS.map((b, i) => `<tr class="${i === bi ? "on" : ""}"><td>${b.ad}</td><td>%${b.AB}</td><td>%${b.C}</td><td>%${b.D}</td></tr>`).join("");
   $("k2_ltv").className = "ltvbox" + (over ? " warn" : "");
-  $("k2_ltv").innerHTML = `Bu konut için azami kredi oranı <b>%${rate}</b> (${band.ad}, enerji sınıfı ${clsAd}).<br>
+  $("k2_ltv").innerHTML = `Bu konut için azami kredi oranı <b>%${rateY}</b> (${band.ad}, enerji sınıfı ${clsAd}${cok ? `; en az iki konut olduğu için %${band[cls]} oranı %75 azaltıldı` : ""}).<br>
     Çekilebilecek en yüksek kredi: <b>${tl(maxKredi)}</b>
     ${over ? `<br><span style="color:#ef6a4c">Girdiğin tutar bu sınırı aşıyor.</span>` : ""}
     <button type="button" id="k2_max">En yüksek tutarı kullan</button>
@@ -708,7 +711,7 @@ function calcKonut() {
   $("k2s_net").textContent = tl(P - tahsis - masraf);
   k2Pdf = { tur: "Konut Kredisi", bas: D.bas, P, r, n, bsmv: 0, kkdf: 0, tF, tV: 0, tFo: 0, top: toplam, T: R2(taksit), rows: plan.map((x) => ({ d: x.d, a: x.ana, f: x.f, fo: 0, v: 0, t: x.t, b: x.bal })) };
   k2Summary = krediOzet({ tur: "Konut Kredisi", P, n, r, taksit: R2(taksit), plan, bsmv: 0, kkdf: 0, tF, tB: 0, tK: 0, toplam, d0: plan[0].d, d1: plan[plan.length - 1].d });
-  $("k2_note").textContent = `Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. Alıcının üzerine kayıtlı başka bir konut varsa azami kredi oranı daha düşük olabilir; bu hesap ilk konut varsayımıyla yapıldı. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir (kutuda %0,5).${tahsisGir > 0.5 ? " ⚠️ Girdiğin tahsis oranı bu sınırı aşıyor; hesap %0,5 ile yapıldı." : ""} Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksidin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.`;
+  $("k2_note").textContent = `Oranlar BDDK'nın 29.01.2026 tarihli 11364 sayılı kararına göredir; birinci el–ikinci el ayrımı yoktur. BDDK'nın 19.11.2026 tarihli 11604 sayılı kararıyla, alıcının, eşinin veya 18 yaş altındaki çocuklarının en az iki konutu varsa bu oran %75 azaltılarak uygulanır (önceki uygulamada eşik en az bir konuttu); ekspertiz bölümünden seçebilirsin. Hisseli tapu ve riskli yapı nedeniyle yıkılan konutlar için kararda ayrı kurallar vardır. Tahsis ücreti üst sınırı kredi tutarının binde 5'idir (kutuda %0,5).${tahsisGir > 0.5 ? " ⚠️ Girdiğin tahsis oranı bu sınırı aşıyor; hesap %0,5 ile yapıldı." : ""} Her taksit dönemi 1 ay faiz işler; ilk taksit tam bir ay sonra değilse ilk taksidin faizi gün/30 ile hesaplanır. Uygulamayı bankanla teyit et.`;
 }
 
 // ---------- Hesap çekirdekleri (DOM'suz): vade karşılaştırma ve ters hesap da bunları kullanır ----------
