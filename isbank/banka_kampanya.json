@@ -1,5 +1,5 @@
 {
- "kontrol": "2026-11-23",
+ "kontrol": "2026-11-24",
  "kategoriler": [
   {
    "slug": "iste-maasa-ozel",
@@ -81,16 +81,16 @@
    "url": "https://www.isbank.com.tr/kampanyalar/bireysel-kredi-kampanyalari",
    "kampanyalar": [
     {
-     "baslik": "Avantajlı %3,49’dan Başlayan Faiz Oranlarıyla, Taksitli Ek Hesap Kullanma Fırsatı İş Bankası’nda!",
-     "bitis": "2026-11-23",
-     "ozet": "Nakit ihtiyacınızı kolayca karşılayabileceğiniz Taksitli Ek Hesap, aylık %3,49’dan başlayan faiz oranlarıyla şimdi daha avantajlı!",
-     "url": "https://www.isbank.com.tr/kampanyalar/indirimli-taksitli-ek-hesap-kampanyasi"
-    },
-    {
      "baslik": "İşCep'ten İş Bankalı olanlara Avantajlı Hisse Senedi Komisyon Ayrıcalığı!",
      "bitis": "2026-11-30",
      "ozet": "İşCep’ten İş Bankası müşterisi olun, yatırım hesabı açarak hisse senedi işlemlerinizde %0,05 komisyon oranı ayrıcalığından yararlanın!",
      "url": "https://www.isbank.com.tr/kampanyalar/iscepten-is-bankali-olanlara-avantajli-hisse-senedi-komisyon-ayricaligi"
+    },
+    {
+     "baslik": "Size özel faiz oranlarıyla Anında Kredi fırsatını kaçırmayın!",
+     "bitis": "2026-11-30",
+     "ozet": "Tüm ihtiyaçlarınız için %3,68'den başlayan faiz oranlı 36 ay vadeli Anında Kredi İşCep’te!",
+     "url": "https://www.isbank.com.tr/kampanyalar/ozel-faiz-oranlariyla-aninda-kredi-firsati"
     }
    ]
   },
@@ -171,7 +171,7 @@
      "baslik": "İşCep'ten İş Bankalı Olanlar % 0,99 Faiz Oranlı Ek Hesap Ayrıcalığından Yararlanıyor!",
      "bitis": "2026-11-30",
      "ozet": "İşCep’ten İş Bankası müşterisi olun, 50.000 TL’ye varan % 0,99 Faiz Oranlı Ek Hesap ayrıcalığından yararlanın!",
-     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-is-bankali-olanlar-1-ay-boyunca-indirimli-faiz-oranli-ek-hesap-ayricaligindan-yararlaniyor"
+     "url": "https://www.isbank.com.tr/kampanyalar/iscepten-is-bankali-olanlar-indirimli-faiz-oranli-ek-hesap-ayricaligindan-yararlaniyor"
     },
     {
      "baslik": "İşCep'ten İş Bankalı Olanlara Ücretsiz Para Transferi Ayrıcalığı!",
