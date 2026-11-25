@@ -556,7 +556,8 @@
 
 /* Bilgisayar (1000 px ve üstü): sekmeler tek sıra; kart kart araçlar iki sütun, tek kartlılar rahat okuma genişliğinde.
    Hesap makinesi ve rulo bilerek olduğu gibi kalır (rulo makinenin yazıcısından çıkıyor). Telefonda değişiklik yok. */
-@media (min-width: 1000px) {
+/* 25 Kasım 2026: geniş düzen 1000 px yerine 720 px'ten başlar (Fold iç ekranı, tablet, yatay telefon); yan menü/alt çubuk mantığı değişmedi */
+@media (min-width: 720px) {
   .wrap { max-width: 1100px; }
   .tabs { grid-template-columns: repeat(11, 1fr); }
   .tabs button { padding: 8px 2px; font-size: 12px; }

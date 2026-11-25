@@ -254,7 +254,8 @@
   .pz-bc { height: 34px; margin: 12px auto 4px; width: 75%; background: repeating-linear-gradient(90deg, #262626 0 2px, transparent 2px 4px, #262626 4px 5px, transparent 5px 8px, #262626 8px 11px, transparent 11px 12px); }
 
 /* Bilgisayar (1000 px ve üstü): solda rapor ve günlük işaretleme, sağda takvim, olasılık, fiş ve yedek. Telefonda değişiklik yok. */
-@media (min-width: 1000px) {
+/* 25 Kasım 2026: geniş düzen 1000 px yerine 720 px'ten başlar (Fold iç ekranı, tablet, yatay telefon); yan menü/alt çubuk mantığı değişmedi */
+@media (min-width: 720px) {
   .wrap { max-width: 1120px; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); column-gap: 22px; align-items: start; }
   .wrap > .stick, .wrap > .note { grid-column: 1 / -1; }
 }

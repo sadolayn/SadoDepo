@@ -187,7 +187,8 @@
 #pkTtl.serit .a { grid-area: a; margin: 0; font-size: 12px; }
 #pkTtl.serit .hft, #pkTtl.serit .sonra { display: none; }
 #pkTtl.serit::after { content: "›"; grid-area: ok; color: var(--accent); font-size: 22px; line-height: 1; }
-@media (min-width: 1000px) {
+/* 25 Kasım 2026: geniş düzen 1000 px yerine 720 px'ten başlar (Fold iç ekranı, tablet, yatay telefon); yan menü/alt çubuk mantığı değişmedi */
+@media (min-width: 720px) {
   #pnl > #pkTtl.serit { order: 1; grid-template-columns: auto minmax(0, 1fr) auto auto; grid-template-areas: "n ad so ok" "n a so ok"; }
   #pkTtl.serit .sonra { display: flex; grid-area: so; flex-direction: column; align-items: flex-end; gap: 3px; margin: 0; }
 }
@@ -218,7 +219,7 @@
 .rdr { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid rgba(243,211,138,.7); position: relative; overflow: hidden; flex: none; }
 .rdr::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, rgba(243,211,138,.9), transparent 28%); animation: rdrD 2.8s linear infinite; }
 @keyframes rdrD { to { transform: rotate(360deg); } }
-@media (min-width: 1000px) {
+@media (min-width: 720px) {
   .pnl { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 10px; }
   .pk.genis { grid-column: 1 / -1; }
   /* PC'de küçük dört kutu üstte, kampanyalar altta tam genişlik */
@@ -249,9 +250,9 @@
 .k4 .ksg button[disabled] { opacity: .45; cursor: default; }
 .k4 .ksg button b { font-variant-numeric: tabular-nums; }
 .k4 .bos { font-size: 12px; color: var(--muted); }
-@media (min-width: 1000px) { .k4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; } }
+@media (min-width: 720px) { .k4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; } }
 /* Telefonda yalnızca Faiz & Kredi ve Yeni gelen; Süresi doluyor ve Tarım bilgisayarda (yer kaplamasın) */
-@media (max-width: 999px) { .k4 .kb.sic, .k4 .kb.tar { display: none; } }
+@media (max-width: 719px) { .k4 .kb.sic, .k4 .kb.tar { display: none; } }
 html[data-tema="acik"] .k4 .kb { background: #f5f8fc; } html[data-tema="acik"] .k4 .ksg button { background: #fff; }
 html[data-tema="acik"] .k4 .kb.sic { background: #fdf0ec; border-color: #f0c2b4; } html[data-tema="acik"] .k4 .kb.tar { background: #fbf2e2; border-color: #e6cf9f; }
 html[data-tema="acik"] .pk.pym .km .u { color: #1a7a4c; } html[data-tema="acik"] .pk.pym .km .d { color: #b8442a; }

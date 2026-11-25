@@ -171,7 +171,8 @@
   /* açık mod elle düzeltme */
   html[data-tema="acik"] .push h3 small { background: #dff3e8; color: #17603e; }
 /* Bilgisayar (1000 px ve üstü): radar üstte tam genişlik; altında solda kelimeler, sağda abonelik ve SSS. Telefonda değişiklik yok. */
-@media (min-width: 1000px) {
+/* 25 Kasım 2026: geniş düzen 1000 px yerine 720 px'ten başlar (Fold iç ekranı, tablet, yatay telefon); yan menü/alt çubuk mantığı değişmedi */
+@media (min-width: 720px) {
   .wrap { max-width: 1120px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 22px; align-items: start; }
   .wrap > .stick, .wrap > .radar-hero { grid-column: 1 / -1; }
 }

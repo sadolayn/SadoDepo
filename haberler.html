@@ -133,17 +133,21 @@
 <script type="module" src="sayac.js"></script>
 <link rel="stylesheet" href="theme.css">
 <style>/* Geniş ekran (PC, 1000 px ve üstü): telefonda hiçbir şey değişmez */
-@media (min-width: 1000px) {
+/* 25 Kasım 2026: geniş düzen 1000 px yerine 720 px'ten başlar (Fold iç ekranı, tablet, yatay telefon); yan menü/alt çubuk mantığı değişmedi */
+@media (min-width: 720px) {
   .wrap { max-width: 1040px; }
   #cats { grid-template-columns: repeat(10, minmax(0, 1fr)); }
   .stick .row { max-width: 640px; }
-  .trends { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; }
-  .trends .more { grid-column: 1 / -1; justify-self: center; }
   .list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 36px; padding: 2px 20px; }
   .list > .sep, .list > .empty, .list > :not(.n) { grid-column: 1 / -1; }
   .list > .n:nth-child(1 of .n), .list > .n:nth-child(2 of .n) { border-top: none; }
 }
-@media (min-width: 1000px) { .list > .sep + .n, .list > .sep + .n + .n { border-top: none; } }
+@media (min-width: 720px) { .list > .sep + .n, .list > .sep + .n + .n { border-top: none; } }
+/* Üç gündem kartı yan yana yalnızca bilgisayarda: Fold iç ekranında yazıları sıkışıyordu, orada alt alta kalır */
+@media (min-width: 1000px) {
+  .trends { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; }
+  .trends .more { grid-column: 1 / -1; justify-self: center; }
+}
 </style>
 </head>
 <body>

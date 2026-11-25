@@ -171,9 +171,9 @@ body.dl-acik #ortakYukari { bottom: calc(80px + env(safe-area-inset-bottom)) !im
 @media print { .dl-hat, .dl-modal { display: none !important; } .dl-kagit .k-imza img { max-height: 18mm; } }
 
 /* ===== Bilgisayar (1000 px ve üstü): liste üç sütun; düzenleyicide form solda, A4 önizleme sağda sabit. Telefonda değişiklik yok. ===== */
-@media (min-width: 1000px) {
+/* 25 Kasım 2026: geniş düzen 1000 px yerine 720 px'ten başlar (Fold iç ekranı, tablet, yatay telefon); yan menü/alt çubuk mantığı değişmedi */
+@media (min-width: 720px) {
   .wrap { max-width: 1240px; }
-  :root { --dlSol: 470px; --dlAra: 32px; }
   #dlListe { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 24px; align-items: end; }
   #dlListe > .dl-giris { grid-column: 1; margin-bottom: 0; }
   #dlListe > .dl-ara { grid-column: 2; }
@@ -188,7 +188,10 @@ body.dl-acik #ortakYukari { bottom: calc(80px + env(safe-area-inset-bottom)) !im
   .dl-uyari { max-width: 760px; }
   .dl-kbd { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 7px; border: 1px solid #333; border-bottom-width: 2px; background: #141414; color: #8a8a8a; font: 600 12px ui-monospace, monospace; transition: opacity .2s ease; }
   .dl-ara:focus-within .dl-kbd { opacity: 0; }
-
+}
+/* Düzenleme ekranı (form + kâğıt önizleme yan yana) yalnızca 1000 px ve üstünde: Fold iç ekranında önizleme çok daralıyordu */
+@media (min-width: 1000px) {
+  :root { --dlSol: 470px; --dlAra: 32px; }
   #dlDuz:not([hidden]) { display: grid; grid-template-columns: var(--dlSol) minmax(0, 1fr); column-gap: var(--dlAra); align-items: start; }
   .dl-sag { position: sticky; top: 84px; }
   .dl-sag { display: flex; flex-direction: column; }

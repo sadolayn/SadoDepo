@@ -129,7 +129,8 @@
   .yerAd .bayr { width: 28px; height: 21px; vertical-align: -3px; }
   [hidden] { display: none !important; }
 /* Bilgisayar (1000 px ve üstü): daha geniş okuma alanı. Telefonda değişiklik yok. */
-@media (min-width: 1000px) { .wrap { max-width: 880px; } }
+/* 25 Kasım 2026: geniş düzen 1000 px yerine 720 px'ten başlar (Fold iç ekranı, tablet, yatay telefon); yan menü/alt çubuk mantığı değişmedi */
+@media (min-width: 720px) { .wrap { max-width: 880px; } }
 </style>
 <script src="pwa.js"></script>
 <script src="ortak.js"></script>

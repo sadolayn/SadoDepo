@@ -225,11 +225,12 @@
   @media (prefers-reduced-motion: reduce) { .gik .gr, .gik .gs { animation: none; } }
   /* ===== Ana menü ===== */
   .mn { width: 100%; max-width: 380px; }
-  /* Geniş ekran (PC, 1000 px ve üstü): telefonda hiçbir şey değişmez (11 Kasım 2026)
+  /* Geniş ekran (720 px ve üstü: Fold iç ekranı, tablet, PC; 25 Kasım 2026'ya kadar 1000 px): telefonda hiçbir şey değişmez (11 Kasım 2026)
      - Menü iki sütunlu ızgara: bölümler satır satır dizilir (okuma sırası telefondakiyle aynı);
        Mola + Sabah brifingi tek grupta durur, iki sütunun boyu dengelenir.
      - Saat · logo · takvim ortada kalır; kayan yazı, YENİ şeridi ve görünüm düğmesi menüyle aynı 860 px hizaya çıkar. */
-  @media (min-width: 1000px) {
+  /* 25 Kasım 2026: geniş düzen 1000 px yerine 720 px'ten başlar (Fold iç ekranı, tablet, yatay telefon); yan menü/alt çubuk mantığı değişmedi */
+  @media (min-width: 720px) {
     .mn { max-width: 860px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; align-items: start; }
     .mn > * { grid-column: 1 / -1; min-width: 0; }
     .mn > .mnB { grid-column: auto; }

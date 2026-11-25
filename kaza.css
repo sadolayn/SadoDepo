@@ -207,4 +207,5 @@ footer.copyright { margin-bottom: 20px; }
 }
 
 /* Bilgisayar (1000 px ve üstü): adımlar daha geniş ve rahat; tutanak telefonda doldurulacak şekilde kaldı. */
-@media (min-width: 1000px) { .wrap, .kz-nav { max-width: 780px; } }
+/* 25 Kasım 2026: geniş düzen 1000 px yerine 720 px'ten başlar (Fold iç ekranı, tablet, yatay telefon); yan menü/alt çubuk mantığı değişmedi */
+@media (min-width: 720px) { .wrap, .kz-nav { max-width: 780px; } }

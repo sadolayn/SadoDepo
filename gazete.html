@@ -213,7 +213,8 @@
 <!-- Inter sitenin kendisinden (22 Kasım 2026; önceden Google Fonts) -->
 <style>@font-face { font-family: "Inter"; font-style: normal; font-weight: 400 800; font-display: swap; src: url(lib/inter-latin-tr.woff2) format("woff2"); }</style>
 <style>/* Geniş ekran (PC, 1000 px ve üstü): telefonda hiçbir şey değişmez */
-@media (min-width: 1000px) {
+/* 25 Kasım 2026: geniş düzen 1000 px yerine 720 px'ten başlar (Fold iç ekranı, tablet, yatay telefon); yan menü/alt çubuk mantığı değişmedi */
+@media (min-width: 720px) {
   .wrap { max-width: 860px; }
   .mini > div { max-width: 860px; }
   .stick .bar { max-width: 600px; margin-left: auto; margin-right: auto; }

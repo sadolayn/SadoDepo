@@ -49,12 +49,12 @@
   sirala(); siniflar(false);
 
   // ---------- PC sütun dengesi (22 Kasım 2026) ----------
-  // 1000 px ve üstünde menü ızgarası 2 (1680+ px'te 3) sütun. Her bölümün boyu ölçülür, 2 px'lik satırlardan o kadar yer ayrılır;
+  // 720 px ve üstünde (25 Kasım 2026'ya kadar 1000 px) menü ızgarası 2 (1680+ px'te 3) sütun. Her bölümün boyu ölçülür, 2 px'lik satırlardan o kadar yer ayrılır;
   // böylece bir bölüm, kısa kalan sütunun altındaki boşluğa çıkar. Telefonda ve arama sırasında (tek sütun) hiçbir şey yapılmaz.
   var dz = 0, q = document.getElementById("araQ"); // q burada tanımlanmalı: aşağıdaki gözlemci kurulurken kullanılıyor (25 Kasım 2026)
   function dengele() {
     dz = 0;
-    var kids = [].slice.call(nav.children), grid = innerWidth >= 1000 && getComputedStyle(nav).display === "grid";
+    var kids = [].slice.call(nav.children), grid = innerWidth >= 720 && getComputedStyle(nav).display === "grid";
     if (!grid) { nav.classList.remove("dengeli"); kids.forEach(function (e) { e.style.gridRowEnd = ""; }); return; }
     kids.forEach(function (e) {
       var cs = getComputedStyle(e); if (cs.display === "none" || cs.position === "absolute" || cs.position === "fixed") { e.style.gridRowEnd = ""; return; }
