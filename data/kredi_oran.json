@@ -52,9 +52,8 @@
     ],
     "yeni": {
       "aylik": 4.08,
-      "gecikme": 4.38,
       "bas": "2026-12-01",
-      "kaynak": "Bankanın müşterilerine gönderdiği bilgilendirme (01.12.2026'dan itibaren aylık %4,08, gecikme %4,38) ve TCMB azami faiz tablosu (24.11.2026'da ilan edildi; KMH azami akdi %4,08, gecikme %4,38). Tarihten sonra isbank.com.tr kontrol edilince 'aylik' güncellenip bu kayıt silinebilir.",
+      "kaynak": "TCMB azami faiz tablosu (24.11.2026'da ilan edildi): 1.12.2026'dan itibaren kredili mevduat hesabı (KMH) azami akdi faizi %4,08; Ek Hesap faizi bu oranı geçemez. Tarihten sonra isbank.com.tr kontrol edilince 'aylik' güncellenip bu kayıt silinebilir.",
       "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Istatistikler/Bankacilik+Verileri/Kredi_Karti_Islemlerinde_Uygulanacak_Azami_Faiz_Oranlari"
     }
   }

@@ -1479,9 +1479,9 @@ renderCekList();
     link_maasli: "https://www.isbank.com.tr/kampanyalar/maasini-is-bankasindan-alan-musterilerimize-ozel-indirimli-faiz-orani-ile-ek-hesap",
     link_isplus: "https://www.isbank.com.tr/kampanyalar/ek-hesap-faiz-oraninda-indirim-ayricaligi",
     link_black: "https://www.isbank.com.tr/ek-hesap-faiz-oraninda-indirim-ayricaligi", taksit_max: 12, kampanya: null, ekler: [],
-    // 25.11.2026: banka, müşterilerine gönderdiği bilgilendirmede 01.12.2026'dan itibaren Ek Hesap faizini %4,08, gecikme faizini %4,38 olarak duyurdu
-    // (TCMB'nin aynı tarihli KMH azami oranlarıyla aynı). Tarihten önce ayrı düğme, tarihi gelince standart oran olur.
-    yeni: { aylik: 4.08, gecikme: 4.38, bas: "2026-12-01", url: TCMB_KK_URL } };
+    // 1.12.2026: TCMB'nin kredili mevduat hesabı (KMH) azami akdi faizi %4,25 → %4,08 (24.11.2026'da ilan edildi); Ek Hesap faizi bu tavanı geçemez.
+    // Tarihten önce ayrı düğme olarak görünür, tarihi gelince standart oran olur.
+    yeni: { aylik: 4.08, bas: "2026-12-01", url: TCMB_KK_URL } };
   const VG = 0.30, GUNLER = [[1, "1 gün"], [5, "5 gün"], [10, "10 gün"], [15, "15 gün"], [30, "1 ay"]];
   const f2 = (v) => v.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const trh = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long" });
@@ -1580,7 +1580,7 @@ renderCekList();
   };
   function src() {
     $("e_src").innerHTML = `Faiz oranı kendiliğinden gelmez; sana uygulanan oranı yaz. Düğmelerdeki oranlar <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr</a>'de herkese açık yayımlanan genel oranlardır (son kontrol: ${new Date(EK.kontrol + "T12:00:00").toLocaleDateString("tr-TR")}).`
-      + (yaklasan() || yenidenGelen() ? ` ${trTarih(EK.yeni.bas)} itibarıyla geçerli %${f2(EK.yeni.aylik)} ise bankanın e-posta bilgilendirmesinden alındı${EK.yeni.gecikme ? `; aynı bilgilendirmeye göre aylık gecikme faiz oranı %${f2(EK.yeni.gecikme)}` : ""}. TCMB'nin aynı tarihten geçerli kredili mevduat hesabı (KMH) azami akdi faizi de %${f2(tcmbDonem(EK.yeni.bas).kmh[0])} (<a href="${TCMB_KK_URL}" target="_blank" rel="noopener">TCMB ↗</a>).` : "")
+      + (yaklasan() || yenidenGelen() ? ` ${trTarih(EK.yeni.bas)} itibarıyla gösterilen %${f2(tcmbDonem(EK.yeni.bas).kmh[0])}, TCMB'nin o tarihten geçerli kredili mevduat hesabı (KMH) azami akdi faizidir (azami gecikme faizi %${f2(tcmbDonem(EK.yeni.bas).kmh[1])}; <a href="${TCMB_KK_URL}" target="_blank" rel="noopener">TCMB ↗</a>); Ek Hesap faizi bu oranı geçemez.` : "")
       + " Kişiye uygulanan oran farklı olabilir. Hesap bilgi amaçlıdır.";
   }
   ozetBagla("e", () => ekOzet); ozetBagla("et", () => tOzet);
