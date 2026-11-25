@@ -602,11 +602,12 @@ function calcKK() {
   const vergi = (fA + fG) * v;
   const top = fA + fG + vergi;
   const DN = tcmbDonem(), SN = tcmbSonraki(), aY = (D) => D.d.map((x) => "%" + nfx(x[0])).join(" / "), gY = (D) => D.d.map((x) => "%" + nfx(x[1])).join(" / ");
+  const yon = SN ? (SN.d[2][0] < DN.d[2][0] ? "düşüyor" : SN.d[2][0] > DN.d[2][0] ? "yükseliyor" : "değişiyor") : "";
   const mxA = `<a href="https://www.maximum.com.tr/harcama-taksitlendirme" target="_blank" rel="noopener" style="color:var(--accent)">maximum.com.tr ↗</a>`;
   $("k_note").innerHTML = `<b>Oranlar neden değişiyor?</b> TCMB azami faizi <b>dönem borcunun tutarına göre</b> üç dilimde belirliyor. Dönem borcunu değiştirince dilim değişirse oranlar da kendiliğinden değişir${kkManual ? " (şu an oranları elle girdin, otomatik seçim kapalı)" : ""}:
     <table class="ltvtab" style="margin-top:6px"><tr><th>Dönem borcu</th><th>Akdi</th><th>Gecikme</th></tr>${DN.d.map((r, i) => `<tr class="${!kkManual && i === t[3] ? "on" : ""}"><td>${KK_DILIM[i]}</td><td>%${nfx(r[0])}</td><td>%${nfx(r[1])}</td></tr>`).join("")}</table>
-    ${SN ? `<span style="display:block;margin-top:6px">📅 <b>${trTarih(SN.bas)} itibarıyla</b> TCMB azami oranları düşüyor: akdi ${aY(SN)} · gecikme ${gY(SN)} (<a href="${TCMB_KK_URL}" target="_blank" rel="noopener" style="color:var(--accent)">TCMB ↗</a>). O gün hesap kendiliğinden yeni oranlara geçer.</span>` : ""}
-    <span style="display:block;margin-top:4px">📌 ${DN.mx ? `<b>maximum.com.tr'de yayımlanan oranlar:</b> Maximum kartlarda akdi faiz ${aY(DN)} (aylık, BSMV-KKDF hariç; ${mxA}). Oranlar TCMB'nin ${DN.mx} tablosuyla aynı; kesin oran hesap özetinde yazar.` : `Tablo TCMB'nin ${trTarih(DN.bas)} itibarıyla geçerli azami oranlarıdır (<a href="${TCMB_KK_URL}" target="_blank" rel="noopener" style="color:var(--accent)">TCMB ↗</a>). Maximum kartlarda uygulanan oranlar ${mxA} sayfasında yayımlanır; kesin oran hesap özetinde yazar.`}</span>`;
+    ${SN ? `<span style="display:block;margin-top:6px">📅 <b>${trTarih(SN.bas)} itibarıyla</b> TCMB azami oranları ${yon}: akdi ${aY(SN)} · gecikme ${gY(SN)} (<a href="${TCMB_KK_URL}" target="_blank" rel="noopener" style="color:var(--accent)">TCMB ↗</a>). Bu hesaplayıcı o tarihten itibaren yeni azami oranlarla hesaplar.</span>` : ""}
+    <span style="display:block;margin-top:4px">📌 ${DN.mx ? `<b>maximum.com.tr'de yayımlanan oranlar:</b> Maximum kartlarda akdi faiz ${aY(DN)} (aylık, BSMV-KKDF hariç; ${mxA}). Oranlar TCMB'nin ${DN.mx} tablosuyla aynı; kesin oran hesap özetinde yazar.` : `Tablodaki oranlar TCMB'nin ${trTarih(DN.bas)} itibarıyla geçerli azami oranlarıdır (<a href="${TCMB_KK_URL}" target="_blank" rel="noopener" style="color:var(--accent)">TCMB ↗</a>). Maximum kartlarda uygulanan oranlar ${mxA} sayfasında yayımlanır; kesin oran hesap özetinde yazar.`}</span>`;
   $("k_out").textContent = tl(top);
   $("k_lim").querySelectorAll("button").forEach((b) => b.classList.toggle("on", +b.dataset.a === num("k_asg")));
   $("k_oto").innerHTML = `<span>✓</span><span>Oranlar otomatik: <b>akdi %${nfx(ra * 100)}</b> · <b>gecikme %${nfx(rg * 100)}</b> · asgari %${nfx(num("k_asg"))} · ${g} gün · BSMV+KKDF %${nfx(v * 100)}${kkManual ? " (elle girildi)" : ` <span style="opacity:.75">(dönem borcu ${t[2]} dilimi)</span>`}. Sadece borcu, ödenen tutarı ve limiti girmen yeter.${SN && !kkManual ? `<span style="display:block;margin-top:4px">📅 ${trTarih(SN.bas)} itibarıyla bu dilimde TCMB azami oranları: akdi <b>%${nfx(SN.d[t[3]][0])}</b> · gecikme <b>%${nfx(SN.d[t[3]][1])}</b>.</span>` : ""}</span>`;
@@ -1495,34 +1496,36 @@ renderCekList();
   const aktif = (k) => (!k.bas || bugun >= k.bas) && (!k.bit || bugun <= k.bit);
   const kalem = (P, r, g) => { const faiz = P * r / 100 * g / 30, v = faiz * VG; return { faiz, kkdf: faiz * 0.15, bsmv: faiz * 0.15, v, top: faiz + v }; };
   const gunAd = (g) => g === 30 ? "1 ay (30 gün)" : g + " gün";
-  // Yeni standart oran (EK.yeni): tarihi gelince standart olur. Tarihten sonra isbank.com.tr kontrol edilip "kontrol" tarihi
-  // yeni.bas'a eşit ya da sonra yazılınca JSON'daki "aylik" yeniden esas alınır (o zaman "yeni" kaydı silinebilir).
-  const yeniGecerli = () => !!(EK.yeni && EK.yeni.aylik && bugun >= EK.yeni.bas && !(EK.kontrol >= EK.yeni.bas));
-  const std = () => (yeniGecerli() ? EK.yeni.aylik : EK.aylik);
-  const yaklasan = () => (EK.yeni && EK.yeni.aylik && bugun < EK.yeni.bas ? EK.yeni : null);
+  // Yeni standart oran (EK.yeni): tarihi gelince standart olur. Bankanın sayfası geç güncellenip "aylik" hâlâ eski (daha yüksek)
+  // kalsa bile yeni oran geçerli sayılır; "aylik" yeni orana eşit ya da daha düşük yazılınca o esas alınır ("yeni" kaydı silinebilir).
+  const yeniVar = () => !!(EK.yeni && EK.yeni.aylik && EK.yeni.bas);
+  const yaklasan = () => (yeniVar() && bugun < EK.yeni.bas ? EK.yeni : null);
+  const yenidenGelen = () => yeniVar() && bugun >= EK.yeni.bas && EK.yeni.aylik < EK.aylik - 1e-9; // standart, EK.yeni'den geliyor
+  const std = () => (yenidenGelen() ? EK.yeni.aylik : EK.aylik);
   // Standarttan düşük olmayan oran indirim sayılmaz: eski kampanya oranı yeni standardın üstünde kalırsa yazılmaz.
   const indirimli = (v) => v < std() - 1e-9;
 
   function oranlar() {
-    const S = std(), Y = yaklasan();
+    const S = std(), Y = yaklasan(), dA = donemli().filter(aktif).filter((k) => indirimli(k.oran));
     const L = [[S, "Standart", "std"]];
     if (Y) L.push([Y.aylik, `${trh(Y.bas)} itibarıyla`, "yeni"]);
-    donemli().filter(aktif).filter((k) => indirimli(k.oran)).forEach((k) => L.push([k.oran, k.ad, k.id]));
+    dA.forEach((k) => L.push([k.oran, k.ad, k.id]));
     const r = num("e_faiz");
     if (secili && !L.some((x) => x[2] === secili && Math.abs(r - x[0]) < 1e-9)) secili = null;
     $("e_oranlar").innerHTML = L.map(([v, ad, id]) => `<button type="button" data-r="${v}" data-id="${id}" class="${Math.abs(r - v) < 1e-9 && (!secili || secili === id) ? "on" : ""}">%${f2(v)}<small>${escB(ad)}</small></button>`).join("");
     $("e_oranlar").querySelectorAll("button").forEach((b) => (b.onclick = () => { $("e_faiz").value = f2(+b.dataset.r); oranElle = true; secili = b.dataset.id; calcEk(); }));
     $("e_oranlarNot") && $("e_oranlarNot").remove();
     const n = document.createElement("div"); n.id = "e_oranlarNot"; n.className = "ekoran";
-    const P = [lnk(EK.link, `Standart %${f2(S)}`)];
-    if (Y) P.push(lnk(Y.url, `${trh(Y.bas)} itibarıyla standart %${f2(Y.aylik)} · TCMB azami oranı`));
-    donemli().filter(aktif).filter((k) => indirimli(k.oran)).forEach((k) => P.push(lnk(k.url, `${k.ad} %${f2(k.oran)}${k.bit ? ` (son gün ${trh(k.bit)})` : ""}`)));
+    // Yeni oran isbank.com.tr'de görülene kadar "Standart" bağlantısı bankanın eski oranlı sayfasına değil TCMB tablosuna gider
+    const P = [yenidenGelen() ? lnk(EK.yeni.url, `Standart %${f2(S)} (${trh(EK.yeni.bas)} itibarıyla) · TCMB azami oranı`) : lnk(EK.link, `Standart %${f2(S)}`)];
+    if (Y) P.push(lnk(Y.url, `${trh(Y.bas)} itibarıyla %${f2(Y.aylik)} · TCMB azami oranı`));
+    dA.forEach((k) => P.push(lnk(k.url, `${k.ad} %${f2(k.oran)}${k.bit ? ` (son gün ${trh(k.bit)})` : ""}`)));
     const ip = EK.isplus ? Object.entries(EK.isplus).filter(([, v]) => indirimli(v)) : [];
-    if (EK.isplus) P.push(lnk(EK.link_isplus, ip.length ? "İş Plus: " + ip.map(([a, v]) => `${a} %${f2(v)}`).join(" · ") : "İş Plus indirimli oranları"));
+    if (EK.isplus) P.push(lnk(EK.link_isplus, ip.length ? "İş Plus: " + ip.map(([a, v]) => `${a} %${f2(v)}`).join(" · ") : "İş Plus Ek Hesap ayrıcalığı"));
     const bl = EK.black ? Object.entries(EK.black).filter(([, v]) => indirimli(v)) : [];
-    if (EK.black) P.push(lnk(EK.link_black, bl.length ? "İş " + bl.map(([a, v]) => `${a} %${f2(v)}`).join(" · ") : "İş Black indirimli oranları"));
+    if (EK.black) P.push(lnk(EK.link_black, bl.length ? "İş " + bl.map(([a, v]) => `${a} %${f2(v)}`).join(" · ") : "İş Black Ek Hesap ayrıcalığı"));
     const biten = donemli().filter((k) => k.bit && bugun > k.bit && gunFark(k.bit, bugun) <= 30);
-    n.innerHTML = `<b>Kaynaklar:</b> ${P.join(" · ")}. Bu indirimler taksitli kullanımda geçerli olmayabilir; taksitli için ayrı dönemsel kampanya olabilir.` + biten.map((k) => `<br>⏹️ ${escB(k.ad)} için %${f2(k.oran)} kampanyası sona erdi (son gün ${trh(k.bit)}); artık standart oran geçerli.`).join("");
+    n.innerHTML = `<b>Kaynaklar:</b> ${P.join(" · ")}.${dA.length || ip.length || bl.length ? " Bu indirimler taksitli kullanımda geçerli olmayabilir; taksitli için ayrı dönemsel kampanya olabilir." : ""}` + biten.map((k) => `<br>⏹️ ${escB(k.ad)} için %${f2(k.oran)} kampanyası sona erdi (son gün ${trh(k.bit)}); artık standart oran geçerli.`).join("");
     $("e_oranlar").after(n);
   }
   function gunler(g) {
@@ -1544,7 +1547,7 @@ renderCekList();
     // TCMB'nin bugün geçerli KMH azami akdi faizinin üstünde bir oran yazıldıysa (ör. önceden kaydedilmiş eski oran) uyar
     const AZ = tcmbDonem(bugun).kmh[0], fazla = r > AZ + 1e-9;
     w.className = "ekwarn" + (asim || fazla ? " hot" : "");
-    w.innerHTML = (fazla ? `<b>⚠️ %${f2(r)} yazıldı; TCMB'nin bugün geçerli Ek Hesap (KMH) azami aylık faizi %${f2(AZ)}.</b> Oranı kontrol et.<br>` : "") + (asim
+    w.innerHTML = (fazla ? `<b>⚠️ %${f2(r)} yazıldı; TCMB'nin bugün geçerli kredili mevduat hesabı (KMH) azami aylık akdi faizi %${f2(AZ)}.</b> Oranı kontrol et.<br>` : "") + (asim
       ? `<b>⚠️ ${Math.round(num("e_gun"))} gün yazıldı; hesap 30 güne göre gösteriliyor.</b> Bir aydan uzun kullanımda dönem faizi ödenmezse anaparaya eklenir ve faize faiz işler; tutar değişir. Uzun vade için aşağıdaki <b>Taksitli Ek Hesap</b>'a bak.`
       : `<b>⚠️ 1 aydan sonra dikkat:</b> Ek hesap faizi her hesap kesim döneminde tahsil edilir. Dönem faizi ödenmezse faiz anaparaya eklenir, faize de faiz işler; tutar bu hesaptan farklı olabilir.`);
     ekOzet = ozetMetni("BİREYSEL EK HESAP FAİZ ÖZETİ", [[`Kullanılacak tutar: ${tl(P)}`, `Süre: ${gunAd(g)}`, `Aylık faiz oranı: %${f2(r)}`], [`Faiz: ${tl(k.faiz)}`, `KKDF (%15): ${tl(k.kkdf)}`, `BSMV (%15): ${tl(k.bsmv)}`, `Toplam maliyet: ${tl(k.top)}`, `Geri ödenecek toplam: ${tl(P + k.top)}`]]);
@@ -1576,8 +1579,9 @@ renderCekList();
     if (K && bugun >= (K.bas || "") && bugun <= K.bit) { kEl.hidden = false; kEl.href = K.url; kEl.innerHTML = `🎉 <b>${escB(K.ad)}</b> · son gün ${trh(K.bit)}: ${escB(K.oran)} ↗`; } else kEl.hidden = true;
   };
   function src() {
-    $("e_src").innerHTML = `Faiz oranı kendiliğinden gelmez; sana uygulanan oranı yaz. Düğmelerdeki oranlar <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr</a>'de herkese açık yayımlanan genel oranlardır (son kontrol: ${new Date(EK.kontrol + "T12:00:00").toLocaleDateString("tr-TR")}); kişiye uygulanan oran farklı olabilir. Hesap bilgi amaçlıdır.`
-      + (EK.yeni && EK.yeni.aylik && !(EK.kontrol >= EK.yeni.bas) ? ` ${trTarih(EK.yeni.bas)} itibarıyla geçerli %${f2(EK.yeni.aylik)} standart oran${EK.yeni.gecikme ? ` ve %${f2(EK.yeni.gecikme)} gecikme faizi` : ""} bankanın müşterilerine gönderdiği bilgilendirmede yer alıyor; TCMB'nin aynı tarihten geçerli Ek Hesap (KMH) azami oranı da %${f2(tcmbDonem(EK.yeni.bas).kmh[0])} (<a href="${TCMB_KK_URL}" target="_blank" rel="noopener">TCMB ↗</a>).` : "");
+    $("e_src").innerHTML = `Faiz oranı kendiliğinden gelmez; sana uygulanan oranı yaz. Düğmelerdeki oranlar <a href="${EK.link}" target="_blank" rel="noopener">isbank.com.tr</a>'de herkese açık yayımlanan genel oranlardır (son kontrol: ${new Date(EK.kontrol + "T12:00:00").toLocaleDateString("tr-TR")}).`
+      + (yaklasan() || yenidenGelen() ? ` ${trTarih(EK.yeni.bas)} itibarıyla geçerli %${f2(EK.yeni.aylik)} ise bankanın e-posta bilgilendirmesinden alındı${EK.yeni.gecikme ? `; aynı bilgilendirmeye göre aylık gecikme faiz oranı %${f2(EK.yeni.gecikme)}` : ""}. TCMB'nin aynı tarihten geçerli kredili mevduat hesabı (KMH) azami akdi faizi de %${f2(tcmbDonem(EK.yeni.bas).kmh[0])} (<a href="${TCMB_KK_URL}" target="_blank" rel="noopener">TCMB ↗</a>).` : "")
+      + " Kişiye uygulanan oran farklı olabilir. Hesap bilgi amaçlıdır.";
   }
   ozetBagla("e", () => ekOzet); ozetBagla("et", () => tOzet);
   $("e_faiz").addEventListener("input", (e) => { if (e.isTrusted) { oranElle = true; secili = null; } });
