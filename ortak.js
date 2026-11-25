@@ -387,6 +387,30 @@
     ["MOLA"],
     ["oyunlar", "🎮", "Oyunlar", "Oyunlar"]
   ];
+  // Menü ikonları (25 Kasım 2026, önizleme): emoji yerine sitenin kendi çizgi ikonları; her cihazda aynı görünür, renk yazıdan gelir (açık/koyu tema).
+  // Yalnızca ?ikon=1 ile açan cihazda görünür (bu cihazda hatırlanır); ?ikon=0 eski emojilere döndürür. Ziyaretçiler emojileri görmeye devam eder.
+  var IKON_ON = (function () { try { var q = new URLSearchParams(location.search).get("ikon"); if (q === "1") localStorage.setItem("ikonDene", "1"); if (q === "0") localStorage.removeItem("ikonDene"); return localStorage.getItem("ikonDene") === "1"; } catch (e) { return false; } })();
+  if (IKON_ON) document.documentElement.classList.add("ikonlu");
+  // Sadolayn menü ikonları: 24×24, çizgi (stroke) ikon; renk currentColor'dan gelir. Özgün, basit geometrik çizimler.
+  var IKON = {
+  index: '<path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.6V20h13V9.6"/><path d="M10 20v-5h4v5"/>',
+  isbank: '<path d="M3.5 20.5h17"/><path d="M4.5 16.5l5-5 3.5 3 6.5-7"/><path d="M15.5 7.5h4v4"/>',
+  gazete: '<path d="M6 3.5h8.5l4 4v13H6z"/><path d="M14.5 3.5v4h4"/><path d="M9 11.5h6.5M9 14.5h6.5M9 17.5h4"/>',
+  haberler: '<rect x="3.5" y="5" width="13.5" height="15" rx="1.6"/><path d="M17 9h3.5v8.5a2.5 2.5 0 0 1-2.5 2.5h-1"/><path d="M6.5 8.5h7.5M6.5 12h7.5M6.5 15.5h4.5"/>',
+  bolge: '<path d="M12 21s-6.5-5.7-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 15.3 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/>',
+  alerts: '<path d="M6.2 16.5V11a5.8 5.8 0 0 1 11.6 0v5.5l1.7 2.1h-15z"/><path d="M10 20.6a2.1 2.1 0 0 0 4 0"/>',
+  banka: '<path d="M3.5 9.3 12 4.5l8.5 4.8"/><path d="M5 9.5h14"/><path d="M6.8 12.2v5.6M10.3 12.2v5.6M13.7 12.2v5.6M17.2 12.2v5.6"/><path d="M4 20.5h16"/>',
+  firma: '<circle cx="12" cy="12" r="8.7"/><path d="m15.6 8.4-2.2 5-5 2.2 2.2-5z"/>',
+  gunce: '<rect x="5.5" y="3.5" width="13" height="17" rx="1.6"/><path d="M9 3.5v17"/><path d="M12 8h3.5M12 11.5h3.5"/>',
+  takvim: '<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.6h17"/><path d="M8 3v4M16 3v4"/><path d="M7.6 13.4h.01M12 13.4h.01M16.4 13.4h.01M7.6 17h.01M12 17h.01" stroke-width="2.4"/>',
+  piyasa: '<path d="M4 8.2h14.5"/><path d="M15 4.7l3.5 3.5-3.5 3.5"/><path d="M20 15.8H5.5"/><path d="M9 12.3l-3.5 3.5L9 19.3"/>',
+  hesap: '<rect x="5" y="3" width="14" height="18" rx="2.2"/><path d="M8.2 6.8h7.6v2.8H8.2z"/><path d="M8.6 13.2h.01M12 13.2h.01M15.4 13.2h.01M8.6 17h.01M12 17h.01M15.4 17h.01" stroke-width="2.4"/>',
+  yakin: '<circle cx="12" cy="12" r="6.6"/><circle cx="12" cy="12" r="2.1"/><path d="M12 2.6v3M12 18.4v3M2.6 12h3M18.4 12h3"/>',
+  hava: '<path d="M8.2 3.6v1.3M3.9 5.4l.9.9M2.6 9.7h1.3M12.5 5.4l-.9.9"/><path d="M5.4 12.6a3.6 3.6 0 1 1 6.4-3.4"/><path d="M8.6 20h8.7a3.4 3.4 0 0 0 .3-6.8 4.9 4.9 0 0 0-9.3.9A3 3 0 0 0 8.6 20z"/>',
+  saha: '<circle cx="12" cy="12" r="8.7"/><circle cx="12" cy="12" r="4.6"/><path d="M12 12l6-6"/><circle cx="15.6" cy="14.6" r="1.1" fill="currentColor" stroke="none"/>',
+  oyunlar: '<path d="M7.2 8h9.6a4.2 4.2 0 0 1 4.1 4.9l-.6 3.4a2.5 2.5 0 0 1-4.3 1.3L14.4 15.6H9.6l-1.6 2a2.5 2.5 0 0 1-4.3-1.3l-.6-3.4A4.2 4.2 0 0 1 7.2 8z"/><path d="M8.3 10.6v3.2M6.7 12.2h3.2"/><path d="M15.4 11.3h.01M17.3 13.1h.01" stroke-width="2.4"/>'
+  };
+  function ikonSvg(k, b) { return IKON[k] ? '<svg viewBox="0 0 24 24" width="' + b + '" height="' + b + '" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + IKON[k] + '</svg>' : ''; }
   var UST = { cop31: "isbank", kaza: "hesap", dilekce: "hesap" }; // alt sayfalar menüde üst sayfalarını yakar
   function siteMenu() {
     var bd = document.body;
@@ -408,6 +432,7 @@
       "#sMenu a.m{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:11px;color:#f2f2f2;opacity:.84;font-size:14px;text-decoration:none;transition:background .2s,opacity .2s}" +
       "#sMenu a.m:hover{background:rgba(224,162,79,.08);opacity:1}" +
       "#sMenu a.m.on{background:linear-gradient(90deg,rgba(224,162,79,.16),rgba(224,162,79,.02));color:#f3d38a;opacity:1;box-shadow:inset 2px 0 0 #e0a24f}" +
+      "html.ikonlu #sMenu a.m .e{display:flex;align-items:center;justify-content:center;width:22px;height:18px;flex:none}#sMenu a.m .e svg{display:block;width:18px;height:18px}html.ikonlu #sMenu a.m:not(.on) .e{color:#c9b991}" +
       "#sMenu .alt{margin-top:auto;padding-top:14px}#sMenu #telAc{position:static;width:100%;justify-content:center;box-shadow:none}}" +
       // Dar pencere: simgeli ince şerit (adlar fareyle üstüne gelince görünür)
       "@media (min-width:1000px) and (max-width:1199px){html.smVar body{padding-left:76px}" +
@@ -424,14 +449,14 @@
       "#sTab.sl .ic{-webkit-mask-image:linear-gradient(90deg,transparent,#000 34px);mask-image:linear-gradient(90deg,transparent,#000 34px)}" +
       "#sTab.sg.sl .ic{-webkit-mask-image:linear-gradient(90deg,transparent,#000 34px,#000 calc(100% - 34px),transparent);mask-image:linear-gradient(90deg,transparent,#000 34px,#000 calc(100% - 34px),transparent)}" +
       "#sTab a{flex:0 0 auto;min-width:62px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 6px;border-radius:13px;font:600 11px system-ui,sans-serif;color:#b8b8b8;text-decoration:none;transition:background .2s,transform .15s;-webkit-tap-highlight-color:transparent}" +
-      "#sTab a span{font-size:19px;line-height:1.2}#sTab a.on{color:#f3d38a;background:rgba(224,162,79,.14)}#sTab a:active{transform:scale(.94)}" +
+      "#sTab a span{font-size:19px;line-height:1.2}html.ikonlu #sTab a span{display:flex;align-items:center;justify-content:center;height:24px}#sTab a span svg{display:block}#sTab a.on{color:#f3d38a;background:rgba(224,162,79,.14)}#sTab a:active{transform:scale(.94)}" +
       // alttaki öteki sabit düğmeler çubuğun üstüne çıkar
       "html.tbVar #ortakGez,html.tbVar #ortakYukari{bottom:calc(84px + env(safe-area-inset-bottom))!important}" +
       "html.tbVar .fab{bottom:calc(88px + env(safe-area-inset-bottom))!important}" +
       "html.tbVar .toast,html.tbVar .cp-toast,html.tbVar #kTost,html.tbVar .ortakEski,html.tbVar .atoast{bottom:calc(92px + env(safe-area-inset-bottom))!important}}" +
       // Açık mod
       "html[data-tema=\"acik\"] #sMenu{background:rgba(245,248,252,.97);border-right-color:#d3dce8}html[data-tema=\"acik\"] #sMenu h6{color:#525c6a}" +
-      "html[data-tema=\"acik\"] #sMenu a.m{color:#10151c;opacity:1}html[data-tema=\"acik\"] #sMenu a.m.on{color:#8a5a12;box-shadow:inset 2px 0 0 #8a5a12}" +
+      "html[data-tema=\"acik\"] #sMenu a.m{color:#10151c;opacity:1}html[data-tema=\"acik\"].ikonlu #sMenu a.m:not(.on) .e{color:#7a6a48}html[data-tema=\"acik\"] #sMenu a.m.on{color:#8a5a12;box-shadow:inset 2px 0 0 #8a5a12}" +
       "html[data-tema=\"acik\"] #sTab{background:rgba(255,255,255,.92);border-color:#d3dce8;box-shadow:0 10px 30px rgba(90,60,20,.15)}" +
       "html[data-tema=\"acik\"] #sTab a{color:#3d4653}html[data-tema=\"acik\"] #sTab a.on{color:#8a5a12;background:#f6ecd9}" +
       "@media (prefers-reduced-motion:reduce){#sTab a,#sMenu a.m{transition:none}}@media print{#sMenu,#sTab{display:none!important}}";
@@ -440,8 +465,8 @@
     MENU.forEach(function (m) {
       if (m.length === 1) { yan += "<h6>" + m[0] + "</h6>"; return; }
       var on = m[0] === ben, a = ' href="' + m[0] + '.html"' + (on ? ' class="m on" aria-current="page"' : ' class="m"');
-      yan += "<a" + a + ' title="' + esc(m[2]) + '"><span class="e" aria-hidden="true">' + m[1] + '</span><span class="l">' + esc(m[2]) + "</span></a>";
-      alt += "<a" + a.replace(' class="m on"', ' class="on"').replace(' class="m"', "") + "><span>" + m[1] + "</span>" + esc(m[3]) + "</a>";
+      yan += "<a" + a + ' title="' + esc(m[2]) + '"><span class="e" aria-hidden="true">' + (IKON_ON && ikonSvg(m[0], 18) || m[1]) + '</span><span class="l">' + esc(m[2]) + "</span></a>";
+      alt += "<a" + a.replace(' class="m on"', ' class="on"').replace(' class="m"', "") + "><span>" + (IKON_ON && ikonSvg(m[0], 22) || m[1]) + "</span>" + esc(m[3]) + "</a>";
     });
     var as = document.createElement("aside"); as.id = "sMenu"; as.setAttribute("aria-label", "Site menüsü"); as.innerHTML = yan + '<div class="alt"></div>';
     var nv = document.createElement("nav"); nv.id = "sTab"; nv.setAttribute("aria-label", "Hızlı geçiş"); nv.innerHTML = '<div class="ic">' + alt + "</div>";
