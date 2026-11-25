@@ -21,3 +21,10 @@ Site herkese açık ve sahibi İş Bankası çalışanı; yanlış ya da abartı
 - İş Bankası hakkında olumsuz, tartışmalı ya da müşteriyi şubeye/kanala yönlendiren ifade yazma. Emin değilsen o cümleyi hiç yazma.
 
 > Neden: 26 Ekim'deki Tera/Pusula duyurusunun "Bankacılığa etkisi" notunda kaynakta olmayan "yatırımcı başvuruları İş Bankası üzerinden yürüyecek" ifadesi yazılmıştı.
+
+## Yazım kuralı (25 Kasım 2026)
+Sitede görünen kendi metinlerimizde (özet, açıklama, başlık, duyuru, kayan yazı) TDK yazımı kullanılır.
+- **Resmî Gazete** şapkalı î ile yazılır; "resmî", "millî" gibi kelimeler de öyle. Türkçe karakterler (ç, ğ, ı, İ, ö, ş, ü) eksiksiz olmalı.
+- Haber sitelerinden alınan başlıklar ve kaynak adları olduğu gibi kalır; onlar alıntıdır.
+
+> Neden: Günlük Resmî Gazete özetlerinde "Resmi Gazete" yazılıyordu. Site sahibi her metinde TDK yazımını istiyor.
