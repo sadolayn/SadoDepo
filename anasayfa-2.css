@@ -395,3 +395,8 @@ html.dzKompakt .favIp { display: none; }
 .hello .clock[role="button"] { border-radius: 14px; }
 .hello .clock[role="button"]:focus { outline: none; }
 .hello .clock[role="button"]:focus-visible { outline: 2px solid #f3d38a; outline-offset: 4px; }
+/* 25 Kasım 2026: geniş ekranda (Fold iç ekranı, tablet, bilgisayar) pencere ekranın ortasında açılır; telefonda alttan çıkmaya devam eder (Ana sayfayı düzenle ve Dünya saati gibi) */
+@media (min-width: 720px) {
+  .ppkSh, .oneri-ov { align-items: center; padding: 24px; }
+  .ppkK { box-shadow: 0 24px 60px rgba(0,0,0,.55); }
+}

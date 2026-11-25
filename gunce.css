@@ -259,3 +259,8 @@
   .wrap { max-width: 1120px; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); column-gap: 22px; align-items: start; }
   .wrap > .stick, .wrap > .note { grid-column: 1 / -1; }
 }
+/* 25 Kasım 2026: geniş ekranda (Fold iç ekranı, tablet, bilgisayar) pencere ekranın ortasında açılır; telefonda alttan çıkmaya devam eder (Ana sayfayı düzenle ve Dünya saati gibi) */
+@media (min-width: 720px) {
+  .sheet { align-items: center; padding: 24px; }
+  .sheet .in { border-bottom: 1px solid var(--line); border-radius: 22px; max-height: calc(100dvh - 48px); box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+}

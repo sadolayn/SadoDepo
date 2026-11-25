@@ -103,6 +103,7 @@
 .kmSheet[hidden] { display: none; }
 .kmSheet .in { width: 100%; max-width: 480px; max-height: 88vh; max-height: calc(100dvh - 20px); overflow-y: auto; overscroll-behavior: contain; background: #121212; border-radius: 22px 22px 0 0; border: 1px solid #2a2a2a; border-bottom: 0; padding: 14px 18px calc(18px + env(safe-area-inset-bottom)); color: #eee; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; text-align: left; }
 .kmSheet.acil .in { animation: kmUp .22s ease-out; }
+@media (min-width: 720px) { .kmSheet { align-items: center; padding: 24px; } .kmSheet .in { border-bottom: 1px solid #2a2a2a; border-radius: 22px; max-height: calc(100dvh - 48px); padding-bottom: 18px; box-shadow: 0 24px 60px rgba(0,0,0,.5); } } /* 25 Kasım 2026: geniş ekranda ortada */
 @keyframes kmUp { from { transform: translateY(40px); opacity: 0; } }
 .kmSheet h2 { display: flex; align-items: center; justify-content: space-between; margin: 0 0 4px; font-size: 19px; }
 .kmSheet h2 button { width: 34px; height: 34px; border-radius: 50%; border: 0; background: #222; color: #bbb; font-size: 16px; cursor: pointer; }

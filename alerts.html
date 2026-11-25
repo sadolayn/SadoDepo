@@ -583,6 +583,7 @@ if (location.hash === "#fiyat-alarmi") addEventListener("load", () => {
     <div id="faM" style="font-size:13px;color:#ffab95;margin-top:8px"></div>
     <div style="display:flex;gap:8px;margin-top:12px"><button type="button" id="faE" style="flex:1;min-height:46px;border:0;border-radius:13px;background:linear-gradient(160deg,#f3d38a,#e0a24f);color:#1a1205;font:700 14.5px system-ui,sans-serif">🔔 İzin ver</button>
     <button type="button" id="faV" style="min-height:46px;padding:0 16px;border-radius:13px;border:1px solid #333;background:transparent;color:#bbb;font:600 14px system-ui,sans-serif">Vazgeç</button></div></div>`;
+  if (matchMedia("(min-width: 720px)").matches) d.style.alignItems = "center"; // geniş ekranda ortada (25 Kasım 2026)
   document.body.appendChild(d);
   const geri = () => location.replace("piyasa.html#alarm"), m = (t) => { $("faM").textContent = t; };
   $("faV").onclick = geri;
