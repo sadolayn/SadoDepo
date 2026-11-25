@@ -40,7 +40,7 @@
   // Hareket azaltma (22 Kasım 2026): telefonda "Animasyonları kaldır" ayarı açıksa her sayfada (oyunlar dahil) hareketler anında biter.
   // Süre 0 değil 0,01 ms: animasyon/geçiş bitişini (animationend, transitionend) bekleyen oyunlar da akmaya devam eder.
   // Kayan yazılar bu kuralın dışında (23 Kasım 2026): bilgisayarda "animasyon efektleri" kapalıyken de yavaşça kaymaya devam eder,
-  // üstüne gelince ya da dokununca durur (ana sayfa .kySer ve .ysSer, İş Bankası Gündemi .jt-r).
+  // üstüne gelince ya da dokununca durur (ana sayfa .kySer ve .ysSer, İş Bankası Gündemi .jt-r). Alttaki canlı kur bandı gölge DOM içinde, bu kural ona ulaşmaz.
   (function () {
     var st = document.createElement("style"); st.id = "hareketAzalt";
     st.textContent = "@media (prefers-reduced-motion: reduce){*:not(.kySer):not(.ysSer):not(.jt-r),*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;transition-delay:0s!important;scroll-behavior:auto!important}}";
@@ -449,6 +449,9 @@
     if (kendiAlt) { var tl = document.getElementById("telAc"); if (tl) as.querySelector(".alt").appendChild(tl); return; }
     bd.appendChild(nv); document.documentElement.classList.add("tbVar");
     var tel = document.getElementById("telAc"); if (tel) as.querySelector(".alt").appendChild(tel);
+    // Canlı kur bandı (25 Kasım 2026): telefonda bu çubuğun üst şeridinde, bilgisayarda ekranın altında akar (kurbant.js).
+    // Kendi alt çubuğu olan sayfalarda (Kaza, Dilekçe) yukarıdaki return yüzünden yüklenmez.
+    var kb = document.createElement("script"); kb.src = "kurbant.js"; kb.defer = true; document.head.appendChild(kb);
     // Çubuk: bulunulan sayfaya kay; kaydırılacak yer varsa kenarda hafif solma
     var ic = nv.firstChild, on = ic.querySelector(".on");
     var kenar = function () { var x = ic.scrollLeft, w = ic.scrollWidth - ic.clientWidth; nv.classList.toggle("sl", x > 4); nv.classList.toggle("sg", x < w - 4); };
