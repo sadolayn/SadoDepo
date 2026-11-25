@@ -739,6 +739,10 @@ try {
     ...(function () { try { return window.aclBant || localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
     // 18 Kasım 2026: yeni ürün; kaynak isbank.com.tr/kazanc-hesap-ticari ve bankanın 18.11.2026 açıklaması (AA/DHA). Yalnızca sayfada yazanlar; ay sonunda kalkar
     ["banka.html#tkh", "🆕 İş Bankası'ndan yeni ürün: <b>Ticari Kazanç Hesabı</b>, işletmenin vadesiz hesabında belirlenen tutarın üstündeki bakiye her iş günü 17.45'te vadeliye geçip <b>gecelik faiz</b> kazanıyor <b class=\"gir\">Hesapla</b>", "2026-11-30", "onem"],
+    // 25 Kasım 2026: İş Yatırım (İş Bankası iştiraki) YK başkanlığı; kaynak İş Yatırım'ın 24.11.2026 tarihli KAP açıklaması (CNBC-e, Investing, Banka Dünyası aynı bilgi).
+    // Yalnızca açıklamada yazanlar: Özşuca 24.11.2026 itibarıyla YK üyeliğinden ayrıldı, görev dağılımında Ayvacı başkan seçildi, GM Devecioğlu YK üyesi atandı (ilk genel kurul onayına sunulacak).
+    // Ayvacı'nın İş Bankası'ndaki yeni unvanı BDDK iznine bağlı olduğundan yazılmaz. Kullanıcı isteği: üst şeritte 2-3 gün → 27 Kasım'dan sonra kendiliğinden kalkar.
+    ["https://www.cnbce.com/borsa/is-yatirimda-yeni-donem-yonetim-kurulu-baskani-degisti-h42547", "📈 İş Bankası iştiraki <b>İş Yatırım'da</b> yeni dönem: Ebru Özşuca'nın yerine Yönetim Kurulu Başkanlığına <b>Kenan Ayvacı</b> seçildi; Genel Müdür <b>Serhat Devecioğlu</b> da yönetim kuruluna katıldı<small>KAP açıklaması, 24 Kasım 2026 · CNBC-e ↗</small>", "2026-11-27", "ust", "isyatirim-baskan"],
     // 23 Kasım 2026: İş Bankası–DenizBank Maximum iş birliği (DHA, AA, Fintech Dünyası aynı açıklama). 24 Kasım: bağlantı İş Bankası'nın kendi duyurusuna çevrildi. Yalnızca açıklamada
     // yazanlar: imzalayanlar ve unvanları, 6 Aralık 2026, "500 bini aşkın" üye iş yeri, Çınar'ın sözleri birebir (art arda gelen iki cümle). İmza yeri/tarihi açıklamada yok, yazılmaz.
     // "ust" işareti: ana sayfanın en üstündeki GÜNDEM şeridinde geçer (alttaki kayan yazıda tekrar etmez); geçiş gününe kadar kalır.
