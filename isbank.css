@@ -327,6 +327,12 @@
   .menu button span { font-size: 11px; overflow: visible; } .menu button span small { font-size: 11px; font-weight: 600; opacity: .85; }
   .menu button.active { background: linear-gradient(160deg, color-mix(in srgb, var(--c) 45%, #fff), var(--c)); border-color: #fff; color: #000; box-shadow: 0 4px 14px color-mix(in srgb, var(--c) 40%, transparent); }
   .menu button.hasnew { border-color: #d32f2f; }
+  /* 25 Kasım 2026: 380 px'ten dar telefonda 4 + 4 + 2 kutucuk. 5'li dizilimde kutu 60 px'e iniyor,
+     "Kampany-a takvimi" kelime ortasından bölünüyor, "Güncel · KAP" kutudan taşıyordu. */
+  @media (max-width: 379px) {
+    .menu button, .menu button:nth-child(n+6) { grid-column: span 5; }
+    .menu button[data-k="Kartsiz"], .menu button[data-k="Medya"] { grid-column: span 10; }
+  }
   .menu button[data-k="Tarihçe"]  { --c: #e0a24f; --d: #2a1d0a; --t: #f3dca8; }
   .menu button[data-k="Black"]    { --c: #c9a050; --d: #0a0a0a; --t: #f3dca8; }
   .menu button[data-k="Maximum"]  { --c: #e0a24f; --d: #6b4410; --t: #fff; background: linear-gradient(160deg, #e9b25c, #8a5a14); border-color: #f0c47a; }

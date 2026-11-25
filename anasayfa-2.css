@@ -65,11 +65,21 @@
   html[data-tema="acik"] .aclSeg button.on { color: #1a1206; }
   html[data-tema="acik"] .aclSpSel select { color: #8a5a12; }
   html[data-tema="acik"] .aclSpSel select option { background: #fff; color: #10151c; }
-  html[data-tema="acik"] .aclSpC button[aria-pressed="true"] { color: #8a5a12; }
+  /* 25 Kasım 2026: buradaki eski "seçili: koyu altın yazı" kuralı kaldırıldı; 9 Kasım kuralını eziyordu (altın üstünde koyu altın, okunmuyordu) */
   html[data-tema="acik"] :is(.aclS, .aclK) { border-color: #d3dce8; }
   html[data-tema="acik"] .aclBar { background: #d3dce8; }
   html[data-tema="acik"] .aclS .ok { color: #c9a66a; }
   html[data-tema="acik"] .aclT { border-color: #d4bb8a; background: linear-gradient(160deg, #fdf3df, #fff); }
+  /* 25 Kasım 2026: açılış kartındaki kampanya kutuları açık temada soluktu (açık altın/mavi sayı, gri hap üstünde açık yazı) */
+  html[data-tema="acik"] .aclT.yeni { border-color: #b9cfe6; background: linear-gradient(160deg, #eaf3fd, #fff); }
+  html[data-tema="acik"] .aclT .n { color: #8a5a12; }
+  html[data-tema="acik"] .aclT.yeni .n { color: #1f5f9f; }
+  html[data-tema="acik"] .aclT .alt2 { color: #6b5a3a; }
+  html[data-tema="acik"] .aclT.yeni .alt2 { color: #3d5f80; }
+  html[data-tema="acik"] .aclT .sg button { background: #fff; border-color: #e3d3b0; color: #2e3642; }
+  html[data-tema="acik"] .aclT.yeni .sg button { border-color: #c9d9ea; }
+  html[data-tema="acik"] .aclT .sg button b { color: #10151c; }
+  html[data-tema="acik"] .aclT .sg button:active { border-color: #b07a2a; }
   html[data-tema="acik"] .sbB { border-color: #d8c49a; background: linear-gradient(90deg, #fdf3df, #fff); color: #232a34; }
   html[data-tema="acik"] .sbT b, html[data-tema="acik"] .sbO, html[data-tema="acik"] .sbIp { color: #8a5a12; }
   html[data-tema="acik"] .sbB::after { background: linear-gradient(100deg, transparent, rgba(224,162,79,.35), transparent); }

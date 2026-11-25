@@ -51,7 +51,7 @@
   // ---------- PC sütun dengesi (22 Kasım 2026) ----------
   // 1000 px ve üstünde menü ızgarası 2 (1680+ px'te 3) sütun. Her bölümün boyu ölçülür, 2 px'lik satırlardan o kadar yer ayrılır;
   // böylece bir bölüm, kısa kalan sütunun altındaki boşluğa çıkar. Telefonda ve arama sırasında (tek sütun) hiçbir şey yapılmaz.
-  var dz = 0;
+  var dz = 0, q = document.getElementById("araQ"); // q burada tanımlanmalı: aşağıdaki gözlemci kurulurken kullanılıyor (25 Kasım 2026)
   function dengele() {
     dz = 0;
     var kids = [].slice.call(nav.children), grid = innerWidth >= 1000 && getComputedStyle(nav).display === "grid";
@@ -73,7 +73,6 @@
     sonra();
   }
   // Arama sırasında gizli bölümler de taransın
-  var q = document.getElementById("araQ");
   if (q) q.addEventListener("input", function () { siniflar(!!q.value.trim()); });
 
   // ---------- Düzenleme penceresi ----------

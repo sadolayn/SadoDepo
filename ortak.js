@@ -316,6 +316,8 @@
     st.textContent =
       "#telAc{position:fixed;left:18px;bottom:18px;z-index:9000;display:flex;align-items:center;gap:7px;padding:10px 15px;border-radius:99px;border:1px solid #6b5222;background:rgba(18,16,12,.94);color:#f3dca8;font:600 13.5px system-ui,-apple-system,'Segoe UI',sans-serif;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.5)}" +
       "#telAc:hover{border-color:#e0a24f;color:#fff}" +
+      // 25 Kasım 2026: açık temada da açık düğme (ana sayfada boyacı çalışmadığı için koyu hap olarak kalıyordu)
+      "html[data-tema=\"acik\"] #telAc{background:rgba(255,255,255,.96);border-color:#d8c49a;color:#6b4a12;box-shadow:0 6px 16px rgba(90,60,20,.12)}html[data-tema=\"acik\"] #telAc:hover{border-color:#8a5a12;color:#3d2a08}" +
       "#telAcK{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:16px}" +
       "#telAcK .in{width:100%;max-width:340px;background:#111;border:1px solid #2c2c2c;border-radius:20px;padding:20px 20px 16px;text-align:center;color:#eee;font:14px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif}" +
       "#telAcK h3{margin:0 0 4px;font-size:18px;color:#fff}#telAcK p{margin:0 0 12px;color:#bbb;font-size:13.5px}" +

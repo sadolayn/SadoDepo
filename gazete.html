@@ -252,7 +252,12 @@ const esc = Ortak.esc; // ortak.js
 const fmtDate = (d) => new Date(d + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
 let dates = [];
 
-const getJSON = (url) => Ortak.json(url);
+// TDK: "Resmî Gazete" (şapkalı î). Günlük özetler ve kurum duyuruları sitenin kendi metni; gösterirken düzeltilir.
+// Haber sitelerinin başlıkları ("kaynaklar") ve adresler olduğu gibi kalır (25 Kasım 2026).
+const tdk = (o, k) => typeof o === "string" ? (k === "url" ? o : o.replace(/\bResmi Gazete/g, "Resmî Gazete"))
+  : Array.isArray(o) ? o.map((x) => tdk(x, k))
+  : o && typeof o === "object" ? Object.fromEntries(Object.entries(o).map(([a, v]) => [a, a === "kaynaklar" ? v : tdk(v, a)])) : o;
+const getJSON = (url) => Ortak.json(url).then((j) => (/^gazete\/(\d{4}-\d\d-\d\d|duyurular)\.json$/.test(url) ? tdk(j) : j));
 
 const fmtTime = (iso) => { const d = new Date(iso); return isNaN(d) ? iso : d.toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }); };
 async function renderStatus() {

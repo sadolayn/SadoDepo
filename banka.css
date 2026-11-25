@@ -300,3 +300,6 @@
   .menuPan { position: fixed; left: 0; right: 0; top: var(--miniH, 54px); z-index: 41; padding: 10px 16px 14px; background: #000; border-bottom: 1px solid #222; box-shadow: 0 12px 24px rgba(0,0,0,.6); transform: translateY(-105%); visibility: hidden; transition: transform .4s cubic-bezier(.2,.8,.2,1), visibility 0s .4s; max-height: calc(100vh - 60px); overflow: auto; }
   .menuPan.on { transform: translateY(0); visibility: visible; transition: transform .4s cubic-bezier(.2,.8,.2,1), visibility 0s; }
   .menuPan .tabs { margin-bottom: 0; }
+
+/* 25 Kasım 2026: açık temada üstteki bilgi notu soluk kalıyordu (satır içi opacity .75 ile kontrast 4,3:1); şimdi 6,5:1 */
+html[data-tema="acik"] .stick > .note { opacity: .92 !important; }

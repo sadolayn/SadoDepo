@@ -241,7 +241,9 @@
 
   /* ---------- satır içi style="" ---------- */
   var ESKI = typeof WeakMap === "function" ? new WeakMap() : null;
-  var SATIR = ["color", "background-color", "background-image", "border-top-color", "border-right-color", "border-bottom-color", "border-left-color", "box-shadow", "outline-color", "text-shadow", "fill", "stroke"];
+  // Sıra önemli (25 Kasım 2026): önce zemin, sonra yazı. Parlak zeminli satır içi rozetin (kırmızı "YENİ" gibi) beyaz yazısı
+  // ancak zemin önce okunursa korunur (yaziKoru); eskiden yazı önce çevrildiği için kırmızı üstünde siyah yazı kalıyordu.
+  var SATIR = ["background-color", "background-image", "color", "border-top-color", "border-right-color", "border-bottom-color", "border-left-color", "box-shadow", "outline-color", "text-shadow", "fill", "stroke"];
   var SVGK = ["fill", "stroke", "stop-color"];
   function svgBoya(el) {
     if (!ESKI || el.closest(".ataIntro,[data-tema-koru-alan]")) return;
@@ -373,5 +375,6 @@
     if (d.getAttribute("data-tema") === "acik") hazir();
   });
   // Geç yüklenen <link> stilleri için
-  window.addEventListener("load", function () { if (d.getAttribute("data-tema") === "acik") sayfaBoya(); });
+  // Kontrast bekçisi de son renklerle bir kez daha bakar (25 Kasım 2026: geç gelen stil dosyasındaki soluk yazılar kaçıyordu)
+  window.addEventListener("load", function () { if (d.getAttribute("data-tema") === "acik") { sayfaBoya(); bekciSonra(document.body); } });
 })();

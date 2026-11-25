@@ -52,6 +52,9 @@
   .rad button.on { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
   h2 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 16px 2px 8px; font-weight: 600; }
   .grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+  /* 25 Kasım 2026: 424 px'ten dar telefonda 4 sütun (kutu 62 px'in altına inince "Veterine-r", "Kütüpha-ne" diye bölünüyordu).
+     5 değil 4: 6'lı ve 8'li gruplar 4+2 / 4+4 dizilir, alt satırda tek kutu yalnız kalmaz. */
+  @media (max-width: 423px) { .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .tile { min-width: 0; background: linear-gradient(160deg, color-mix(in srgb, var(--c, #444) 22%, #0d0d0d), #0d0d0d); border: 1px solid color-mix(in srgb, var(--c, #444) 40%, #1a1a1a); border-radius: 11px; padding: 6px 1px 5px; text-align: center; cursor: pointer; color: var(--ink); font: inherit; }
   .tile .e { font-size: 17px; line-height: 1.1; }
   .tile .n { font-size: 11px; margin-top: 3px; line-height: 1.15; overflow-wrap: anywhere; hyphens: auto; color: color-mix(in srgb, var(--c, #fff) 25%, #fff); }

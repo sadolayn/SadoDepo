@@ -426,8 +426,9 @@ function renderBankaKamp() {
       ${c.kampanyalar.map((x) => `<a class="bkit" href="${esc(x.url)}" target="_blank" rel="noopener">${isNew("b:" + x.url) ? '<span class="newtag">YENİ</span> ' : ""}<b>${esc(x.baslik)}</b>${x.ozet ? `<span>${esc(x.ozet)}</span>` : ""}${x.bitis ? `<small>Bitiş: ${fd(x.bitis)}</small>` : ""}</a>`).join("")}
     </div>`).join("") + `<a class="maxlink" href="https://www.isbank.com.tr/kampanyalar" target="_blank" rel="noopener">İş Bankası'nın tüm kampanyaları ↗</a>`;
 }
-// ===== Pazarama: MaxiPuan ve MaxiMil kullanımı (maximum.com.tr ve maximiles.com.tr, Ekim 2026'da doğrulandı) =====
-const PAZ = { milMin: 5000, milMax: 1000, milBitis: "2026-10-31", milKaynak: "https://www.maximum.com.tr/kampanyalar/maximillerinizi-maximum-mobildeki-pazarama-online-alisveris-menusunde-kullanabilirsiniz", puanKaynak: "https://www.maximum.com.tr/maxipuan" };
+// ===== Pazarama: MaxiPuan ve MaxiMil kullanımı (maximum.com.tr ve maximiles.com.tr, Ekim 2026'da doğrulandı; MaxiMil tarihi 25 Kasım 2026'da yenilendi) =====
+const PAZ = { milMin: 5000, milMax: 1000, milBitis: "2026-11-30", // 25 Kasım 2026: kampanya 1–30 Kasım 2026 için yenilendi (maximum.com.tr kampanya sayfası; koşullar aynı)
+   milKaynak: "https://www.maximum.com.tr/kampanyalar/maximillerinizi-maximum-mobildeki-pazarama-online-alisveris-menusunde-kullanabilirsiniz", puanKaynak: "https://www.maximum.com.tr/maxipuan" };
 function pazHtml() {
   const milAktif = new Date() <= new Date(PAZ.milBitis + "T23:59:59");
   const ilgili = camps.filter((c) => /pazarama/i.test(c.baslik + " " + c.ozet));
@@ -435,7 +436,7 @@ function pazHtml() {
     <div class="pzHero"><span class="pzTag">🛒 PAZARAMA</span><b>Puanların Pazarama'da nakit gibi</b><span>İş Bankası'nın alışveriş platformu Pazarama'da MaxiPuan ve MaxiMil'lerini doğrudan harcayabilirsin. İkisinde de <b>1 puan = 1 TL</b>.</span></div>
     <div class="pzDuo">
       <div class="pzC pu"><i>🪙</i><b>MaxiPuan</b><em>1 MaxiPuan = 1 TL</em><span>Pazarama ve Pazarama Tatil'de ödeme yaparken kullanılır. Tüm Maximum kartlarda geçerli.</span></div>
-      <div class="pzC mi"><i>✈️</i><b>MaxiMil</b><em>${tlFmt(PAZ.milMin)} sepette ${tlFmt(PAZ.milMax).replace(" TL", "")} Mil'e kadar</em><span>Sepetin ${tlFmt(PAZ.milMin)} ve üzeriyse işlem başına en fazla ${PAZ.milMax.toLocaleString("tr-TR")} MaxiMil kullanırsın. ${milAktif ? `<u>31 Ekim 2026'ya kadar</u>` : `<u>Ekim 2026 uygulamasıydı; güncel koşula bak</u>`}</span></div>
+      <div class="pzC mi"><i>✈️</i><b>MaxiMil</b><em>${tlFmt(PAZ.milMin)} sepette ${tlFmt(PAZ.milMax).replace(" TL", "")} Mil'e kadar</em><span>Sepetin ${tlFmt(PAZ.milMin)} ve üzeriyse işlem başına en fazla ${PAZ.milMax.toLocaleString("tr-TR")} MaxiMil kullanırsın. ${milAktif ? `<u>${new Date(PAZ.milBitis + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })} tarihine kadar</u>` : `<u>${new Date(PAZ.milBitis + "T12:00:00").toLocaleDateString("tr-TR", { month: "long", year: "numeric" })} uygulamasıydı; güncel koşula bak</u>`}</span></div>
     </div>
     <div class="pzCalc"><b>🧮 Bu alışverişte ne kadar Mil kullanırım?</b>
       <div class="pzIn"><label>Sepet tutarı<input id="pzSepet" type="text" inputmode="numeric" value="6.500"></label><label>MaxiMil bakiyen<input id="pzMil" type="text" inputmode="numeric" value="2.000"></label></div>
