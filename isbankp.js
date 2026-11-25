@@ -353,7 +353,9 @@ function isplusHtml() {
       <div class="ipt3">${S.map((x) => `<div style="--c:${x.renk}"><em>${esc(x.ad.toUpperCase())}</em><b>${esc(x.kart)}+</b><span>30 günde kart harcaması</span><i>${x.ek === "Ek koşul yok" ? "ek koşul yok" : "+ " + esc(x.ek)}</i></div>`).join("")}</div>
       <p class="iort">✔️ Üç seviyede de ortak koşul: ${esc(J.ortak)}. Hesap hep <b>son 30 güne</b> bakar.</p>
       <table class="iptab"><thead><tr><th>Ayrıcalık</th>${S.map((x) => `<th style="color:${x.renk === "#2a3a9c" ? "#8fa2ff" : x.renk}">${esc(x.ad)}</th>`).join("")}</tr></thead><tbody>
-        ${J.ayricaliklar.map((a) => `<tr><td><a href="${a.u}" target="_blank" rel="noopener">${a.ic} ${esc(a.ad)}</a></td>${a.v.map((v) => `<td class="${v === "–" ? "n" : ""}">${esc(v)}</td>`).join("")}</tr>`).join("")}
+        ${J.ayricaliklar.map((a) => `<tr><td><a href="${a.u}" target="_blank" rel="noopener">${a.ic} ${esc(a.ad)}</a></td>${a.son && gunIst() > a.son
+          ? `<td colspan="${a.v.length}"><a class="gunO" href="${esc(a.u)}" target="_blank" rel="noopener">güncel oran ↗</a></td>` // "son" tarihinden sonra eski değer yazılmaz
+          : a.v.map((v) => `<td class="${v === "–" ? "n" : ""}">${esc(v)}</td>`).join("")}</tr>`).join("")}
       </tbody></table>
       <p>📍 Seviyeni gör: <b>${esc(J.nerede)}</b></p>
       <a href="${J.kaynak}" target="_blank" rel="noopener">İş Plus'ın tüm koşulları ↗</a>
@@ -370,6 +372,13 @@ function isplusHtml() {
       <p>ℹ️ ${esc(J.dahil_degil)}</p>
     </details>`;
 }
+// Black Ek Hesap indirimli oranları (isbank.com.tr; ayrıcalığın bitişi 31.12.2026). 1.12.2026'da TCMB'nin Ek Hesap (KMH) azami faizi
+// %4,08'e indiği için bu oranlar o tarihten sonra yazılmaz, bankanın sayfasına bağlanır; banka yeni oranı yayımlayınca burası güncellenmeli.
+const EK_BLACK = { v: ["%4,15", "%4,10"], son: "2026-11-30", u: "https://www.isbank.com.tr/ek-hesap-faiz-oraninda-indirim-ayricaligi" };
+const gunIst = () => new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10); // İstanbul günü
+const ekBlackHucre = () => gunIst() <= EK_BLACK.son
+  ? `<td>${EK_BLACK.v[0]}</td><td class="p">${EK_BLACK.v[1]}</td>`
+  : `<td colspan="2"><a class="gunO" href="${EK_BLACK.u}" target="_blank" rel="noopener">güncel oran ↗</a></td>`;
 function blackHtml() {
   return `<div class="blk">
       <div class="bh"><span>BİLGİ · RESMÎ DEĞİL</span><b>İş Black</b><small>Varlığına göre kendiliğinden tanımlanan ayrıcalık programı · başvuru gerekmez</small></div>
@@ -379,7 +388,7 @@ function blackHtml() {
       </div>
       <table class="bt"><thead><tr><th></th><th>Black</th><th class="p">Black Plus</th></tr></thead><tbody>
         <tr><td>💰 Maksimum Vadeli Hesap'ta ek faiz</td><td>+%1</td><td class="p">+%3</td></tr>
-        <tr><td>➕ Ek Hesap faiz oranı</td><td>%4,15</td><td class="p">%4,10</td></tr>
+        <tr><td>➕ Ek Hesap faiz oranı</td>${ekBlackHucre()}</tr>
         <tr><td>🌍 Yurt dışı para transferi</td><td>–</td><td class="p">ayda ilk 2 ücretsiz<small style="display:block;font-weight:500;font-size:10.5px;opacity:.75">25.000 TL'ye kadar · muhabir masrafı hariç</small></td></tr>
         <tr><td>🔐 Kiralık kasa depozitosu</td><td>–</td><td class="p">alınmaz</td></tr>
         <tr><td>📈 İş Portföy uzman görüşmesi</td><td>–</td><td class="p">3 ayda bir</td></tr>

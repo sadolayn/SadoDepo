@@ -206,6 +206,8 @@
   .bt { width: 100%; border-collapse: collapse; margin: 6px 0 10px; font-size: 13px; }
   .bt th { font-size: 11px; letter-spacing: 1.5px; color: #b79a74; text-align: center; padding: 4px; font-weight: 700; } .bt th.p { color: #f3dca8; }
   .bt td { padding: 8px 4px; border-top: 1px solid #2c2a25; text-align: center; color: #ddd; } .bt td:first-child { text-align: left; color: #cfcfcf; } .bt td.p { color: #f3dca8; font-weight: 700; }
+  /* "güncel oran ↗": eski oranın yerine bankanın sayfasına bağlantı (25 Kasım 2026, Ek Hesap faizi 1 Aralık'ta değişiyor) */
+  a.gunO { display: inline-block; padding: 4px 0; font-size: 12px; font-weight: 600; color: #9cc3ff; text-decoration: none; } .bt a.gunO { color: #f3dca8; }
   .bcom { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px; } .bcom b { width: 100%; font-size: 12px; letter-spacing: 1px; color: #b79a74; text-transform: uppercase; }
   .bcom span { font-size: 12.5px; padding: 5px 9px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid #2f2b22; color: #e6e0d4; }
   .bilmek { margin: 0 0 10px; border-radius: 16px; border: 1px dashed #6b5222; background: radial-gradient(120% 120% at 0% 0%, #2b2418, #0a0a0a); padding: 12px 14px; }

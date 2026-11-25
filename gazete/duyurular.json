@@ -1,7 +1,16 @@
 {
-  "guncelleme": "2026-11-23T07:04:31+03:00",
+  "guncelleme": "2026-11-25T19:45:00+03:00",
   "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
+    {
+      "tarih": "2026-11-24",
+      "kurum": "TCMB",
+      "baslik": "TL kredi kartı ve kredili mevduat hesabı azami faizleri 1 Aralık'tan itibaren 0,17 puan düşüyor",
+      "ozet": "TCMB'nin 24 Kasım 2026'da ilan ettiği tabloya göre kredi kartı azami faizlerinin hesaplandığı referans oran 1 Aralık 2026'dan itibaren %3,11'den %2,94'e iniyor. TL kredi kartlarında aylık azami akdi faiz dönem borcu 30.000 TL'nin altında %3,25'ten %3,08'e, 30.000–180.000 TL arasında %3,75'ten %3,58'e, 180.000 TL'nin üzerinde %4,25'ten %4,08'e düşüyor; azami gecikme faizleri sırasıyla %3,38, %3,88 ve %4,38 oluyor. Nakit çekimde ve kredili mevduat hesabında (KMH) azami akdi faiz %4,25'ten %4,08'e, azami gecikme faizi %4,55'ten %4,38'e iniyor.",
+      "etki": "İş Bankası, müşterilerine gönderdiği bilgilendirmede 01.12.2026'dan itibaren Ek Hesap için aylık faiz oranını %4,08, aylık gecikme faiz oranını %4,38 olarak güncellediğini bildirdi. Örneğin 50.000 TL'nin 30 gün kullanımında faiz 2.125 TL'den 2.040 TL'ye iner (KKDF ve BSMV hariç). Bankalar kart ve KMH faizlerini bu azami oranları aşmamak koşuluyla kendileri belirler.",
+      "onemli": true,
+      "url": "https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Istatistikler/Bankacilik+Verileri/Kredi_Karti_Islemlerinde_Uygulanacak_Azami_Faiz_Oranlari"
+    },
     {
       "tarih": "2026-11-20",
       "kurum": "BDDK",
