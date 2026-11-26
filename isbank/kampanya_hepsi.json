@@ -1,5 +1,5 @@
 {
- "guncelleme": "2026-11-26T08:12",
+ "guncelleme": "2026-11-26T16:14",
  "isbank": {
   "bireysel": {
    "toplam": 191,
@@ -553,7 +553,7 @@
       {
        "baslik": "ETS’de İşPay veya İşCep Seyahatime Özel 1.000 TL’ye Varan Ek MaxiPuan Fırsatı!",
        "bitis": "2026-11-30",
-       "ozet": "İşCep'ten kampanyaya katılın; 1- 30 Kasım 2026 tarihleri arasında Bankamatik Kartı veya İş Bankası bireysel kredi kartlarınızla Etstur web sitesinde İşPay ödeme seçeneği ya da İşCep Hayatım menüsünden Seyahatim >…",
+       "ozet": "Maximum Mobil veya İşCep'ten kampanyaya katılın; 1- 30 Kasım 2026 tarihleri arasında Bankamatik Kartı veya İş Bankası bireysel kredi kartlarınızla Etstur web sitesinde İşPay ödeme seçeneği ya da İşCep Hayatım…",
        "url": "https://www.isbank.com.tr/kampanyalar/etsde-iscep-seyahatime-ozel-ek-maxipuan-firsati",
        "ilk": "2000-01-01",
        "ne": "MaxiPuan",
@@ -2430,8 +2430,17 @@
  },
  "maximum": {
   "bireysel": {
-   "toplam": 209,
+   "toplam": 210,
    "kampanyalar": [
+    {
+     "baslik": "Pazarama'da Sepette %15 İndirim Fırsatı!",
+     "bitis": "2026-11-27",
+     "ozet": "",
+     "url": "https://www.maximum.com.tr/kampanyalar/pazaramada-indirim-firsati",
+     "ilk": "2026-11-26",
+     "ne": "İndirim",
+     "nere": "Online Alışveriş"
+    },
     {
      "baslik": "E-Ticaret Alışverişlerinizde 3.000 TL'ye Varan MaxiPuan!",
      "bitis": "2026-11-30",
@@ -4743,6 +4752,16 @@
      "nere": "Araç & Akaryakıt"
     },
     {
+     "baslik": "Bella Maison'da 500 TL MaxiPuan!",
+     "bitis": "2026-11-30",
+     "ozet": "1-30 Kasım 2026 tarihleri arasında Maximum Kart’ınızla Maximum anlaşmalı Bella Maison mağazalarından ve bellamaison.com adresinden tek seferde yapacağınız 5.000 TL ve üzeri ilk alışverişinize 500 TL MaxiPuan.",
+     "url": "https://www.maximiles.com.tr/kampanyalar/bella-maison-da-500-tl-maxipuan",
+     "tv": 2,
+     "ilk": "2000-01-01",
+     "ne": "MaxiPuan",
+     "nere": "Ev & Yaşam"
+    },
+    {
      "baslik": "Dyson'da Peşin Fiyatına 9 Taksit!",
      "bitis": "2026-11-30",
      "ozet": "Maximum Kart’ınız ile 30 Kasım 2026 tarihine kadar Maximum anlaşmalı Dyson mağazalarından ve Dyson.com.tr'den yapacağınız alışverişlerinizde peşin fiyatına 9 taksit fırsatı!",
@@ -4941,16 +4960,6 @@
      "ilk": "2000-01-01",
      "ne": "MaxiPuan",
      "nere": "Seyahat"
-    },
-    {
-     "baslik": "Samsonite'ta 2.500 TL MaxiPuan!",
-     "bitis": "2026-11-30",
-     "ozet": "Samsonite mağazaları ile www.samsonite.com.tr adresinden yapacağınız alışverişinizde MaxiPuan kazanma fırsatı!",
-     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-samsonite-ta-2-500-tl-ye-varan-maxipuan-kampanyasi",
-     "tv": 2,
-     "ilk": "2000-01-01",
-     "ne": "MaxiPuan",
-     "nere": "Giyim & Kozmetik"
     },
     {
      "baslik": "Ucuzabilet.com’da Peşin Fiyatına 3 Aya Varan Taksit Fırsatı!",
@@ -5264,13 +5273,13 @@
      "nere": "Giyim & Kozmetik"
     },
     {
-     "baslik": "Bella Maison'da 500 TL MaxiPuan!",
+     "baslik": "Samsonite'ta 2.500 TL MaxiPuan!",
      "bitis": "2026-11-30",
-     "ozet": "1-30 Kasım 2026 tarihleri arasında Maximum Kart’ınızla Maximum anlaşmalı Bella Maison mağazalarından ve bellamaison.com adresinden tek seferde yapacağınız 5.000 TL ve üzeri ilk alışverişinize 500 TL MaxiPuan.",
-     "url": "https://www.maximiles.com.tr/kampanyalar/bella-maison-da-500-tl-maxipuan",
+     "ozet": "Samsonite mağazaları ile www.samsonite.com.tr adresinden yapacağınız alışverişinizde MaxiPuan kazanma fırsatı!",
+     "url": "https://www.maximiles.com.tr/kampanyalar/maximiles-inizdan-samsonite-ta-2-500-tl-ye-varan-maxipuan-kampanyasi",
      "tv": 2,
      "ne": "MaxiPuan",
-     "nere": "Ev & Yaşam",
+     "nere": "Giyim & Kozmetik",
      "ilk": "2000-01-01"
     },
     {
