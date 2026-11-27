@@ -54,8 +54,8 @@
   .stTahta { position: relative; width: min(100%, 460px); aspect-ratio: 1; border-radius: 50%; touch-action: none;
     background:
       radial-gradient(circle at 50% 50%, transparent 0 63%, rgba(0,0,0,.35) 64%, transparent 66%),
-      repeating-radial-gradient(circle at 46% 42%, rgba(255,220,160,.018) 0 3px, rgba(0,0,0,.05) 3px 7px),
-      radial-gradient(circle at 42% 32%, #2b1d10 0%, #1a110a 45%, #0e0905 78%, #070503 100%);
+      repeating-radial-gradient(circle at 46% 42%, rgba(255,225,170,.035) 0 3px, rgba(0,0,0,.06) 3px 7px),
+      radial-gradient(circle at 42% 32%, #8c5c30 0%, #6e4524 45%, #523218 78%, #3a2310 100%);
     box-shadow: 0 0 0 1px #5a4320, 0 0 0 5px #0b0805, 0 0 0 6px #2a1f10, 0 18px 40px rgba(0,0,0,.7), inset 0 2px 0 rgba(255,220,160,.06), inset 0 -18px 40px rgba(0,0,0,.55); }
   .stTahta::before { content: ""; position: absolute; inset: 2.2%; border-radius: 50%; border: 1px solid rgba(224,162,79,.22); pointer-events: none; }
   .stIzgara, .stPiyon { position: absolute; inset: 3%; }
@@ -63,11 +63,12 @@
   .stPiyon { pointer-events: none; }
   /* Delik: oyuk */
   .h { position: relative; margin: 0; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; touch-action: none; }
-  .h::before { content: ""; position: absolute; left: 31%; top: 31%; width: 38%; height: 38%; border-radius: 50%;
-    background: radial-gradient(circle at 50% 38%, #000 0 48%, #120c06 72%, #2a1d10 100%);
-    box-shadow: inset 0 2px 3px rgba(0,0,0,.95), 0 1px 0 rgba(255,220,160,.08); }
+  /* Açık ceviz tahtada altın halkalı delik: boş delik her yerden seçilsin */
+  .h::before { content: ""; position: absolute; left: 28%; top: 28%; width: 44%; height: 44%; border-radius: 50%;
+    background: radial-gradient(circle at 50% 42%, #000 0 50%, #1a1007 75%, #3a2612 100%);
+    box-shadow: 0 0 0 2px rgba(243,211,138,.7), inset 0 3px 4px #000; }
   .h:focus { outline: none; } .h:focus-visible::after { content: ""; position: absolute; inset: 6%; border-radius: 50%; box-shadow: 0 0 0 2px #e0a24f; }
-  .h.hd::before { box-shadow: inset 0 2px 3px rgba(0,0,0,.95), 0 0 0 2px rgba(224,162,79,.28); }
+  .h.hd::before { box-shadow: 0 0 0 3px #f3d38a, 0 0 10px 2px rgba(243,211,138,.6), inset 0 3px 4px #000; }
   /* Gidilebilecek delik */
   .h.ok::after { content: ""; position: absolute; inset: 14%; border-radius: 50%; border: 2px solid #e0a24f; background: rgba(224,162,79,.12); opacity: 1; transform: scale(1); transition: opacity .2s ease, transform .2s ease; }
   .h.ip::after { content: ""; position: absolute; inset: 12%; border-radius: 50%; border: 2px dashed #f3d38a; background: rgba(243,211,138,.14); animation: stNabiz 1.4s ease-in-out infinite; }
