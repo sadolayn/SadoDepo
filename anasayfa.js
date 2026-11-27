@@ -775,8 +775,11 @@ try {
     const tur = '<span style="display:inline-block;width:22px"></span>' + L.join("");
     if (tur === ustSon) return; // aynı içerik: şeridi baştan başlatma
     ustSon = tur; k.dataset.gundem = 1; window.ustGundemTur = tur;
-    s2.innerHTML = tur + tur; k.hidden = false;
-    k.querySelector(".ysEt").innerHTML = "<i></i>GÜNDEM"; k.setAttribute("aria-label", "Gündem");
+    // SON DAKİKA varsa şerit onun etiketiyle kalır; gündem satırları (Resmî Gazete, kurum duyuruları…) son dakikanın arkasından geçer
+    const sd = k.classList.contains("sd") && window.sdTur ? window.sdTur : "";
+    const yn = !sd && window.yeniTur ? window.yeniTur : ""; // YENİ şeridi satırları gündemin arkasında kalır
+    s2.innerHTML = sd + tur + yn + sd + tur + yn; k.hidden = false;
+    if (!sd) { k.querySelector(".ysEt").innerHTML = "<i></i>GÜNDEM"; k.setAttribute("aria-label", "Gündem"); }
     requestAnimationFrame(() => s2.style.setProperty("--sure", Math.max(28, Math.round(s2.scrollWidth / 2 / 40)) + "s"));
     if (!k.dataset.ppkDinle) { k.dataset.ppkDinle = 1; s2.addEventListener("click", (e) => { if (e.target.closest("[data-ppk]")) { e.preventDefault(); ppk && ppk.tap && ppk.tap(); } const a = e.target.closest("a[data-g]"); if (a && window.Rapor) Rapor.bolum("gundem-" + a.dataset.g); }); }
   }
@@ -794,8 +797,19 @@ try {
     const yeni = (j.duyurular || []).filter((x) => x && x.onemli && x.bant !== false && x.baslik && (Date.now() - new Date(x.tarih + "T12:00:00")) / 864e5 <= 3).slice(0, 2); // 3 gün kalır (2 Kasım 2026: 7 gün uzun geldi)
     if (!yeni.length) return;
     const e = Ortak.esc; // ortak.js
-    dizi.unshift(...yeni.map((x) => ["gazete.html?kurum", `<b class="yn">ÖNEMLİ</b>🏛️ ${e(x.kurum)}: ${e(x.baslik)} <b class="gir">Ayrıntı</b>`, "", "onem"]));
+    // 27 Kasım 2026: kurum duyuruları en üstteki şeride taşındı ("ust"); tıklama "gundem-kurum" diye sayılır
+    dizi.unshift(...yeni.map((x) => ["gazete.html?kurum", `<b class="yn">ÖNEMLİ</b>🏛️ ${e(x.kurum)}: ${e(x.baslik)} <b class="gir">Ayrıntı</b>`, "", "ust", "kurum"]));
     dizi.sort((a, b) => (b[0] === "anma") - (a[0] === "anma") || (b[0] === "video") - (a[0] === "video")); // anma satırı ve bayram videosu yine en başta
+    ciz();
+  }).catch(() => {});
+  // 27 Kasım 2026: bugünkü Resmî Gazete'nin "Bankacılığı ilgilendirenler" başlıkları da en üstteki şeritte (en fazla 2; Resmî Gazete sayfasında o günü açar).
+  // Başlıklar sitenin kendi Resmî Gazete özetindekilerle aynı; İş Bankası adı geçen madde şeride çıkmaz.
+  Ortak.json("gazete/" + bugunTR + ".json").then((g) => {
+    const e = Ortak.esc;
+    const L = ((g && g.bankacilik) || []).filter((x) => x && x.baslik && !/i̇ş bankası|iş bankası|işbank/i.test(x.baslik + " " + (x.aciklama || ""))).slice(0, 2);
+    if (!L.length) return;
+    dizi.unshift(...L.map((x) => ["gazete.html#" + bugunTR, `📜 <b>Resmî Gazete</b> · ${e(x.baslik)} <b class="gir">Ayrıntı</b>`, "", "ust", "resmigazete"]));
+    dizi.sort((a, b) => (b[0] === "anma") - (a[0] === "anma") || (b[0] === "video") - (a[0] === "video"));
     ciz();
   }).catch(() => {});
   // COP31: bugünün kalan İş Bankası oturumları saatleriyle (program: isbank/cop31.json, İş Bankası'nın yayımladığı PDF'ten); bugün yoksa sıradaki gün
@@ -979,7 +993,8 @@ try {
   const kutu = document.getElementById("yeniS"), ser = document.getElementById("ysSer");
   if (!kutu || !ser || !L.length || document.documentElement.classList.contains("matem")) return; // matemde bu şerit gündem haberlerini taşır
   const esc = Ortak.esc; // ortak.js
-  const tur = (kutu.dataset.gundem && window.ustGundemTur || "") + '<span style="display:inline-block;width:22px"></span>' + L.map(([e, ad, not, u]) => `<a href="${esc(u)}" data-r="${esc(ad)}">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("") + `<span class="ysNot ysSon">sitede yeni ✦</span>`;
+  window.yeniTur = '<span style="display:inline-block;width:22px"></span>' + L.map(([e, ad, not, u]) => `<a href="${esc(u)}" data-r="${esc(ad)}">${e}<b>${esc(ad)}</b>${esc(not)}</a>`).join("") + `<span class="ysNot ysSon">sitede yeni ✦</span>`;
+  const tur = (kutu.dataset.gundem && window.ustGundemTur || "") + window.yeniTur; // gündem sonradan gelirse ustSerit YENİ satırlarını arkasına ekler
   ser.innerHTML = tur + tur; // iki tur yan yana: kesintisiz döngü
   requestAnimationFrame(() => ser.style.setProperty("--sure", Math.max(28, Math.round(ser.scrollWidth / 2 / 40)) + "s"));
   kutu.hidden = false;
@@ -1004,7 +1019,9 @@ try {
     if (!L.length) return;
     const tur = '<span style="display:inline-block;width:22px"></span>' + L.map((x) =>
       `<a href="${esc(x.u)}" target="_blank" rel="noopener" data-sd="${esc(x.k || "")}">${esc(x.t)}<small>${esc(x.s)}${x.n >= 3 ? " · " + x.n + " kaynak" : ""}${x.d ? " · " + saat(x.d) : ""} ↗</small></a>`).join("");
-    ser.innerHTML = tur + tur;
+    // Arkasından gündem satırları (bugünkü Resmî Gazete, önemli kurum duyuruları) geçer; sonradan gelirse ustSerit ekler
+    window.sdTur = tur; const gd = window.ustGundemTur || "";
+    ser.innerHTML = tur + gd + tur + gd;
     kutu.classList.add("sd"); kutu.hidden = false; kutu.setAttribute("aria-label", "Son dakika");
     kutu.querySelector(".ysEt").innerHTML = "<i></i>SON DAKİKA";
     requestAnimationFrame(() => ser.style.setProperty("--sure", Math.max(24, Math.round(ser.scrollWidth / 2 / 45)) + "s"));

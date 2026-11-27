@@ -14,6 +14,7 @@
   var oku = function () { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { return null; } };
   var yaz = function (o) { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} };
   var son = function (a) { if (!Array.isArray(a)) return null; for (var i = a.length - 1; i >= 0; i--) if (typeof a[i] === "number" && a[i] > 0) return a[i]; return null; };
+  var once2 = function (a) { if (!Array.isArray(a)) return null; var n = 0; for (var i = a.length - 1; i >= 0; i--) if (typeof a[i] === "number" && a[i] > 0 && ++n === 2) return a[i]; return null; }; // bir önceki günün değeri
   var al = function (u) { return Ortak.json(u).catch(function () { return null; }); };
 
   // Kampanyalar sayfasındaki "aynı kampanya" anahtarıyla aynı: iki sitede birden çıkan kampanya bir kez sayılır
@@ -86,6 +87,22 @@
       }
       var f1 = fark("Dolar", "💵", base.usd, cur.usd, 2, "piyasa.html"), f2 = fark("Gram altın", "🥇", base.xau, cur.xau, 0, "piyasa.html");
       if (f1) cip.push(f1); if (f2) cip.push(f2);
+    } else {
+      // 27 Kasım 2026: bu cihazda karşılaştıracak önceki bakış yoksa (ilk açılış, yeni cihaz) kart boş kalmaz: "Dünden beri" gösterilir
+      var dun = gunTR(1), gA2 = {};
+      var DL = KL.filter(function (k) { return k.ilk && k.ilk >= dun; }).filter(function (k) { var a = anahtar(k); if (gA2[a]) return false; gA2[a] = 1; return true; });
+      if (DL.length) {
+        try { sessionStorage.setItem("senYokkenK", JSON.stringify(DL.map(function (k) { return k.url; }))); } catch (e) {}
+        cip.push('<a href="isbank.html#senyokken">🎁 <b>' + DL.length + "</b> yeni kampanya</a>");
+      }
+      if (cur.gz && cur.gz >= dun) cip.push('<a href="gazete.html#' + esc(cur.gz) + '">📜 ' + (cur.gz === bugun ? "Bugünkü" : "Dünkü") + " Resmî Gazete özeti</a>");
+      if (cur.ppk && cur.ppk >= dun && PPK.last) {
+        var c2 = Number(PPK.last.change) || 0;
+        cip.push('<a href="takvim.html">🏦 PPK kararı: <b>%' + esc(String(PPK.last.rate).replace(".", ",")) + "</b>" + (c2 ? " (" + (c2 > 0 ? "+" : "−") + nf(Math.abs(c2) * 100, 0) + " baz puan)" : " (değişmedi)") + "</a>");
+      }
+      var g1 = fark("Dolar", "💵", once2(P.usd), cur.usd, 2, "piyasa.html"), g2 = fark("Gram altın", "🥇", once2(P.xau), cur.xau, 0, "piyasa.html");
+      if (g1) cip.push(g1); if (g2) cip.push(g2);
+      if (st.kapatG === bugun) cip = []; // bugün kapatıldıysa yeniden çıkmaz
     }
     // Takipteki kampanyalar: bitmesine 3 gün ya da daha az kalanlar
     var T = []; try { T = JSON.parse(localStorage.getItem("kmpTakip") || "[]") || []; } catch (e) {}
@@ -105,7 +122,7 @@
     if (st.kapat && st.once && st.kapat === st.once.t) cip = []; // bu turun değişiklikleri kapatıldı
     if (st.kapatG === bugun) sat = [];                          // hatırlatmalar bugün için kapatıldı
     if (!cip.length && !sat.length) return;
-    kart.innerHTML = '<div class="dgsB"><h3>' + (cip.length ? "✨ Sen yokken" + (base ? "<small>son bakışın " + esc(zaman(base.t)) + "</small>" : "") : "⏰ Hatırlatmalar") + "</h3>" +
+    kart.innerHTML = '<div class="dgsB"><h3>' + (cip.length ? (base ? "✨ Sen yokken<small>son bakışın " + esc(zaman(base.t)) + "</small>" : "✨ Dünden beri<small>dün ve bugün gelenler</small>") : "⏰ Hatırlatmalar") + "</h3>" +
       '<button type="button" class="dgsX" aria-label="Kartı kapat">✕</button></div>' +
       (cip.length ? '<div class="dgsC">' + cip.join("") + "</div>" : "") + sat.join("") +
       '<p class="dgsN">🔒 Karşılaştırma yalnızca bu cihazda yapılır.</p>';
