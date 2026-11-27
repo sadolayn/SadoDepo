@@ -1,5 +1,5 @@
 /* degisen.js — ana sayfada "✨ Sen yokken" kartı (22 Kasım 2026).
-   Son bakışından bu yana: yeni kampanyalar, Resmî Gazete özetleri, PPK kararı, dolar ve gram altındaki değişim;
+   Son bakışından bu yana: yeni kampanyalar, İş Bankası haberleri, Resmî Gazete özetleri, PPK kararı, dolar ve gram altındaki değişim;
    ayrıca takibe aldığın kampanyalardan bitmesine 3 gün kalanlar ve gerçekleşen fiyat alarmları.
    Karşılaştırma için gereken küçük özet YALNIZCA bu cihazda tutulur ("senYokken"); hiçbir yere gönderilmez, ziyaret sayılmaz.
    Veriler sitenin kendi dosyalarından (Ortak.json aynı dosyayı sayfada tek kez indirir). */
@@ -44,9 +44,13 @@
     return '<a href="' + href + '">' + ik + " " + ad + " <b>" + nf(b, d) + '</b> <span class="' + (f > 0 ? "u" : "d") + '">' + (f > 0 ? "▲" : "▼") + " %" + nf(Math.abs(f), 1) + "</span></a>";
   }
 
-  Promise.all([al("isbank/kampanya_hepsi.json"), al("gazete/index.json"), al("data/ppk.json"), al("data/piyasa.json")]).then(function (R) {
+  Promise.all([al("isbank/kampanya_hepsi.json"), al("gazete/index.json"), al("data/ppk.json"), al("data/piyasa.json"), al("isbank/haberler.json")]).then(function (R) {
     var KL = kampanyalar(R[0]), GZ = Array.isArray(R[1]) ? R[1] : (R[1] && (R[1].gunler || R[1].dates)) || [], PPK = R[2] || {}, P = R[3] || {};
     var yakin = gunTR(14);
+    // İş Bankası haberleri (27 Kasım 2026): son 14 günün haberleri; önceki bakışta olmayanlar "yeni" sayılır
+    var HB = ((R[4] && R[4].haberler) || []).filter(function (h) { return h && h.tarih && h.tarih >= yakin && (h.url || h.baslik); });
+    var hbKim = function (h) { return h.url || h.baslik; };
+    var hbCip = function (n) { return '<a href="isbank.html#haberler">📰 <b>' + n + "</b> yeni İş Bankası haberi</a>"; };
     var YK = KL.filter(function (k) { return k.ilk && k.ilk > "2000-01-01" && k.ilk >= yakin; });
     var cur = {
       t: Date.now(),
@@ -54,13 +58,14 @@
       gk: YK.map(anahtar).filter(function (a, i, A) { return A.indexOf(a) === i; }),
       gz: GZ.slice().sort().pop() || "",
       ppk: (PPK.last && PPK.last.date) || "",
-      usd: son(P.usd), xau: son(P.xau)
+      usd: son(P.usd), xau: son(P.xau),
+      hb: R[4] ? HB.map(hbKim) : null
     };
     if (!R[0]) cur.gor = null; // veri alınamadıysa "yeni" sayılmasın
     var st = oku() || {}, base = null;
     if (!st.son) st.son = cur;
     else if (cur.t - st.son.t > PENCERE) { st.once = st.son; st.son = cur; }
-    else { var t0 = st.son.t; st.son = cur; st.son.t = t0; if (!R[0] && st.once) { st.son.gor = st.once.gor; st.son.gk = st.once.gk; } }
+    else { var t0 = st.son.t; st.son = cur; st.son.t = t0; if (!R[0] && st.once) { st.son.gor = st.once.gor; st.son.gk = st.once.gk; } if (!R[4] && st.once) st.son.hb = st.once.hb; }
     base = st.once || null;
     yaz(st);
 
@@ -76,6 +81,11 @@
           try { sessionStorage.setItem("senYokkenK", JSON.stringify(YL.map(function (k) { return k.url; }))); } catch (e) {}
           cip.push('<a href="isbank.html#senyokken">🎁 <b>' + YL.length + "</b> yeni kampanya</a>");
         }
+      }
+      if (cur.hb && base.hb) {
+        var onceH = {}; base.hb.forEach(function (u) { onceH[u] = 1; });
+        var nH = cur.hb.filter(function (u) { return !onceH[u]; }).length;
+        if (nH) cip.push(hbCip(nH));
       }
       if (cur.gz && base.gz && cur.gz > base.gz) {
         var n = GZ.filter(function (g) { return g > base.gz; }).length;
@@ -95,6 +105,8 @@
         try { sessionStorage.setItem("senYokkenK", JSON.stringify(DL.map(function (k) { return k.url; }))); } catch (e) {}
         cip.push('<a href="isbank.html#senyokken">🎁 <b>' + DL.length + "</b> yeni kampanya</a>");
       }
+      var nD = HB.filter(function (h) { return h.tarih >= dun; }).length;
+      if (nD) cip.push(hbCip(nD));
       if (cur.gz && cur.gz >= dun) cip.push('<a href="gazete.html#' + esc(cur.gz) + '">📜 ' + (cur.gz === bugun ? "Bugünkü" : "Dünkü") + " Resmî Gazete özeti</a>");
       if (cur.ppk && cur.ppk >= dun && PPK.last) {
         var c2 = Number(PPK.last.change) || 0;

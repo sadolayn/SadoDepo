@@ -58,6 +58,7 @@ if (location.hash === "#video") { cat = "🎬 Video"; lastNews = cat; } // ana s
 if (location.hash === "#atamalar") { cat = "👔 Atamalar"; lastNews = cat; } // ana sayfadaki ÖNEMLİ atama haberinden
 if (location.hash === "#black") { cat = "Black"; ayr = "black"; }
 if (location.hash === "#kampanya") cat = "Kampanya";
+if (location.hash === "#haberler") { cat = "Tümü"; lastNews = cat; } // ana sayfadaki "Sen yokken" kartından
 { const HK = { subeler: "Şubeler", soru: "Soru", tarihce: "Tarihçe", ktakvim: "KTakvim", pazarama: "Pazarama", kartsiz: "Kartsiz", medya: "Medya" }, hk = HK[location.hash.slice(1)]; if (hk) cat = hk; } // ana sayfa aramasından ve favorilerden gelince
 
 // ===== "Yeni" takibi: okunmamış içerik düğmede kırmızı sayı olarak görünür, bakınca düşer =====

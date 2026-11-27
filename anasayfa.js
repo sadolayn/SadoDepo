@@ -277,9 +277,10 @@ try {
     $("kur").querySelector(".pyIc2").textContent = "💻";
     $("kur").querySelector(".pyTx").innerHTML = "<b>Bilgisayarına ekle</b><small>Kendi penceresinde aç, tek tıkla ulaş</small>";
   }
+  let kurTarif = false; // başka sayfadaki hatırlatmadan gelindiyse (index.html#kur) doğrudan yol tarifi açılır
   $("kur").onclick = async () => {
     window.Rapor && Rapor.bolum("ana-ekrana-ekle");
-    const p = window.__kurPrompt;
+    const p = kurTarif ? null : window.__kurPrompt; kurTarif = false;
     if (p) { p.prompt(); try { const r = await p.userChoice; if (r.outcome === "accepted") $("kur").hidden = true; } catch (e) {} window.__kurPrompt = null; return; }
     const t = window.__tarayici, y = $("kurYardim"); y.hidden = false;
     if (pc) {
@@ -340,6 +341,7 @@ try {
     y.querySelector(".kyX").onclick = () => { y.hidden = true; okKaldir(); };
   };
   window.addEventListener("appinstalled", () => ($("kur").hidden = true));
+  if (location.hash === "#kur" && !kurulu) setTimeout(() => { kurTarif = true; $("kur").click(); const y = $("kurYardim"); if (y && !y.hidden) y.scrollIntoView({ behavior: "smooth", block: "center" }); }, 450);
 })();
 } catch (e) { console.error("anasayfa: (function () {", e); }
 
@@ -739,6 +741,8 @@ try {
     ...(function () { try { return window.aclBant || localStorage.getItem("aclGordu") === bugunTR; } catch (e) { return false; } })() ? [] : [["acilis", "☕ <b>Açılış kartı</b> hazır: çeyrek, Gazete, bölgen, PPK ve kampanyalar tek ekranda. Bugün baktın mı? <b class=\"gir\">Aç</b>"]],
     // 18 Kasım 2026: yeni ürün; kaynak isbank.com.tr/kazanc-hesap-ticari ve bankanın 18.11.2026 açıklaması (AA/DHA). Yalnızca sayfada yazanlar; ay sonunda kalkar
     ["banka.html#tkh", "🆕 İş Bankası'ndan yeni ürün: <b>Ticari Kazanç Hesabı</b>, işletmenin vadesiz hesabında belirlenen tutarın üstündeki bakiye her iş günü 17.45'te vadeliye geçip <b>gecelik faiz</b> kazanıyor <b class=\"gir\">Hesapla</b>", "2026-11-30", "onem"],
+    // 27 Kasım 2026: Maximum Mobil ilave MaxiPuan; kaynak maximum.com.tr kampanya sayfası (başlıktaki ifade). Dokununca o sayfa açılır; 31 Aralık'ta kalkar
+    ["https://www.maximum.com.tr/kampanyalar/maximum-mobilden-katilanlara-ilave-maxipuan", "📱 Aralık'ta MaxiPuan kampanyalarına <b>Maximum Mobil'den</b> katılana <b>ilave %10 MaxiPuan</b>; uygulamanın yeni sürümü gerekli <b class=\"gir\">Kampanya</b>", "2026-12-31"],
     // 25 Kasım 2026: İş Yatırım (İş Bankası iştiraki) YK başkanlığı; kaynak İş Yatırım'ın 24.11.2026 tarihli KAP açıklaması (CNBC-e, Investing, Banka Dünyası aynı bilgi).
     // Yalnızca açıklamada yazanlar: Özşuca 24.11.2026 itibarıyla YK üyeliğinden ayrıldı, görev dağılımında Ayvacı başkan seçildi, GM Devecioğlu YK üyesi atandı (ilk genel kurul onayına sunulacak).
     // Ayvacı'nın İş Bankası'ndaki yeni unvanı BDDK iznine bağlı olduğundan yazılmaz. Kullanıcı isteği: üst şeritte 2-3 gün → 27 Kasım'dan sonra kendiliğinden kalkar.
@@ -839,6 +843,7 @@ try {
     if (h === "acilis") { window.Rapor && Rapor.bolum("kayan-acilis"); window.Acilis && window.Acilis.ac(); return; }
     if (/^https:\/\/www\.denizbank\.com\//.test(h)) { window.Rapor && Rapor.bolum("kayan-denizbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // DenizBank'ın kendi duyurusu
     if (/^https:\/\/www\.ekonomim\.com\//.test(h)) { window.Rapor && Rapor.bolum("kayan-ekonomim"); window.open(h, "_blank", "noopener"); return; } // Ekonomim haberi (yeni sekmede)
+    if (/^https:\/\/www\.maximum\.com\.tr\//.test(h)) { window.Rapor && Rapor.bolum("kayan-maximum-mobil"); window.open(h, "_blank", "noopener"); return; } // Maximum'un kendi kampanya sayfası
     if (/^https:\/\/www\.isbank\.com\.tr\//.test(h)) { window.Rapor && Rapor.bolum("kayan-isbank-duyuru"); window.open(h, "_blank", "noopener"); return; } // İş Bankası'nın kendi duyurusu
     if (h === "cop31.html") { window.Rapor && Rapor.bolum("kayan-cop31"); location.href = h; return; }
     if (h.includes(".html")) { window.Rapor && Rapor.bolum(h.includes("kurum") ? "kayan-kurum" : "kayan-gazete-yakinda"); location.href = h; return; }
