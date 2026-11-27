@@ -49,7 +49,7 @@ if (location.hash === "#senyokken") { cat = "Maximum"; kYeni = true; try { const
 let ayr = "black", ipl = null; try { ayr = localStorage.getItem("isbankAyr") || "black"; } catch (e) {}
 if (location.hash === "#isplus") { cat = "Black"; ayr = "plus"; }
 // Ana sayfadaki kayan yazıdan gelince
-if (location.hash === "#iscep" || location.hash === "#odul") cat = "İşCep";
+if (location.hash === "#iscep" || location.hash === "#odul" || location.hash === "#iscep-maxi") cat = "İşCep";
 const odulGit = location.hash === "#odul"; // ana sayfadaki kupadan gelince ödül kartına kaydır
 if (location.hash === "#guncel") { cat = "📰 Güncel"; lastNews = cat; } // ana sayfadaki kayan yazıdaki önemli haberden
 if (location.hash === "#kap") { cat = "KAP"; lastNews = cat; }
@@ -1513,7 +1513,7 @@ async function ipYukle() {
   try { IPJ = await Ortak.json("isbank/iscep_ipucu.json"); IPK = IPJ.kategoriler.map((x) => [x.k, x.ic, x.k === "ayar" ? "Ayarlar" /* düğmede "Profil ve Ayarlar" üç satıra bölünüyordu */ : x.ad]); IPUCU = IPJ.ipuclari; } catch (e) { IPJ = { ipuclari: [] }; }
 }
 let ipHepsi = false; // İşCep "Hepsi": önce öne çıkan 10 ipucu, istenirse tamamı
-let ipSec = null, ipGun = null, ipGecmis = [], ipTorba = null; // ipTorba: bu turda henüz çıkmamış ipuçları (hepsi bitmeden tekrar yok)
+let ipSec = location.hash === "#iscep-maxi" ? "maxi" : null /* 27 Kasım 2026: ana sayfadaki "Maxi 8 yaşında" satırından gelince Maxi ipuçları açılır */, ipGun = null, ipGecmis = [], ipTorba = null; // ipTorba: bu turda henüz çıkmamış ipuçları (hepsi bitmeden tekrar yok)
 const IPC = { ayar: "#3f8cff", para: "#3fc283", maxi: "#b48cf0", kolay: "#f0c64a", arac: "#ef5a5a", ev: "#ef8a4c", aile: "#ff4fa3", seyahat: "#5aa9f0", yatirim: "#a8c94a" };
 // İşCep başlıkları: Maximum'daki gibi menünün hemen altında, yapışkan alanda
 function ipTiles() {

@@ -120,6 +120,10 @@ const ISQ_ALL = [].concat(
     ["İşCep Seyahatim'den hangi havalimanı için lounge ve fast track satın alınabilir?", ["Esenboğa", "Sabiha Gökçen", "Adnan Menderes", "Antalya"], 1],
     ["Yapay zekâ asistanı Maxi'ye İşCep dışında hangi kanallardan da ulaşılabilir?", ["Telegram ve Signal", "WhatsApp ve Facebook Messenger", "Sadece e-posta", "Hiçbiri"], 1],
     ["Maxi, İşCep'e kaydettiğin faturalar için ne yapar?", ["Faturayı iptal eder", "Ödeme günü gelince hatırlatır", "Faturayı başkasına ödetir", "Hiçbir şey yapmaz"], 1],
+    ["Maxi'ye WhatsApp'tan hangi numarayla yazılabilir?", ["0850 724 0 724", "444 0 202", "0850 222 0 600", "WhatsApp'ta yoktur"], 0],
+    ["Maxi'de, hazır kredi limitini sohbet ederek kullandıran özelliğin adı nedir?", ["Maxi Kredi Asistanım", "Kredi Sihirbazı", "Hızlı Kredi Robotu", "İşCep Kredi Kutusu"], 0],
+    // 27 Kasım 2026: Maxi 8 yaşında (Kasım 2018); kaynak isbank.com.tr/maxi
+    ["Kasım 2026'da Maxi kaç yaşına girdi?", ["5", "6", "8", "10"], 2, "2026-12-31"],
     ["İşCep'teki 'Ödeme İste' ile gönderilen istek onaylanınca para hangi sistemle anında geçer?", ["SWIFT", "EFT", "FAST", "Western Union"], 2],
     ["İş Plus seviyeleri hangileridir?", ["Bronz, Gümüş, Altın", "Turkuaz, Mavi, Lacivert", "Klasik, Gold, Platinum", "Yeşil, Sarı, Kırmızı"], 1],
     ["İşCep ana sayfasındaki tutarları tek dokunuşla gizleyen özelliğin adı nedir?", ["Gizli Hesap", "Hassas Mod", "Karanlık Mod", "Kilitli Ekran"], 1],

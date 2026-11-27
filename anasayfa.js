@@ -754,6 +754,9 @@ try {
     ["tema", "🌓 Gözüne göre seç: takvimin altındaki <b>◐ Görünüm</b> düğmesine dokun: <b>Açık · Koyu · Sistem</b>; Sistem telefonunun ayarına uyar <b class=\"gir\">Seç</b>", "2026-11-22"],
     // İşCep ödülü satırı 5 Kasım'da çıkarıldı: üstteki kupa kartı zaten gösteriyor
     ["maximum", "🎁 Kampanyaları bulmak hiç bu kadar kolay olmamıştı: İş Bankası, Maximum ve Maximiles tek ekranda; arama, takvim ve <b>Bana uygun</b> <b class=\"gir\">İş Bankası Gündemi › Kampanyalar</b>", "2026-11-30"],
+    // 27 Kasım 2026: Maxi 8 yaşında (Kasım 2018'de İşCep'te açıldı). Kaynak: isbank.com.tr/maxi ("500'den fazla konu", yazarak/konuşarak işlem) ve bankanın AA açıklaması ("yılda 11 milyon kullanıcı").
+    // Bankanın bildirimindeki "550+ yeni yetenek" resmî sitede yok; sitede yazan 500+ kullanılır. Bir hafta kalır, dokununca İşCep ipuçlarının Maxi başlığı açılır.
+    ["iscep-maxi", "🎂 <b>Maxi 8 yaşında!</b> Yılda 11 milyon kişinin konuştuğu asistan artık 500'ü aşkın konuda yanıt veriyor: para gönderme, fatura, kredi, yatırım, harcama özeti… Yaz ya da söyle 💙 <b class=\"gir\">Maxi'nin az bilinenleri</b>", "2026-12-04", "onem"],
     ["iscep", "🌍 İşCep ile yurt dışına para gönderimi: süre ve ücret bilgileri <b class=\"gir\">İş Bankası Gündemi › İşCep</b> bölümünde", "2026-12-31"],
           ];
   const CAGRI = [null, null];
