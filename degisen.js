@@ -16,6 +16,9 @@
   var son = function (a) { if (!Array.isArray(a)) return null; for (var i = a.length - 1; i >= 0; i--) if (typeof a[i] === "number" && a[i] > 0) return a[i]; return null; };
   var al = function (u) { return Ortak.json(u).catch(function () { return null; }); };
 
+  // Kampanyalar sayfasındaki "aynı kampanya" anahtarıyla aynı: iki sitede birden çıkan kampanya bir kez sayılır
+  var kucuk = function (t) { return (t || "").toLocaleLowerCase("tr").replace(/[’'`]/g, "").replace(/[çğıöşüâîû]/g, function (h) { return { ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a", î: "i", û: "u" }[h]; }); };
+  var anahtar = function (k) { return k.es || kucuk(k.baslik).replace(/[^a-z0-9%]/g, ""); };
   function kampanyalar(K) {
     var L = [], gor = {};
     ["isbank", "maximum", "maximiles"].forEach(function (kay) {
@@ -43,9 +46,11 @@
   Promise.all([al("isbank/kampanya_hepsi.json"), al("gazete/index.json"), al("data/ppk.json"), al("data/piyasa.json")]).then(function (R) {
     var KL = kampanyalar(R[0]), GZ = Array.isArray(R[1]) ? R[1] : (R[1] && (R[1].gunler || R[1].dates)) || [], PPK = R[2] || {}, P = R[3] || {};
     var yakin = gunTR(14);
+    var YK = KL.filter(function (k) { return k.ilk && k.ilk > "2000-01-01" && k.ilk >= yakin; });
     var cur = {
       t: Date.now(),
-      gor: KL.filter(function (k) { return k.ilk && k.ilk > "2000-01-01" && k.ilk >= yakin; }).map(function (k) { return k.url; }),
+      gor: YK.map(function (k) { return k.url; }),
+      gk: YK.map(anahtar).filter(function (a, i, A) { return A.indexOf(a) === i; }),
       gz: GZ.slice().sort().pop() || "",
       ppk: (PPK.last && PPK.last.date) || "",
       usd: son(P.usd), xau: son(P.xau)
@@ -54,16 +59,22 @@
     var st = oku() || {}, base = null;
     if (!st.son) st.son = cur;
     else if (cur.t - st.son.t > PENCERE) { st.once = st.son; st.son = cur; }
-    else { var t0 = st.son.t; st.son = cur; st.son.t = t0; if (!R[0] && st.once) st.son.gor = st.once.gor; }
+    else { var t0 = st.son.t; st.son = cur; st.son.t = t0; if (!R[0] && st.once) { st.son.gor = st.once.gor; st.son.gk = st.once.gk; } }
     base = st.once || null;
     yaz(st);
 
     var cip = [], sat = [];
     if (base) {
+      // Yeni sayılan kampanyalar: önceki bakışta görülmemiş olanlar (aynı kampanya iki sitedeyse bir kez).
+      // Bağlantı tam bu kampanyaları açar (Kampanyalar › "Sen yokken gelenler"); sayfadaki bölüm seçimi (Bireysel/Ticari) karışmaz.
       if (cur.gor && base.gor) {
-        var once = {}; base.gor.forEach(function (u) { once[u] = 1; });
-        var yeni = cur.gor.filter(function (u) { return !once[u]; }).length;
-        if (yeni) cip.push('<a href="isbank.html#yeniliste">🎁 <b>' + yeni + "</b> yeni kampanya</a>");
+        var onceU = {}, onceA = {}; base.gor.forEach(function (u) { onceU[u] = 1; }); (base.gk || []).forEach(function (a) { onceA[a] = 1; });
+        var YL = YK.filter(function (k) { return base.gk ? !onceA[anahtar(k)] : !onceU[k.url]; }), gA = {};
+        YL = YL.filter(function (k) { var a = anahtar(k); if (gA[a]) return false; gA[a] = 1; return true; });
+        if (YL.length) {
+          try { sessionStorage.setItem("senYokkenK", JSON.stringify(YL.map(function (k) { return k.url; }))); } catch (e) {}
+          cip.push('<a href="isbank.html#senyokken">🎁 <b>' + YL.length + "</b> yeni kampanya</a>");
+        }
       }
       if (cur.gz && base.gz && cur.gz > base.gz) {
         var n = GZ.filter(function (g) { return g > base.gz; }).length;

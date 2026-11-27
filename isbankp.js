@@ -37,9 +37,15 @@ if (location.hash === "#maximum") cat = "Maximum"; // ana sayfadaki kampanya hat
 let kYeni = location.hash === "#yeni"; // ana sayfadaki "son 5 günde N yeni" etiketinden gelince: Kampanyalar › Yeni gelenler
 if (kYeni) cat = "Maximum";
 // Ana sayfadaki Açılış kartından (Faiz & Kredi / Yeni gelen kutuları): Kampanyalar açılır ve sayfa doğrudan süzülmüş listeye iner
-const kGit = location.hash === "#kliste" || location.hash === "#yeniliste";
+// Bölüm adresin içinde gelir (#yeniliste-ticari); düz #yeniliste her zaman "Hepsi" açar.
+// (27.11.2026: eskiden Kampanyalar'da en son seçilen bölüm hatırlanıyordu; "Sen yokken 6 yeni" deyip yalnızca Ticari'deki 1 kampanyayı gösteriyordu.)
+const kYH = /^#yeniliste(?:-(bireysel|ticari))?$/.exec(location.hash);
+const kGit = location.hash === "#kliste" || !!kYH || location.hash === "#senyokken";
 let kYeniSeg = ""; // Yeni gelenlerde bölüm: "" hepsi · bireysel · ticari (ana sayfada Bireysel/Ticari'ye basınca o bölüm açılır)
-if (kGit) { cat = "Maximum"; if (location.hash === "#yeniliste") { kYeni = true; try { kYeniSeg = JSON.parse(localStorage.getItem("isbankKamp") || "{}").seg || ""; } catch (e) {} } }
+if (kGit) { cat = "Maximum"; if (kYH) { kYeni = true; kYeniSeg = kYH[1] || ""; } }
+// ✨ Ana sayfadaki "Sen yokken N yeni kampanya"dan gelince: tam o N kampanya (adresleri bu sekmede, sessionStorage'da)
+let kSY = null;
+if (location.hash === "#senyokken") { cat = "Maximum"; kYeni = true; try { const a = JSON.parse(sessionStorage.getItem("senYokkenK") || "null"); if (Array.isArray(a) && a.length) kSY = a; } catch (e) {} }
 let ayr = "black", ipl = null; try { ayr = localStorage.getItem("isbankAyr") || "black"; } catch (e) {}
 if (location.hash === "#isplus") { cat = "Black"; ayr = "plus"; }
 // Ana sayfadaki kayan yazıdan gelince
@@ -818,12 +824,12 @@ function renderKampanyalar() {
       + `<div class="tsat kgr"><span class="tlab">🛍️ Nerede</span><div class="tgrid">${sb("data-nere", "", "📋", "Hepsi", nereT.length, !kNere, "hep")}${nereGor.map(([ad, ic, n]) => sb("data-nere", ad, ic, kKisa(ad), n, kNere === ad)).join("")}${nereGor.length < nereS.length || kKatAcik ? `<button type="button" data-kac="1" class="kac">${kKatAcik ? "▴ Daha az" : `▾ ${nereS.length - nereGor.length} grup daha`}</button>` : ""}</div></div>` : "");
   // "Bana uygun" ya da "Yeni gelenler" açıkken süzgeç satırları gizlenir: ikisi de üç sitenin hepsine bakar, Kaynak/Bölüm/Nerede onları etkilemez
   if (kYeni) t.innerHTML = t.querySelector(".kara").outerHTML
-    + `<div class="ksihnot kyeninot"><span>🆕 <b>Yeni gelenler</b> açık · son 5 gün, üç siteye birden bakılır</span><button type="button" data-sihkapat="1">✕ Kapat</button></div>`;
+    + `<div class="ksihnot kyeninot"><span>${kSY ? "✨ <b>Sen yokken gelenler</b> açık · son bakışından beri, üç site birlikte" : "🆕 <b>Yeni gelenler</b> açık · son 5 gün, üç siteye birden bakılır"}</span><button type="button" data-sihkapat="1">✕ Kapat</button></div>`;
   else if (kSih.acik) t.innerHTML = t.querySelector(".kara").outerHTML
     + `<div class="ksihnot"><span>🧭 <b>Bana uygun</b> açık · seçimler aşağıda, üç siteye birden bakılır</span><button type="button" data-sihkapat="1">✕ Kapat</button></div>`;
   t.onclick = (e) => {
     const b = e.target.closest("button"); if (!b || b.closest(".kara")) return;
-    if (b.dataset.sihkapat) { kSih.acik = false; kYeni = false; kAra = ""; renderKampanyalar(); icerigeKay(); return; }
+    if (b.dataset.sihkapat) { kSih.acik = false; kYeni = false; kSY = null; kAra = ""; renderKampanyalar(); icerigeKay(); return; }
     if (b.dataset.kac) { kKatAcik = !kKatAcik; renderKampanyalar(); return; }
     if (b.dataset.kfilt) { kFiltAcik = !kFiltAcik; try { sessionStorage.setItem("kFiltAcik", kFiltAcik ? "1" : "0"); } catch (x) {} renderKampanyalar(); return; }
     if (b.dataset.ky) { kKay = b.dataset.ky; kNe = kNere = kKim = ""; kOne = kKatAcik = false; }
@@ -859,11 +865,12 @@ function renderKampanyalar() {
     i.oninput = () => { kAra = i.value; sil.hidden = !kAra; t.classList.toggle("araniyor", !!kAra.trim()); $("kGovde").innerHTML = kAra.trim() ? kAraHtml() : kYeni ? kYeniHtml() : kSih.acik ? kSihHtml() : govde(); };
     sil.onclick = () => { kAra = ""; i.value = ""; sil.hidden = true; t.classList.remove("araniyor"); $("kGovde").innerHTML = kYeni ? kYeniHtml() : kSih.acik ? kSihHtml() : govde(); i.focus(); };
     $("kSihirBtn").onclick = () => { kSihAcKapa(); kYeni = false; kAra = ""; renderKampanyalar(); if (kSih.acik) icerigeKay(); };
-    if ($("kYeniBtn")) $("kYeniBtn").onclick = () => { kYeni = true; kYeniSeg = ""; kSih.acik = false; kAra = ""; renderKampanyalar(); icerigeKay(); };
+    if ($("kYeniBtn")) $("kYeniBtn").onclick = () => { kYeni = true; kYeniSeg = ""; kSY = null; kSih.acik = false; kAra = ""; renderKampanyalar(); icerigeKay(); };
     // Kutu daralınca "Bana uygun" kutunun içinde kalır: sayfa aşağıdayken de tek dokunuşla açılır
     t.querySelector(".ksihk").onclick = () => { kSihAcKapa(); kYeni = false; kAra = ""; renderKampanyalar(); bolumeGit($("kGovde")); };
     $("kGovde").onclick = (e) => {
       const ys = e.target.closest("[data-yseg]"); if (ys) { kYeniSeg = ys.dataset.yseg; $("kGovde").innerHTML = kYeniHtml(); return; }
+      if (e.target.closest("[data-ytum]")) { kSY = null; kYeniSeg = ""; renderKampanyalar(); icerigeKay(); return; }
       const sr = e.target.closest("[data-sira]"); if (sr) { kSira = sr.dataset.sira; kKaydet(); renderKampanyalar(); return; }
       if (e.target.closest("[data-ktemiz]")) { kNe = kNere = kKim = ""; kKaydet(); renderKampanyalar(); return; }
       if (e.target.closest("[data-ksuz]")) {
@@ -997,20 +1004,28 @@ const kAyni = (k) => k.es || kKucuk(k.baslik).replace(/[^a-z0-9%]/g, "");
 // 🆕 Yeni gelenler: son 5 günde (İstanbul günüyle bugün ve önceki 4 gün; 1 Kasım 2026'da 3 günden 5'e çıkarıldı) listeye giren kampanyalar; üç site, bireysel ve ticari.
 // İki sitede birden yayımlanan kampanya bir kez, ilk görüldüğü günle. Ana sayfadaki "son 5 günde N yeni" ve Kampanyalar rozeti bu listeden.
 const kTrGun = (once) => new Date(Date.now() + 3 * 3600e3 - once * 864e5).toISOString().slice(0, 10); // İstanbul günü, "once" gün önce
-function kYeniListe(seg) {
-  const sinir = kTrGun(4), G = new Map();
-  kTumu(seg).forEach((k) => {
+function kYeniListe(seg, sy) {
+  const sinir = sy ? "" : kTrGun(4), G = new Map(), U = sy ? new Set(sy) : null;
+  kTumu(seg).filter((k) => !U || U.has(k.url)).forEach((k) => {
     const a = kAyni(k), ilk = k.ilk && k.ilk > "2000-01-01" ? k.ilk : "0", x = G.get(a);
     if (!x) G.set(a, { ...k, _ilk: ilk }); else { if (x._kay !== k._kay) x._iki = true; if (ilk < x._ilk) x._ilk = ilk; }
   });
   return [...G.values()].filter((k) => k._ilk >= sinir).sort((a, b) => b._ilk.localeCompare(a._ilk) || (a.bitis || "9").localeCompare(b.bitis || "9"));
 }
 function kYeniHtml() {
-  const H = kYeniListe(), nB = kYeniListe("bireysel").length, nT = kYeniListe("ticari").length;
+  if (kSY && !kYeniListe("", kSY).length) kSY = null; // o kampanyalar artık listede yoksa son 5 güne dön
+  const H = kYeniListe("", kSY), nB = kYeniListe("bireysel", kSY).length, nT = kYeniListe("ticari", kSY).length;
   const yb = (v, ad, n) => `<button type="button" data-yseg="${v}" class="${kYeniSeg === v ? "on" : ""}">${ad} <b>${n}</b></button>`;
-  const secim = H.length ? `<div class="kyseg">${yb("", "📋 Hepsi", H.length)}${yb("bireysel", "👤 Bireysel", nB)}${yb("ticari", "🏢 Ticari", nT)}</div>` : "";
-  const L = kYeniSeg ? kYeniListe(kYeniSeg) : H;
+  const secim = H.length ? `<div class="kyseg">${yb("", "📋 Hepsi", H.length)}${nB ? yb("bireysel", "👤 Bireysel", nB) : ""}${nT ? yb("ticari", "🏢 Ticari", nT) : ""}</div>` : "";
+  if ((kYeniSeg === "bireysel" && !nB) || (kYeniSeg === "ticari" && !nT)) kYeniSeg = "";
+  const L = kYeniSeg ? kYeniListe(kYeniSeg, kSY) : H;
   if (!L.length) return secim + '<div class="empty">Son 5 günde yeni kampanya gelmedi. Liste her sabah üç siteden yeniden toplanır.</div>';
+  if (kSY) {
+    const say2 = Object.keys(K_KAY).map((k) => [k, L.filter((x) => x._kay === k).length]).filter((x) => x[1]);
+    let h2 = `<div class="ksag" style="--kk:#3fc283"><div class="kyol">✨ Sen yokken gelen <b>${L.length} kampanya</b></div><small class="kdag">${say2.map(([k, n]) => K_KAY[k][0] + " " + K_KAY[k][1] + " " + n).join(" · ")} · ${kYeniSeg === "ticari" ? "yalnızca ticari" : kYeniSeg === "bireysel" ? "yalnızca bireysel" : "bireysel ve ticari birlikte"}</small></div>` + secim;
+    L.forEach((k) => { h2 += kKart(k, K_KAY[k._kay][3], k._seg === "ticari"); });
+    return h2 + `<div class="kyseg"><button type="button" data-ytum="1">🆕 Son 5 günün hepsini gör <b>${kYeniListe().length}</b></button></div>`;
+  }
   const say = Object.keys(K_KAY).map((k) => [k, L.filter((x) => x._kay === k).length]).filter((x) => x[1]);
   const gunAd = (g) => (g === kTrGun(0) ? "Bugün" : g === kTrGun(1) ? "Dün" : new Date(g + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", weekday: "long" })) + " gelenler";
   let h = `<div class="ksag" style="--kk:#3fc283"><div class="kyol">🆕 Son 5 günde gelen <b>${L.length} kampanya</b></div><small class="kdag">${say.map(([k, n]) => K_KAY[k][0] + " " + K_KAY[k][1] + " " + n).join(" · ")} · ${kYeniSeg === "ticari" ? "yalnızca ticari" : kYeniSeg === "bireysel" ? "yalnızca bireysel" : "bireysel ve ticari birlikte"}</small></div>` + secim, son = "";

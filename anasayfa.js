@@ -648,7 +648,7 @@ try {
       o.seg = p[1]; o.nere = ""; o.kim = ""; o.one = false; o.ne = p[0] === "fk" ? "Faiz & Kredi" : ""; if (p[0] === "fk") o.kay = "isbank";
       yaz("isbankKamp", JSON.stringify(o));
       if (window.Rapor) Rapor.bolum("acilis-" + p[0] + "-" + p[1]);
-      location.href = "isbank.html#" + (p[0] === "fk" ? "kliste" : "yeniliste"); // sayfa doğrudan süzülmüş listeye iner
+      location.href = "isbank.html#" + (p[0] === "fk" ? "kliste" : "yeniliste-" + p[1]); // sayfa doğrudan süzülmüş listeye iner
     });
   }).catch(function () {}));
 
@@ -1434,7 +1434,7 @@ try {
       o.seg = p[1]; o.nere = p[0] === "tar" ? "Tarım" : ""; o.kim = ""; o.one = false; o.ne = p[0] === "fk" ? "Faiz & Kredi" : "";
       if (p[0] === "fk" || p[0] === "tar") o.kay = "isbank";
       try { localStorage.setItem("isbankKamp", JSON.stringify(o)); } catch (x) {}
-      location.href = "isbank.html#" + (p[0] === "yeni" ? "yeniliste" : "kliste");
+      location.href = "isbank.html#" + (p[0] === "yeni" ? "yeniliste-" + p[1] : "kliste");
     });
   }).catch(function () {});
 })();
