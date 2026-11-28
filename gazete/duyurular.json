@@ -1,7 +1,35 @@
 {
-  "guncelleme": "2026-11-25T20:10:00+03:00",
-  "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmi duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
+  "guncelleme": "2026-11-28T07:01:24+03:00",
+  "not": "Düzenleyici kurumların (BDDK, TCMB, SPK, TMSF, MASAK, Ticaret Bakanlığı) bankacılığı ilgilendiren karar ve duyuruları. Kayıtlar mümkünse kurumun resmî duyurusuna, değilse haber kaynağına bağlanır; MASAK yaptırım listelerinde kişi ve kurum adı yazılmaz.",
   "duyurular": [
+    {
+      "tarih": "2026-11-28",
+      "kurum": "TCMB",
+      "baslik": "Fintlix Elektronik Para ve Ödeme Hizmetleri'nin faaliyet izni iptal edildi",
+      "ozet": "Merkez Bankası'nın Fintlix Elektronik Para ve Ödeme Hizmetleri A.Ş.'nin faaliyet izninin iptal edilmesine ilişkin kararı 28 Kasım 2026 tarihli ve 33444 sayılı Resmî Gazete'de yayımlandı.",
+      "etki": "İptalin gerekçesi ve kullanıcı fonlarına ilişkin süreç henüz açıklanmadı.",
+      "onemli": true,
+      "url": "https://www.haberler.com/haber/28-kasim-cumartesi-2026-resm-gazete-atama-20470013-haberi/",
+      "gazete": "2026-11-28"
+    },
+    {
+      "tarih": "2026-11-26",
+      "kurum": "TCMB",
+      "baslik": "TL mevduat zorunlu karşılıklarına yapılan faiz veya telafi ödemesi fonlama maliyetinin %86'sından %90'ına çıkarıldı",
+      "ozet": "TCMB, 26 Kasım 2026 tarihli Makroihtiyati Çerçeveye İlişkin Basın Duyurusu (2026-52) ile Türk lirası mevduat zorunlu karşılıklarına TCMB ağırlıklı ortalama fonlama maliyetinin %86'sı yerine %90'ı oranında faiz veya telafi ödemesi yapılmasına karar verdi.",
+      "etki": "Bankaların TL mevduat zorunlu karşılıkları için TCMB'den aldığı faiz veya telafi ödemesinin oranı %86'dan %90'a yükseliyor.",
+      "onemli": true,
+      "url": "https://www.tcmb.gov.tr/wps/wcm/connect/1ac76266-65fc-4470-8004-0e91fb58849e/DUY2026-52.pdf?MOD=AJPERES&CACHEID=ROOTWORKSPACE-1ac76266-65fc-4470-8004-0e91fb58849e-q8phlSd"
+    },
+    {
+      "tarih": "2026-11-26",
+      "kurum": "TCMB",
+      "baslik": "Bir hafta vadeli repo ihalelerine geçici olarak ara verildi",
+      "ozet": "TCMB, 26 Kasım 2026 tarihli Türk Lirası Likidite Yönetimine İlişkin Basın Duyurusu (2026-51) ile açık piyasa işlemleri kapsamındaki bir hafta vadeli repo ihalelerine geçici olarak ara verilmesine karar verdi.",
+      "etki": "Uygulamanın ne kadar süreceğine ilişkin ayrıntılar henüz açıklanmadı.",
+      "onemli": true,
+      "url": "https://www.tcmb.gov.tr/wps/wcm/connect/41b545b8-a0f2-424a-b400-ced9df0425f2/DUY2026-51.pdf?MOD=AJPERES&CACHEID=ROOTWORKSPACE-41b545b8-a0f2-424a-b400-ced9df0425f2-q8pgTg6"
+    },
     {
       "tarih": "2026-11-24",
       "kurum": "TCMB",
@@ -239,15 +267,6 @@
       "etki": "SPK kararına göre mutabakatı tamamlanan yatırımcılara ilk ödeme ara ödeme yoluyla yapılacak; pay iadesi nihai tasfiyede yapılacak.",
       "onemli": false,
       "url": "https://bloomberght.com/spkdan-tafsiye-edilen-fonlar-icin-ara-odeme-karari-3789902"
-    },
-    {
-      "tarih": "2026-09-23",
-      "kurum": "MASAK",
-      "baslik": "Ön ödemeli kart ve e-parada basitleştirilmiş tedbir eşiği 5.500 TL'ye çıktı",
-      "ozet": "Genel Tebliğ (Sıra No: 33) ile düşük riskli ürünlerde basitleştirilmiş tedbir eşikleri yükseltildi: ön ödemeli kart ve elektronik parada 2.750 TL'den 5.500 TL'ye, hayat sigortası yıllık priminde 10 bin TL'den 20 bin TL'ye. EFT/havale kimlik tespiti eşikleri değişmedi.",
-      "etki": "Düşük tutarlı ön ödemeli kart ve e-para işlemlerinde kimlik tespiti kolaylaşır; havale ve EFT kuralları aynı kalır.",
-      "onemli": true,
-      "url": "https://hukukcularevi.com/masak-limitleri-degisti-mi-23-eylul-2026-genel-teblig-33-34-on-odemeli-kart-5500-mobil-odeme-6500-eft-havale-bm-yaptirim-listesi/"
     }
   ]
 }
