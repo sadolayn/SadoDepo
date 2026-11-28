@@ -86,6 +86,9 @@
   .sec.imp { border-color: rgba(224,162,79,.6); background: linear-gradient(180deg, rgba(224,162,79,.10), var(--card) 60%); }
   .sec.bnk { border-color: rgba(90,169,240,.5); background: linear-gradient(180deg, rgba(90,169,240,.08), var(--card) 60%); }
   .sec.bnk h2 { color: #5aa9f0; }
+  .sec.vrg { border-color: rgba(63,194,131,.5); background: linear-gradient(180deg, rgba(63,194,131,.08), var(--card) 60%); }
+  .sec.vrg h2 { color: #3fc283; }
+  .sec.vrg .vb { display: inline-block; margin: 4px 0 2px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; color: #5aa9f0; border: 1px solid rgba(90,169,240,.45); }
   .kurum { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: rgba(224,162,79,.18); color: var(--accent); margin-bottom: 4px; }
   .item { padding: 10px 0; border-top: 1px solid var(--line); }
   .item:first-of-type { border-top: none; }
@@ -483,10 +486,15 @@ async function show(date) {
       </div>`;
     // Başlık bağlantısı: maddenin kendi Resmî Gazete adresi varsa o, yoksa günün fihristi
     const lk = (it, txt) => { const u = it.url && /^https:\/\/www\.resmigazete\.gov\.tr\//.test(it.url) ? it.url : resmi; return `<a class="rg" href="${esc(u)}" target="_blank" rel="noopener" title="${it.url ? "Resmî metni aç" : "Günün Resmî Gazete fihristini aç"}">${txt}<i>${it.url ? "↗" : "📜"}</i></a>`; };
-    // Öncelik bankacılık: önce bankacılığı ilgilendirenler, sonra atamalar
+    // Öncelik bankacılık: önce bankacılığı ilgilendirenler, sonra vergi, sonra atamalar
     const bnk = g.bankacilik || [];
     if (bnk.length) {
       html += `<div class="sec bnk"><h2>🏦 Bankacılığı ilgilendirenler</h2>` + bnk.map((it) => `<div class="item"><b>${lk(it, esc(it.baslik))}</b>${it.aciklama ? `<span>${esc(it.aciklama)}</span>` : ""}</div>`).join("") + `</div>`;
+    }
+    // Vergi, harç ve fon değişiklikleri (stopaj, KKDF, BSMV, gelir/kurumlar vergisi, harçlar…) ayrı başlıkta
+    const vrg = g.vergi || [];
+    if (vrg.length) {
+      html += `<div class="sec vrg"><h2>💰 Vergi ve harçlar</h2>` + vrg.map((it) => `<div class="item"><b>${lk(it, esc(it.baslik))}</b>${it.aciklama ? `<span>${esc(it.aciklama)}</span>` : ""}${it.yururluk ? `<div class="yur">📅 Yürürlük: ${esc(it.yururluk)}</div>` : ""}${it.bankacilik ? `<span class="vb">🏦 Bankacılığı ilgilendirir</span>` : ""}</div>`).join("") + `</div>`;
     }
     const atm = g.onemli_atamalar || [];
     if (atm.length) {
